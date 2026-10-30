@@ -1,0 +1,85 @@
+\documentclass{mimosis}
+%%% Legrand Orange Book
+%%% Based on latex-mimosis (github.com/Pseudomanifold/latex-mimosis, MIT),
+%%% restructured as a general multi-part book rather than a thesis.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hyperlinks & bookmarks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[%
+  colorlinks = true,
+  citecolor  = BurntOrange,
+  linkcolor  = BurntOrange,
+  urlcolor   = BurntOrange,
+  unicode,
+  ]{hyperref}
+
+\usepackage{bookmark}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapter epigraphs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% A small, book-specific touch that the thesis-oriented starter does not
+% use: a quotation set below each opening chapter heading.
+
+\usepackage{epigraph}
+\setlength{\epigraphwidth}{0.7\textwidth}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Plain natbib + bibtex, not biblatex + biber: the compiler that builds
+% this template runs a fixed <engine>/bibtex/<engine>/<engine> cycle with
+% no biber pass, so a biblatex bibliography (upstream's default) would
+% never actually resolve here.
+
+\usepackage[numbers]{natbib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fonts
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This starter compiles under pdflatex, so it always takes the \else
+% branch below (file-resolvable packages, not fontconfig family names).
+
+\ifxetexorluatex
+  \usepackage{unicode-math}
+  \setmainfont{EB Garamond}
+  \setmathfont{Garamond Math}
+  \setmonofont[Scale=MatchLowercase]{Source Code Pro}
+\else
+  \usepackage[lf]{ebgaramond}
+  \usepackage[oldstyle,scale=0.7]{sourcecodepro}
+  \singlespacing
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Incipit
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Title of Your Book}
+\subtitle{A subtitle, if you have one}
+\author{Jordan Rivera}
+
+\begin{document}
+
+\frontmatter
+  \include{Sources/Title}
+  \include{Sources/Preface}
+
+  \tableofcontents
+
+\mainmatter
+
+  \include{Sources/PartOne}
+  \include{Sources/PartTwo}
+
+\backmatter
+
+  \bibliographystyle{plainnat}
+  \bibliography{references}
+
+\end{document}

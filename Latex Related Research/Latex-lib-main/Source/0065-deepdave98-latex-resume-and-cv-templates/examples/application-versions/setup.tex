@@ -1,0 +1,16 @@
+% Shared setup for every entry file. Compile with XeLaTeX.
+\resumepagelimit{1}
+
+% jobduties sees the selected command names, not the text inside them.
+% Check each selected bullet when it runs. Unused bullets stay out of the PDF
+% and do not produce placeholder reminders.
+\newcommand{\ResumeBullet}[1]{%
+  \resumecheckfield{selected bullet}{bullets}{#1}%
+  \item #1%
+}
+
+\input{content/profile}
+\input{content/experience}
+\input{content/projects}
+\input{content/skills}
+\input{content/education}

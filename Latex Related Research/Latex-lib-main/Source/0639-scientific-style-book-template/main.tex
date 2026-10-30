@@ -1,0 +1,82 @@
+\documentclass[11pt,twoside]{book}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{libertine}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,capitalise]{cleveref}
+\definecolor{scigreen}{HTML}{356859}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{definition}[theorem]{Definition}
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\begin{document}
+\begin{titlepage}
+\centering
+\vspace*{0.85in}
+{\Huge\bfseries Notes on Structured Inquiry\par}
+\vspace{15pt}{\Large A scientific-style book starter\par}
+\vspace{20pt}\textcolor{scigreen}{\rule{0.72\textwidth}{2pt}}\par
+\vfill
+{\Large Author Name\par}\vspace{6pt}{\large Research group or institution\par}
+\vspace{0.5in}{\small Version 1.0 \textbullet{} \the\year\par}
+\end{titlepage}
+\frontmatter
+\chapter*{Overview}
+This starter foregrounds a navigable table of contents, labelled results,
+cross-references, compact tables, and appendices. Replace the examples with
+the argument and evidence of your own scientific monograph.
+\tableofcontents
+\mainmatter
+\chapter{Questions and definitions}\label{ch:questions}
+\section{A precise vocabulary}
+\begin{definition}
+An observation is a recorded statement about a system together with the
+conditions under which it was recorded.
+\end{definition}
+Good definitions reduce ambiguity before a calculation begins. The workflow
+in \cref{ch:methods} uses this distinction to separate observations from
+interpretations.
+\chapter{Methods and evidence}\label{ch:methods}
+\section{A small reproducible protocol}
+\begin{enumerate}[label=\arabic*.]
+  \item State the question and the measurable outcome.
+  \item Record inputs, instruments, and environmental conditions.
+  \item Preserve the raw observations before summarising them.
+\end{enumerate}
+\begin{theorem}[A transparent estimate]\label{thm:estimate}
+If each observation is recorded with its unit and uncertainty, a later reader
+can reproduce the reported estimate from the same evidence.
+\end{theorem}
+\begin{proof}
+The unit identifies the scale of the quantity, while the uncertainty records
+the precision claimed by the measurement. Together they determine the
+interpretation of the estimate.
+\end{proof}
+\section{Example results}
+\begin{table}[ht]
+\centering
+\caption{Illustrative measurements}\label{tab:measurements}
+\begin{tabular}{lrrr}
+\toprule Sample & Mean & Uncertainty & Unit\\\midrule
+A & 12.4 & 0.3 & mm\\ B & 11.8 & 0.2 & mm\\ C & 12.1 & 0.4 & mm\\
+\bottomrule
+\end{tabular}
+\end{table}
+Table~\ref{tab:measurements} demonstrates a compact result layout.
+\chapter{Interpretation}
+\section{From result to claim}
+A result is not automatically an explanation. Make the inferential step
+explicit, identify competing explanations, and state what future observation
+would distinguish them.
+\backmatter
+\appendix
+\chapter{Notation and conventions}
+Use appendices for derivations, supplementary tables, code listings, or a
+notation index that would interrupt the main argument.
+\chapter*{Acknowledgements}
+Replace this neutral page with acknowledgements and contribution statements.
+\end{document}

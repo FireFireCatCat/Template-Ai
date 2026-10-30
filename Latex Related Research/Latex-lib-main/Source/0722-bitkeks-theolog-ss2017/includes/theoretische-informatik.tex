@@ -1,0 +1,259 @@
+\section{Theoretische Informatik}
+
+Die Theoretische Informatik beginnt mit der Berechenbarkeitstheorie. Hier nutzen wir das Maschinenmodell der Turingmaschine, um Aussagen über die Entscheidbarkeit von Problemen zu treffen. Die Berechenbarkeitstheorie klassifiziert Probleme demnach nach ihrer Berechenbarkeit bzw. Entscheidbarkeit. \\
+
+Ab Kapitel \ref{subsec:komplex} behandeln wir die Komplexitätstheorie. In dieser geht es um die Fragestellung, wie viel Zeit und Speicher ein entscheidbares und algorithmisch formalisierbares Problem benötigt, um von einer Maschine wie der Turingmaschine gelöst zu werden. Die Komplexitätstheorie klassifiziert also Probleme, von denen wir wissen, dass sie berechenbar/entscheidbar sind, nach ihrem Ressourcenaufwand.
+
+\subsection{Allgemeines}
+    \begin{description}
+        \item[Surjektiv, Injektiv, Bijektiv] Betrifft Abbildungen zwischen zwei Mengen. \f{Surjektiv} bedeutet, jedes Element in der Zielmenge wird mindestens einmal getroffen. \f{Injektiv} bedeutet, jedes Element in der Zielmenge wird höchstens einmal getroffen. \f{Bijektiv} bedeutet, die Abbildungen sind sowohl surjektiv als auch injektiv, es besteht eine eindeutige Zuordnung. \textit{Merkhilfe: Paare „(Injektiv höchstens), (mindestens surjektiv)“ $\to$ IHMS in alphabetischer Reihenfolge}
+
+        \item[Kardinalität, Mächtigkeit] Die Menge der Elemente in einer Menge. \\
+            Eine unendliche Zielmenge ist \f{abzählbar}, wenn es eine bijektive Abbildung von der Menge $\N$ auf die Zielmenge gibt. Ist die Zielmenge endlich, ist sie natürlich ebenfalls abzählbar. \f{Überabzählbare} Mengen hingegen haben mehr Elemente, als Elemente in $\N$ sind.
+    \end{description}
+
+\subsection{Turingmaschinen}
+    \begin{description}
+        \item[Turingmaschine] deterministisch als DTM oder nichtdeterministisch als NTM. \\
+            Definiert als Tupel $(Q,\Sigma,\Gamma,\delta,q_0,F)$ mit endlicher Menge von Zuständen $Q$, Eingabealphabet $\Sigma$, Arbeitsalphabet $\Gamma$, Übergangsfunktion $\delta$, Startzustand $q_0$ und Menge von akzeptierenden Endzuständen $F$. Können ein oder mehrere Bänder haben. Siehe auch Church-Turing-These. \vl{FS 18} \vl{TIL 1}
+
+            \begin{description}
+                \item[Funktion] Turingmaschine kann eine Funktion von Eingaben auf Ausgabewörter definieren. Wenn eine TM bei Eingabe $w$ anhält und die Ausgabe der Form $v\blank\blank\dots$ entspricht, hat diese TM die Funktion berechnet.
+                \item[Sprache] die von einer Turingmaschine erkannte Sprache ist die Menge aller Wörter, die von dieser TM akzeptiert werden (d.h. in einem Endzustand hält).
+
+                \item[Konfiguration]
+                    der „Gesamtzustand“ einer TM, bestehend aus Zustand, Bandinhalt und Position des Lese-/Schreibkopfs;
+                    geschrieben als Wort (Bandinhalt), in dem der Zustand vor der Position des Kopfes eingefügt ist. Beispiel $ \blank\blank q_0aaba \blank\blank$.
+                \item[Übergangsrelation]
+                    Beziehung zwischen zwei Konfigurationen wenn die TM von der ersten in die zweite übergehen kann
+                    (deterministisch oder nichtdeterministisch)
+                \item[Lauf] mögliche Abfolge von Konfigurationen einer TM, beginnend mit der Startkonfiguration; kann endlich oder unendlich sein
+                \item[Halten] Ende der Abarbeitung, wenn die TM in einer Konfiguration keinen Übergang mehr zur Verfügung hat.
+
+                \item[Transducer] Ausgabe der Turingmaschine ist Inhalt des Bandes, wenn TM hält, ansonsten undefiniert. Endzustände sind irrelevant.
+                \item[Entscheider] Ausgabe der Turingmaschine ist „Akzeptiert“, wenn TM in Endzustand hält, ansonsten „verwirft“ (beinhaltet auch „TM hält nicht“). Bandinhalt ist irrelevant.
+                \item[Aufzähler] ist eine DTM, die bei Eingabe des leeren Bandes immer wieder (d.h. bis zum letzten Wort bei endlichen Sprachen) einen Zustand $q_{Ausgabe}$ erreicht, in welchem das aktuelle Band ein Wort aus der Sprache dieser DTM ist. Die Sprache dieser DTM ist dann die Menge der so erzeugten Wörter. Diese DTM muss nicht halten, die Sprache kann unendlich sein. Wörter dürfen mehrfach ausgegeben werden.
+
+                \item[Universalmaschine $U$] eine Turingmaschine, die andere TM als Eingabe kodiert erhält und diese simuliert. Die Kodierung ist dabei z.B. binär, mit dem Trennsymbol $\#$. Hat vier Bänder: Eingabeband von $U$ mit kodierter TM und kodierter Eingabe $w$, Arbeitsband von $U$, Band 3 mit aktuellem Zustand der simulierten TM und Band 4 als Arbeitsband der simulierten TM. \\ Für die Arbeitsweise siehe \vl{TIL 4}
+            \end{description}
+
+        \item[Berechenbarkeit] bezogen auf Funktionen. Eine Funktion $F$ heißt berechenbar, wenn es eine DTM gibt, die $F$ berechnet. Ist durch geeignete Kodierung (z.B. binär) erweiterbar auf natürliche Zahlen, Wörterlisten und andere Mengen. \vl{TIL 2}
+            \begin{description}
+                \item[rekursiv] eine berechenbare totale Funktion ist rekursiv.
+                \item[partiell rekursiv] eine berechenbare partielle Funktion ist partiell rekursiv.
+            \end{description}
+
+        \item[Entscheidbarkeit] bezogen auf Sprachen. \vl{TIL 2}
+            \begin{description}
+                \item[entscheidbar / berechenbar / rekursiv] es existiert eine Turingmaschine, die das Wortproblem der Sprache entscheidet. D.h. die Turingmaschine ist Entscheider und die Sprache ist gleich der Sprache der TM.
+                \item[semi-entscheidbar / Turing-erkennbar / Turing-akzeptierbar / rekursiv aufzählbar] es existiert eine Turingmaschine, deren erzeugte Sprache gleich der Sprache ist, jedoch die TM kein Entscheider ist. \\
+                Eine Sprache ist genau dann semi-entscheidbar, wenn es einen Aufzähler für diese Sprache gibt.
+                \item[unentscheidbar] sonst. \\
+                    „Es gibt Sprachen und Funktionen, die nicht berechenbar sind.“ Beweis anhand der abzählbaren Menge von Turingmaschinen im Vergleich zur Überabzählbarkeit der Menge der Sprachen über jedem Alphabet.
+            \end{description}
+
+        \item[Probleme] der Kategorie „Unentscheidbar bzw. unberechenbar, nicht berechenbar“. \vl{TIL 2}
+            \begin{description}
+                \item[Busy-Beaver-Funktion] ist nicht berechenbar und wächst sehr schnell. Die Funktion nimmt eine natürliche Zahl $n$ und gibt die maximale Anzahl $x$-Symbole, welche eine DTM mit $n$ Zuständen und dem Arbeitsalphabet $\{x,\blank\}$ bis zu ihrem Halt schreiben kann, zurück.
+            \end{description}
+    \end{description}
+
+\subsection{LOOP und WHILE}
+    LOOP und WHILE sind eine Erfindung von Schöning und sind quasi eine pädagogische Brücke zwischen den Ultra-low-level Turingmaschinen und High-level Programmiersprachen. WHILE baut auf LOOP auf. \vl{TIL 3}
+    \begin{description}
+        \item[LOOP] Besteht aus Variablen, Wertzuweisungen und Schleifen. Die Eingabe einer Menge von natürlichen Zahlen wird in $x_1, x_2, …$ gespeichert. Die Ausgabe ist eine natürliche Zahl, gespeichert in $x_0$. Alle weiteren Variablen haben den Wert $0$. LOOP terminiert immer in endlich vielen Schritten. Berechnet eine totale Funktion.
+            \begin{description}
+                \item[Variablen] Menge $\{x_0,x_1,…\}$ oder auch $\{x, y, \mathit{myVariable}\}$. Haben als Wert eine natürliche Zahl.
+                \item[Wertzuweisungen] in der Form $x := y + n$ oder $x := y - n$, wobei $n$ eine natürliche Zahl ist. Eine Wertzuweisung ist bereits ein LOOP-Programm.
+                \item[Schleifen] in der Form LOOP $x$ DO $P$ END, wobei $P$ wieder ein LOOP-Programm ist. Der Wert der Variable $x$ kann in $P$ nicht geändert werden. Daher terminiert ein LOOP-Programm immer in endlich vielen Schritten.
+                \item[Hintereinanderausführung] wenn $P_0$ und $P_1$ LOOP-Programme, dann auch $P_0;P_1$.
+                \item[Syntax-Erweiterung] Die Syntax lässt sich zur Vereinfachung erweitern.
+                    \begin{description}
+                        \item[Wertzuweisung \hili{$x:=y$}] $x:=y+0$
+                        \item[Rücksetzen \hili{$x:=0$}] LOOP $x$ DO $x:=x-1$ END
+                        \item[Wertzuweisung Zahl \hili{$x:=n$}] $x:=0;x:=x+n$. Alternativ $x:=null+n$
+                        \item[Variablen-Addition \hili{$x:=y+z$}] $x:=y;$ LOOP $z$ DO $x:=x+1$ END
+                        \item[Bedingung \hili{IF $x\neq0$ THEN}] LOOP $x$ DO $y:=1$ END $;$ LOOP $y$ DO $P$ END
+                    \end{description}
+                \item[Berechenbarkeit] eine Funktion heißt LOOP-berechenbar, wenn es ein LOOP-Programm gibt, welches die Funktion berechnet. Auch hier ist mit geeigneter Kodierung wieder mehr machbar, als nur die natürlichen Zahlen in Betracht zu ziehen (Beispiel Wortproblem, Probleme in NP, gängige Algorithmen). Es gibt berechenbare totale Funktionen, die nicht LOOP-berechenbar sind (vgl. Ackermannfunktion).
+            \end{description}
+
+\newpage
+        \item[WHILE] Basiert auf LOOP und erweitert dieses. Jedes LOOP-Programm ist auch ein WHILE-Programm.
+            \begin{description}
+                \item[Schleifen] in der Form WHILE $x \neq 0$ DO $P$ WHEN, wobei $P$ wieder WHILE-Programm. Im Gegensatz zu LOOP kann in WHILE der Wert von $x$ in $P$ zur Laufzeit geändert werden. Es kann also passieren, dass das Programm nicht terminiert wenn $x$ nie auf $0$ gesetzt wird.
+                \item[Konvertierung] LOOP-Schleifen können in WHILE-Schleifen konvertiert werden. Eine DTM kann WHILE-Programme simulieren und ein WHILE-Programm DTMen simulieren.
+                \item[Berechenbarkeit] Eine partielle Funktion heißt WHILE-berechenbar, wenn es ein WHILE-Programm gibt, welches bei einem definierten $f(n_0,n_1,…)$ terminiert und bei einem nicht definierten Wertebereich nicht terminiert. Wenn eine partielle Funktion WHILE-berechenbar ist, ist sie \f{Turing-berechenbar}.
+            \end{description}
+    \end{description}
+
+
+\subsection{Unentscheidbare Probleme und Reduktionen}
+    Beweis durch Diagonalisierung, Reduktionen \vl{TIL 4}
+    \begin{description}
+        \item[Probleme] der Kategorie „unentscheidbar“.
+        \begin{description}
+            \item[Halteproblem $\phalt$] Semi-entscheidbar. Frage: „Gegeben eine Turingmaschine $M$ und ein Wort $w$. Wird die Turingmaschine $M$ für die Eingabe $w$ jemals anhalten?“. Das Halteproblem $\phalt$ der Turingmaschine $M$ für das Wort $w$ kann formal kodiert werden als $enc(M)\#\#enc(w)$ und einer universellen Turingmaschine zur Überprüfung übergeben werden. Beweise für Unentscheidbarkeit anhand Diagonalisierung und Reduktion in \vl{TIL 4}
+
+            \item[Goldbachsche Vermutung] Beispiel für ein auf das Halteproblem reduzierbares Problem. Besagt, dass jede gerade Zahl $n \ge 4$ die Summe zweier Primzahlen ist. Zum Beispiel ist $4 = 2 + 2$ und $100 = 47 + 53$. Lässt man nun eine Turingmaschine diese Vermutung systematisch beginnend bei $4$ testen, würde ein Anhalten bei Misserfolg $\phalt$ und „die Vermutung stimmt nicht“ gleichzeitig lösen. Gäbe es demnach ein Programm, welches $\phalt$ lösen kann (entscheidet), wäre eine separate Überprüfung der Goldbachschen Vermutung nicht nötig. Die Frage der Goldbachschen Vermutung wäre sofort beantwortet.
+
+            \item[$\epsilon$~-Halteproblem] „Gegeben sei eine Turingmaschine. Wird diese TM für die leere Eingabe $\epsilon$ jemals anhalten?“. Unentscheidbar.
+        \end{description}
+
+        \item[Beweismethoden] zum Nachweis der Unentscheidbarkeit.
+        \begin{description}
+            \item[Kardinalität] Beweis von Aussagen anhand der unterschiedlichen Kardinalitäten.
+            \item[Diagonalisierung] Berechenbarkeit annehmen und einen paradoxen Algorithmus für das Problem konstruieren.
+            \item[Reduktion] Reduktion (Rückführung) eines Problems auf ein anderes Problem (Einbetten eines Problems in ein anderes). Die Reduktion ist ein Entscheid\-bar\-keits\-algorithmus. Entscheidbarkeit, Semi-Entscheidbarkeit, Co-Semi-Entscheidbarkeit werden übertragen („wenn A semi-entscheidbar und es gilt $B \leq_{m} A$, dann auch B semi-entscheidbar“). Siehe auch \verweis{subsec:fs-komplexitaet}. \vl{TIL 4}
+                \begin{description}
+                    \item[Turing-Reduktion] Ein Problem \prob{P} ist Turing-reduzierbar auf ein Problem \prob{Q} (in Symbolen: $\prob{P} \leq_T\prob{Q}$), wenn man \prob{P} mit einem Programm lösen könnte, welches ein Programm für \prob{Q} als Unterprogramm (auch: Subroutine) aufrufen darf. Das Programm für \prob{Q} muss hierbei nicht existieren.
+
+                    \item[Many-One-Reduktion] Eine berechenbare totale Funktion $f: \Sigma^* \to \Sigma^*$ ist eine Many-One-Reduktion von einer Sprache \prob{P} auf eine Sprache \prob{Q} (in Symbolen: $\prob{P} \leq_m \prob{Q}$), wenn für alle Wörter $w \in \Sigma^*$ gilt: $w \in \prob{P}$ gdw. $f(w) \in \prob{Q}$. \\
+                    Schwächer als Turing-Reduktion, jede Many-One-Reduktion kann als Turing-Reduktion ausgedrückt werden (dies gilt jedoch nicht andersherum).
+
+                    \item[Polynomielle Many-One-Reduktion] Many-One-Reduktion mit einer polynomiell berechenbaren Funktion. In Symbolen: $\prob{P} \leq_{p} \prob{Q}$. Bedeutet: „Q ist mindestens genauso schwer wie P“. \vl{TIL 8}
+                \end{description}
+            \item[Satz von Rice] Siehe \verweis{subsec:fs-sprachen-automaten}. \vl{TIL 5} \\
+                „Praktisch alle interessanten Fragen zu Sprachen von Turingmaschinen sind unentscheibar“. \\
+                Eingabe ist eine Turingmaschine, Ausgabe „hat die Sprache der TM die Eigenschaft?“.
+        \end{description}
+    \end{description}
+
+
+\newpage
+\subsection{Semi-Entscheidbarkeit}
+    \textit{Hinweis: Hierzu gibt es im Schöning gute graphische Darstellungen}. \vl{TIL 5}
+    \begin{description}
+        \item[Komplement] einer Sprache $L$: $\overline{L} = \{w \in \Sigma^* ~|~ w \notin L \}$ (Achtung: auf Kontext achten. Komplement des Halteproblems ist z.B. anderer Form). Die Turing-Reduktionen $\overline{L} \leq_T L$ bzw. $L \leq_T \overline{L}$ sind mit einer Turingmaschine überprüfbar. Für eine Eingabe $w$ entscheidet diese, ob $w \in L$ und invertiert das Ergebnis.
+        \item[Semi-Entscheidbarkeit] Beispiel anhand des Halteproblems: simuliere eine Turingmaschine und deren Eingabe, kodiert als $enc(M)\#\#enc(w)$. Wenn $M$ hält, hält auch die universelle Turingmaschine und akzeptiert. Eine Sprache $L$ ist entscheidbar, wenn sowohl $L$ als auch $\overline{L}$ semi-entscheidbar sind.
+        \item[Co-Semi-Entscheidbarkeit] Wenn $L$ nicht semi-entscheidbar, aber $\overline{L}$ semi-entscheidbar, dann ist $L$ co-semi-entscheidbar. Wenn eine Sprache $L$ unentscheidbar, jedoch semi-entscheidbar ist, kann $\overline{L}$ nicht semi-entscheidbar sein.
+    \end{description}
+
+
+\subsection{Postsches Korrespondenzproblem}
+    Auch: \f{PCP}. Ein unentscheidbares Problem ohne direkten Bezug zu einer Berechnung. \vl{TIL 5}
+    \begin{description}
+        \item[PCP] Bei diesem Problem nimmt man eine Reihe von 2-Tupeln (anschaulich vergleichbar mit Dominosteinen) mit je einem Wert oben und einem unten. Ziel der Lösung ist nun, die gegebenen Tupel so anzuordnen, dass oben und unten die gleiche Wortkette entsteht. Beispiel: wir haben die drei Tupel (AB, B), (B, BBB) und (BB, BA). Eine Anordnung mit zehn Tupeln ergibt dann die Lösung. Es kann vorkommen, dass das Problem keine Lösung besitzt.
+        \item[MPCP] Hilfskonstruktion. Wir nutzen MPCP, um das Halteproblem auf MPCP zu reduzieren. Folgend reduzieren wir MPCP auf PCP. Beim MPCP wird PCP verwendet, jedoch das Start-Tupel vorgegeben. Die Lösung eines MPCP ist auch eine Lösung des entsprechenden PCP, welche mit dem gegebenen Start-Tupel beginnt.
+    \end{description}
+
+
+\subsection{Unentscheidbare Probleme formaler Sprachen}
+    In diesem Kapitel wird wieder auf \verweis{subsec:fs-sprachen-automaten} zurückgegriffen. Eine durch eine Grammatik $G$ erzeugte Sprache wird als $L(G)$ bezeichnet. Für Beweise der folgenden Sätze siehe Vorlesung. Siehe auch Chomsky-Hierarchie in \verweis{subsec:fs-sprachen-automaten}. \vl{TIL 6}
+    \begin{itemize}
+        \setlength\itemsep{0em}
+        \item Das Schnittproblem regulärer Grammatiken (Typ 3) ist entscheidbar.
+        \item Das Schnittproblem kontextfreier Grammatiken (Typ 2, \f{CFG}) ist unentscheidbar. Beweis durch Many-One-Reduktion vom PCP.
+        \item Das Leerheitsproblem für kontextfreie Grammatiken ist entscheidbar.
+        \item Kontextfreie Sprachen sind unter Vereinigung abgeschlossen.
+        \item Deterministische kontextfreie Sprachen sind unter Komplement abgeschlossen.
+        \item Das Äquivalenzproblem kontextfreier Grammatiken ist unentscheidbar.
+    \end{itemize}
+
+\subsection{Komplexitätstheorie}
+\label{subsec:komplex}
+    Untersuchung von Problemkomplexitäten und Suche nach Methoden zur Bestimmung der Komplexität eines Problems. Klassierung zwischen „leicht lösbar“ bis „schwer lösbar“. Einteilung von berechenbaren Problemen entsprechend der Menge an Ressourcen, die zu ihrer Lösung nötig sind. Einführung anhand von Beispielen. \vl{TIL 7}
+    \begin{description}
+        \item[Eulerpfad] Ein Eulerpfad ist ein Pfad in einem Graphen, der jede Kante genau einmal durchquert. Ein Eulerkreis ist ein zyklischer Eulerpfad. Ein Graph hat genau dann einen Eulerschen Pfad, wenn er maximal zwei Knoten ungeraden Grades besitzt und zusammenhängend ist. \vl{TIL 7}
+
+        \item[Schranken von Turingmaschinen] in Zeit (Berechnungsschritte) und Raum (Speicherzellen). \\ Siehe \verweis{subsec:fs-komplexitaet}.
+        \item[$O$-Notation] Siehe \verweis{subsec:fs-komplexitaet}.
+
+\newpage
+        \item[Komplexitätsklassen] erfassen Sprachklassen je nach ihrer Komplexität. \vl{FS 24}
+            \begin{description}
+                \item[PTime (P)] DTM mit polynomieller Zeit. \\
+                    Unter Komplement abgeschlossen, dazu für $L$ akzeptierende Zustände für $\overline{L}$ invertieren.
+                \item[ExpTime (Exp)] DTM mit exponentieller Zeit.
+                \item[LogSpace (L)] DTM mit logarithmischem Speicher.
+                \item[PSpace] DTM mit polynomiellem Speicher. \\
+
+                \item[NPTime (NP)] NTM mit polynomieller Zeit.
+                \item[coNP] Klasse der Sprachen $L$, für die $\overline{L} \in \NP$ gilt. Vermutung: $\MT{coNP} \neq \NP$
+                \item[NExpTime (NExp)] NTP mit exponentieller Zeit.
+                \item[NLogSpace (NL)] NTM mit logarithmischem Speicher. $\MT{NL} = \MT{coNL}$ nach Satz von Immerman, Sz.
+                \item[NPSpace] NTM mit polynomiellem Speicher (ist gleich PSpace, nach Satz von Savitch).
+            \end{description}
+
+        \item[NP-vollständige Probleme] Auf diese kann reduziert werden, um zu zeigen, dass Sprache $\in \NP$. \vl{TIL 9}
+            \begin{description}
+                \item[SAT] siehe \verweis{subsec:fs-komplexitaet}.
+                \item[Hamiltonpfad] Ein Hamiltonpfad ist ein Pfad in einem Graphen, der jeden Knoten genau einmal durchquert. Ein Hamiltonkreis ist ein zyklischer Hamiltonpfad. \vl{TIL 11}
+                \item[Clique] Eine Clique ist ein Graph, bei dem jeder Knoten mit jedem anderen direkt durch eine Kante verbunden ist.
+                    Gegeben: Ein Graph $G$ und eine Zahl $k$. Frage: Enthält $G$ eine Clique mit $k$ Knoten?
+                \item[Unabhängige Mengen] Eine unabhängige Menge ist eine Teilmenge von Knoten in einem Graph, bei der kein Knoten mit einem anderen direkt verbunden ist.
+                    Gegeben: Ein Graph $G$ und eine Zahl $k$. Frage: Enthält $G$ eine unabhängige Menge mit $k$ Knoten?
+                \item[Teilmengen-Summe (subset sum)]  Gegeben: Eine Menge von Gegenständen $S = \{\ a_{1}, \dots, a_{n} \}$ , wobei jedem Gegenstand $a_{i}$ ein Wert $v(a_{i})$ zugeordnet ist; eine gewünschte Zahl $z$. Frage: Gibt es eine Teilmenge $T \subseteq S$ mit $\sum\limits_{a \in T} v(a) = z$?
+                \item[Rucksack (knapsack)] Gegeben: Eine Menge von Gegenständen $G = \{\ a_{1}, \dots, a_{n}\ \}$, wobei jedem Gegenstand $a_{i}$ ein Wert $v(a_{i})$ und ein Gewicht $g(a_{i})$ zugeordnet ist; ein Mindestwert $w$ und ein Gewichtslimit $l$. \\
+                    Frage: Gibt es eine Teilmenge $T \subseteq G$, so dass (1) $\sum\limits_{a \in T} g(a) \leq l$ und (2) $\sum\limits_{a \in T} v(a) \geq w$, d.h. eine Auswahl Gegenstände, deren Wert größer $w$ ist, jedoch das gesamte Gewicht $l$ nicht überschreitet?
+            \end{description}
+
+        \item[Pseudopolynomielle Probleme] Die Probleme Teilmengen-Summe und Rucksack kann man bei \f{unärer Kodierung} in pseudopolynomieller Zeit durch z.B. dynamische Programmierung lösen. Probleme, welche selbst dann noch NP-vollständig sind, wenn man alle Zahlen unär kodiert, heißen stark NP-vollständig. \vl{TIL 10}
+
+        \item[NL-vollständige Probleme] Können mit einer NTM und logarithmischem Speicher gelöst werden.
+            \begin{description}
+                \item[Erreichbarkeit] in gerichteten Graphen. Gegeben: gerichteter Graph $G$ mit Knoten $s$ und $t$. Frage: Gibt es in $G$ einen gerichteten Pfad von $s$ nach $t$?
+            \end{description}
+
+        \item[QBF] Eine Quantifizierte Boolsche Formel (QBF) ist eine logische Formel der folgenden Form: \\
+            $Q_{1}p_{1}.Q_{2}p_{2}.\dots.Q_{l}p_{l}.F[p_{1},\dots,p_{l}]$ mit $i \geq 0, Q_{i} \in \{\ \exists, \forall\ \}$ Quantoren, $p_{i}$ aussagenlogischen Atomen (Variablen) und $F$ einer aussagenlogischen Formel mit Atomen $p_{1},\dots,p_{l}$. \vl{TIL 11}
+
+        \item[PSpace-Probleme] PSpace-hart und -vollständig. Siehe auch Satz von Savitch. \vl{TIL 11} \vl{TIL 12}
+            \begin{description}
+                \item[TrueQBF] PSpace-vollständig. Gegeben: eine QBF $Q$. Frage: Ist $W(Q) = 1$? \\
+                    Es gilt $\MT{SAT} \leq_{p} \MT{TrueQBF}$; eine Tautologie lässt sich auf TrueQBF reduzieren.
+                \item[TrueQBF$_{\text{alt}}$] Ist TrueQBF mit alternierenden All- bzw. Existenzquantoren.
+                \item[Geography] PSpace-vollständig. Gegeben: Ein gerichteter Graph und ein Startknoten. Frage: Gibt es eine Gewinnstrategie für dieses TrueQBF-Spiel Geography?
+            \end{description}
+
+        \item[Linear Speedup Theorem] Sei $M$ eine Turingmaschine mit $k > 1$ Bändern, die bei Eingaben der Länge $n$ nach maximal $f(n)$ Schritten hält. Dann gibt es für jede natürliche Zahl $c > 0$ eine äquivalente $k$-Band Turingmaschine $M'$, die nach maximal $\frac{f(n)}{c} + n + 2$ Schritten hält. \\
+        Bedeutet: in der Theorie kann jedes Programm mit Hilfe mehrerer Bänder „beliebig schneller“ gemacht werden. Dies ist praktisch nicht umsetzbar, da eine Turingmaschine nicht beliebig große Datenmengen in einem Schritt lesen und nicht beliebig komplexe Zustandsübergänge in konstanter Zeit realisieren kann.
+
+        \item[Polynomieller Verifikator, Zertifikate] Ein polynomieller Verifikator für eine Sprache $L \subseteq \SIGS$ ist eine polynomiell-zeitbeschränkte, deterministische TM $M$, für die gilt:
+            \begin{itemize}
+                \item $M$ akzeptiert nur Wörter der Form $w\#z$ mit: $w \in L$, $z \in \SIGS$ ist ein \f{Zertifikat} polynomieller Länge (d.h. für $M$ gibt es ein Polynom $p$ mit $|z| \leq p(|w|)$)
+
+                \item Für jedes Wort $w \in L$ gibt es ein solches Wort $w\#z \in L(M)$.
+            \end{itemize}
+            Das Zertifikat $z$ kodiert die Lösung des Problems $w$, die der Verifikator lediglich nachprüft. Zertifikate sollten kurz sein, damit die Prüfung selbst nicht länger dauert als die Lösung des Problems. Zertifikate werden auch \f{Nachweis}, \f{Beweis} oder \f{Zeuge} genannt. \vl{TIL 9}
+
+        \item[Satz von Ladner] Falls $P \neq \NP$, dann gibt es Probleme in NP, die weder NP-vollständig sind noch in P liegen. Diese Probleme heißen NP-intermediate. \vl{TIL 10}
+
+        \item[Komplexität und Spiele] Spiele lassen sich in verschiedene Klassen einsortieren. \vl{TIL 12}
+            \begin{description}
+                \item[NP] Solitaire, Sudoku, Minesweeper, Tetris
+                \item[PSpace] Geography, Reversi, Tic-Tac-Toe (Spiele, bei denen zwei Spieler abwechseln ziehen)
+                \item[ExpTime] Schach, Dame, Go, Stern-Halma (Züge können rückgängig gemacht werden)
+            \end{description}
+    \end{description}
+
+
+\subsection{Eigenschaften der Komplexitätsklassen}
+    Siehe \verweis{subsec:fs-komplexitaet} für eine Übersicht der Klassen. \vl{TIL 7}
+    \begin{description}
+        \item[Nichtdeterministische Klassen] $NL \subseteq NP \subseteq NPSpace \subseteq NExp$
+        \item[DTM auch als NTM, d.h. nichtdet. stärker] $L \subseteq NL$, $P \subseteq NP$, $\mathit{PSpace} \subseteq \mathit{NPSpace}$, $Exp \subseteq NExp$
+        \item[Satz von Savitch] Speicherbeschränkte NTM können durch DTMs nur mit  quadratischen Mehrkosten simuliert werden. Insbesondere gilt damit $\mathit{PSpace} = \mathit{NPSpace}$.
+    \end{description}
+
+    Zusammenfassend: $L \subseteq NL \subseteq P \subseteq NP \subseteq \mathit{PSpace} = \mathit{NPSpace} \subseteq Exp \subseteq \MT{NExp}$. \\
+    Jedoch ist zu beachten:
+
+    \begin{itemize}
+        \setlength\itemsep{0em}
+        \item Wir wissen nicht, ob irgendeines dieser $\subseteq$ sogar $\subsetneq$ ist.
+        \item Insbesondere wissen wir nicht, ob $P \subsetneq NP$ oder $P = NP$.
+        \item Wir wissen nicht einmal, ob $L \subsetneq NP$ oder $L = NP$.
+    \end{itemize}
+
+    Es gibt noch leichtere Probleme als polynomielle. Praktisch relevante Probleme in L sind z.B. Erreichbarkeit in ungerichteten Graphen und die Zwei-Färbbarkeit von Graphen.
+    Probleme, welche noch leichter zu lösen sind, sind ggf. nicht mehr durch Härte und Vollständigkeit bezeichenbar und bedürfen ggf. andererer Berechnungsmodelle. \vl{TIL 12}
+
+    \begin{description}
+        \item[Robustheit von Zeitklassen] Setzt sich aus zwei Erkenntnissen zusammen:
+            \begin{itemize}
+                \item Konstante Faktoren haben keinen Einfluss auf die Probleme, die eine zeitbeschränkte Mehrband-TM lösen kann, sofern mindestens lineare Zeit erlaubt ist (Linear Speedup Theorem). Sofern nicht einmal lineare Zeit zur Verfügung stände, könnte die TM nicht einmal die Eingabe lesen!
+                \item Die Anzahl der Bänder hat lediglich einen polynomiellen (quadratischen) Einfluss auf die Probleme, die eine zeitbeschränkte TM lösen kann.
+            \end{itemize}
+        \item[Robustheit von Speicherklassen] Weder konstante Faktoren, noch die Anzahl der Bänder haben Einfluss auf die Probleme, welche eine speicherbeschränkte TM lösen kann.
+    \end{description}

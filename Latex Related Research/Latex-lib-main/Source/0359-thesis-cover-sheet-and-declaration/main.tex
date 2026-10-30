@@ -1,0 +1,144 @@
+% Thesis cover sheet + statutory declaration — scientific-thesis-cover.
+%
+% scientific-thesis-cover is NOT included in this download: it ships with
+% TeX Live (and with latextemplates.com's compiler), so bundling a copy would
+% only pin you to an older version than your own system already has.
+%
+% Package documentation: texdoc scientific-thesis-cover
+%                        https://ctan.org/pkg/scientific-thesis-cover
+% Licence: LPPL-1.3c, (c) Oliver Kopp. The package carries no university logo
+% or other artwork, so nothing branded is redistributed here either.
+%
+% WHAT THIS PACKAGE IS. It is not a thesis class. It contributes exactly two
+% pages — a cover sheet (\Titelblatt) and a signed statutory declaration
+% (\Versicherung) — and leaves the rest of the document to whatever class you
+% already use. That is the point: most university thesis rules constrain the
+% front matter and the declaration wording and say almost nothing about the
+% body. So this starter pairs the package with a plain `report', and the two
+% pages it produces graft unchanged onto a scrbook/memoir/report thesis you
+% have already written.
+%
+% EVERY SETTING IS A PACKAGE OPTION, NOT A MACRO. There is no \title or
+% \author for the cover — the package reads key-values captured at
+% \usepackage time, so a \title{...} placed after this preamble does not
+% reach the cover sheet at all. That is the most common way to end up with a
+% cover reading "title not set" in a document that also has a perfectly good
+% \title.
+\documentclass[11pt,a4paper,oneside]{report}
+
+% The package warns, loudly and on every run, unless UTF-8 input support is
+% loaded BEFORE it: its German declaration text contains real umlauts. Under
+% pdfLaTeX that means inputenc (or inputenx) with the `utf8' option written
+% out explicitly — the package inspects which option was given, so relying on
+% the LaTeX kernel's modern UTF-8 default does not silence it.
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+% REQUIRED, and the package does not load it itself. scientific-thesis-cover
+% v4.0.2 tests \ifluatex while its own \RequirePackage{ifluatex} sits
+% commented out one line below \RequirePackage{ifthen}. TeX scans the skipped
+% branch of a conditional for \if/\fi pairs without expanding it, and an
+% undefined \ifluatex is not counted as an \if — so the \fi that closes it is
+% one too many and the load aborts with "! Extra \fi" pointing at the closing
+% bracket of the \usepackage below. It fails that way under EVERY engine,
+% including LuaLaTeX, and regardless of whether inputenc was loaded, because
+% the branch does not have to be taken to be scanned. Loading the (LPPL,
+% TeX Live) ifluatex compatibility stub first is the whole fix.
+\usepackage{ifluatex}
+
+\usepackage[
+  % `language' picks the label set, and only the literal string `english'
+  % selects English. ANY other value — a typo, or a babel-style name such as
+  % `ngerman' — silently falls back to German rather than erroring, so this
+  % one is worth getting exactly right.
+  language=english,
+  %
+  % `type' maps a short key onto formal degree wording. The recognised keys
+  % are bachelor, master, diplom, study, fachstudie and projectinf.
+  %
+  % WATCH OUT: those six expand to GERMAN wording even under
+  % language=english. That is deliberate upstream — they are the legally
+  % operative degree names in the examination regulations the package was
+  % written for, so `type=master' prints "Masterarbeit" on an otherwise
+  % English cover. Outside those regulations that is simply wrong, so this
+  % starter does not use a key at all.
+  %
+  % An unrecognised value is not an error: it is printed verbatim. That is the
+  % escape hatch, and it is the normal path for anyone whose degree wording is
+  % not one of the six German ones — write out what your own regulations say.
+  type={Master's Thesis},
+  %
+  % `institute' behaves the same way. Eight abbreviations (ipvs, iaas, fmi,
+  % iste, iti, iris, vis, sec) plus `fac' expand to a named institute AND the
+  % package's built-in University of Stuttgart postal address — the package
+  % grew out of that faculty's house template. Any OTHER value is used
+  % verbatim with no address attached, which is what you want anywhere else,
+  % and what this starter does.
+  institute={Department of Computing Science\\Example University\\Somewhere},
+  %
+  % `course' likewise: cs, se, mcl, msv, bis, simtech and medinf expand to
+  % the German course names; anything else prints as written.
+  course={Computing Science},
+  %
+  title={Incremental Consistency Checking for Distributed Configuration Stores},
+  author={Priya Raghunathan},
+  examiner={Prof.\ Dr.\ Elena Marchetti},
+  supervisor={Dr.\ Tomas Lindgren},
+  startdate={1 March 2026},
+  enddate={31 August 2026},
+  %
+  % Without this the cover sheet is page 1 and the body starts at 2. Setting
+  % it makes the page after the cover page 1 — which is what most submission
+  % rules mean by "numbering begins after the title page".
+  setPageNumberToOne=true,
+]{scientific-thesis-cover}
+
+\usepackage{hyperref}
+
+\begin{document}
+
+% The cover sheet. \Coverpage is an alias for the same macro if you prefer an
+% English name. It issues its own \cleardoublepage on both sides, so do not
+% wrap it in \clearpage: under a `twoside' class that adds a second blank leaf.
+\Titelblatt
+
+% The statutory declaration ("Erklärung" / "Declaration"). \Affirmation is
+% the English-named alias. The wording is fixed by the package and is
+% deliberately not editable — it is the legally-shaped sentence about the work
+% being your own, unpublished, and consistent across submitted copies. If your
+% university mandates different wording, typeset that page yourself rather
+% than patching this one.
+%
+% It ends with a rule and a place/date/signature caption, so this page is
+% meant to be printed and signed in ink; an unsigned declaration is routinely
+% bounced by the examinations office.
+\Versicherung
+
+\tableofcontents
+
+\chapter{Introduction}
+
+Replace this chapter with your own. What matters for the cover sheet is that
+nothing above required a thesis class: both front pages come entirely from
+the package options, so you can graft them onto a thesis already written in
+\texttt{scrbook}, \texttt{memoir} or \texttt{report} by adding one
+\verb|\usepackage| line and two macro calls.
+
+\section{Problem Statement}
+
+State the problem here.
+
+\section{Contributions}
+
+List what the thesis contributes.
+
+\chapter{Background}
+
+Set up the ideas the rest of the thesis depends on.
+
+\chapter{Conclusion}
+
+Say what it means.
+
+\end{document}

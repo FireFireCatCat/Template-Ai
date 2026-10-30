@@ -1,0 +1,23 @@
+\newboolean{dlrg@contentLayout@bauchbinde}
+\setboolean{dlrg@contentLayout@bauchbinde}{false}
+\newboolean{dlrg@contentLayout@footline}
+\setboolean{dlrg@contentLayout@footline}{true}
+
+\newcommand{\dlrg@pubtitelbild}{}
+\newcommand{\dlrg@pubtitelbildcaption}{}
+
+\newboolean{set@head}
+\setboolean{set@head}{false}
+\newboolean{set@foot}
+\setboolean{set@foot}{false}
+
+\pgfkeys{
+    /dlrg/.cd,
+    contentLayout/.code={%
+        %setboolean{\equal.... lässt LaTeX nicht zu
+        \ifthenelse{\equal{bauchbinde}{#1}}{\setboolean{dlrg@contentLayout@bauchbinde}{true}}{\setboolean{dlrg@contentLayout@bauchbinde}{false}}%
+        \ifthenelse{\equal{footline}{#1}}{\setboolean{dlrg@contentLayout@footline}{true}}{\setboolean{dlrg@contentLayout@footline}{false}}%
+    },
+    titelbild/.store in=\dlrg@pubtitelbild,
+    titelbildcaption/.store in=\dlrg@pubtitelbildcaption,
+}

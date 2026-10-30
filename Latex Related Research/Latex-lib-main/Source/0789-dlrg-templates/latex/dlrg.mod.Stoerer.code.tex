@@ -1,0 +1,89 @@
+% Störerformen
+% ****************************************************************
+%Form für den Störer Links
+\pgfdeclareshape{stoererLinks}{
+    \nodeparts{text,two}
+    \inheritsavedanchors[from=rectangle split] % this is nearly a rectangle
+    \inheritanchor[from=rectangle split]{north west}
+    \inheritanchor[from=rectangle split]{center}
+    \inheritanchor[from=rectangle split]{text}
+    \inheritanchor[from=rectangle split]{two}
+    \backgroundpath{% this is new
+        % store lower right in xa/ya and upper right in xb/yb
+        \southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+        \northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+        % construct main path
+        \pgfpathmoveto{\pgfpoint{\pgf@xb}{\pgf@ya-3mm}}
+        \pgfpathlineto{\pgfpoint{\pgf@xa}{\pgf@ya-3mm}}
+        \pgfpathlineto{\pgfpoint{\pgf@xa}{\pgf@yb+3mm}}
+        \pgfsetcornersarced{\pgfpoint{2mm}{2mm}}
+        \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb+3mm}}
+        \pgfpathclose
+    }
+}
+
+%Form für den Störer Rechts
+\pgfdeclareshape{stoererRechts}{
+    \nodeparts{text,two}
+    \inheritsavedanchors[from=rectangle split] % this is nearly a rectangle
+    \inheritanchor[from=rectangle split]{north east}
+    \inheritanchor[from=rectangle split]{center}
+    \inheritanchor[from=rectangle split]{text}
+    \inheritanchor[from=rectangle split]{two}
+    \backgroundpath{% this is new
+        % store lower right in xa/ya and upper right in xb/yb
+        \southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+        \northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+        % construct main path
+        \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya-3mm}}
+        \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@ya-3mm}}
+        \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yb+3mm}}
+        \pgfsetcornersarced{\pgfpoint{2mm}{2mm}}
+        \pgfpathlineto{\pgfpoint{\pgf@xa}{\pgf@yb+3mm}}
+        \pgfpathclose
+    }
+}
+
+% Störerstile
+% ****************************************************************
+\tikzset{
+    stoerer/.style={
+        rectangle split,
+        rectangle split parts=1,
+        rectangle split draw splits=false,
+        inner ysep=2mm,
+        align=left %Damit Umbrüche im Text möglich sind
+    },
+    stoerer rot/.style={
+        color=dlrgGelb,
+        fill=dlrgRot
+    },
+    stoerer weiss/.style={
+        color=black!80,
+        fill=white,
+        fill opacity=0.8
+    },
+    stoerer links/.style={
+        below right,
+        shape=stoererLinks,
+        inner xsep=6mm,
+        rectangle split part align={left,left}
+    },
+    stoerer rechts/.style={
+        below left,
+        shape=stoererRechts,
+        inner xsep=6mm,
+        rectangle split part align={left,left}
+    },
+    stoerer title/.style={
+        font=\fontsize{40}{50}\bfseries
+    },
+    every stoerersubtitle node part/.style={
+        font=\Large\bfseries
+    },
+    stoerer zweiteilig/.style={
+        rectangle split parts=2,
+    }
+}
+
+\let\pgfnodepartstoerersubtitlebox=\pgfnodeparttwobox

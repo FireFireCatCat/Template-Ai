@@ -1,0 +1,105 @@
+%%% First title page with all informat
+\cleardoublepage
+\thispagestyle{empty}
+~
+\vfill
+\begin{center}
+	{\huge \myMainTitle}
+	\\[2mm]
+	{\Large \mySubtitle}
+
+	\vfill
+	{by \myName}
+	\vfill
+	% black and white (default):
+	\includegraphics[width=0.25\textwidth]{LundUniversityLogo.pdf}
+
+	\vspace{10mm}
+	{Thesis for the degree of \myDegree}\\
+	\vspace{2mm}
+	{Thesis advisors: \myAdvisors}\\
+	{Faculty opponent: \myOpponent}\\
+	\vspace{1cm}
+	{\footnotesize
+		\myDefenceAnnouncement
+	}
+	\\
+\end{center}
+\vfill
+
+%%% Datasheet page
+\newpage
+\thispagestyle{empty}
+\input{datasheet.tex}
+
+%%% Second title page without additional information to have book metadata on the left-hand side.
+\cleardoublepage
+\thispagestyle{empty}
+~
+\vfill
+\begin{center}
+	{\huge \myMainTitle}
+	\\[2mm]
+	{\Large \mySubtitle}
+
+	\vfill
+	{by \myName}
+	\vfill
+	% black and white (default):
+	\includegraphics[width=0.25\textwidth]{LundUniversityLogo.pdf}
+
+	\color{white}{
+	\vspace{10mm}
+	{\myDegree}\\
+	{Thesis advisors: \myAdvisors}\\
+	{Faculty opponent: \myOpponent}\\
+	\vspace{1cm}
+	{\footnotesize
+		\myDefenceAnnouncement
+	}}
+	\\
+\end{center}
+\vfill
+
+%%% Book metadata page.
+\newpage
+\begin{flushleft}
+	A doctoral thesis at a university in Sweden takes either the form of a single,
+	cohesive research study (monograph) or a summary of research papers
+	(compilation thesis), which the doctoral student has written alone or together
+	with one or several other author(s).
+
+	In the latter case the thesis consists of two parts. An introductory text puts
+	the research work into context and summarizes the main points of the papers.
+	Then, the research publications themselves are reproduced, together
+	with a description of the individual contributions of the authors. The
+	research papers may either have been already published or are manuscripts at
+	various stages (in press, submitted, or in draft).
+
+	\vspace*{\stretch{1}}
+
+	\ifdef{\myFundingOrganization}{
+		\textbf{Funding information:} \myName\xspace was funded by the \myFundingOrganization.
+		\linebreak[2]
+	}{}
+
+	ISBN \myISBNpdf{} (electronic version)\\
+	ISBN \myISBNprint{} (print version)\\
+	ISSN \myISSN{}\\
+	Doctoral Dissertation \myDissertationNumber, \myYear\\
+	LU-CS-DISS: \myYear-\myLuCsDissNumber\linebreak[2]
+
+	Lund University \\
+	\myDepartment \\
+	\myAddress  \linebreak[2]
+
+	E-mail: \href{mailto:\myEmail}{\texttt{\myEmail}}\\
+	WWW: \href{https://\myWebsite}{\texttt{\myWebsite}} \linebreak[2]
+
+	Typeset using \LaTeX \\
+
+	Printed in Sweden by Tryckeriet i E-huset, Lund, \myYear\linebreak[2]
+
+	\textit{\copyright~\myName{}~\myYear{}}
+	\vspace{10mm}
+\end{flushleft}

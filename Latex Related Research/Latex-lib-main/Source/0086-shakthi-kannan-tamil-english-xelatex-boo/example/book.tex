@@ -1,0 +1,83 @@
+%
+% Preamble
+%
+
+\documentclass[11pt,openany]{book}
+
+%
+% Packages
+%
+
+\usepackage{dialogue} % Before polyglossia for \providelength
+\usepackage{polyglossia}
+\usepackage{setspace}
+\usepackage{verse}
+\usepackage{ifthen}
+
+%
+% Configuration
+%
+
+\newboolean{bulletchapters}
+\setboolean{bulletchapters}{true}
+
+\newboolean{leftmargini}
+\setboolean{leftmargini}{true}
+
+% Set book title
+\newcommand{\booktitle}{\tamilfont{ஸ்ரீ}}
+
+\usepackage{../styles/config}
+
+\title{\booktitle}
+\author{\tamilfont{இணையதளம்}}
+\date{\today}
+
+\begin{document}
+
+\hyphenchar\the\font = -1 % the current font has no "hyphen" character
+\pretolerance = 9999 % allow large interword spaces in the first run
+\tolerance = \pretolerance % should not be needed
+\hbadness = \pretolerance % do not display "underfull hbox"
+\emergencystretch = 5em % the third run if needed
+
+\frontmatter
+
+\thispagestyle{empty}
+\titleTMB[தமிழ் எழுத்து]{ஸ்ரீ}{இணையதளம்}
+\newpage
+
+%% Copyright page
+\thispagestyle{empty}
+\copyrightpage
+\clearpage
+
+\begin{figure}[p]
+  \centering
+  \vectorframelandscape{images/Shri-symbol.png}
+  \caption{\label{Figure:-tamilfont}\tamilfont ஸ்ரீ அல்லது சிறீ என்றால் செல்வம் எனப் பொருள்படும். வணக்கத்துக்குரிய என்பதைக் குறிக்கும்}
+\end{figure}
+
+\clearpage
+
+\tableofcontents
+
+\cleardoublepage
+
+\tamilfont
+
+\include{foreword}
+
+\mainmatter
+
+%
+% Contents
+%
+
+\include{book-contents}
+
+%
+% End
+%
+
+\include{end}

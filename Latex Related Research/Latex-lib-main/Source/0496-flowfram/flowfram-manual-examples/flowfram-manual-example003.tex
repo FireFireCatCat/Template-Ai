@@ -1,0 +1,42 @@
+% This file is embedded in flowfram-manual.pdf 
+% Example 3 Contination Text in Static Frames
+% Label: "ex:staticcont"
+% arara: pdflatex
+% arara: pdfcrop
+\documentclass[12pt]{article}
+\pagestyle{empty}
+\usepackage[T1]{fontenc}
+\usepackage{flowfram}
+\usepackage{lipsum} 
+
+\onecolumnStopinarea{1in}{0.5\typeblockwidth-10pt}{\typeblockheight}{0pt}{0pt}
+\setstaticframe{\value{maxstatic}}{label=upper,border=plain} 
+
+\onecolumnSbottominarea{1in}{0.5\typeblockwidth-10pt}{\typeblockheight}{0.5\typeblockwidth+10pt}{0pt}
+\setstaticframe{\value{maxstatic}}{label=lower,border=plain,parindent=1em}
+
+
+\renewcommand{\ffdefaultstaticcontinuetext}[2]{% 
+   Continued \relativeframelocation{static}{#2}{static}{#1}% 
+ }
+\renewcommand{\ffstaticpostcontinued}[2]{% 
+ \ffcontinuedtextlayout{% 
+   Continued from \relativeframelocation{static}{#1}{static}{#2}% 
+ }% 
+ \ffdefaultpostcontinued
+} 
+\begin{document}
+ \begin{staticcontents*}{upper}
+Some text in a static frame for 
+illustrative purposes that needs to
+break off and continue later on and
+\continueonframe{lower}
+resuming where we left off
+this is text in another static frame
+elsewhere on the page. 
+
+Next paragraph.
+\end{staticcontents*} 
+
+\lipsum[1-3] 
+\end{document}

@@ -1,0 +1,43 @@
+% \begin{description}\item[1.4.0, 2022 October 10]\relax   \P\thinspace The [siunitx] option is now on by default, and the
+%       |\units| macro produces a one-time-per-document
+%       warning that it will be removed in the next version.  \P\thinspace Having two |\partmarks| commands in an
+%       environment is now detected as an error (it was documented as an
+%       error, but not checked, so the extra |\partmarks|
+%       commands were simply ignored).\par\item[1.4.0-b1, 2022 August 7]\relax   \P\thinspace The class file now depends on a version of LaTeX which is at least
+%       the 2020/10/01 release.  This is so that we can use the current LaTeX
+%       hooks mechanism.  \P\thinspace Rework |\partmarks|: the |\partmarks|
+%       indicator can now go \emph{inside} most environments, including
+%       list, quotes, unnumbered equations, and the various amsmath displays.  In these
+%       cases, the indicator will automatically appear at the end of the
+%       environment.  The starred variant of the command still exists, but
+%       should rarely be necessary.\par\item[1.3.5-b1, 2022 July 11]\relax   \P\thinspace Fix erroneous broken line before |\partmarks|, in
+% compose mode, when a paragraph fills the last line.  \P\thinspace Fix support for STIX2 fonts in XeLaTeX and LuaLaTeX (it was
+% working inaccurately before).  \P\thinspace Add an optional argument for |\part| to override part numbering.  \P\thinspace Use the |xcolor| package for colour management, instead
+% of the core |color| package (the |xcolor|
+% package is well-known and stable, and this means that we are
+% compatible with TikZ).  \P\thinspace |\partmarks| in solutions no longer gobble trailing space
+% (doing so is probably right in questions, and is still the case, but
+% |\partmarks| in solutions tend to be more interspersed with
+% text).  \P\thinspace |\label| within a |\part| now refers to the
+% part number (as opposed to the question number).  \P\thinspace Avoid a ‘You can't use `\unskip' in vertical mode’ error,
+% in certain circumstances.  \P\thinspace Add the |[siunitx]| option, indicating that we should
+% load the siunitx\footnote{\url{https://www.ctan.org/pkg/siunitx}} package (default no).
+% This is now preferred to the |\units| macro, and the latter will be
+% removed in a forthcoming release.  \P\thinspace Renamed |A1.clo| to clearer |myclass.clo|  \P\thinspace Repository moved from bitbucket to
+% https://heptapod.host/nxg/exam-n\footnote{\url{https://heptapod.host/nxg/exam-n}},
+% when bitbucket dropped support for Mercurial.
+% This means, incidentally, that links to specific issues at bitbucket
+% are now broken.  \P\thinspace Bold-italic maths should now work correctly with STIX.  \P\thinspace Long |\partmarks| comments now appear as footnotes.  \P\thinspace Solutions are now set |\normalsize|.  \P\thinspace Bugfix: move definition of |\defaultpartmarkscategory|
+% so it can be invoked within a |.clo| file straightforwardly.  \P\thinspace Define the |[uprightpi]| option to set |\pi|
+% as an upright character, as appropriate for a constant (this is
+% implemented fully only for the |[mtpro2]| and
+% |[stix2]| options)..  \P\thinspace Note that the |\units| macro is likely to be deprecated
+% in a forthcoming version, and replaced by a recommendation to use the
+% standard |[siunitx]| package.\par\item[1.3, 2018 November 21]\relax   \P\thinspace Add a ‘category’ optional argument to |\partmarks|, and
+% add |\defaultpartmarkscategory|.\par\item[1.2.1, 2018 July 2]\relax   \P\thinspace Bugfix: ignore any content which appears after
+% |\end{document}|, in |\includequestion| (author)
+% files (fixes issue 6).  \P\thinspace The environments |{figure*}| and |{table*}| now produce an error.  \P\thinspace The macro |\vec| now produces correct greek bold maths.  \P\thinspace Docmentation: notes on unit formatting.\par\item[1.2, 2017 December 1]\relax   \P\thinspace Use serif STIX2 fonts for sans and monospace cases, when using
+% Lua- or XeLaTeX (the style doesn't use/encourage any sans-serif text,
+% so this shouldn't matter).  \P\thinspace Fix font sizes in solutions.  \P\thinspace Adjustments to font-handling, which appear to have fixed LuaLaTeX differences.  \P\thinspace Add the |stix2| option, to use the
+% STIX2 font set\footnote{\url{http://www.stixfonts.org/}}.  \P\thinspace Make it possible to use |\rubric| and |\baserubric| within a |.clo| file.
+% This was advertised as being possible, but it seems it had never been tested!\par\end{description}

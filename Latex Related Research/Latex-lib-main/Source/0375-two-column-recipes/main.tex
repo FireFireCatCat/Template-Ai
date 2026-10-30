@@ -1,0 +1,68 @@
+% Recipes as a compact two-column list: ingredient on the left, the step
+% that uses it on the right. The `cooking' package (Axel Reichert, CTAN,
+% GPL). Vendored: not in TeX Live. Upstream's own default labels
+% (\energy, \sidedish, \hint, \preparationtime, \modification) are German;
+% the package's own documentation supplies the English translations used
+% below (cooking.dtx, "Customization" section).
+\documentclass[a4paper,11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{cooking}
+
+\renewcommand*{\energy}[1]{\item #1\,kJ per helping}
+\renewcommand*{\sidedish}[1]{\item[Side dish] #1}
+\renewcommand*{\hint}[1]{\item[Hint] #1}
+\renewcommand*{\preparationtime}[1]{\item[Preparation time] #1}
+\renewcommand*{\modification}[1]{\item[Modification] #1}
+
+\pagestyle{recipe}
+
+\begin{document}
+
+\begin{recipe}{Braised Red Cabbage}
+\ingredient{1 medium} red cabbage, shredded
+\ingredient{2} apples, peeled and diced
+\ingredient{1} onion, sliced
+\ingredient{2 tbsp} butter
+\ingredient{3 tbsp} red wine vinegar
+\ingredient{2 tbsp} sugar
+\ingredient{1} bay leaf
+\ingredient{to taste} salt and pepper
+
+Melt the butter in a large pot and sweat the onion until soft.
+Add the cabbage and apples, then stir in the vinegar and sugar.
+
+Tuck in the bay leaf, cover, and simmer gently for about an hour,
+stirring occasionally, until the cabbage is tender and glossy.
+Season to taste and remove the bay leaf before serving.
+
+\energy{450}
+\sidedish{Roast pork or sausages}
+\hint{Tastes even better reheated the next day}
+\preparationtime{1 hour 15 minutes}
+\modification{Add a handful of raisins for a sweeter finish}
+\end{recipe}
+
+\begin{recipe}{Potato Dumplings}
+\ingredient{1 kg} floury potatoes
+\ingredient{100 g} potato starch
+\ingredient{1} egg
+\ingredient{to taste} salt
+\ingredient{50 g} butter
+
+Boil the potatoes in their skins until tender, then peel and rice
+them while still hot.
+
+Work in the starch, egg and salt to form a smooth dough. Shape into
+walnut-sized dumplings.
+
+Simmer the dumplings in salted water for about 15 minutes, until
+they float. Drain and toss with melted butter before serving.
+
+\preparationtime{50 minutes}
+\sidedish{Roast goose or braised beef}
+\end{recipe}
+
+\end{document}

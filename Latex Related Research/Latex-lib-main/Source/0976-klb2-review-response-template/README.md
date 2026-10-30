@@ -1,0 +1,222 @@
+# LaTeX Template for Review Responses
+
+[![Overleaf Template](https://img.shields.io/static/v1?label=Overleaf&logo=overleaf&message=Template&color=47A141)](https://www.overleaf.com/latex/templates/review-response-template/tmbvmjstxwrd)
+
+This repository provides a simple LaTeX template for writing responses to
+reviewers, which is typically needed when submitting an article to a scientific
+journal.
+
+_This template is also available on
+[Overleaf](https://www.overleaf.com/latex/templates/review-response-template/tmbvmjstxwrd)._
+
+# Usage
+
+In order to use the `reviewresponse.cls` class in your document, simply include
+the following line at the top of your LaTeX document
+
+```latex
+\documentclass{reviewresponse}
+```
+
+On GitHub, you can simply click on ["Use this template"](https://github.com/new?template_name=review-response-template&template_owner=klb2).
+
+
+## Commands
+The following commands are provided by the package.  
+If you are using [TeXstudio](https://www.texstudio.org/), there exists an
+autocomplete file (`.cwl`) for the `reviewresponse.cls` package, which can be
+found [here](https://gist.github.com/klb2/29f6fffeac8cc79e3b3f79e980a6b9e3).
+
+### Document Metadata
+You can use the following commands to specify the metadata of the submitted
+document.
+Place these commands before `\begin{document}`.
+
+```latex
+\title{Title of the Manuscript}
+\author{Author One\affil{1}, Author Two\affil{1,*} and Author Three\affil{2}}
+\affiliation{
+    \affil{1} Affiliation 1\\
+    \affil{2} Affiliation 2
+}
+\journal{Name of the Journal}
+\manuscript{ID-of-the-Manuscript}
+\editorname{Name of the Editor}
+```
+
+
+### Editor and Reviewers
+
+```latex
+\editor
+\reviewer
+```
+
+These commands start a new editor and reviewer.
+The typical usage is
+
+```latex
+\begin{document}
+...
+\editor
+Response to the editor
+
+\reviewer
+Response to the first reviewer
+
+\reviewer
+Response to the second reviewer
+```
+
+
+
+### Comments and Responses
+
+```latex
+\begin{generalcomment}
+...
+\end{generalcomment}
+```
+
+The `generalcomment` environment is meant for general comments given by the
+editor and reviewers.
+
+
+
+```latex
+\begin{revcomment}
+...
+\end{revcomment}
+```
+
+The `revcomment` environment is meant for the individual comments made by the
+reviewers.
+They are automatically numbered.
+
+It also accepts optional arguments, which are directly passed to the underlying
+`tcolorbox` environment.
+This is useful, if you want to add some arguments in specific situations, e.g.,
+the `breakable` keyword for very long comments.
+
+
+```latex
+\begin{revresponse}[Optional Parameter]
+...
+\end{revresponse}
+```
+
+The `revresponse` environment is meant for responses to the individual comments
+of the reviewers and editor.
+The optional parameter changes the text on the first line.
+By default, this text is "Thank you for the comment.".
+
+The `concludingresponse` environment is meant for the final response to the editor or reviewer.
+The optional parameter changes the text in the header of the `tcolorbox` environment.
+By default, this text is "Concluding Response"; the value of the optional parameter is added to this text.
+
+```latex
+\begin{concludingresponse}[to the Editor]
+...
+\end{concludingresponse}
+```
+
+
+### Changes
+
+```latex
+\begin{changes}
+...
+\end{changes}
+```
+
+The `changes` environment is meant for indicating changes that you made to your
+manuscript.
+It sets the content in a box in order to highlight it for the reviewers.
+
+
+### Bibliography
+The `reviewresponse` package supports the use of `biblatex` for references.
+Simply include `biblatex` and use the `\cite` command in your response.
+
+If you want to print specific references, e.g., at the end of the response to
+one particular comment, you can use the `\printpartbibliography` command.
+
+```latex
+\printpartbibliography{bibkey1,bibkey2,...}
+```
+
+
+
+### Customization
+You can customize the appearance of all boxes and the title page in the
+`reviewresponse.cls` file.
+However, some basic properties can also easily be customized in the main
+document.
+
+#### Colors
+If you want to change the colors of the boxes, you need to redefine the
+following colors, e.g., using `\definecolor` or `\colorlet`.
+The shown values are the defaults.
+
+```latex
+\colorlet{colorcommentfg}{black}  % color of the text in the comment box
+\definecolor{colorcommentframe}{HTML}{005374} % color of the frame and title of the comment box
+\colorlet{colorcommentbg}{colorcommentframe!2} % color of the background of the comment box
+
+\definecolor{colorchangeframe}{HTML}{006622} % color of the frame of the changes box
+\colorlet{colorchangebg}{colorchangeframe!2} % color of the background of the changes box
+
+\colorlet{colorconcludingresponsefg}{black} % color of the title and text in the concluding response box
+\colorlet{colorconcludingresponsebg}{black!1} % color of the background of the concluding response box
+\colorlet{colorconcludingresponseframe}{black!20} % color of the frame of the concluding response box
+```
+
+#### Borders
+If you want to change the thickness of the borders, you can set
+`\borderthickness` and `\accentborderthickness` to custom values.
+The following values are the defaults.
+
+```latex
+\setlength{\borderthickness}{0.75pt}  % border around all boxes
+\setlength{\accentborderthickness}{5pt}  % accent border on the left side of the revcomment and changes boxes
+```
+
+
+#### Fonts
+Changing the document fonts can be done in any normal LaTeX way, e.g., through
+loading specific font packages or using `\setmainfont` from the
+[`fontspec`](https://ctan.org/pkg/fontspec) package when using LuaLaTeX.
+
+For the title page, the template uses (custom) KOMA fonts, which can be
+changed/updated using `\setkomafont` or `\addtokomafont`.  
+The following are the default values for the komafonts used on the title page.
+
+```latex
+\setkomafont{titlehead}{\normalsize\color{black!70}\sffamily}
+\setkomafont{title}{\usekomafont{disposition}\Large}
+\newkomafont{journalextra}{\normalsize\itshape}
+\newkomafont{journal}{\large}
+\setkomafont{author}{\large}
+\newkomafont{affiliation}{\small}
+```
+
+
+
+## Options
+The class has the following options, which can be set when setting the
+`\documentclass`, i.e., like `\documentclass[option=value]{reviewresponse}`.
+All unknown options will be passed on to the underlying `scrartcl` class.
+
+- `revnumtocomment`: (bool)  
+  If set to true, the reviewer number will be put in front
+  of the comment number, i.e., it will say "Comment 2.3" for the third comment
+  of the second reviewer.
+- `revnumtoheader`: (bool)  
+  If set to true, a header line with the reviewer will be added to each page.
+  This can help to keep track of the current section/reviewer when scrolling
+  through long review response documents.
+
+# Contribute
+Thank you for considering contributing to this project.
+You should be able to find all the information you need at
+[`CONTRIBUTING.md`](CONTRIBUTING.md).

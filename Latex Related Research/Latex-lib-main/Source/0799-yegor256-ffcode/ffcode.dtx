@@ -1,0 +1,676 @@
+% \iffalse meta-comment
+% SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
+% SPDX-License-Identifier: MIT
+% \fi
+
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+
+% \GetFileInfo{ffcode.dtx}
+% \DoNotIndex{\endgroup,\begingroup,\let,\else,\fi,\newcommand,\newenvironment}
+
+% \iffalse
+%<*driver>
+\ProvidesFile{ffcode.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{ffcode}
+%<*package>
+[0000-00-00 0.0.0 Fixed Font Code]
+%</package>
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{fail-fast}
+\usepackage{microtype}
+\AddToHook{env/verbatim/begin}{\microtypesetup{protrusion=false}}
+\PassOptionsToPackage{hyperindex=false}{hyperref}
+\usepackage{href-ul}
+\usepackage{bookmark}
+\renewcommand{\RerunFileCheck}[3]{\AddToHook{enddocument/info}{#2}}
+\usepackage{ffcode}
+\usepackage{xcolor}
+\usepackage[dtx,runs=2]{docshots}
+\PageIndex
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+	\DocInput{ffcode.dtx}
+\end{document}
+%</driver>
+% \fi
+
+% \title{|ffcode|: \LaTeX{} Package \\ for Fixed-Font Code Blocks\thanks{The sources are in GitHub at \href{https://github.com/yegor256/ffcode}{yegor256/ffcode}}}
+% \author{Yegor Bugayenko \\ \texttt{yegor256@gmail.com}}
+% \date{\filedate, \fileversion}
+%
+% \maketitle
+%
+% \section{Introduction}
+%
+% This package typesets source code within articles
+% and ensures a tidy, consistent appearance. Following installation from
+% CTAN, the typical usage proceeds as follows (note the |\ff| command
+% and the |ffcode| environment):
+% \begin{docshot}
+% \documentclass{article}
+% \usepackage{ffcode}
+% \pagestyle{empty}
+% \begin{document}
+% The function |fibo()| is recursive:
+% \begin{ffcode}
+% int fibo(int n) {
+%   if (n < 2) {
+%     return n; (*@ \label{ln:ret} @*)
+%   }
+%   return fibo(n-1)+fibo(n-2);
+% }
+% \end{ffcode}
+% Line no.~\ref{ln:ret} returns \ff{n}
+% and terminates it.
+% \end{document}
+% \end{docshot}
+
+% \DescribeMacro{\ffinput}
+% An |\ffinput| command is also provided, which reads content from a file
+% and inserts it into the document, formatted in precisely the manner that
+% would result from the |ffcode| environment. The |ffsave|
+% environment may be employed beforehand; it behaves as the |ffcode|
+% environment, save that the content is written to a file rather than
+% printed, whence it may subsequently be retrieved by the |\ffinput| command.
+% The name of that file is given in the optional argument of |ffsave|,
+% for instance |\begin{ffsave}[foo.txt]|, and defaults to |ffsave.txt|.
+
+% \section{Package Options}
+
+% Each option below is a switch: naming it turns it on, and it also
+% accepts an explicit value, either |true| or |false|. For instance,
+% |\usepackage[nonumbers=false]{ffcode}| keeps the line numbers.
+
+% \DescribeMacro{samepage}
+% The |samepage| package option prevents page breaks inside |ffcode| blocks.
+
+% \DescribeMacro{noframes}
+% The |noframes| package option omits the light gray frames around |\ff|
+% texts.
+
+% \DescribeMacro{nobars}
+% The |nobars| package option omits the vertical gray bar at the left side
+% of each snippet.
+
+% \DescribeMacro{nonumbers}
+% The |nonumbers| package option omits the line numbers.
+
+% \DescribeMacro{novert}
+% By default, a pair of vertical bars works as a shortcut for |\ff|.
+% The |novert| package option leaves the vertical bar as an ordinary
+% character.
+
+% \DescribeMacro{nocn}
+% By default, line numbering is continuous: numbers commence at the
+% first snippet and increment until the end of the document. The |nocn|
+% package option (an abbreviation for ``no continuous numbering'') causes
+% the numbering to restart from one in each snippet.
+
+% \DescribeMacro{tmpfile}
+% Every |ffcode| block is captured verbatim to a scratch file before it
+% is typeset (this is what makes |\ffcolumnbreak| possible). The name of
+% that file defaults to |\jobname.ffcode| and may be changed with the
+% |tmpfile| package option, for instance
+% |\usepackage[tmpfile=build/ffcode.tmp]{ffcode}|.
+
+% \DescribeMacro{bold}
+% The |\ff| fragments may be rendered in a heavier weight than the default, which proves convenient for certain document classes
+% (note the use of the \href{https://ctan.org/pkg/lmodern}{lmodern} package: without it, boldface fails to operate, as explained \href{https://tex.stackexchange.com/a/215489/1449}{here}):
+% \begin{docshot}[options={firstline=4,lastline=10}]
+% \documentclass{article}
+% \usepackage[paperwidth=3in]{geometry}
+% \pagestyle{empty}
+% \usepackage{lmodern}
+% \usepackage[bold,noframes]{ffcode}
+% \begin{document}
+% Sometimes it's necessary to make
+% code pieces look bolder, like
+% the |fibo()| function in this text.
+% \end{document}
+% \end{docshot}
+
+% \DescribeMacro{sf}
+% The font family of |\ff| fragments may be altered to |\sffamily|:
+% \begin{docshot}[options={firstline=4,lastline=9}]
+% \documentclass{article}
+% \usepackage[paperwidth=3in]{geometry}
+% \pagestyle{empty}
+% \usepackage[sf,bold,noframes]{ffcode}
+% \begin{document}
+% Sometimes a less strictly fixed-width,
+% more elegant look may be preferred,
+% like the \emph{|fibo()|} here.
+% \end{document}
+% \end{docshot}
+
+% \section{Typesetting}
+
+% The package handles low-height text correctly, for instance a solitary
+% dot: \ff{.}
+
+% A pair of vertical bars decorates a \TeX{} command within a snippet.
+% A single vertical bar may be produced by means of
+% ``\verb+\ff{\char`\|}+''.
+
+% The |\ff| command behaves differently in math mode---it adds no
+% gray frames:
+% \begin{docshot}[options={firstline=6,lastline=8}]
+% \documentclass{article}
+% \usepackage{ffcode}
+% \usepackage{mathtools}
+% \pagestyle{empty}
+% \begin{document}
+% \begin{equation*}
+% x = \int_{|home|}^{\ff{N}} f(x).
+% \end{equation*}
+% \end{document}
+% \end{docshot}
+
+% Lines within the |ffcode| environment may be highlighted,
+% and any further configuration parameters from
+% the |listings| package may likewise be supplied:
+% \begin{docshot}[options={firstline=6,lastline=13}]
+% \documentclass{article}
+% \usepackage[paperwidth=3in]{geometry}
+% \usepackage{ffcode}
+% \pagestyle{empty}
+% \begin{document}
+% \begin{ffcode}[backgroundcolor=\color{gray!20}]
+% while (true) {
+%   (*@\textcolor{red}{print("Hi!")}@*)
+%   print("Enter your name:")
+%   scan(x)
+%   print("Your name | " + x)
+% }
+% \end{ffcode}
+% \end{document}
+% \end{docshot}
+
+% \DescribeMacro{\ffcolumnbreak}
+% A snippet may be split into two or more side-by-side columns by
+% placing |\ffcolumnbreak| on a line of its own, wrapped in an escape so
+% that |listings| does not print it. Line numbering runs continuously
+% across the columns, which is handy for a listing too tall for the
+% page. Each further |\ffcolumnbreak| adds one more column. By default
+% the columns share the line equally; a column whose longest line does
+% not fit in its equal share is widened just enough to hold it, and the
+% extra space is taken from the columns that have room to spare:
+% \begin{docshot}[options={firstline=6,lastline=14}]
+% \documentclass{article}
+% \usepackage[paperwidth=4in]{geometry}
+% \usepackage{ffcode}
+% \pagestyle{empty}
+% \begin{document}
+% \begin{ffcode}
+% int fibo(int n) {
+%   if (n < 2) {
+% (*@ \ffcolumnbreak @*)
+%     return n;
+%   }
+%   return fibo(n-1)+fibo(n-2);
+% }
+% \end{ffcode}
+% \end{document}
+% \end{docshot}
+
+% The |\lstset| command of the |listings| package may also be employed
+% to establish defaults for the |ffcode| environment.
+% In contrast to the optional argument, which applies solely to a single
+% snippet, |\lstset| acts globally: every subsequent code listing in the
+% document inherits the new settings, including any further |ffcode|
+% blocks thereafter.
+% To confine the change to a single |ffcode| block, the call should be
+% wrapped within a |\begingroup|\ldots|\endgroup| pair:
+% \begin{docshot}[options={firstline=6,lastline=11}]
+% \documentclass{article}
+% \usepackage[paperwidth=3in]{geometry}
+% \usepackage{ffcode}
+% \pagestyle{empty}
+% \begin{document}
+% \begingroup
+% \lstset{backgroundcolor=\color{yellow!30}}
+% \begin{ffcode}
+% print("Hi!")
+% \end{ffcode}
+% \endgroup
+% \end{document}
+% \end{docshot}
+
+% A snippet may be rendered in ``condensed'' mode, with reduced spacing
+% between letters, by supplying |columns=fixed| together with a narrower
+% |basewidth| from the |listings| package:
+% \begin{docshot}[options={firstline=6,lastline=12}]
+% \documentclass{article}
+% \usepackage[paperwidth=3in]{geometry}
+% \usepackage{ffcode}
+% \pagestyle{empty}
+% \begin{document}
+% \begin{ffcode}[columns=fixed,basewidth=0.4em]
+% while (true) {
+%   print("Enter your name:")
+%   scan(x)
+%   print("Hello, " + x)
+% }
+% \end{ffcode}
+% \end{document}
+% \end{docshot}
+
+% \StopEventually{}
+
+% \section{Implementation}
+% \changes{v0.1.0}{2021/06/10}{Initial version}
+
+% First, we parse package options with the help of
+% \href{https://ctan.org/pkg/pgfopts}{pgfopts} package:
+% \changes{v0.2.0}{2021/06/13}{Package options \texttt{nonumbers} and \texttt{noframes} added.}
+% \changes{v0.3.0}{2021/09/07}{Package option \texttt{nocn} added.}
+% \changes{v0.4.0}{2022/01/09}{Package option \texttt{nobars} added.}
+% \changes{v0.6.0}{2022/11/16}{We use \texttt{pgfopts} instead of \texttt{xkeyval}.}
+% \changes{v0.6.0}{2022/11/16}{Package option \texttt{novert} added, to disable the redefinition of the vertical bar.}
+% \changes{v0.7.0}{2022/11/28}{Package option \texttt{bold} added, to make all \texttt{\char`\\ff} pieces look bolder than usual.}
+% \changes{v0.7.0}{2022/11/28}{Package option \texttt{sf} added, to print all \texttt{\char`\\ff} pieces with \texttt{\char`\\sffamily}.}
+% \changes{v0.9.2}{2024/02/04}{All lengths and sizes are in ``em'' instead of ``pt''.}
+% \changes{v0.10.0}{2025/01/02}{Package option \texttt{samepage} added, to prevent each \texttt{ffcode} block from breaking across pages.}
+% \changes{v0.11.1}{2026/05/01}{Reserve \texttt{xleftmargin} for line numbers so they sit inside the column instead of protruding into the page margin.}
+% \changes{v0.13.0}{2026/07/10}{Package option \texttt{tmpfile} added, to configure the scratch file used to capture \texttt{ffcode} bodies.}
+% \changes{v0.15.4}{2026/10/14}{Package options are now true switches, so that setting \texttt{nonumbers} or any other option to \texttt{false} no longer turns the feature on.}
+%    \begin{macrocode}
+\RequirePackage{pgfopts}
+\newif\ifff@bold
+\newif\ifff@sf
+\newif\ifff@samepage
+\newif\ifff@noframes
+\newif\ifff@nonumbers
+\newif\ifff@nobars
+\newif\ifff@novert
+\newif\ifff@nocn
+\pgfkeys{
+  /ff/.cd,
+  bold/.is if=ff@bold,
+  sf/.is if=ff@sf,
+  samepage/.is if=ff@samepage,
+  noframes/.is if=ff@noframes,
+  nonumbers/.is if=ff@nonumbers,
+  nobars/.is if=ff@nobars,
+  novert/.is if=ff@novert,
+  nocn/.is if=ff@nocn,
+  tmpfile/.store in=\ff@file,
+  tmpfile/.default=\jobname.ffcode,
+  tmpfile,
+}
+\ProcessPgfPackageOptions{/ff}
+%    \end{macrocode}
+
+% Then, we include the \href{https://ctan.org/pkg/xcolor}{xcolor} package:
+%    \begin{macrocode}
+\RequirePackage{xcolor}
+%    \end{macrocode}
+
+% Then, we configure the \href{https://ctan.org/pkg/listings}{listings} package.
+% The defaults are applied here, at package load, so that a user may override
+% them globally with \texttt{\char`\\lstset} after \texttt{\char`\\usepackage\{ffcode\}}.
+% The line skip is reset to zero at the start of every listing, as
+% \href{https://tex.stackexchange.com/questions/706858}{explained here}.
+% Also, \texttt{acmart} warns about the \texttt{\char`\\@vspace}
+% that \texttt{listings} emits around displays, so its saved originals
+% are restored during typesetting:
+% \changes{v0.9.0}{2024/01/09}{The \texttt{minted} package is replaced by the \texttt{listings} package.}
+% \changes{v0.10.2}{2025/07/06}{We started to use \texttt{keepspaces} in order to guarantee correct visual rendering of multi-spaced content.}
+% \changes{v0.12.0}{2026/05/05}{Static \texttt{\char`\\lstset} defaults moved from the per-environment hook to the preamble, so that user-supplied \texttt{\char`\\lstset} calls are no longer overwritten on every \texttt{ffcode} usage.}
+% \changes{v0.12.2}{2026/07/10}{Restore the original \texttt{\char`\\@vspace} inside listings, so \texttt{acmart} no longer warns about the vertical spacing that \texttt{listings} emits around every block.}
+%    \begin{macrocode}
+\RequirePackage{listings}
+\lst@AddToHook{Init}{\setlength{\lineskip}{0pt}}
+\ifdefined\@vspace@orig
+  \lst@AddToHook{DisplayStyle}{%
+    \let\@vspace\@vspace@orig
+    \ifdefined\@vspacer@orig\let\@vspacer\@vspacer@orig\fi}
+\fi
+\lstset{breaklines}
+\lstset{escapeinside={(*@}{@*)}}
+\lstset{basicstyle={\ttfamily}}
+\lstset{columns=fullflexible}
+\lstset{keepspaces=true}
+\ifff@nonumbers\else
+  \lstset{numbers=left,numbersep=.8em,
+    numberstyle={\tiny\sffamily\color{gray}},
+    xleftmargin=2.5em}
+\fi
+\ifff@nobars\else
+  \lstset{frame=leftline,framerule=.05em,rulecolor={\color{gray}}}
+\fi
+\ifff@nocn\else
+  \lstset{firstnumber=last}
+\fi
+%    \end{macrocode}
+
+% \begin{macro}{\ffcolumnbreak}
+% Then, we define the |\ffcolumnbreak| marker and the machinery that
+% splits an |ffcode| block into side-by-side columns. Because |listings|
+% typesets a single line-by-line stream, a block is first captured
+% verbatim to a temporary file; that file is then scanned for
+% |\ffcolumnbreak| markers, which cut it into segments. Only a line that
+% holds nothing but the escaped marker, spaces aside, counts as a break;
+% any other line that mentions |\ffcolumnbreak| is left to |listings|.
+% Each segment is measured before it is printed: it is typeset once into a discarded box,
+% so that |listings| records the width of its longest line in
+% |\lst@maxwidth|, and that width (plus the gutter reserved for line
+% numbers) becomes the natural width of the column. The available width
+% is then shared by a water-filling pass in |\ff@computelevel|: it seeks
+% the common level such that every column narrower than the level takes
+% the level, while a column wider than the level keeps its natural width,
+% and the two together fill |\linewidth|. Thus equal-sized columns split
+% the line evenly, and only a column too wide for its share claims more,
+% at the expense of the columns that have room to spare. When even the
+% natural widths overflow |\linewidth|, the widths are scaled down in
+% proportion to fit. A block without any marker is rendered as one
+% listing, exactly as before:
+% \changes{v0.13.0}{2026/07/10}{The \texttt{\char`\\ffcolumnbreak} marker added, to split an \texttt{ffcode} block into two or more side-by-side columns.}
+% \changes{v0.13.0}{2026/07/10}{Columns split by \texttt{\char`\\ffcolumnbreak} are now sized by the longest line in each, instead of splitting \texttt{\char`\\linewidth} evenly.}
+% \changes{v0.13.0}{2026/07/10}{Restore the original \texttt{\char`\\@vspace} inside every \texttt{\char`\\ffcolumnbreak} column, so \texttt{acmart} no longer warns about the top-alignment strut in each column box.}
+% \changes{v0.15.0}{2026/07/10}{Columns split by \texttt{\char`\\ffcolumnbreak} now share the line equally by default, widening only a column that does not fit its equal share.}
+% \changes{v0.15.1}{2026/10/14}{Line numbers no longer restart in every \texttt{\char`\\ffcolumnbreak} column when the \texttt{nocn} option is used.}
+% \changes{v0.15.2}{2026/10/14}{Only a line holding nothing but the escaped \texttt{\char`\\ffcolumnbreak} marker now splits a block, so code that merely mentions it is no longer cut out.}
+%    \begin{macrocode}
+\RequirePackage{fancyvrb}
+\newcommand\ffcolumnbreak{}
+\def\ff@flat#1{\zap@space#1 \@empty}
+\edef\ff@cbmarker{\detokenize{(*@}\string\ffcolumnbreak\detokenize{@*)}}
+\newread\ff@read
+\newcount\ff@nlines
+\newcount\ff@nbreaks
+\newcount\ff@ncols
+\newcount\ff@prev
+\newcount\ff@start
+\newdimen\ff@colwd
+\newdimen\ff@sepwd
+\newdimen\ff@total
+\newdimen\ff@avail
+\newdimen\ff@natwd
+\newdimen\ff@gutter
+\newdimen\ff@level
+\newdimen\ff@fixedsum
+\newcount\ff@fixedcnt
+\newcount\ff@denom
+\newcount\ff@prevcnt
+\newsavebox\ff@mbox
+\let\ff@grab\relax
+\lst@AddToHook{Init}{\ff@grab}
+\def\ff@colsep{\hspace{0.4em}{\color{gray}\vrule width 0.3pt}%
+  \hspace{0.4em}}
+\def\ff@allother{%
+  \count@=\z@
+  \loop\catcode\count@=12 \ifnum\count@<255 \advance\count@\@ne\repeat
+  \catcode`\ =10 \endlinechar=-1 }
+\def\ff@readloop{%
+  \read\ff@read to\ff@line
+  \ifeof\ff@read
+    \let\ff@next\relax
+  \else
+    \global\advance\ff@nlines\@ne
+    \edef\ff@flatline{\expandafter\ff@flat\expandafter{\ff@line}}%
+    \ifx\ff@flatline\ff@cbmarker
+      \global\advance\ff@nbreaks\@ne
+      \xdef\ff@segs{\unexpanded\expandafter{\ff@segs}\noexpand\ff@seg
+        {\the\numexpr\ff@start+\@ne\relax}{\the\numexpr\ff@nlines-\@ne\relax}}%
+      \global\ff@start=\ff@nlines
+    \fi
+    \let\ff@next\ff@readloop
+  \fi
+  \ff@next}
+\def\ff@scan{%
+  \global\ff@nlines=\z@ \global\ff@nbreaks=\z@
+  \global\ff@start=\z@ \gdef\ff@segs{}%
+  \openin\ff@read=\ff@file\relax
+  \begingroup\ff@allother\ff@readloop\endgroup
+  \closein\ff@read
+  \ifnum\ff@nbreaks>\z@
+    \xdef\ff@segs{\unexpanded\expandafter{\ff@segs}\noexpand\ff@seg
+      {\the\numexpr\ff@start+\@ne\relax}{\the\ff@nlines}}%
+  \fi}
+\def\ff@measure#1#2{%
+  \setbox\ff@mbox=\vbox{\hfuzz\maxdimen
+    \lstinputlisting[numbers=none,breaklines=false,%
+      firstline=#1,lastline=#2]{\ff@file}}%
+  \ff@natwd=\dimexpr\lst@maxwidth+\ff@gutter\relax
+  \global\advance\ff@total\ff@natwd
+  \xdef\ff@cols{\unexpanded\expandafter{\ff@cols}%
+    \noexpand\ff@col{#1}{#2}{\the\ff@natwd}}}
+\def\ff@onepass{%
+  \global\ff@fixedsum=\z@ \global\ff@fixedcnt=\z@
+  \begingroup
+    \def\ff@col##1##2##3{%
+      \ifdim##3>\ff@level
+        \global\advance\ff@fixedsum##3\relax
+        \global\advance\ff@fixedcnt\@ne
+      \fi}%
+    \ff@cols
+  \endgroup
+  \ifnum\ff@fixedcnt<\ff@ncols
+    \ff@denom=\numexpr\ff@ncols-\ff@fixedcnt\relax
+    \ff@level=\dimexpr(\ff@avail-\ff@fixedsum)/\ff@denom\relax
+  \fi}
+\def\ff@computelevel{%
+  \ff@level=\dimexpr\ff@avail/\ff@ncols\relax
+  \ff@prevcnt=\z@
+  \loop
+    \ff@onepass
+  \ifnum\ff@fixedcnt>\ff@prevcnt
+    \ff@prevcnt=\ff@fixedcnt
+  \repeat}
+\def\ff@col#1#2#3{%
+  \ifnum\ff@prev=\z@\else\ff@colsep\lstset{firstnumber=last}\fi
+  \ifdim\ff@total>\ff@avail
+    \ff@colwd=\dimexpr#3*\number\ff@avail/\number\ff@total\relax
+  \else
+    \ifdim#3>\ff@level\ff@colwd=#3\relax\else\ff@colwd=\ff@level\fi
+  \fi
+  \parbox[t]{\ff@colwd}{%
+    \ifdefined\@vspace@orig
+      \let\@vspace\@vspace@orig
+      \ifdefined\@vspacer@orig\let\@vspacer\@vspacer@orig\fi
+    \fi
+    \vspace{0pt}%
+    \lstinputlisting[firstline=#1,lastline=#2]{\ff@file}}%
+  \ff@prev=\@ne}
+\def\ff@render{%
+  \ff@scan
+  \begingroup
+  \expandafter\lstset\expandafter{\ff@opts}%
+  \ifnum\ff@nbreaks=\z@
+    \lstinputlisting{\ff@file}%
+  \else
+    \ff@ncols=\ff@nbreaks \advance\ff@ncols\@ne
+    \ff@sepwd=0.8em \advance\ff@sepwd0.3pt
+    \ff@avail=\dimexpr\linewidth-\ff@sepwd*\ff@ncols+\ff@sepwd\relax
+    \global\ff@total=\z@ \gdef\ff@cols{}%
+    \edef\ff@savednum{\the\c@lstnumber}%
+    \def\ff@grab{\global\ff@gutter\@totalleftmargin}%
+    \let\ff@seg\ff@measure \ff@segs
+    \let\ff@grab\relax
+    \global\c@lstnumber=\ff@savednum\relax
+    \ff@computelevel
+    \par\addvspace\topsep
+    \noindent\hbox{\ff@prev=\z@ \ff@cols}%
+    \par\addvspace\topsep
+  \fi
+  \endgroup}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{environment}{ffcode}
+% Then, we (re)define the |ffcode| environment. Its body is written
+% verbatim to the temporary file and handed to |\ff@render|. The
+% optional |[...]| argument is parsed the same way |fancyvrb| does it,
+% by turning the end-of-line active before looking ahead, so that the
+% newline after |\begin{ffcode}| is not swallowed when no options are
+% supplied:
+%    \begin{macrocode}
+\newenvironment{ffcode}
+  {\catcode`\^^M=\active
+   \@ifnextchar[\ff@begin{\ff@begin[]}}
+  {\end{VerbatimOut}%
+   \ff@render
+   \ifff@samepage\endminipage\fi}
+\def\ff@begin[#1]{%
+  \catcode`\^^M=5\relax
+  \def\ff@opts{#1}%
+  \ifff@samepage\noindent\minipage{\linewidth}\fi
+  \VerbatimEnvironment\begin{VerbatimOut}{\ff@file}}
+%    \end{macrocode}
+% \end{environment}
+
+% \begin{macro}{\ffinput}
+% Then, we define the \texttt{\char`\\ffinput} command. It hands its file
+% and options to |\ff@render|, inside a group, so that it prints a file
+% exactly as the |ffcode| environment would, columns included:
+% \changes{v0.10.0}{2024/12/29}{The \texttt{\char`\\ffinput} command added.}
+% \changes{v0.12.0}{2026/05/26}{Stopped \texttt{\char`\\ffinput} options from leaking into later listings.}
+% \changes{v0.15.3}{2026/10/14}{The \texttt{\char`\\ffinput} command now splits a file into columns at \texttt{\char`\\ffcolumnbreak} markers, as the \texttt{ffcode} environment does.}
+%    \begin{macrocode}
+\newcommand\ffinput[2][]{%
+  \ifff@samepage\noindent\minipage{\linewidth}\fi%
+  \begingroup\def\ff@file{#2}\def\ff@opts{#1}\ff@render\endgroup
+  \ifff@samepage\endminipage\fi%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{environment}{ffsave}
+% Then, we define the \texttt{ffsave} environment. Before opening the
+% output stream, its missing parent directory is created, so that
+% \texttt{\char`\\begin\char`\{ffsave\char`\}[foo/bar.txt]}
+% works even when \texttt{foo/} is absent (this needs shell escape enabled):
+% \changes{v0.11.0}{2025/07/06}{The \texttt{ffsave} environment added.}
+% \changes{v0.12.1}{2026/07/10}{The \texttt{ffsave} environment now creates the missing parent directory of its target file.}
+%    \begin{macrocode}
+\RequirePackage{shellesc}
+\ExplSyntaxOn
+\cs_new_protected:cpn { ff@mkdir } #1
+  {
+    \str_set:Nn \l_tmpa_str {#1}
+    \sys_if_platform_windows:TF
+      {
+        \str_replace_all:Nnn \l_tmpa_str { / } { \c_backslash_str }
+        \ShellEscape { if~not~exist~"\l_tmpa_str"~mkdir~"\l_tmpa_str" }
+      }
+      { \ShellEscape { mkdir~-p~"\l_tmpa_str" } }
+  }
+\ExplSyntaxOff
+\newenvironment{ffsave}[1][ffsave.txt]
+  {\filename@parse{#1}%
+   \ifx\filename@area\@empty\else
+     \expandafter\ff@mkdir\expandafter{\filename@area}%
+   \fi
+   \VerbatimEnvironment\begin{VerbatimOut}{#1}}
+  {\end{VerbatimOut}}
+%    \end{macrocode}
+% \end{environment}
+
+% \begin{macro}{\ff@print}
+% Then, we define a supplementary macro |\ff@print|:
+% \changes{v0.5.1}{2022/10/30}{Now, the command \texttt{ff} ignores italic and bold and always prints \texttt{\char`\\texttt} as it should be.}
+%    \begin{macrocode}
+\newcommand\ff@print[1]{%
+  \textnormal{%
+    \ifff@sf\sffamily\else\ttfamily\fi%
+    \ifff@bold\fontseries{b}\selectfont\fi%
+    #1%
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\ff@rule}
+% Then, we define a supplementary command |\ff@rule|:
+%    \begin{macrocode}
+\newcommand\ff@rule
+  {\vrule height 0.6em depth 0.1em width 0em}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\ff@box}
+% Then, we use \href{https://ctan.org/pkg/tcolorbox}{tcolorbox} to define the |\ff@box|
+% command for a gray box around a verbatim text block:
+%    \begin{macrocode}
+\ifff@noframes\else
+  \RequirePackage{tcolorbox}
+  \newtcbox\ff@box{nobeforeafter,colframe=gray!80!white,
+    colback=gray!5!white,boxrule=0.01em,arc=0.1em,
+    boxsep=0.12em,left=0.05em,right=0.05em,top=0.02em,bottom=0.02em,
+    tcbox raise base}
+\fi
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\ff@x}
+% Then, we define the internal |\ff@x| command for printing a piece of fixed-width-font text:
+%    \begin{macrocode}
+\NewDocumentCommand\ff@x{v}{\ff{#1}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\ff}
+% \changes{v0.8.0}{2022/12/01}{The \texttt{\char`\\ff} command is now a normal command, not verbatim.}
+% Then, we define |\ff| macro:
+%    \begin{macrocode}
+\newcommand\ff[1]{%
+  \ifff@noframes%
+    \ff@rule\ff@print{#1}%
+  \else%
+    \relax\ifmmode%
+      \ff@rule\ff@print{#1}%
+    \else%
+      \ff@box{\ff@rule\ff@print{#1}}%
+    \fi%
+  \fi%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% Finally, we let vertical bars work similarly to |\ff|, as suggested
+% \href{https://tex.stackexchange.com/a/665105/1449}{here}
+% and \href{https://tex.stackexchange.com/a/665303/1449}{here}
+% (unless the |novert| package option is used):
+%    \begin{macrocode}
+\ifff@novert\else
+  \catcode`\|\active
+  \AtBeginDocument{\catcode`\|\active\protected\def|{\ff@x|}}
+  \catcode`\| 12 %
+\fi
+%    \end{macrocode}
+
+%    \begin{macrocode}
+\endinput
+%    \end{macrocode}
+
+% \Finale
+
+%\clearpage
+%
+%\PrintChanges
+%\clearpage
+%\PrintIndex

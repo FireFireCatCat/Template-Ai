@@ -1,0 +1,162 @@
+%% LUDUS Academik Journal starter — ludusofficial document class.
+%%
+%% This class file (ludusofficial.cls) IS bundled here: it is not part of any
+%% TeX Live distribution, so a download without it would not compile.
+%%
+%% Class options: a colour theme (blue/red/green/purple/orange/cyan) and an
+%% article type (fullpaper/letter/poster/survey/shortpaper/artpaper).
+\documentclass[blue,fullpaper]{ludusofficial}
+
+%% Document metadata — shown in the page header/footer banner.
+\journalname{LUDUS}
+\journalsubtitle{International Journal of Game Studies}
+\conferencename{LUDUS 2026}
+\publicationyear{2026}
+
+%% DOI (optional — leave the line out entirely if not yet assigned)
+%\articledoi{10.1234/ludus.2026.example}
+
+%% Article information
+\title{Difficulty Curves as Rhetorical Devices: Pacing in Roguelike Design}
+\shorttitle{Difficulty Curves as Rhetoric}
+\shortauthor{Ada Lovelace \& Grace Hopper}
+
+\author{%
+    \textbf{Ada Lovelace}\textsuperscript{1}, \textbf{Grace Hopper}\textsuperscript{2}\\[0.2cm]
+    \mdseries\small\textsuperscript{1}Department of Game Design, University of Somewhere\\
+    \small\textsuperscript{2}School of Interactive Media, Institute of Computing\\
+    \small Corresponding: a.lovelace@example.ac.uk
+}
+
+\begin{document}
+
+%% Abstract and keywords must be defined BEFORE \maketitle.
+\begin{abstract}
+Roguelikes are frequently described as "punishing," yet their difficulty
+curves are rarely analysed as a deliberate communicative device rather than
+an incidental design cost. We argue that permadeath-driven pacing functions
+rhetorically: escalating failure states teach players to read a run's risk
+profile before committing to it, turning death into feedback rather than
+punishment. Drawing on case studies of three commercially released
+roguelikes, we identify three pacing patterns — front-loaded attrition,
+plateaued escalation, and spike-and-recover — and show that each
+communicates a different relationship between player skill and player luck.
+We conclude that difficulty curve design is best understood as an argument
+the game makes about what kind of failure is meaningful.
+\end{abstract}
+
+\keywords{roguelike; difficulty curve; procedural rhetoric; game pacing; permadeath; player feedback}
+
+%% Maketitle creates the full-width header with abstract and keywords, then
+%% starts the two-column body layout.
+\maketitle
+
+%% From here, content is in two columns.
+\section{Introduction}
+
+Roguelikes make failure routine: a run ends, progress resets, and the player
+begins again with only the knowledge gained, not the items or levels lost.
+This design is often framed as punishing by contrast with genres that
+preserve player progress unconditionally. We take a different view: a
+roguelike's difficulty curve is not simply "how hard the game is" but a
+structured argument about which kinds of failure the game treats as
+meaningful information versus arbitrary bad luck.
+
+\subsection{Why Pacing, Not Just Difficulty}
+
+Difficulty alone is a scalar; pacing is a curve, and a curve has shape.
+Two roguelikes can share an identical average failure rate while
+communicating entirely different things about player agency, depending on
+\emph{when} in a run failure becomes likely and how sharply the odds shift
+once it does.
+
+\section{Three Pacing Patterns}
+
+We analysed run-length and cause-of-death data from three commercially
+released roguelikes spanning distinct design lineages, and identify three
+recurring pacing shapes.
+
+\subsection{Front-Loaded Attrition}
+
+Difficulty is highest in the opening minutes, when the player has the
+fewest resources to respond to it, then eases as build-defining choices
+compound. This pattern rewards players who treat early runs as
+information-gathering rather than progress, echoing the "legible failure"
+argument in procedural rhetoric~\cite{bogost2007}.
+
+\subsection{Plateaued Escalation}
+
+Difficulty rises in discrete steps rather than continuously, holding steady
+across several encounters before jumping at fixed narrative or structural
+checkpoints. Players can therefore read their current plateau as a signal
+of what the game expects them to already know, similar to the
+environmental legibility cues described by~\cite{jenkins2004}.
+
+\subsection{Spike-and-Recover}
+
+Isolated high-variance encounters interrupt an otherwise gentle curve,
+after which difficulty drops back below the pre-spike baseline. This
+pattern communicates that a single bad outcome is a local event, not
+evidence the run itself is doomed — the closest of the three to Murray's
+notion of a game world that remains legible and navigable even when hostile
+to the player~\cite{murray1997}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\columnwidth]{testImg.jpg}
+    \caption{Illustrative reference image used as a figure placeholder in this starter; replace with your own.}
+    \label{fig:example}
+\end{figure}
+
+\section{Discussion}
+
+Table~\ref{tab:patterns} summarises how each pattern differs in where
+difficulty concentrates within a run and what it implies about the source
+of failure.
+
+\begin{table}[h!]
+\centering
+\caption{Three difficulty-curve pacing patterns and what each communicates about failure.}
+\label{tab:patterns}
+\begin{tabular}{lcc}
+\hline
+\textbf{Pattern} & \textbf{Peak timing} & \textbf{Implied cause} \\
+\hline
+Front-loaded  & Early    & Player unpreparedness \\
+Plateaued     & Stepped  & Structural checkpoint \\
+Spike-recover & Isolated & Local bad luck \\
+\hline
+\end{tabular}
+\end{table}
+
+None of these patterns is inherently more punishing in aggregate terms —
+they can share an identical overall failure rate — but they differ sharply
+in what a player is entitled to conclude from a death. A front-loaded curve
+tells the player to treat early deaths as tuition; a spike-and-recover curve
+tells them not to over-read a single bad encounter. Conflating these as
+"just difficulty" erases a design decision that is doing real
+communicative work.
+
+\section{Conclusion}
+
+Treating a roguelike's difficulty curve as a rhetorical structure rather
+than a tuning parameter reframes what "fair" failure means in the genre: a
+curve is fair not because it is gentle, but because it accurately signals
+which failures are lessons and which are noise. Future work could extend
+this framework beyond roguelikes to other permadeath-adjacent genres, and
+test whether players' own accounts of "unfair" deaths track the pacing
+pattern we identify here or diverge from it.
+
+\begin{acknowledgments}
+We thank playtesters who shared run logs used to identify the pacing
+patterns discussed here.
+\end{acknowledgments}
+
+%% References using BibTeX.
+%% Compile with: pdflatex -> bibtex -> pdflatex -> pdflatex (or xelatex in
+%% place of pdflatex — this class supports both; see the Building note in
+%% README.md for why xelatex is the default in engine.txt).
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

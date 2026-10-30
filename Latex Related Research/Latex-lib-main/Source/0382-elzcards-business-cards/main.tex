@@ -1,0 +1,43 @@
+\documentclass{article}
+
+\usepackage{elzcards}
+\usepackage[landscape,letterpaper,vmargin={0mm,0mm},hmargin={0mm,0mm}]{geometry}
+\usepackage{xcolor}
+
+\definecolor{ink}{HTML}{243447}
+\definecolor{accent}{HTML}{D65A31}
+\definecolor{muted}{HTML}{5F6B76}
+
+\newcommand{\frontcard}{%
+  \vspace*{7mm}%
+  \begin{center}
+    {\color{accent}\Large\bfseries NORTHSTAR STUDIO}\par
+    \vspace{3mm}
+    {\color{ink}\Huge\bfseries Mara Jensen}\par
+    \vspace{1mm}
+    {\color{muted}\large Product designer}\par
+    \vspace{6mm}
+    {\color{ink}\small mara@northstar.example\quad northstar.example}\par
+    {\color{ink}\small +1 415 555 0148}
+  \end{center}%
+}
+
+\newcommand{\backcard}{%
+  \vspace*{10mm}%
+  \begin{center}
+    {\color{accent}\Large N}\par
+    \vspace{4mm}
+    {\color{ink}\large Design systems for useful products}\par
+    \vfill
+    {\color{muted}\small San Francisco \textbullet\ Remote worldwide}
+  \end{center}%
+}
+
+\begin{document}
+
+% BusinessCard stores one design; MakeBC imposes it on a sheet at the
+% package's default 3.5in x 2in business-card size.
+\BusinessCard{\frontcard}[\backcard]
+\MakeBC[lines,line thickness=0.35pt,crop color=accent]
+
+\end{document}

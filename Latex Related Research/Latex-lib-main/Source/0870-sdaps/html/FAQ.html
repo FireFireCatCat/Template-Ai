@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Frequently Asked Questions &#8212; sdaps-class 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/sdapstex.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Creating custom layouts using base commands" href="customlayout.html" />
+    <link rel="prev" title="Welcome to sdaps-class’s documentation!" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="customlayout.html" title="Creating custom layouts using base commands"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to sdaps-class’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Frequently Asked Questions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="frequently-asked-questions">
+<h1>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="numeric-field-input">
+<h2>Numeric field input<a class="headerlink" href="#numeric-field-input" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes the input of longer numbers is required. Freeform text cannot be used
+so that other methods are necessary. The method presented here is a field of
+checkboxes, but further options may exist depending on the solution:</p>
+<ul class="simple">
+<li><p>Use of a unique questionnaire ID and be careful when handing out the questionnaire</p></li>
+<li><p><a class="reference internal" href="customlayout.html#codeboxes"><span class="std std-ref">Codeboxes</span></a>, i.e. text fields where a barcode sticker is placed</p></li>
+</ul>
+<p>In this example, each digit of an 8 digit number is asked for using an
+<a class="reference internal" href="sdapsclassic.html#optiongroup" title="optiongroup"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">optiongroup</span></code></a> environment.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-1" class="tab-code" name="tab-group-1" ><label for="tab-code-1" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-1" class="tab-rendering" name="tab-group-1" checked><label for="tab-rendering-1" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>optiongroup<span class="nb">}</span>[vertical]<span class="nb">{</span>Please enter the 8 digit number<span class="nb">}</span>
+  <span class="c">% Set the value as it would be 1 based otherwise, so we can just</span>
+  <span class="c">% use it directly from the data export</span>
+  <span class="k">\choice</span><span class="na">[val=0]</span><span class="nb">{</span>0<span class="nb">}</span>
+  <span class="k">\choice</span><span class="na">[val=1]</span><span class="nb">{</span>1<span class="nb">}</span>
+  <span class="k">\choice</span><span class="na">[val=2]</span><span class="nb">{</span>2<span class="nb">}</span>
+  <span class="k">\choice</span><span class="na">[val=3]</span><span class="nb">{</span>3<span class="nb">}</span>
+  <span class="k">\choice</span><span class="na">[val=4]</span><span class="nb">{</span>4<span class="nb">}</span>
+  <span class="k">\choice</span><span class="na">[val=5]</span><span class="nb">{</span>5<span class="nb">}</span>
+  <span class="k">\choice</span><span class="na">[val=6]</span><span class="nb">{</span>6<span class="nb">}</span>
+  <span class="k">\choice</span><span class="na">[val=7]</span><span class="nb">{</span>7<span class="nb">}</span>
+  <span class="k">\choice</span><span class="na">[val=8]</span><span class="nb">{</span>8<span class="nb">}</span>
+  <span class="k">\choice</span><span class="na">[val=9]</span><span class="nb">{</span>9<span class="nb">}</span>
+  <span class="k">\question</span><span class="na">[text=d1]</span><span class="nb">{</span><span class="s">$</span><span class="nv">\bigsqcup</span><span class="s">$</span><span class="nb">}</span>
+  <span class="k">\question</span><span class="na">[text=d2]</span><span class="nb">{</span><span class="s">$</span><span class="nv">\bigsqcup</span><span class="s">$</span><span class="nb">}</span>
+  <span class="k">\question</span><span class="na">[text=d3]</span><span class="nb">{</span><span class="s">$</span><span class="nv">\bigsqcup</span><span class="s">$</span><span class="nb">}</span>
+  <span class="k">\question</span><span class="na">[text=d4]</span><span class="nb">{</span><span class="s">$</span><span class="nv">\bigsqcup</span><span class="s">$</span><span class="nb">}</span>
+  <span class="k">\question</span><span class="na">[text=d5]</span><span class="nb">{</span><span class="s">$</span><span class="nv">\bigsqcup</span><span class="s">$</span><span class="nb">}</span>
+  <span class="k">\question</span><span class="na">[text=d6]</span><span class="nb">{</span><span class="s">$</span><span class="nv">\bigsqcup</span><span class="s">$</span><span class="nb">}</span>
+  <span class="k">\question</span><span class="na">[text=d7]</span><span class="nb">{</span><span class="s">$</span><span class="nv">\bigsqcup</span><span class="s">$</span><span class="nb">}</span>
+  <span class="k">\question</span><span class="na">[text=d8]</span><span class="nb">{</span><span class="s">$</span><span class="nv">\bigsqcup</span><span class="s">$</span><span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>optiongroup<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-2c3a847be98e0b18c8f30e20a7f2031e80a45561.svg" alt="\begin{optiongroup}[vertical]{Please enter the 8 digit number}
+  % Set the value as it would be 1 based otherwise, so we can just
+  % use it directly from the data export
+  \choice[val=0]{0}
+  \choice[val=1]{1}
+  \choice[val=2]{2}
+  \choice[val=3]{3}
+  \choice[val=4]{4}
+  \choice[val=5]{5}
+  \choice[val=6]{6}
+  \choice[val=7]{7}
+  \choice[val=8]{8}
+  \choice[val=9]{9}
+  \question[text=d1]{$\bigsqcup$}
+  \question[text=d2]{$\bigsqcup$}
+  \question[text=d3]{$\bigsqcup$}
+  \question[text=d4]{$\bigsqcup$}
+  \question[text=d5]{$\bigsqcup$}
+  \question[text=d6]{$\bigsqcup$}
+  \question[text=d7]{$\bigsqcup$}
+  \question[text=d8]{$\bigsqcup$}
+\end{optiongroup}" /></p>
+</div></div><p class="caption">Using optiongroup to input longer numbers</p></div></div>
+<div class="section" id="how-can-one-use-images">
+<h2>How can one use images?<a class="headerlink" href="#how-can-one-use-images" title="Permalink to this headline">¶</a></h2>
+<p>The normal LaTeX commands will work as usual. As the image needs to be
+available during and after the <cite>setup</cite> step of SDAPS extra steps will be
+required though. The basic problem is that the given LaTeX file is copied
+into a new directory and the images may not be available then. The following
+ways exist to deal with this:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Copy all images by passing <cite>–add</cite> for each image</p></li>
+<li><p>Place all images into a directory and use <cite>–add</cite> on the directory</p></li>
+</ol>
+</div></blockquote>
+<p>The second option is a good strategy if you have more images. In the example
+below a directory called <cite>images</cite> is used which has one file called <cite>sdaps.png</cite>.
+The <cite>\graphicspath</cite> command is used so that the image can be refered to by its
+filename rather than the full relative path.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-2" class="tab-code" name="tab-group-2" ><label for="tab-code-2" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-2" class="tab-rendering" name="tab-group-2" checked><label for="tab-rendering-2" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span>The SDAPS logo for the website is <span class="k">\raisebox</span><span class="nb">{</span>-0.8cm<span class="nb">}{</span><span class="k">\includegraphics</span><span class="na">[width=2cm]</span><span class="nb">{</span>sdaps.png<span class="nb">}}</span>.
+</pre></div>
+Required code in preamble:<div class="highlight"><pre><span></span><span class="k">\usepackage</span><span class="nb">{</span>graphicx<span class="nb">}</span>
+<span class="c">% Do not add a leading ./ as that will cause issues under some conditions!</span>
+<span class="k">\graphicspath</span><span class="nb">{{</span>images/<span class="nb">}}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-d3d2ac4eea088d60f5d7fea1d2102a6f07432254.svg" alt="The SDAPS logo for the website is \raisebox{-0.8cm}{\includegraphics[width=2cm]{sdaps.png}}." /></p>
+</div></div><p class="caption">Using `graphicx` together with `\\graphicspath` to place images into a subdirectory</p></div><p>With that done, you need to run the following to setup the project</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sdaps setup tex PROJECT_DIR questionnaire.tex --add images
+</pre></div>
+</div>
+</div>
+<div class="section" id="adjusting-corner-mark-positions">
+<h2>Adjusting corner mark positions<a class="headerlink" href="#adjusting-corner-mark-positions" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to adjust the positions of the corner marks. Currently this
+needs to be done manually. You can override the positions and also update
+the default page margins using code like the following in the preamble.</p>
+<p>This requires SDAPS version 1.9.10 or later.</p>
+<div class="highlight-tex notranslate"><div class="highlight"><pre><span></span><span class="c">% Re-define the default margins (10mm -&gt; 12mm, 12mm -&gt; 15mm)</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\dim</span><span class="nb">_</span>gset:Nn <span class="k">\g</span><span class="nb">_</span>sdaps<span class="nb">_</span>edge<span class="nb">_</span>left<span class="nb">_</span>margin<span class="nb">_</span>dim <span class="nb">{</span> 12mm <span class="nb">}</span>
+<span class="k">\dim</span><span class="nb">_</span>gset:Nn <span class="k">\g</span><span class="nb">_</span>sdaps<span class="nb">_</span>edge<span class="nb">_</span>right<span class="nb">_</span>margin<span class="nb">_</span>dim <span class="nb">{</span> 12mm <span class="nb">}</span>
+<span class="k">\dim</span><span class="nb">_</span>gset:Nn <span class="k">\g</span><span class="nb">_</span>sdaps<span class="nb">_</span>edge<span class="nb">_</span>top<span class="nb">_</span>margin<span class="nb">_</span>dim <span class="nb">{</span> 15mm <span class="nb">}</span>
+<span class="k">\dim</span><span class="nb">_</span>gset:Nn <span class="k">\g</span><span class="nb">_</span>sdaps<span class="nb">_</span>edge<span class="nb">_</span>bottom<span class="nb">_</span>margin<span class="nb">_</span>dim <span class="nb">{</span> 15mm <span class="nb">}</span>
+<span class="k">\ExplSyntaxOff</span>
+
+<span class="c">% Modify the top, bottom and left/right margins, these should be 2mm larger</span>
+<span class="k">\geometry</span><span class="nb">{</span>top=15mm<span class="nb">}</span>
+<span class="k">\geometry</span><span class="nb">{</span>bottom=17mm<span class="nb">}</span>
+<span class="k">\geometry</span><span class="nb">{</span>hmargin=14mm<span class="nb">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Frequently Asked Questions</a><ul>
+<li><a class="reference internal" href="#numeric-field-input">Numeric field input</a></li>
+<li><a class="reference internal" href="#how-can-one-use-images">How can one use images?</a></li>
+<li><a class="reference internal" href="#adjusting-corner-mark-positions">Adjusting corner mark positions</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to sdaps-class’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="customlayout.html"
+                        title="next chapter">Creating custom layouts using base commands</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/FAQ.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="customlayout.html" title="Creating custom layouts using base commands"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to sdaps-class’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Frequently Asked Questions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Benjamin Berg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

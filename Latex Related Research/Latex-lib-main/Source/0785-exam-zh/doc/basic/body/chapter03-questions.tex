@@ -1,0 +1,761 @@
+% !TeX root = ../exam-zh-doc-basic.tex
+
+\section{创建题目}
+
+本章详细介绍如何创建各种题型。掌握这些内容后，你就能制作大部分常见的试卷了。
+
+\subsection{试卷抬头}
+
+试卷抬头包括标题、科目、学生信息栏和注意事项等内容。
+
+\subsubsection{标题和科目}
+
+\begin{function}{\title,\subject,\maketitle}
+  \begin{examzhsyntax}
+    \title(*\marg{标题}*)
+    \subject(*\oarg{宽度}\marg{科目}*)
+    \maketitle
+  \end{examzhsyntax}
+
+  设置试卷标题和科目，使用 |\maketitle| 生成。
+\end{function}
+
+\begin{latexcode}[deletetexcs={\documentclass},morekeywords={\documentclass}]
+  \documentclass{exam-zh}
+  \begin{document}
+
+  \title{2024年春季期中考试}
+  \subject{数学}
+  \maketitle
+
+  % ... 题目内容
+  \end{document}
+\end{latexcode}
+
+\textbf{说明：}
+\begin{itemize}
+  \item |\title| 设置主标题
+  \item |\subject| 设置科目，可选参数 \meta{宽度} 控制科目文字分散对齐的宽度
+  \item |\maketitle| 必须在设置标题和科目后使用，才能显示
+\end{itemize}
+
+\subsubsection{学生信息栏}
+
+\begin{function}{\information}
+  \begin{examzhsyntax}
+    \information(*\oarg{分隔符}\marg{信息内容}*)
+  \end{examzhsyntax}
+
+  创建学生信息填写栏，默认分隔符为 |\quad|。
+\end{function}
+
+\begin{latexcode}
+  \information{
+    姓名\underline{\hspace{6em}},
+    班级\underline{\hspace{6em}},
+    座号\underline{\hspace{4em}}
+  }
+\end{latexcode}
+
+\textbf{提示：}
+\begin{itemize}
+  \item 使用 |\underline{\hspace{长度}}| 创建填写下划线
+  \item 常用长度单位：|em|（字符宽度）、|cm|（厘米）
+  \item 可以用逗号、|\quad| 等分隔各项
+\end{itemize}
+
+\subsubsection{注意事项}
+
+\begin{function}{notice 环境}
+  \begin{examzhsyntax}
+    \begin{notice}(*\oarg{选项}*)
+      \item 注意事项1
+      \item 注意事项2
+    \end{notice}
+  \end{examzhsyntax}
+
+  创建注意事项列表，自动加粗标题。
+\end{function}
+
+\begin{latexcode}
+  \begin{notice}
+    \item 本试卷共 3 大题，满分 100 分。
+    \item 考试时间 90 分钟。
+    \item 请用黑色签字笔在答题卡上作答。
+  \end{notice}
+\end{latexcode}
+
+\textbf{自定义标题：}
+
+\begin{latexcode}
+  \begin{notice}[label = {考生须知：}]
+    \item ...
+  \end{notice}
+\end{latexcode}
+
+
+\subsection{选择题}
+
+选择题由 |question| 环境和 |choices| 环境组合使用。
+
+\subsubsection{基本用法}
+
+\begin{latexcode}
+  \begin{question}
+    下列哪个数是质数？\paren[B]
+    \begin{choices}
+      \item $4$
+      \item* $5$  % 用星号标记正确答案
+      \item $6$
+      \item $8$
+    \end{choices}
+  \end{question}
+\end{latexcode}
+
+\textbf{关键点：}
+\begin{enumerate}
+  \item |\begin{question}...\end{question}| 创建题目
+  \item |\paren[B]| 添加答案括号，|[B]| 表示正确答案是选项 B（默认隐藏）
+  \item |\begin{choices}...\end{choices}| 创建选项列表
+  \item 每个 |\item| 是一个选项，自动标号为 A、B、C、D...；正确选项可以写成 |\item*|
+\end{enumerate}
+
+\subsubsection{标记和显示正确选项}
+
+|\item*| 只在源码中记录正确选项，默认不会改变学生版外观。需要显示答案时，可以统一着色正确选项：
+
+\begin{latexcode}
+  \examsetup{
+    choices/show-answer = true,
+    choices/answer-color = red
+  }
+
+  \begin{choices}
+    \item 错误选项
+    \item* 正确选项
+    \item 错误选项
+    \item* 另一个正确选项
+  \end{choices}
+\end{latexcode}
+
+关闭 |choices/show-answer| 后，星号仍会被识别并移除，但标签和内容恢复普通颜色。该设置独立于 |question/show-answer|，方便在 |\ExamPrintAnswerSet| 中单独配置教师版。
+
+\subsubsection{显示分值}
+
+默认情况下，题目分值是隐藏的。
+
+\begin{latexcode}
+  % 全局显示所有题目的分值
+  \examsetup{
+    question/show-points = true
+  }
+
+  \begin{question}[points = 5]
+    题目内容...（本题5分）
+  \end{question}
+\end{latexcode}
+
+\textbf{单独设置某题分值：}
+
+\begin{latexcode}
+  \begin{question}[points = 10]
+    这道题10分...
+  \end{question}
+\end{latexcode}
+
+\subsubsection{控制选项排列}
+
+选项默认会自动排列成合适的列数。
+
+\textbf{手动指定列数：}
+
+\begin{latexcode}
+  % 全局设置
+  \examsetup{
+    choices/columns = 2  % 所有选择题排成2列
+  }
+
+  % 单独设置某题
+  \begin{choices}[columns = 4]  % 这题排成4列
+    \item ...
+  \end{choices}
+\end{latexcode}
+
+\textbf{强制单列（选项内容很长时）：}
+
+\begin{latexcode}
+  \begin{choices}[columns = 1]
+    \item 这是一个很长的选项内容...
+    \item 另一个很长的选项...
+  \end{choices}
+\end{latexcode}
+
+\subsubsection{选项标签样式}
+
+默认选项标签是 A、B、C、D...，可以自定义。
+
+\begin{latexcode}
+  % 使用数字标签
+  \begin{choices}[label = \arabic*.]
+    \item 选项1
+    \item 选项2
+  \end{choices}
+
+  % 使用带圈数字
+  \begin{choices}[label = \circlednumber*]
+    \item 第一个选项
+    \item 第二个选项
+  \end{choices}
+\end{latexcode}
+
+\subsubsection{多选题}
+
+多选题使用同样的方式，只是答案可以有多个。
+
+\begin{latexcode}
+  \begin{question}
+    下列哪些数是质数？（多选）\paren[BD]
+    \begin{choices}
+      \item $4$
+      \item* $5$
+      \item $6$
+      \item* $7$
+    \end{choices}
+  \end{question}
+\end{latexcode}
+
+\subsubsection{嵌套使用限制}
+
+\textbf{问题：}|choices| 环境在某些情况下不能正常工作。
+
+\textbf{限制 1：在深层嵌套列表中使用}
+
+\begin{latexcode}
+  % 错误：多层 enumerate 嵌套时 choices 可能错位
+  \begin{question}
+    \begin{enumerate}
+      \item 第一问
+        \begin{enumerate}
+          \item 小问(a)：请选择...\paren[A]
+            \begin{choices}  % 可能显示异常
+              \item ...
+            \end{choices}
+        \end{enumerate}
+    \end{enumerate}
+  \end{question}
+\end{latexcode}
+
+\textbf{建议：}
+\begin{itemize}
+  \item 避免在两层及以上的 |enumerate| 嵌套中使用 |choices|
+  \item 如需小问，将选择题放在最外层
+  \item 或使用简单的文本列举：A. ... B. ... C. ... D. ...
+\end{itemize}
+
+\begin{tcolorbox}[colback=blue!5!white, colframe=blue!75!black, title=\textbf{推荐做法}]
+当解答题包含选择题小问时，采用以下结构：
+
+\begin{latexcode}
+\begin{problem}
+  已知函数 $f(x) = x^2 - 2x + 1$。
+  \begin{enumerate}
+    \item 求 $f(x)$ 的对称轴；
+    \item $f(x)$ 的图像与 $x$ 轴的交点个数是\paren[A]
+  \end{enumerate}
+
+  % 选项单独放在 enumerate 外面
+  （第2问选项）
+  \begin{choices}
+    \item 0个  \item 1个  \item 2个  \item 3个
+  \end{choices}
+\end{problem}
+\end{latexcode}
+\end{tcolorbox}
+
+\textbf{限制 2：与 wrapstuff 图文绕排冲突}
+
+\begin{latexcode}
+  % 错误：图片绕排后 choices 位置错乱
+  \begin{question}
+    \begin{wrapstuff}{0.3\textwidth}
+      \includegraphics{fig.png}
+    \end{wrapstuff}
+    题目文字...\paren[A]
+    \begin{choices}  % 会错位
+      \item ...
+    \end{choices}
+  \end{question}
+\end{latexcode}
+
+\textbf{解决方案：}
+\begin{enumerate}
+  \item 使用 |minipage| 布局代替 |wrapstuff|
+  \item 将图片放在 |choices| 环境之后
+  \item 或将图片居中放置，不使用绕排
+\end{enumerate}
+
+详见"常见场景"章节的"图文混排详解"小节。
+
+\textbf{限制 3：在 minipage 中使用}
+
+在 |minipage| 环境中使用 |choices| 时可能出现宽度计算问题：
+
+\begin{latexcode}
+  % 可能需要手动指定列数
+  \begin{minipage}{0.5\textwidth}
+    \begin{question}
+      题目...\paren[A]
+      \begin{choices}[columns = 1]  % 手动指定单列
+        \item ...
+      \end{choices}
+    \end{question}
+  \end{minipage}
+\end{latexcode}
+
+
+\subsection{填空题}
+
+填空题使用 |\fillin| 命令创建填空位置。
+
+\subsubsection{基本用法}
+
+\begin{latexcode}
+  \begin{question}
+    圆周率 $\uppi \approx$ \fillin[3.14]（保留两位小数）。
+  \end{question}
+
+  \begin{question}
+    $1 + 1 = $ \fillin[2]。
+  \end{question}
+\end{latexcode}
+
+\textbf{说明：}
+\begin{itemize}
+  \item |\fillin[答案]| 创建填空，答案默认隐藏
+  \item 答案在 |\examsetup{question/show-answer = true}| 时显示
+  \item 无答案时自动生成固定长度的下划线
+\end{itemize}
+
+\subsubsection{调整填空宽度}
+
+\textbf{全局设置：}
+
+\begin{latexcode}
+  \examsetup{
+    fillin/width = 4em  % 默认宽度
+  }
+\end{latexcode}
+
+\textbf{单独设置：}
+
+\begin{latexcode}
+  % 这个填空特别长
+  计算结果：\fillin[width = 8em][很长的答案内容]
+
+  % 这个填空短一些
+  答：\fillin[width = 2em][是]
+\end{latexcode}
+
+\subsubsection{特殊符号使用注意事项}
+
+填空题答案中使用某些特殊符号时需要转义或特殊处理。
+
+\textbf{方括号 |[]| 冲突：}
+
+\begin{latexcode}
+  % 错误：方括号会被解析为可选参数
+  区间为 \fillin[[2,3)]
+
+  % 正确：用花括号包裹整个答案
+  区间为 \fillin[{$[2,3)$}]
+
+  % 正确：不配对的方括号也需要花括号保护
+  区间为 \fillin[{$(−\infty, 1]$}]
+\end{latexcode}
+
+\textbf{其他特殊符号：}
+
+\begin{center}
+\begin{tabular}{lll}
+  \hline
+  \textbf{符号} & \textbf{错误示例} & \textbf{正确写法} \\
+  \hline
+  百分号 |%| & |\fillin[50%]| & |\fillin[50\%]| \\
+  美元符号 |\$| & |\fillin[$100]| & |\fillin[\$100]| \\
+  和号 |&| & |\fillin[A&B]| & |\fillin[A\&B]| \\
+  下划线 |_| & |\fillin[a_1]| & |\fillin[a\_1]| 或 |\fillin[$a_1$]| \\
+  花括号 |\{| |\}| & |\fillin[{1,2}]| & |\fillin[\{1,2\}]| 或 |\fillin[{$\{1,2\}$}]| \\
+  \hline
+\end{tabular}
+\end{center}
+
+\begin{tcolorbox}[colback=yellow!10!white, colframe=orange!75!black, title=\textbf{易错点提示}]
+\textbf{规则总结：}
+\begin{enumerate}
+  \item 如果答案包含方括号 |[| |]|，必须用花括号 |\{| |\}| 包裹整个答案
+  \item 如果答案包含数学符号，建议用 |$...$| 包裹（如 |\fillin[$[2,3)$]|）
+  \item LaTeX 特殊字符（|% $ & _ { } # ^ ~|）需要转义（加反斜杠 |\|）
+  \item 不确定时，用花括号保护总是安全的：|\fillin[{答案}]|
+\end{enumerate}
+\end{tcolorbox}
+
+\textbf{数学符号答案：}
+
+数学符号应该用数学模式：
+
+\begin{latexcode}
+  % 错误：数学符号直接写
+  答案是 \fillin[x^2 + 1]
+
+  % 正确：用 $ $ 包裹
+  答案是 \fillin[$x^2 + 1$]
+\end{latexcode}
+
+\textbf{长答案换行：}
+
+显示答案时，普通 |\fillin| 会在答案自然宽度超过当前行宽后自动切换为可换行排版。带星号的 |\fillin*| 用于无论内容长短都强制采用可换行排版：
+
+\begin{latexcode}
+  % 短答案：保持单行
+  填空：\fillin[3.14]
+
+  % 长答案：普通命令自动换行
+  填空：\fillin[这是一个比较长的答案内容，需要在题目中换行显示]
+
+  % 显式强制可换行
+  填空：\fillin*[短答案]
+
+  % 不显示答案时，也可以配合 width 控制占位宽度
+  填空：\fillin[width = 8em][长答案]
+\end{latexcode}
+
+\subsubsection{填空样式}
+
+默认是下划线样式，也可以改成括号、圆圈、矩形或纯留白。
+
+\begin{latexcode}
+  % 全局设置为括号样式
+  \examsetup{
+    fillin/type = paren
+  }
+
+  答案在括号里：\fillin[答案]
+\end{latexcode}
+
+\textbf{可选样式：}
+\begin{itemize}
+  \item |line|（默认）：下划线 \fillin[答案]
+  \item |paren|：括号 \fillin[type=paren][答案]
+  \item |circle|：圆圈 \fillin[type=circle][答案]
+  \item |rectangle|：方框 \fillin[type=rectangle][答案]
+  \item |blank|：留白（无线）
+\end{itemize}
+
+\subsubsection{数学公式中的填空}
+
+在数学环境中使用填空，注意语法：
+
+\begin{latexcode}
+  \begin{question}
+    解方程：$x^2 - 5x + 6 = 0$，得 $x_1 = $ \fillin[2]，$x_2 = $ \fillin[3]。
+  \end{question}
+
+  \begin{question}
+    化简：$(x + 1)^2 = $ \fillin[$x^2 + 2x + 1$]。
+  \end{question}
+\end{latexcode}
+
+\textbf{提示：}数学公式答案仍然要放在 |$...$| 中，例如 |\fillin[$x^2 + 1$]|。
+
+
+\subsection{解答题}
+
+解答题使用 |problem| 环境和 |solution| 环境。
+
+\subsubsection{基本结构}
+
+\begin{latexcode}
+  \begin{problem}[points = 10]
+    计算：$(x + 1)^2$
+
+    \begin{solution}
+      解：
+
+      $(x + 1)^2 = (x + 1)(x + 1)$
+
+      $= x^2 + 2x + 1$
+
+      答：$(x + 1)^2 = x^2 + 2x + 1$
+    \end{solution}
+  \end{problem}
+\end{latexcode}
+
+\textbf{说明：}
+\begin{itemize}
+  \item |problem| 环境创建解答题（类似 |question|，但排版有区别）
+  \item |[points = 10]| 设置分值
+  \item |solution| 环境包含解答过程（默认隐藏）
+\end{itemize}
+
+\textbf{推荐结构：}请把 |solution| 放在它所对应的 |problem| 或
+|question| 环境内部，并置于题干之后。这样题目与解答的对应关系最清楚，
+局部设置的作用域也与该题保持一致。下面是一个可直接编译的最小示例：
+
+\begin{latexcode}[deletetexcs={\documentclass},morekeywords={\documentclass}]
+  \documentclass{exam-zh}
+  \examsetup{solution/show-solution = show-stay}
+  \begin{document}
+    \begin{question}
+      $\uppi \approx$ \fillin[3.14]（保留两位小数）。
+      \begin{solution}
+        $\uppi \approx 3.14$。
+      \end{solution}
+    \end{question}
+  \end{document}
+\end{latexcode}
+
+为兼容旧文档，紧跟在题目环境之后的外置 |solution| 目前仍可用于
+|hide|、|show-stay| 和 |show-move|。但外置写法没有结构上的归属关系，
+若中间插入另一道题，移动到文末的解答题号也会关联到后一道题；因此不建议在
+新文档中使用。无论采用哪种写法，都应让 |solution| 紧邻其对应题目。
+
+\subsubsection{显示解答}
+
+控制解答的显示方式：
+
+\begin{latexcode}
+  \examsetup{
+    solution/show-solution = show-stay  % 原位显示
+    % solution/show-solution = show-move  % 移到试卷最后
+    % solution/show-solution = hide       % 隐藏（默认）
+  }
+\end{latexcode}
+
+\textbf{三种模式：}
+\begin{enumerate}
+  \item |hide|（默认）：完全隐藏，生成学生版
+  \item |show-stay|：在原位显示，适合教师版
+  \item |show-move|：移到试卷最后统一显示
+\end{enumerate}
+
+\subsubsection{给分点标记}
+
+在解答过程中标记给分点：
+
+\begin{latexcode}
+  \begin{solution}
+    解：设方程两根为 $x_1$、$x_2$。\score{2}
+
+    由韦达定理得：
+    $x_1 + x_2 = 5$ \score{3}
+
+    $x_1 \cdot x_2 = 6$ \score{3}
+
+    解得 $x_1 = 2$，$x_2 = 3$。\score{2}
+  \end{solution}
+\end{latexcode}
+
+\textbf{说明：}|\score{分数}| 命令标记该步骤的分值，有助于阅卷。
+
+\subsubsection{小问题}
+
+解答题中可以包含多个小问：
+
+\begin{latexcode}
+  \begin{problem}[points = 12]
+    已知函数 $f(x) = x^2 - 2x + 1$。
+    \begin{enumerate}
+      \item 求 $f(x)$ 的最小值；\score{5}
+      \item 求 $f(x)$ 的对称轴；\score{4}
+      \item 画出 $f(x)$ 的图像。\score{3}
+    \end{enumerate}
+
+    \begin{solution}
+      \begin{enumerate}
+        \item 配方得 $f(x) = (x-1)^2$，
+              最小值为 $0$。
+        \item 对称轴为 $x = 1$。
+        \item （图像略）
+      \end{enumerate}
+    \end{solution}
+  \end{problem}
+\end{latexcode}
+
+
+\subsection{其他题型}
+
+\subsubsection{判断题}
+
+模板没有单独的“判断题命令”，通常直接用 |\paren| 或 |\fillin| 自定义“对/错”即可。
+
+\begin{latexcode}
+  \begin{question}
+    $1 + 1 = 3$。\paren[错]
+  \end{question}
+
+  \begin{question}
+    圆的面积公式是 $S = \uppi r^2$。\fillin[对]
+  \end{question}
+\end{latexcode}
+
+\textbf{说明：}
+\begin{itemize}
+  \item |\paren[对]|、|\paren[错]| 适合直接在题干后给出判断位
+  \item |\fillin[对]|、|\fillin[错]| 适合需要横线或括号样式的场景
+  \item 答案仍由 |\examsetup{question/show-answer = true}| 控制显示
+\end{itemize}
+
+\subsubsection{列表题}
+
+一个大题下有多个并列的小问题：
+
+\begin{latexcode}
+  \begin{question}
+    计算下列各题：
+    \begin{enumerate}
+      \item $1 + 1 = $ \fillin[2]
+      \item $2 + 2 = $ \fillin[4]
+      \item $3 + 3 = $ \fillin[6]
+    \end{enumerate}
+  \end{question}
+\end{latexcode}
+
+
+\subsection{题号控制}
+
+\subsubsection{自动编号}
+
+题号默认从 1 开始自动递增，无需手动管理。
+
+\subsubsection{重置题号}
+
+在新的题型部分重置题号：
+
+\begin{latexcode}
+  \section{选择题}
+  \begin{question}
+    % 题号自动从 1 开始
+  \end{question}
+
+  \section{填空题}
+  \examsetup{question/index = 0}  % 重置题号
+  \begin{question}
+    % 题号重新从 1 开始
+  \end{question}
+\end{latexcode}
+
+\subsubsection{手动设置题号}
+
+从指定数字开始：
+
+\begin{latexcode}
+  \examsetup{question/index = 10}  % 下一题从 11 开始
+
+  \begin{question}
+    这是第 11 题...
+  \end{question}
+\end{latexcode}
+
+\subsubsection{题号样式}
+
+自定义题号格式：
+
+\begin{latexcode}
+  \examsetup{
+    question/label = \arabic*.,    % 1., 2., 3., ...
+    % question/label = (\arabic*), % (1), (2), (3), ...
+    % question/label = \Alph*.,    % A., B., C., ...
+  }
+\end{latexcode}
+
+
+\subsection{完整示例}
+
+下面是一份包含多种题型的完整试卷示例：
+
+\begin{tcolorbox}[colback=green!5!white, colframe=green!75!black, title=\textbf{完整示例说明}]
+此示例展示了一份标准试卷的完整结构，包含：
+\begin{itemize}
+  \item 试卷抬头（标题、科目、学生信息、注意事项）
+  \item 三种题型（选择题、填空题、解答题）
+  \item 题号重置和分值设置
+  \item 答案显示/隐藏的切换方式
+\end{itemize}
+
+\textbf{提示：}可复制此代码作为模板，也可参考 \file{examples-basic/01-first-exam.tex} 获取更实用的示例。
+\end{tcolorbox}
+
+\begin{latexcode}[deletetexcs={\documentclass},morekeywords={\documentclass}]
+  \documentclass{exam-zh}
+
+  % 显示答案（教师版）
+  % \examsetup{
+  %  question/show-answer = true,
+  %  solution/show-solution = show-stay
+  % }
+
+  \begin{document}
+
+  \title{2024年春季期中考试}
+  \subject{数学}
+  \maketitle
+
+  \information{
+    姓名\underline{\hspace{6em}},
+    班级\underline{\hspace{6em}}
+  }
+
+  \begin{notice}
+    \item 本试卷共 3 大题，满分 100 分。
+    \item 考试时间 90 分钟。
+  \end{notice}
+
+  \vspace{1em}
+
+  \section{选择题（每题5分，共10分）}
+
+  \begin{question}
+    $1 + 1 = $ \paren[C]
+    \begin{choices}
+      \item $0$  \item $1$  \item $2$  \item $3$
+    \end{choices}
+  \end{question}
+
+  \begin{question}
+    下列哪个是质数？\paren[B]
+    \begin{choices}
+      \item $4$  \item $5$  \item $6$  \item $8$
+    \end{choices}
+  \end{question}
+
+  \section{填空题（每题5分，共10分）}
+  \examsetup{question/index = 0}
+
+  \begin{question}
+    $\uppi \approx$ \fillin[3.14]（保留两位小数）。
+  \end{question}
+
+  \begin{question}
+    正方形边长5cm，面积是 \fillin[25] $\text{cm}^2$。
+  \end{question}
+
+  \section{解答题（共10分）}
+  \examsetup{question/index = 0}
+
+  \begin{problem}[points = 10]
+    计算：$(x + 1)^2$
+    \begin{solution}
+      解：$(x + 1)^2 = x^2 + 2x + 1$
+    \end{solution}
+  \end{problem}
+
+  \end{document}
+\end{latexcode}
+
+\textbf{使用提示：}
+\begin{itemize}
+  \item 复制此代码作为模板
+  \item 修改标题、科目和题目内容
+  \item 注释或取消注释 |\examsetup| 切换学生版/教师版
+  \item 参考 \file{examples-basic/} 目录中的更多示例
+\end{itemize}

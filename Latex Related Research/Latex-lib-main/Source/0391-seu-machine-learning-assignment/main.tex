@@ -1,0 +1,95 @@
+%! TEX program = pdflatex
+%% SEU Machine Learning Assignment starter -- seu-ml-assign.cls.
+%%
+%% The seu-ml-assign class itself is NOT included in this download: it
+%% ships with every modern TeX distribution (and with
+%% latextemplates.com's compiler), so bundling a copy would only risk
+%% pinning you to an older version than your own system already has.
+%%
+%% Class documentation: texdoc seu-ml-assign
+%%                       https://ctan.org/pkg/seu-ml-assign
+%% Licence: seu-ml-assign is MIT, (c) Teddy van Jerry (Wuqiong Zhao).
+%%
+%% engine.txt: pdflatex. THE CLASS'S lang=cn OPTION IS BROKEN -- found
+%% by actually compiling, not by reading: \DeclareOptionX{lang}{\def
+%% \@@lang{#1}} combined with \ifx\@@lang\@@lang@cn (comparing against
+%% \def\@@lang@cn{cn}) NEVER evaluates true when \@@lang is set via an
+%% xkeyval class option, even though a plain \def\A{cn}/\def\B{cn}/
+%% \ifx\A\B DOES compare equal outside of xkeyval's option-parsing path
+%% (verified with a minimal isolated test). \RequirePackage{ctex} is
+%% therefore silently skipped, and with no CJK font active every
+%% Chinese character in the document renders as PRECISELY NOTHING --
+%% no tofu, no warning, no error, just missing text and no course-name
+%% localisation, confirmed by rendering the preview and comparing
+%% against the .tex source. This is the "clean compile renders wrong"
+%% failure mode: compiling with lang=cn exits 0 with zero warnings.
+%% Given the class's own default mode (no lang= option) is English and
+%% genuinely works, this starter uses that mode rather than shipping a
+%% Chinese assignment that would silently lose all its Chinese text.
+\documentclass[oneside,solution]{seu-ml-assign}
+
+\title{Assignment}
+\author{Ada Lovelace}
+\studentID{20270001}
+\instructor{Prof. Example}
+\date{\today}
+\duedate{20:00, January 8, 2027}
+\assignno{4}
+\semester{SEU --- 2027 Spring}
+\mainproblem{Support Vector Machines and Kernel Methods}
+
+\begin{document}
+
+\maketitle
+
+\problem{Linearly Separable SVM}
+\subproblem{}
+Given a training set $\{(\mathbf{x}_i, y_i)\}_{i=1}^n$ with
+$y_i \in \{-1,+1\}$, write the primal optimization problem for the
+hard-margin support vector machine.
+
+\begin{proof}
+The hard-margin SVM primal problem is
+\begin{equation}
+    \min_{\mathbf{w},b} \ \frac{1}{2}\|\mathbf{w}\|^2
+    \quad \text{s.t.} \quad y_i(\mathbf{w}^\top\mathbf{x}_i + b) \ge 1,\ \forall i,
+\end{equation}
+which correctly classifies every training point while maximizing the
+geometric margin $2/\|\mathbf{w}\|$.
+\end{proof}
+
+\subproblem{}
+Write the corresponding Lagrangian dual problem.
+
+\begin{proof}
+Introducing multipliers $\alpha_i \ge 0$, the dual problem is
+\begin{equation}
+    \max_{\bm{\alpha}} \ \sum_{i=1}^n \alpha_i
+    - \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n \alpha_i\alpha_j y_i y_j \mathbf{x}_i^\top\mathbf{x}_j
+    \quad \text{s.t.} \quad \sum_{i=1}^n \alpha_i y_i = 0,\ \alpha_i \ge 0.
+\end{equation}
+The optimum satisfies $\mathbf{w}^* = \sum_i \alpha_i^* y_i \mathbf{x}_i$,
+with support vectors corresponding to $\alpha_i^* > 0$.
+\end{proof}
+
+\problem{Kernel Methods}
+\subproblem{}
+Prove that the Gaussian kernel
+$K(\mathbf{x},\mathbf{z}) = \exp(-\|\mathbf{x}-\mathbf{z}\|^2/2\sigma^2)$
+is a valid kernel (its Gram matrix is positive semi-definite).
+
+\begin{proof}
+Expand the Gaussian kernel as
+\begin{equation}
+    K(\mathbf{x},\mathbf{z}) = \exp\left(-\frac{\|\mathbf{x}\|^2}{2\sigma^2}\right)
+    \exp\left(\frac{\mathbf{x}^\top\mathbf{z}}{\sigma^2}\right)
+    \exp\left(-\frac{\|\mathbf{z}\|^2}{2\sigma^2}\right).
+\end{equation}
+The middle factor $\exp(\mathbf{x}^\top\mathbf{z}/\sigma^2)$ expands as
+an infinite series of polynomial kernels, each term of which is
+positive semi-definite; nonnegative combinations and pointwise
+(Schur) products of PSD kernels remain PSD, and the outer positive
+scalar factors preserve PSD-ness, so $K$ is a valid kernel.
+\end{proof}
+
+\end{document}

@@ -1,0 +1,102 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## Unreleased
+### Fixed
+- The reviewer number 0 is printed as "E" (for editor) instead of "0". This
+  fixes the labeling when `revnumtocomment` is active as individual comments
+  made by the editor will now be labeled "Comment E.1".
+
+### Added
+- Add new class option `revnumtoheader`, which adds a header line with the
+  current reviewer number.
+
+
+## [3.0.0] - 2026-06-24
+### Fixed
+- Fix labeling of comments
+- The `\editor` and `\reviewer` command now define a regular `\section` and the
+  number is hidden through a low `secnumdepth`.
+- Convert line breaks to spaces in `\printtitle` command to avoid line breaks
+  in the cover letter
+
+### Changed
+- Change thickness of rules to `\borderthickness`
+- Change thickness of left rule of `changes` and `revcomment` boxes to
+  `\accentborderthickness` (5pt default)
+- Update default colors of boxes
+- Change definition of box environments to directly use the `\newtcolorbox`
+  command
+- Use sans-serif font for the "Response:" label
+- Completely redesigned title page
+- Change license to the LaTeX Project Public License Version 1.3c
+
+### Added
+- Add new variables `\accentborderthickness` and `\borderthickness` for
+  customizable border thicknesses
+- Comments get an automatic label `comment:<reviewer_num>.<comment_num>`
+- The title page now uses `komafont`, which includes the newly defined
+  `journalextra`, `journal`, and `affiliation` fonts
+
+
+## [2.1.1] - 2026-06-22
+### Fixed
+- Add missing `autorefname` for reviewer
+
+### Added
+- Add new class option `revnumtocomment`, which allows adding the reviewer
+  number in front of the comment number, i.e., if set to true, it will say
+  "Comment 2.3" for the third comment of the second reviewer.
+
+
+## [2.1] - 2025-06-12
+### Changed
+- Rename `\the...` commands to `\print...` to avoid conflict with biblatex
+
+### Added
+- Add new `concludingresponse` environment for setting final comments/remarks
+  in a separate box. This also adds the corresponding colors
+  `colorconcludingresponsefg`, `colorconcludingresponsebg`, and
+  `colorconcludingresponseframe`.
+- Each comment now automatically sets a bookmark in the PDF (using the
+  `bookmark` option of `tcolorbox`).
+- Add `\affil` to `\maketitle` to display affiliations in the cover letter, associated with `\affil` definitions that can be used in `\author` and `\affiliation` commands.
+
+
+## [2.0.1] - 2024-06-25
+### Fixed
+- Fix missing manuscript number in cover letter by adding `\themanuscript`
+  macro
+
+
+## [2.0] - 2024-03-17
+### Changed
+- Change structure from a LaTeX package (`.sty`) to a class file (`.cls`)
+
+
+## [1.3] - 2024-01-30
+### Changed
+- Changed counter names
+  - `reviewer@counter` to `reviewer`
+  - `reviewcomment@counter` to `revcomment`
+
+### Added
+- Add `\autorefname` for `reviewer` and `revcomment`
+- Add default PDF property values for title, author, and keywords when using
+  the hyperref package
+
+## [1.2.2] - 2023-05-24
+### Changed
+- Change glue space after response blocks
+
+## [1.2.1] - 2022-10-18
+### Added
+- Add widow and orphan line penalty
+
+## [1.2] - 2021-11-10
+### Added
+- The `revcomment` environment now accepts arguments, which are directly passed
+  to the underlying `tcolorbox`.

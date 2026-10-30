@@ -1,0 +1,102 @@
+\documentclass[10pt,a4paper,landscape]{article}
+\usepackage[margin=12mm]{geometry}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+\definecolor{ink}{RGB}{20,24,29}
+\definecolor{papergray}{RGB}{242,244,246}
+\definecolor{linegray}{RGB}{150,158,166}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+
+\newcommand{\monthbox}[3]{%
+  \begin{minipage}[t][38mm][t]{0.30\linewidth}
+    \colorbox{ink}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\color{white}\bfseries #1\hfill\scriptsize #2}}\par\vspace{2mm}
+    {\tiny\renewcommand{\arraystretch}{1.15}%
+    \begin{tabularx}{\linewidth}{@{}>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X@{}}
+      \textbf{M}&\textbf{T}&\textbf{W}&\textbf{T}&\textbf{F}&\textbf{S}&\textbf{S}\\
+      #3
+    \end{tabularx}}
+  \end{minipage}%
+}
+
+\newcommand{\notegrid}[1]{%
+  \begin{tikzpicture}
+    \draw[linegray] (0,0) rectangle (\linewidth,\textheight-18mm);
+    \foreach \y in {1,...,#1} {\draw[linegray!65] (0,\y*7mm) -- (\linewidth,\y*7mm);}
+  \end{tikzpicture}%
+}
+
+\begin{document}
+\begin{tikzpicture}[remember picture,overlay]
+  \fill[ink] (current page.north west) rectangle ([yshift=-28mm]current page.north east);
+  \fill[papergray] ([yshift=-28mm]current page.north west) rectangle ([yshift=-31mm]current page.north east);
+\end{tikzpicture}
+\vspace*{3mm}
+{\color{white}\fontsize{25}{29}\selectfont\bfseries 2026 Planner}\par
+\vspace{5mm}
+{\color{ink}\large\bfseries E-ink edition}\hfill{\color{linegray}\small monochrome / tablet-friendly / high contrast}\par
+\vspace{6mm}
+\begin{tabular}{@{}p{0.32\linewidth}p{0.32\linewidth}p{0.32\linewidth}@{}}
+  \monthbox{January}{2026}{& & & 1 & 2 & 3 & 4\\5 & 6 & 7 & 8 & 9 & 10 & 11\\12 & 13 & 14 & 15 & 16 & 17 & 18\\19 & 20 & 21 & 22 & 23 & 24 & 25\\26 & 27 & 28 & 29 & 30 & 31 &} &
+  \monthbox{February}{2026}{& & & & & & 1\\2 & 3 & 4 & 5 & 6 & 7 & 8\\9 & 10 & 11 & 12 & 13 & 14 & 15\\16 & 17 & 18 & 19 & 20 & 21 & 22\\23 & 24 & 25 & 26 & 27 & 28 &} &
+  \monthbox{March}{2026}{& & & & & & 1\\2 & 3 & 4 & 5 & 6 & 7 & 8\\9 & 10 & 11 & 12 & 13 & 14 & 15\\16 & 17 & 18 & 19 & 20 & 21 & 22\\23 & 24 & 25 & 26 & 27 & 28 & 29\\30 & 31 & & & & &}\\[3mm]
+  \monthbox{April}{2026}{& & 1 & 2 & 3 & 4 & 5\\6 & 7 & 8 & 9 & 10 & 11 & 12\\13 & 14 & 15 & 16 & 17 & 18 & 19\\20 & 21 & 22 & 23 & 24 & 25 & 26\\27 & 28 & 29 & 30 & & &} &
+  \monthbox{May}{2026}{& & & & 1 & 2 & 3\\4 & 5 & 6 & 7 & 8 & 9 & 10\\11 & 12 & 13 & 14 & 15 & 16 & 17\\18 & 19 & 20 & 21 & 22 & 23 & 24\\25 & 26 & 27 & 28 & 29 & 30 & 31} &
+  \monthbox{June}{2026}{1 & 2 & 3 & 4 & 5 & 6 & 7\\8 & 9 & 10 & 11 & 12 & 13 & 14\\15 & 16 & 17 & 18 & 19 & 20 & 21\\22 & 23 & 24 & 25 & 26 & 27 & 28\\29 & 30 & & & & &}\\[3mm]
+  \monthbox{July}{2026}{& & 1 & 2 & 3 & 4 & 5\\6 & 7 & 8 & 9 & 10 & 11 & 12\\13 & 14 & 15 & 16 & 17 & 18 & 19\\20 & 21 & 22 & 23 & 24 & 25 & 26\\27 & 28 & 29 & 30 & 31 & &} &
+  \monthbox{August}{2026}{& & & & & 1 & 2\\3 & 4 & 5 & 6 & 7 & 8 & 9\\10 & 11 & 12 & 13 & 14 & 15 & 16\\17 & 18 & 19 & 20 & 21 & 22 & 23\\24 & 25 & 26 & 27 & 28 & 29 & 30\\31 & & & & & &} &
+  \monthbox{September}{2026}{& 1 & 2 & 3 & 4 & 5 & 6\\7 & 8 & 9 & 10 & 11 & 12 & 13\\14 & 15 & 16 & 17 & 18 & 19 & 20\\21 & 22 & 23 & 24 & 25 & 26 & 27\\28 & 29 & 30 & & & &}\\[3mm]
+  \monthbox{October}{2026}{& & & 1 & 2 & 3 & 4\\5 & 6 & 7 & 8 & 9 & 10 & 11\\12 & 13 & 14 & 15 & 16 & 17 & 18\\19 & 20 & 21 & 22 & 23 & 24 & 25\\26 & 27 & 28 & 29 & 30 & 31 &} &
+  \monthbox{November}{2026}{& & & & & & 1\\2 & 3 & 4 & 5 & 6 & 7 & 8\\9 & 10 & 11 & 12 & 13 & 14 & 15\\16 & 17 & 18 & 19 & 20 & 21 & 22\\23 & 24 & 25 & 26 & 27 & 28 & 29\\30 & & & & & &} &
+  \monthbox{December}{2026}{& 1 & 2 & 3 & 4 & 5 & 6\\7 & 8 & 9 & 10 & 11 & 12 & 13\\14 & 15 & 16 & 17 & 18 & 19 & 20\\21 & 22 & 23 & 24 & 25 & 26 & 27\\28 & 29 & 30 & 31 & & &}
+\end{tabular}
+
+\newpage
+\begin{center}
+  {\color{ink}\fontsize{20}{24}\selectfont\bfseries Quarterly focus board}\par
+  \vspace{2mm}
+  {\color{linegray}\small Keep the page sparse: one priority, one constraint, and one next action per quarter.}
+\end{center}
+\vspace{5mm}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries\large}p{25mm} X X X@{}}
+  \toprule
+  Quarter & Priority & Constraint & Next action \\
+  \midrule
+  Q1 & \rule{0pt}{18mm} & & \\
+  Q2 & \rule{0pt}{18mm} & & \\
+  Q3 & \rule{0pt}{18mm} & & \\
+  Q4 & \rule{0pt}{18mm} & & \\
+  \bottomrule
+\end{tabularx}
+\vspace{7mm}
+\begin{tabularx}{\linewidth}{@{}X X@{}}
+  \fbox{\parbox[t][36mm][t]{\linewidth}{\textbf{Ideas / parking lot}\par\vspace{20mm}}} &
+  \fbox{\parbox[t][36mm][t]{\linewidth}{\textbf{Review notes}\par\vspace{20mm}}}
+\end{tabularx}
+
+\newpage
+\begin{center}
+  {\color{ink}\fontsize{20}{24}\selectfont\bfseries Daily notes}\par
+  \vspace{2mm}
+  {\color{linegray}\small Date: \rule{35mm}{0.4pt}\hfill Energy: \rule{20mm}{0.4pt}\hfill}\par
+\end{center}
+\vspace{4mm}
+\begin{tabularx}{\linewidth}{@{}p{25mm} X p{25mm} X@{}}
+  \toprule
+  \textbf{Top priority} & \rule{0pt}{14mm} & \textbf{Time blocks} & \\
+  \midrule
+  \textbf{Notes} & \multicolumn{3}{l}{\rule{0pt}{62mm}} \\
+  \bottomrule
+\end{tabularx}
+\vspace{5mm}
+\begin{tabularx}{\linewidth}{@{}X X X@{}}
+  \fbox{\parbox[t][25mm][t]{\linewidth}{\textbf{Done}\par\vspace{12mm}}} &
+  \fbox{\parbox[t][25mm][t]{\linewidth}{\textbf{Tomorrow}\par\vspace{12mm}}} &
+  \fbox{\parbox[t][25mm][t]{\linewidth}{\textbf{One thing to remember}\par\vspace{12mm}}}
+\end{tabularx}
+\end{document}

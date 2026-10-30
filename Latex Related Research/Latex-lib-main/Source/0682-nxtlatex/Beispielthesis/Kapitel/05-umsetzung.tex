@@ -1,0 +1,194 @@
+\chapter{Umsetzung}
+\label{kap:umsetzung}
+
+Das in Kapitel~\ref{kap:modell} entwickelte Modell wird auf zwei Wegen
+umgesetzt: als \Index{Modellierungssprache} in MathProg, die ein
+Standardlöser bearbeitet, und als eigenes Verfahren in Python. Beide
+Umsetzungen arbeiten auf derselben Instanz. Das ist keine
+Selbstverständlichkeit und wird in Abschnitt~\ref{sec:einequelle}
+begründet.
+
+\section{Eine Quelle für die Daten}
+\label{sec:einequelle}
+
+Wer zwei Verfahren vergleicht, vergleicht in Wahrheit oft zwei
+Datensätze. Werden die Zahlen für den Löser und für das eigene Programm
+getrennt gepflegt, laufen sie früher oder später auseinander, und der
+Vergleich misst dann den Unterschied der Eingaben statt den der
+Verfahren.
+
+Deshalb liegt die Instanz genau einmal vor, nämlich in
+\texttt{Code/daten.py}. Aus dieser Quelle wird die Datendatei für
+\ac{glpk} erzeugt; dasselbe Modul liest das Python-Verfahren direkt ein.
+Die Bearbeitungszeit ergibt sich in beiden Fällen aus derselben Formel
+
+\begin{equation}
+  p_{ij} = \frac{g_j}{e_i(q_j)},
+  \label{eq:dauer}
+\end{equation}
+
+wobei $g_j$ die \Index{Grundzeit} des Arbeitsgangs $j$ ist, $q_j$ die
+benötigte Qualifikation und $e_i(q_j)$ die Effizienz des Mitarbeiters
+$i$ in dieser Qualifikation. Ist $e_i(q_j)$ nicht definiert, fehlt die
+Qualifikation, und das Paar $(i,j)$ existiert nicht.
+
+Dieselbe Quelle speist auch die Abbildungen, die Tabellen und die
+Zahlen im Fließtext dieser Arbeit. Alle Zahlenwerte in diesem Text sind
+Makros, die aus den Rechenergebnissen erzeugt werden. Eine Zahl, die
+hier steht, kann deshalb nicht von der Rechnung abweichen, auf die sie
+sich beruft.
+
+\section{Das Modell in MathProg}
+\label{sec:mathprog}
+
+\Index{MathProg} (auch GMPL) ist die Modellierungssprache von
+\ac{glpk} \parencite{glpk}. Sie beschreibt das Modell deklarativ: Mengen,
+Parameter, Variablen, Zielfunktion, Nebenbedingungen. Wie das Problem
+gelöst wird, steht nicht im Modell -- das ist Sache des Lösers.
+
+Die Mengen und die Zulässigkeit werden so erklärt:
+
+\begin{lstlisting}[language=mathprog,caption={Mengen, Parameter und Variablen},label={lst:modmengen}]
+set MITARBEITER;
+set AUFGABEN;
+set ZULAESSIG within {MITARBEITER, AUFGABEN};
+
+param p{(i,j) in ZULAESSIG} > 0;
+
+var x{(i,j) in ZULAESSIG}, binary;
+var Cmax >= 0;
+\end{lstlisting}
+
+Entscheidend ist die dritte Zeile. \texttt{ZULAESSIG} ist eine Teilmenge
+des Kreuzprodukts, und alle folgenden Größen sind nur über dieser
+Teilmenge erklärt. Eine Variable $x_{ij}$ für ein Paar ohne passende
+Qualifikation entsteht damit gar nicht erst. Die Alternative -- alle
+Paare anlegen und die unzulässigen mit einer großen Zahl bestrafen --
+wäre nicht nur größer, sondern brächte auch die in
+Abschnitt~\ref{sec:eigenschaften} beschriebene Schwächung der
+Relaxation mit sich.
+
+Zielfunktion und Nebenbedingungen folgen unmittelbar der Formulierung
+aus Kapitel~\ref{kap:modell}:
+
+\begin{lstlisting}[language=mathprog,caption={Zielfunktion und Nebenbedingungen},label={lst:modnb}]
+minimize Gesamtdauer: Cmax;
+
+s.t. Vergabe{j in AUFGABEN}:
+  sum{(i,j) in ZULAESSIG} x[i,j] = 1;
+
+s.t. Auslastung{i in MITARBEITER}:
+  sum{(i,j) in ZULAESSIG} p[i,j] * x[i,j] <= Cmax;
+\end{lstlisting}
+
+Das vollständige Modell steht in Anhang~\ref{anh:mathprog}. Aufgerufen
+wird es mit
+
+\begin{lstlisting}[language=bash,numbers=none]
+glpsol --math erpolino.mod --data erpolino.dat
+\end{lstlisting}
+
+\ac{glpk} löst die Instanz in \MilpSekunden{} Sekunden und meldet
+\texttt{INTEGER OPTIMAL SOLUTION FOUND}. Diese Meldung ist mehr als ein
+Ergebnis: Sie ist ein Beweis. Der Löser hat gezeigt, dass keine bessere
+Zuordnung existiert, nicht nur, dass er keine gefunden hat.
+
+\section{Das Verfahren in Python}
+\label{sec:python}
+
+Das Verfahren folgt dem klassischen Ablauf
+\parencite{kirkpatrick1983optimization}: Von einer Startlösung ausgehend
+wird wiederholt eine Nachbarlösung erzeugt und angenommen oder
+verworfen. Als Startlösung dient die \ac{lpt}-Regel.
+
+\subsection{Nachbarschaft}
+
+Zwei Operatoren erzeugen Nachbarlösungen, wie in
+Abbildung~\ref{abb:nachbarschaft} dargestellt. Das \Index{Verschieben}
+nimmt dem am stärksten ausgelasteten Mitarbeiter eine Aufgabe ab und
+gibt sie einem anderen qualifizierten Mitarbeiter. Das \Index{Tauschen}
+kreuzt zwei Aufgaben zwischen ihren Mitarbeitern, sofern beide dafür
+qualifiziert sind.
+
+Der zweite Operator ist nicht entbehrlich. Sind zwei Mitarbeiter beide
+ausgelastet, führt jedes Verschieben zwangsläufig zu einer
+Verschlechterung an anderer Stelle; nur ein Tausch kann die Last
+umverteilen, ohne sie zu erhöhen. Ohne den Tausch bleibt das Verfahren
+an solchen Konstellationen hängen.
+
+\subsection{Die Energie und das Plateauproblem}
+\label{sec:plateau}
+
+Naheliegend wäre, die Zielgröße selbst als \Index{Energie} zu verwenden.
+Das funktioniert schlecht, und der Grund ist lehrreich. Der
+\Index{Makespan} ist ein Maximum: Er ändert sich nur, wenn gerade der
+Engpass betroffen ist. Jeder Zug, der die übrigen Mitarbeiter betrifft,
+ist energieneutral. Das Verfahren läuft über weite \Index{Plateaus} und
+erhält kein Signal, welche Richtung sich lohnt.
+
+Abhilfe schafft ein zusätzlicher Term, der schon dann sinkt, wenn die
+Last gleichmäßiger verteilt wird:
+
+\begin{equation}
+  E(x) = \max_{i \in I} a_i(x)
+       + \lambda \sqrt{\sum_{i \in I} a_i(x)^2},
+  \qquad
+  a_i(x) = \sum_{j:(i,j) \in Z} p_{ij}\, x_{ij}.
+  \label{eq:energie}
+\end{equation}
+
+Der zweite Summand ist die euklidische Norm des
+\Index{Auslastungsvektors}. Er macht die Landschaft begehbar, ohne die
+Zielgröße zu ersetzen: Das Gewicht $\lambda = 0{,}002$ ist so klein
+gewählt, dass der Term die Rangfolge zweier Lösungen mit
+unterschiedlichem Makespan nicht umdrehen kann. Die Auslastungen liegen
+bei rund 200~Minuten, der Term damit bei etwa 1,2; ein Unterschied im
+Makespan von einer Minute wiegt schwerer.
+
+Bewertet wird während des Laufs über $E$, berichtet und gespeichert wird
+stets der echte Makespan. Was diese Änderung bewirkt, zeigt
+Abschnitt~\ref{sec:energiewirkung}: Der Mittelwert über 20 Läufe sinkt
+von \SaRohMittel{} auf \SaMittel{} Minuten, und erst mit dem
+Glättungsterm wird das Optimum überhaupt erreicht.
+
+\subsection{Abkühlung}
+
+Die Temperatur fällt geometrisch, $T_{k+1} = \alpha\,T_k$, von
+$T_{\text{start}} = 25$ auf $T_{\text{ende}} = 0{,}05$ über
+\num{60000} Schritte. Der Faktor ergibt sich daraus zu
+
+\begin{equation}
+  \alpha = \left(\frac{T_{\text{ende}}}{T_{\text{start}}}\right)^{1/K}
+  \approx 0{,}99990.
+\end{equation}
+
+Abbildung~\ref{abb:abkuehlung} zeigt den Verlauf und die daraus
+folgende Annahmewahrscheinlichkeit für eine Verschlechterung. Zu Beginn
+werden auch deutliche Verschlechterungen angenommen, gegen Ende kaum
+noch: Das Verfahren geht von der Erkundung in die Feinsuche über.
+
+\begin{figure}[tb]
+  \centering
+  \input{Abbildungen/abkuehlung}
+  \caption[Abkühlung und Annahmewahrscheinlichkeit]{Geometrische
+    Abkühlung über den Lauf und die daraus folgende
+    Annahmewahrscheinlichkeit einer Verschlechterung. Gezeichnet mit
+    MetaPost.}
+  \label{abb:abkuehlung}
+\end{figure}
+
+\subsection{Reproduzierbarkeit}
+
+Simulated Annealing ist ein stochastisches Verfahren. Ein einzelner Lauf
+sagt daher wenig aus, und ein Lauf ohne festen Startwert lässt sich
+nicht wiederholen. Beide Punkte werden hier ernst genommen: Alle Läufe
+verwenden feste Startwerte, und ausgewertet wird nicht ein Lauf, sondern
+die Streuung über 20~Läufe.
+
+\section{Werkzeuge}
+
+Das Verfahren ist in Python~3.13 ohne weitere Abhängigkeiten
+implementiert; die Auswertung nutzt NumPy \parencite{harris2020array}
+und matplotlib \parencite{hunter2007matplotlib}. Als Löser dient
+\ac{glpk} in Version~5.0 \parencite{glpk}. Der Quelltext des Verfahrens
+findet sich in Anhang~\ref{anh:quelltext}.

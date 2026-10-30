@@ -1,0 +1,179 @@
+%% template-refcard.tex
+%% Copyright 2014-2019 Rudy Matela
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% The Current Maintainer of this work is Rudy Matela.
+%
+% This work consists of the files refcard.cls and tempalte-refcard.tex
+
+
+\documentclass{refcard}
+\usepackage[T1]{fontenc} % necessary so '{', '}' and '\' get the right font
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{Template\\Reference Card / Cheat Sheet}
+
+\cright{
+	Copyright \textit{0000}  \textit{Author Name}
+}{
+	Avaliable under \textit{License Name} \tiny This is a template, see source for real license
+}
+\version{0.6.0}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Structure}
+
+\begin{verbatim}
+	Something {
+	    Command
+	    Statement
+	    Command
+	}
+\end{verbatim}
+
+
+\section{Types}
+
+\begin{ldesc}
+	\li[char]    char
+	\li[integer] integer
+	\li[list]    list
+	\li[pointer] *char, *integer, ...
+\end{ldesc}
+
+
+\section{Initialization}
+
+\begin{ldesc}
+	\li[local variable]     \I{type} \I{name}=\I{value}
+	\li[global variable]    \I{type} \I{NAME}=\I{value}
+	\li[volatile variable]  \I{type} \I{\_name\_}=\I{value}
+	\li[lists]              \I{type} \I{name}[\I{size}]=\I{value}
+\end{ldesc}
+
+
+\section{Literals}
+
+\begin{ldesc}
+	\li[String with escapes]    "str..$\backslash{}$a.ing"
+	\li[String without escapes] 'str..$\backslash{}$a.ing'
+	\li[Character]              \#x
+	\li[Character (Unicode)]    \#\{12AB56\}
+\end{ldesc}
+
+
+\section{Operators (grouped by precedence)}
+
+\begin{Ldesc}
+	\Li[object member                ] \I{name}.\I{member}
+	\li[module member                ] \I{name}::\I{member}
+	\Li[plus, minus (unary), negation] +, -, ~
+	\Li[multiplication, division, remainder] *, /, \%
+	\li[division\&remainder          ] \I{qo},\I{rt} <- \I{dd} /\% \I{ds}
+	\Li[sum, subtraction             ] +, -
+	\Li[comparisons                  ] >, >=, <, <=
+	\Li[comparisons                  ] ==, !=
+	\Li[and, or                      ] \&\&, ||
+	\Li[ternary conditional          ] \I{expr1}?\I{expr2}:\I{expr3}
+	\Li[assignments                  ] <-, +<-, -<-, *<-
+	\li                                /<-, ||<-, \&\&<-
+\end{Ldesc}
+
+\noindent
+Unary operators and conditionals group right to left.\\
+All other group left to right.
+
+
+\section{Control Flow}
+
+\begin{ldesc}
+	\li[statement terminator]        ;
+	\li[block delimiter]             \{ \} or [ ]
+	\li[exit from while]             break
+	\li[next while iteration]        continue
+	\li[return value from function]  return \I{expr}
+\end{ldesc}
+
+
+\subsection{Flow Constructions}
+
+\begin{ldesc}
+	\li[if statement]
+		if~(\I{expr})~\I{block} \li
+		else~~~~~     \I{block} \li
+
+	\li[while statement]
+		while (\I{expr}) \{ \li
+		~~~~\I{statement};  \li
+		~~~~\I{statement};  \li
+	    \}
+\end{ldesc}
+
+
+\section{Libraries}
+
+
+\subsection{Lists \hfill \C{import Libs.StdList}}
+
+\begin{ldesc}
+	\li[iiii] iiii
+	\li[wwww] wwww
+	\li[iiii] wwww
+	\li       wwww
+	\li[blah] blah
+\end{ldesc}
+
+\subsection{Mathematical Functions \hfill \C{inc Some.Math}}
+
+\begin{ldesc}
+	\li[iiii] iiii
+	\li[wwww] wwww
+	\li[iiii] wwww
+	\li       wwww
+	\li[blah] blah
+\end{ldesc}
+
+
+\subsection{Input and Output \hfill \C{require System.IO}}
+
+\begin{ldesc}
+	\li[printing] print "formatstring"
+	\li[wwww] wwww
+	\li[iiii] wwww
+	\li       wwww
+	\li[blah] blah
+\end{ldesc}
+
+% Debug for three column environment:
+%\newpage \subsection{Blah} Bleh  11111
+%\newpage \subsection{Blah} bleh  22222
+%\newpage \subsection{Blah} bleh  33333
+
+
+\subsection{Auto-wrapping}
+
+\begin{tabular}{|p{0.3\columnwidth}|p{0.6\columnwidth}|}
+\hline
+bla                                         & ble \\
+\hline
+the quick brown fox jumps over the lazy dog & some other long text that will automatically wrap \\
+\hline
+something                                   & something something something something something \\
+\hline
+\end{tabular}
+
+
+\end{document} 
+

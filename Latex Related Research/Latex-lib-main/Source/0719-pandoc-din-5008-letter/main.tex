@@ -1,0 +1,68 @@
+% Pandoc DIN 5008 letter starter — scrlttr2 output equivalent.
+% The source template is CC BY-SA 4.0; this example is newly authored.
+\documentclass[paper=a4,fontsize=11pt,parskip=half,foldmarks=off,
+  enlargefirstpage=true]{scrlttr2}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{blueink}{HTML}{164E63}
+\setkomafont{fromname}{\sffamily\bfseries}
+\setkomafont{subject}{\sffamily\bfseries}
+\setkomavar{fromname}{Northbridge Open Data Lab}
+\setkomavar{fromaddress}{Kanalstraße 14\\10407 Northbridge}
+\setkomavar{fromphone}{+44 20 7946 0214}
+\setkomavar{fromemail}{\href{mailto:office@example.org}{office@example.org}}
+\setkomavar{fromurl}{data.example.org}
+\setkomavar{place}{Northbridge}
+\setkomavar{date}{18 September 2026}
+\setkomavar{yourref}{NODL/REQ-2026-19}
+\setkomavar{myref}{ODL-2026-077}
+\setkomavar{customer}{Community Partnership 04}
+\setkomavar{subject}{Response to your data-access request}
+\setkomavar{signature}{Maya Chen\\Data steward}
+\setkomavar{firsthead}{%
+  \begin{flushright}
+    {\color{blueink}\sffamily\bfseries\Large Northbridge Open Data Lab}\par
+    {\small\color{blueink}Reliable data, clearly explained}
+  \end{flushright}}
+\setkomavar{location}{%
+  \raggedleft\small
+  \textcolor{blueink}{Your reference:} \usekomavar{yourref}\\
+  \textcolor{blueink}{Our reference:} \usekomavar{myref}\\
+  \textcolor{blueink}{Customer:} \usekomavar{customer}}
+\setkomavar{firstfoot}{\centering\footnotesize\color{blueink}
+  Northbridge Open Data Lab\enskip|\enskip data.example.org}
+
+\begin{document}
+\begin{letter}{
+  Alex Morgan\\
+  Neighbourhood Access Forum\\
+  42 Station Road\\
+  Northbridge NB2 7LT}
+\opening{Dear Alex Morgan,}
+
+Thank you for your request for the quarterly footfall dataset. We can provide
+the anonymised daily totals for the period from January through June 2026.
+The accompanying data dictionary explains the aggregation window, missing
+day codes and the suppression rule applied to very small counts.
+
+The release does not include raw device identifiers or precise timestamps.
+Those fields are not needed for the evaluation question described in your
+request, and removing them reduces the chance that an individual journey can
+be inferred. We would be happy to discuss a more detailed release if you can
+specify a research purpose and an appropriate review process.
+
+Please confirm the preferred secure transfer address by 30 September. We
+will then send the dataset and checksum in a separate message.
+
+\closing{Yours sincerely,}
+\encl{Data dictionary (1); release note (1)}
+\cc{Priya Nair, Information Governance}
+\end{letter}
+\end{document}

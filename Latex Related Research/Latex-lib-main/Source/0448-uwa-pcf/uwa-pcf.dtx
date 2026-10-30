@@ -1,0 +1,735 @@
+% \iffalse meta-comment
+% Copyright 2019, 2021 Anthony Di Pietro
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Anthony Di Pietro.
+%
+% This work consists of the files uwa-pcf.dtx, uwa-pcf.ins, and
+% uwa-pcf-example.tex and the derived files uwa-pcf.cls and uwa-pcf.pdf.
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{uwa-pcf.dtx}
+%</driver>
+%<class>\NeedsTeXFormat{LaTeX2e}[2005/12/01]
+%<class>\ProvidesClass{uwa-pcf}
+%<*class>
+    [2021/09/28 1.0.1 UWA Participant Consent Form]
+%</class>
+%
+%<*driver>
+\documentclass[
+        a4paper,
+        10pt
+]{ltxdoc}
+\usepackage{hypdoc}
+\PassOptionsToPackage{scale=0.9}{sourcecodepro}
+\usepackage[regular]{uwa-letterhead}[2021/09/13]
+\GetFileInfo{uwa-pcf.dtx}
+\setcounter{secnumdepth}{3}
+\geometry{
+        left=5cm,
+        right=2cm
+}
+\hypersetup{colorlinks=true}
+\date{}
+\makeatletter
+\title{%
+        {The UWA Participant Consent Form Class} \\
+        {\Large uwa-pcf \fileversion{} (\filedate{})}%
+}
+\c@IndexColumns = 2
+\renewcommand*{\uwalh@uwa}{\sffamily}
+\renewcommand{\uwalh@makeletterhead}{}
+\makeatother
+\DoNotIndex{\newcommand, \newenvironment}
+\DisableCrossrefs
+\CodelineIndex
+\RecordChanges
+\CheckSum{328}
+\begin{document}
+        \DocInput{uwa-pcf.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+% \changes{1.0.0}{2019/08/31}{Initial version}
+% \changes{1.0.1}{2021/09/28}{Make HREO statement and signature lines optional}
+%
+% \maketitle
+%
+% \section{Introduction}
+%
+% This class generates a Participant Consent Form (PCF) for a
+% human research protocol at the University of Western Australia.
+%
+% \section{Usage}
+%
+% \subsection{External Dependencies}
+%
+% You must supply the university logo (as |uwacrest-blue.pdf| by default).
+% It is available in SVG format at
+% \href{https://static-listing.weboffice.uwa.edu.au/visualid/core-rebrand/img/uwacrest/}
+% {https://static-listing.weboffice.uwa.edu.au/visualid/core-rebrand/img/uwacrest/}.
+%
+% In accordance with the official PCF template, this class uses the
+% \href{https://docs.microsoft.com/en-us/typography/font-list/arial}{Arial}
+% typeface by default. The fonts must be installed on the system for this to
+% work. Arial is available as part of Microsoft's TrueType core fonts for the
+% web (\url{https://sourceforge.net/projects/mscorefonts2/}). Alternatively,
+% you can use the |noarial| package option to substitute it with
+% \href{https://adobe-fonts.github.io/source-sans/}{Source Sans Pro}, the usual
+% typeface used for university correspondence.
+%
+% \subsection{Class Options}
+%
+% \DescribeMacro{\documentclass}
+% To select the class, add this to your preamble:
+% \begin{quote}
+% |\documentclass{uwa-pcf}|
+% \end{quote}
+%
+% This class supports the |draft|, |final|, |leqno|, and |fleqn| options
+% from the |article| base class and the |footer|, |nofooter|, |arial|, and
+% |noarial| options from the |uwa-letterhead| package.
+%
+% You can pass the following options to specify whether to include the
+% mandatory Human Ethics Research Office (HREO) statement:
+% \begin{itemize}
+%         \item |hreo|: Include HREO statement (default).
+%         \item |nohreo|: Do not include HREO statement.
+% \end{itemize}
+%
+% You can pass the following options to specify whether to include the
+% signature and date lines:
+% \begin{itemize}
+%         \item |signature|: Include signature and date lines (default).
+%         \item |nosignature|: Do not include signature and date lines.
+% \end{itemize}
+%
+% \subsection{Letterhead Fields}
+%
+% Use the following commands in the preamble to set the letterhead fields:
+%
+% \DescribeMacro{\author}
+% \begin{minipage}[t]{\textwidth}
+% |\author|\marg{author} \\
+% The author of the document. \\
+% Required
+% \end{minipage}
+%
+% \DescribeMacro{\school}
+% \begin{minipage}[t]{\textwidth}
+% |\school|\marg{school} \\
+% The author's school within the university. \\
+% Required
+% \end{minipage}
+%
+% \DescribeMacro{\mbdp}
+% \begin{minipage}[t]{\textwidth}
+% |\mbdp|\marg{mbdp} \\
+% The author's \href{http://www.staff.uwa.edu.au/facilities/mail/mbdp}
+% {mailbag delivery point (MBDP)}. \\
+% Required
+% \end{minipage}
+%
+% \DescribeMacro{\university}
+% \begin{minipage}[t]{\textwidth}
+% |\university|\marg{university} \\
+% The name of the university. \\
+% Default: \textit{The University of Western Australia}
+% \end{minipage}
+%
+% \DescribeMacro{\address}
+% \begin{minipage}[t]{\textwidth}
+% |\address|\marg{address} \\
+% The university's address. \\
+% Default: \textit{35 Stirling Highway, Crawley WA 6009}
+% \end{minipage}
+%
+% \DescribeMacro{\phone}
+% \begin{minipage}[t]{\textwidth}
+% |\phone|\marg{phone} \\
+% The author's phone number. \\
+% Required
+% \end{minipage}
+%
+% \DescribeMacro{\mobile}
+% \begin{minipage}[t]{\textwidth}
+% |\mobile|\marg{mobile} \\
+% The author's mobile number. \\
+% Required
+% \end{minipage}
+%
+% \DescribeMacro{\email}
+% \begin{minipage}[t]{\textwidth}
+% |\email|\marg{email} \\
+% The author's email address. \\
+% Required
+% \end{minipage}
+%
+% \DescribeMacro{\website}
+% \begin{minipage}[t]{\textwidth}
+% |\website|\marg{website} \\
+% The author's website, or their school's website. \\
+% Omit the scheme (|https://|) and path (|/|). \\
+% Default: \textit{www.uwa.edu.au}
+% \end{minipage}
+%
+% \DescribeMacro{\footeraddress}
+% \begin{minipage}[t]{\textwidth}
+% |\footeraddress|\marg{footeraddress} \\
+% The university's address, shortened for the first-page footer. \\
+% Default: \textit{Perth WA 6009 Australia}
+% \end{minipage}
+%
+% \DescribeMacro{\cricos}
+% \begin{minipage}[t]{\textwidth}
+% |\cricos|\marg{cricos} \\
+% The university's \href{http://cricos.education.gov.au/}{CRICOS} provider code. \\
+% Default: \textit{00126G}
+% \end{minipage}
+%
+% \DescribeMacro{\uwacrest}
+% \begin{minipage}[t]{\textwidth}
+% |\uwacrest|\marg{uwacrest} \\
+% The filename of the UWA crest in PDF format (available in SVG format at
+% \href{https://static-listing.weboffice.uwa.edu.au/visualid/core-rebrand/img/uwacrest/}
+% {https://static-listing.weboffice.uwa.edu.au/visualid/core-rebrand/img/uwacrest/}). \\
+% Default: \textit{uwacrest-blue.pdf}
+% \end{minipage}
+%
+% \subsection{Project Fields}
+%
+% Use the following commands in the preamble to set the project fields:
+%
+% \DescribeMacro{\project}
+% \begin{minipage}[t]{\textwidth}
+% |\project|\marg{project} \\
+% The project's title. \\
+% Required
+% \end{minipage}
+%
+% \subsection{Participant Name}
+%
+% \DescribeMacro{\theparticipant}
+% Use |\theparticipant| to generate the line for the participant's name.
+% For example:
+%
+% \begin{quote}
+% \begin{verbatim}
+% I, \theparticipant, have read the information provided and
+% any questions I have asked have been answered to my satisfaction.
+% I agree to participate in this research project but withdrawal
+% is not possible once data are submitted.
+% \end{verbatim}
+% \end{quote}
+%
+% \StopEventually{\PrintChanges\PrintIndex}
+%
+% \section{Implementation}
+%
+% \subsection{Class Options}
+%
+% \begin{minipage}{\textwidth}
+% \begin{macro}{\uwapcf@hreo}
+% \begin{macro}{\uwapcf@signature}
+% Define conditionals for the class options.
+%    \begin{macrocode}
+\newif\ifuwapcf@hreo
+\newif\ifuwapcf@signature
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{minipage}
+%
+% The |hreo| and |nohreo| options respectively enable and disable
+% the HREO statement.
+%    \begin{macrocode}
+\DeclareOption{hreo}{
+        \uwapcf@hreotrue
+}
+\DeclareOption{nohreo}{
+        \uwapcf@hreofalse
+}
+%    \end{macrocode}
+%
+% The |signature| and |nosignature| options respectively enable and disable
+% the signature and date lines.
+%    \begin{macrocode}
+\DeclareOption{signature}{
+        \uwapcf@signaturetrue
+}
+\DeclareOption{nosignature}{
+        \uwapcf@signaturefalse
+}
+%    \end{macrocode}
+%
+% Pass the |draft|, |final|, |leqno|, and |fleqn| options through to the
+% |article| base class, and pass the |footer|, |nofooter|, |arial|, and
+% |noarial| options through to the |uwa-letterhead| package.
+%    \begin{macrocode}
+\DeclareOption{draft}{
+        \PassOptionsToClass{\CurrentOption}{article}
+}
+\DeclareOption{final}{
+        \PassOptionsToClass{\CurrentOption}{article}
+}
+\DeclareOption{leqno}{
+        \PassOptionsToClass{\CurrentOption}{article}
+}
+\DeclareOption{fleqn}{
+        \PassOptionsToClass{\CurrentOption}{article}
+}
+\DeclareOption{footer}{
+        \PassOptionsToPackage{\CurrentOption}{uwa-letterhead}
+}
+\DeclareOption{nofooter}{
+        \PassOptionsToPackage{\CurrentOption}{uwa-letterhead}
+}
+\DeclareOption{arial}{
+        \PassOptionsToPackage{\CurrentOption}{uwa-letterhead}
+}
+\DeclareOption{noarial}{
+        \PassOptionsToPackage{\CurrentOption}{uwa-letterhead}
+}
+%    \end{macrocode}
+%
+% Show a warning for unknown options.
+%    \begin{macrocode}
+\DeclareOption*{
+        \ClassWarning{uwa-pcf}{Unknown option '\CurrentOption'}
+}
+%    \end{macrocode}
+%
+% Use the |hreo| and |signature| options by default.
+%    \begin{macrocode}
+\ExecuteOptions{
+        hreo,
+        signature
+}
+%    \end{macrocode}
+%
+% Complete option processing.
+%    \begin{macrocode}
+\ProcessOptions\relax
+%    \end{macrocode}
+%
+% Load the |article| base class with the |a4paper| and |11pt| options.
+%    \begin{macrocode}
+\PassOptionsToClass{
+        a4paper,
+        11pt
+}{article}
+\LoadClass{article}
+%    \end{macrocode}
+%
+% \subsection{Page Configuration}
+%
+% Use |uwa-letterhead| to configure the page.
+%    \begin{macrocode}
+\RequirePackage[regular]{uwa-letterhead}
+%    \end{macrocode}
+%
+% Adjust paragraph spacing.
+%    \begin{macrocode}
+\setlength{\parskip}{0.83\baselineskip}
+%    \end{macrocode}
+%
+% \subsection{Font Configuration}
+%
+% Use |fontspec| for access to OpenType and TrueType fonts.
+%    \begin{macrocode}
+\RequirePackage[no-math]{fontspec}
+%    \end{macrocode}
+%
+% Set default fonts.
+%    \begin{macrocode}
+\uwalh@arial
+\ifuwalh@arialfont
+        \setmainfont{Arial}
+        \setsansfont{Arial}
+\fi
+\renewcommand{\familydefault}{\sfdefault}
+%    \end{macrocode}
+%
+% Use |anyfontsize| to support the irregular font sizes required.
+%    \begin{macrocode}
+\RequirePackage{anyfontsize}
+%    \end{macrocode}
+%
+% \subsection{Letterhead}
+%
+% Adjust the address block of the letterhead to match the PCF template.
+% \begin{macro}{\uwalh@addresstop}
+% \begin{macro}{\uwalh@addressblock}
+%    \begin{macrocode}
+\setlength{\uwalh@addresstop}{2.07cm}
+\renewcommand{\uwalh@addressblock}{%
+        \begin{textblock*}%
+                {\uwalh@addresswidth}(\uwalh@addressleft, \uwalh@addresstop)
+                \begin{minipage}[t]{\uwalh@addresswidth}
+                        \color{UWAPCFBody}%
+                        \sffamily\fontsize{9}{10.4}\selectfont%
+                        \@author{} \\
+                        \uwalh@school{}, M\uwalh@mbdp{} \\
+                        \uwalh@university{} \\
+                        \uwalh@address{} \\
+                        \noblanks[q]{\uwalh@phone}%
+                        Tel: \href{tel:\thestring}{\uwalh@phone} \\
+                        Email: \href{mailto:\uwalh@email}{\uwalh@email} \\
+                        \href{https://\uwalh@website/}{\uwalh@website}
+                \end{minipage}
+        \end{textblock*}%
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \subsection{Heading Configuration}
+%
+% Use |titlesec| to configure headings.
+%    \begin{macrocode}
+\RequirePackage[sf]{titlesec}
+\titleformat{\section}{\color{black}\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\color{black}\bfseries\small}{\thesubsection}{1em}{}
+\titlespacing*{\section}{0pt}{-0.07em}{-0.07em}
+\titlespacing*{\subsection}{0pt}{-0.07em}{-0.07em}
+%    \end{macrocode}
+% Disable section numbering.
+%    \begin{macrocode}
+\setcounter{secnumdepth}{0}
+%    \end{macrocode}
+%
+% \subsection{Colour Configuration}
+%
+% Use |xcolor| for colour support, and enable |hyperref| compatibility.
+%    \begin{macrocode}
+\RequirePackage[hyperref]{xcolor}
+%    \end{macrocode}
+% Define body text colour.
+%    \begin{macrocode}
+\definecolor{UWAPCFBody}{RGB}{77, 77, 79}
+%    \end{macrocode}
+%
+% \subsection{Template Fields}
+%
+% Set default values for the letterhead template fields.
+%    \begin{macrocode}
+\renewcommand*{\uwalh@footermbdp}{459}
+\renewcommand*{\uwalh@footerphone}{+61 8 6488 3703}
+\renewcommand*{\uwalh@mobile}{+61 000 000 000}
+\renewcommand*{\uwalh@footeremail}{humanethics@uwa.edu.au}
+%    \end{macrocode}
+%
+% Redefine macros to set the letterhead template fields
+% without affecting the first-page footer.
+%    \begin{macrocode}
+\renewcommand*{\mbdp}[1]{\renewcommand*{\uwalh@mbdp}{#1}}
+\renewcommand*{\university}[1]{\renewcommand*{\uwalh@university}{#1}}
+\renewcommand*{\phone}[1]{\renewcommand*{\uwalh@phone}{#1}}
+\renewcommand*{\mobile}[1]{}
+\renewcommand*{\email}[1]{\renewcommand*{\uwalh@email}{#1}}
+%    \end{macrocode}
+%
+% \begin{minipage}{\textwidth}
+% \begin{macro}{\uwapcf@project}
+% Set default values for the template fields.
+%    \begin{macrocode}
+\newcommand*{\uwapcf@project}{}
+%    \end{macrocode}
+% \end{macro}
+% \end{minipage}
+%
+% \begin{minipage}{\textwidth}
+% \begin{macro}{\project}
+% Define macros to set the template fields.
+%    \begin{macrocode}
+\newcommand*{\project}[1]{\renewcommand*{\uwapcf@project}{#1}}
+%    \end{macrocode}
+% \end{macro}
+% \end{minipage}
+%
+% \subsection{Field Validation}
+%
+% \begin{macro}{\uwapcf@checkfields}
+% Check that the required template fields are set.
+%    \begin{macrocode}
+\newcommand{\uwapcf@checkfields}{%
+        \uwalh@checkfield{\uwapcf@project}{\noexpand\project}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Document Title}
+%
+% \begin{macro}{\uwapcf@maketitle}
+% Generate the title of the Participant Consent Form, including the
+% fields for the project title and researchers.
+%    \begin{macrocode}
+\newcommand{\uwapcf@maketitle}{%
+        \uwapcf@checkfields{}%
+        \vspace{-1\parskip}\vspace{-0.310cm}%
+        \begin{center}%
+                \uwalh@arial%
+                \fontsize{16}{16.96}\selectfont%
+                \textbf{Participant Consent Form}%
+                \normalsize%
+        \end{center}%
+        \vspace{-1\parskip}\vspace{-0.120cm}%
+        \begin{center}%
+                \uwalh@arial%
+                \fontsize{12}{12.72}\selectfont%
+                \uwapcf@project{}%
+                \normalsize%
+        \end{center}%
+        \uwalh@arial%
+        \fontsize{10}{11.6}\selectfont%
+        \vspace{-1\parskip}\vspace{0.860cm}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Signature Lines}
+%
+% \begin{macro}{\uwapcf@sig@vspace}
+% The vertical space before the signature lines.
+%    \begin{macrocode}
+\newlength{\uwapcf@sig@vspace}
+\setlength{\uwapcf@sig@vspace}{1.3cm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@sig@rulewidth}
+% The width of the signature lines.
+%    \begin{macrocode}
+\newlength{\uwapcf@sig@rulewidth}
+\setlength{\uwapcf@sig@rulewidth}{0.0227cm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@sig@offset}
+% The horizontal offset of the leftmost signature line.
+%    \begin{macrocode}
+\newlength{\uwapcf@sig@offset}
+\setlength{\uwapcf@sig@offset}{0.095cm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@sig@labeloffset}
+% The horizontal offset of the signature line labels.
+%    \begin{macrocode}
+\newlength{\uwapcf@sig@labeloffset}
+\setlength{\uwapcf@sig@labeloffset}{0.008cm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@siglabelvspace}
+% The vertical space added before the signature line labels.
+%    \begin{macrocode}
+\newlength{\uwapcf@sig@labelvspace}
+\setlength{\uwapcf@sig@labelvspace}{-0.0675cm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@sig@gutter}
+% The horizontal space between the signature lines.
+%    \begin{macrocode}
+\newlength{\uwapcf@sig@gutter}
+\setlength{\uwapcf@sig@gutter}{3cm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@sig@siglinelength}
+% The length of the line for the signature.
+%    \begin{macrocode}
+\newlength{\uwapcf@sig@siglinelength}
+\setlength{\uwapcf@sig@siglinelength}{4.905cm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@sig@datelinelength}
+% The length of the line for the date.
+%    \begin{macrocode}
+\newlength{\uwapcf@sig@datelinelength}
+\setlength{\uwapcf@sig@datelinelength}{2.946cm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@makesignature}
+% Generate the signature lines.
+%    \begin{macrocode}
+\newcommand{\uwapcf@makesignature}{%
+        \vspace{\uwapcf@sig@vspace}%
+        \hspace{\uwapcf@sig@offset}%
+        \begin{minipage}[t]{\uwapcf@sig@siglinelength}
+                \rule{\textwidth}{\uwapcf@sig@rulewidth} \\
+                \vspace{-1\baselineskip}\vspace{\uwapcf@sig@labelvspace} \\
+                \hspace*{\uwapcf@sig@labeloffset}%
+                Participant signature
+        \end{minipage}%
+        \hspace{\uwapcf@sig@gutter}%
+        \begin{minipage}[t]{\uwapcf@sig@datelinelength}
+                \rule{\textwidth}{\uwapcf@sig@rulewidth} \\
+                \vspace{-1\baselineskip}\vspace{\uwapcf@sig@labelvspace} \\
+                \hspace*{\uwapcf@sig@labeloffset}%
+                Date
+        \end{minipage}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{HREO Statement}
+%
+% \begin{macro}{\uwapcf@hreo@vspace}
+% The vertical space before the HREO statement.
+%    \begin{macrocode}
+\newlength{\uwapcf@hreo@vspace}
+\setlength{\uwapcf@hreo@vspace}{1.843cm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@hreo@font}
+% The font for the HREO statement.
+%    \begin{macrocode}
+\newcommand*{\uwapcf@hreo@font}{%
+        \uwalh@arial%
+        \fontsize{9}{10.4}\selectfont%
+        \color{black}%
+        \bfseries\itshape%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@hreo@parvspace}
+% The vertical space between paragraphs for the HREO statement.
+%    \begin{macrocode}
+\newlength{\uwapcf@hreo@parvspace}
+\setlength{\uwapcf@hreo@parvspace}{0.5\baselineskip}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@hreo@statement}
+% The statement required by the Human Research Ethics Office (HREO).
+%    \begin{macrocode}
+\newcommand{\uwapcf@hreo@statement}{%
+        \begin{minipage}{\textwidth}
+        Approval to conduct this research has been provided by the
+        University of Western Australia, in accordance with its ethics
+        review and approval procedures. Any person considering
+        participation in this research project, or agreeing to
+        participate, may raise any questions or issues with the
+        researchers at any time.
+        \end{minipage}
+
+        \vspace*{\uwapcf@hreo@parvspace}
+
+        \begin{minipage}{\textwidth}
+        In addition, any person not satisfied with the response of
+        researchers may raise ethics issues or concerns, and may make
+        any complaints about this research project by contacting the
+        Human Ethics office at UWA on
+        \href{tel:+61-8-6488-4703}{(08)~6488~4703} or by emailing to
+        \href{mailto:humanethics@uwa.edu.au}{humanethics@uwa.edu.au}.
+        \end{minipage}
+
+        \vspace*{\uwapcf@hreo@parvspace}
+        
+        \begin{minipage}{\textwidth}
+        All research participants are entitled to retain a copy of any
+        Participant Information Form and/or Participant Consent Form
+        relating to this research project.
+        \end{minipage}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uwapcf@makehreostatement}
+% Generate the HREO statement.
+%    \begin{macrocode}
+\newcommand{\uwapcf@makehreostatement}{%
+        \vspace{\uwapcf@hreo@vspace} \\
+        \begin{minipage}{\textwidth}
+                {%
+                        \uwapcf@hreo@font{}%
+                        \uwapcf@hreo@statement{}%
+                }%
+        \end{minipage}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Body Text Font}
+%
+% \begin{macro}{\uwapcf@bodyfont}
+% Set the body text font and colour.
+%    \begin{macrocode}
+\newcommand*{\uwapcf@bodyfont}{%
+        \sffamily%
+        \fontsize{11}{15.5}\selectfont%
+        \color{UWAPCFBody}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Form Generation}
+%
+% Automatically generate the title and set the body text font at
+% the beginning of the document.
+%    \begin{macrocode}
+\AtBeginDocument{%
+        \uwapcf@bodyfont{}%
+        \uwapcf@maketitle{}%
+}
+%    \end{macrocode}
+%
+% Automatically add the signature lines and HREO statement at the end
+% of the document.
+%    \begin{macrocode}
+\AtEndDocument{%
+        \ifuwapcf@signature\uwapcf@makesignature{}\fi%
+        \ifuwapcf@hreo\uwapcf@makehreostatement{}\fi%
+}
+%    \end{macrocode}
+%
+% \subsection{Participant Name}
+%
+% \begin{macro}{\theparticipant}
+% Generate the line for the participant's name.
+%    \begin{macrocode}
+\newcommand{\theparticipant}{%
+        \begin{minipage}[t]{9.415cm}
+                \vspace*{0.048cm}%
+                \rule{\textwidth}{0.0227cm}%
+        \end{minipage}%
+}
+%    \end{macrocode}
+% \end{macro}
+% \Finale
+\endinput

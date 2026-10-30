@@ -1,0 +1,20 @@
+\chapter{Related Work}
+\label{cap:related}
+
+\section{Time-Series Storage Engines}
+Purpose-built time-series databases such as Gorilla store data in
+compressed, append-only blocks keyed by sensor and time window, which
+improves both write throughput and compression ratio relative to
+general-purpose storage engines \cite{Pelkonen2015}.
+
+\section{Query Planning over Temporal Data}
+Query optimization for temporal data has a long history in the database
+literature, though most classical work targets transactional workloads
+rather than the high-cardinality, append-mostly workloads typical of sensor
+telemetry \cite{Jensen2017}.
+
+\section{Gap Addressed by This Dissertation}
+Prior time-series query planners generally treat sensor identity and time
+as independent dimensions to be indexed separately. This dissertation
+explores planning jointly over both dimensions when sampling rate is known
+in advance.

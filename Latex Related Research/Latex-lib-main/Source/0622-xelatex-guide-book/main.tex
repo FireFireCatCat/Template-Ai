@@ -1,0 +1,73 @@
+\documentclass[12pt,oneside]{book}
+
+\usepackage{mybook}
+\usepackage{mybookcover}
+\usepackage{natbib}
+
+\title{The XeLaTeX Guide}
+\subtitle{Notes for getting started with fontspec}
+\author{Wander}
+\version{v1.0}
+
+\begin{document}
+
+\makemytitle
+
+\frontmatter
+\addchtoc{Preface}
+\chapter*{Preface}
+This guide collects practical notes on typesetting with XeLaTeX: how
+\texttt{fontspec} selects fonts, and the small conventions that make a
+document easy to maintain as it grows.
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{Choosing Fonts with fontspec}
+
+\section{Main, Sans and Mono Families}
+
+XeLaTeX and LuaLaTeX both load system fonts directly through
+\texttt{fontspec}, rather than requiring a font to be installed as TeX
+metrics first \citep{knuth1984texbook}. Table~\ref{tab:families} lists the
+three families a document typically sets.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    Command & Sets \\
+    \midrule
+    \verb|\setmainfont|  & body text \\
+    \verb|\setsansfont|  & sans-serif emphasis \\
+    \verb|\setmonofont|  & code and verbatim text \\
+    \bottomrule
+  \end{tabular}
+  \caption{The three font families \texttt{fontspec} configures.}
+  \label{tab:families}
+\end{table}
+
+\section{A Note on Missing Fonts}
+
+If a font a document asks for is not installed, \texttt{fontspec} raises an
+error rather than silently substituting one. This starter uses DejaVu Serif,
+DejaVu Sans and DejaVu Sans Mono, all installed here by default.
+
+\chapter{Structuring a Longer Document}
+
+\section{Chapters, Marks and Running Heads}
+
+This class customises \verb|\chaptermark| and \verb|\sectionmark| so the
+running head names the current chapter and section, a convenience worth
+keeping even outside CJK typesetting \citep{knuth1984texbook}.
+
+\section{Closing the Document}
+
+The bibliography below is produced the same way it would be under a plain
+\texttt{book} class: a \texttt{natbib} style and a \texttt{.bib} file.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

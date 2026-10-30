@@ -1,0 +1,34 @@
+% Letter-class-option file for the "Letter of Notice" starter — the sender
+% letterhead, kept as a separate .lco (KOMA-Script's own convention, per
+% scrletter) rather than inlined, so main.tex stays pure body content.
+\ProvidesFile{letter-of-notice-sender.lco}[letter-class-option file]
+
+\RequirePackage{marvosym}
+\RequirePackage{xcolor}
+
+\KOMAoptions{
+  foldmarks=true,
+  fromurl=false,
+  fromemail=true,
+  fromphone=true,
+  fromfax=false,
+  fromalign=right,
+  fromrule=off,
+  footsepline=off,
+}
+
+\definecolor{noticegray}{gray}{.45}
+
+\setkomavar{fromname}{Tobias Lindqvist}
+\setkomafont{fromname}{\bfseries\Large}
+\setkomavar{fromaddress}{9 Kirkland Terrace\\Edinburgh EH9 1RT}
+\setkomafont{fromaddress}{\small\slshape\color{noticegray}}
+\setkomavar{fromphone}[]{+44 131 555 0163}
+\setkomavar{fromemail}[]{t.lindqvist@example.com}
+\setkomavar{backaddress}{T. Lindqvist, 9 Kirkland Terrace, Edinburgh EH9 1RT}
+
+\setkomavar{signature}{Tobias Lindqvist}
+\renewcommand*{\raggedsignature}{\raggedright}
+\@setplength{sigbeforevskip}{1.6cm}
+
+\endinput

@@ -1,0 +1,68 @@
+% !TEX TS-program = xelatex
+% !TEX encoding = UTF-8
+\documentclass[onecolumn,oneside]{SUSTechHomework}
+
+\author{Jane Student}
+\sid{12345678}
+\title{Homework 3}
+\coursecode{CS205}
+\coursename{Data Structures and Algorithms}
+
+\begin{document}
+\maketitle
+
+\section{Asymptotic Notation}
+
+\begin{enumerate}
+    \item Prove that $f(n) = 5n^2 + 3n$ is $O(n^2)$.
+
+    \textit{Solution.} Take $c = 8$ and $n_0 = 1$. For $n \geq 1$, $3n \leq
+    3n^2$, so $5n^2 + 3n \leq 8n^2$, which satisfies the definition of $O(n^2)$.
+
+    \item Rank the following functions by growth rate, slowest to fastest:
+    $n \log n$, $2^n$, $n!$, $\sqrt{n}$.
+
+    \textit{Solution.} $\sqrt{n} < n\log n < 2^n < n!$.
+\end{enumerate}
+
+\section{Binary Search Trees}
+
+\begin{enumerate}
+    \item Insert the keys $5, 3, 8, 1, 4, 7, 9$ in that order into an initially
+    empty binary search tree. Draw the resulting tree.
+
+    \textit{Solution.} Each key after the first is placed by comparing against
+    the root and recursing left (smaller) or right (larger):
+    \begin{verbatim}
+            5
+          /   \
+         3     8
+        / \   / \
+       1   4 7   9
+    \end{verbatim}
+
+    \item What is the time complexity of \texttt{search}, \texttt{insert}, and
+    \texttt{delete} on a balanced BST with $n$ nodes? What about an
+    unbalanced one in the worst case?
+
+    \textit{Solution.} Balanced: $O(\log n)$ for all three operations. In the
+    worst case (a degenerate, list-shaped tree) all three degrade to $O(n)$.
+\end{enumerate}
+
+\section{Code Listing}
+
+\begin{lstlisting}[language=Python, caption=Iterative binary search]
+def binary_search(a, target):
+    lo, hi = 0, len(a) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if a[mid] == target:
+            return mid
+        elif a[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1
+\end{lstlisting}
+
+\end{document}

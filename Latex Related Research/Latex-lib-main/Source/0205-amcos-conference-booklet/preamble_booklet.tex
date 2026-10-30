@@ -1,0 +1,117 @@
+%======================================================
+% Adapted from AMCOS_booklet (GPL-3.0)
+% https://github.com/maximelucas/AMCOS_booklet
+% Original authors: Maxime Lucas, Pau Clusella
+%=======================================================
+
+\definecolor{myorange}{RGB}{255,117,40}
+\definecolor{mygray}{RGB}{164, 168, 172}
+\definecolor{mywhite}{RGB}{235, 238, 231}
+\definecolor{myblue}{RGB}{52, 115, 116}
+
+\newcommand{\primarycolor}{myblue}
+\newcommand{\secondarycolor}{mywhite}
+
+%----------------------------------------
+% talk abstract environment
+%----------------------------------------
+\newenvironment{abstract}[4] %{title}{author}{affiliation}{tag}
+{\filbreak
+
+	{\large \bfseries #1}
+
+	{\bfseries \itshape #2,} \textcolor{mygray}{#3} \hfill {#4}
+
+}
+{}
+
+%----------------------------------------
+% poster abstract command
+%----------------------------------------
+\newcommand{\poster}[3] %{title}{author}{affiliation}
+{\filbreak
+
+	{\bfseries \large #1} \\
+	\tab #2, \textit{#3}
+
+}
+
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+
+%----------------------------------------
+% tags for talk type (coloured circle in abstracts)
+%----------------------------------------
+
+\newcommand{\KLcolor}{myorange!45}
+\newcommand{\IScolor}{myblue!65}
+\newcommand{\CTcolor}{white}
+
+\newcommand{\KLtag}{\tikz[baseline={([yshift=-.8ex]current bounding box.center)}]  \node[circle, inner sep=2pt, minimum size=0.5em, color=black, fill=\KLcolor]{\small \bfseries KL};}
+\newcommand{\IStag}{\tikz[baseline={([yshift=-.8ex]current bounding box.center)}]  \node[circle, inner sep=2pt, minimum size=0.5em, color=black, fill=\IScolor]{\small \bfseries IS};}
+\newcommand{\CTtag}{\tikz[baseline={([yshift=-.8ex]current bounding box.center)}]  \node[circle, inner sep=2pt, minimum size=0.5em, color=black, fill=\CTcolor]{\small \bfseries CT};}
+
+%
+% PAGE LAYOUT: vertical colour bar on the outer edge of each page
+%
+\usepackage{etoolbox}
+\usepackage[scale=1,angle=0,opacity=1]{background}
+\backgroundsetup{contents={}}
+
+\AddEverypageHook{%
+\ifthenelse{\isodd{\thepage} \AND \thepage>1}{%
+	\backgroundsetup{color=\secondarycolor,position=current page.south east,
+		nodeanchor=south east,contents={\rule{10pt}{0.66\paperheight}}}
+	}{}
+\ifthenelse{\NOT \isodd{\thepage}}{%
+	\backgroundsetup{color=\secondarycolor,position=current page.south west,
+		nodeanchor=south west,contents={\rule{10pt}{0.66\paperheight}}}
+	}{}
+\BgMaterial}
+
+%---------------------------------------------------
+% chapter heading style — coloured bar beside the title
+%---------------------------------------------------
+\newdimen\mybarpadding
+\mybarpadding=1.5em\relax
+
+\RedeclareSectionCommand[
+    afterskip=4em plus 1pt minus 1pt,
+    beforeskip=-1pt,
+    level=0,
+    toclevel=0
+]{chapter}
+
+\setkomafont{chapter}{\normalfont\normalsize\bfseries\Huge}
+
+\makeatletter
+\renewcommand{\chapterlinesformat}[3]{%
+  \ifthispageodd{%
+    \hfill%
+    \raisebox{-0.2em}{\makebox[0pt][r]{\textcolor{\primarycolor}{\rule{\paperwidth}{1em}}}}%
+    \hspace{\mybarpadding}%
+	\mbox{#3}%
+  }{%
+      \mbox{#3}%
+      \hspace{\mybarpadding}%
+      \raisebox{-0.2em}{\makebox[0pt][l]{\textcolor{\primarycolor}{\rule{\paperwidth}{1em}}}}%
+  }%
+}
+\makeatother
+
+%
+% TIMETABLE COLOURS AND STYLES
+%
+\newcommand{\tbg}{gray}
+\newcommand{\tfg}{white}
+\newcommand{\tbc}{gray!25}
+
+\newcommand{\tablebreak}[2]{\rowcolor{\tbc} #1 &  \multicolumn{4}{c|}{\bfseries #2} \\ \hline}
+\newcommand{\eventtype}[2]{#1& \multicolumn{4}{c|}{\cellcolor{\tbg}\color{\tfg}\bfseries #2} \\ \hline}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\newcommand{\IS}[5]{#1 &\cellcolor{\IScolor}IS&{\bfseries#2}\newline #4&&#5 \\ \hline}
+\newcommand{\CT}[5]{#1 &\cellcolor{\CTcolor}CT&{\bfseries#2}\newline #4&&#5 \\ \hline}
+\newcommand{\KL}[5]{#1 &\cellcolor{\KLcolor}KL&{\bfseries#2}\newline #4&&#5 \\ \hline}

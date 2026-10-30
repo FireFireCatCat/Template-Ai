@@ -1,0 +1,594 @@
+% \iffalse
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Documentation Builder
+%<*doc>
+\documentclass[a4paper]{ltxdoc}
+
+\usepackage{hsrstud}
+\usepackage[
+  type={CC},
+  modifier={by-sa},
+  version={4.0},
+]{doclicense}
+\usepackage[
+  margin=3.5cm,
+  left=4cm
+]{geometry}
+
+\usepackage{booktabs}
+\usepackage{enumitem}
+
+\CodelineIndex
+\EnableCrossrefs
+\RecordChanges
+
+%% Metadata
+\title{\textcolor{hsr-blue}{HSR}--Stud Document Classes}
+\author{Naoki Pross \texttt{<naoki.pross@ost.ch>}}
+\date{\today}
+
+\begin{document}
+\DocInput{\jobname.dtx}
+
+\end{document}
+%</doc>
+% \fi
+
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%^^A Classes Documentation
+%
+% \maketitle
+% \tableofcontents
+% 
+% \section{Purpose of these document classes}
+% The following document classes were made by and for the HSR-Stud organization. 
+% These classes are intended to be used to create beautiful summaries and cheat 
+% sheets. Available classes are:
+% \begin{description}[align=right]
+%   \item[|hsrzf|] For summaries (Zusammenfassung)
+%   \item[|hsrbericht|] For reports (Bericht)
+% \end{description}
+%
+% 
+% \section{Class Options}
+% \begin{description}[align=right]
+%   \item[\tt sans] Use Sans-Serif fonts (|cmbright| and |hfbright|).
+%   \item[\tt slab] Use Slab-Serif fonts (|bitter| and |eulervm|).
+%   \item[\tt margin=<size>] Sets up margins to reasonable size.
+%   \item[\tt *] Any other given option is passed to the underlying class (article).
+% \end{description}
+% 
+% \begin{table}\centering
+% \begin{tabular}{l r r l r r}
+%   \toprule
+%   Size & H & V & Size & H & V \\
+%   \midrule
+%   huge    & 45 & 40 & small   & 20 & 20 \\
+%   large   & 35 & 35 & tiny    & 10 & 20 \\
+%   big     & 30 & 30 & minimal &  5 & 20 \\
+%   normal  & 25 & 30 \\
+%   \bottomrule
+% \end{tabular}
+% \caption{Sizes for the {\tt margin} option. All sizes are in millimeters}
+% \end{table}
+% 
+% 
+% \section{Extra Metadata}
+% Thanks to the {\tt titling} package, normal metadata informations are available 
+% throug the following commands: \cs{theauthor}, \cs{thedate}, \cs{thetitle}. 
+% Additionally, more metadata variables have been created for this class, to 
+% conserve informations related to the university course.
+% \begin{description}[align=right]
+%   \item[\cs{course}] The degree programme of the discussed subject.
+%     Example: |Elektrotechnik|
+%   \item[\cs{module}] Short name of the module according to the class 
+%     schedule. Example: |ComEng1|
+%   \item[\cs{semester}] Semester during which the summarized subject was 
+%     taught. Example: |FS20|
+%   \item[\cs{institute}] Internal institute in which the module was taught. 
+%     This field is optional.
+%   \item[\cs{authoremail}] Email of the author. This field is optional.
+%   \item[\cs{maintainer}] Name of the person maintaining the work. This 
+%     field is optional.
+%   \item[\cs{contributors}] List of names of those who have contributed to
+%     the document. This field is optional.
+% \end{description}
+% Like \cs{date}, \cs{title}, etc. these fields have too an accessor macro 
+% \cs{the<metadata>}. For example: \cs{thecourse}, \cs{themodule}, and so on.
+% 
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%^^A Zusammenfassung Class Documentation
+% \section{Zusammenfassung \texttt{hsrzf} class}
+% This class is intended to be used to write short summaries.
+%
+% \subsection{Class options}
+% \begin{description}[align=right]
+%   \item[\tt header] Use the HSR--Stud standard header. The option 
+%     {\tt noheader} disables the header.
+% \end{description}
+%
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%^^A Bericht Class Documentation
+% \section{Bericht \texttt{hsrbericht} class}
+% This class tries to conform to the indications given by the communication
+% department of the HSR. The specifications are found in the ``Werkzeugkastens 
+% Technische Berichte''.
+%
+% \subsection{Metadata}
+% In addition to the metadata described in the previous section. This class 
+% requires:
+% \begin{description}[align=right]
+%   \item[\cs{subtitle}] Pretty self explanatory.
+%   \item[\cs{category}] Category assigned to the project.
+%     This field is optional.
+%   \item[\cs{project}] Name or reference to your project.
+%   \item[\cs{topic}] You chosen topic in the category.
+%   \item[\cs{instructor}] Name of the instructor / academic that is 
+%     following or has assigned your work.
+%   \item[\cs{startdate}] Date when you started the project.
+%   \item[\cs{finishdate}] Date when you finished the project (can be set to 
+%     \cs{today} to keep automatically updated.
+%   \item[\cs{address}] Address or place where your work is produced.
+%     This field is optional.
+%   \item[\cs{matriculationnr}] Your matriculation number.
+%   \item[\cs{logo}] Code to insert your logo.
+%   \item[\cs{clientlogo}] Code to insert the logo of the client / research 
+%     department / \dots .
+% \end{description}
+%
+% \section{Minimal working examples}
+% 
+% ^^A TODO: fix this with `%'
+% \begin{lstlisting}
+%  \documentclass[margin=normal]{hsrzf}
+%  
+%  % Packages
+%  %% the HSRStud package
+%  \usepackage{hsrstud}
+%  
+%  % Metadata
+%  \course{Elektrotechnik}
+%  \module{ModAbk}
+%  \semester{Herbstsemester 2020}
+%  
+%  \authoremail{vname@hsr.ch}
+%  \author{\textsl{Vorname Name} -- \texttt{\theauthoremail}}
+%  
+%  \title{\texttt{\themodule} Zusammenfassung}
+%  \date{\thesemester}
+%  
+%  % document
+%  \begin{document}
+%  \maketitle
+%  \tableofcontents
+%  \section{Introduction}
+%  \[
+%    i\hbar \partial_t \left| \psi(t) \right\rangle 
+%      = \hat{H} \left| \psi(t) \right\rangle
+%  \]
+%  
+%  \end{document}\end{lstlisting}
+% 
+% \section{License}
+% \doclicenseThis
+%
+% \PrintChanges
+% \PrintIndex
+% 
+% \section{Implementation}
+%    \begin{macrocode}
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%^^A Class Headers
+
+%<*hsrzf>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{hsrzf}[2020/04/05 v0.1 HSRStud Summary class]
+%</hsrzf>
+
+%<*hsrbericht>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{hsrbericht}[2020/05/05 v0.1 HSRStud Report class]
+%</hsrbericht>
+
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%^^A Implementation
+%
+%<*hsrzf|hsrbericht>
+
+%% Coding Packages (Dependencies)
+\RequirePackage{iftex}
+\RequirePackage{kvoptions}
+\RequirePackage{etoolbox}
+
+%% Default font
+\RequirePackage{lmodern}
+
+%% Class options
+\SetupKeyvalOptions{
+  family=hsr,
+  prefix=hsr@
+}
+
+%% Use header and footer
+\DeclareBoolOption[false]{header}
+\DeclareComplementaryOption{noheader}{header}
+
+%% Use a sans-serif slab-serif or concrete font
+\DeclareBoolOption[false]{sans}
+\DeclareBoolOption[false]{slab}
+\DeclareBoolOption[false]{concrete}
+
+%% Configures the geometry package
+%% 
+%% Possible values:
+%%  - huge    (45mm, 40mm)
+%%  - large   (35mm, 35mm)
+%%  - big     (30mm, 30mm)
+%%  - normal  (25mm, 30mm)
+%%  - small   (20mm, 20mm)
+%%  - tiny    (10mm, 20mm)
+%%  - minimal ( 5mm, 20mm)
+\DeclareStringOption{margin}[huge]
+
+%% Configures the polyglossia package
+% \DeclareStringOption[]{lang}[german]
+
+
+%% Pass other options to the class
+\DeclareDefaultOption{%
+  \ifx\CurrentOptionValue\relax
+    \PackageWarningNoLine{\@currname}{%
+      Unknown option ``\CurrentOption''\MessageBreak
+      is passed to class ``article''%
+    }%
+    % Pass the option to package color.
+    % Again it is better to expand \CurrentOption.
+    \expandafter\PassOptionsToClass
+      \expandafter{\CurrentOption}{article}
+  \else
+    % Package color does not take options with values.
+    % We provide the standard LaTeX error.
+    \@unknownoptionerror
+  \fi
+}
+
+\ProcessKeyvalOptions{hsr}
+
+
+%% Create new metadata fields
+
+%% Required fields
+\newcommand\course[1]{\gdef\hsr@course{#1}}
+\newcommand\hsr@course{\ClassError{hsrzf}{no \noexpand\course given}{}}
+\newcommand\thecourse{\hsr@course}
+
+\newcommand\module[1]{\gdef\hsr@module{#1}}
+\newcommand\hsr@module{\ClassError{hsrzf}{no \noexpand\module given}{}}
+\newcommand\themodule{\hsr@module}
+
+\newcommand\semester[1]{\gdef\hsr@semester{#1}}
+\newcommand\hsr@semester{\ClassError{hsrzf}{no \noexpand\semester given}{}}
+\newcommand\thesemester{\hsr@semester}
+
+%% Optional fields
+\newcommand\institute[1]{\gdef\hsr@institute{#1}}
+\newcommand\hsr@institute{\ClassWarning{hsrzf}{no \noexpand\institute given}{}}
+\newcommand\theinstitute{\hsr@institute}
+
+\newcommand\authoremail[1]{\gdef\hsr@authoremail{#1}}
+\newcommand\hsr@authoremail{\ClassWarning{hsrzf}{no \noexpand\authoremail given}{}}
+\newcommand\theauthoremail{\hsr@authoremail}
+
+\newcommand\maintainer[1]{\gdef\hsr@maintainer{#1}}
+\newcommand\hsr@maintainer{\ClassWarning{hsrzf}{no \noexpand\maintainer given}{}}
+\newcommand\themaintainer{\hsr@maintainer}
+
+\newcommand\contributors[1]{\gdef\hsr@contributors{#1}}
+\newcommand\hsr@contributors{\ClassWarning{hsrzf}{no \noexpand\contributors given}{}}
+\newcommand\thecontributors{\hsr@contributors}
+%</hsrzf|hsrbericht>
+%<*hsrbericht>
+%% The report class has some extra metadata
+
+%% Extra title informations
+\newcommand\subtitle[1]{\gdef\hsr@subtitle{#1}}
+\newcommand\hsr@subtitle{\ClassError{hsrbericht}{no \noexpand\subtitle given}{}}
+\newcommand\thesubtitle{\hsr@subtitle}
+
+%% Project informations
+\newcommand\category[1]{\gdef\hsr@category{#1}}
+\newcommand\hsr@category{\ClassWarning{hsrbericht}{no \noexpand\category given}{}}
+\newcommand\thecategory{\hsr@category}
+
+\newcommand\project[1]{\gdef\hsr@project{#1}}
+\newcommand\hsr@project{\ClassError{hsrbericht}{no \noexpand\project given}{}}
+\newcommand\theproject{\hsr@project}
+
+\newcommand\topic[1]{\gdef\hsr@topic{#1}}
+\newcommand\hsr@topic{\ClassError{hsrbericht}{no \noexpand\topic given}{}}
+\newcommand\thetopic{\hsr@topic}
+
+\newcommand\version[1]{\gdef\hsr@version{#1}}
+\newcommand\hsr@version{\ClassError{hsrbericht}{no \noexpand\version given}{}}
+\newcommand\theversion{\hsr@version}
+
+\newcommand\instructor[1]{\gdef\hsr@instructor{#1}}
+\newcommand\hsr@instructor{\ClassError{hsrbericht}{no \noexpand\instructor given}{}}
+\newcommand\theinstructor{\hsr@instructor}
+
+\newcommand\startdate[1]{\gdef\hsr@startdate{#1}}
+\newcommand\hsr@startdate{\ClassError{hsrbericht}{no \noexpand\startdate given}{}}
+\newcommand\thestartdate{\hsr@startdate}
+
+\newcommand\finishdate[1]{\gdef\hsr@finishdate{#1}}
+\newcommand\hsr@finishdate{\ClassError{hsrbericht}{no \noexpand\finishdate given}{}}
+\newcommand\thefinishdate{\hsr@finishdate}
+
+%% Author informations
+\newcommand\address[1]{\gdef\hsr@address{#1}}
+\newcommand\hsr@address{\ClassWarning{hsrbericht}{no \noexpand\address given}{}}
+\newcommand\theaddress{\hsr@address}
+
+\newcommand\matriculationnr[1]{\gdef\hsr@matriculationnr{#1}}
+\newcommand\hsr@matriculationnr{\ClassError{hsrbericht}{no \noexpand\matriculationnr given}{}}
+\newcommand\thematriculationnr{\hsr@matriculationnr}
+
+%% Logos informations
+\newcommand\logo[1]{\gdef\hsr@logo{#1}}
+\newcommand\hsr@logo{\ClassWarning{hsrbericht}{no \noexpand\logo given}{}}
+\newcommand\thelogo{\hsr@logo}
+
+\newcommand\clientlogo[1]{\gdef\hsr@clientlogo{#1}}
+\newcommand\hsr@clientlogo{\ClassWarning{hsrbericht}{no \noexpand\clientlogo given}{}}
+\newcommand\theclientlogo{\hsr@clientlogo}
+%</hsrbericht>
+%<*hsrzf|hsrbericht>
+
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%^^A Setup base class
+\LoadClass[a4paper]{article}
+
+%% Style deps
+\RequirePackage{geometry}
+\RequirePackage{fancyhdr}
+\RequirePackage{titling}
+\RequirePackage{totpages}
+\RequirePackage{array}
+
+%% Insert metadata in the pdf
+\PassOptionsToPackage{plainpages=false, pdfpagelabels, pdfusetitle}{hyperref}
+\RequirePackage{hyperref}
+
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%^^A Setup Style
+%
+
+
+%% Configure Sans-Serif font
+\ifhsr@sans
+  \ifhsr@slab
+    \PackageError{hsrzf}{%
+      sans ans slab options cannot be used at the same time
+    }
+  \fi
+  \ifhsr@concrete{hsrzf}{%
+    sans and concrete options cannot be used at the same time
+  }
+  \fi
+
+  \PassOptionsToPackage{T1}{fontenc}
+  \RequirePackage{fontenc}
+  \RequirePackage{cmbright}
+  \RequirePackage{sfmath}
+\fi
+
+%% Configure Slab-Serif font
+\ifhsr@slab
+  \ifhsr@sans
+    \PackageError{hsrzf}{%
+      slab and sans options cannot be used at the same time
+    }
+  \fi
+  \ifhsr@concrete{hsrzf}{%
+    slab and concrete options cannot be used at the same time
+  }
+  \fi
+
+  \PassOptionsToPackage{T1}{fontenc}
+  \RequirePackage{fontenc}
+  \PassOptionsToPackage{rm,light}{roboto}
+  \RequirePackage{roboto}
+\fi
+
+%% Configure (secret) concrete font
+\ifhsr@concrete
+  \ifhsr@sans{hsrzf}{%
+    concrete and sans options cannot be used at the same time
+  }
+  \fi
+  \ifhsr@slab
+    \PackageError{hsrzf}{%
+      concrete ans slab options cannot be used at the same time
+    }
+  \fi
+
+  \PassOptionsToPackage{boldsans,amssymb}{concmath}
+  \RequirePackage{concmath}
+  \PassOptionsToPackage{T1}{fontenc}
+  \RequirePackage{fontenc}
+\fi
+
+%% configure geometry
+%% defaults to big
+\newlength{\hsr@hmarginwidth}
+\newlength{\hsr@vmarginheight}
+
+\ifx\hsr@margin\@empty
+  \setlength\hsr@hmarginwidth{30mm}
+  \setlength\hsr@vmarginheight{30mm}
+\else
+  \expandafter\ifstrequal\expandafter{\hsr@margin}{huge}{
+    \setlength\hsr@hmarginwidth{45mm}
+    \setlength\hsr@vmarginheight{40mm}}{}
+%%
+  \expandafter\ifstrequal\expandafter{\hsr@margin}{large}{
+    \setlength\hsr@hmarginwidth{35mm}
+    \setlength\hsr@vmarginheight{35mm}}{}
+%%
+  \expandafter\ifstrequal\expandafter{\hsr@margin}{big}{
+    \setlength\hsr@hmarginwidth{30mm}
+    \setlength\hsr@vmarginheight{30mm}}{}
+%%
+  \expandafter\ifstrequal\expandafter{\hsr@margin}{normal}{
+    \setlength\hsr@hmarginwidth{25mm}
+    \setlength\hsr@vmarginheight{30mm}}{}
+%%
+  \expandafter\ifstrequal\expandafter{\hsr@margin}{small}{
+    \setlength\hsr@hmarginwidth{20mm}
+    \setlength\hsr@vmarginheight{20mm}}{}
+%%
+  \expandafter\ifstrequal\expandafter{\hsr@margin}{tiny}{
+    \setlength\hsr@hmarginwidth{10mm}
+    \setlength\hsr@vmarginheight{20mm}}{}
+%%
+  \expandafter\ifstrequal\expandafter{\hsr@margin}{minimal}{
+    \setlength\hsr@hmarginwidth{ 5mm}
+    \setlength\hsr@vmarginheight{20mm}}{}
+%%
+  % TODO: fix this
+  % \ClassError{hsrzf}{Invalid margin size}
+  % \setlength\hsr@hmarginwidth{30mm}
+  % \setlength\hsr@vmarginheight{30mm}
+\fi
+
+%</hsrzf|hsrbericht>
+
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%^^A HSR ZF specific
+%<*hsrzf>
+%% TODO: change vmarginheight if header is on
+\newgeometry{
+    hmargin=\hsr@hmarginwidth,
+    vmargin=\hsr@vmarginheight,
+    marginparsep=0pt,
+    marginpar=0pt,
+}
+
+\fancypagestyle{hsrzf}{%
+    \fancyhf{} % clear
+    \fancyhead[L]{\leftmark}
+    \fancyhead[C]{\themodule}
+    \fancyhead[R]{\@date}
+
+    \fancyfoot[L]{\href{https://github.com/HSR-Stud/}{\texttt{HSR-Stud}}}
+    \fancyfoot[C]{\texttt{CC BY-NC-SA}}
+    \fancyfoot[R]{\thepage ~/ \pageref{TotPages}}
+
+    \renewcommand{\headrulewidth}{.5pt}
+    \renewcommand{\footrulewidth}{.5pt}
+}
+
+\fancypagestyle{hsrzf-norulers}{%
+    \fancyhf{} % clear
+    \fancyhead[L]{\leftmark}
+    \fancyhead[C]{\themodule}
+    \fancyhead[R]{\@date}
+
+    \fancyfoot[L]{\href{https://github.com/HSR-Stud/}{\texttt{HSR-Stud}}}
+    \fancyfoot[C]{\texttt{CC BY-NC-SA}}
+    \fancyfoot[R]{\thepage ~/ \pageref{TotPages}}
+
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+\ifhsr@header
+\pagestyle{hsrzf}
+\fi
+%</hsrzf>
+
+%^^A%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%^^A HSR Bericht specific
+%<*hsrbericht>
+
+%% Redefine title and abstract
+\renewcommand\maketitle{%
+\begin{titlepage}
+    \thispagestyle{hsrbericht}
+    \begin{center}
+    \vspace*{6cm}
+    \textbf{\fontsize{48}{60}\selectfont \@title}
+    \vspace{1.5cm} \\
+    \textbf{\fontsize{24}{48}\selectfont \hsr@subtitle}
+    \vspace{1cm} \\
+    \textbf{\fontsize{22}{48}\selectfont \hsr@category}
+    \vspace{0.5cm} \\
+    \begin{tabular}{rl}
+    \textbf{Version:} & \hsr@version \\
+    \end{tabular}
+    \vspace{4cm} \\
+    \begin{tabular}{rl p{1.5cm} rl}
+    \textbf{Autor:} & \textbf{\@author}         && Dozent:       & \hsr@instructor \\
+    E-Mail:         & \texttt{\hsr@authoremail} && Themengebiet: & \hsr@topic \\
+    Matrikelnummer: & \hsr@matriculationnr      && Studiengang:  & \hsr@course \\
+    Adresse:        & \hsr@address              &&                  & \\ 
+    \end{tabular}{}
+    \vspace{2cm} \\
+    \begin{tabular}{rl}
+    \textbf{Erstellt am:}       & \textbf{\hsr@startdate} \\
+    \textbf{Letze Änderung am:} & \textbf{\hsr@finishdate} \\
+    \end{tabular}
+    \end{center}
+\end{titlepage}}
+
+\renewenvironment{abstract}{%
+    \section*{Abstract}%
+    \newcommand\problem{\paragraph{Problem}}
+    \newcommand\goal{\paragraph{Ziel}}
+    \newcommand\method{\paragraph{Method / Vorgehen}}
+    \newcommand\results{\paragraph{Wesentliche Ergebnisse}}
+    \newcommand\suggestions{\paragraph{Empfehlungen}}
+    \newcommand\keywords{\paragraph{Schl\"usselw\"orter}}
+}{}
+
+%% TODO: twoside / book support
+%% Debug:
+%% \RequirePackage{showframe}
+
+\newgeometry{
+    hmargin=\hsr@hmarginwidth,
+    vmargin=\hsr@vmarginheight,
+    marginparsep=0pt,
+    marginpar=0pt,
+}
+
+%% Configure headers
+\fancypagestyle{hsrbericht}{%
+    \fancyhf{} % clear
+    \fancyhead[C]{\@title}
+    \fancyhead[R]{\hsr@clientlogo}
+    \fancyhead[L]{\hsr@logo}
+    \fancyfoot[R]{\thepage / \pageref{TotPages} }
+    \fancyfoot[L]{Dockument: \jobname \\ Druck: \finishdate}
+    \renewcommand{\headrulewidth}{.5pt}
+    \renewcommand{\footrulewidth}{.5pt}
+}
+
+\fancypagestyle{plain}{%
+    \fancyhf{} % clear
+    \fancyhead[C]{\@title}
+    \fancyhead[R]{\hsr@clientlogo}
+    \fancyhead[L]{\hsr@logo}
+    \fancyfoot[R]{\thepage / \pageref{TotPages} }
+    \fancyfoot[L]{Dockument: \jobname \\ Druck: \finishdate}
+    \renewcommand{\headrulewidth}{.5pt}
+    \renewcommand{\footrulewidth}{.5pt}
+}
+
+\pagestyle{hsrbericht}
+
+%</hsrbericht>
+%    \end{macrocode}
+%
+% \Finale
+%^^A vim:set tw=80 sw=2 ts=2 et:

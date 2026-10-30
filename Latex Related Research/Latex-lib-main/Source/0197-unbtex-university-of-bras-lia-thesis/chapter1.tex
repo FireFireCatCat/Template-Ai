@@ -1,0 +1,34 @@
+\chapter{Introduction}
+\label{cap:intro}
+
+Sensor deployments for environmental and infrastructure monitoring routinely
+produce time-series data at a scale that makes naive range-scan query
+execution impractical. A query asking for the average temperature across a
+thousand sensors over the last month may need to scan billions of
+individual readings if the underlying storage engine has no way to exploit
+the temporal and sensor-wise structure of the data \cite{Jensen2017}.
+
+\section{Motivation}
+Existing time-series database systems typically rely on generic indexing
+structures borrowed from relational systems, which do not exploit the fact
+that sensor readings arrive at regular intervals and are naturally
+partitioned by sensor identity and time window \cite{Pelkonen2015}.
+
+\section{Contributions}
+This dissertation makes the following contributions:
+\begin{itemize}
+  \item A query planning strategy that partitions scans along both the
+    sensor and time dimensions, exploiting known sampling regularity to
+    prune irrelevant partitions before execution.
+  \item An implementation evaluated against three large-scale environmental
+    sensing datasets with heterogeneous sampling rates.
+  \item An analysis of when the proposed planner's gains are largest,
+    showing the biggest improvements on queries aggregating across many
+    sensors over long time windows.
+\end{itemize}
+
+\section{Dissertation Outline}
+Chapter~\ref{cap:related} reviews prior work on time-series database
+systems and query planning. Later chapters (omitted from this starter
+document) would present the planning algorithm, implementation, and
+experimental results in detail.

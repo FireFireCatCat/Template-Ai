@@ -1,0 +1,181 @@
+% !TeX root = ../exam-zh-doc-basic.tex
+
+\section{已知问题与限制}
+
+本章只保留可以从当前仓库代码直接确认的限制和使用边界，帮助你避开容易踩坑的地方。
+
+\subsection{项目状态}
+
+\subsubsection{项目已停止维护}
+
+仓库的 \file{README.md} 已明确说明：\cls{exam-zh} 自 2024 年 4 月 26 日起停止维护。
+
+\textbf{这意味着：}
+\begin{itemize}
+  \item 文档和实现不一定会继续同步更新
+  \item 新需求未必会加入
+  \item 使用时应优先依赖仓库现有代码和示例，而不是外部二手说明
+\end{itemize}
+
+
+\subsection{编译环境限制}
+
+\subsubsection{必须使用 \XeLaTeX{}}
+
+\cls{exam-zh} 在类文件中直接检查编译引擎，只接受 \XeLaTeX{}。
+
+\textbf{因此：}
+\begin{itemize}
+  \item 不能使用 \pdfLaTeX{}
+  \item 不能使用 \LuaLaTeX{}
+  \item 在线平台也需要手动把编译器切到 \XeLaTeX{}
+\end{itemize}
+
+\subsubsection{\TeX{} Live 版本要求}
+
+类文件中还检查了 \LaTeX{} 内核版本，要求至少为 \TeX{} Live 2020 对应的版本。
+
+\textbf{建议：}
+\begin{itemize}
+  \item 使用 \TeX{} Live 2020 或更新版本
+  \item 遇到奇怪的键值报错时，先确认发行版是否过旧
+\end{itemize}
+
+
+\subsection{图文排版边界}
+
+\subsubsection{优先使用仓库自带的图文命令}
+
+仓库里真正实现并维护的是 |\textfigure|、|multifigures| 和相关模块。
+
+\textbf{建议：}
+\begin{itemize}
+  \item 一段文字配一张图，优先用 |\textfigure|
+  \item 多张题图并排，优先用 |multifigures|
+  \item 只需要简单插图时，直接用 |\includegraphics|
+\end{itemize}
+
+\subsubsection{wrapstuff 只适合简单场景}
+
+\file{exam-zh-textfigure.sty} 会在本地存在 \file{wrapstuff.sty} 时自动加载它，但仓库本身没有提供独立封装接口。
+
+\textbf{使用时要注意：}
+\begin{itemize}
+  \item 复杂嵌套列表里不要依赖 |wrapstuff|
+  \item |choices| 前后不要混用复杂绕排
+  \item 碰到错位时，优先退回 |\textfigure|、|multifigures| 或 |minipage|
+\end{itemize}
+
+
+\subsection{填空题边界}
+
+\subsubsection{长答案会自动换行，星号用于强制换行}
+
+普通 |\fillin| 在显示答案且内容超过当前行宽时会自动换行；|\fillin*| 保留为强制采用可换行排版的写法。
+
+\begin{latexcode}
+  短答案：\fillin[42]
+
+  长答案：\fillin[这是一个比较长的答案内容，需要换行显示]
+
+  强制可换行：\fillin*[短答案]
+\end{latexcode}
+
+\subsubsection{答案中有未配对方括号时要加保护}
+
+|\fillin| 的答案本身放在可选参数里，所以像区间这样的内容需要用大括号包起来：
+
+\begin{latexcode}
+  % 错误
+  \fillin[[2,3)]
+
+  % 正确
+  \fillin[{$[2,3)$}]
+\end{latexcode}
+
+\subsubsection{数学答案仍然要自己进入数学模式}
+
+|\fillin| 不会自动把答案切换成数学模式，数学内容仍需写成 |\fillin[$x^2+1$]| 这样的形式。
+
+
+\subsection{当前不支持的功能}
+
+\subsubsection{选择题和填空题答案自动后置}
+
+当前代码只为 |solution| 环境实现了 |show-move| 这种“移到文末”的模式。
+
+\textbf{这意味着：}
+\begin{itemize}
+  \item |\paren| 的答案不能自动收集到文末
+  \item |\fillin| 的答案不能自动收集到文末
+  \item 如果需要单独答案页，只能手动整理
+\end{itemize}
+
+\subsubsection{按大小写分别控制向量箭头样式}
+
+仓库里没有提供“根据大写/小写字母分别切换不同箭头长度”的内置接口。
+
+\subsubsection{Beamer 演示文稿支持}
+
+\cls{exam-zh} 通过 |\LoadClass{ctexbook}| 建立在书籍类上，不是演示文稿类，因此不能直接当作 |beamer| 模板使用。
+
+
+\subsection{页面设置边界}
+
+\subsubsection{内置纸张预设只有 A4 和 A3}
+
+仓库里 |page/size| 只定义了 |a4paper| 和 |a3paper| 两个值：
+
+\begin{latexcode}
+  \examsetup{
+    page/size = a4paper
+  }
+\end{latexcode}
+
+如果你要用其他尺寸，就需要自己写 |\geometry| 设置。
+
+\subsubsection{自定义页边距要放在 \textbackslash AtEndPreamble}
+
+因为类文件会在导言区末尾统一设置 |\geometry|，所以用户自己的页边距调整也应放进 |\AtEndPreamble|，否则容易被默认值覆盖。
+
+
+\subsection{排版现象}
+
+\subsubsection{自动换页后的垂直间距可能不完全均匀}
+
+这类现象主要来自 \LaTeX{} 自己的分页与底对齐机制，不是 \cls{exam-zh} 单独提供的接口。
+
+\textbf{常见处理方式：}
+\begin{itemize}
+  \item 手动调整内容长度
+  \item 在合适位置 |\newpage|
+  \item 必要时少量使用 |\vspace| 微调
+\end{itemize}
+
+
+\subsection{获取帮助}
+
+\subsubsection{优先看什么}
+
+\begin{enumerate}
+  \item 先看仓库里的示例文件
+  \item 再看完整文档 \file{exam-zh-doc.pdf}
+  \item 最后再去 Issues 或群里提问
+\end{enumerate}
+
+\subsubsection{提问时要提供什么}
+
+\begin{itemize}
+  \item 操作系统和 \TeX{} 发行版版本
+  \item 一份最小可复现示例
+  \item 完整错误信息
+  \item 期望效果
+\end{itemize}
+
+\subsubsection{社区渠道}
+
+\begin{itemize}
+  \item GitHub：\url{https://github.com/xkwxdyy/exam-zh/issues}
+  \item Gitee：\url{https://gitee.com/xkwxdyy/exam-zh/issues}
+  \item QQ 群：652500180
+\end{itemize}

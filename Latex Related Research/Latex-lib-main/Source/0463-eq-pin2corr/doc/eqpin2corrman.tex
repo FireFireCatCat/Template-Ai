@@ -1,0 +1,761 @@
+%
+% Need some discussion on workflow
+%
+% makeindex < aebpro_man.idx > aebpro_man.ind
+\RequirePackage[!use=preview,!use=usebw]{spdef}
+\documentclass[10pt]{article}
+\usepackage[fleqn]{amsmath}
+%\usepackage{hyperref}
+\usepackage[%
+    web={centertitlepage,
+      designv,
+      forcolorpaper,
+      latextoc,
+%      uselatexparts,
+      extended
+    },
+    exerquiz,
+%    linktoattachments,
+    aebxmp
+]{aeb_pro}
+\usepackage{aeb_mlink}
+\usepackage[!showscore]{eq-pin2corr}
+
+%\previewOn\pmpvOn
+
+%\tocPartTitle{\protect\makebox[0pt][r]{\thepart\hspace{.5em}}#1}
+\tocPartTitle{\tops{\protect\makebox[0pt][r]{\thepart\hspace{.5em}}}{\thepart\space}#1}
+
+
+\useBeginQuizButton[\CA{Begin}]
+\useEndQuizButton[\CA{End}]
+\useMCCircles
+
+\declPINId{5243}{02JRVZdRgYgCA-Rtje8VkD} % PIN number, hash string
+%\classPINVar{_PinCode1}
+
+
+%\usepackage{booktabs}
+%\usepackage{aeb_mlink}
+%\usepackage{eq-pin2corr}
+%\usepackage{graphicx,array}
+%\usepackage{ifthen}
+%\usepackage{myriadpro}
+%\usepackage{calibri}
+
+\usepackage[altbullet]{lucidbry}
+
+%\usepackage{xbmks}
+%\DeclareInitView{layoutmag={navitab:UseOutlines}}
+
+%\xbmksetup{colors={int=red},styles={intbf}}
+
+\addtolength{\marginparwidth}{20pt}
+
+%\previewtrue
+%\usepackage{makeidx}
+%\makeindex
+\usepackage{acroman}
+\usepackage[active]{srcltx}
+
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+\makeatletter
+\renewcommand*{\thesubsubsection}{\texorpdfstring{$\bullet$}{\textbullet}}
+\renewcommand*{\theparagraph}{\texorpdfstring{\protect\P}{\textparagraph}}
+\renewcommand*{\thesubparagraph}{\texorpdfstring{\protect\P\protect\P}{\textparagraph\textparagraph}}
+\renewcommand{\paragraph}
+    {\renewcommand{\@seccntformat}[1]{\theparagraph\space}%
+    \@startsection{paragraph}{4}{0pt}{6pt}{-3pt}{\bfseries}}
+\renewcommand*\l@paragraph{\@dottedtocline{4}{5.0em}{1em}} %{7.0em}{4.1em}}
+\renewcommand{\subparagraph}
+    {\renewcommand{\@seccntformat}[1]{\thesubparagraph\space}%
+    \@startsection{subparagraph}{5}{\parindent}{6pt}{-3pt}{\bfseries}}
+\def\dps{$\mbox{$\mathfrak D$\kern-.3em\mbox{$\mathfrak P$}%
+   \kern-.6em \hbox{$\mathcal S$}}$}
+
+\newenvironment{aebQuote}
+   {\list{}{\leftmargin\amtIndent}%
+    \item\relax}{\endlist}
+\def\parboxValign{t}
+\newcommand{\FmtMP}[2][0pt]{\mbox{}\marginpar{%
+    \raisebox{.5\baselineskip+#1}{%
+    \expandafter\parbox\expandafter[\parboxValign]%
+        {\marginparwidth}{\aebbkFmtMp#2}}}}
+\def\aebbkFmtMp{\kern0pt\itshape\small
+    \ifusebw\color{gray}\else\color{blue}\fi
+    \raggedleft\hspace{0pt}}\newcommand{\BlogArticle}{%
+    \makebox[0pt][l]{\hspace{-1pt}\color{blue}\Pisymbol{webd}{254}%
+    }\raisebox{.5pt}{\ifusebw\color{black}\else
+    \color{red}\fi\ding{045}}}
+\def\dps{$\mbox{$\mathfrak D$\kern-.3em\mbox{$\mathfrak P$}%
+   \kern-.6em \hbox{$\mathcal S$}}$}
+
+\def\chgCurrLblName#1{\def\@currentlabelname{#1}}
+\def\echgCurrLblName#1{\edef\@currentlabelname{#1}}
+\let\db\@gobble
+
+%\newenvironment{aebQuote}
+%               {\list{}{\leftmargin\amtIndent}%
+%                \item\relax}
+%               {\endlist}
+
+\makeatother
+
+%\getDimsFromGraphic{graphics/dpsweb}{\dpswebW}{\dpswebH}
+
+
+%\urlstyle{rm}
+\urlstyle{sf}
+\let\uif\textsf
+\let\app\textsf
+\def\psf#1{\textbf{\textsf{#1}}}
+%\let\amtIndent\leftmargini
+\edef\amtIndent{\the\parindent}
+
+\renewcommand*\descriptionlabel[1]{\hspace\labelsep
+    \normalfont #1}
+
+\let\tops\texorpdfstring
+
+\DeclareDocInfo
+{
+    university={Acro\negthinspace\TeX.Net},
+    title={The \textsf{eq-pin2corr} package\tops{\\}{: } Apply PIN security to quizzes},
+    author={D. P. Story},
+    email={dpstory@acrotex.net},
+    subject={Documentation for the eq-pin2corr package from AcroTeX: Apply PIN security to quizzes},
+    talksite={\url{www.acrotex.net}},
+    version={2.0, 2021/05/29},
+    Keywords={AcroTeX, PIN security},
+    copyrightStatus=True,
+    copyrightNotice={Copyright (C) \the\year, D. P. Story},
+    copyrightInfoURL={http://www.acrotex.net}
+}
+
+\def\dps{$\hbox{$\mathfrak D$\kern-.3em\hbox{$\mathfrak P$}%
+   \kern-.6em \hbox{$\mathcal S$}}$}
+
+\universityLayout{fontsize=Large}
+\titleLayout{fontsize=LARGE}
+\authorLayout{fontsize=Large}
+\tocLayout{fontsize=Large,color=aeb}
+\sectionLayout{indent=-62.5pt,fontsize=large,color=aeb}
+\subsectionLayout{indent=-31.25pt,color=aeb}
+\subsubsectionLayout{indent=0pt,color=aeb}
+\subsubDefaultDing{\tops{$\bullet$}{\textbullet}}
+
+\widestNumber{0.00.}
+%\pagestyle{empty}
+%\parindent0pt\parskip\medskipamount
+
+\begin{defineJS}{\btnAct}
+  var resp=app.response({
+    cQuestion: "Enter a PIN number",
+    cTitle: "Get Hash String"
+  });
+  if (resp != null) {
+    var f=this.getField("txt");
+    f.value=Collab.hashString(resp);
+  }
+\end{defineJS}
+
+
+\frenchspacing
+
+\chngDocObjectTo{\newDO}{doc}
+\begin{docassembly}
+var titleOfManual="The eq-pin2corr package MANUAL";
+var manualfilename="Manual_BG_Print_pin2corr.pdf";
+var manualtemplate="Manual_BG_Brown.pdf"; // Blue, Green, Brown
+var _pathToBlank="C:/Users/Public/Documents/ManualBGs/"+manualtemplate;
+var doc;
+var buildIt=false;
+if ( buildIt ) {
+    console.println("Creating new " + manualfilename + " file.");
+    doc = \appopenDoc({cPath: _pathToBlank, bHidden: true});
+    var _path=this.path;
+    var pos=_path.lastIndexOf("/");
+    _path=_path.substring(0,pos)+"/"+manualfilename;
+    \docSaveAs\newDO ({ cPath: _path });
+    doc.closeDoc();
+    doc = \appopenDoc({cPath: manualfilename, oDoc:this, bHidden: true});
+    f=doc.getField("ManualTitle");
+    f.value=titleOfManual;
+    doc.flattenPages();
+    \docSaveAs\newDO({ cPath: manualfilename });
+    doc.closeDoc();
+} else {
+    console.println("Using the current "+manualfilename+" file.");
+}
+var _path=this.path;
+var pos=_path.lastIndexOf("/");
+_path=_path.substring(0,pos)+"/"+manualfilename;
+\addWatermarkFromFile({
+    bOnTop:false,
+    bOnPrint:false,
+    cDIPath:_path
+});
+\executeSave();
+\end{docassembly}
+
+\begin{document}
+
+\maketitle
+
+
+\selectColors{linkColor=black}
+\tableofcontents
+\selectColors{linkColor=webgreen}
+
+\def\AcroT{Acro\!\TeX}\def\cAcroT{\textcolor{blue}{\AcroT}}
+\def\AcroEB{\AcroT{} eDucation Bundle}\def\cAcroEB{\textcolor{blue}{\AcroEB}}
+\def\AcroB{\AcroT{} Bundle}\def\cAcroB{\textcolor{blue}{\AcroB}}
+\def\bUrl{http://www.math.uakron.edu/~dpstory}
+
+\hypersetup{linktocpage}
+
+\part{Version 1.0}\label{prt:One}
+
+In this part of the manual, we document the features of the \pkg{eq-pin2corr} package
+as they originally appeared. In addition to the features documented here, version~2.0
+adds a number of features, some of which were suggested by Tahir Y. These additional features
+are documented in \hyperref[prt:Two]{Part~\ref*{prt:Two}} on page~\pageref{prt:Two} of this manual.
+
+\section{Introduction}
+
+This package is an add-on to the \env{quiz} environment of the \pkg{exerquiz}
+package.
+
+\paragraph*{Purpose.} This package adds PIN security to a quiz created by
+ the \env{quiz} environment. To correct a quiz, the document consumer must
+press the \uif{Correct} button of a quiz and successfully enter the correct
+PIN number. For example,
+
+\usePINCorrBtn
+
+\begin{quiz*}{qz1}
+Solve each, passing is 100\%.\hfill\llap{\smash{\parbox[t]{145pt}{\leavevmode\llap{\color{red}\ding{042}\enspace}Take the quiz, when finished, press the \uif{Correct} button and enter the PIN number
+to correct the quiz.}}}
+\begin{questions}
+    \item The sum of 1 and 1 is \dots
+\begin{answers}{8}
+\bChoices
+  \Ans0 0\eAns
+  \Ans0 1\eAns
+  \Ans1 2\eAns
+  \Ans0 3\eAns
+  \Ans0 4\eAns
+\eChoices
+\end{answers}
+  \item $ \cos(\pi) = \RespBoxMath{-1}{1}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{-1} $
+
+\item $\displaystyle\frac{d}{dx}{\sin(x)}=\RespBoxMath{cos(x)}{4}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{cos(x)} $
+\end{questions}
+\end{quiz*}\quad\ScoreField[\rectW{2.25in}]\currQuiz\olBdry\CorrButton{\currQuiz} (PIN: \numPINId)\vcgBdry[6pt]
+
+Answers: \AnswerField\currQuiz\vcgBdry[6pt]
+
+ This package is designed for the educational sector, for instructors who use
+ the quizzes from the \pkg{exerquiz} package to assess the
+ understanding their students of the course material.
+
+ \paragraph*{PDF Viewers.} Discussion of PDF viewers for the document author and the document consumer.
+ \begin{aebQuote}
+ \begin{description}
+ \item[\textbf{Instructor:}] Any PDF viewer may be used as a PDF
+     \emph{previewer}, \app{sumatraPDF}, for instance. To verify the newly
+     created quiz is functioning correctly, \app{Adobe Reader DC}
+     (\FmtMP{\app{AR}}\app{AR}) or \app{Acrobat DC}
+     (\FmtMP{\app{AA}}\app{AA}) \emph{must be used}.
+ \item[\textbf{Document consumers (students):}] The \pkg{exerquiz} and
+     \pkg{eq-pin2tocorr} extensively use JavaScript to perform many
+     background tasks. For the student to have any success in this
+     workflow, he/she must use \app{Adobe Reader DC}(\FmtMP{\app{AR}}\app{AR}).
+ \end{description}
+ \end{aebQuote}
+ \paragraph*{Workflow.} The package is designed for the following workflow:\begingroup\tightsettings
+ \begin{enumerate}
+     \item The instructor creates\FmtMP{create quiz} the quiz using the
+         \pkg{exerquiz} and \pkg{eq-pin2corr} packages.
+     \item The instructor delivers\FmtMP{deliver quiz} the ``PDF quiz'' to
+         each student. (System drive or email)
+     \item The student takes\FmtMP{take quiz} the quiz. The student can
+         press the \uif{Correct} but, unless s/he knows the PIN, the quiz
+         is not marked up.
+     \item The student saves\FmtMP{save quiz} the PDF quiz in \app{Adobe
+         Reader DC}.
+     \item The student returns\FmtMP{return quiz} the PDF to the
+         instructor. (System drive or email)
+     \item The instructor opens the returned PDF quiz in AA/AR and
+         presses\FmtMP{correct quiz} the \uif{Correct} button to mark up
+         the quiz. The instructor \emph{saves the quiz}. The instructor
+         records the grade of the student.
+     \item The instructor returns\FmtMP{returns quiz} the PDF, at some
+         point, to the student.
+     \item Both instructor and student happily\FmtMP{happy people} go on
+         with their lives.
+     \end{enumerate}
+ The implementation details are left to the instructor.
+\endgroup
+
+\paragraph*{Document creation.} Any of the PDF creators current to the
+{\LaTeX} world can be used: (1) \app{pdflatex}, (2) \app{lualatex}, (3)
+\app{xelatex}, and my old friend, (4) \app{dvips}/\app{Distiller} (or
+\app{dvips}/\app{ps2pdf}). In the latter case (4), \app{Acrobat} is required
+to import Document JavaScripts.
+
+\section{The preamble}
+
+The minimal preamble for documents that use the \pkg{eq-pin2corr} package.
+\bVerb\def\1{\rlap{\hskip150pt\%\textsf{ or some other class}}}%
+\def\2{\rlap{\hskip150pt\%\textsf{ recommended but not required}}}%
+\begin{Verbatim}[xleftmargin=\amtIndent,fontsize=\small,commandchars=!()]
+!1\documentclass{article}
+!2\usepackage[!ameta(options)]{web}
+\usepackage[!ameta(options)]{exerquiz}!textbf([2021/04/27])
+\usepackage[!ameta(options)]{eq-pin2corr}
+...
+\declPINId{!ameta(pin-num)}{!ameta(hash-string)}
+\classPINVar{!ameta(class-pin-var)}
+...
+\begin{document}
+\end{Verbatim}
+\eVerb A recent version of \pkg{exerquiz} (2021/05/29 or later) is required;
+\pkg{eq-pin2corr} brings in the \pkg{eq-save} package (2021/04/27 or later).
+
+\section{Package options}
+
+There are two options for this package: \opt{showscore} and \opt{!showscore}.
+If you took the test on page~3, you will have noticed that when \uif{End
+Quiz} control is pressed the phrase \textsf{"Success! Now save and send to the
+instructor"} appears in the \cs{ScoreField} or the \cs{PointsField}, this is
+the default behavior. Passing \FmtMP{\opt{showscore}}\opt{showscore} in the
+optional argument list of \pkg{eq-key2corr} causes the actual score to appear
+in the same box (eg, \texttt{Score: 2 out of  3}), which is historically what
+always appears in these boxes. The other option \FmtMP{\opt{!showscore}}\opt{!showscore} is a
+convenience option to aid in switching from one option to the other without
+too much cut and paste. The default definition of the text string that
+appears is,
+\begin{Verbatim}[xleftmargin=\amtIndent,fontsize=\small]
+\flJSStr[noquotes]{\SaveAndSendMsg}{Success! %
+Now save and send to the instructor}
+\end{Verbatim}
+Refer to the \texttt{eformsman.pdf} for a discussion of \cs{flJSStr}.
+
+\paragraph*{Local controls.} The two options can be turned off and on locally with \FmtMP{\cs{showScoreOff}}\cs{showScoreOff} and
+\FmtMP{\cs{showScoreOn}}\cs{showScoreOn} commands.
+
+\section{Setting the pin-hash values}\label{s:pin-hash}
+
+In the preamble, as indicated above, are two commands, the first is required,
+the second is optional.
+\bVerb\takeMeasure{\string\declPINId\darg{\ameta{pin-num}}\darg{\ameta{hash-string}}}%
+%\setlength{\dimen0}{\wd\webtempboxi+2\fboxsep+2\fboxrule}%
+%\def\1{\rlap{\sffamily\hskip\linewidth(\cs{numPINId} expands to \ameta{pin-num})}}
+\def\2{\rlap{\sffamily\hskip\linewidth(optional)}}
+\begin{dCmd}[commandchars=!()]{\bxSize}
+\declPINId{!ameta(pin-num)}{!ameta(hash-string)}
+\numPINId
+!2\classPINVar{!ameta(class-pin-var)}
+\end{dCmd}
+\eVerb It is through the \cs{declPINId} command that the PIN security is set
+up. The command \cs{numPINId} expands to \ameta{pin-num} is not normally
+typeset into the document, but is used for documentation or demonstration
+purposes, such as in this document.
+
+\paragraph*{\cs{declPINId\darg{\ameta{pin-num}}\darg{\ameta{hash-string}}}}
+The \ameta{pin-num} is a number, perhaps four digits, that is used to pass
+through the security of the \uif{Correct} button.\footnote{The
+\ameta{pin-num} does not have to be a number, it can be any password
+(passcode) that is easy to remember. I prefer a four digit number.} Once you
+decide on the PIN number, you need to generate the corresponding
+\emph{hash-string}. The hash-string is obtained from the demo file
+\texttt{get-hash-string.pdf}, the contents of that file is reproduced below.
+\begin{aebQuote}
+\pushButton[\CA{Push}\AAmouseup{\btnAct}]{btn}{}{11bp}\olBdry
+\textField[\textSize{8}]{txt}{2in}{11bp}\olBdry
+\pushButton[\CA{Reset}\AAmouseup{this.resetForm();}]{reset}{}{11bp}
+\end{aebQuote}
+Press the button labeled \uif{Push} and enter your PIN number into the dialog
+box (enter, for example, \texttt{\numPINId}), then press \uif{OK}, the
+corresponding hash-string appears in the text field, \texttt{\hashPINId}.
+Copy the PIN number (\texttt{\numPINId}) into the first argument of
+\cs{declPINId} and copy the hash-string (\texttt{\hashPINId}) from the text
+field into the second argument, like so,
+\begin{Verbatim}[xleftmargin=\amtIndent,commandchars=!()]
+\declPINId{!numPINId}{!hashPINId}
+\end{Verbatim}
+The above is placed in the preamble of the document.
+
+When the user enters a PIN number (right or wrong), it is converted to a
+hash-string and compared with the hash string of the correct PIN number; if
+they match, then the quiz is corrected. It is important to note that the PIN
+number \emph{does not appear anywhere} in the document, so it cannot be
+discovered. Knowledge of the correct hash-string does not help. Of course
+both PIN number and hash string appear in the source file of the document.
+
+\paragraph*{\cs{classPINVar\darg{\ameta{class-pin-var}}}} From the
+instructor's viewpoint, it takes a lot of effort to enter the PIN number for
+every quiz that is submitted (it may be in the hundreds). There is a way of
+avoiding the requirement of entering the PIN number, and that is through the
+use of the \cs{classPINVar} command. This method will work if you have
+\app{Adobe Acrobat} or if you only have \app{Adobe Reader DC}. The steps for
+doing this are as follows:
+\begin{enumerate}
+    \item Decide on a class PIN variable name, it can be a generic one, or one specialize to your class,
+    for example, \cs{classPINVar\darg{Calc2Sprg21}}, then declare it in the preamble:
+\begin{Verbatim}[xleftmargin=\amtIndent]
+\classPINVar{Calc2Spr21}
+\end{Verbatim}
+The value of the argument must be a valid JavaScript name.
+    \item Go to the user config.js file of AA/AR and edit that file by
+        including the following line in it,
+\begin{Verbatim}[xleftmargin=\amtIndent,commandchars=!()]
+var Calc2Spr21 = "!hashPINId";
+\end{Verbatim}
+where the hash string used here is the same one corresponding to the PIN
+number for the document (\texttt{\numPINId} in our example).
+\end{enumerate}
+\app{AA/AR} only reads \texttt{config.js} one time when it opens, so
+\texttt{Calc2Spr21} will not be known until the next time \app{AA/AR} is opened.
+The location of the \texttt{config.js} file is described in general in the
+file \texttt{\href{install_jsfiles.pdf}{install\_jsfiles.pdf}}, found in the \texttt{doc} folder of this
+distribution.
+
+Once the above line is placed in the \texttt{config.js} file, the instructor does not
+enter the PIN number, pressing \uif{Correct} immediately corrects the quiz.
+
+\section{Turning the PIN security feature on and off}
+
+The security PIN feature can be turned on and off through the following two
+commands.
+\bVerb\takeMeasure{\string\restoreCorrBtn}%
+\def\1{\leavevmode\rlap{\sffamily\hskip\linewidth(Turn on PIN security)}}%
+\def\2{\leavevmode\rlap{\sffamily\hskip\linewidth(Turn off PIN security)}}%
+\begin{dCmd}[commandchars=!()]{\bxSize}
+!1\usePINCorrBtn
+!2\restoreCorrBtn
+\end{dCmd}
+\eVerb These can placed anywhere outside a \env{quiz} environment. The
+commands take effect beginning at the next quiz in the document.
+
+\part{Version 2.0}\label{prt:Two}
+
+\section{Introduction}
+
+Version~2 of this package provides additional security options for the
+document author (instructor or professor).
+
+\newtopic\noindent The source files (TEX) for the working examples in this
+part of the manual may be found on the {\AcroTeX} Blog web site:
+\begin{itemize}
+  \item \href{http://www.acrotex.net/blog/?p=1516}{\pkg{eq-pin2corr}: PIN security with warning and freezing}\footnote
+  {\url{http://www.acrotex.net/blog/?p=1516}}
+  \item \href{http://www.acrotex.net/blog/?p=1519}{\protect\pkg{eq-pin2corr}:
+  PIN security on \protect\uif{Begin Quiz} and tracking retakes of a quiz}\footnote
+  {\url{http://www.acrotex.net/blog/?p=1519}}
+\end{itemize}
+
+\section{Security with warn and freeze on \tops{\protect\uif}{}{End Quiz}}
+
+When the student presses the \uif{End Quiz} control, an alert dialog box
+opens which warns\FmtMP{warn and freeze} the user that quiz will be `frozen'
+which means active form fields are made readonly, except for the \uif{Ans}
+button. The user has a choice of responding \uif{Yes} or \uif{No}, in the
+later case, the student can continue with the quiz. If the student presses
+\uif{Yes}, the quiz is frozen, all the student can do is to save the file and
+to send it to the instructor.
+\bVerb\takeMeasure{\uif{Click 'Yes' to end the quiz or 'No' to continue working on the quiz.}\}}%
+\settowidth{\eflength}{\cs{useWarnEndQuiz}}
+\def\1{\leavevmode\rlap{\hspace{\eflength} \%\sffamily{ use with \cs{usePINCorrBtn}}}}%
+\def\2{\leavevmode\rlap{\sffamily\hskip\linewidth(Turn off PIN security)}}%
+\begin{dCmd}[commandchars=!()]{\bxSize}
+!1\useWarnEndQuiz
+\restoreEndQuiz
+\flJSStr{\EndQuizG@te@Msg}{!uif(Warning:)
+!uif(Are you sure you want to end this quiz?)\r\r
+!uif(The quiz will be frozen and no more changes will be allowed.)
+!uif(Click 'Yes' to end the quiz or 'No' to continue working on the quiz.)}
+\end{dCmd}
+\eVerb Expand \cs{useWarnEndQuiz} prior to the quiz for which the `warn and
+freeze' security is to be employed. After the quiz, optionally expand
+\cs{restoreEndQuiz} to its original definition.
+
+\useWarnEndQuiz
+
+\newtopic\noindent
+Prior to the following quiz, \cs{usePINCorrBtn}\cs{useWarnEndQuiz} are
+expanded.
+\begin{quiz*}{qz2}
+Solve each, passing is 100\%.
+\begin{questions}
+    \item The sum of 1 and 1 is \dots
+\begin{answers}{8}
+\bChoices
+  \Ans0 0\eAns
+  \Ans0 1\eAns
+  \Ans1 2\eAns
+  \Ans0 3\eAns
+  \Ans0 4\eAns
+\eChoices
+\end{answers}
+  \item $ \cos(\pi) = \RespBoxMath{-1}{1}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{-1} $
+
+\item $\displaystyle\frac{d}{dx}{\sin(x)}=\RespBoxMath{cos(x)}{4}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{cos(x)} $
+\end{questions}
+\end{quiz*}\quad\ScoreField[\rectW{2.25in}]\currQuiz\olBdry\CorrButton{\currQuiz} (PIN: \numPINId)
+
+\noindent
+Answers: \AnswerField\currQuiz
+
+\section{PIN security with freeze on \tops{\protect\uif}{}{Correct}}
+
+In the previous section, the quiz is made readonly (frozen) when the student
+presses the \uif{End Quiz} control. We can also freeze the quiz when the
+\uif{Correct} control is pressed.
+
+This strategy allows the student to take and retake the quiz if the score is
+not to his liking; assuming the \texttt{showscore} option is in effect.
+Freezing the quiz on the \uif{Correct} control allows the quiz to be marked
+up and returned to the student, without fear the student will later modify
+his answers and complain to the teacher that the score is incorrect.
+
+\newtopic\noindent To freeze the quiz when the \uif{Correct} control is pressed,
+expand \cs{FreezeThisQuiz}.
+\bVerb\takeMeasure{\string\FreezeThisQuizNot}%
+\def\1{\rlap{\sffamily\hskip\linewidth(use with \cs{usePINCorrBtn})}}
+\begin{dCmd}[commandchars=!()]{\bxSize}
+!1\FreezeThisQuiz
+\FreezeThisQuizNot
+\end{dCmd}
+\eVerb There are two methods of expanding \cs{FreezeThisQuiz}: (1) expand
+prior to the quiz (and expand \cs{FreezeThisQuizNot} following the quiz); or
+(2) pass \cs{FreezeThisQuiz} through the optional argument of the
+\cs{CorrButton} (the \uif{Correct} control) using the syntax
+\verb|\CorrButton[\cmd{\FreezeThisQuiz}]{\currQuiz}|. The latter method make
+the change local, hence \cs{FreezeThisQuizNot} is not needed following the
+quiz.
+
+\showScoreOn
+\restoreEndQuiz
+
+\newtopic\noindent
+The following quiz uses \verb|\CorrButton[\cmd{\FreezeThisQuiz}]{\currQuiz}|
+at the end of the quiz. Prior to this quiz, \cs{showScoreOn} and
+\cs{restoreEndQuiz} are expanded, the later to recover from `warn and freeze'
+of the previous quiz.
+\begin{quiz*}{qz3}
+Solve each, passing is 100\%.
+\begin{questions}
+    \item The sum of 1 and 1 is \dots
+\begin{answers}{8}
+\bChoices
+  \Ans0 0\eAns
+  \Ans0 1\eAns
+  \Ans1 2\eAns
+  \Ans0 3\eAns
+  \Ans0 4\eAns
+\eChoices
+\end{answers}
+  \item $ \cos(\pi) = \RespBoxMath{-1}{1}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{-1} $
+
+\item $\displaystyle\frac{d}{dx}{\sin(x)}=\RespBoxMath{cos(x)}{4}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{cos(x)} $
+\end{questions}
+\end{quiz*}\quad\ScoreField[\rectW{2.25in}]\currQuiz\olBdry\CorrButton[\cmd{\FreezeThisQuiz}]{\currQuiz} (PIN: \numPINId)
+
+\noindent
+Answers: \AnswerField\currQuiz
+
+\section{Tallying the number of retakes of a quiz}
+
+One problem with digital PDF quizzes (\`a la Acro\negthinspace\TeX) is a
+student takes and retakes a quiz until a desired score of 100\% is attained,
+assuming no PIN security is on the \uif{Correct} control. This problem is
+partially mitigated by the PIN security on the \uif{Correct} control, but
+still, teachers, when administering an exam for credit, do not like to see
+student retaking the quiz multiple times. The \pkg{eq-pin2corr} package now offers
+the following commands:
+\bVerb\takeMeasure{\string\qzResetTally[\ameta{options}]}%
+\def\1{\rlap{\sffamily\hskip\linewidth(optionally, use with \cs{usePINCorrBtn})}}
+\begin{dCmd}[commandchars=!()]{\bxSize}
+!1\useBeginQuizCnt
+\restorBeginQuiz
+\qzResetTally[!ameta(options)]
+\end{dCmd}
+\eVerb Expanding \cs{useBeginQuizCnt} modifies the action of the \uif{Begin
+Quiz} control to count the number of times the student as retaken the same
+quiz. The count show up in the readonly text field created by
+\cs{qzResetTally}. Restore the original action of the \uif{Begin Quiz} control
+by expanding \cs{restorBeginQuiz}.
+
+This next quiz has PIN security with freeze on the \uif{Correct} control. The
+\uif{Begin Quiz} controls tracks the number of times the student
+\emph{re-takes the quiz}. Prior to the quiz we expand
+\cs{showScoreOn}\cs{useBeginQuizPIN}\cs{useBeginQuizCnt}. The
+\cs{qzResetTally} field is place to the right of the \cs{CorrButton} command.
+Speaking of the \cs{CorrButton}, \verb|\cmd{\FreezeThisQuiz}| is passed to
+this command through its optional argument so that the quiz is frozen when
+the instructor presses the \uif{Correct} control and successfully enters the
+PIN.
+
+\showScoreOn
+\useBeginQuizPIN
+\useBeginQuizCnt
+%\restorBeginQuiz
+
+\begin{quiz*}{qz4}
+\textbf{Instructions:} Take and retake this quiz until you obtain 100\%.
+\begin{questions}
+    \item The sum of 1 and 1 is \dots
+\begin{answers}{8}
+\bChoices
+  \Ans0 0\eAns
+  \Ans0 1\eAns
+  \Ans1 2\eAns
+  \Ans0 3\eAns
+  \Ans0 4\eAns
+\eChoices
+\end{answers}
+  \item $ \cos(\pi) = \RespBoxMath{-1}{1}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{-1} $
+
+\item $\displaystyle\frac{d}{dx}{\sin(x)}=\RespBoxMath{cos(x)}{4}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{cos(x)} $
+\end{questions}
+\end{quiz*}\quad\ScoreField[\rectW{2.25in}]\currQuiz\olBdry\CorrButton[\cmd{\FreezeThisQuiz}]{\currQuiz} (PIN: \numPINId)\hfill\qzResetTally
+
+\noindent
+Answers: \AnswerField\currQuiz
+
+\section{Setting the maximum number of retakes}
+
+This quiz has PIN security on the \uif{Correct} control. The \uif{Begin Quiz} controls
+tracks the number of times the student \emph{re-takes the quiz}. It also sets the maximum
+number of times the student retake the quiz.
+\bVerb\takeMeasure{\string\setMaxRetakes\darg{\ameta{qz-name}\darg{\ameta{num}}}}%
+\def\1{\rlap{\sffamily\hskip\linewidth(use with \cs{usePINCorrBtn})}}
+\begin{dCmd}[commandchars=!()]{\bxSize}
+\setMaxRetakes{!ameta(qz-name)}{!ameta(num)}
+\nMaxRetakes{!ameta(qz-name)}
+\end{dCmd}
+\eVerb When declared prior to the quiz whose name is \ameta{qz-name},
+\cs{setMaxRetakes} sets the maximum of times a student can \emph{retake the same
+quiz} to \ameta{num}, where \ameta{num} is a nonnegative integer. Declaring
+\cs{setMaxRetakes\darg{\ameta{qz-name}}\darg{0}} means the student may only
+take the quiz once (no retakes allowed); \cs{setMaxRetakes\darg{\ameta{qz-name}}\darg{2}} means he
+can retake the quiz twice (for a total of three times).
+
+The command \cs{nMaxRetakes\darg{\ameta{qz-name}}} is a way of typesetting
+the number \ameta{num} into the document as part of the instructions for the
+quiz, for example.
+
+\showScoreOn
+\useBeginQuizCnt
+\setMaxRetakes{qz5}{2}
+
+\newtopic\noindent The following quiz has PIN security with freeze under the \uif{Correct} control and it
+allows the student to retake the quiz at most \nMaxRetakes{qz5}~times.
+
+\begin{quiz*}{qz5}
+Solve each, passing is 100\%. Be aware that you will be allowed to
+\emph{retake} this quiz at most \nMaxRetakes{qz5}~times.
+\begin{questions}
+    \item The sum of 1 and 1 is \dots
+\begin{answers}{8}
+\bChoices
+  \Ans0 0\eAns
+  \Ans0 1\eAns
+  \Ans1 2\eAns
+  \Ans0 3\eAns
+  \Ans0 4\eAns
+\eChoices
+\end{answers}
+  \item $ \cos(\pi) = \RespBoxMath{-1}{1}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{-1} $
+
+\item $\displaystyle\frac{d}{dx}{\sin(x)}=\RespBoxMath{cos(x)}{4}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{cos(x)} $
+\end{questions}
+\end{quiz*}\quad\ScoreField[\rectW{2.25in}]\currQuiz\olBdry\CorrButton[\cmd{\FreezeThisQuiz}]{\currQuiz} (PIN: \numPINId)\hfill\qzResetTally
+
+\noindent
+Answers: \AnswerField\currQuiz
+
+\section{PIN Security for \tops{\protect\uif}{}{Begin Quiz} and \tops{\protect\uif}{}{Correct}}
+
+For this final example, the student can see his quiz score (which can be
+optionally changed by expanding \cs{showScoreOff}); however, to retake the
+quiz a PIN must be entered when the \uif{Begin Quiz} button is pressed. The
+PIN under the \uif{Begin Quiz} control is (usually) different from the PIN
+under the \uif{Correct} button.
+\bVerb\takeMeasure{\string\flJSStr\darg{\string\BeginQuizG@te@Msgii}\{\uif{Press the Begin Quiz}}%
+%\def\1{\rlap{\sffamily\hskip\linewidth(\cs{numRePINId} expands to \ameta{pin-num})}}
+\begin{dCmd}[commandchars=!()]{\bxSize}
+\declRePINId{!ameta(pin-num)}{!ameta(hash-string)}
+\numRePINId
+\flJSStr{\BeginQuizG@te@Msgi}{!uif(Enter the PIN number)
+!uif(to retake this quiz)}
+\flJSStr{\BeginQuizG@te@Msgii}{!uif(Press the Begin Quiz)
+!uif(control to begin the quiz again)}
+\end{dCmd}
+\eVerb \cs{declRePINId} is used to declare the PIN number for retaking the
+quiz, as well as the corresponding hash string. Refer to \cs{declPINId} above
+(\hyperref[s:pin-hash]{Section~\ref{s:pin-hash}}) for information of how to
+acquire the hash string for the PIN.
+
+The command \cs{numREPINId} expands to \ameta{pin-num} is not normally
+typeset into the document, but is used for documentation or demonstration
+purposes, such as in this document.
+
+The final two, \cs{BeginQuizG@te@Msgi} and \cs{BeginQuizG@te@Msgii} expand to
+the messages the respondent reads. These may be redefined as desired.
+
+\newtopic\noindent
+The PIN for the \uif{Begin Quiz} button is \numRePINId. The \uif{Begin Quiz}
+button does not need a PIN for the first time it is pressed. It requires a
+PIN after the first press.
+
+\showScoreOn
+\useBeginQuizPIN
+
+\begin{quiz*}{qz6}
+Solve each, passing is 100\%.
+\begin{questions}
+    \item The sum of 1 and 1 is \dots
+\begin{answers}{8}
+\bChoices
+  \Ans0 0\eAns
+  \Ans0 1\eAns
+  \Ans1 2\eAns
+  \Ans0 3\eAns
+  \Ans0 4\eAns
+\eChoices
+\end{answers}
+  \item $ \cos(\pi) = \RespBoxMath{-1}{1}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{-1} $
+
+\item $\displaystyle\frac{d}{dx}{\sin(x)}=\RespBoxMath{cos(x)}{4}{.0001}{[0,1]}\cgBdry[1bp]
+\CorrAnsButton{cos(x)} $
+\end{questions}
+\end{quiz*}\quad\ScoreField[\rectW{2.25in}]\currQuiz\olBdry\CorrButton{\currQuiz} (PIN: \numPINId)\hfill\qzResetTally
+
+\noindent
+Answers: \AnswerField\currQuiz\vcgBdry[6pt]
+
+This kind of security is best when the students are taking a quiz in a
+computer lab with a proctor in the room. The student can ask the proctor to
+reset the quiz. Note that we keep a tally on the number of requests as the
+proctor may not write it down or remember.
+
+\medbreak\noindent
+Now, I really must get back to retirement.\enspace\dps
+
+
+\end{document}

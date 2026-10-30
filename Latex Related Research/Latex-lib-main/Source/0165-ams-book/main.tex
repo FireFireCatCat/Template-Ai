@@ -1,0 +1,110 @@
+%% AMS book starter — amsbook document class.
+%%
+%% The amsbook class itself is NOT included in this download: it ships with
+%% every modern TeX distribution (and with latextemplates.com's compiler), so
+%% bundling a copy would only risk pinning you to an older version than your
+%% own system already has.
+%%
+%% Class documentation: texdoc amsbook   |   https://ctan.org/pkg/amscls
+%% Licence: amsbook (part of amscls) is LPPL-1.3c, (c) American Mathematical
+%% Society.
+%%
+%% Unlike a bare article, a book needs \frontmatter / \mainmatter /
+%% \backmatter to get roman-numeral front matter, a fresh arabic page 1 at
+%% the first chapter, and correctly numbered back matter — amsbook supplies
+%% all three, which is the actual reason to reach for it over amsart.
+\documentclass{amsbook}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Foundations of Analytic Structures}
+\author{Ada Lovelace}
+\address{Institute of Analytical Engines, London, United Kingdom}
+\email{ada@example.edu}
+
+\date{\today}
+
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\chapter*{Preface}
+This book grew out of a lecture series on analytic structures given at the
+Institute of Analytical Engines. It is intended as a graduate-level
+introduction, assuming only a first course in real analysis.
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{Preliminaries}
+\label{ch:preliminaries}
+
+We fix notation and recall the basic definitions used throughout.
+
+\begin{definition}[Analytic structure]
+\label{def:analytic-structure}
+An \emph{analytic structure} on a set $X$ is a collection $\mathcal{A}$ of
+functions $X \to \mathbb{C}$ closed under addition, multiplication, and
+locally uniform limits.
+\end{definition}
+
+\begin{theorem}
+\label{thm:first}
+Every analytic structure $\mathcal{A}$ on a compact set $X$ contains the
+constant functions.
+\end{theorem}
+
+\begin{proof}
+Let $c \in \mathbb{C}$ be constant. The constant function $c$ is the locally
+uniform limit of the sequence $c, c, c, \dots \in \mathcal{A}$, hence lies in
+$\mathcal{A}$ by closure under limits.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:first} is the reason we always assume $X \neq \emptyset$.
+\end{remark}
+
+See~\cite{rudin1976principles} for the classical real-analysis background,
+and~\cite{ahlfors1979complex} for the complex-analytic prerequisites.
+
+\chapter{Convergence and Compactness}
+\label{ch:convergence}
+
+\begin{proposition}
+\label{prop:compact-embed}
+If $X$ is compact and $\mathcal{A}$ separates points, then the evaluation map
+$X \to \mathbb{C}^{\mathcal{A}}$ is an embedding.
+\end{proposition}
+
+\begin{proof}
+Continuity and injectivity follow from separation of points
+(Definition~\ref{def:analytic-structure}); compactness of $X$ upgrades the
+continuous injection to a homeomorphism onto its image, by the standard
+closed-map lemma.
+\end{proof}
+
+\begin{corollary}
+Under the hypotheses of Proposition~\ref{prop:compact-embed}, $X$ is
+metrizable.
+\end{corollary}
+
+\backmatter
+
+\bibliographystyle{amsplain}
+\bibliography{references}
+
+\end{document}

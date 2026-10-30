@@ -1,0 +1,102 @@
+% Hinweise
+% ********************************************************************
+\newcommand{\HinweisZurVorlage}[1]{
+    \ifthenelse{\boolean{dlrg@hinweiseAnzeigen}}{%
+        \begin{tcolorbox}[
+            colback=white,
+            colframe=dlrgRot,
+            fonttitle=\bfseries,
+            title=Hinweis -- bei einer Nutzung als Vorlage bitte löschen oder deaktivieren
+        ]
+        #1
+        \end{tcolorbox}
+    }{%
+    }
+}
+
+% Abkürzungsverzeichnis
+% ********************************************************************
+\newacronymstyle{short}%
+{%
+    \GlsUseAcrEntryDispStyle{long-short}%
+}%
+{%
+    \GlsUseAcrStyleDefs{long-short}%
+    \renewcommand*{\genacrfullformat}[2]{%
+    \protect\firstacronymfont{\glsentryshort{##1}}##2%
+  }%
+}
+\setacronymstyle{short}
+
+% Titelseite
+% ********************************************************************
+\newcommand{\titel@extra}{
+    \ifthenelse{\equal{\dlrg@pubtitelbild}{}}{ %Ohne Titelbild Tabelle
+        \vfill
+        \begin{center}
+            \begin{tcolorbox}[
+                enhanced,
+                colframe=dlrgRot,
+                boxrule=.5mm
+            ]
+                \begin{large}
+                    \begin{tblr}{colspec={lX[l]}, width=.95\textwidth}
+                        von: & \title@Autor{} \\
+                        Lehrgangsleitung: & \title@Mentor{} \\
+                        Ort und Datum: & \title@Ort{}, \title@Datum{} \\
+                    \end{tblr}
+                \end{large}
+            \end{tcolorbox}
+        \end{center}
+        \vfill
+    }{ %Bei Titelbild ist das Thema der Subtitle
+        \begin{tikzpicture}[remember picture,overlay]
+            \node [yshift=-220mm, stoerer, stoerer weiss, stoerer rechts, font=\bfseries] at (current page.north east) {
+                    \begin{tblr} {width=.6\textwidth, colspec={ll}}
+                        von: & \title@Autor{} \\
+                        Lehrgangsleitung: & \title@Mentor{} \\
+                        Ort und Datum: & \title@Ort{}, \title@Datum{} \\
+                    \end{tblr}
+            };
+        \end{tikzpicture}
+    }
+}
+
+\newcommand{\title@Datum}{Fehlende Angabe zum Datum}
+\newcommand{\title@Autor}{Fehlende Angabe zum Autor}
+\newcommand{\title@Mentor}{Fehlende Angabe zum Mentor}
+\newcommand{\title@Ort}{Fehlende Angabe zum Ort}
+\newcommand{\title@Thema}{Fehlende Angabe zum Thema}
+\newcommand{\title@Thema@kurz}{Fehlende Angabe zum Thema}
+
+
+%Definitionen für Titelseite wiederverwertbar machen
+\def\date#1{\gdef\@date{#1}\gdef\title@Datum{#1}}
+\def\author#1{\gdef\@author{#1}\gdef\title@Autor{#1}}
+
+\newcommand{\mentor}[1]{%
+    \renewcommand{\title@Mentor}{#1}%
+}
+\newcommand{\ort}[1]{%
+    \renewcommand{\title@Ort}{#1}%
+}
+\NewDocumentCommand{\thema}{O{#2} m}{
+    \renewcommand{\title@Thema@kurz}{#1}%
+    \renewcommand{\title@Thema}{#2}%
+    %Thema als Subtitle
+    \subtitle{#2}
+}
+
+% Kopfzeile
+% ********************************************************************
+\ifthenelse{\boolean{dlrg@contentLayout@bauchbinde}}{
+    \ihead{\title@Autor{} -- \title@Thema@kurz{}}
+    \setboolean{set@head}{true}
+}{}
+
+% Fußzeile
+% ********************************************************************
+\ifthenelse{\boolean{dlrg@contentLayout@footline}}{
+    \cfoot{\title@Autor{} -- \title@Thema@kurz{}}
+    \setboolean{set@foot}{true}
+}{}

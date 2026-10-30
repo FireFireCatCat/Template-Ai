@@ -1,0 +1,47 @@
+# LaTeX Report Template for BDIC Modules
+
+An elegant and professional LaTeX template designed for academic reports across various modules in Beijing-Dublin International College (BDIC). This template draws inspiration from [this template](https://www.overleaf.com/latex/templates/math-notes-template/kfqdrzrzpvvk) while being specifically tailored for BDIC coursework.
+
+> [!IMPORTANT]
+> **Disclaimer**: This is an **unofficial** template created for student use. It is not endorsed, provided, or approved by University College Dublin, Beijing University of Technology, or BDIC. The institutional logos used in this template remain the intellectual property of their respective universities and are included solely for academic formatting purposes.
+
+
+## Screenshots
+
+### Report with Independent Title Page
+
+<table>
+  <tr>
+    <td><img src="./screenshots/title-page.jpg"/></td>
+    <td><img src="./screenshots/table-of-contents.jpg"/></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td><img src="./screenshots/main-body-1.jpg"/></td>
+    <td><img src="./screenshots/main-body-2.jpg"/></td>
+  </tr>
+</table>
+
+### Report with Compact Title
+
+<table>
+  <tr>
+    <td><img src="./screenshots/compact-title.jpg"></td>
+  </tr>
+</table>
+
+## Suggestions
+
+1. **Structure:** 在该项目的文件结构中，应该将跟文档内容相关的图片放在 `figures` 路径下，将用于装饰目的的图片放到 `images` 路径下。*(In the file structure of this project, pictures relevant to the main content of the document should be placed under `figures`, while pictures for decorative purposes should be put into `images`.)*
+
+2. **Editing:** 在编辑文章的不同部分时，最好把每部分的内容分别放到 `src` 路径下的不同文件中，以使主 TeX 文件更加整洁。*(When editing different sections of the document, it is better to put each section into a separate file under the `src` directory to keep the main TeX file neat and clear.)*
+
+3. **Using the template:** 在 [release](https://github.com/peylix/bdic-report-template-latex/releases) 页面下载 `report-template-release.zip` 或 `report-template-release.tar.gz` 文件。*(Download `report-template-release.zip` 或 `report-template-release.tar.gz` from [release](https://github.com/peylix/bdic-report-template-latex/releases).)*
+
+   - 如果使用 Overleaf，在其页面上选择 **New Project > Upload Project**，再把 `.zip` 文件拖到弹出的窗口中即可。*(If you are using Overleaf, go to **New Project > Upload Project** and drag the `.zip` file into the upload window.)*
+   - 如果想用本地编辑器（如 TeXShop、Neovim、VS Code 等），可以解压该压缩包，再打开 `main.tex` 来编辑。*(If you prefer using local editors (e.g., TeXShop, Neovim, VS Code, etc.), unzip the file and open `main.tex` to start editing.)*
+
+
+4. **Customizing:** 该文档的代码中提供了多种选项，可以被方便地启用或禁用。`.cls` 文件的代码十分简单且结构清晰，以便对其进行修改来贴合具体需求。 *(There are plenty of options in the template code that are easy to enable or disable. The source code for the `.cls` file is simple and well-structured and you can easily customize the template to suit your needs.)*
+

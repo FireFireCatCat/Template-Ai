@@ -1,0 +1,29 @@
+\setcounter{tocdepth}{1}
+
+\pagestyle{plain}
+
+% add bold mathematical symbols to section titles
+\makeatletter
+\g@addto@macro\bfseries{\boldmath}
+\makeatother
+
+\renewcommand\thealgorithm{A.\arabic{algorithm}}
+
+\algnewcommand{\Input}{\item[\textbf{Input:}]}
+\algnewcommand{\Output}{\item[\textbf{Output:}]}
+
+\newcommand{\clearemptydoublepage}{\clearpage{\pagestyle{empty}\cleardoublepage}}
+
+\newcommand{\de}{\mathrm{d}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\newcolumntype{d}[1]{D{.}{.}{#1}}
+
+% Indented example environment
+\theoremstyle{plain}
+\theorembodyfont{\upshape}
+\theoremseparator{.}
+\theoremindent1\parindent
+\newtheorem{example}{Example}[chapter]

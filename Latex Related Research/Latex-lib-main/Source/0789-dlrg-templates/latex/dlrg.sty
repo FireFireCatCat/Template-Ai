@@ -1,0 +1,232 @@
+\NeedsTeXFormat{LaTeX2e}[2018-04-01]
+\ProvidesPackage{dlrg}[2025/03/15 v1.1.0 Kommandos fuer die DLRG]
+
+% ********************************************************************
+% * Paketoptionen                                                    *
+% ********************************************************************
+
+% Abhängigkeiten
+% ********************************************************************
+\RequirePackage{pgfopts}
+\RequirePackage{xifthen}
+
+% Boolesche Optionen
+% ********************************************************************
+%\newboolean{dlrg@boolwert}
+\newboolean{dlrg@debug}
+
+% Standardwerte
+% ********************************************************************
+%\newcommand{\dlrg@wert}{Standard}
+\newcommand{\dlrg@typ}{} % Für Kompatibilitätsmoduss
+\newcommand{\dlrg@module}{}
+\newcommand{\dlrg@sprache}{}
+
+% Definition der Paketoptionen
+% ********************************************************************
+\pgfkeys{
+    /dlrg/.cd,
+    module/.store in=\dlrg@module,
+    typ/.store in=\dlrg@typ,
+    sprache/.store in=\dlrg@sprache,
+    debug/.value forbidden,
+    debug/.code=\setboolean{dlrg@debug}{true},
+    .unknown/.code={}, % Unbekannte Optionen ignorieren.
+}
+
+% Frühe Paketoptionen verarbeiten (etwa die zu ladenden Module und den
+% Typ des Dokuments)
+% ********************************************************************
+\ProcessPgfPackageOptions{/dlrg}
+
+
+% ********************************************************************
+% * Basisfunktionen und deren Abhängigkeiten                         *
+% ********************************************************************
+
+% Fehlerbehandlung und -ausgabe
+% ********************************************************************
+\newcommand{\swarnung}[1]{\PackageWarning{dlrg}{#1}}
+\newcommand{\sfehler}[1]{\PackageError{dlrg}{#1}}
+\newcommand{\sinfo}[1]{\PackageInfo{dlrg}{#1}}
+
+% Debugvarianten
+\newcommand{\sdwarnung}[1]{
+    \ifthenelse{\boolean{dlrg@debug}}{
+        \swarnung{#1}
+    }{
+        % stillschweigend ignorieren
+    }
+}
+\newcommand{\sdinfo}[1]{
+    \ifthenelse{\boolean{dlrg@debug}}{
+        \sinfo{#1}
+    }{
+        % stillschweigend ignorieren
+    }
+}
+
+
+% unschädliche Warnungen im Normalbetrieb unterdrücken
+\ifthenelse{\boolean{dlrg@debug}}{}{
+    \usepackage{silence}
+
+    % Kompatiblität von ctable zu TikZ
+    \WarningFilter{ctable}{Transp}
+}
+
+% Laden von Dokumenttypen
+% ********************************************************************
+% Laden der jeweiligen Dokumenttyp-Definition. Falls keine gefunden
+% wurde und das Paket nicht eingebettet verwendet wird, wird die
+% Definition von Publikationen geladen.
+
+% \dlrg@typDateiLaden{Dokumenttyp}{Abschnitt}
+\newcommand{\dlrg@typDateiLaden}[2]{
+    \ifthenelse{\equal{\dlrg@typ}{ohne}}{
+        \sdinfo{Eingebetteter Modus. Es wird kein Dokumenttyp geladen!}
+    }{
+        \IfFileExists{dlrg.typ.#1.#2.tex}{
+            % Wenn die Datei existiert
+            \input{dlrg.typ.#1.#2.tex}
+            \sdinfo{Dokumenttyp #1.#2 geladen!}
+        }{
+            % Wenn die Datei nicht existiert, lade Dokument.
+            \sdwarnung{Dokumenttyp #1.#2 nicht gefunden, %
+                lade Dokument!}
+            \IfFileExists{dlrg.typ.doc.#2.tex}{
+                % Wenn die Datei existiert
+                \input{dlrg.typ.doc.#2.tex}
+                \sdinfo{dlrg.typ.doc.#2 geladen!}
+            }{
+                % Wenn die Datei nicht existiert Fehler melden!
+                \sdwarnung{Dokumenttyp dlrg.pub.#2 nicht gefunden!}
+            }
+        }
+    }
+}
+
+% Modullader
+% ********************************************************************
+% Um Kollisionen zu vermeiden muss gespeichert werden, ob eine Datei
+% bereits geladen wurde. So können Module auch mehrfach angegeben
+% und von anderen Modulen verwendet werden.
+
+% \dlrg@modulDateiLaden{Kategorie}{Modulname}{Abschnitt}
+\newcommand{\dlrg@modulDateiLaden}[3]{
+    \IfFileExists{dlrg.#1.#2.#3.tex}{
+        % Wenn die Datei existiert
+        \ifcsname dlrg@geladen#1#2#3\endcsname
+        % Wenn die Datei bereits geladen wurde
+        \sdwarnung{Moduldatei dlrg.#1.#2.#3 war bereits geladen!}
+        \else
+        % Wenn die Datei nicht bereits geladen wurde
+        \input{dlrg.#1.#2.#3.tex}
+        \expandafter\def
+            \csname dlrg@geladen#1#2#3\endcsname{true}
+        \expandafter\def
+            \csname dlrg@geladen#1#2\endcsname{true}
+        \sdinfo{Moduldatei dlrg.#1.#2.#3 geladen!}
+        \fi
+    }{
+        % Wenn die Datei nicht existiert
+        \sdwarnung{Moduldatei dlrg.#1.#2.#3 nicht gefunden!}
+    }
+}
+
+
+% \dlrg@modulNachladen{Modulname}
+% Lädt ein Modul mit allen Abschnitten. Interne Hilfsfunktion für
+% Erfüllung von Abhängigkeiten in Modulen. Die Verwendung zu anderen
+% Zwecken wird nicht empfohlen.
+\newcommand{\dlrg@modulNachladen}[1]{
+    \dlrg@modulDateiLaden{mod}{#1}{optionen}
+    \ProcessPgfPackageOptions{/dlrg}
+    \dlrg@modulDateiLaden{mod}{#1}{pakete}
+    \dlrg@modulDateiLaden{mod}{#1}{code}
+}
+
+% Modulliste
+% ********************************************************************
+\RequirePackage{forarray}
+% Standardmodule laden und um optionale Module ergänzen
+\edef\dlrg@ladeModule{%
+    Schrift,
+    \dlrg@module
+}
+
+% ********************************************************************
+% * Paketoptionen der Module                                         *
+% ********************************************************************
+
+% Definitionen der Paketoptionen der Module laden
+% ********************************************************************
+\ForEachX{,}{
+    \dlrg@modulDateiLaden{mod}{\thislevelitem}{optionen}
+}{\dlrg@ladeModule}
+
+% Definitionen der Paketabhängigkeiten des Dokumenttyps laden
+% ********************************************************************
+\dlrg@typDateiLaden{\dlrg@typ}{optionen}
+
+% Paketoptionen verarbeiten
+% ********************************************************************
+% Zurücksetzen der unbekannten Optionen
+%\def\dlrg@unbekannteOptionen{}
+% TODO: Evtl. Warnung, falls unbekannte Option gesetzt.
+% Erneutes Verarbeiten der Optionen
+\ProcessPgfPackageOptions{/dlrg}
+
+% ********************************************************************
+% * Paketabhängigkeiten                                              *
+% ********************************************************************
+
+% Allgemeine Paketabhängigkeiten
+% ********************************************************************
+
+% Eingabe und Sprache
+\RequirePackage[\dlrg@sprache,ngerman]{babel}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[TS1,T1]{fontenc}
+
+% Makros
+\RequirePackage{xparse}
+\RequirePackage{xstring}
+\RequirePackage{environ}
+
+% Mathematisches
+\RequirePackage{amsmath}
+
+% Grafik
+\PassOptionsToPackage{table,dvipsnames}{xcolor}
+\RequirePackage{xcolor}
+\RequirePackage{tikz}
+\RequirePackage{graphicx}
+
+% Referenzen
+\RequirePackage{hyperref}
+
+
+% Paketabhängigkeiten der Module
+% ********************************************************************
+\ForEachX{,}{
+    \dlrg@modulDateiLaden{mod}{\thislevelitem}{pakete}
+}{\dlrg@ladeModule}
+
+% Paketabhängigkeiten des Dokumenttyps
+% ********************************************************************
+\dlrg@typDateiLaden{\dlrg@typ}{pakete}
+
+
+% ********************************************************************
+% * Module laden                                                     *
+% ********************************************************************
+
+\ForEachX{,}{
+    \dlrg@modulDateiLaden{mod}{\thislevelitem}{code}
+}{\dlrg@ladeModule}
+
+% ********************************************************************
+% * Code des Dokumenttyps einbinden                                  *
+% ********************************************************************
+\dlrg@typDateiLaden{\dlrg@typ}{code}

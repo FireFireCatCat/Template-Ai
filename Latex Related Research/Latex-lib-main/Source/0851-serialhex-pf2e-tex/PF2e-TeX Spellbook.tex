@@ -1,0 +1,105 @@
+\documentclass[10pt,letterpaper,onecolumn,openany]{book}
+
+% The main PF2e package.
+% Make sure the location is correct for where *you* put the library!!!
+\usepackage[bg=full]{pf-book} % Options: bg-a4, bg-letter, bg-full, bg-print, bg-none.
+
+% Some extra packages
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+% Autogen text...
+\usepackage{lipsum}
+
+% A command for this document, to make showing commands easier!
+\DeclareRobustCommand{\showmacro}[1]{\string#1 #1}
+% this macro doesn't work, and I can't figure out how to make it wwork right now...
+\newenvironment{showenvironment}[1]{%
+\begin{verbatim}%
+#1%
+\end{verbatim}%
+#1%
+}
+
+% The following commands redefine Chapter to remove \cleardoublepage and \clearpage from \chapter
+% so that chapters don't automatically create new pages.
+\makeatletter
+\renewcommand\chapter{\thispagestyle{plain}%
+\global\@topnum\z@
+\@afterindentfalse
+\secdef\@chapter\@schapter}
+\makeatother
+
+% This is so we don't have Table of Contents explosion, remove if desired
+\setcounter{secnumdepth}{0}
+
+%% % Macros for ease of use
+%% \usepackage{xparse}
+%% \usepackage{fvextra}
+%% \NewDocumentCommand{\verbAndRun}{v}{%
+%%   \expandafter\VerbAndRunAux\expandafter{\detokenize{#1}}%
+%% }
+%% \newcommand{\VerbAndRunAux}[1]{%
+%%   \texttt{#1}\par #1 }
+
+% Start document
+\begin{document}
+
+\frontmatter
+
+% Your cover image, if you have one
+\pfMakeCover[
+  image = ai-generated-cover-art,
+  title = PF2e-\TeX Spellbook,
+  subtitle = {Is it a spellbook, or a cheatsheet?} % Need the braces if there is a comma in the name
+]
+
+This is the inside cover.
+Put some copyright stuff here, and all the legal stuff.
+Blah blah blah, copyright me and stuff...
+
+\lipsum[1-5]
+
+\InsertORC{I'm attributing stuff...\\
+}{I'm reserving Potatos!!\\
+}{Licensed all material from Sorcerers on the Shore}
+
+% Inserts Table of Contents
+\clearpage
+\tableofcontents
+
+% Your content goes here...
+\mainmatter
+\pfMakeSplashHeader[
+  image = ai-generated-splash,
+  title = Splash image test title,
+  headerHeight = -7cm,
+  textBodyHeight = 4.5cm
+]
+
+\chapter{Intro}
+
+You know how most Paizo products have a cool splash section at the beginning of the chapter before it gets into the nitty-gritty of the text?
+Well I haven't implemented anything like that yet!
+So be patient while I work on that.
+
+\begin{multicols}{2}
+
+  This is the intro chapter, where I introduce things!
+  Most of this is going to be showcasing the different functionality that is built in to these styles.
+  Each "chapter" is going to feature a different set of features.
+  Feel free to look at the source, at this document, and the others under /docs.
+  It will give you an idea of how much of this is intended to work.
+
+  First of all, I recommend not typing everything into one *.tex file.
+  For many reasons, but mainly as it is easier to organize your thoughts and whatnot if they are in separate chapters.
+
+  Thus, I do this:
+
+\end{multicols}
+
+\include{docs/actions}
+\include{docs/sections}
+
+\end{document}
+

@@ -1,0 +1,97 @@
+\documentclass[11pt]{book}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\geometry{paperwidth=6.5in,paperheight=9.5in,margin=0.8in}
+\definecolor{codebg}{HTML}{F1F5F9}
+\definecolor{codeink}{HTML}{1E293B}
+\definecolor{accent}{HTML}{7C3AED}
+\hypersetup{colorlinks=true,linkcolor=accent,urlcolor=accent,citecolor=accent}
+\lstset{backgroundcolor=\color{codebg},basicstyle=\ttfamily\small,
+  keywordstyle=\color{accent}\bfseries,commentstyle=\color{gray},
+  frame=single,rulecolor=\color{gray!35},columns=fullflexible,
+  language=Python,showstringspaces=false}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{exercise}{Exercise}[chapter]
+\newtheorem{remark}{Remark}[chapter]
+\title{Patterns for Mathematical Computing}
+\author{Your Name}
+\date{2026}
+\begin{document}
+\frontmatter
+\maketitle
+\chapter*{How to read this book}
+Each chapter pairs a mathematical idea with a small executable pattern. The
+theorem and exercise environments keep statements distinct from explanation;
+the listings show where a concept can become a reproducible computation.
+\tableofcontents
+\mainmatter
+\chapter{Sequences and sums}
+Let $(a_n)$ be a sequence and define its partial sum by
+\begin{equation}
+  S_N=\sum_{n=1}^{N}a_n.
+\end{equation}
+\begin{theorem}
+If $|r|<1$, then the geometric series satisfies
+$\sum_{n=0}^{\infty}r^n=1/(1-r)$.
+\end{theorem}
+\begin{proof}
+The finite sum is $(1-r^{N+1})/(1-r)$. Since $r^{N+1}$ tends to zero, the
+limit gives the stated result.
+\end{proof}
+\begin{exercise}
+Use the theorem to estimate $\sum_{n=0}^{\infty}(1/3)^n$ and verify the first
+five partial sums by hand.
+\end{exercise}
+\chapter{A small computation}
+The following listing computes partial sums without hiding the loop behind a
+library call.
+\begin{lstlisting}
+def geometric_partial_sum(r, terms):
+    total = 0.0
+    for n in range(terms):
+        total += r ** n
+    return total
+
+print(geometric_partial_sum(1 / 3, 5))
+\end{lstlisting}
+\begin{remark}
+The code approximates a limit, while the theorem describes the limit exactly.
+Keeping those statements separate is a useful habit in computational writing.
+\end{remark}
+\chapter{Comparing approximations}
+\begin{table}[ht]
+\centering
+\caption{Partial sums for $r=1/3$.}
+\begin{tabular}{@{}rr@{}}
+\toprule
+$N$ & $S_N$ \\
+\midrule
+1 & 1.0000 \\
+2 & 1.3333 \\
+3 & 1.4444 \\
+5 & 1.4938 \\
+\bottomrule
+\end{tabular}
+\end{table}
+The table gives a compact bridge from symbolic reasoning to numerical
+intuition. Add figures, notebooks, or longer code listings as the book grows.
+\appendix
+\chapter{Notation guide}
+Use $\mathbb{N}$ for the positive integers in this starter, and state a
+different convention explicitly if your field includes zero.
+\backmatter
+\chapter*{References}
+\begin{thebibliography}{9}
+\bibitem{knuth} Donald E. Knuth, \emph{The Art of Computer Programming},
+  Addison-Wesley, 1997.
+\bibitem{strang} Gilbert Strang, \emph{Introduction to Linear Algebra},
+  Wellesley-Cambridge Press, 2016.
+\end{thebibliography}
+\end{document}

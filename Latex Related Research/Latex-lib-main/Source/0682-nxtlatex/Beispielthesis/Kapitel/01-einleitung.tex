@@ -1,0 +1,113 @@
+\chapter{Einleitung}
+\label{kap:einleitung}
+
+\section{Ausgangslage und Problemstellung}
+\label{sec:ausgangslage}
+
+Die Erpolino Metallverarbeitung GmbH mit Sitz in Reutlingen fertigt Präzisionsteile
+im Kundenauftrag. Als Lohnfertiger bearbeitet das Unternehmen keine eigenen
+Serienprodukte, sondern nimmt Aufträge unterschiedlicher Auftraggeber an, die sich
+in Stückzahl, Toleranzanforderung und Bearbeitungsumfang deutlich voneinander
+unterscheiden. Ein typischer Auftrag zerfällt dabei in mehrere \Index{Arbeitsgänge},
+etwa Drehen, Fräsen, Entgraten, Messen und Dokumentieren.
+
+Die Zuteilung dieser Arbeitsgänge an die Beschäftigten ist nicht beliebig. Die
+derzeit \ZahlMitarbeiter{} Mitarbeiter der Fertigung verfügen über unterschiedliche
+Qualifikationen: Nicht jede Person darf jeden Arbeitsgang ausführen, und wer ihn
+ausführen darf, benötigt dafür nicht zwangsläufig dieselbe Zeit. Welche Person
+welchen Arbeitsgang übernehmen kann, lässt sich in einer \Index{Qualifikationsmatrix}
+festhalten, die für jede Kombination aus Mitarbeiter und Arbeitsgang die
+Bearbeitungsdauer oder aber die Unzulässigkeit der Zuordnung angibt.
+
+Die Disposition erfolgt im Unternehmen bislang manuell. Die Fertigungsleitung
+verteilt die anstehenden Arbeitsgänge zu Wochenbeginn auf Basis von Erfahrung und
+mit Unterstützung einer Tabellenkalkulation. Dieses Vorgehen ist etabliert und
+liefert zulässige Pläne, es besitzt jedoch eine strukturelle Schwäche: Eine von
+Hand erstellte Zuteilung führt regelmäßig zu einer ungleichen Auslastung. Einzelne
+gut qualifizierte Mitarbeiter erhalten einen überproportionalen Anteil der Arbeit,
+während andere Kapazität ungenutzt bleibt. Da der Auftrag erst abgeschlossen ist,
+wenn der letzte Arbeitsgang beendet wurde, bestimmt die am stärksten belastete
+Person die Gesamtdauer. Diese Gesamtdauer wird in der Ablaufplanung als
+\Index{Makespan} bezeichnet \parencite{pinedo2016scheduling}. Der Engpass entsteht
+somit nicht aus fehlender Kapazität, sondern aus deren ungünstiger Verteilung.
+
+\section{Zielsetzung}
+\label{sec:zielsetzung}
+
+Die vorliegende Arbeit untersucht, wie sich die Zuteilung von Arbeitsgängen an
+qualifikationsverschiedene Mitarbeiter mit den Mitteln der mathematischen
+Optimierung planen lässt. Die leitende Forschungsfrage lautet: \enquote{Mit welchem
+Optimierungsverfahren lässt sich die Zuordnung von Arbeitsgängen zu unterschiedlich
+qualifizierten Mitarbeitern bei der Erpolino Metallverarbeitung GmbH so bestimmen,
+dass der Makespan minimal wird, und welches Verfahren ist für die tatsächlich
+auftretende Problemgröße angemessen?}
+
+Zur Beantwortung wird das Problem zunächst als \ac{milp} formuliert und mit einem
+exakten Verfahren gelöst. Als Vergleichsmaßstab dienen zum einen die
+Konstruktionsheuristik \ac{lpt} \parencite{graham1969bounds}, zum anderen das
+metaheuristische Verfahren \ac{sa} \parencite{kirkpatrick1983optimization}.
+Grundlage der Untersuchung ist eine reale Instanz des Unternehmens mit
+\ZahlMitarbeiter{} Mitarbeitern und \ZahlAufgaben{} Arbeitsgängen.
+
+Ein zentrales Ergebnis sei bereits hier angedeutet: Für diese Instanzgröße liefert
+das exakte Verfahren in weniger als einer Sekunde eine beweisbar optimale Lösung
+mit einem Makespan von \Optimum{} Stunden. Die Heuristiken erreichen diesen Wert
+nicht -- \ac{lpt} kommt auf \MakespanLPT{} Stunden, \ac{sa} auf \MakespanSA{}
+Stunden und damit auf einen Abstand von \AbstandSA{} Prozent zum Optimum. Der
+Einsatz einer Heuristik lohnt sich für die betriebliche Praxis der Erpolino
+Metallverarbeitung GmbH folglich nicht. Erst ab einer Größenordnung von etwa
+60 Arbeitsgängen kehrt sich dieses Verhältnis um, weil die Rechenzeit des exakten
+Verfahrens dann merklich ansteigt. Dieser Befund ist kein Mangel der Arbeit,
+sondern ihr eigentliches Resultat: Er begründet, welches Verfahren empfohlen wird
+und ab wann diese Empfehlung neu zu prüfen ist.
+
+\section{Abgrenzung}
+\label{sec:abgrenzung}
+
+Die Arbeit betrachtet ausschließlich die Zuordnung von Arbeitsgängen zu
+Mitarbeitern unter Minimierung des Makespans. Mehrere in der Praxis durchaus
+relevante Aspekte bleiben bewusst unberücksichtigt.
+
+Nicht behandelt werden \Index{Reihenfolgeabhängigkeiten}, also technologisch
+bedingte Vorrangbeziehungen zwischen Arbeitsgängen. Alle Arbeitsgänge gelten als
+voneinander unabhängig und zu jedem Zeitpunkt ausführbar. Ebenso bleiben
+\Index{Rüstzeiten} außer Betracht; die Bearbeitungsdauer eines Arbeitsgangs hängt
+allein von der ausführenden Person ab, nicht von deren vorangegangener Tätigkeit.
+Nicht Gegenstand der Arbeit ist ferner die \Index{Maschinenbelegung}: Es wird
+angenommen, dass die benötigten Betriebsmittel verfügbar sind und keine zusätzliche
+Ressourcenkonkurrenz erzeugen. Termine und Fälligkeiten einzelner Aufträge fließen
+nicht in die Zielfunktion ein, weshalb Kennzahlen wie die maximale Verspätung
+unberücksichtigt bleiben \parencite{pinedo2016scheduling}. Schließlich werden
+Schichtmodelle, Pausenregelungen und Abwesenheiten nicht modelliert; alle
+Mitarbeiter stehen über den Planungshorizont hinweg gleichermaßen zur Verfügung.
+
+Diese Einschränkungen verkleinern den Modellumfang, ohne den Kern der
+Problemstellung zu berühren. Sie werden in Kapitel~\ref{kap:zusammenfassung} als
+Ansatzpunkte für weiterführende Arbeiten wieder aufgegriffen.
+
+\section{Aufbau der Arbeit}
+\label{sec:aufbau}
+
+Kapitel~2 legt die Grundlagen der Optimierung dar. Es führt in die lineare und
+ganzzahlige Optimierung ein \parencite{wolsey2020integer}, ordnet das betrachtete
+Zuordnungsproblem komplexitätstheoretisch ein \parencite{garey1979computers} und
+stellt die eingesetzten Lösungsverfahren vor.
+
+Kapitel~3 arbeitet das lineare Problem aus. Die Zielfunktion, die Nebenbedingungen
+und die Behandlung unzulässiger Zuordnungen werden entwickelt; anschließend werden
+das exakte Verfahren, \ac{lpt} und \ac{sa} methodisch gegenübergestellt.
+
+Kapitel~4 beschreibt die Erpolino Metallverarbeitung GmbH, ihre Fertigungsstruktur
+und die Erhebung der Daten, aus denen die Qualifikationsmatrix der untersuchten
+Instanz hervorgeht.
+
+Kapitel~5 dokumentiert die Umsetzung. Das Modell wird in MathProg formuliert und
+mit dem GNU Linear Programming Kit gelöst \parencite{glpk}; die Heuristiken sowie
+die Auswertung entstehen in Python \parencite{harris2020array,hunter2007matplotlib}.
+
+Kapitel~6 analysiert die Ergebnisse. Neben dem Vergleich der Verfahren auf der
+realen Instanz werden künstlich vergrößerte Instanzen herangezogen, um zu bestimmen,
+ab welcher Problemgröße der Einsatz einer Heuristik sinnvoll wird.
+
+Kapitel~7 fasst die Arbeit zusammen, beantwortet die Forschungsfrage und benennt
+offenen Forschungsbedarf.

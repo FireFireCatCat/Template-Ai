@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{ink}{HTML}{243447}
+\definecolor{accent}{HTML}{0B7285}
+\setlist{itemsep=2pt,topsep=4pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\newcommand{\studentname}{Your Name}
+\newcommand{\coursename}{Data Structures}
+\newcommand{\termname}{Spring 2026}
+\newcommand{\assignmentnumber}{04}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textsc{\coursename}}
+\chead{Assignment \assignmentnumber}
+\rhead{\studentname}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{accent}\leaders\hrule height \headrulewidth\hfill}}
+
+\newcounter{problem}
+\newenvironment{problem}[1][]
+  {\refstepcounter{problem}\par\vspace{8pt}\textcolor{accent}{\large\bfseries Problem \theproblem}\if\relax\detokenize{#1}\relax\else\ --- #1\fi\par\smallskip\ignorespaces}
+  {\par\medskip}
+\newenvironment{solution}
+  {\begingroup\color{ink}\textbf{Solution.}\quad\ignorespaces}
+  {\endgroup\par}
+\newtheorem*{claim}{Claim}
+
+\title{\vspace{-2em}\textcolor{ink}{Assignment \assignmentnumber}\\
+  \large A practical study of graph algorithms}
+\author{\studentname\\\coursename\ --- \termname}
+\date{Due 18 March 2026}
+
+\begin{document}
+\maketitle
+\thispagestyle{fancy}
+
+\textbf{Submission checklist.} Show enough work to make your reasoning
+verifiable. State the running time of every algorithm and cite any external
+source that informed your solution.
+
+\begin{problem}[Breadth-first search]
+Let $G=(V,E)$ be an undirected graph with $|V|=n$ vertices and $|E|=m$
+edges. Describe an algorithm that returns the shortest unweighted distance
+from a source $s$ to every reachable vertex. Give a loop invariant for the
+queue-processing loop and prove its running time.
+
+\begin{solution}
+Place $s$ in a FIFO queue with distance zero. Whenever a vertex is removed,
+inspect its adjacency list and enqueue each undiscovered neighbour with
+distance one greater than the current vertex. The invariant is that a vertex
+leaves the queue only after its stored distance is its shortest path length:
+the first path reaching it has the smallest possible number of edges because
+the queue processes vertices in nondecreasing distance order. Each vertex and
+edge is inspected at most once, so the time is $O(n+m)$ and the storage is
+$O(n)$.
+\end{solution}
+\end{problem}
+
+\begin{problem}[A weighted counterexample]
+Give a small weighted graph showing why breadth-first search cannot replace
+Dijkstra's algorithm when edge weights are positive but unequal. Explain the
+incorrect choice it makes.
+
+\begin{solution}
+Use vertices $s,a,b,t$ and edges
+\[
+  s\mathbin{-}a\ (1),\qquad a\mathbin{-}t\ (10),\qquad
+  s\mathbin{-}b\ (4),\qquad b\mathbin{-}t\ (1).
+\]
+The two-edge path through $a$ is discovered first, but costs $11$; the path
+through $b$ costs $5$. Breadth-first search minimises the number of edges,
+not their total weight.
+\end{solution}
+\end{problem}
+
+\begin{problem}[Design question]
+A graph is stored as an adjacency matrix. What is the asymptotic cost of
+testing whether an edge $(u,v)$ exists, and what is the cost of enumerating
+all neighbours of $u$? Contrast both answers with an adjacency-list graph.
+\end{problem}
+
+\begin{claim}
+For sparse graphs, adjacency lists use less space and make neighbour
+enumeration proportional to the degree of the selected vertex \cite{cormen2009}.
+\end{claim}
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}

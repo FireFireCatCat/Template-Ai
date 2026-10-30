@@ -1,0 +1,256 @@
+%% cv.tex
+%% Copyright 2017 Zeyi Fan
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Zeyi Fan.
+%
+% This work consists of only the file cv.tex
+
+\documentclass{article}
+\usepackage[top=.4in, bottom=.0in, left=3in, right=0.4in,marginparwidth=2.5in]{geometry}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{fontspec}
+\usepackage{titlesec}
+\usepackage{pstricks}
+\usepackage{amssymb}
+\usepackage{paralist}
+
+%\usepackage[pdfauthor={Zeyi Fan},
+            %pdftitle={Zeyi Fan's Resume},
+            %pdfkeywords={}]{hyperref}
+\usepackage{hyperref}
+
+\definecolor{mygray}{gray}{0.95}
+\definecolor{lightdark}{gray}{0.55}
+\definecolor{dark}{gray}{0.3}
+\definecolor{skillbg}{gray}{0.7}
+
+\newcommand{\amount}{5.7in}
+\setcounter{section}{-1}
+
+\linespread{1.2}
+\pagenumbering{gobble}
+
+\renewcommand{\labelitemi}{$\blacksquare$}
+\renewenvironment{itemize}[1]{\begin{compactitem}#1}{\end{compactitem}}
+
+% Helpers
+
+\newcommand\twodigits[1]{%
+   \ifnum#1<10 0#1\else #1\fi
+}
+
+%\newcommand\hl[1]{{\ralewaysb #1}}
+\newcommand\hl[1]{#1}
+
+
+% Fonts
+%
+% PATCHED for latextemplates.com: upstream's \newfontfamily calls
+% resolved "Raleway"/"Raleway Medium"/etc. by FONTCONFIG FAMILY NAME.
+% That name is not registered in the pinned image (confirmed: `fc-list |
+% grep -i raleway` returns nothing), even though TeX Live itself ships
+% the actual Raleway .otf files (impallari/raleway) — same class of gap
+% as the classic `fontawesome` package elsewhere in this catalogue.
+% Loading each weight by its exact kpathsea-resolvable filename instead
+% of a fontconfig family name sidesteps the lookup entirely.
+% Raleway ships inside TeX Live itself (texmf-dist/fonts/opentype/
+% impallari/raleway/), resolvable by kpathsea under its exact filename —
+% fontspec's [Extension=.otf] tells it to search for that filename via
+% kpathsea rather than asking fontconfig to resolve a family name.
+\newfontfamily\raleway{Raleway-Regular}[Extension=.otf]
+\newfontfamily\ralewaym{Raleway-Medium}[Extension=.otf]
+\newfontfamily\ralewaysb{Raleway-SemiBold}[Extension=.otf]
+\newfontfamily\ralewayb{Raleway-Bold}[Extension=.otf]
+\newfontfamily\ralewayeb{Raleway-ExtraBold}[Extension=.otf]
+\newfontfamily\ralewaybb{Raleway-Black}[Extension=.otf]
+
+\setmainfont{Raleway-Regular}[Extension=.otf,
+  BoldFont=Raleway-Bold, ItalicFont=Raleway-RegularItalic,
+  BoldItalicFont=Raleway-BoldItalic]
+
+
+% Styles
+\newcommand{\name}[2]{
+    \begin{center}
+        \Huge{
+            \ralewayeb{#1 #2}
+        }
+    \end{center}
+}
+
+\newcommand{\tagline}[1]{
+    \begin{center}
+        \large{
+            \color{dark}
+            \ralewaysb{#1}
+        }
+        \vspace{.2em}
+    \end{center}
+}
+
+\renewcommand{\thesection}{\twodigits{\arabic{section}}.}
+
+\titleformat{\section}
+[hang]
+{\ralewaysb\large\color{dark}}
+{}
+{.0em}
+{}
+[{\titlerule[0.8pt]}]
+
+\titlespacing*{\section}{0pt}{4pt}{10pt}
+
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+\setlength{\parindent}{0mm}
+
+\newcommand{\contactline}[2]{
+    \ralewaysb{#1} & \raleway{#2}
+}
+
+\newcommand{\skill}[2]{
+    \vspace{.2em}
+    \ralewayb{#1}
+
+    \psset{xunit=0.197\linewidth, yunit=5pt}
+    \begin{pspicture}[showgrid=false](5,1)
+        \psline[linecolor=skillbg](0,0.5)(5,0.5)
+        \psline[linecolor=skillbg,arrows=|-|](1,0.5)(2,0.5)
+        \psline[linecolor=skillbg,arrows=|-|](3,0.5)(4,0.5)
+        \psline[linecolor=skillbg,arrows=-|](0,0.5)(5,0.5)
+
+        \psline[linecolor=black,arrows=|-|](0,0.5)(#2,0.5)
+    \end{pspicture}
+}
+
+\newcommand{\block}[3]{
+    {\large\ralewayb #1}
+
+    \ralewaym{\color{lightdark}#2}
+
+    \raleway{#3}
+}
+
+\begin{document}
+
+% background
+
+\begin{tikzpicture}[remember picture,overlay]
+  \fill[mygray] (current page.south west) rectangle ([xshift=-\amount]current page.north east);
+\end{tikzpicture}
+
+% Side Bar
+
+\begin{textblock}{58.5}(6,7.7)
+    \name{Jordan}{Ashworth}
+
+    \section{About me}
+
+    \color{dark}
+
+    Jordan is a backend engineer with 8 years' experience building distributed systems. Most recently led a migration to a queue-based architecture that cut p99 latency by 40\%. Enjoys mentoring and writing runbooks a teammate can actually follow at 3am.
+
+    \section{Contacts}
+
+    \renewcommand{\arraystretch}{1.1}
+
+    \begin{tabular}{rl}
+        \contactline{Phone}{+1 555 010 0100} \\
+        \contactline{Email}{jordan.ashworth@example.com} \\
+        \contactline{Website}{\href{https://jordanashworth.example}{jordanashworth.example}} \\
+        \contactline{GitHub}{\href{https://github.com/jordanashworth}{@jordanashworth}} \\
+        \contactline{LinkedIn}{\href{https://linkedin.com/in/jordan-ashworth}{/in/jordan-ashworth}}
+    \end{tabular}
+
+    \section{Skills}
+
+    \skill{Go}{4.5}
+
+    \skill{Python}{4}
+
+    \skill{SQL}{4}
+
+    \skill{Kubernetes}{4}
+
+    \skill{Kafka}{4}
+
+    \skill{PostgreSQL}{4}
+
+    \skill{Git}{4}
+
+    \skill{Terraform}{3.5}
+
+    \skill{Linux}{3.5}
+
+    \skill{Nginx}{3}
+
+    \skill{Redis}{3}
+
+\end{textblock}
+
+% Main
+
+\vspace{-25pt}  % Change this value to adjust the position of the right
+\section{Education}
+
+\block{University of Michigan}
+{M.Sc. Computer Science | 2014 -- 2016}
+{
+    Thesis on fault-tolerant distributed queues.
+}
+
+\section{Work Experience}
+
+\block{Senior Backend Engineer}
+{Northwind Systems | Boston, MA | March 2022 -- Present}
+{
+    \begin{itemize}[-]
+        \item Led the migration of the order-processing service to a \hl{queue-based architecture}, cutting p99 latency by 40\%.
+        \item Introduced structured on-call runbooks that cut mean time to resolution in half.
+        \item Mentored two junior engineers now running their own services.
+    \end{itemize}
+}
+
+\vspace{.5em}
+
+\block{Backend Engineer}
+{Fernbridge Analytics | Remote | July 2018 -- February 2022}
+{
+
+\begin{itemize}[-]
+    \item Built the ingestion pipeline handling \hl{2M events/day}.
+    \item Owned the on-call rotation for the data platform for three years.
+    \item Designed and developed the internal metrics service used across the data platform.
+\end{itemize}
+}
+
+\section{Projects}
+
+\block{openqueue}{}{
+    \begin{itemize}[-]
+        \item An open-source at-least-once message queue with a Go client library.
+        \item Designed and built a \hl{high-throughput broker in Go} with disaster recovery.
+        \item Used Raft for leader election and PostgreSQL for the durability log.
+        \item 1.2k GitHub stars.
+    \end{itemize}
+}
+
+\section{Awards}
+
+\ralewaysb Best Internal Tool \raleway at Northwind Systems Hack Week\hfill Sept 2023
+
+\ralewaysb Dean's List \raleway at University of Michigan\hfill 2015 -- 2016
+
+\end{document}

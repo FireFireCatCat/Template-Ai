@@ -1,0 +1,35 @@
+% hilbert — a book class from Rashid Talha's "latex-templates" collection,
+% "for beautiful books, not aimed to be maths-heavy". Picked as the best
+% book candidate among six active classes in that repo (penrose, salam,
+% cauchy: articles/notes; wade: letters; the beamer themes: presentations)
+% since it is the one purpose-built for chaptered, front/main/back-matter
+% books. Not on CTAN — bundled directly.
+%
+% Class documentation: the class file's own comments (no separate doc).
+% Licence: MIT, (c) 2020 rmathsphys (Rashid Talha).
+\documentclass[11pt]{hilbert}
+
+\input{additional/metadata.tex}
+
+\begin{document}
+
+\frontmatter
+  \halftitlepage
+  \input{additional/fulltitle}
+  \input{additional/copyright}
+  \input{additional/dedication}
+  \tableofcontents
+  \pagestyle{hf-front}
+  \input{additional/foreword}
+  \input{additional/preface}
+
+\mainmatter
+  \input{chapters/thelastcall.tex}
+  \input{chapters/theinterpreter.tex}
+  \input{chapters/postcardsfromnowhere.tex}
+
+\backmatter
+  \input{additional/acknowledgements.tex}
+  \input{additional/aboutauthor.tex}
+
+\end{document}

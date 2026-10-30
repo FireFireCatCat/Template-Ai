@@ -1,0 +1,71 @@
+% McDowell CV starter — github:dnl-blkv/mcdowell-cv, MIT.
+%
+% Engine: xelatex. mcdowellcv.cls loads fontspec unconditionally and defaults
+% to the Windows system font "Times New Roman" (with a `calibri` class option
+% pointing at another Windows-only font) — neither ships in the pinned
+% compiler's font set. The vendored mcdowellcv.cls in this directory has the
+% default swapped for Nimbus Roman, a URW clone of Times already in the
+% image. See the comment in mcdowellcv.cls.
+\documentclass[]{mcdowellcv}
+
+\usepackage{amsmath}
+
+\name{Morgan Reyes}
+\address{221 Baker St, Unit 4 \linebreak Seattle WA 98109}
+\contacts{(206) 555-0134 \linebreak morgan.reyes@example.com}
+
+\begin{document}
+
+	\makeheader
+
+	\begin{cvsection}{Employment}
+		\begin{cvsubsection}{Backend Engineer}{Fintrace Inc.}{2022 -- Present}
+			\begin{itemize}
+				\item Rebuilt the ledger reconciliation service, cutting nightly batch runtime from 3 hours to 20 minutes.
+				\item Introduced idempotency keys across all payment-write endpoints, eliminating a class of double-charge incidents.
+				\item Owned the migration from a monolithic Rails app to four bounded-context services.
+			\end{itemize}
+		\end{cvsubsection}
+
+		\begin{cvsubsection}{Software Engineer}{Harborlight Systems}{2019 -- 2022}
+			\begin{itemize}
+				\item Built the internal feature-flag service used by 40+ engineers across six teams.
+				\item Reduced staging deploy time from 25 minutes to 4 minutes by parallelising the CI pipeline.
+			\end{itemize}
+		\end{cvsubsection}
+
+		\begin{cvsubsection}{Software Engineering Intern}{Harborlight Systems}{Summer 2018}
+			\begin{itemize}
+				\item Prototyped a rate-limiting middleware later adopted as the team's default.
+			\end{itemize}
+		\end{cvsubsection}
+	\end{cvsection}
+
+	\begin{cvsection}{Education}
+		\begin{cvsubsection}{Seattle, WA}{University of Washington}{2015 -- 2019}
+			\begin{itemize}
+				\item B.S. in Computer Science, June 2019. GPA: 3.7.
+				\item Coursework: Distributed Systems; Databases; Operating Systems; Algorithms.
+			\end{itemize}
+		\end{cvsubsection}
+	\end{cvsection}
+
+	\begin{cvsection}{Technical Experience}
+		\begin{cvsubsection}{Projects}{}{}
+			\begin{itemize}
+				\item \textbf{queue-replay} (2023). CLI tool that replays a dead-letter queue against a staging environment for postmortem debugging. Go.
+				\item \textbf{schema-watch} (2021 -- 2022). Service that diffs production database schemas against migration files and alerts on drift. Python, PostgreSQL.
+			\end{itemize}
+		\end{cvsubsection}
+	\end{cvsection}
+
+	\begin{cvsection}{Languages and Technologies}
+		\begin{cvsubsection}{}{}{}
+			\begin{itemize}
+				\item Go; Python; TypeScript; SQL; Ruby
+				\item PostgreSQL; Kafka; Docker; Kubernetes; Terraform
+			\end{itemize}
+		\end{cvsubsection}
+	\end{cvsection}
+
+\end{document}

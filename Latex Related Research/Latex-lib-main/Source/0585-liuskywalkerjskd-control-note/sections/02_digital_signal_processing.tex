@@ -1,0 +1,412 @@
+%=============================================================================
+\section{Digital Signal Processing}
+%=============================================================================
+
+You might be wondering: ``I signed up for control theory, why are we starting with signal processing?'' Great question. Here is the answer: \textbf{garbage in, garbage out.}
+
+Your controller is only as good as the data it receives. If your IMU (Inertial Measurement Unit---the small chip that combines accelerometers and gyroscopes to measure orientation and motion) reading is bouncing around like a caffeinated squirrel, no amount of PID tuning will save you. So before we learn to control systems, we learn to clean up their signals.
+
+\subsection{Understanding the Frequency Domain}
+
+In everyday life, we think about signals in the \textbf{time domain}---voltage changes over time, position changes over time. This is natural and intuitive. But it turns out that many problems become \textit{much} easier if we look at signals from a different angle: the \textbf{frequency domain}.
+
+The core idea is beautifully simple: \textit{any signal can be decomposed into a sum of sinusoids of different frequencies.} Your noisy gyroscope reading? It is actually a clean low-frequency rotation signal plus a bunch of high-frequency noise signals all added together. If we can identify which frequencies are ``signal'' and which are ``noise,'' we can surgically remove the noise.
+
+Think of it like an audio equalizer on a music player. The bass, mids, and treble are all mixed together in the time-domain waveform. But the equalizer lets you boost or cut specific frequency ranges independently. That is exactly what we do with filters in control systems.
+
+\textbf{Key intuition:} Slow, meaningful changes in your system (like a chassis turning) happen at low frequencies. Fast, meaningless changes (like electrical noise or vibration) happen at high frequencies. The frequency domain lets us tell them apart.
+
+\subsection{Laplace Transform and Fourier Transform}
+
+These two transforms are your tickets from the time domain to the frequency domain. They are closely related, but they serve slightly different purposes.
+
+\subsubsection{Laplace Transform}
+
+The Laplace transform takes a time-domain function $f(t)$ and converts it into a function of the complex variable $s$:
+
+\begin{equation}
+F(s) = \mathcal{L}\{f(t)\} = \int_0^{\infty} f(t) e^{-st} \, dt
+\end{equation}
+
+where $s = \sigma + j\omega$ is a complex number. The real part $\sigma$ captures exponential growth or decay, and the imaginary part $j\omega$ captures oscillation.
+
+\textbf{Why do we care?} Because the Laplace transform turns differential equations into algebraic equations. Instead of solving
+\[
+m\ddot{x} + b\dot{x} + kx = F(t),
+\]
+(which requires calculus), we can solve
+\[
+(ms^2 + bs + k)X(s) = F(s),
+\]
+(which is just algebra). Derivatives become multiplication by $s$. Integration becomes division by $s$. Life becomes easier.
+
+The most important Laplace transforms you will use daily:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Time domain} & \textbf{$s$-domain} & \textbf{When you see it} \\
+\midrule
+$1$ (step input) & $\frac{1}{s}$ & Commanding a new setpoint \\
+$e^{-at}$ & $\frac{1}{s+a}$ & First-order system response \\
+$\sin(\omega t)$ & $\frac{\omega}{s^2 + \omega^2}$ & Oscillation, vibration \\
+$\dot{f}(t)$ & $sF(s) - f(0)$ & Derivative in the controller \\
+$\int f(t)\,dt$ & $\frac{F(s)}{s}$ & Integral in the controller \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Pro tip:} You do not need to memorize the integral formula. You need to understand that $s$ means ``derivative'' and $1/s$ means ``integral.'' That single insight will carry you through 80\% of control theory.
+
+\textbf{What is $e^{-st}$ actually doing?} The kernel $e^{-st} = e^{-\sigma t} e^{-j\omega t}$ is a ``probe signal'' that asks two questions simultaneously: (1) $e^{-\sigma t}$: ``Does the signal grow or decay at rate $\sigma$?'' (2) $e^{-j\omega t}$: ``How much of frequency $\omega$ is present?'' By integrating $f(t) \cdot e^{-st}$ over all time, we compute the ``correlation'' between the signal and every possible exponential-sinusoid. The result $F(s)$ is a map of the entire complex plane, telling us exactly how much of each exponential-oscillatory mode exists in the signal.
+
+\textbf{Common Laplace transform pairs --- worked out:}
+
+The \textbf{unit step} $u(t) = 1$ for $t \geq 0$:
+\[
+\mathcal{L}\{1\} = \int_0^{\infty} e^{-st} \, dt = \left[-\frac{e^{-st}}{s}\right]_0^{\infty} = \frac{1}{s}
+\]
+
+The \textbf{exponential decay} $e^{-at}$:
+\[
+\mathcal{L}\{e^{-at}\} = \int_0^{\infty} e^{-at} e^{-st} \, dt = \int_0^{\infty} e^{-(s+a)t} \, dt = \frac{1}{s+a}
+\]
+Notice that $F(s) = \frac{1}{s+a}$ ``blows up'' when $s = -a$. That special value of $s$ is called a \textbf{pole}---we will define it properly in a moment.
+
+\subsubsection{A First Look at Poles and Zeros}
+
+We just saw that $\mathcal{L}\{e^{-at}\} = \frac{1}{s+a}$. The denominator becomes zero at $s = -a$, which means $F(s)$ shoots to infinity there. That point is called a \textbf{pole}.
+
+In general, for any rational function in $s$---and most \textbf{transfer functions} (the ratio of a system's output to its input in the $s$-domain, which we will derive properly in the next chapter) are rational---we write:
+\[
+G(s) = \frac{N(s)}{D(s)} = \frac{(s - z_1)(s - z_2) \cdots}{(s - p_1)(s - p_2) \cdots}
+\]
+\begin{itemize}[nosep]
+    \item \textbf{Poles} ($p_i$): roots of the denominator $D(s)$. These are the values of $s$ where $G(s) \to \infty$.
+    \item \textbf{Zeros} ($z_i$): roots of the numerator $N(s)$. These are the values of $s$ where $G(s) = 0$.
+\end{itemize}
+
+\textbf{Why should you care right now?} Because the pole location tells you the time-domain behavior directly:
+\begin{itemize}[nosep]
+    \item A pole at $s = -a$ (negative real) produces $e^{-at}$---exponential decay. The more negative $a$ is, the faster the decay.
+    \item A pole at $s = +a$ (positive real) produces $e^{+at}$---exponential growth. The system is unstable.
+    \item A pair of complex poles $s = -\sigma \pm j\omega$ produces $e^{-\sigma t}\cos(\omega t)$---a decaying oscillation. (This should look familiar from the $e$ and $\pi$ section!)
+\end{itemize}
+
+In short: \textbf{poles tell you what exponential and oscillatory modes are hiding inside a system.} Every time we design a filter in this chapter, we are really choosing where to put poles and zeros. We will revisit poles and zeros more rigorously in Section~\ref{sec:system_analysis_tf}, where we connect them to stability, speed, and overall system performance.
+
+The \textbf{ramp} $t \cdot u(t)$:
+\[
+\mathcal{L}\{t\} = \frac{1}{s^2}
+\]
+Notice: multiplying by $t$ in time corresponds to differentiating with respect to $s$ and flipping the sign: $\mathcal{L}\{t \cdot f(t)\} = -\frac{d}{ds}F(s)$. Since $\mathcal{L}\{1\} = 1/s$, we get $\mathcal{L}\{t\} = -\frac{d}{ds}\frac{1}{s} = \frac{1}{s^2}$.
+
+\subsubsection{Fourier Transform}
+
+The Fourier transform is the Laplace transform's well-behaved cousin. It is what you get when you set $s = j\omega$ (i.e., $\sigma = 0$):
+
+\begin{equation}
+F(j\omega) = \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, dt
+\end{equation}
+
+While the Laplace transform works with the full complex plane (and can handle unstable, growing signals), the Fourier transform lives strictly on the imaginary axis. It tells you: ``How much of each frequency is present in this signal?''
+
+\textbf{When to use which:} Use the \textbf{Laplace transform} for analyzing and designing control systems (transfer functions, stability). Use the \textbf{Fourier transform} for analyzing signals (noise, vibration, frequency content).
+
+In practice, for digital systems we often use the \textbf{Discrete Fourier Transform (DFT)}, computed efficiently via the \textbf{Fast Fourier Transform (FFT)} algorithm. If you ever want to see what frequencies are hiding in your sensor data, just throw it into an FFT. MATLAB's \texttt{fft()} or Python's \texttt{numpy.fft.fft()} will do the job in one line.
+
+\subsubsection{Frequency Spectrum}
+
+When you apply the Fourier transform to a signal, you get its \textbf{frequency spectrum}---a plot showing the amplitude (and phase) of each frequency component.
+
+Reading a frequency spectrum is like reading an X-ray of your signal:
+\begin{itemize}
+    \item A tall peak at 50 Hz? That is probably power line interference.
+    \item A broad hump below 10 Hz? That is likely your actual signal of interest.
+    \item Random fuzz spread across all frequencies? That is white noise.
+\end{itemize}
+
+\textbf{Practical example:} Suppose your gimbal encoder gives a noisy velocity reading. You record 1 second of data, compute the FFT, and see a clean peak at 3 Hz (your gimbal is tracking a target moving at 3 Hz) plus a mess of noise above 50 Hz. Now you know: design a low-pass filter with a cutoff around 20--30 Hz, and your signal will be clean.
+
+The frequency spectrum has two parts:
+\begin{itemize}
+    \item \textbf{Magnitude spectrum} $|F(j\omega)|$: How strong each frequency component is.
+    \item \textbf{Phase spectrum} $\angle F(j\omega)$: The time shift of each frequency component.
+\end{itemize}
+
+For filter design, we mostly care about the magnitude spectrum. Phase becomes important later when we analyze control loop stability (\textit{phase margin}---how much extra phase lag the system can tolerate before it becomes unstable; see the Classical Control chapter).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{frequency_spectrum.pdf}
+\caption{Top: a noisy time-domain signal looks hopeless. Bottom: the FFT instantly reveals a 5 Hz signal and a 42 Hz resonance hiding in the noise.}
+\end{figure}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Case Study: Debugging a Vibrating Chassis with FFT}
+
+\vspace{0.3em}
+True story pattern from competition robotics: Your mecanum chassis drives fine at low speed but develops a nasty vibration at high speed. The whole frame buzzes. Everyone suspects a loose screw. You tighten everything. Still vibrates.
+
+\textbf{The diagnosis:} Log the IMU accelerometer data for 5 seconds while driving at the problematic speed. Run an FFT in Python:
+
+\begin{verbatim}
+    import numpy as np
+    freqs = np.fft.rfftfreq(len(data), d=1.0/sample_rate)
+    spectrum = np.abs(np.fft.rfft(data))
+    plt.plot(freqs, spectrum)
+\end{verbatim}
+
+You see a massive spike at exactly 42 Hz. Interesting. You calculate: at high speed, the mecanum wheel rollers contact the ground at\ldots about 42 Hz. The roller contact frequency matches a structural resonance of the chassis frame.
+
+\textbf{The fix options:}
+\begin{itemize}[nosep]
+    \item Add a \textbf{notch filter} (band-reject) at 42 Hz in the control loop to prevent the controller from exciting the resonance.
+    \item Add physical damping (rubber mounts) to shift the resonance frequency.
+    \item Stiffen the frame to move the resonance above the operating range.
+\end{itemize}
+
+\textbf{The lesson:} Without the FFT, you would have spent hours tightening screws. With the FFT, the root cause was obvious in 10 seconds. \textbf{The frequency domain is a debugging superpower.} Whenever something oscillates and you do not know why, record the data and look at the spectrum.
+\end{mdframed}
+
+\subsection{Frequency-Based Filter Design}
+
+Now that we can see signals in the frequency domain, we can design filters to keep the frequencies we want and reject the ones we do not.
+
+A filter is simply a system that has different gains at different frequencies. We describe this using the filter's \textbf{frequency response}---a plot of gain vs.\ frequency (called a \textbf{Bode magnitude plot}).
+
+\subsubsection{Low-Pass Filter}
+
+The most common filter in robotics. It passes low frequencies and attenuates high frequencies.
+
+\textbf{First-order low-pass filter:}
+\begin{equation}
+H(s) = \frac{\omega_c}{s + \omega_c}
+\end{equation}
+
+where $\omega_c = 2\pi f_c$ is the cutoff frequency in rad/s. At frequencies below $\omega_c$, the gain is approximately 1 (signal passes through). Above $\omega_c$, the gain rolls off at $-20$ dB/decade (signal gets attenuated).
+
+\textbf{In the time domain}, this is equivalent to an exponential moving average:
+\begin{equation}
+y[n] = \alpha \cdot x[n] + (1 - \alpha) \cdot y[n-1]
+\end{equation}
+
+This follows from a backward Euler discretization of the continuous filter. Starting from $H(s) = \frac{\omega_c}{s + \omega_c}$, the corresponding differential equation is $\dot{y} + \omega_c y = \omega_c x$. Replacing $\dot{y}$ with the backward difference $\frac{y[n] - y[n-1]}{T_s}$ gives:
+\[
+\frac{y[n] - y[n-1]}{T_s} + \omega_c\, y[n] = \omega_c\, x[n]
+\]
+Collecting terms in $y[n]$:
+\[
+y[n]\!\left(\frac{1}{T_s} + \omega_c\right) = \omega_c\, x[n] + \frac{y[n-1]}{T_s}
+\]
+Dividing both sides by $\left(\frac{1}{T_s} + \omega_c\right)$ and defining $\alpha = \frac{\omega_c T_s}{1 + \omega_c T_s} = \frac{T_s}{T_s + 1/\omega_c}$:
+\[
+y[n] = \alpha \cdot x[n] + (1 - \alpha) \cdot y[n-1]
+\]
+
+where $\alpha = \frac{T_s}{T_s + \frac{1}{2\pi f_c}}$ (since $\omega_c = 2\pi f_c$) and $T_s$ is the sampling period.
+
+\textbf{When to use:} Smoothing noisy sensor readings (gyroscope, accelerometer, motor current). This is the filter you will use 90\% of the time.
+
+\textbf{Gotcha:} A low-pass filter introduces \textbf{phase lag}---the output is delayed relative to the input. The more aggressively you filter (lower cutoff), the more lag you introduce. In a fast control loop, this lag can destabilize your system. There is always a trade-off between smooth signals and fast response.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{lpf_response.pdf}
+\caption{Left: LPF step response --- lower cutoff means slower rise but smoother output. Right: filtering a noisy 3 Hz signal --- the LPF recovers the true signal while removing high-frequency noise.}
+\end{figure}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Case Study: Why a Low-Pass Filter Gives You ``Soft Start'' for Free}
+
+\vspace{0.3em}
+Suppose you command your motor to jump from 0 to 5000 RPM instantly (a step input). Without any filter, the setpoint changes discontinuously---the motor driver sees a sudden full-voltage command, the gears slam, the chassis lurches, and your teammates spill their coffee.
+
+Now insert a first-order LPF on the setpoint: $r_{\text{filtered}}(s) = \frac{\omega_c}{s + \omega_c} \cdot R(s)$. What happens?
+
+The step input in the $s$-domain is $R(s) = \frac{5000}{s}$. After the filter:
+\[
+R_{\text{filtered}}(s) = \frac{5000 \, \omega_c}{s(s + \omega_c)}
+\]
+
+Taking the inverse Laplace transform:
+\[
+r_{\text{filtered}}(t) = 5000 \left(1 - e^{-\omega_c t}\right)
+\]
+
+The step has been transformed into a \textbf{smooth exponential ramp}. The time constant is $\tau = 1/\omega_c$. After $3\tau$, the output reaches 95\% of the target; after $5\tau$, it is at 99\%.
+
+\textbf{Why this matters on your robot:}
+\begin{itemize}[nosep]
+    \item \textbf{Mechanical protection:} Gears and belts have torque limits. A step command can strip teeth or snap belts. The LPF limits the rate of change, keeping forces within safe bounds.
+    \item \textbf{Current limiting:} A sudden voltage step causes a huge inrush current ($I = V/R$ when back-EMF is still zero). The LPF ramps up the voltage gradually, keeping current manageable.
+    \item \textbf{Tunable aggressiveness:} Want a faster ramp? Increase $\omega_c$ (higher cutoff). Want a gentler ramp? Decrease $\omega_c$. One parameter controls the entire behavior.
+\end{itemize}
+
+\textbf{Comparison with a linear ramp:} You could also ramp the setpoint linearly (e.g., increase by 1000 RPM/s). But the LPF is better because it also smooths out \textit{any} discontinuity in the setpoint---not just the initial step, but also sudden changes during operation. It is a ``set it and forget it'' solution.
+
+\textbf{The code is trivial:}
+\begin{verbatim}
+    setpoint_filtered += alpha * (setpoint_raw - setpoint_filtered);
+\end{verbatim}
+
+One line of code. No lookup tables, no state machines. That is the beauty of the LPF as a soft-start mechanism.
+\end{mdframed}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{lpf_soft_start.pdf}
+\caption{LPF soft start: a single parameter $\tau$ controls how aggressively the motor ramps up. The step command becomes a smooth exponential curve.}
+\end{figure}
+
+\subsubsection{Band-Pass Filter}
+
+Passes a specific range of frequencies and attenuates everything else. Think of it as a low-pass and a high-pass filter combined.
+
+\begin{equation}
+H(s) = \frac{\frac{\omega_0}{Q} s}{s^2 + \frac{\omega_0}{Q} s + \omega_0^2}
+\end{equation}
+
+where $\omega_0$ is the center frequency and $Q$ is the quality factor (higher $Q$ = narrower band).
+
+\textbf{When to use:} Extracting a specific frequency component from a signal. For example, if you know your target oscillates at a specific frequency and you want to track it while rejecting everything else.
+
+In robotics, band-pass filters are less common than low-pass filters, but they are useful for vibration analysis and resonance detection.
+
+\subsubsection{High-Pass Filter}
+
+Passes high frequencies, attenuates low frequencies. It is the opposite of a low-pass filter.
+
+\textbf{First-order high-pass filter:}
+\begin{equation}
+H(s) = \frac{s}{s + \omega_c}
+\end{equation}
+
+\textbf{When to use:} Removing DC offset or slow drift from a signal. For example, if your accelerometer has a slowly drifting bias, a high-pass filter can remove it while keeping the fast acceleration data intact.
+
+\textbf{Practical note:} A complementary filter (commonly used for IMU sensor fusion) is just a low-pass filter on one sensor and a high-pass filter on another, with their cutoff frequencies matched so the gains add up to 1. The accelerometer gets low-passed (trust it for slow/static orientation) and the gyroscope gets high-passed (trust it for fast rotations). Simple, elegant, and surprisingly effective.
+
+\subsubsection{Notch Filter (Band-Reject Filter)}
+
+A notch filter is the opposite of a band-pass filter: it \emph{removes} a narrow band of frequencies while leaving everything else untouched. It is your surgical tool for killing a single problematic frequency---a structural resonance, a 50/60 Hz power-line hum, or a motor cogging frequency.
+
+\textbf{Second-order notch filter:}
+\begin{equation}
+H(s) = \frac{s^2 + \omega_0^2}{s^2 + \frac{\omega_0}{Q}\,s + \omega_0^2}
+\end{equation}
+
+where $\omega_0$ is the frequency to reject and $Q$ is the quality factor (higher $Q$ = narrower notch). At $s = j\omega_0$, the numerator evaluates to zero, so the gain drops to zero at exactly $\omega_0$. The denominator keeps the filter stable and controls the width of the rejection band.
+
+\textbf{Pole-zero interpretation:} The numerator places a pair of \textit{zeros} on the imaginary axis at $s = \pm j\omega_0$---these create the ``notch'' by driving the gain to zero. The denominator places a pair of \textit{poles} slightly to the left of those zeros---these keep the filter stable and determine how quickly the gain recovers on either side. This is a textbook example of poles and zeros doing exactly what we described in Section 2.2: zeros kill frequencies, poles shape the surrounding response.
+
+\textbf{When to use:}
+\begin{itemize}[nosep]
+    \item A structural resonance is causing oscillation in your control loop (see the mecanum wheel case study earlier in this chapter).
+    \item Power-line interference (50 or 60 Hz) is corrupting a sensor signal.
+    \item A motor's cogging torque at a known frequency is visible in the velocity measurement.
+\end{itemize}
+
+\textbf{Practical tip:} Getting $\omega_0$ wrong by even a few Hz can make the notch miss the target entirely. Always identify the exact resonance frequency from an FFT of your sensor data \textit{before} designing the filter. If the resonance frequency shifts with operating conditions (e.g., with speed or load), consider an \textbf{adaptive notch filter} that tracks $\omega_0$ in real time.
+
+\textbf{Discrete-time implementation:} Like all filters in this chapter, the notch filter is implemented as a biquad (second-order section). The bilinear transform with pre-warping at $\omega_0$ converts $H(s)$ to $H(z)$ without shifting the notch frequency:
+\[
+s = \frac{\omega_0}{\tan(\omega_0 T_s / 2)} \cdot \frac{z - 1}{z + 1}.
+\]
+
+\subsubsection{Filter Type Selection and Parameter Tuning}
+
+Choosing the right filter comes down to answering three questions:
+\begin{enumerate}
+    \item \textbf{What frequencies do I want to keep?} This determines the filter type (low-pass, high-pass, band-pass, or notch).
+    \item \textbf{Where is the boundary?} This determines the cutoff frequency $f_c$ (or the rejection frequency $f_0$ for a notch).
+    \item \textbf{How sharp should the transition be?} This determines the filter order (or $Q$ for a notch).
+\end{enumerate}
+
+\textbf{Rules of thumb:}
+\begin{itemize}
+    \item Start with a first-order low-pass filter. It is simple, stable, and good enough for most applications.
+    \item Set the cutoff frequency to 5--10$\times$ the bandwidth of your signal of interest. Too low and you lose signal; too high and you keep noise.
+    \item If a first-order filter is not enough, try second-order (Butterworth for flat passband, Chebyshev for sharper rolloff).
+    \item \textbf{Never} design a filter without looking at the frequency spectrum of your actual data first. Guessing cutoff frequencies is a recipe for frustration.
+    \item When in doubt, plot the filtered output alongside the raw signal and check if the result makes physical sense.
+\end{itemize}
+
+\subsection{Z-Transform}
+
+Everything we have discussed so far with the Laplace transform lives in the continuous world. But your microcontroller is digital---it works with samples, not continuous signals. The \textbf{Z-transform} is the discrete-time equivalent of the Laplace transform.
+
+The Z-transform of a discrete sequence $x[n]$ is:
+\begin{equation}
+X(z) = \sum_{n=0}^{\infty} x[n] z^{-n}
+\end{equation}
+
+The key correspondence is:
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Continuous ($s$-domain)} & \textbf{Discrete ($z$-domain)} \\
+\midrule
+$s$ (derivative) & $\frac{z-1}{T_s}$ (forward difference) \\
+$\frac{1}{s}$ (integral) & $\frac{T_s}{z-1}$ (accumulator) \\
+Stable if $\text{Re}(s) < 0$ & Stable if $|z| < 1$ \\
+$e^{-aT_s}$ in $s$-domain & $z^{-1}$ is one-sample delay \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Why do we care?} Because when you implement a filter or controller on a microcontroller, you are working in the $z$-domain, whether you realize it or not. That simple line of code:
+\[
+\texttt{y = alpha * x + (1 - alpha) * y\_prev;}
+\]
+is actually a $z$-domain transfer function:
+\[
+H(z) = \frac{\alpha}{1 - (1-\alpha)z^{-1}}
+\]
+
+Understanding the Z-transform helps you:
+\begin{itemize}
+    \item Convert continuous-time filters/controllers to code (covered in Section 5).
+    \item Analyze the stability of your discrete-time system.
+    \item Understand why your controller might behave differently at different sampling rates.
+\end{itemize}
+
+For now, just remember: \textbf{$z^{-1}$ means ``one time step ago.''} That is the single most important thing about the Z-transform.
+
+\textbf{Common Z-transform pairs:}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Discrete signal} & \textbf{$z$-domain} & \textbf{When you see it} \\
+\midrule
+$\delta[n]$ (unit impulse) & $1$ & Initial kick \\
+$u[n]$ (unit step) & $\frac{z}{z-1}$ & Step command \\
+$a^n u[n]$ (geometric decay) & $\frac{z}{z-a}$ & Discrete first-order response \\
+$x[n-1]$ (one-step delay) & $z^{-1}X(z)$ & Previous sample in code \\
+$x[n] - x[n-1]$ (first difference) & $(1 - z^{-1})X(z)$ & Discrete derivative \\
+$\sum_{k=0}^{n} x[k]$ (running sum) & $\frac{1}{1 - z^{-1}}X(z)$ & Discrete integral \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{The connection between $s$ and $z$:} The exact mapping is $z = e^{sT_s}$. The connection is simple: a continuous-time exponential $x(t) = e^{st}$, when sampled at intervals $T_s$, becomes the sequence $x[n] = e^{snT_s} = (e^{sT_s})^n$. In the Z-transform world, $z^n$ is the discrete exponential. Matching terms gives $z = e^{sT_s}$.
+
+A continuous pole at $s = -a$ maps to a discrete pole at $z = e^{-aT_s}$. This means:
+\begin{itemize}
+    \item A stable continuous pole ($\text{Re}(s) < 0$) maps to $|z| < 1$ (inside the unit circle). Stability is preserved.
+    \item A faster continuous pole (more negative $s$) maps to a smaller $|z|$ (closer to the origin). Very fast poles map near $z = 0$.
+    \item An oscillatory continuous pole ($s = \sigma \pm j\omega$) maps to $z = e^{\sigma T_s} e^{\pm j\omega T_s}$, which spirals inside (stable) or outside (unstable) the unit circle.
+\end{itemize}
+
+\textbf{Reading a $z$-domain transfer function:} Any $z$-domain transfer function can be directly translated to code by replacing $z^{-1}$ with ``previous value.'' For example:
+\[
+H(z) = \frac{b_0 + b_1 z^{-1}}{1 + a_1 z^{-1}}
+\]
+becomes:
+\begin{verbatim}
+    y = b0 * x + b1 * x_prev - a1 * y_prev;
+    x_prev = x;  y_prev = y;
+\end{verbatim}
+This is called a \textbf{difference equation}, and it is the final form of any digital filter or controller.

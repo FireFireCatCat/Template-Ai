@@ -1,0 +1,101 @@
+% Cover Letter for a Journal Submission — jourcl
+%
+% jourcl is aimed specifically at submitting a paper to a journal (author
+% details with ORCID, editor addressing, abstract box, recommended-reviewer
+% slots, declaration of originality, conflict-of-interest statement) — a
+% different use case from a job-application cover letter.
+%
+% Upstream's \aboutme header unconditionally calls \includelogo, and the
+% class also offers \showSignature for a scanned signature image. Neither an
+% institution logo nor a signature is bundled here (no image assets shipped),
+% so \includelogo is redefined to render nothing and \showSignature is left
+% uncalled, exactly as upstream's own comments say to do ("comment it out if
+% you don't have one").
+%
+% No fontspec anywhere in jourcl.cls — pdflatex-safe.
+\documentclass[hidelinks]{jourcl}
+\renewcommand{\includelogo}{}
+
+% Recommended reviewers (optional; leave a slot's fields empty to omit it)
+\FirstRecommended{Reviewer}
+\FirstNameSurname{Elena Kowalski}
+\FirstInstitution{Jagiellonian University, \\Institute of Computer Science}
+\FirstEmail{e.kowalski@example.edu}
+\SecondRecommended{Reviewer}
+\SecondNameSurname{Tomas Herrera}
+\SecondInstitution{Universidad Nacional, \\Department of Applied Mathematics}
+\SecondEmail{t.herrera@example.edu}
+\ThirdRecommended{}\ThirdNameSurname{}\ThirdInstitution{}\ThirdEmail{}
+
+% Author data
+\NameSurname{Priya Natarajan}
+\AuthorOrcid{0000-0002-1825-0097}
+\InstitutionName{University of Ljubljana, \\Faculty of Computer and Information Science}
+\StreetNo{Vecna pot 113}
+\CityPostal{1000 Ljubljana, Slovenia}
+\Email{priya.natarajan@example.edu}
+\Phone{+38614798000}
+
+% Article data
+\JournalName{Journal of Evolutionary Computation}
+\Title{Adaptive Mutation Rates in Constrained Multi-Objective Optimisation}
+\Editor{Prof. Marko Novak}
+\abstract{We propose an adaptive mutation scheme for constrained
+multi-objective evolutionary algorithms that adjusts step size using
+feedback from constraint-violation trends rather than a fixed schedule.
+Across five benchmark suites, the approach improves hypervolume by 6--14\%
+over static-mutation baselines while requiring no additional tuning.}
+
+\toEditor{To the editor: \pEditor}
+\PersonAddressing{Dear Prof. Novak}
+\Introduction{We submit our paper titled: \pTitle, which we would like to be considered for publication in \pJournalName.\SpecialIssueSentence}
+\final{We believe the proposed adaptive mechanism addresses a practical gap in constrained multi-objective optimisation and would be of interest to the journal's readership. We hope the manuscript will capture your interest and that you will consider it for publication in \pJournalName.}
+\declaration{This manuscript is the authors' original work and has not been published or submitted simultaneously elsewhere. All authors have reviewed the manuscript and agreed to its submission.}
+\conflictofinterest{We have no conflicts of interest to disclose.}
+\valediction{\yourssincerely}
+\signature{\pNameSurname, on behalf of all authors}
+
+\begin{document}
+
+\large
+\aboutme{
+    \pNameSurname \! \orcidlink{\pAuthorOrcid}\\
+    \faIcon{university} \pInstitutionName\\
+    \pStreetNo\\
+    \pCityPostal\\
+    \faIcon{envelope} \pEmail \\
+    \faIcon{phone-square-alt} \pPhone
+    }
+
+\noindent\makebox[\linewidth]{\rule{0.9\paperwidth}{0.4pt}}
+
+\today
+
+\ptoEditor
+
+\vspace*{1\baselineskip}
+\pPersonAddressing,
+
+\pIntroduction
+
+\begin{framed}
+Abstract: \pabstract
+\end{framed}
+
+\showreviewers
+
+\vspace{-.7cm}
+
+\pfinal\newline
+
+\pdeclaration \newline
+
+\pconflictofinterest
+
+\vfill
+
+\pvalediction\par
+
+\psignature
+
+\end{document}

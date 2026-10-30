@@ -1,0 +1,98 @@
+%# -*- coding:utf-8 -*-
+%% Based on moderncv's template_en.tex.
+%% Copyright 2006-2008 Xavier Danaux (xdanaux@gmail.com).
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License version 1.3c,
+% available at http://www.latex-project.org/lppl/.
+
+\documentclass[11pt,a4paper]{moderncv}
+
+\usepackage{fontspec,xunicode}
+\usepackage[slantfont,boldfont]{xeCJK}
+\usepackage{xcolor}
+
+% PATCH (latextemplates.com): upstream picked fonts with \ifwindows/\ifmacosx
+% branches (Times New Roman, SimSun/STSong/STFangsong — all OS-bundled fonts
+% looked up by fontconfig FAMILY name). None of those branches match Linux,
+% and this pinned image's fontconfig only resolves DejaVu and the URW
+% base-35 clones anyway (see research/README.md's font-trap section) — the
+% upstream fonts would silently fail to load with a clean-looking compile.
+% Replaced with TeX Gyre Termes (a Times-alike) for the Latin text and the
+% Fandol family for CJK, both loaded by FILENAME via kpathsea, which this
+% TeX Live resolves regardless of platform or fontconfig.
+\setmainfont{texgyretermes-regular.otf}[
+  BoldFont = texgyretermes-bold.otf,
+  ItalicFont = texgyretermes-italic.otf,
+]
+\setCJKmainfont[ItalicFont=FandolKai-Regular.otf, BoldFont=FandolHei-Bold.otf]{FandolSong-Regular.otf}
+\setCJKsansfont{FandolHei-Regular.otf}
+\setCJKmonofont{FandolSong-Regular.otf}
+
+% moderncv themes
+\moderncvtheme[blue]{classic}  % optional argument are 'blue' (default), 'orange', 'red', 'green', 'grey' and 'roman' (for roman fonts, instead of sans serif fonts)
+
+% adjust the page margins
+\usepackage[scale=0.9]{geometry}
+\AtBeginDocument{\recomputelengths}  % required when changes are made to page layout lengths
+
+% personal data
+\firstname{Wei}
+\familyname{Chen}
+\title{Software Engineer / 软件工程师}
+\address{Hangzhou, China}{}
+\mobile{+86 138 0000 0000}
+\email{wei.chen@example.com}
+\homepage{wei-chen.dev}
+\social[github]{weichen-dev}
+\extrainfo{%
+  LinkedIn: linkedin.com/in/weichen-dev
+}
+
+% \photo[64pt]{avatar.png}  % add a photo by dropping a file next to main.tex and uncommenting this line
+
+%----------------------------------------------------------------------------------
+%            content
+%----------------------------------------------------------------------------------
+\begin{document}
+\maketitle
+\vspace*{-14mm}
+
+\section{工作经历 / Experience}
+\cventry{2022.03--至今}{高级后端工程师}{字节跳动}{北京}{}{负责推荐系统服务端架构，
+  将核心排序服务的 P99 延迟从 180ms 降到 60ms，主导了从单体服务到微服务的拆分}
+\cventry{2019.07--2022.02}{后端工程师}{美团}{北京}{}{参与外卖订单系统的开发与维护，
+  设计并实现了订单状态机，支撑日均千万级订单}
+\cventry{2018.01--2019.06}{实习生}{腾讯}{深圳}{}{参与微信支付对账系统开发，
+  独立完成了对账差异自动修复模块}
+
+\section{教育经历 / Education}
+\cventry{2015.09--2019.06}{学士}{浙江大学}{计算机科学与技术}{}{}
+\cvlistitem{校级一等奖学金 (2017, 2018)}
+\cvlistitem{ACM/ICPC 区域赛银奖}
+
+\section{项目 / Projects}
+\subsection{开源项目 / Open Source}
+\cvline{fastcache}{一个用 Go 编写的高性能本地缓存库
+  \emph{github.com/weichen-dev/fastcache} \textbf{2,300+ stars}}
+\cvline{ordergraph}{订单状态可视化调试工具，被团队内部广泛使用}
+
+\section{技能 / Skills}
+\cvline{\textbf{后端}}{Go, Java, PostgreSQL, Redis, Kafka}
+\cvline{\textbf{基础设施}}{Kubernetes, Docker, Terraform}
+\cvline{\textbf{其他}}{熟练使用 Git/Vim, 英语工作沟通流利}
+
+\section{Publications}
+\cvline{2021}{W. Chen, et al. \emph{Reducing Tail Latency in Large-Scale
+  Recommendation Serving.} Internal Engineering Report.}
+
+\end{document}
+
+%% end of file `main.tex'.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-command-extra-options: "-shell-escape"
+%%% TeX-master: t
+%%% TeX-engine: xetex
+%%% End:

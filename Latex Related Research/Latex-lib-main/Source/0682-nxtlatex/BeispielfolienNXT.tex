@@ -1,0 +1,242 @@
+% Beispieldokument für das Beamer-Thema NXT
+\documentclass[aspectratio=169]{beamer}
+
+\usetheme{NXT}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage[ngerman]{babel}
+
+% Farbmuster: gefülltes Rechteck + Farbname
+\newcommand{\cs}[1]{%
+  \colorbox{#1}{\kern1.5em\strut\kern1.5em}~{\footnotesize\ttfamily #1}%
+}
+
+% Metadaten
+\title{NXT-Folien mit \LaTeX{}}
+\subtitle{Beispiel für das Beamer-Thema NXT}
+\author{Volker Reichenberger}
+\date{\today}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Titelseite
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Aufzählungen}
+
+\begin{columns}[T]
+  \begin{column}{0.48\textwidth}
+    \textbf{Aufzählung (itemize)}
+    \begin{itemize}
+      \item Erster Punkt
+      \item Zweiter Punkt mit \emph{Hervorhebung}
+      \item Dritter Punkt
+        \begin{itemize}
+          \item Unterpunkt A
+          \item Unterpunkt B
+        \end{itemize}
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.48\textwidth}
+    \textbf{Nummerierung (enumerate)}
+    \begin{enumerate}
+      \item Schritt eins
+      \item Schritt zwei
+      \item Schritt drei
+    \end{enumerate}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Textblöcke und Hervorhebungen}
+
+\begin{block}{Hinweis}
+  Mit der Umgebung \texttt{block} können wichtige Informationen
+  hervorgehoben werden.
+\end{block}
+
+\bigskip
+
+\begin{alertblock}{Warnung}
+  Diese Umgebung eignet sich für Warnungen oder kritische Hinweise.
+\end{alertblock}
+
+\bigskip
+
+\begin{exampleblock}{Beispiel}
+  Und diese Umgebung für Beispiele oder Erläuterungen.
+\end{exampleblock}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Tabellen}
+
+\begin{table}
+  \centering
+  \begin{tabular}{llr}
+    \toprule
+    \textbf{Methode} & \textbf{Beschreibung} & \textbf{Aufwand} \\
+    \midrule
+    Interviews       & Qualitative Befragung        & hoch   \\
+    Fragebogen       & Quantitative Erhebung        & mittel \\
+    Beobachtung      & Direkte Verhaltensanalyse    & hoch   \\
+    Dokumentanalyse  & Auswertung vorhandener Daten & gering \\
+    \bottomrule
+  \end{tabular}
+  \caption{Übersicht der Forschungsmethoden}
+\end{table}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Zwei Spalten mit Abbildung}
+
+\begin{columns}[T]
+  \begin{column}{0.55\textwidth}
+    \begin{itemize}
+      \item Das NXT-Thema verwendet das charakteristische
+        \emph{NXT-Grün} (RGB 0, 139, 146).
+      \item Schriftart: \textbf{Segoe UI} (LuaLaTeX).
+      \item Mathematik: Euler-Math.
+      \item Die NXT-Logos stecken im NXT Logo Font und sind immer
+        verfügbar; Hochschullogo und Skyline werden mit
+        \texttt{\textbackslash IfFileExists} abgesichert.
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.4\textwidth}
+    \begin{center}
+      \nxtlogo[width=0.7\textwidth]\\[10pt]
+      {\color{nxtgreen}\nxtlogofont\LARGE N X T}
+    \end{center}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Mathematik}
+
+Die Euler'sche Identität verbindet fünf fundamentale Konstanten:
+\[
+  e^{i\pi} + 1 = 0
+\]
+
+\bigskip
+
+Das Integral der Gaußschen Glockenkurve:
+\[
+  \int_{-\infty}^{+\infty} e^{-x^2}\,\mathrm{d}x = \sqrt{\pi}
+\]
+
+\bigskip
+
+\begin{block}{Hinweis}
+  Das Thema lädt \texttt{unicode-math} mit dem Font
+  \texttt{Euler-Math} für typographisch ansprechenden Formelsatz.
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Farben – Grüntöne und Grautöne}
+
+\begin{columns}[T]
+  \begin{column}{0.48\textwidth}
+    \textbf{NXT-Grüntöne und Akzente}\\[4pt]
+    \cs{nxtgreen}\\[3pt]
+    \cs{nxtgreen.2}\\[3pt]
+    \cs{nxtgreen.3}\\[3pt]
+    \cs{nxtgreen.4}\\[3pt]
+    \cs{nxt.violet}\\[3pt]
+    \cs{nxt.blue}\\[3pt]
+    \cs{nxt.orange}\\[6pt]
+    {\footnotesize\texttt{nxtcolor} ist ein Alias für \texttt{nxtgreen}.}
+  \end{column}
+  \begin{column}{0.48\textwidth}
+    \textbf{Grautöne}\\[4pt]
+    \cs{nxt.verylightgray}\\[3pt]
+    \cs{nxt.gray0}\\[3pt]
+    \cs{nxt.gray1}\\[3pt]
+    \cs{nxt.gray3}\\[3pt]
+    \cs{nxt.gray5}\\[3pt]
+    \cs{nxt.gray7}\\[3pt]
+    \cs{nxt.gray8}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Farben – weitere Farben}
+
+\begin{columns}[T]
+  \begin{column}{0.48\textwidth}
+    \cs{nxt.yellow}\\[3pt]
+    \cs{nxt.red}\\[3pt]
+    \cs{nxt.magenta}\\[3pt]
+    \cs{nxt.violet}\\[3pt]
+    \cs{footgray}
+  \end{column}
+  \begin{column}{0.48\textwidth}
+    \cs{nxt.navy}\\[3pt]
+    \cs{nxt.cyan}\\[3pt]
+    \cs{nxt.olive}\\[3pt]
+    \cs{nxt.lightolive}\\[3pt]
+    \cs{nxt.lightblue}\\[3pt]
+    \cs{nxt.darkblue}
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Logos}
+
+Die NXT-Logos kommen aus dem NXT Logo Font, der dem Paket beiliegt --
+nichts herunterzuladen. Das optionale Argument nimmt \texttt{width},
+\texttt{height} und das Farbschema:
+\medskip
+
+\begin{tabular}{@{}ll@{}}
+  \verb|\nxtlogo|         & \nxtlogo[height=6mm]     \\[4pt]
+  \verb|\nxtlogonut|      & \nxtlogonut[height=6mm]  \\[4pt]
+  \verb|\nxthsrtlogo|     & \nxthsrtlogo[height=6mm] \\[4pt]
+  \verb|\nxtlogostandard| & \nxtlogostandard[height=6mm] \\[4pt]
+  \verb|schema=schwarz|   & \nxthsrtlogo[height=6mm, schema=schwarz] \\[4pt]
+  \verb|schema=weisseZeile| &
+    \colorbox{nxt.gray8}{\nxthsrtlogo[height=6mm, schema=weisseZeile]}
+\end{tabular}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{Hochschullogo und Skyline}
+
+Hochschullogo und Skyline gehören der Hochschule und liegen dem Paket
+nicht bei. \texttt{getnxtlogos} lädt sie von der Hochschul-Website und
+installiert sie in den lokalen \texttt{texmf}-Baum:
+
+\begin{verbatim}
+sh getnxtlogos              # macOS, Linux
+powershell -ExecutionPolicy Bypass
+           -File getnxtlogos.ps1   # Windows
+\end{verbatim}
+
+\begin{tabular}{@{}ll@{}}
+  \verb|\hsrtlogograu| & \hsrtlogograu[height=6mm] \\[4pt]
+  \verb|\hsrtskyline|  & \hsrtskyline[height=4mm]
+\end{tabular}
+\medskip
+
+Fehlen die Dateien, übergehen beide Makros sie stillschweigend.
+
+\end{frame}
+
+\end{document}

@@ -1,0 +1,450 @@
+%\iffalse
+% imac.dtx generated using makedtx version 1.3 (c) Nicola Talbot
+% Command line args:
+%   -dir imac-source
+%   -src imac.sty=>imac.sty
+%   -license lppl
+%   -doc imac-source/imac.tex
+%   -author
+%   "Joseph C. Slater"
+%   imac
+% Created on 2026/10/8 9:04
+%\fi
+%\iffalse
+%<*package>
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+%</package>
+%\fi
+% \iffalse
+% Doc-Source file to use with LaTeX2e
+% Copyright (C) 2026 Joseph C. Slater, all rights reserved.
+% \fi
+% \iffalse
+%<*driver>
+%%%%%%%%%%%%%%%%%%%%%%%%%%% ASME.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% This is a template for the IMAC (International Modal Analysis
+%%% Conference) style file imac.sty.  No subsubsection format is
+%%% defined for IMAC, so I used this command for the nomenclature command.
+%%% With this you should also find imac.bst which applies the closest
+%%% thing I can determine to be the ``Standard'' for IMAC.
+%%% The 9 point text size has already been defined in the style file imac.sty.
+%%%
+%%% Version 2026-10-07
+%%% (versioned by release date rather than a version number; see the
+%%% "Changes" section below for the full history)
+%%% As of the 2026-10-07 release, this style matches the official IMAC
+%%% Word Template.dotx: single-column A4 layout, Times New Roman body
+%%% text, sentence-case bold headings, and plain (non-superscript)
+%%% bracketed citations.
+%%%
+\documentclass{article}
+\usepackage{imac}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={IMAC},
+    pdfpagemode=FullScreen,
+    }
+% You also need to have the packages: cite, citesort, and ifthen
+% (ifthen comes with the standard distribution of LaTeX).
+% They can be obtained from any CTAN server. Probably where you found
+% this.
+
+\newcommand{\degrees}{$^{\circ}$~}
+
+\begin{document}
+\DocInput{imac.dtx}
+\end{document}
+%</driver>
+%\fi
+%
+%%%% Don't want date printed
+%\date{}
+%
+%\title{\fontsize{16pt}{19pt}\selectfont\bfseries IMAC version 2.0: A \LaTeX\ PACKAGE FOR WRITING
+%PAPERS IN
+%INTERNATIONAL MODAL ANALYSIS CONFERENCE (IMAC) FORMAT}
+%
+%
+%\author{\vspace{.25in}\\
+%\textbf{Joseph C. Slater}\\
+%}
+%\maketitle
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{abstract}
+%Just like in any other \LaTeX\  document, you begin the abstract, make
+%the title, and define the author as shown in the example. Not that
+%IMAC requires that the author names be in bold, so you have to do this
+%yourself. In addition, I haven't yet hacked the style definition for
+%the title. Maybe I will later, but that's a minor inconvenience.
+%
+%For feedback and support, please see the \href{https://github.com/josephcslater/IMAC}{IMAC style home page}.
+%\end{abstract}
+%
+%\keywords{Keyword one \textbullet\ Keyword two \textbullet\ Keyword three}
+%
+%
+%\subsubsection*{Nomenclature}
+%\begin{tabular}{lll}
+%\matr{M} &&  matrix\\
+%
+%\dmat{M}&& diagonal matrix\\
+%
+%\vect{\Phi} && vector \\
+%
+%\elem{M_{11}}&& single element of \matr{M}\\
+%
+%\pnorm{x} && p-norm of \vect{x}\\
+%
+%$\begin{bmatrix}\matr{M}_{11}&:&\matr{M}_{12}\\
+%	\hdotsfor[2]{1}&:&\hdotsfor[2]{1}\\
+%	\matr{M}_{21}&:&\matr{M}_{22}
+%\end{bmatrix}$
+%&& partitioned matrix\\
+%
+%\end{tabular}
+%
+%\section{Changes}
+%As of this release, versions are identified by release date
+%(\texttt{YYYY-MM-DD}) rather than by an incrementing version number.
+%Older entries below retain their original version numbers since
+%precise individual dates for each of them could not be reliably
+%recovered from the repository history; the closest available
+%commit dates are noted.
+%
+%2018-03-26: Initial public release (version 1.0, later also labeled
+%1.0.1/1.0.2), including the LPPL license and hyperlinks to the main
+%document.
+%
+%2021-12-08: (version 1.0.3) Fix minor typos in document.
+%
+%2026-10-07: Realigned the style with the official IMAC Word Template
+%(\emph{Word Template.dotx}, distributed via the IMAC/SEM (Society for
+%Experimental Mechanics) author toolkit) so that \LaTeX\ and Word
+%submissions now produce matching formatting. Specific changes:
+%\begin{itemize}
+%\item Switched body and heading fonts from sans-serif (Helvetica/Computer
+%Modern Sans) to Times New Roman-compatible fonts (via \texttt{mathptmx}).
+%\item Changed from a two-column US Letter layout to a single-column
+%A4 layout, with margins matching the Word template (top 0.825in,
+%bottom 1in, left/right 0.715in).
+%\item Section, subsection, and subsubsection headings are now bold,
+%sentence case, instead of bold, all-caps.
+%\item The \texttt{Abstract}, \texttt{References}, \texttt{Table}, and
+%\texttt{Program} labels are now bold, sentence case, instead of
+%bold, all-caps.
+%\item In-text citations are now plain, non-superscript, bracketed
+%numbers (e.g.\ \texttt{[1, 2, 3]}), matching the Word template, instead
+%of bracketed superscripts. Citation ranges are no longer compressed.
+%\item Added a \verb*z\keywordsz command to typeset a Keywords line
+%after the abstract, matching the Word template.
+%\item Paragraph spacing (\texttt{\textbackslash parskip}) reduced to
+%8pt to match the Word template's default paragraph spacing.
+%\item Removed unused eleven/ten/eight-point \texttt{\textbackslash font}
+%definitions, the obsolete \texttt{helvet} package instructions, and
+%the duplicate/stray package loading; added \texttt{\textbackslash
+%ProvidesPackage} for proper version reporting (now also date-based).
+%\item Fixed a hyperlink color inconsistency: citations now use
+%\texttt{citecolor=blue}, matching the rest of the document's links
+%(previously citations defaulted to hyperref's green).
+%\end{itemize}
+%
+%\section{Typing Your Document}
+%\indent First thing to note is that the IMAC style indents the first
+%line of each paragraph, including the paragraph immediately following
+%a section header. You can override the \LaTeX\ default of not
+%indenting by using the \indent command each time after a
+%\verb*a\sectiona command or by using the package \verb*zindentfirstz
+%which can be downloaded from any CTAN location.
+%
+%The second thing which you may need to do is obtain and install the
+%packages: \verb*zcitez, \verb*zifthenz, \verb*zamsmathz, and \verb*zmathptmxz
+%(for Times-compatible text and math fonts, matching the official Word
+%template). These are all standard CTAN packages and should already be
+%part of any complete \LaTeX\ distribution.
+%
+%The PDF\textregistered\ file \verb*zimac.pdfz can be viewed for comparison to the results
+%you obtain from \LaTeX ing this document.
+%
+%A few macros have been defined below for conforming to the
+%IMAC\cite{ewins} notation convention (See Table \ref{dm}). If you use them, you can simply redefine the
+%macros according to the journal requirements when the time comes for submission.
+%I've defined only those that I thought were either difficult or do not
+%conform to normal textbook standards. You may find it useful to define
+%your own macros at the end of the file \verb*zimac.styz, but please
+%make sure that you don't delete them the next time you update!
+%
+%In Table \ref{dm} you'll also see some code for making a partitioned
+%matrix. Sorry, but I don't know how to turn this into an
+%environment. If you figure it out, let me know and I'll incorporate it.
+%The colons form the horizontal delimiters and the \verb*z\hdotsforz
+%command forms the vertical delimiters. The first argument represents
+%a spacing of the dots, and the second required argument is the number
+%of columns that the dotted line should span.
+%
+%\begin{table*}
+%	\begin{tabular}{lll}
+%	\matr{M} &\verb*c\matr{M}c&  matrix\\
+%
+%	\dmat{M}&\verb*c\dmat{M}c& diagonal matrix\\
+%
+%	\vect{\Phi} & \verb*a\vect{\Phi}a & vector \\
+%
+%	\elem{M_{11}}&\verb*z\elem{M_{11}}z& single element of \matr{M}\\
+%
+%	\pnorm{x} &\verb*a\pnorm{x}a & p-norm of \vect{x}\\
+%%%%%  Look between these lines for the partitioned matrix code
+%	$\begin{bmatrix}\matr{M}_{11}&:&\matr{M}_{12}\\
+%		\hdotsfor[2]{1}&:&\hdotsfor[2]{1}\\
+%		\matr{M}_{21}&:&\matr{M}_{22}
+%	\end{bmatrix}$
+%%%%%  Look between these lines for the partitioned matrix code
+%%%%%  The stuff below this is for displaying the code. Ignore it.
+%	&\begin{minipage}{3.5in}
+%	{\verb*z\begin{bmatrix}z\\\verb*z\matr{M}_{11}&:&\matr{M}_{12}\\z\\
+%\verb*z\hdotsfor[2]{1}&:&\hdotsfor[2]{1}\\z\\
+%\verb*z\matr{M}_{21}&:&\matr{M}_{22}z\\\verb*z\end{bmatrix}z}
+%\end{minipage}
+%	& partitioned matrix\\
+%	\end{tabular}
+%	\caption{\label{dm}Defined macros}
+%
+%\end{table*}
+%
+%Please contact me at \verb*zjoseph.c.slater@gmail.comz if you find bugs in this.
+%I'll do my best to fix them in a timely fashion. Please don't contact me with respect to general \LaTeX\
+%questions.
+%For help with \LaTeX\ please consult Lamport\cite{lamport}, Goossens
+%et al.\cite{goossens}, and/or Kopka and Daly\cite{kopka}. Additional
+%resources are available through the \TeX\ newsgroup \verb*zcomp.text.texz,
+%the
+%CTAN archives at \verb*zhttp://www.ucc.ie/cgi-bin/ctanz, and the \TeX
+%users group (TUG) home page (\verb*zhttp://www.tug.org/z).
+%
+%From here on is just some examples to give you some
+%continuing examples of how to do things. The table would have been
+%better off if I had used the \verb*zhhlinez package.
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\section{Here is a section}
+%
+%\indent In bladed disk assemblies, the disk acts as a coupling device between the
+%blades.  As the stiffness of the disk increases, blade coupling
+%decreases. It has been shown that weak interblade coupling leads to
+%high levels of mode localization when blades are
+%mistuned.
+%
+%
+%\begin{figure}
+%\begin{center}
+%\fbox{There once was a figure here}
+%\end{center}
+%\caption{\label{undeformed}Here is a figure.}
+%\end{figure}
+%
+%\subsection{This is a subsection}
+%
+%\indent All models used in this study were variations of the symmetric,
+%constant stiffness system referred to as the baseline model (Figure
+%\ref{undeformed}).  Yada yada.
+%
+%
+%
+%\begin{table}
+%\begin{center}
+%\begin{tabular}{|c|c|c|c|}
+%\hline
+%    & Random 1      &     Random 2  &    Random 3\\
+%\cline{2-4}
+%\raisebox{2ex}{Blade Number}  & $10^{-3}$ Kg   &    $10^{-3}$ Kg &    $10^{-3}$  Kg\\
+%\hline
+%\hline
+%
+%1   &    0.0168  & 0.3343  & 0.3413\\
+%2    &   0.0260  & 0.2867  & 0.4431\\
+%3    &   0.2579  & 0.4529  & 0.3710\\
+%
+%\hline
+%
+%\end{tabular}
+%\end{center}
+%\caption{\label{random} Simple table.}
+%\end{table}
+%
+%... and that's it! If you can't get it to work, I can be reached at
+%\verb*zjoseph.c.slater@gmail.comz.
+%
+%
+%
+%
+%\section*{Acknowledgments}
+%Note that for the Acknowledgments you need to use the
+%\verb*z\sectionz command in the starred form to avoid getting the
+%section number.
+%
+%Thanks to Leslie Lamport\cite{lamport}, Goossens, Mittelbach, and
+%Samarin\cite{goossens} and all others  who've built \LaTeX\ into what it is
+%today.
+%
+%\section*{Copyright}
+%
+%Copyright (C) 1998 Joseph C. Slater
+%
+%\bibliographystyle{imac}
+%
+%\bibliography{imac}
+%
+%
+%
+%\StopEventually{}
+%\section{The Code}
+%\iffalse
+%    \begin{macrocode}
+%<*imac.sty>
+%    \end{macrocode}
+%\fi
+% This is imac.sty for producing IMAC-format (International
+% Modal Analysis Conference)  articles using LaTeX2e 
+% Supported by Joseph C. Slater
+% joseph.c.slater@gmail.com
+% https://josephcslater.github.io
+%
+% Copyright (C) 1999 Joseph C. Slater
+%
+% This program is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License
+% as published by the Free Software Foundation; either version 2
+% of the License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+%
+% Modified from the ASME style
+% written by   Srinivas S. Sripada
+%              Research Fellow,
+%              Dept. of Mechanical Engg. & Applied Mechanics
+%              University of Pennsylvania
+%              Philadelphia
+%
+%%%
+%%% Version 2026-10-07
+%%% (versioned by release date rather than a version number; see the
+%%% "Changes" section of imac.tex for the full history)
+%%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{imac}[2026/10/07 IMAC conference paper format (aligned with the official Word template)]
+
+\RequirePackage{ifthen}
+\RequirePackage{amsmath}
+\RequirePackage[nocompress]{cite}
+\RequirePackage{geometry}
+
+% The official IMAC Word Template.dotx uses Times New Roman body text,
+% a single (non-two-column) layout, and A4 paper, so this style now
+% mirrors that instead of the old sans-serif/two-column convention.
+\RequirePackage{mathptmx} % Times-compatible text and math fonts
+
+%% define the section headings
+%% Word template headings are simply bold, sentence/title case (not
+%% small caps or all caps) at body text size.
+\setcounter{secnumdepth}{1}
+
+\renewcommand{\section}{\@startsection
+{section}{0}{0 in}{1\baselineskip}{.001 em}{\normalfont\bfseries}}
+
+\renewcommand{\subsection}{\@startsection
+{subsection}{1}{0in}{1\baselineskip}{0.001 em}{\normalfont\bfseries}}
+
+\renewcommand{\subsubsection}{\@startsection
+{subsubsection}{0}{0 in}{1\baselineskip}{.001 em}{\normalfont\bfseries}}
+
+
+%% define headings for Bibliography listing, figures, tables, programs
+%% (sentence case, bold, matching the Word template's "Abstract" /
+%% "References" labels rather than the previous all-caps sans-serif style)
+
+\renewcommand{\refname}{\noindent {\bfseries References}}
+\renewcommand{\abstractname}{\noindent {\bfseries Abstract}}
+\renewcommand{\@makecaption}[2]{\vspace{10pt}%
+{\begin{center}{\bfseries #1: #2}\end{center}}%
+}
+
+\def\tablename{\bfseries Table}
+\def\Programname{\bfseries Program}
+
+% A Keywords line, as used after the abstract in the Word template, e.g.:
+%   \keywords{Keyword one \textbullet\ Keyword two \textbullet\ Keyword three}
+\newcommand{\keywords}[1]{\par\noindent{\bfseries Keyword} \quad #1\par}
+
+% Page geometry matching the Word template (A4 paper; see Word Template.dotx
+% word/document.xml sectPr: pgSz 11907x15876 twips, pgMar top=1188,
+% bottom=1440, left=right=1030 twips).
+\geometry{a4paper, top=0.825in, bottom=1in, left=0.715in, right=0.715in}
+
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{8pt} % matches Word docDefaults spacing w:after="160" twips
+\setlength{\parindent}{0in}
+\renewcommand{\textfraction}{0.2}
+\renewcommand{\floatsep}{18pt}
+\renewcommand{\textfloatsep}{18pt}
+\renewcommand{\intextsep}{.1875 in}
+\renewcommand{\floatpagefraction}{.7}
+
+% The Word template's in-text citations are plain inline brackets
+% (e.g. "[1, 2, 3]"), not bracketed superscripts, and ranges are not
+% compressed. The `cite` package (loaded with [nocompress] above)
+% already gives non-superscript bracketed citations; \citepunct just
+% adds the space after the comma to match the Word template's style.
+\renewcommand{\citepunct}{,\ }
+
+% We don't want any headers or footers. IMAC will put on what they like.
+\pagestyle{empty}
+
+% The following prevents the maketitle from putting a page number on 
+% page 1
+\let\ps@plain=\ps@empty
+
+\newcommand{\vect}[1]{\ensuremath{\left\{#1\right\}}}
+\newcommand{\matr}[1]{\ensuremath{\left[#1\right]}}
+\newcommand{\elem}[1]{\ensuremath{\left(#1\right)}}
+\newcommand{\dmat}[1]{\ensuremath{[\hbox{\textsf{\`}}#1\raisebox{-5pt}{\hbox{\textsf{\`}}}]}}
+\newcommand{\pnorm}[1]{\ensuremath{\lVert#1\rVert_{p}}}
+
+\endinput
+
+
+
+%\iffalse
+%    \begin{macrocode}
+%</imac.sty>
+%    \end{macrocode}
+%\fi
+%\Finale
+\endinput

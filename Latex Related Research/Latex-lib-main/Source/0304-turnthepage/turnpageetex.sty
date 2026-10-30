@@ -1,0 +1,45 @@
+\NeedsTeXFormat{LaTeX2e}[2024-06-01]
+\ProvidesPackage{turnthepage}[2024/11/15 v2.0a Indicating to turn the page with eTeX (LM; MvD; HMM)]
+
+\PackageInfo{turnpageetex}{This is turnthepage with using e-TeX and recent LaTeX format.}
+
+\ifx\turnthepage\undefined
+ \DeclareOption{short}{\providecommand{\turnthepage}{/\ldots}}
+ \DeclareOption{english}{\providecommand{\turnthepage}{\textit{Turn the page.}}}
+ \DeclareOption{francais}{\providecommand{\turnthepage}{\textit{Tournez la page.}}}
+ \DeclareOption{nederlands}{\providecommand{\turnthepage}{\textit{Sla de pagina om.}}}
+ \DeclareOption{deutsch}{\providecommand{\turnthepage}{\textit{Bitte wenden.}}}
+\else
+ \newcommand{\turnp@agewarn}{%
+   \PackageWarning{turnpageetex}{Command turnthepage was already defined.\MessageBreak%
+     Now redefining it.}}
+ \DeclareOption{short}{\turnp@agewarn \renewcommand{\turnthepage}{/\ldots}}
+ \DeclareOption{english}{\turnp@agewarn \renewcommand{\turnthepage}{\textit{Turn the page.}}}
+ \DeclareOption{francais}{\turnp@agewarn \renewcommand{\turnthepage}{\textit{Tournez la page.}}}
+ \DeclareOption{nederlands}{\turnp@agewarn \renewcommand{\turnthepage}{\textit{Sla de pagina om.}}}
+ \DeclareOption{deutsch}{\turnp@agewarn \renewcommand{\turnthepage}{\textit{Bitte wenden.}}}
+\fi
+
+\ProcessOptions
+
+\ifx\turnthepage\undefined
+ \providecommand{\turnthepage}{ }
+ \PackageWarning{turnpageetex}{No option for package turnthepage\MessageBreak%
+  (or turnpageetex) choosen!\MessageBreak%
+   There will be no information regarding\MessageBreak%
+   the need to turn the page!\MessageBreak%
+   }
+\fi
+
+\RequirePackage{picture}
+
+\AddToHook{shipout/background}{%
+ \ifodd\the\ReadonlyShipoutCounter%
+  \ifnum\@abspage@last>\the\ReadonlyShipoutCounter\relax%
+   \put(\dimexpr 1in+\textwidth+\oddsidemargin\relax,%
+        \dimexpr -1in-\topmargin-\headheight-\headsep-\textheight-\footskip\relax%
+       ){\llap{\turnthepage}}%
+  \fi%
+ \fi%
+}
+\endinput

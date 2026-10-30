@@ -1,0 +1,832 @@
+% \iffalse meta-comment
+%
+% File: rub-kunstgeschichte.dtx
+% Copyright (C) 2024 by Joran Schneyer <joran.schneyer@ruhr-uni-bochum.de>
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% 
+% The Current Maintainer of this work is Joran Schneyer <joran.schneyer@ruhr-uni-bochum.de>.
+%
+% This work consists of the files rub-kunstgeschichte.dtx
+%                                 rub-kunstgeschichte-example.tex
+%                                 rub-kunstgeschichte.ins
+%           and the derived file  rub-kunstgeschichte.cls
+%
+% \fi
+
+% \iffalse
+%<*driver>
+\ProvidesFile{rub-kunstgeschichte.dtx}
+%</driver>
+%<class>\NeedsTeXFormat{LaTeX2e}[2022-06-01]
+%<class>\ProvidesClass{rub-kunstgeschichte}
+%<*class>
+    [2025-02-04 v0.5.0 RUB Kunstgeschichte class]
+%</class>
+%<*driver>
+\documentclass{ltxdoc}
+
+%^^A Load packages needed for the documentation
+\usepackage{dtxdescribe}
+\fvset{commandchars={|()}}
+
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+    \DocInput{\jobname.dtx}
+    \PrintChanges
+    \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+%^^A Document general changes here
+% \changes{v0.1.0}{2024-05-26}{Initial version}
+%
+% \GetFileInfo{\jobname.dtx}
+%
+% \DoNotIndex{\newcommand,\newenvironment}
+% \DoNotIndex{\begin,\end}
+% \DoNotIndex{\fi}
+% \DoNotIndex{\section,\subsection,\subsubsection}
+% \DoNotIndex{\title,\author,\tableofcontents}
+% \DoNotIndex{\LaTeX,\verb}
+% \DoNotIndex{\texorpdfstring}
+% \DoNotIndex{\@rubkgi@bibheading,\@rubkgi@bibheading@primary,\@rubkgi@bibheading@secondary}
+% \DoNotIndex{\@rubkgi@maketitle}
+% \DoNotIndex{\@rubkgi@titlepage@gradebox@width}
+% \DoNotIndex{\@author,\@date,\@title}
+% \DoNotIndex{\@rubkgi@titlepage@author@email,\@rubkgi@titlepage@author@matricnum,\@rubkgi@titlepage@author@semester,\@rubkgi@titlepage@seminar@semester,\@rubkgi@titlepage@seminar@lecturer,\@rubkgi@titlepage@seminar@name,\@rubkgi@titlepage@seminar@degree,\@rubkgi@titlepage@seminar@module,\@rubkgi@titlepage@seminar@creditpoints}
+% \DoNotIndex{\@rubkgi@printfiguresources@heading}
+%
+%^^A define helper commands for consistent typesetting in the documentation
+% \DeclareDocumentCommand\email{m}{\href{mailto:#1}{\nolinkurl{#1}}}
+%
+% \title{The \pkg{\jobname} class^^A
+%   \thanks{This document corresponds to \pkg{\jobname}~\fileversion,
+%     dated \filedate.}}
+% \author{\copyright{} Joran Schneyer^^A
+%   \thanks{Released under the LaTeX Project Public License v1.3c or later.^^A
+%   \\ See \url{https://www.latex-project.org/lppl.txt}}^^A
+%   \\ \email{joran.schneyer@ruhr-uni-bochum.de}}
+% \date{\filedate}
+%
+% \maketitle
+% \tableofcontents
+%
+% \section{Introduction}\label{sec:introduction}
+%
+% This \LaTeX{} class aims to implement the guidelines on scientific writing of the art history institute (Kunstgeschichtliches Institut - short: KGI) at Ruhr University Bochum.^^A
+% \footnote{Guidelines version July 2023 \url{https://kgi.ruhr-uni-bochum.de/wp-content/uploads/2023/04/Anleitung-zum-Erstellen-von-Hausarbeiten-im-Fach-Kunstgeschichte_Fassung-Juli-2023.pdf}}
+%
+% Note, that at this point this is not an official class made by anyone at the institute but rather a free-time hobby project of me, Joran, who knows \LaTeX{} from studying Electrical Engineering and just wants to help out some friends studying art history.
+%
+% You can find the latest releases and the development of this project at GitHub: \url{https://github.com/rub-kgi/rub-kunstgeschichte-latex}
+%
+% \section{Usage}\label{sec:usage}
+%
+% To use this class, simply specify it as the document class.^^A
+% \footnote{You can also find a complete example usage of this class that you can use as a template in the file \texttt{rub-kunstgeschichte-example.tex}. You can find this file alongside a compiled pdf version as part of the releases on GitHub \url{https://github.com/rub-kgi/rub-kunstgeschichte-latex/releases}.}
+% \begin{sourceverb}
+% \documentclass{rub-kunstgeschichte}
+% \end{sourceverb}
+%
+% \subsection{Caveats}
+% When using this class, some packages are loaded automatically with options (see also \autoref{sec:implementation:package-loading}).
+% That means that you can't reload the same package with different options without risking an option clash error.
+% The relevant packages offer other ways to change their options in the preamble:
+%
+% \DescribePackage{biblatex}
+% Customize citations and bibliography.
+%
+% \verb|\ExecuteBibliographyOptions|\oarg{entrytype}\marg{options} can be used to set most options,
+% but some can only be set at the time of loading the \pkg{biblatex} package.
+% Those can be set in the class options using the \optn{biblatex} key (see also \autoref{sec:usage:class-options}).
+%
+% \DescribePackage{hyperref}
+% Customize behavior of clickable elements and pdf meta-data.
+%
+% \verb|\hypersetup|\marg{options} should be used for nearly all options.
+% The few options that can only be given at load time of the package have to be passed along using the \optn{hyperref} class option (see also \autoref{sec:usage:class-options}).
+%
+% \DescribePackage{setspace}
+% Overwrite the 1.5 line-spacing setting.
+%
+% Either \verb|\singlespacing|,
+% \verb|\doublespacing|
+% or for custom spacing factors also
+% \verb|\setstretch|\marg{baselinestretch}.
+%
+% \DescribePackage{geometry}
+% Overwrite geometry options such as the page margin settings.
+%
+% \verb|\geometry|\marg{options}
+%
+% \subsection{Class options}\label{sec:usage:class-options}
+% You can pass several \meta{options} to the class by using
+% \begin{sourceverb}
+% \documentclass|oarg(options){rub-kunstgeschichte}
+% \end{sourceverb}
+% The \meta{options} are key/value pairs that sometimes defer to a default value when only the key is given.
+%
+% \DescribeOption{biblatex}
+% Pass along options to the \pkg{biblatex} package. They overwrite default options set by this class.
+%
+% \DescribeOption{hyperref}
+% Pass along options to the \pkg{biblatex} package. They do \textbf{not} overwrite default options set by this class as they are set after loading the package using the \verb|\hypersetup| command.
+% To overwrite them, use \verb|\hypersetup|\marg{options} in the preamble.
+%
+% \DescribeOption{parskip}
+% \DescribeDefault{\optn{true}}
+% Specify wether to load the \pkg{parskip} package to remove indentation at the start of paragraphs.
+%
+% \DescribeOption{noparskip}
+% \DescribeDefault{\optn{true}}
+% The complementary option to the \optn{parskip} option.
+%
+% If neither \optn{parksip} nor \optn{noparskip} are given, the \pkg{parskip} package is automatically loaded by default.
+%
+% \subsection{Macros}\label{sec:usage:macros}
+%
+% \DescribeMacro{\printbibliographies} \oarg{options}
+%
+% Prints the bibliography, divided into two subbibliographies.
+% One for primary sources and one for secondary literature, as suggested in section 3.7.1 of the guidelines on page 14.
+% It uses the keyword mechanism to distinguish primary sources i.e. in order for a bib entry to be sorted into the primary sources section, it needs the \texttt{source} keyword.
+% E.g. the bible would be considered a primary source:
+% \begin{sourceverb}
+% @inbook{bible,
+%     author    = {{The Bible}},
+%     title     = {The Holy Bible: King James Version},
+%     |ldots
+%     keywords  = {source}
+% }
+% \end{sourceverb}
+% All other entries which don't have the \texttt{source} keyword will be sorted into the secondary literature section of the bibliography.
+%
+% You can customize the behavior of the macro using key-value \meta{options}. The option keys that are currently available are \optn{heading}, \optn{heading-primary} and \optn{heading-secondary} to overwrite the headings of the bibliography and the two subbibliographies respectively.
+%
+% \DescribeMacro{\maketitle} \oarg{titlepage-info}
+%
+% The native command \cs{maketitle} is redefined to create the title page according to the template in the guidelines.
+% The new title page needs more information than the standard one.
+% Besides the name of the author and title it needs more details about the author such as the matriculation number as well as information about the seminar the work is associated with.
+% The extra info can be passed as key-value pairs to the optional \meta{titlepage-info} argument of the redefined \cs{maketitle} macro
+% \DescribeMacro{\configureTitlepage}
+% or to the \cs{configureTitlepage} macro implemented for just this task.
+% The following custom keys are implemented:
+% \begin{description}
+% \ItemDescribeOption[titlepage]{email} The email of the author.
+% \ItemDescribeOption[titlepage]{matricnum} The matriculation number of the author.
+% \ItemDescribeOption[titlepage]{author-semester} The number of semesters the author has studied the subject.
+% \ItemDescribeOption[titlepage]{seminar-semester} The semester in which the seminar takes place in. E.g. \optn{Sommersemester 2024} or \optn{Wintersemester 2023/24}.
+% \ItemDescribeOption[titlepage]{seminar-lecturer} The name of the lecturer of the seminar.
+% \ItemDescribeOption[titlepage]{seminar-name} The name of the seminar itself.
+% \ItemDescribeOption[titlepage]{seminar-degree} The degree in which the author has taken the seminar in.
+% \ItemDescribeOption[titlepage]{seminar-module} The module in which the author has taken the seminar in.
+% \ItemDescribeOption[titlepage]{seminar-cp} The credit points the author will be rewarded with when completing the seminar.
+% \end{description}
+% Additionally you should set the normal \cs{author}, \cs{date} and \cs{title} info in the preamble.
+%
+% Note, that in contrast to e.g. the headers of the bibliography, the title page is not translated into the document language.
+% The guidleines specify that exactly this template should be used and to our understanding this means that it should always be written in german, regardless of the document language.
+%
+% \DescribeMacro{\subtitle}
+% In addition to the standard \cs{title} command, this class provides a \cs{subtitle} command. Note, that the subtitle has no key in \cs{configureTitlepage} but can only be set with the \cs{subtitle} command.
+%
+% \DescribeMacro{\appendix}
+% To indicate the end of the main content and start of the appendix, the \cs{appendix} command is used in \LaTeX. Here, the command was redefined to automatically disable section numbering for the appendix as suggested in the guidelines. This means you can just use normal section commands such as
+% \begin{sourceverb}
+% \section{Figures}
+% \end{sourceverb}
+% after calling
+% \begin{sourceverb}
+% \appendix
+% \end{sourceverb}
+% and it will not have a section number.
+%
+% \DescribeMacro{\figuresource} \marg{figure source text}
+%
+% You can add the source of a figure inside a \env{figure} environment with the \cs{figuresource} command,\footnote{Hint: You can use \cs{fullcite} inside of \cs{figuresource} to print a full citation e.g. of a literature where the figure is from to further ease the process of stating figure sources.}
+%
+% \DescribeMacro{\printfiguresources} \oarg{options}
+%
+% so that you can later use \cs{printfiguresources} to automatically list all figure sources in the order of figure numbers.
+% \DescribeKey{heading}
+% Currently, \meta{options} only consist of the \texttt{heading} key to overwrite the heading of the figure sources section.\footnote{If you only want to add a heading for a different language, see \autoref{sec:usage:translations}.}
+%
+% \subsection{Translations}\label{sec:usage:translations}
+%
+% The class uses the \pkg{translations} package to allow multi-lingual strings. The default language is english. To tell it which language it should use, you can load a package like \pkg{babel} with the corresponding language as the package option in the preamble. E.g. for german using the new spelling rules
+% \begin{sourceverb}
+% \usepackage[ngerman]{babel}
+% \end{sourceverb}
+%
+% All pre-defined strings this class prints on the page of the document (such as the headings of the bibliographies when using \cs{printbibliographies}) are available in multiple languages.
+% So far this package only defines its strings for english and german, but you can define them for other languages too.\footnote{E.g. using the \cs{declaretranslation} command. For more info, refer to the documentation of the \pkg{translations} package: \url{https://ctan.org/pkg/translations}}
+%
+% The translation string definitions can be found in \autoref{sec:implementation:translations}.
+%
+% \StopEventually{}
+%
+% \clearpage
+% \appendix
+%
+% \section{Implementation}\label{sec:implementation}
+%
+% \iffalse
+%<*class>
+% \fi
+%
+% \subsection{Class options}\label{sec:implementation:class-options}
+% \iffalse
+%% Class options
+% \fi
+% The class options are defined as keyval options for great flexibility.
+% They toggle some of the class features or customize their behavior.
+%
+% \begin{option}{biblatex}
+% The \optn{biblatex} option stores its content in a macro until it is later passed along to the \pkg{biblatex} package after specifying the default options (see \autoref{sec:implementation:package-loading:bibliography}).
+% Therefore, options provided with this key overwrite the ones set per default by this class.
+%    \begin{macrocode}
+\DeclareKeys[rubkgi]{
+    biblatex.store = \@rubkgi@biblatexOptions,
+    biblatex.usage = load
+}
+%    \end{macrocode}
+% \end{option}
+%
+% \begin{option}{hyperref}
+% The \optn{hyperref} option passes its content along immediately, to be used as options when the \pkg{hyperref} package is loaded.
+% This will \textbf{not} overwrite default options set by this class as they are set after loading the package using \verb|\hypersetup|\marg{options} (see also \autoref{sec:implementation:package-loading:others}).
+%    \begin{macrocode}
+\DeclareKeys[rubkgi]{
+    hyperref.code  = \PassOptionsToPackage{#1}{hyperref},
+    hyperref.usage = load
+}
+%    \end{macrocode}
+% \end{option}
+%
+% \paragraph{Paragraph indentation}
+% First we define a TeX switch which is later used (see \autoref{sec:implementation:package-loading}) to check wether to load the \pkg{parskip} package to remove the indentation at the start of paragraphs.
+% \iffalse
+%% TeX switch to decide wether to load the parskip package
+% \fi
+%    \begin{macrocode}
+\newif\if@rubkgi@parskip
+%    \end{macrocode}
+% By default we set the switch to true, so the parskip package is normally loaded when using this class.
+%    \begin{macrocode}
+\@rubkgi@parskiptrue
+%    \end{macrocode}
+% \begin{option}{parskip}
+% Then we declare the key so the switch can be turned on and off by the user in the class options.
+%    \begin{macrocode}
+\DeclareKeys[rubkgi]{
+    parskip.if      = @rubkgi@parskip,
+    parskip.usage   = load,
+%    \end{macrocode}
+% \end{option}
+% \begin{option}{noparskip}
+% Finally we define the complementary key for easier disabling of the parskip feature.
+%    \begin{macrocode}
+    noparskip.ifnot = @rubkgi@parskip,
+    noparskip.usage = load
+}
+%    \end{macrocode}
+% \end{option}
+%
+% \paragraph{Process options}
+% After defining the class options it is necessary to process them too in order to actually make use of them.
+%    \begin{macrocode}
+\ProcessKeyOptions[rubkgi]
+%    \end{macrocode}
+%
+% \subsection{Base class}\label{sec:implementation:base-class}
+% \DescribeClass{article}
+% The \pkg{\jobname} class is based on the \pkg{article} class.
+% When loading the class we specify \texttt{12pt} as the base font size, as required by the guidelines.
+% \iffalse
+%% Load base class with 12pt base font size
+% \fi
+%    \begin{macrocode}
+\LoadClass[12pt]{article}
+%    \end{macrocode}
+%
+% \subsection{Loading packages}\label{sec:implementation:package-loading}
+%
+% \subsubsection{Bibliography}\label{sec:implementation:package-loading:bibliography}
+%
+% \DescribePackage{biblatex}
+% \changes{v0.2.0}{2024-09-06}{Use biblatex with authortitle-dw style from biblatex-dw package.}^^A
+% \changes{v0.3.0}{2024-10-30}{Use arthistory-bonn biblatex style instead of authortitle-dw.}^^A
+% To support bibliography facilities out of the box, the \pkg{biblatex} package is loaded. To customize the behavior, a few options are passed to the package.
+% \iffalse
+%% biblatex options
+% \fi
+%    \begin{macrocode}
+\PassOptionsToPackage{
+%    \end{macrocode}
+%
+% \DescribeOption[biblatex]{backend}
+% Defines the backend program. To use all features of \pkg{biblatex}, the \prog{biber} backend must be used.
+%    \begin{macrocode}
+    backend=biber,
+%    \end{macrocode}
+%
+% \DescribeOption[biblatex]{singletitle}
+% Prints the title of a cited work in short citations only if there is more than one work of the same author.
+%    \begin{macrocode}
+    singletitle=true,
+%    \end{macrocode}
+%
+% \DescribeOption[biblatex]{autocite}
+% Defines the behavior of the \cs{autocite} command, which in this case will behave like the \cs{footcite} command and will print citations in the footnotes instead of directly in the text.
+%    \begin{macrocode}
+    autocite=footnote,
+%    \end{macrocode}
+%
+% \DescribeOption[biblatex]{autopunct}
+% Controls whether the citation commands scan ahead for punctuation marks and move the citation after the punctuation.
+%    \begin{macrocode}
+    autopunct=true
+}{biblatex}
+%    \end{macrocode}
+%
+% \DescribePackage{biblatex-arthistory-bonn}
+% \iffalse
+%% biblatex-arthistory-bonn package
+% \fi
+% Further approximation of the suggested bibliography and citation styles in the guidelines is achieved by using the \pkg{biblatex-arthistory-bonn} package.
+% To use it, a few more options are passed to \pkg{biblatex}:
+%    \begin{macrocode}
+\PassOptionsToPackage{
+%    \end{macrocode}
+%
+% \DescribeOption[biblatex]{style}
+% The \optn{arthistory-bonn} style provided by the \pkg{biblatex-arthistory-bonn} package is suited to approximate the citation style suggested in the guidelines.
+%    \begin{macrocode}
+    style=arthistory-bonn,
+%    \end{macrocode}
+%
+% The following options of the \optn{arthistory-bonn} biblatex style are set to further implement the guidelines:
+%
+% \DescribeOption[biblatex]{firstcitefull}
+% Delivers a full citation for the first occurence of an entry.
+%    \begin{macrocode}
+    firstcitefull=true,
+%    \end{macrocode}
+%
+% \DescribeOption[biblatex]{enddot}
+% Every bibliography entry will end with a dot.
+%    \begin{macrocode}
+    enddot=true,
+%    \end{macrocode}
+%
+% The next \optn{arthistory-bonn} option is not implementing any part of the guidelines but is still useful:
+%
+% \DescribeOption[biblatex]{namelinked}
+% Both name and year in a short citation will link to the respective bibliography entry.
+%    \begin{macrocode}
+    namelinked=true
+}{biblatex}
+%    \end{macrocode}
+%
+% After specifying the default options, we pass along the ones that might have been set in the class options.
+% \iffalse
+%% pass biblatex class options along
+% \fi
+%    \begin{macrocode}
+\PassOptionsToPackage{\@rubkgi@biblatexOptions}{biblatex}
+%    \end{macrocode}
+%
+% And finally the \pkg{biblatex} package is loaded.
+% \iffalse
+%% load biblatex
+% \fi
+%    \begin{macrocode}
+\RequirePackage{biblatex}
+%    \end{macrocode}
+%
+% \subsubsection{Document format}
+%
+% \DescribePackage{setspace}
+% To achieve 1.5 times line spacing as required by the guidelines,
+% we simply load the package \pkg{setspace} with the \optn{onehalfspacing} option.
+% \iffalse
+%% Set 1.5 times line spacing
+% \fi
+%    \begin{macrocode}
+\RequirePackage[onehalfspacing]{setspace}
+%    \end{macrocode}
+%
+% \DescribePackage{geometry}
+% Used to set page size and margins.
+% The guidelines require 2cm top, left and bottom margins as well as a 4cm correction margin on the right side.
+% Furthermore A4 paper is the standard page size here.
+% \iffalse
+%% Set a4 paper size and margins
+% \fi
+%    \begin{macrocode}
+\RequirePackage[
+    a4paper,
+    top=2cm,left=2cm,bottom=2cm,right=4cm
+]{geometry}
+%    \end{macrocode}
+%
+% \DescribePackage{parskip}
+% \changes{v0.2.0}{2024-09-06}{Use parskip to avoid paragraph indentation}^^A
+% To avoid indentation at the start of paragraphs, the \pkg{parskip} package is loaded if the corresponding switch is set to true. See also \autoref{sec:implementation:class-options}.
+% \iffalse
+%% Avoid paragraph indentation
+% \fi
+%    \begin{macrocode}
+\if@rubkgi@parskip
+    \RequirePackage{parskip}
+\fi
+%    \end{macrocode}
+%
+% \subsubsection{Other useful packages}\label{sec:implementation:package-loading:others}
+%
+% \DescribePackage{etoolbox}
+% \changes{v0.5.0}{2025-02-04}{Use \pkg{etoolbox} for dynamic definition of internal macros.}^^A
+% Used for several programming tasks. E.g. it allows dynamic internal macro names which is used for the automatic figure source printing system.
+%    \begin{macrocode}
+\RequirePackage{etoolbox}
+%    \end{macrocode}
+%
+% \DescribePackage{forloop}
+% \changes{v0.5.0}{2025-02-04}{Use \pkg{forloop} package for simple loops.}^^A
+% Another package for better, easier and more robust programming which simply provides a command for doing loops.
+%    \begin{macrocode}
+\RequirePackage{forloop}
+%    \end{macrocode}
+%
+% \DescribePackage{hyperref}
+% \changes{v0.2.0}{2024-09-06}{Use hyperref for clickable links and references.}^^A
+% Makes links and references clickable.
+% \iffalse
+%% Hyperref
+% \fi
+%    \begin{macrocode}
+\RequirePackage{hyperref}
+%    \end{macrocode}
+% By default, we configure it to not highlight clickable elements.
+%    \begin{macrocode}
+\hypersetup{hidelinks}
+%    \end{macrocode}
+%
+% \DescribePackage{translations}
+% Used internally by the class to create multilingual strings that react to the document language set e.g. by \pkg{babel}.
+% \iffalse
+%% Translations
+% \fi
+%    \begin{macrocode}
+\RequirePackage{translations}
+%    \end{macrocode}
+%
+% \iffalse
+%% Other
+% \fi
+%
+% \DescribePackage{tabularx}
+% To make fancy tables. Is used e.g. in the title page.
+%    \begin{macrocode}
+\RequirePackage{tabularx} % For fancy tables. Is used in title page.
+%    \end{macrocode}
+%
+% \DescribePackage{boxedminipage}
+% Used by title page.
+%    \begin{macrocode}
+\RequirePackage{boxedminipage} % Used in title page.
+%    \end{macrocode}
+%
+% \subsection{Macros}\label{sec:implementation:macros}
+% \iffalse
+%% Macros
+% \fi
+%
+% \begin{macro}{\printbibliographies}
+% \changes{v0.4.0}{2024-12-11}{Fix: Unwanted space before bibliography headings}^^A
+% \changes{v0.3.0}{2024-10-30}{was added}^^A
+% Prints the bibliography using the native \cs{printbibliography} macro, but divides it into sections for primary sources and secondary literature. The keyword \texttt{source} is used to sort entries into the primary sources section.
+%
+% We start by defining the macro with an optional argument that is passed to \cs{SetKeys} to allow customization using key-value pairs.
+%    \begin{macrocode}
+\newcommand{\printbibliographies}[1][]{%
+    \SetKeys[rubkgi@printbibliographies]{#1}%
+%    \end{macrocode}
+% We add an entry to the table of contents and insert the main bibliography heading.
+%    \begin{macrocode}
+    \addcontentsline{toc}{section}{%
+        \texorpdfstring{\@rubkgi@bibheading}{bibliography}%
+    }%
+    \printbibheading[%
+        heading = bibliography,%
+        title = {\@rubkgi@bibheading}%
+    ]
+%    \end{macrocode}
+% Then we print the subbibliographies.
+%    \begin{macrocode}
+    \printbibliography[%
+        keyword = source,%
+        heading = subbibliography,%
+        title = {\@rubkgi@bibheading@primary}%
+    ]
+    \printbibliography[%
+        notkeyword = source,%
+        heading = subbibliography,%
+        title = {\@rubkgi@bibheading@secondary}%
+    ]
+}
+%    \end{macrocode}
+% For greater flexibility we define the heading strings as internal macros that can be redefined by the user with key-value options and use the \pkg{translations} package for the default strings. See \autoref{sec:implementation:translations} for the implementation of the translations. We don't want heading strings to include paragraphs, this is why we use the starred variant of \cs{newcommand}.
+%    \begin{macrocode}
+\newcommand*{\@rubkgi@bibheading}{%
+    \GetTranslationWarn{Bibliography}
+}
+\newcommand*{\@rubkgi@bibheading@primary}{%
+    \GetTranslationWarn{Primary Bibliography}
+}
+\newcommand*{\@rubkgi@bibheading@secondary}{%
+    \GetTranslationWarn{Secondary Bibliography}
+}
+%    \end{macrocode}
+% Finally, we declare the keys that the user can use to redefine the headings.
+%    \begin{macrocode}
+\DeclareKeys[rubkgi@printbibliographies]
+{
+    heading           .store = \@rubkgi@bibheading,
+    heading-primary   .store = \@rubkgi@bibheading@primary,
+    heading-secondary .store = \@rubkgi@bibheading@secondary
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\maketitle}
+% \changes{v0.3.0}{2024-10-30}{Redefined for custom title page according to template in guidelines.}^^A
+% We redefine the \cs{maketitle} macro to print a custom title page.
+% We also add the ability to customize it using key-value pairs in the optional argument.
+%    \begin{macrocode}
+\renewcommand{\maketitle}[1][]{%
+    \SetKeys[rubkgi@titlepage]{#1}%
+    \@rubkgi@maketitle%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@rubkgi@maketitle}
+% The custom title page is defined as a dedicated internal command.
+%    \begin{macrocode}
+\newcommand{\@rubkgi@maketitle}{
+%    \end{macrocode}
+% It uses the \env{titlepage} environment to dedicate a full page to the titel.
+% Inside, it uses groups, minipages and tabularx tables to arrange the fields to resemble the template of the guidelines.
+%    \begin{macrocode}
+    \begin{titlepage}
+        % set page margins for the title page
+        \newgeometry{left=2.5cm,top=2.5cm,bottom=2cm,right=2.5cm}%
+        % define the width of the grade box
+        \def\@rubkgi@titlepage@gradebox@width{5.03cm}%
+        %
+        % create a group for the top part of the title page
+        {\raggedright%
+        % create a minipage for the top left part
+        \begin{minipage}[t]%
+        % calculate the width of the top left part
+        % based on the grade box width
+        {\dimexpr\textwidth%
+        -\@rubkgi@titlepage@gradebox@width%
+        -0.5cm\relax}%
+        \vspace{0pt}% somehow helps aligning at the top
+        \begin{tabularx}{\linewidth}{@{}lX}%
+            \multicolumn{2}{@{}l}{%
+                Ruhr-Universität Bochum%
+            }\\%
+            \multicolumn{2}{@{}l}{%
+                Fakultät für Geschichtswissenschaft%
+            }\\%
+            \multicolumn{2}{@{}l}{%
+                Kunstgeschichtliches Institut%
+            }\\%
+            \multicolumn{2}{@{}l}{%
+                \@rubkgi@titlepage@seminar@semester%
+            }\\%
+            Dozent:in:    & \@rubkgi@titlepage@seminar@lecturer\\%
+            Seminartitel: & \@rubkgi@titlepage@seminar@name\\%
+            Studiengang:  & \@rubkgi@titlepage@seminar@degree\\%
+            Modul:        & \@rubkgi@titlepage@seminar@module\\%
+            Kreditpunkte: & \@rubkgi@titlepage@seminar@creditpoints\\%
+        \end{tabularx}%
+        \end{minipage}%
+        % align grade box on the right side by filling in the gap
+        \hfill%
+        % define the grade box as a boxedminipage
+        \begin{boxedminipage}[t][3.78cm][t]%
+        {\@rubkgi@titlepage@gradebox@width}%
+        % leave a little space and add the text inside
+        \vspace{1em}%
+        \hspace{1em}Note:%
+        \end{boxedminipage}%
+        }% top part ends here
+        %
+        \vfill% vertical space to fill
+        %
+        % create center part (title and author)
+        \begin{center}%
+        % add title relatively LARGE
+        {\LARGE \@title \par}%
+        {\Large \@subtitle \par}%
+        \vskip 2em% add space between (sub-)title and author
+        % add author slightly larger than normal text
+        {\large \@author \par}%
+        % end the center environment
+        % and switch back to normal paragraph text style
+        \end{center}\par%
+        %
+        \vfill% fill gap to put next part at bottom
+        %
+        % create bottom part
+        {\raggedright%
+        \begin{tabular}{@{}ll}%
+            Matrikelnr.: & \@rubkgi@titlepage@author@matricnum\\%
+            % Add email as a clickable link
+            Email: & \href{mailto:\@rubkgi@titlepage@author@email}%
+                                 {\@rubkgi@titlepage@author@email}\\%
+            Fachsemester: & \@rubkgi@titlepage@author@semester\\%
+            Abgabetermin: & \@date\\%
+        \end{tabular}
+        }%
+    \end{titlepage}%
+%    \end{macrocode}
+% The guidelines specify that the titlepage counts towards the page numbers but should not display one. Therefore we set the page number counter to two after the title page.
+%    \begin{macrocode}
+    \setcounter{page}{2}%
+%    \end{macrocode}
+% We also reset the geometry to the one defined before the title page and then end the custom titlepage macro.
+%    \begin{macrocode}
+    \restoregeometry%
+}
+%    \end{macrocode}
+% The custom title page needs extra information which we want the user to be able to set via key-value pairs. We first define the key-value pairs and then set the defaults.
+%    \begin{macrocode}
+\DeclareKeys[rubkgi@titlepage]
+{
+    email            .store = \@rubkgi@titlepage@author@email,
+    matricnum        .store = \@rubkgi@titlepage@author@matricnum,
+    author-semester  .store = \@rubkgi@titlepage@author@semester,
+    seminar-semester .store = \@rubkgi@titlepage@seminar@semester,
+    seminar-lecturer .store = \@rubkgi@titlepage@seminar@lecturer,
+    seminar-name     .store = \@rubkgi@titlepage@seminar@name,
+    seminar-degree   .store = \@rubkgi@titlepage@seminar@degree,
+    seminar-module   .store = \@rubkgi@titlepage@seminar@module,
+    seminar-cp       .store = \@rubkgi@titlepage@seminar@creditpoints
+}
+\SetKeys[rubkgi@titlepage]
+{
+    email            = {YOUR-EMAIL},
+    matricnum        = {YOUR MATRICULATION NUMBER},
+    author-semester  = {YOUR NUMBER OF SEMESTERS},
+    seminar-semester = {THE SEMESTER IN WHCIH THE SEMINAR IS HELD},
+    seminar-lecturer = {NAME OF SEMINAR LECTURER},
+    seminar-name     = {NAME OF THE SEMINAR},
+    seminar-degree   = {DEGREE SEMINAR IS TAKEN IN},
+    seminar-module   = {MODULE SEMINAR IS TAKEN IN},
+    seminar-cp       = {SEMINAR CP}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\configureTitlepage}
+% Furthermore, we create a macro that can be used in the preamble to set the titlepage info keys.
+%    \begin{macrocode}
+\newcommand{\configureTitlepage}[1]{%
+    \SetKeys[rubkgi@titlepage]{#1}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\subtitle}
+% \changes{v0.5.0}{2025-02-04}{Added}^^A
+% The titlepage also has the option for a subtitle.
+% For consistency with other packages and classes we provide a dedicated \cs{subtitle} command instead of a key in \cs{configureTitlepage}.
+%    \begin{macrocode}
+\newcommand{\subtitle}[1]{%
+    \gdef\@subtitle{#1}%
+}
+%    \end{macrocode}
+% We also initialize the subtitle as empty
+%    \begin{macrocode}
+\gdef\@subtitle{}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\appendix}
+% \changes{v0.4.0}{2024-12-11}{redefined to disable section numbering}^^A
+% To automatically disable section numbering in appendix sections,
+% we redefine \cs{appendix} to include setting the section numbering depth to zero.
+% \iffalse
+%% Extend \appendix to disable section numbering
+% \fi
+% First, we save the old appendix definition in a different macro.
+%    \begin{macrocode}
+\let\oldappendix\appendix%
+%    \end{macrocode}
+% Then we redefine the \cs{appendix} command
+%    \begin{macrocode}
+\renewcommand{\appendix}{%
+%    \end{macrocode}
+% starting with the old appendix macro
+%    \begin{macrocode}
+    \oldappendix%
+%    \end{macrocode}
+% and extending it with setting the section numbering depth to zero,
+% which will result in disabled section numbers.
+%    \begin{macrocode}
+    \setcounter{secnumdepth}{0}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\figuresource}
+% \changes{v0.5.0}{2025-02-04}{Added}^^A
+% This is used to save a figure source string (potentially including a \cs{cite} command) for later use with \cs{printfiguresources}.
+% We use the \cs{csgdef} command of the \pkg{etoolbox} package to define a dynamically named macro for each figure to store the figure source string.
+%    \begin{macrocode}
+\newcommand{\figuresource}[1]{%
+    \csgdef{figsource@\thefigure}{#1}%
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\printfiguresources}
+% \changes{v0.5.0}{2025-02-04}{Added}^^A
+% With the saved figure sources from \cs{figuresource}, we can print a list of them using the \cs{forloop} command of the \pkg{forloop} package.
+% We also provide an optional argument to overwrite the heading of the figure sources section that we create in this command.
+%    \begin{macrocode}
+\newcommand{\printfiguresources}[1][]{%
+    \SetKeys[rubkgi@printfiguresources]{#1}%
+    \section{\@rubkgi@printfiguresources@heading}%
+    \newcounter{@figindex}%
+    \forloop{@figindex}{1}%
+        {\value{@figindex} < \numexpr\value{figure}+1\relax}{%
+        \ifcsdef{figsource@\the@figindex}{%
+            \noindent \figurename~\the@figindex: %
+            \csname figsource@\the@figindex\endcsname\par%
+        }{}%
+    }%
+}
+%    \end{macrocode}
+% In order for this to work we will use the translation package for the heading by default
+%    \begin{macrocode}
+\newcommand*{\@rubkgi@printfiguresources@heading}{%
+    \GetTranslationWarn{Figure Sources}%
+}
+%    \end{macrocode}
+% and declare a key for the options of \cs{printfiguresources} to overwrite the heading:
+%    \begin{macrocode}
+\DeclareKeys[rubkgi@printfiguresources]
+{
+    heading .store = \@rubkgi@printfiguresources@heading
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Translations}\label{sec:implementation:translations}
+% \changes{v0.3.0}{2024-10-30}{Use translations package for multi-lingual support.}^^A
+% \changes{v0.5.0}{2025-02-04}{Add strings for figure sources section heading.}^^A
+%
+% The \pkg{translations} package offers an easy interface to create multilingual strings. We can define them all at once here, at the end of the class, since they are only used when the user commands are expanded in the document.
+%
+% \subsubsection*{Bibliography headings}
+%
+% The \pkg{translations} package already comes with translations for the main heading of the bibliography. Additionally, we provide the headings for the subbibliographies in english and german.
+%    \begin{macrocode}
+\DeclareTranslation{english}{Primary Bibliography}{Primary sources}
+\DeclareTranslation{german}{Primary Bibliography}{Primärliteratur}
+\DeclareTranslation{english}{Secondary Bibliography}{Secondary literature}
+\DeclareTranslation{german}{Secondary Bibliography}{Sekundärliteratur}
+%    \end{macrocode}
+%
+% \subsubsection*{Figures}
+%
+% We provide figure sources section headings for english and german:
+%    \begin{macrocode}
+\DeclareTranslation{english}{Figure Sources}{Figure Credits}
+\DeclareTranslation{german}{Figure Sources}{Abbildungsnachweise}
+%    \end{macrocode}
+% 
+% \iffalse
+
+%</class>
+% \fi
+%
+% \Finale

@@ -1,0 +1,516 @@
+%% haskell-cs.tex
+%
+% Copyright 2014-2021 Rudy Matela
+%
+% This text is available under (at your option):
+%   * Creative Commons Attribution-ShareAlike 3.0 Licence
+%   * GNU Free Documentation License version 1.3 or Later
+%
+
+\documentclass{refcard}
+\usepackage[T1]{fontenc}
+\usepackage{rotating}
+\usepackage{amssymb}
+
+\renewcommand{\familydefault}{\sfdefault}
+\newcommand{\la}{\textbackslash}
+\newcommand{\F}{\I{f}}
+\newcommand{\X}{\I{x}}
+\newcommand{\Y}{\I{y}}
+\newcommand{\Z}{\I{z}}
+\newcommand{\W}{\I{w}}
+\newcommand{\XS}{\I{xs}}
+
+\newcommand{\mtype}[1]{\multicolumn{2}{@{}C}{#1}}
+\newcommand{\longtype}[1]{\multicolumn{3}{@{}C}{#1}}
+\newcommand{\Longtype}[1]{\multicolumn{4}{@{}C}{#1}}
+\newcommand{\longcall}[1]{\multicolumn{3}{@{}R@{\s$\equiv$\s}}{#1}}
+
+
+
+\title{Basic Haskell Cheat Sheet}
+
+\cright{
+	Copyright 2014-2021, Rudy Matela --
+	Compiled on \today{} \\
+	Upstream: \texttt{https://github.com/rudymatela/concise-cheat-sheets}
+}{
+	This text is available under
+	the Creative Commons Attribution-ShareAlike 3.0 Licence, \\
+	\textbf{or} (at your option), the GNU Free Documentation License version 1.3 or Later.
+}
+\version[~\\]{1.3}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Structure}
+
+\begin{verbatim}
+	function :: type -> type
+	function x  =  expr
+
+	function2 :: type -> [type] -> type
+	function2 x xs  =  expr
+
+	main = do
+	  action
+	  ...
+\end{verbatim}
+
+
+\section{Function Application}
+
+\begin{tabularlc}{C@{\s$\equiv$\s}C@{\s\s\s\s$\equiv$\s}C}
+	\li[f x y]         (f x) y     & ((f) (x)) (y)
+	\li[f x y z]       ((f x) y) z & (f x y) z
+	\li[f \$ g x]      f (g x)     & f~.~g~\$~x
+	\li[f \$ g \$ h x] f (g (h x)) & f~.~g~.~h~\$~x
+	\li[f \$ g x y]    f (g x y)   & f~.~g~x~\$~y
+	\li[f g \$ h x]    f g (h x)   & f~g~.~h~\$~x
+\end{tabularlc}
+
+
+\section{Values and Types}
+
+\begin{tabularlc}{lC@{\s}C}
+	\li[has type]               \I{expr}         & ::~\I{type}
+	\li[boolean]                True || False    & ::~Bool
+	\li[character]              'a'              & ::~Char
+	\li[fixed-precision integer] 1               & ::~Int
+	\li[integer (arbitrary sz.)] 31337           & ::~Integer
+	\li                          31337\verb+^+10 & ::~Integer
+	\li[single precision float] 1.2              & ::~Float 
+	\li[double precision float] 1.2              & ::~Double
+	\li[list]                   []               & ::~[a]
+	\li[]                       [1,2,3]          & ::~[Integer]
+	\li[]                       ['a','b','c']    & ::~[Char]
+	\li                         "abc"            & ::~[Char]
+	\li[]                       [[1,2],[3,4]]    & ::~[[Integer]]
+	\li[string]                 "asdf"           & ::~String
+	\li[tuple]                  (1,2)            & ::~(Int,Int)
+%	\li                         (1,'a')          & ::~(Int,Char)
+	\li                         ([1,2],'a')      & ::~([Int],Char)
+	\li[ordering relation]      LT, EQ, GT       & ::~Ordering
+	\li[function ($\lambda$)]   \la\X~->~\I{e}   & ::~a -> b
+	\li[maybe (just something]  Just 10          & ::~Maybe Int
+	\li[\hphantom{maybe (}or nothing)]
+	                            Nothing          & ::~Maybe a
+%	\li[function]               isAlpha          & ::~Char -> Bool
+\end{tabularlc}
+
+
+\section{Values and Typeclasses}
+
+\begin{tabularlc}{lC@{\s}C}
+	\li[given context, has type]       \I{expr} & ::~\I{constraint}~=>~\I{type}
+	\li[Numeric (\C{+},\C{-},\C{*})]   137      & ::~Num a => a
+	\li[Fractional (\C{/})]            1.2      & ::~Fractional a => a
+	\li[Floating]                      1.2      & ::~Floating a => a
+	\li[Equatable (\C{==})]            'a'      & ::~Eq a => a
+	\li[Ordered (\C{<=},\C{>=},\C{>},\C{<})]
+	                                   731      & ::~Ord a => a
+%	\li                                sort     & ::~Ord a => [a] -> [a]
+%	\li[Bounded (minBound,maxBound)]   minBound & ::~Int
+\end{tabularlc}
+
+
+\section{Declaring Types and Classes}
+
+\begin{ldesc}
+	\li[type synonym] type \I{MyType} = \I{Type} \li
+					  type PairList a b = [(a,b)] \li
+                      type String = [Char] ~~~~{\tiny-{-} from Prelude}
+
+	\lI[data \small{(single constructor)}]
+		data~\I{MyData}~=~\I{MyData}~\I{Type}~\I{Type} \li
+		~~deriving (\I{Class}, \I{Class})
+
+	\lI[data \small{(multi constructor)}]
+		data~\I{MyData}~=~\I{Simple} \I{Type} \li
+		~~~~~\T{MyData}~|~\I{Duple} \I{Type} \I{Type} \li
+		~~~~~\T{MyData}~|~\I{Nople}
+
+	\lI[data \small{(record syntax)}]
+		data~\I{MDt}~=~\I{MDt}~\{ \I{fieldA} \li
+		~~~~~\T{MDt}~~~\T{MDt}~,  \I{fieldB}~::~\I{TyAB} \li
+		~~~~~\T{MDt}~~~\T{MDt}~,  \I{fieldC}~::~\I{TyC} \}
+
+	\lI[newtype]
+		newtype~\I{MyType}~=~\I{MyType}~\I{Type}
+	\li[~~\rotatebox{90}{$\Rsh$} \small{(single constr./field)}]
+		~~deriving (\I{Class}, \I{Class})
+
+	\lI[typeclass] class \I{MyClass} a where \li
+	               ~~\I{foo}~::~a~->~a~->~\I{b} \li
+	               ~~\I{goo}~::~a~->~a
+
+	\lI[typeclass instance]
+	               instance \I{MyClass} \I{MyType} where \li
+				   ~~\I{foo}~\I{x}~\I{y}~=~... \li
+				   ~~\I{goo}~\I{x}~=~...
+\end{ldesc}
+
+
+\section{Operators (grouped by precedence)}
+
+% Of the operators, in case we run out of space, \\ is a good candidate for
+% removal, as it is not in prelude.
+\begin{Ldesc}
+	\Li[List index, function composition] !!, \hfill .
+	\Li[raise to: Non-neg. Int, Int, Float] \hfill \verb+^+, \verb+^^+, \verb+**+
+	\Li[multiplication, fractional division] *, /
+	\li[integral division ($\Rightarrow -\infty$), modulus] `div`, `mod`
+	\li[integral quotient ($\Rightarrow 0$), remainder] `quot`, `rem`
+	\Li[addition, subtraction] +, -
+	\Li[list construction, append lists] \hfill :, ++
+	\li[list difference]                 ~~~~~~~~~~~~\verb+\\+
+	\Li[comparisons:]     ~~>, >=, <, <=, ==, /=~
+	\li[list membership]  ~~~`elem`, `notElem`~~
+	\Li[boolean and] \hfill \&\&
+	\Li[boolean or] \hfill ||
+	\Li[sequencing: bind and then] >{>}=, >{>}
+	\Li[application, strict apl., sequencing] \$, \$!, `seq`
+\end{Ldesc}
+
+\noindent
+NOTE: Highest precedence (first line) is 9, lowest precedence is 0.  Operator
+listings aligned left, right, and center indicate left-, right-, and
+non-associativity.
+
+\begin{description}
+\item [Defining fixity:]
+\begin{ldesc}
+	\li[non associative] infix \I{0-9} \I{`op`}
+	\li[left associative] infixl \I{0-9} \I{+-+}
+	\li[right associative] infixr \I{0-9} \I{-!-}
+	\li[default (when none given)] infixl 9
+\end{ldesc}
+\end{description}
+
+\subsection{Functions $\equiv$ Infix operators}
+
+\begin{tabular}{C@{\s$\equiv$\s}C}
+	f a b & a `f` b \\
+	a + b & (+) a b \\
+	(a +) b & ((+) a) b \\
+	(+ b) a & (\la{}x -> x + b) a \\
+\end{tabular}
+
+
+\section{Expressions / Clauses}
+
+\newcommand{\thead}[1]{\textnormal{\textbf{#1}}}
+\newcommand{\theads}[2]{\multicolumn{1}{C@{\s$\approx$\s}}{\thead{#1}} & \thead{#2} \\}
+
+\begin{tabular}{CC}
+\theads{if expression}{guarded equations}
+if~\I{boolExpr}  & \I{foo}~...~| \I{boolExpr}~ = \I{exprA} \\
+then~\I{exprA}   & \T{foo}~~~~~| otherwise    = \I{exprB} \\
+else~\I{exprB}   &                                       \\[1ex]
+
+\theads{nested if expression}{guarded equations}
+if~\I{boolExpr1}      & \I{foo} ...~| \I{boolExpr1} = \I{exprA} \\
+then~\I{exprA}        & \T{foo}~~~~~| \I{boolExpr2} = \I{exprB} \\
+else~if~\I{boolExpr2} & \T{foo}~~~~~| otherwise     = \I{exprC} \\
+~~~~~then~\I{exprB} & \\
+~~~~~else~\I{exprC} & \\[1ex]
+
+\theads{case expression}{function pattern matching}
+case~\I{x}~of~\I{pat1} -> \I{exA} & \I{foo pat1} = \I{exA} \\
+~~~~~\T{x}~~~~\I{pat2} -> \I{exB} & \I{foo pat2} = \I{exB} \\
+~~~~~\T{x}~~~~\_\T{at2} -> \I{exC} & \I{foo \_~~~} = \I{exC} \\[1ex]
+
+\theads{2-variable case expression}{function pattern matching}
+case~(\I{x},\I{y})~of & \I{foo pat1 patA} = \I{exprA} \\
+(\I{pat1},\I{patA}) -> \I{exprA} & \I{foo pat2 patB} = \I{exprB} \\
+(\I{pat2},\I{patB}) -> \I{exprB} & \I{foo \_~~~ \_~~~} = \I{exprC} \\
+\_~~~~~~~~~~        -> \I{exprC} & \\[1ex]
+
+\theads{let expression}{where clause}
+let~\I{nameA}~=~\I{exprA} & \I{foo ...}~=~\I{mainExpression} \\
+~~~~\I{nameB}~=~\I{exprB} & ~~where \I{nameA}~=~\I{exprA} \\
+in \I{mainExpression}     & ~~~~~~~~\I{nameB}~=~\I{exprB} \\[1ex]
+
+\theads{do notation}{desugarized do notation}
+do \I{patA} <- \I{action1} & \I{action1} >{>}= \la \I{patA} ->\\
+~~~\I{action2}             & ~~\I{action2} >{>}\\
+~~~\I{patB} <- \I{action3} & ~~\I{action3} >{>}= \la \I{patB} ->\\
+~~~\I{action4}             & ~~~~\I{action4}\\
+\end{tabular}
+
+
+\section{Pattern Matching \hfill \small(fn. declaration, lambda, case, let, where)}
+
+\begin{tabularlc}{b@{\hspace{9ex}}lC@{\hspace{11ex}}lC}
+  \li[fixed]  number 3      & 3  & character 'a' & 'a' \li
+              ignore value  & \_ & empty string  & ""
+\end{tabularlc}\\%
+\begin{tabularlc}{blC}
+  \lI[list]   empty                                        & [] \li
+              head \C{x} and tail \C{xs}                   & (x:xs) \li
+              tail \C{xs} (ignore head)                    & (\_:xs) \li
+              list with 3 elements                         & [a,b,c] \li
+%             list with 3 elements: \C{a}, \C{b} and \C{c} & (a:b:c:[]) \li
+              list where 2nd element is 3                  & (x:3:xs)
+
+  \lI[tuple]  pair values \C{a} and \C{b}                  & (a,b) \li
+              ignore second element                        & (a,\verb+_+) \li
+              triple values \C{a}, \C{b} and \C{c}         & (a,b,c)
+
+  \lI[mixed]  first tuple on list                          & ((a,b):xs)
+
+  \lI[maybe]  just constructor                             & Just a \li
+              nothing constructor                          & Nothing
+
+  \lI[custom] user-defined type                            & MyData a b c \li
+              ignore second field                          & MyData a \verb+_+ c \li
+              user-defined record type                     & MyR \{f1=x, f2=y\}
+
+  \lI[as-pattern] tuple \C{s} and its values               & s@(a,b) \li
+                  list \C{a}, its head and tail            & a@(x:xs) \li
+%	              data \C{p} and its fields                  & p@(MyData a b c)
+\end{tabularlc}
+
+
+% TODO: Add record update syntax somewhere
+
+
+\section{Prelude functions \hfill
+(\parbox{19.3ex}{\footnotesize{\textnormal{%
+A few types have been simplified \\
+to their list instances, e.g.: foldr%
+}}})%
+}
+
+\subsection{Misc}
+
+\begin{tabular}{@{}C@{\s}C@{\hspace{3ex}}R@{\s$\equiv$\s}C}
+	id        & ::~a -> a           & id \I{x}            & \I{x} \s{\tiny-{-} identity} \\
+	const     & ::~a -> b -> a      & (const \I{x}) \I{y} & \I{x}    \\
+	undefined & ::~a                & undefined           & \textnormal{$\bot$ (lifts error)}   \\
+	error     & ::~[Char] -> a      & error \I{cs}        & \textnormal{$\bot$ (lifts error \I{cs})} \\
+    not       & ::~Bool -> Bool     & not True & False \\
+	flip      & \longtype{::~(a -> b -> c) -> b -> a -> c} \\
+	\longcall{flip~\F~\$~\X~\Y} & \F~\Y~\X \\[-2ex]
+\end{tabular}
+
+\subsection{Lists}
+
+\begin{tabular}{@{}C@{\hspace{1ex}}C@{\hspace{5ex}}R@{\s$\equiv$\s}C}
+	null    & ::~[a] -> Bool        & null []              & True~~{\footnotesize -{-} \textnormal{$\emptyset$?}} \\
+%	        &                       & null [\X,\Y]         & False \\
+	\mtype{length~::~[a] -> Int}    & length [\X,\Y,\Z]    & 3                \\
+	elem    & ::~a -> [a] -> Bool   & \Y~`elem`~[\X,\Y]    & True~~{\footnotesize-{-} \textnormal{$\in?$}}  \\
+	head    & ::~[a] -> a           & head [\X,\Y,\Z,\W]   & \X               \\
+	last    & ::~[a] -> a           & last [\X,\Y,\Z,\W]   & \W               \\
+	tail    & ::~[a] -> [a]         & tail [\X,\Y,\Z,\W]   & [\Y,\Z,\W]       \\
+	init    & ::~[a] -> [a]         & init [\X,\Y,\Z,\W]   & [\X,\Y,\Z]       \\
+%	init xs & \s\s \textnormal{\I{init}ial elements of xs}& \s\s\textnormal{(excludes last element)} \\
+	\mtype{reverse ::~[a] -> [a]}   & reverse [\X,\Y,\Z]   & [\Z,\Y,\X]       \\
+	take    & ::~Int -> [a] -> [a]  & take 2 [\X,\Y,\Z]    & [\X,\Y]          \\
+	drop    & ::~Int -> [a] -> [a]  & drop 2 [\X,\Y,\Z]    & [\Z]             \\
+
+	\Longtype{takeWhile, dropWhile ::~(a -> Bool) -> [a] -> [a]}              \\
+	        \longcall{takeWhile (/= \Z) [\X,\Y,\Z,\W]} & [\X,\Y]              \\[.2ex]
+
+	zip     & \longtype{::~[a] -> [b] -> [(a, b)]}                            \\
+\multicolumn{4}{C}{~~~~~~~~~~~~~~~~~~zip [\X,\Y,\Z] [\I{a},\I{b}] $\equiv$ [(\X,\I{a}),(\Y,\I{b})]} \\[-2ex]
+\end{tabular}
+
+\subsubsection{Infinite Lists}
+
+\begin{tabular}{@{}C@{\s}C@{}R@{\s$\equiv$\s}C}
+	repeat  & ::~a -> [a]             & repeat x             & [\X,\X,\X,\X,\X,\X,...] \\
+	cycle   & ::~[a] -> [a]           & cycle \XS            & \XS++\XS++\XS++... \\
+	        &                         & cycle [\X,\Y]        & [\X,\Y,\X,\Y,\X,\Y,...] \\
+	iterate & \longtype{::~(a -> a) -> a -> [a]} \\
+	        &                         & iterate f x          & [\X,\F~\X,\F~(\F~\X),...] \\[-2ex]
+\end{tabular}
+
+
+\subsubsection{Higher-order / Functors}
+
+\begin{tabular}{@{}C@{\s}C@{\hspace{3ex}}R@{\s$\equiv$\s}C}
+	map     & \longtype{::~(a->b) -> [a] -> [b]}                \\
+	        & & map~\F~[\X,\Y,\Z]      & [\F~\X, \F~\Y, \F~\Z]  \\[1ex]
+	zipWith & \longtype{::~(a -> b -> c) -> [a] -> [b] -> [c]}  \\
+	        \longcall{zipWith \F~[\X,\Y,\Z] [\I{a},\I{b}]} & [\I{f x a}, \I{f y b}] \\[1ex]
+	filter  & \longtype{::~(a -> Bool) -> [a] -> [a]}           \\
+	        & & ~~~~filter~\I{(/=\Y)}~[\X,\Y,\Z] & [\X,\Z]      \\[1ex]
+	foldr   & \longtype{::~(a -> b -> b) -> b -> [a] -> b}      \\
+	        & & foldr \F~\Z~[\X,\Y]    & \X~`\F`~(\Y~`\F`~\Z)   \\[1ex]
+	foldl   & \longtype{::~(a -> b -> a) -> a -> [b] -> a}      \\
+	        & & foldl \F~\X~[\Y,\Z]    & (\X~`\F`~\Y)~`\F`~\Z   \\[-2ex]
+\end{tabular}
+
+
+\subsubsection{Special folds}
+
+\begin{tabular}{@{}C@{\hspace{1ex}}C@{\hspace{10ex}}R@{\s$\equiv$\s}C}
+	and     & ::~[Bool]~->~Bool    & and [\I{p},\I{q},\I{r}]     & \I{p}~\&\&~\I{q} \&\& \I{r} \\
+	or      & ::~[Bool]~->~Bool    & or [\I{p},\I{q},\I{r}]      & \I{p}~||~\I{q} || \I{r} \\
+\end{tabular} \\
+\begin{tabular}{@{}C@{\hspace{1ex}}C@{\hspace{4ex}}R@{\s$\equiv$\s}C}
+	sum     & ::~Num~a~=>~[a]~->~a & sum [\I{i},\I{j},\I{k}]     & \I{i}+\I{j}+\I{k} \\
+	product & ::~Num~a~=>~[a]~->~a & product [\I{i},\I{j},\I{k}] & \I{i}*\I{j}*\I{k} \\
+	maximum & ::~Ord~a => [a] -> a & maximum [9,0,5] & 9 \\
+	minimum & ::~Ord~a => [a] -> a & minimum [9,0,5] & 0 \\
+	concat  & \longtype{::~[[a]]~->[a]  ~ concat [\I{xs},\I{ys},\I{zs}] $\equiv$ \I{xs}++\I{ys}++\I{zs}} \\
+\end{tabular}
+
+
+\subsection{Tuples}
+\begin{tabular}{@{}C@{\s}C@{\hspace{3ex}}R@{\s$\equiv$\s}C}
+	fst       & ::~(a, b) -> a      &     ~~~~~fst (\I{x},\I{y}) & \I{x} \\
+	snd       & ::~(a, b) -> b      &          snd (\I{x},\I{y}) & \I{y} \\
+%	swap      & ::~(a, b) -> (b, a) & snd (\I{x},\I{y})   & (\I{y},\I{x}) \\ % Data.Tuple
+	curry     & \longtype{::~((a, b) -> c) -> a -> b -> c} \\
+	            \longcall{curry (\la(\I{x},\I{y}) -> \I{e})} & \la\I{x} \I{y} -> \I{e}\\[1ex]
+	uncurry   & \longtype{::~(a -> b -> c) -> (a, b) -> c} \\
+	            \longcall{uncurry (\la \I{x} \I{y} -> \I{e})} & \la(\I{x},\I{y}) -> \I{e} \\[-2ex]
+\end{tabular}
+
+
+\subsection{Numeric}
+
+\begin{tabular}{@{}C@{\s}C@{\hspace{-1ex}}R@{\s$\equiv$\s}C}
+	abs            & ::~Num a => a -> a         & abs (-9) & 9     \\
+	even, odd      & ::~Integral a => a -> Bool & even 10  & True  \\
+\mtype{gcd, lcm ::~Integral a => a -> a -> a}   & gcd 6 8  &  2    \\
+	recip          & ::~Fractional a => a -> a  & recip \X & 1/\X  \\
+    pi             & ::~Floating a => a         & pi       & 3.14...  \\
+	sqrt, log      & ::~Floating a => a -> a    & sqrt \X  & \X**0.5   \\
+	\Longtype{exp, sin, cos, tan, asin, acos ::~Floating a => a  -> a} \\
+	\Longtype{truncate, round~::~(RealFrac a, Integral b) => a -> b} \\
+	\Longtype{ceiling, floor~~::~(RealFrac a, Integral b) => a -> b} \\
+\end{tabular}
+
+
+\subsection{Strings}
+
+\newcommand{\n}{\B{\la{}n}}
+
+\begin{tabular}{@{}C@{\s}C@{\hspace{3ex}}R@{\s$\equiv$\s}C}
+	lines & \longtype{::~String -> [String]} \\
+	\longcall{lines "ab\n{}cd\n{}e"} & ["ab","cd","e"] \\[1ex]
+	unlines & \longtype{::~[String] -> String} \\
+	\longcall{~~~~~~~~~~~~unlines ["ab","cd","e"]} & "ab\n{}cd\n{}e\n{}" \\[1ex]
+	words & \longtype{::~String -> [String]} \\
+	\longcall{words "ab cd e"} & ["ab","cd","e"] \\[1ex]
+	unwords & \longtype{::~[String] -> String} \\
+	\longcall{unwords ["ab","cd","ef"]} & "ab cd ef" \\[-1ex]
+\end{tabular}
+
+
+\subsection{Read and Show classes}
+
+\begin{tabular}{@{}C@{\s}C@{\hspace{5ex}}R@{\s$\equiv$\s}C}
+	show & ::~Show a => a -> String & show 137 & "137" \\
+	read & ::~Show a => String -> a & read "2" & 2 \\
+\end{tabular}
+
+
+\subsection{Ord Class}
+
+\begin{tabular}{@{}C@{\s}C@{\hspace{3ex}}R@{\s$\equiv$\s}C}
+	min     & ::~Ord a => a -> a -> a        & min 'a' 'b'  & 'a' \\
+	max     & ::~Ord a => a -> a -> a        & max "b" "ab" & "b" \\
+	compare & ::~Ord a => a->a->Ordering & compare 1 2  & LT  \\
+\end{tabular}
+
+
+\section{Libraries / Modules}
+
+\begin{ldesc}
+	\li[importing]               import \I{Some.Module}
+	\li[~~(qualified)]           import qualified \I{Some.Module} as \I{SM}
+	\li[~~(subset)]              import \I{Some.Module} (\I{foo},\I{goo})
+	\li[~~(hiding)]              import \I{Some.Module} hiding (\I{foo,goo})
+	\li[~~(typeclass instances)] import \I{Some.Module} ()
+	\lI[declaring]
+		module \I{Module.Name} \li
+		~~( \I{foo}, \I{goo} ) \li
+		where \li
+	    ...
+	\lI[./File/On/Disk.hs] import File.On.Disk
+\end{ldesc}
+
+
+\subsection{Tracing and monitoring (unsafe) \hfill \C{Debug.Trace}}
+
+\begin{ldesc}
+	\li[Print \I{string}, return \I{expr}] trace \I{string} \$ \I{expr}
+	\li[Call \C{show} before printing]     traceShow \I{expr} \$ \I{expr}
+\end{ldesc} \\
+\begin{ldesc}
+	\li[Trace function]  f x y | traceShow (x,y) False = undefined \li[\s call values]
+	                     f x y = ...
+\end{ldesc}
+
+
+\subsection{IO \normalsize -- Must be ``inside'' the IO Monad}
+
+\begin{ldesc}
+	\li[Write char \CI{c} to stdout]                     putChar \I{c}
+	\li[Write string \CI{cs} to stdout]                  putStr \I{cs}
+	\li[Write string \CI{cs} to stdout w/ a newline]     putStrLn \I{cs}
+	\li[Print \CI{x}, a \C{show} instance, to stdout]    print \I{x}
+	\li[Read char from stdin]                            getChar
+	\li[Read line from stdin as a string]                getLine
+	\li[Read all input from stdin as a string]           getContents
+	\li[Bind stdin/out to \CI{foo} (\CI{\footnotesize ::~String -> String})]
+	                                                     interact \I{foo}
+	\li[Write string \CI{cs} to a file named \CI{fn}]    writeFile \I{fn} \I{cs}
+	\li[Append string \CI{cs} to a file named \CI{fn}]   appendFile \I{fn} \I{cs}
+	\li[Read contents from a file named \CI{fn}]         readFile \I{fn}
+\end{ldesc}
+
+
+\section{List Comprehensions}
+
+Take \I{pat} from \I{list}. If \I{boolPredicate}, add element \I{expr} to list:\\
+\begin{tabular}{C@{\s$\equiv$\s}C}
+	\multicolumn{2}{C}{[\I{expr} | \I{pat} <- \I{list}, \I{boolPredicate}, ...]} \\[1ex]
+	{[}x | x <- \I{xs}]                   & \I{xs} \\
+	{[}\I{f} x | x <- \I{xs}, \I{p} x]    & map \I{f} \$ filter \I{p} \I{xs} \\
+	{[}x | x <- \I{xs}, \I{p} x, \I{q} x] & filter \I{q} \$ filter \I{p} \I{xs} \\
+\multicolumn{2}{C}{
+	{[}x+y | x <- [\I{a},\I{b}], y <- [\I{i},\I{j}]] $\equiv$
+	    [\I{a}+\I{i}, \I{a}+\I{j}, \I{b}+\I{i}, \I{b}+\I{j}]
+} \\
+	{[}\I{x} | \I{boolE}]                 & if \I{boolE} then [\I{x}] else []
+\end{tabular}
+
+\section{GHC - Glasgow Haskell Compiler (and Cabal)}
+
+\begin{ldesc}
+	\li[compiling \C{program.hs}] \$ ghc program.hs
+	\li[running]                  \$ ./program
+	\li[running directly]         \$ run\_haskell program.hs
+	\li[interactive mode (GHCi)]  \$ ghci
+	\li[GHCi load]                > :l \I{program.hs}
+	\li[GHCi reload]              > :r
+	\li[GHCi activate stats]      > :set +s
+%	\li[GHCi turn off stats]      > :unset +s
+	\li[GHCi help]                > :?
+	\li[Type of an expression]    > :t \I{expr}
+	\li[Info (oper./func./class)] > :i \I{thing}
+	\li[Installed GHC packages]   \$ ghc-pkg list \I{[pkg\_name]}
+
+	\lI[Activating some pragma]   \verb+{+-\# LANGUAGE \I{Pragma} \#-\verb+}+
+	\li[Same, via GHC call]       \$ ghc -X\I{SomePragma} ...
+
+	\lI[install package \C{pkg}]           \$ cabal install \I{pkg}
+	\li[update package list]               \$ cabal update
+	\li[list packages matching \C{pat}]    \$ cabal list \I{pat}
+	\li[information about package]         \$ cabal info \I{pkg}
+	\li[help on commands]                  \$ cabal help \I{[command]}
+	\li[run executable/test/bench]         \$ cabal run/test/bench \I{[name]}
+	\li[initialize sandbox]                \$ cabal sandbox init
+	\li[add custom sandbox source]         \$ cabal sandbox add-source \I{dir}
+\end{ldesc}
+
+\end{document} 

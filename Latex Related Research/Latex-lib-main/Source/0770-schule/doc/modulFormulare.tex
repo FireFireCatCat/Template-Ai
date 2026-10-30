@@ -1,0 +1,16 @@
+\section{Formulare}
+\label{modul:formulare}
+Das Modul \module{Formulare} befindet sich noch in der Entwicklung. Es soll die Möglichkeit bieten, Formulare aus dem \pkg{hyperref} in PDF-Dokumenten komfortabel einzubinden. Dabei sollen auch die Möglichkeit erhalten bleiben, dass die gesetzten Dokumente in ausgedruckter Form für den Unterricht nutzbar sind.
+
+Durch Einbindung des Moduls wird automatisch eine \texttt{Form}-Umgebung um das komplette Dokument erstellt. Die Übergabe von Parametern an diese Umgebung muss er noch implementiert werden.
+
+\subsection{Befehle}
+\begin{commands}
+    \command{feldLinFormular}[\oarg{Abstand}\marg{Anzahl}\oarg{Textfeldargumente}]
+		erstellt ein Textfeld für das Formular, dass mit der gegebenen Anzahl an Linien für den Ausdruck versehen ist. Der Abstand der Linien zueinander kann angegeben werden, er beträgt standardmäßig $0,7\unit{cm}$. Dem Befehl können auch Argumente mitgegeben werden, die an das intern genutzte \texttt{TextField} übergeben werden.
+
+		Bei dem Textfeld ist die Schriftgröße 18pt gesetzt, die ungefähr passend zu den Linienabstand von $0,7\unit{cm}$ ist. Außerdem wurde die Hintergrundfarbe auf leer gesetzt, damit die Linien zu erkennen sind.
+\begin{example}
+  \feldLinFormular[0.5cm]{3}
+\end{example}
+\end{commands}

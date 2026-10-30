@@ -1,0 +1,1099 @@
+% attinormativi-esempi.tex
+%
+% Documento di esempio autonomo e compilabile per la classe attinormativi.
+% Standalone compilable example for the attinormativi class.
+%
+% Versione 1.2 — copre tutte le funzionalità della classe, inclusa
+% l'opzione accessible (PDF/UA-1, Direttiva UE 2016/2102).
+%
+% ---------------------------------------------------------------------------
+% ISTRUZIONI DI COMPILAZIONE
+%
+%   MODALITÀ STANDARD (senza accessibilità):
+%     pdflatex attinormativi-esempi.tex   (tre passate)
+%     xelatex  attinormativi-esempi.tex
+%     lualatex attinormativi-esempi.tex
+%
+%   MODALITÀ ACCESSIBLE (PDF/UA-1):
+%     Richiede OBBLIGATORIAMENTE LuaLaTeX e TeX Live 2023+.
+%     Decommentare il blocco \DocumentMetadata e l'opzione "accessible"
+%     nella \documentclass (Sezione A), quindi compilare con:
+%       lualatex attinormativi-esempi.tex
+%       lualatex attinormativi-esempi.tex
+%       lualatex attinormativi-esempi.tex   (tre passate per tagpdf)
+%
+%     Verifica del PDF prodotto:
+%       PAC 2024 (PDF Accessibility Checker, gratuito, Windows)
+%       Adobe Acrobat Pro: Strumenti → Accessibilità → Verifica completa
+%
+% Il file attinormativi.cls deve trovarsi nella stessa directory oppure
+% in una directory riconosciuta da TEXMF.
+%
+% ---------------------------------------------------------------------------
+% VARIANTI DA PROVARE PER LE OPZIONI STANDARD
+%
+% 1. Font sans-serif:
+%      \documentclass[bozza,sansserif,12pt]{attinormativi}
+%
+% 2. Impaginazione fronte/retro:
+%      \documentclass[bozza,12pt,duplex]{attinormativi}
+%
+% 3. Margini personalizzati:
+%      \documentclass[bozza,12pt,left=40mm,right=25mm,top=30mm,bottom=30mm]{attinormativi}
+%
+% Per impostazione predefinita (questa compilazione base):
+%   - font serif (Latin Modern Roman)
+%   - margini standard (left=35mm, right=30mm, top=25mm, bottom=25mm)
+%   - impaginazione solo fronte (simplex/oneside)
+%
+% Licenza: LPPL 1.3c
+% ---------------------------------------------------------------------------
+
+% ---------------------------------------------------------------------------
+% SEZIONE A — Opzioni della classe
+%
+% Attivare/disattivare le opzioni di seguito per verificare le singole
+% funzionalità.  Il set di default mostra: bozza + sansserif + simplex.
+%
+% Per testare sansserif: aggiungere "sansserif" alle opzioni.
+% Per testare duplex:    sostituire "simplex" con "duplex".
+% Per testare margini:   aggiungere, ad es., "left=40mm,right=25mm".
+%
+% ---------------------------------------------------------------------------
+% PER TESTARE L'ACCESSIBILITÀ PDF/UA-1 (opzione accessible):
+%
+%   1. Decommentare il blocco \DocumentMetadata qui sotto.
+%   2. Decommentare "accessible" nella \documentclass.
+%   3. Compilare SOLO con LuaLaTeX (tre passate).
+%   4. Verificare il PDF con PAC 2024 o Adobe Acrobat Pro.
+%
+%   NOTA: \DocumentMetadata deve precedere \documentclass. Se si usa
+%   la modalità standard (senza accessible), lasciarlo commentato.
+% ---------------------------------------------------------------------------
+
+%% ── Decommentare il blocco seguente per attivare la modalità accessible ──
+%\DocumentMetadata{
+%  pdfversion  = 1.7,
+%  pdfstandard = UA-1,
+%  lang        = it-IT,
+%}
+%% ────────────────────────────────────────────────────────────────────────
+
+\documentclass[%
+  bozza,          %% modalità bozza: attiva note redazionali e banner
+  sansserif,      %% font: sansserif (Latin Modern Sans). Sostituire con "serif".
+  simplex,        %% impaginazione: solo fronte. Sostituire con "duplex".
+                  %%   Alias accettati: oneside / twoside.
+  12pt            %% corpo del testo
+  %% accessible,  %% <-- Decommentare (con \DocumentMetadata sopra) per PDF/UA-1
+]{attinormativi}
+%
+% ---------------------------------------------------------------------------
+% Variante margini — decommentare la riga seguente per testarla:
+% \documentclass[bozza,serif,simplex,12pt,left=40mm,right=25mm,top=30mm,bottom=28mm]{attinormativi}
+% ---------------------------------------------------------------------------
+
+% ---------------------------------------------------------------------------
+% SEZIONE B — Pacchetti opzionali dell'utente
+%
+% cleveref va caricato nel preambolo DOPO \documentclass{attinormativi}
+% e PRIMA di \begin{document}.  La classe rileva automaticamente la sua
+% presenza e attiva le definizioni \crefname italiane in \AtBeginDocument.
+% ---------------------------------------------------------------------------
+
+\usepackage{cleveref}
+\usepackage{hologo}   %% per \hologo{LuaLaTeX} nella Sezione H
+
+% ---------------------------------------------------------------------------
+% SEZIONE C — Metadati dell'atto
+% ---------------------------------------------------------------------------
+
+\tipoatto{Regolamento}
+\numeroatto{3}
+\dataatto{1° maggio 2026}
+\autoritaatto{Comune di Esempiopoli}
+\titoloatto{Regolamento per la promozione delle energie rinnovabili
+e delle comunità energetiche}
+\oggettoatto{Disciplina delle modalità di costituzione, adesione
+e gestione delle comunità energetiche rinnovabili nel territorio comunale,
+in attuazione del decreto legislativo 8~dicembre~2021, n.~199.}
+
+% ---------------------------------------------------------------------------
+% Per il test dell'alias \maketitle si veda la Sezione D, punto 1.
+% ---------------------------------------------------------------------------
+
+\begin{document}
+
+
+
+% ===========================================================================
+% SEZIONE D — Frontespizio
+%
+% Punto 1: \maketitle come alias di \frontespizioatto.
+%
+% I due comandi sono equivalenti. In questa compilazione si usa \maketitle
+% per verificare che l'alias funzioni.  Per verificare l'originale basta
+% sostituire \maketitle con \frontespizioatto: il risultato deve essere
+% identico.
+% ===========================================================================
+
+\maketitle            %% TEST alias: equivalente a \frontespizioatto
+
+% ── Banner di bozza (visibile solo con l'opzione "bozza") ──────────────────
+
+\bozzainfo
+
+% ── Indici di apertura ─────────────────────────────────────────────────────
+
+\tableofcontents
+\indicearticoli
+
+% ===========================================================================
+% PREAMBOLO
+% ===========================================================================
+
+\begin{preambolo}
+Visto il decreto legislativo 8~dicembre~2021, n.~199, recante attuazione
+della direttiva (UE) 2018/2001 sulla promozione dell'uso dell'energia da
+fonti rinnovabili;\\
+Visto il decreto-legge 1°~marzo~2022, n.~17, convertito con modificazioni
+dalla legge 27~aprile~2022, n.~34;\\
+Vista la deliberazione del Consiglio comunale n.~45 del 10~marzo~2026,
+con la quale si è approvato il Piano d'azione per l'energia sostenibile;\\
+Ritenuto necessario disciplinare a livello locale la costituzione e il
+funzionamento delle comunità energetiche rinnovabili;\\
+Il Consiglio comunale adotta il seguente regolamento.
+\end{preambolo}
+
+% ===========================================================================
+\titolo{Disposizioni generali}
+% ===========================================================================
+
+\articolo{Finalità e ambito di applicazione}[art:finalita]
+
+\comma{Il presente regolamento disciplina la costituzione, l'adesione e
+la gestione delle comunità energetiche rinnovabili (di seguito: CER) nel
+territorio del Comune di Esempiopoli, in attuazione del decreto legislativo
+8~dicembre~2021, n.~199.}[c:finalita:1]
+
+\comma{Le disposizioni del presente regolamento si applicano alle CER
+costituite nella forma di ente del terzo settore, di cooperativa, di
+associazione o di altro soggetto di diritto privato senza scopo di lucro
+prevalente, la cui area di riferimento ricada, anche parzialmente, nel
+territorio comunale.}
+
+\comma{Sono esclusi dall'ambito di applicazione del presente regolamento:
+\begin{lettere}
+  \item i gruppi di autoconsumo collettivo di cui all'articolo~42 del
+        decreto legislativo 8~dicembre~2021, n.~199;
+  \item le comunità energetiche disciplinate da normativa regionale
+        speciale incompatibile con le presenti disposizioni.
+\end{lettere}
+}
+
+% ---------------------------------------------------------------------------
+
+\articolo{Definizioni}[art:definizioni]
+
+\comma{Ai fini del presente regolamento si intende per:
+\begin{definizioni}
+  \definizione{Comunità energetica rinnovabile}{Il soggetto giuridico
+    autonomo, costituito ai sensi dell'articolo~31 del decreto legislativo
+    8~dicembre~2021, n.~199, basato sulla partecipazione aperta e
+    volontaria, che produce, consuma, condivide e vende energia elettrica
+    da fonti rinnovabili.}[def:cer]
+
+  \definizione{Impianto di produzione}{L'insieme di macchine, apparecchi,
+    dispositivi e strutture destinate alla produzione di energia elettrica
+    da fonti rinnovabili, allacciati alla rete di distribuzione in bassa
+    o media tensione nella medesima zona di mercato.}[def:impianto]
+
+  \definizione{Membro produttore}{Il soggetto partecipante alla CER che
+    detiene, a qualsiasi titolo, uno o più \defref{def:impianto} conferiti
+    nella comunità.}[def:membro-produttore]
+
+  \definizione{Membro consumatore}{Il soggetto partecipante alla CER che
+    preleva energia dalla rete senza disporre di un proprio
+    \defref{def:impianto}.}[def:membro-consumatore]
+
+  \definizione{Energia condivisa}{La quantità di energia elettrica,
+    espressa in chilowattora, prodotta e contemporaneamente consumata
+    dai membri della CER nell'arco della medesima ora, calcolata ai sensi
+    della vigente normativa tecnica del Gestore dei Servizi Energetici.}[def:energia-condivisa]
+
+  \definizione{Sportello CER}{Lo sportello unico istituito dal Comune per
+    l'assistenza ai soggetti interessati alla costituzione o all'adesione
+    a una comunità energetica rinnovabile.}[def:sportello]
+\end{definizioni}
+}
+
+\notaredaz{Verificare la coerenza delle definizioni con le linee guida
+del GSE pubblicate nel febbraio~2024 e con gli aggiornamenti normativi
+eventualmente intervenuti prima dell'adozione definitiva.}
+
+% ===========================================================================
+% SEZIONE E — Test cleveref
+%
+% I comandi \cref{} e \Cref{} devono produrre il nome del livello
+% strutturale in italiano, senza che l'utente debba scriverlo a mano.
+%
+% Risultati attesi (cleveref + definizioni italiane della classe):
+%   \cref{art:finalita}       => "articolo 1"
+%   \Cref{art:finalita}       => "Articolo 1"       (a inizio frase)
+%   \cref{c:finalita:1}       => "comma 1"
+%   \cref{def:cer}            => "definizione a"
+%   \cref{all:statuto}        => "allegato A"
+%   \cref{art:finalita,art:requisiti}   => lista automatica ("articoli 1 e 3")
+%
+% Il blocco seguente è visibile solo in modalità bozza; in produzione
+% non occupa spazio ma i label e i riferimenti rimangono attivi.
+% ===========================================================================
+
+\notaredaz{%
+  \textbf{TEST cleveref — riferimenti automatici.}\\[0.4ex]
+  I valori tra parentesi sono i risultati attesi; quelli a sinistra
+  del trattino sono prodotti da cleveref.
+  \begin{itemize}
+    \item \cref{art:finalita}
+          \quad\textrightarrow\quad \textit{atteso:} articolo~1
+    \item \Cref{art:finalita}
+          \quad\textrightarrow\quad \textit{atteso:} Articolo~1
+    \item \cref{c:finalita:1}
+          \quad\textrightarrow\quad \textit{atteso:} comma~1
+    \item \cref{def:cer}
+          \quad\textrightarrow\quad \textit{atteso:} definizione~a
+    \item \cref{all:statuto}
+          \quad\textrightarrow\quad \textit{atteso:} allegato~A
+    \item \cref{art:finalita,art:requisiti}
+          \quad\textrightarrow\quad \textit{atteso:} articoli~1 e~3
+    \item \crefrange{art:finalita}{art:definizioni}
+          \quad\textrightarrow\quad \textit{atteso:} articoli~1--2
+  \end{itemize}
+}
+
+% ===========================================================================
+\titolo{Costituzione e riconoscimento delle CER}
+% ===========================================================================
+
+\articolo{Requisiti per il riconoscimento comunale}[art:requisiti]
+
+\comma{Il Comune riconosce, ai fini dell'applicazione dei benefici previsti
+dal presente regolamento, le CER che soddisfano congiuntamente i seguenti
+requisiti:
+\begin{lettere}
+  \item siano formalmente costituite e registrate secondo le modalità
+        previste dalla normativa vigente;
+  \item abbiano sede legale o operativa nel territorio comunale;
+  \item abbiano adottato uno statuto conforme allo schema di cui
+        al \cref{all:statuto};      %% TEST: cleveref su allegato
+  \item abbiano presentato la documentazione di cui
+        al \cref{art:domanda}.      %% TEST: cleveref su articolo
+\end{lettere}
+}[c:requisiti:1]
+
+\comma{Il riconoscimento è subordinato alla verifica, da parte
+dello \defref{def:sportello}, della disponibilità di almeno un
+\defref{def:impianto} allacciato alla rete nella zona di mercato
+di riferimento.}
+
+% ---------------------------------------------------------------------------
+
+\articolo{Procedura di riconoscimento}[art:domanda]
+
+\comma{La CER richiedente presenta allo \defref{def:sportello} apposita
+domanda, redatta su modello predisposto dall'ufficio, corredata dalla
+seguente documentazione:
+\begin{numeri}
+  \item copia dell'atto costitutivo e dello statuto;
+  \item elenco dei membri fondatori con indicazione della qualifica di
+        \defref{def:membro-produttore} o \defref{def:membro-consumatore};
+  \item documentazione tecnica relativa agli impianti di produzione
+        conferiti, con indicazione della potenza nominale installata;
+  \item dichiarazione sostitutiva di atto notorio attestante l'insussistenza
+        di cause ostative al riconoscimento.
+\end{numeri}
+}
+
+\comma{Lo sportello conclude il procedimento entro trenta giorni dalla
+ricezione della domanda completa. In caso di documentazione incompleta,
+il responsabile del procedimento richiede, entro dieci giorni, le
+integrazioni necessarie; il termine si sospende fino alla ricezione
+delle stesse.}
+
+\comma[bis]{Decorso il termine di cui al comma~2 senza che sia intervenuto
+un provvedimento espresso, la domanda si intende accolta ai sensi
+dell'articolo~20 della legge 7~agosto~1990, n.~241.}
+
+\notaredazinline{verificare compatibilità con le procedure SUAP}
+
+% ===========================================================================
+\titolo{Incentivi e benefici comunali}
+% ===========================================================================
+
+\capo{Benefici di carattere urbanistico}
+
+\articolo{Procedura semplificata per gli impianti FER}[art:procedura-semplificata]
+
+\comma{Gli impianti fotovoltaici e le relative opere di connessione,
+destinati ad alimentare una CER riconosciuta ai sensi
+del \cref{art:requisiti},    %% TEST: cleveref su articolo (testo corrente)
+beneficiano della procedura di comunicazione semplificata di cui
+all'articolo~6 del decreto legislativo 3~marzo~2011, n.~28, a prescindere
+dalla potenza nominale installata, entro i limiti consentiti dalla
+normativa nazionale.}
+
+\comma{Il responsabile del procedimento comunica l'esito della verifica
+entro quindici giorni dalla presentazione della comunicazione.}
+
+\capo{Benefici di carattere fiscale}
+
+\articolo{Riduzione dell'imposta municipale}[art:imu]
+
+\comma{Gli immobili sui quali sono installati impianti di produzione
+conferiti a una CER riconosciuta beneficiano di una riduzione dell'aliquota
+dell'imposta municipale propria (IMU) nella misura stabilita annualmente
+dal Consiglio comunale con la delibera di approvazione delle aliquote,
+nei limiti previsti dalla legislazione vigente.}
+
+\comma{La riduzione di cui al comma~1 cessa automaticamente in caso di
+revoca del riconoscimento ai sensi del \cref{art:revoca}.}
+%% TEST: cleveref — articolo non ancora dichiarato al momento del \comma;
+%%       cleveref risolve il riferimento alla terza compilazione.
+
+% ===========================================================================
+\titolo{Revoca del riconoscimento e controlli}
+% ===========================================================================
+
+\articolo{Revoca del riconoscimento}[art:revoca]
+
+\comma{Il Comune revoca il riconoscimento qualora la CER:
+\begin{lettere}
+  \item perda uno o più requisiti di cui al \cref{art:requisiti};
+  \item non trasmetta la relazione annuale di cui al \cref{art:relazione}
+        entro i termini stabiliti;
+  \item violi in modo grave o reiterato le disposizioni del presente
+        regolamento.
+\end{lettere}
+}
+
+\comma{Prima della revoca, il responsabile del procedimento comunica
+alla CER i motivi ostativi, assegnando un termine non inferiore a quindici
+giorni per la presentazione di memorie e documenti ai sensi dell'articolo~10
+della legge 7~agosto~1990, n.~241.}
+
+% ---------------------------------------------------------------------------
+
+\articolo{Obblighi di rendicontazione}[art:relazione]
+
+\comma{Le CER riconosciute trasmettono annualmente allo \defref{def:sportello},
+entro il 31~marzo di ciascun anno, una relazione contenente:
+\begin{lettere}
+  \item i dati di produzione, consumo e \defref{def:energia-condivisa}
+        dell'anno precedente, estratti dal sistema di misura del Gestore
+        della Rete di Distribuzione;
+  \item l'elenco aggiornato dei membri, con separata indicazione dei
+        \defref{def:membro-produttore} e dei \defref{def:membro-consumatore};
+  \item la quota dei benefici economici derivanti dall'incentivo
+        sull'\defref{def:energia-condivisa} destinata a utenze in condizioni
+        di disagio economico.
+\end{lettere}
+}
+
+% ===========================================================================
+\titolo{Disposizioni finali}
+% ===========================================================================
+
+\normatransitoria{I soggetti già operanti, alla data di entrata in vigore
+del presente regolamento, come comunità energetiche rinnovabili nel
+territorio comunale, sono tenuti a presentare domanda di riconoscimento
+ai sensi del \cref{art:domanda} entro novanta giorni dall'entrata in
+vigore. Nelle more del procedimento, continuano ad applicarsi le disposizioni
+previgenti.}
+%% TEST cleveref in disposizione finale tipizzata.
+
+\abrogazioni{Sono abrogate tutte le disposizioni regolamentari comunali
+incompatibili con il presente regolamento. In particolare, è abrogato
+l'articolo~12 del regolamento per la disciplina degli impianti tecnologici
+approvato con delibera consiliare n.~18/2019.}
+
+\entrataInVigore{Il presente regolamento è pubblicato all'albo pretorio
+online del Comune di Esempiopoli ed entra in vigore il quindicesimo giorno
+successivo alla data di pubblicazione.}
+
+% ===========================================================================
+% ALLEGATI
+% ===========================================================================
+
+\allegato{Schema di statuto della comunità energetica rinnovabile}[all:statuto]
+
+Il presente schema costituisce un modello orientativo. Le CER richiedenti
+possono adattarlo alle proprie specificità organizzative nel rispetto
+dei requisiti inderogabili stabiliti dal \cref{art:requisiti}.
+%% TEST cleveref in corpo allegato.
+
+\articolo[1]{Denominazione e sede}
+\comma{È costituita la comunità energetica rinnovabile denominata
+«\textit{CER [nome]}», con sede legale in Esempiopoli (XX), via
+\underline{\hspace{4cm}}, n.~\underline{\hspace{1cm}}.}
+
+\articolo[2]{Oggetto e finalità}
+\comma{La comunità ha per oggetto la produzione, il consumo, la condivisione
+e la vendita di energia elettrica da fonti rinnovabili, senza scopo di
+lucro prevalente, nel rispetto della normativa vigente.}
+
+% ── ── ── ──
+
+\allegato{Modulo di domanda di riconoscimento}[all:modulo]
+
+\noindent\textbf{Al Comune di Esempiopoli}\\
+\textbf{Sportello CER}\\[1em]
+
+Il/La sottoscritto/a \underline{\hspace{5cm}}, nato/a a
+\underline{\hspace{3.5cm}} il \underline{\hspace{2cm}}, C.F.\
+\underline{\hspace{4cm}}, in qualità di legale rappresentante della
+CER \underline{\hspace{4cm}}, con sede in \underline{\hspace{4cm}},
+
+\bigskip
+\noindent\textbf{CHIEDE}
+
+\noindent il riconoscimento della comunità energetica rinnovabile
+ai sensi del \cref{art:requisiti} del Regolamento comunale per
+la promozione delle energie rinnovabili e delle comunità energetiche,
+allegando la documentazione di cui al \cref{art:domanda}.
+%% TEST: cleveref nel modulo allegato (riferimenti incrociati a distanza).
+
+\bigskip
+\noindent Esempiopoli, lì \underline{\hspace{3cm}}
+
+\bigskip
+\noindent Firma del legale rappresentante: \underline{\hspace{5cm}}
+
+% ===========================================================================
+% SEZIONE F — Riepilogo test funzionalità v1.1
+%
+% Visibile solo in modalità bozza.
+% Questo blocco riepiloga i risultati attesi e funge da checklist
+% per chi verifica manualmente il PDF prodotto.
+% ===========================================================================
+
+\notaredaz{%
+  \textbf{CHECKLIST VERIFICA FUNZIONALITÀ v1.2}\\[0.5ex]
+  %
+  \textbf{1 — Opzione font.}
+  Il documento corrente usa \texttt{sansserif} (Latin Modern Sans).
+  Ricompilare con l'opzione \texttt{serif} e verificare che:
+  (a)~il font del testo cambi in Latin Modern Roman;
+  (b)~la giustificazione e la sillabazione rimangano attive;
+  (c)~non compaiano overfull box sistematici.\\[0.4ex]
+  %
+  \textbf{2 — Alias \texttt{\textbackslash maketitle}.}
+  Il frontespizio è stato generato con \texttt{\textbackslash maketitle}.
+  Verificare che sia identico a quello prodotto da
+  \texttt{\textbackslash frontespizioatto} sostituendo il comando
+  e ricompilando.\\[0.4ex]
+  %
+  \textbf{3 — Supporto cleveref.}
+  Nel blocco \emph{TEST cleveref} in apertura del Titolo II e negli
+  altri punti marcati \texttt{\%\% TEST cleveref} verificare che:
+  (a)~\texttt{\textbackslash cref} produca la forma minuscola corretta
+  (\textit{articolo}, \textit{comma}, \textit{definizione}, \textit{allegato});
+  (b)~\texttt{\textbackslash Cref} produca la forma maiuscola a inizio frase;
+  (c)~i rimandi multipli (\texttt{\textbackslash cref\{art:finalita,art:requisiti\}})
+  e gli intervalli (\texttt{\textbackslash crefrange}) siano formattati
+  automaticamente.\\[0.4ex]
+  %
+  \textbf{4 — Opzioni margini e fronte/retro.}
+  Ricompilare con ciascuna delle seguenti varianti dichiarate in testa
+  al file e verificare visivamente il PDF:
+  \begin{itemize}
+    \item \texttt{duplex}: le pagine pari e dispari devono avere margini
+          asimmetrici (inner $>$ outer); il primo capitolo deve iniziare
+          su pagina dispari.
+    \item \texttt{left=40mm,right=25mm}: la colonna di testo deve spostarsi
+          verso destra rispetto al default.
+    \item \texttt{top=30mm,bottom=30mm}: il bianco superiore e inferiore
+          deve aumentare rispetto al default di 25mm.
+  \end{itemize}
+  \textbf{5 — Accessibilità PDF/UA-1 (opzione \texttt{accessible}).}
+  Per i test specifici dell'accessibilità vedere la \textbf{Sezione~H}
+  in fondo al documento. Quella sezione contiene la checklist completa
+  con le istruzioni per la verifica con PAC~2024 e la spiegazione
+  di ogni elemento taggato.
+}
+
+% ===========================================================================
+% SEZIONE G — Test numerazione manuale degli articoli
+%
+% Questa sezione verifica tutti i casi d'uso del parametro opzionale [N]
+% su \articolo, \comma e sulle disposizioni finali tipizzate.
+%
+% Struttura del test:
+%   Titolo VI   — Articoli con numerazione automatica (baseline)
+%   Titolo VII  — Salto in avanti:    \articolo[20]{...}
+%   Titolo VIII — Salto all'indietro: \articolo[5]{...}
+%   Titolo IX   — Ripresa automatica dopo interruzione manuale
+%   Titolo X    — Numero manuale con label e verifica riferimenti
+%   Titolo XI   — Comma manuale e ripresa automatica del contatore
+%   Titolo XII  — Disposizioni finali tipizzate con numero manuale [N]
+%
+% RISULTATI ATTESI
+%   - Il numero stampato in testa all'articolo corrisponde al valore
+%     dell'argomento opzionale, indipendentemente dal contatore interno.
+%   - Dopo un \articolo[N], il contatore automatico riprende dal valore
+%     che aveva PRIMA dell'interruzione + 1 (non da N+1): effetto diretto
+%     del \begingroup...\endgroup usato in \AN@emit.
+%   - \artref{}, \cref{} e \Cref{} su un articolo numerato manualmente
+%     restituiscono N, non il valore del contatore.
+%   - Lo stesso comportamento vale per \comma[etichetta] e per le
+%     disposizioni finali tipizzate con argomento opzionale.
+% ===========================================================================
+
+% ---------------------------------------------------------------------------
+\titolo{Numerazione automatica — baseline di riferimento}
+% ---------------------------------------------------------------------------
+%
+% Questi due articoli stabiliscono la baseline del contatore automatico
+% subito prima dei test manuali.  I numeri effettivi dipendono da quanti
+% articoli sono stati emessi in precedenza nel documento.
+
+\articolo{Primo articolo automatico — baseline}[art:baseline1]
+\comma{Articolo con numerazione automatica.  Il numero effettivo è
+determinato dal contatore \texttt{subsubsection} al momento della
+compilazione.  Verificare nell'indice degli articoli.}
+
+\articolo{Secondo articolo automatico — baseline}[art:baseline2]
+\comma{Deve avere il numero immediatamente successivo al precedente.
+Sia $b$ tale numero: il primo articolo automatico dopo le interruzioni
+manuali deve avere numero $b+1$.}
+
+\notaredaz{%
+  \textbf{TEST baseline.}\\
+  Verificare che \artref{art:baseline1} e \artref{art:baseline2}
+  abbiano numeri consecutivi nell'indice degli articoli e nel testo.
+}
+
+% ---------------------------------------------------------------------------
+\titolo{Salto in avanti — \texttt{\textbackslash articolo[20]\{...\}}}
+% ---------------------------------------------------------------------------
+
+\articolo[20]{Articolo con numero manuale in avanti}[art:manuale20]
+\comma{Il numero di questo articolo è stato forzato a~20 con
+\texttt{\textbackslash articolo[20]\{...\}[art:manuale20]}.
+Il contatore interno \textbf{non} viene modificato: l'articolo automatico
+successivo riprenderà da $b+1$, non da~21.}[c:manuale20:1]
+
+\notaredaz{%
+  \textbf{TEST salto in avanti.}\\
+  Verificare che:
+  \begin{itemize}
+    \item il titolo mostri «Articolo~20»;
+    \item \artref{art:manuale20} $\to$ \textit{atteso:} art.~20;
+    \item \cref{art:manuale20}   $\to$ \textit{atteso:} articolo~20;
+    \item l'indice degli articoli riporti «Articolo~20».
+  \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+\titolo{Salto all'indietro — \texttt{\textbackslash articolo[5]\{...\}}}
+% ---------------------------------------------------------------------------
+%
+% Il numero manuale è inferiore all'ultimo valore del contatore.
+% La classe deve stampare 5 senza imporre vincoli di monotonia.
+
+\articolo[5]{Articolo con numero manuale all'indietro}[art:manuale5]
+\comma{Il numero di questo articolo è stato forzato a~5 anche se il
+contatore interno ha già superato tale valore.
+Questo caso verifica l'assenza di vincoli di monotonia nella
+numerazione manuale.}
+
+\notaredaz{%
+  \textbf{TEST salto all'indietro.}\\
+  Verificare che:
+  \begin{itemize}
+    \item il titolo mostri «Articolo~5» anche se il contatore è più alto;
+    \item \artref{art:manuale5} $\to$ \textit{atteso:} art.~5;
+    \item non vengano prodotti errori o warning di LaTeX.
+  \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+\titolo{Ripresa del contatore automatico dopo numerazione manuale}
+% ---------------------------------------------------------------------------
+
+\articolo{Articolo automatico dopo due numerazioni manuali}[art:dopo-manuale]
+\comma{Questo articolo usa la numerazione automatica dopo
+\artref{art:manuale20} (numero manuale~20) e \artref{art:manuale5}
+(numero manuale~5).  Il suo numero deve essere $b+1$, dove $b$ è il
+numero di \artref{art:baseline2}.  Se il numero fosse~21 o~6,
+significa che \texttt{\textbackslash AN@emit} ha modificato il contatore
+invece di isolarlo nel gruppo.}
+
+\notaredaz{%
+  \textbf{TEST ripresa contatore.}\\
+  Sia $b$ = numero di \artref{art:baseline2}.
+  Verificare che \artref{art:dopo-manuale} = $b+1$.
+}
+
+% ---------------------------------------------------------------------------
+\titolo{Numero manuale con label e verifica riferimenti incrociati}
+% ---------------------------------------------------------------------------
+
+\articolo[42]{Articolo con numero manuale e label}[art:manuale42]
+\comma{Articolo con numero forzato a~42 e label \texttt{art:manuale42}.
+Tutti i comandi di riferimento devono restituire~42.}[c:manuale42:1]
+
+\comma{Secondo comma dell'articolo~42.}[c:manuale42:2]
+
+\notaredaz{%
+  \textbf{TEST riferimenti su articolo con numero manuale.}\\
+  \begin{itemize}
+    \item \artref{art:manuale42}
+          $\to$ \textit{atteso:} art.~42
+    \item \articoloeref{art:manuale42}
+          $\to$ \textit{atteso:} articolo~42
+    \item \cref{art:manuale42}
+          $\to$ \textit{atteso:} articolo~42
+    \item \Cref{art:manuale42}
+          $\to$ \textit{atteso:} Articolo~42
+    \item \artcomma{art:manuale42}{c:manuale42:1}
+          $\to$ \textit{atteso:} art.~42, comma~1
+    \item \artcomma{art:manuale42}{c:manuale42:2}
+          $\to$ \textit{atteso:} art.~42, comma~2
+  \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+\titolo{Comma con etichetta manuale e ripresa del contatore}
+% ---------------------------------------------------------------------------
+
+\articolo{Articolo con commi misti: automatici e manuali}[art:commi-misti]
+
+\comma{Primo comma automatico — etichetta attesa: 1.}[c:commi-misti:1]
+
+\comma{Secondo comma automatico — etichetta attesa: 2.}[c:commi-misti:2]
+
+\comma[bis]{Comma con etichetta manuale «bis».
+Il contatore \texttt{paragraph} \textbf{non} viene modificato
+grazie al \texttt{\textbackslash begingroup}.}
+
+\comma{Terzo comma automatico — etichetta attesa: 3, non 4.
+Il «bis» non ha spostato il contatore.}
+
+\comma[ter]{Altro comma con etichetta manuale «ter».}
+
+\comma{Quarto comma automatico — etichetta attesa: 4.}
+
+\notaredaz{%
+  \textbf{TEST comma manuale e ripresa automatica.}\\
+  Sequenza attesa per \artref{art:commi-misti}:
+  1 $\to$ 2 $\to$ bis $\to$ 3 $\to$ ter $\to$ 4.\\
+  Se la sequenza automatica fosse 1, 2, 3, 4, 5 (saltando le etichette
+  manuali come se non esistessero) o si interrompesse, il
+  \texttt{\textbackslash begingroup} non isola correttamente il contatore.
+}
+
+% ---------------------------------------------------------------------------
+\titolo{Disposizioni finali tipizzate con numero manuale}
+% ---------------------------------------------------------------------------
+%
+% \normatransitoria[N], \abrogazioni[N], \entrataInVigore[N]:
+% il numero manuale deve comparire nel titolo e nell'indice degli articoli.
+
+\normatransitoria[99]{Norma transitoria con numero manuale~99.
+Il titolo deve mostrare «Articolo~99»
+e l'indice deve riportare «Articolo~99 — Norma transitoria».}
+
+\abrogazioni[100]{Abrogazioni con numero manuale~100.
+Il titolo deve mostrare «Articolo~100»
+e l'indice deve riportare «Articolo~100 — Abrogazioni».}
+
+\entrataInVigore[101]{Entrata in vigore con numero manuale~101.
+Il titolo deve mostrare «Articolo~101»
+e l'indice deve riportare «Articolo~101 — Entrata in vigore».}
+
+\notaredaz{%
+  \textbf{TEST disposizioni finali tipizzate con [N].}\\
+  Verificare che ciascuno dei tre articoli mostri il numero manuale
+  nel titolo e nell'indice degli articoli, e che il contatore automatico
+  non sia stato alterato (un eventuale \texttt{\textbackslash articolo}
+  successivo senza argomento opzionale deve seguire la sequenza pre-interruzione).
+}
+
+% ===========================================================================
+% INDICI FINALI
+% ===========================================================================
+
+\indiceallegati
+\indicedefinizioni
+
+% ===========================================================================
+% SEZIONE H — Test accessibilità PDF/UA-1 (opzione accessible)
+%
+% Questa sezione è progettata per essere compilata con l'opzione
+% "accessible" attiva (LuaLaTeX + \DocumentMetadata, vedere Sezione A).
+%
+% Il contenuto è visibile in entrambe le modalità (standard e accessible),
+% ma il tagging PDF è presente solo quando l'opzione accessible è attiva.
+%
+% ISTRUZIONI:
+%   1. Decommentare \DocumentMetadata e "accessible" in Sezione A.
+%   2. Compilare con LuaLaTeX per tre passate.
+%   3. Aprire il PDF in PAC 2024 o Adobe Acrobat Pro.
+%   4. Verificare ciascun punto della checklist seguente.
+% ===========================================================================
+
+\titolo{Test di accessibilità PDF/UA-1}
+
+% ---------------------------------------------------------------------------
+% H.1 — Test: controllo prerequisiti e ClassWarning
+% ---------------------------------------------------------------------------
+%
+% Il seguente blocco informativo spiega cosa verificare a livello
+% di log di compilazione (non nel PDF).
+
+\articolo{Verifica prerequisiti di compilazione}[art:acc-prerequisiti]
+
+\comma{%
+  La classe \texttt{attinormativi} v1.2 emette un \texttt{ClassWarning}
+  nelle seguenti condizioni, verificabili nel log di compilazione
+  (\texttt{.log}):
+  \begin{lettere}
+    \item opzione \texttt{accessible} attiva ma motore diverso da
+          \hologo{LuaLaTeX}: il messaggio recita
+          \emph{«L'opzione `accessible' richiede LuaLaTeX»};
+    \item opzione \texttt{accessible} attiva ma
+      \texttt{\textbackslash DocumentMetadata}
+      assente: il messaggio recita
+          \emph{«L'opzione `accessible' richiede \textbackslash DocumentMetadata
+          prima di \textbackslash documentclass»}.
+  \end{lettere}
+  In entrambi i casi il tagging viene disattivato automaticamente
+  e la compilazione prosegue senza errori fatali.%
+}
+
+\notaredaz{%
+  \textbf{TEST H.1 — Prerequisiti e ClassWarning.}\\
+  Verificare nel file \texttt{.log}:
+  \begin{itemize}
+    \item Con \texttt{accessible} attivo e LuaLaTeX + \texttt{\textbackslash DocumentMetadata}:
+          nessun \texttt{ClassWarning} relativo all'accessibilità deve comparire.
+    \item Ricompilare con \texttt{pdflatex} (mantenendo \texttt{accessible}):
+          deve comparire il warning sul motore.
+    \item Ricompilare con \texttt{lualatex} ma rimuovendo \texttt{\textbackslash DocumentMetadata}:
+          deve comparire il warning su \texttt{\textbackslash DocumentMetadata}.
+    \item In entrambi i casi il PDF viene prodotto senza errori e il
+         booleano pubblico \texttt{\textbackslash ifANaccessible} vale \texttt{false}.
+ \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+% H.2 — Test: frontespizio taggato (Title + P)
+% ---------------------------------------------------------------------------
+
+\articolo{Frontespizio: strutture Title e P}[art:acc-frontespizio]
+
+\comma{%
+  In modalità \texttt{accessible}, il frontespizio generato da
+  \texttt{\textbackslash frontespizioatto} (o dal suo alias
+  \texttt{\textbackslash maketitle}) produce le seguenti strutture
+  nell'albero dei tag PDF:
+  \begin{lettere}
+    \item il titolo ufficiale dell'atto (\texttt{\textbackslash titoloatto})
+          è racchiuso in un tag \texttt{Title};
+    \item gli altri campi (autorità, tipo atto, numero, data, oggetto)
+          sono racchiusi ciascuno in un tag \texttt{P}.
+  \end{lettere}%
+}
+
+\notaredaz{%
+  \textbf{TEST H.2 — Frontespizio.}\\
+  In PAC~2024 o nel pannello «Struttura» di Acrobat Pro, navigare
+  alla prima pagina del documento e verificare:
+  \begin{itemize}
+    \item la presenza di un tag \texttt{Title} contenente il testo
+          «Regolamento per la promozione delle energie rinnovabili
+          e delle comunità energetiche»;
+    \item la presenza di tag \texttt{P} distinti per ciascuno degli
+          altri campi del frontespizio (autorità, tipo, numero, data, oggetto);
+    \item l'assenza di contenuto non taggato (testo fuori struttura)
+          sulla pagina del frontespizio.
+  \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+% H.3 — Test: gerarchia heading H1–H5
+% ---------------------------------------------------------------------------
+
+\articolo{Gerarchia strutturale: heading H1–H5}[art:acc-heading]
+
+\comma{%
+  La mappatura tra livelli normativi e ruoli PDF/UA è la seguente:
+  \begin{numeri}
+    \item \texttt{\textbackslash libro} $\to$ \texttt{H1};
+    \item \texttt{\textbackslash titolo} $\to$ \texttt{H2};
+    \item \texttt{\textbackslash capo} $\to$ \texttt{H3};
+    \item \texttt{\textbackslash sezione} $\to$ \texttt{H4};
+    \item \texttt{\textbackslash articolo} $\to$ \texttt{H5}.
+  \end{numeri}
+  Il comma (\texttt{\textbackslash comma}) non è un heading: il suo
+  contenuto testuale è taggato come paragrafo (\texttt{P}), mentre
+  il numero anteposto al testo è trattato come elemento decorativo.%
+}
+
+\notaredaz{%
+  \textbf{TEST H.3 — Gerarchia heading.}\\
+  In PAC~2024 (scheda «Logical Structure») o nel pannello
+  «Ordine di lettura» di Acrobat Pro, verificare:
+  \begin{itemize}
+    \item i titoli di questo documento (\emph{Titolo~I},
+          \emph{Titolo~II}, ecc.) risultano come \texttt{H2};
+    \item i capi (\emph{Capo~I Benefici di carattere urbanistico},
+          ecc.) risultano come \texttt{H3};
+    \item gli articoli risultano come \texttt{H5};
+    \item i commi risultano come \texttt{P}, non come \texttt{H6};
+    \item la gerarchia è continua e non presenta salti di livello
+          (es. \texttt{H2} seguito direttamente da \texttt{H5} senza
+          \texttt{H3}/\texttt{H4} intermedi nello stesso ramo
+          è corretto perché la classe non usa i livelli intermedi
+          per i commi).
+  \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+% H.4 — Test: comma taggato come P
+% ---------------------------------------------------------------------------
+
+\articolo{Comma: tag P (paragrafo normativo)}[art:acc-comma]
+
+\comma{Questo è il primo comma dell'articolo di test per il tag~P.
+Il contenuto di questo comma deve apparire nell'albero dei tag come
+paragrafo, non come heading.}[c:acc-comma:1]
+
+\comma[bis]{Questo comma usa numerazione manuale «bis». Anche in questo
+caso il contenuto deve essere taggato come \texttt{P}.}
+
+\comma{Questo è il terzo comma, con numerazione automatica ripresa
+correttamente dopo l'interruzione manuale.}[c:acc-comma:3]
+
+\notaredaz{%
+  \textbf{TEST H.4 — Comma come P.}\\
+  Nell'albero dei tag, verificare per i commi di
+  \artref{art:acc-comma}:
+  \begin{itemize}
+    \item ciascun comma è rappresentato da un tag \texttt{P};
+    \item il numero anteposto (es. «1.», «bis.», «3.») è marcato come
+          \texttt{Artifact} o non compare nell'albero dei tag come
+          elemento testuale autonomo;
+    \item la sequenza dei commi nell'ordine di lettura corrisponde
+          all'ordine nel sorgente.
+  \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+% H.5 — Test: liste normative come OL
+% ---------------------------------------------------------------------------
+
+\articolo{Liste normative: tag OL/LI/LBody}[art:acc-liste]
+
+\comma{Le liste di tipo \texttt{lettere} devono essere taggata come
+lista ordinata. Esempio:
+\begin{lettere}
+  \item Prima voce della lista alfabetica;
+  \item seconda voce della lista alfabetica;
+  \item terza voce della lista alfabetica.
+\end{lettere}%
+}
+
+\comma{Le liste di tipo \texttt{numeri} devono essere anch'esse
+taggata come lista ordinata. Esempio:
+\begin{numeri}
+  \item Prima voce della lista numerica;
+  \item seconda voce della lista numerica;
+  \item terza voce della lista numerica.
+\end{numeri}%
+}
+
+\notaredaz{%
+  \textbf{TEST H.5 — Liste normative come OL.}\\
+  Nell'albero dei tag, verificare per le liste di questo articolo:
+  \begin{itemize}
+    \item entrambe le liste risultano come \texttt{OL}
+          (ordered list), non come \texttt{L} generica;
+    \item ciascuna voce è una coppia \texttt{LI}/\texttt{LBody};
+    \item l'etichetta alfabetica o numerica (es. «a)», «1)») è
+          presente come \texttt{Lbl} all'interno di \texttt{LI};
+    \item nessuna voce è fuori struttura.
+  \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+% H.6 — Test: ambiente definizioni come DL/DT/DD
+% ---------------------------------------------------------------------------
+
+\articolo{Ambiente definizioni: tag DL/DT/DD}[art:acc-definizioni]
+
+\comma{Di seguito un sotto-insieme di definizioni ai soli fini
+del test di accessibilità:
+\begin{definizioni}
+  \definizione{Termine alfa}{Prima definizione di test, usata per
+    verificare la struttura \texttt{DT}/\texttt{DD}.}[def:acc-alfa]
+
+  \definizione{Termine beta}{Seconda definizione di test. Il rimando
+    al \defref{def:acc-alfa} deve essere navigabile.}[def:acc-beta]
+
+  \definizione{Termine gamma}{Terza definizione di test, con testo
+    più lungo per verificare che il tag \texttt{DD} contenga
+    correttamente l'intera descrizione anche su più righe.}[def:acc-gamma]
+\end{definizioni}
+}
+
+\notaredaz{%
+  \textbf{TEST H.6 — Definizioni come DL/DT/DD.}\\
+  Nell'albero dei tag, verificare:
+  \begin{itemize}
+    \item la lista è racchiusa in un tag \texttt{DL}
+          (definition list);
+    \item per ciascuna voce è presente una coppia:
+          \texttt{DT} contenente il termine in grassetto
+          e \texttt{DD} contenente il testo della definizione;
+    \item la struttura si ripete per tutte e tre le voci
+          senza interruzioni.
+  \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+% H.7 — Test: note redazionali come Artifact
+% ---------------------------------------------------------------------------
+
+\articolo{Note redazionali: tag Artifact}[art:acc-note]
+
+\comma{In modalità \texttt{accessible}, le note redazionali (visibili
+solo con l'opzione \texttt{bozza}) sono marcate come \texttt{Artifact}
+nell'albero dei tag. I lettori di schermo non leggono gli artefatti,
+poiché sono elementi decorativi o editoriali privi di valore normativo.%
+\notaredazinline{questa nota inline deve risultare come Artifact nel PDF taggato}%
+}
+
+\notaredaz{%
+  \textbf{TEST H.7 — Note redazionali come Artifact.}\\
+  Nell'albero dei tag, verificare:
+  \begin{itemize}
+    \item questa nota a blocco (\texttt{\textbackslash notaredaz})
+          non compare nell'albero dei tag come contenuto strutturato,
+          oppure risulta esplicitamente marcata come \texttt{Artifact};
+    \item la nota inline (\texttt{\textbackslash notaredazinline})
+          del comma precedente è anch'essa marcata come \texttt{Artifact};
+    \item il banner di bozza (\texttt{\textbackslash bozzainfo}),
+          presente in apertura del documento, è marcato come
+          \texttt{Artifact}.
+  \end{itemize}
+  In PAC~2024 il test «Artifacts are tagged correctly» deve risultare
+  superato (verde) per questi elementi.
+}
+
+% ---------------------------------------------------------------------------
+% H.8 — Test: preambolo e ambienti di servizio come Sect
+% ---------------------------------------------------------------------------
+
+\articolo{Ambienti di servizio: tag Sect}[art:acc-sect]
+
+\comma{Il preambolo presente in apertura del documento (ambiente
+\texttt{preambolo}) e l'eventuale relazione illustrativa (ambiente
+\texttt{relazione}) sono racchiusi in un tag \texttt{Sect}
+(sezione generica). Il tag \texttt{Sect} è il ruolo PDF/UA appropriato
+per unità logiche dotate di un proprio titolo che non partecipano
+alla gerarchia heading numerata dell'atto.%
+}
+
+\notaredaz{%
+  \textbf{TEST H.8 — Preambolo e relazione come Sect.}\\
+  Nell'albero dei tag, verificare:
+  \begin{itemize}
+    \item il blocco «Preambolo» in apertura del documento è racchiuso
+          in un tag \texttt{Sect};
+    \item all'interno della \texttt{Sect} è presente il titolo del
+          capitolo non numerato («Preambolo»);
+    \item il contenuto del preambolo (le clausole \emph{visto},
+          \emph{ritenuto}, ecc.) è strutturato come paragrafi \texttt{P}
+          all'interno della sezione.
+  \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+% H.9 — Test: allegati come Sect/Caption e indici come TOC
+% ---------------------------------------------------------------------------
+
+\articolo{Allegati e indici: tag Sect, Caption, TOC}[art:acc-allegati]
+
+\comma{Gli allegati del documento sono strutturati come segue
+nell'albero dei tag:
+\begin{lettere}
+  \item l'intero allegato è racchiuso in un tag \texttt{Sect};
+  \item il titolo dell'allegato è marcato come \texttt{Caption}
+        all'interno della \texttt{Sect};
+  \item il contenuto dell'allegato è strutturato come paragrafi
+        \texttt{P} e, se presenti, come articoli \texttt{H5} e
+        commi \texttt{P}.
+\end{lettere}%
+}
+
+\comma{Gli indici secondari (\texttt{\textbackslash indicearticoli},
+\texttt{\textbackslash indiceallegati}, \texttt{\textbackslash indicedefinizioni})
+generano ciascuno un blocco \texttt{TOC} (table of contents) nell'albero
+dei tag. Il tag \texttt{TOC} è il ruolo PDF/UA dedicato agli indici
+navigazionali.%
+}
+
+\notaredaz{%
+  \textbf{TEST H.9 — Allegati e indici.}\\
+  Per gli allegati (vedere Allegato~A e Allegato~B nel documento):
+  \begin{itemize}
+    \item navigare all'allegato nell'albero dei tag e verificare
+          la struttura \texttt{Sect} $\to$ \texttt{Caption}
+          (titolo) + contenuto;
+    \item verificare che il titolo «Allegato~A --- Schema di statuto»
+          risulti come \texttt{Caption}, non come \texttt{H2}.
+  \end{itemize}
+  Per gli indici (indicearticoli in apertura, indiceallegati e
+  indicedefinizioni in chiusura):
+  \begin{itemize}
+    \item ciascun indice deve presentare un tag \texttt{TOC};
+    \item le singole voci dell'indice devono risultare come
+          \texttt{TOCI} (table of contents item) all'interno del
+          \texttt{TOC}.
+  \end{itemize}
+}
+
+% ---------------------------------------------------------------------------
+% H.10 — Checklist PAC 2024 completa
+% ---------------------------------------------------------------------------
+
+\notaredaz{%
+  \textbf{CHECKLIST ACCESSIBILITÀ v1.2 — Verifica PAC 2024}\\[0.5ex]
+  Aprire il PDF in PAC~2024 e verificare che tutti i seguenti
+  controlli risultino superati (icona verde):
+  \begin{enumerate}
+    \item \textbf{Document is tagged PDF} — il documento ha una
+          struttura ad albero dei tag.
+    \item \textbf{Document is marked as PDF/UA} — il dizionario
+          \texttt{/MarkInfo} contiene \texttt{/Marked true} e
+          il blocco \texttt{XMP} include il marcatore UA.
+    \item \textbf{Document language is specified} — la lingua
+          \texttt{it-IT} è dichiarata (da \texttt{\textbackslash DocumentMetadata}).
+    \item \textbf{Title is specified} — il tag \texttt{Title}
+          del frontespizio è presente.
+    \item \textbf{Headings are used properly} — la gerarchia
+          \texttt{H2}--\texttt{H5} è continua per ogni ramo.
+    \item \textbf{Lists are structured properly} — le liste
+          \texttt{lettere} e \texttt{numeri} risultano come
+          \texttt{OL} con voci \texttt{LI}/\texttt{LBody}.
+    \item \textbf{Artifacts are tagged correctly} — le note
+          redazionali non compaiono come contenuto strutturato.
+    \item \textbf{All content is contained in the structure tree} —
+          nessun testo risulta fuori dall'albero dei tag.
+  \end{enumerate}
+  In caso di errori, annotare il numero del test PAC e il tag
+  incriminato per il debug nella classe.
+}
+
+\end{document}

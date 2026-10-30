@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sdapslayout package &#8212; sdaps-class 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/sdapstex.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="sdapspdf package" href="sdapspdf.html" />
+    <link rel="prev" title="sdapsclassic class" href="sdapsclassic.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="sdapspdf.html" title="sdapspdf package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sdapsclassic.html" title="sdapsclassic class"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sdapslayout package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sdapslayout-package">
+<h1>sdapslayout package<a class="headerlink" href="#sdapslayout-package" title="Permalink to this headline">¶</a></h1>
+<p>This package provides a set of more complex layouting options on top of the
+sdapsarray package. The following environments are provided:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#choicearray" title="choicearray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicearray</span></code></a></p></li>
+<li><p><a class="reference internal" href="#rangearray" title="rangearray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">rangearray</span></code></a></p></li>
+</ul>
+<p>The rangearray is not quite as powerful, as it does not expose some of the
+sdapsarray options to the user. Note that much more complex custom layouts can
+be created directly with sdapsarray.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The documentation here is currently incomplete! Pleases refer to the sdapsclassic <a class="reference internal" href="sdapsclassic.html#choicegroup" title="choicegroup"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicegroup</span></code></a> and <a class="reference internal" href="sdapsclassic.html#markgroup" title="markgroup"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">markgroup</span></code></a> documentation!</p>
+</div>
+<dl class="tex environ">
+<dt id="choicearray">
+<em class="property">\begin{</em><code class="sig-name descname">choicearray</code><em class="property">}</em><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span></span><br/><span class="sig"></span><br/><em class="property">\end{</em><code class="sig-name descname">choicearray</code><em class="property">}</em><a class="headerlink" href="#choicearray" title="Permalink to this definition">¶</a></dt>
+<dd><p>The following optional keyword parameters can be passed to the
+environment. These keyword parameters default to the values provided in the
+SDAPS context and can for example be modified globally for the document.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>align</strong> – named alignment group, set to a common name to align multiple environments to each other</p></li>
+<li><p><strong>noalign</strong> – disable alignment (same as setting <code class="docutils literal notranslate"><span class="pre">align</span></code> to an empty value)</p></li>
+<li><p><strong>horizontal</strong> – set horizontal mode where each question is one row (default)</p></li>
+<li><p><strong>layouter</strong> – set the sdapsarray layouter (e.g. rotated for rotated column headers)</p></li>
+<li><p><strong>angle</strong> – set the angle of the column headers when in rotated mode</p></li>
+<li><p><strong>vertical</strong> – set vertical mode where each question is one column</p></li>
+<li><p><strong>type</strong> – the question type “multichoice” or “singlechoice”</p></li>
+<li><p><strong>multichoice</strong> – switch to multichoice “Choice” question mode</p></li>
+<li><p><strong>singlechoice</strong> – switch to singlechoice “Option” question mode</p></li>
+</ul>
+</dd>
+</dl>
+<p>The choicearray environment represents a tabular layout for a set of multiple
+choice questions which have the same possible answers. A new header is created
+in the metadata to group the questions.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The header is currently <em>not shown</em> in the PDF and it cannot
+contain fragile content due to implementation constraints! This is an issue
+with the class which will be fixed. The exact final behaviour is not yet
+specified.</p>
+</div>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-31" class="tab-code" name="tab-group-31" ><label for="tab-code-31" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-31" class="tab-rendering" name="tab-group-31" checked><label for="tab-rendering-31" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>choicearray<span class="nb">}</span>[layouter=rotated]
+  <span class="k">\choice</span><span class="nb">{</span>Choice 1<span class="nb">}</span>
+  <span class="k">\choice</span><span class="nb">{</span>Choice 2<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question one<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question two<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicearray<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-33dfefa58981354e1e92db235f30d93f630a87ca.svg" alt="\begin{choicearray}[layouter=rotated]
+  \choice{Choice 1}
+  \choice{Choice 2}
+  \question{Question one}
+  \question{Question two}
+\end{choicearray}" /></p>
+</div></div><p class="caption">Example of a choicearray environment</p></div><div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-32" class="tab-code" name="tab-group-32" ><label for="tab-code-32" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-32" class="tab-rendering" name="tab-group-32" checked><label for="tab-rendering-32" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>choicearray<span class="nb">}</span>[layouter=rotated,vertical]
+  <span class="k">\choice</span><span class="nb">{</span>Choice 1<span class="nb">}</span>
+  <span class="k">\choice</span><span class="nb">{</span>Choice 2<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question one<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question two<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicearray<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-b7991d2b528a292b0e29ad477da88255d83dec4f.svg" alt="\begin{choicearray}[layouter=rotated,vertical]
+  \choice{Choice 1}
+  \choice{Choice 2}
+  \question{Question one}
+  \question{Question two}
+\end{choicearray}" /></p>
+</div></div><p class="caption">Example of a vertical choicearray environment</p></div><div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Right now all arguments can be overriden, this should not be the case. It
+would be correct if the variable name is loaded from the kwargs, and then
+the defaults for align and horizontal/vertical should be applied</p>
+</div>
+<p>Inside the environment you need to first define all possible answers with
+choice macro and each question using the question macro.</p>
+</dd></dl>
+
+<dl class="tex environ">
+<dt id="optionarray">
+<em class="property">\begin{</em><code class="sig-name descname">optionarray</code><em class="property">}</em><span class="sig"> <span class="sig-paren">[</span><em></em><span class="sig-paren">]</span></span><br/><span class="sig"></span><br/><em class="property">\end{</em><code class="sig-name descname">optionarray</code><em class="property">}</em><a class="headerlink" href="#optionarray" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>Uh, document this.</p>
+</div>
+</dd></dl>
+
+<dl class="tex environ">
+<dt id="rangearray">
+<em class="property">\begin{</em><code class="sig-name descname">rangearray</code><em class="property">}</em><span class="sig"> <span class="sig-paren">[</span><em></em><span class="sig-paren">]</span></span><br/><span class="sig"></span><br/><em class="property">\end{</em><code class="sig-name descname">rangearray</code><em class="property">}</em><a class="headerlink" href="#rangearray" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">Todo</p>
+<p>Uh, document this.</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sdapsclassic.html"
+                        title="previous chapter">sdapsclassic class</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sdapspdf.html"
+                        title="next chapter">sdapspdf package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/sdapslayout.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="sdapspdf.html" title="sdapspdf package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sdapsclassic.html" title="sdapsclassic class"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sdapslayout package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Benjamin Berg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

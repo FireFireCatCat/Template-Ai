@@ -1,0 +1,628 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creating custom layouts using base commands &#8212; sdaps-class 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/sdapstex.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="sdapsclassic class" href="sdapsclassic.html" />
+    <link rel="prev" title="Frequently Asked Questions" href="FAQ.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="sdapsclassic.html" title="sdapsclassic class"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="FAQ.html" title="Frequently Asked Questions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Creating custom layouts using base commands</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="creating-custom-layouts-using-base-commands">
+<h1>Creating custom layouts using base commands<a class="headerlink" href="#creating-custom-layouts-using-base-commands" title="Permalink to this headline">¶</a></h1>
+<p>Usually the pre-defined layouts that SDAPS provides are sufficent. However,
+there may be special cases that need more customization. Such customization is
+possible, but it does require a more in depth understanding of LaTeX and
+the SDAPS packages.</p>
+<p>If you do this, please make sure to properly test the output. The easiest way
+of such testing is to use the <code class="docutils literal notranslate"><span class="pre">annotate</span></code> command that SDAPS provides, as it
+visualises the view that SDAPS has of the questionnaire. Doing this testing is
+essential as small errors and even side effects of how LaTeX executes code may
+render the information about the questionnaire useless!</p>
+<p>Even seemingly “simple” environments like <code class="docutils literal notranslate"><span class="pre">tabularx</span></code> may not be usable
+together with SDAPS!</p>
+<div class="section" id="general-question-structure">
+<h2>General question structure<a class="headerlink" href="#general-question-structure" title="Permalink to this headline">¶</a></h2>
+<p>To define a question, you need to define
+1. the start of the question and its type,
+2. the possible answers to the question
+3. the checkboxes and textboxes, and finally
+4. the end of the question.</p>
+<p>A very simple example might look like the following.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-3" class="tab-code" name="tab-group-3" ><label for="tab-code-3" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-3" class="tab-rendering" name="tab-group-3" checked><label for="tab-rendering-3" class="label-rendering">Result</label><input type="radio" id="tab-metadata-3" class="tab-metadata" name="tab-group-3"><label for="tab-metadata-3" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="c">% Prepare some stuff so that we can access the specialized commands more easily.</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\let\myquestionbegin\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>begin:nnn
+<span class="k">\let\mycheckbox\sdaps</span><span class="nb">_</span>checkbox:nn
+<span class="k">\let\myanswer\sdaps</span><span class="nb">_</span>answer:n
+<span class="k">\let\myquestionend\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>end:n
+<span class="k">\ExplSyntaxOff</span>
+
+<span class="k">\myquestionbegin</span><span class="nb">{</span>name<span class="nb">}{</span>Choice<span class="nb">}{</span>Exported question text<span class="nb">}</span>
+Please check after reading this text: <span class="k">\mycheckbox</span><span class="nb">{}{}</span>
+<span class="k">\myanswer</span><span class="nb">{</span>check<span class="nb">}</span>
+<span class="k">\myquestionend</span><span class="nb">{</span>name<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-d196d21d38b78b632d8ebed2fa3947c43e7f6fbc.svg" alt="% Prepare some stuff so that we can access the specialized commands more easily.
+\ExplSyntaxOn
+\let\myquestionbegin\sdaps_qobject_begin:nnn
+\let\mycheckbox\sdaps_checkbox:nn
+\let\myanswer\sdaps_answer:n
+\let\myquestionend\sdaps_qobject_end:n
+\ExplSyntaxOff
+
+\myquestionbegin{name}{Choice}{Exported question text}
+Please check after reading this text: \mycheckbox{}{}
+\myanswer{check}
+\myquestionend{name}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]QObject-Choice=1. Exported question text
+[13]Box[1]=Checkbox,0,209.5491pt,729.69331pt,9.95845pt,9.95845pt,box,1.00374pt,1_1,1
+[14]Answer[1]=check
+[15]Variable[1]=1
+</pre></div></div><p class="caption">Question with one checkbox</p></div><p>Please have a look at the resulting document and the generated metadata. In particular,
+please note:</p>
+<ul class="simple">
+<li><p>The export shows “<code class="docutils literal notranslate"><span class="pre">QObject-Choice</span></code>” this is from the <code class="docutils literal notranslate"><span class="pre">Choice</span></code> specified and denotes the question type</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">name</span></code> argument does not show up. It only needs to match the one at the end and primarily serves error detection purposes.</p></li>
+<li><p>SDAPS will see the question as “Exported question text” with one answer “check”</p></li>
+<li><p>The checkbox is automatically exported including its coordinates</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Be careful! The below example shows the effect that <code class="docutils literal notranslate"><span class="pre">tabularx</span></code> has. This environment
+expands its content multiple times, and the result is that the automatic numbering
+breaks; making this the 3rd question rather than the first! Other subtle errors like
+this can occur with certain environments, so make sure to double check everything is OK!</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-4" class="tab-code" name="tab-group-4" ><label for="tab-code-4" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-4" class="tab-rendering" name="tab-group-4" checked><label for="tab-rendering-4" class="label-rendering">Result</label><input type="radio" id="tab-metadata-4" class="tab-metadata" name="tab-group-4"><label for="tab-metadata-4" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="c">% Prepare some stuff so that we can access the specialized commands more easily.</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\let\myquestionbegin\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>begin:nnn
+<span class="k">\let\mycheckbox\sdaps</span><span class="nb">_</span>checkbox:nn
+<span class="k">\let\myanswer\sdaps</span><span class="nb">_</span>answer:n
+<span class="k">\let\myquestionend\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>end:n
+<span class="k">\ExplSyntaxOff</span>
+
+<span class="k">\begin</span><span class="nb">{</span>tabularx<span class="nb">}{</span><span class="k">\textwidth</span><span class="nb">}{</span>|X|<span class="nb">}</span>
+  <span class="k">\myquestionbegin</span><span class="nb">{</span>name<span class="nb">}{</span>Choice<span class="nb">}{</span>The tabularx environment breaks everything ...<span class="nb">}</span>
+  Please check after reading this text: <span class="k">\mycheckbox</span><span class="nb">{}{}</span>
+  <span class="k">\myanswer</span><span class="nb">{</span>check<span class="nb">}</span>
+  <span class="k">\myquestionend</span><span class="nb">{</span>name<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>tabularx<span class="nb">}</span>
+</pre></div>
+Required code in preamble:<div class="highlight"><pre><span></span><span class="k">\usepackage</span><span class="nb">{</span>tabularx<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-57001c6bc38f0fa621278b10dceb4618c957f915.svg" alt="% Prepare some stuff so that we can access the specialized commands more easily.
+\ExplSyntaxOn
+\let\myquestionbegin\sdaps_qobject_begin:nnn
+\let\mycheckbox\sdaps_checkbox:nn
+\let\myanswer\sdaps_answer:n
+\let\myquestionend\sdaps_qobject_end:n
+\ExplSyntaxOff
+
+\begin{tabularx}{\textwidth}{|X|}
+  \myquestionbegin{name}{Choice}{The tabularx environment breaks everything ...}
+  Please check after reading this text: \mycheckbox{}{}
+  \myanswer{check}
+  \myquestionend{name}
+\end{tabularx}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[20]QObject-Choice=3. The tabularx environment breaks everything ...
+[21]Box[3]=Checkbox,0,215.9491pt,719.40335pt,9.95845pt,9.95845pt,box,1.00374pt,3_1,1
+[22]Answer[3]=check
+[23]Variable[3]=3
+</pre></div></div><p class="caption">Question inside tabularx</p></div></div>
+</div>
+</div>
+<div class="section" id="the-different-question-types">
+<h1>The different question types<a class="headerlink" href="#the-different-question-types" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="headings">
+<h2>Headings<a class="headerlink" href="#headings" title="Permalink to this headline">¶</a></h2>
+<p>This is the easiest case, and it can be used for structuring the document.</p>
+<p>For example, the <code class="docutils literal notranslate"><span class="pre">\section</span></code> command simply calls
+<code class="docutils literal notranslate"><span class="pre">\sdaps_qobject_begin:nnn</span> <span class="pre">{</span> <span class="pre">section</span> <span class="pre">}{</span> <span class="pre">Head</span> <span class="pre">}{</span> <span class="pre">#1</span> <span class="pre">}</span></code>
+and <code class="docutils literal notranslate"><span class="pre">\sdaps_qobject_end:n</span> <span class="pre">{</span> <span class="pre">section</span> <span class="pre">}</span></code> for you. Something similar happens for
+the <code class="docutils literal notranslate"><span class="pre">choicegroup</span></code> and other grouping environments where a heading is defined
+for all questions.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-5" class="tab-code" name="tab-group-5" ><label for="tab-code-5" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-5" class="tab-rendering" name="tab-group-5" checked><label for="tab-rendering-5" class="label-rendering">Result</label><input type="radio" id="tab-metadata-5" class="tab-metadata" name="tab-group-5"><label for="tab-metadata-5" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="c">% Prepare some stuff so that we can access the specialized commands more easily.</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\let\myquestionbegin\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>begin:nnn
+<span class="k">\let\myquestionend\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>end:n
+<span class="k">\ExplSyntaxOff</span>
+
+<span class="k">\myquestionbegin</span><span class="nb">{</span>heading<span class="nb">}{</span>Head<span class="nb">}{</span>Heading<span class="nb">}</span>
+  Something inside the section.
+<span class="k">\myquestionend</span><span class="nb">{</span>heading<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-4b5478f94507ac6c56e58574248ecab3aa49c6eb.svg" alt="% Prepare some stuff so that we can access the specialized commands more easily.
+\ExplSyntaxOn
+\let\myquestionbegin\sdaps_qobject_begin:nnn
+\let\myquestionend\sdaps_qobject_end:n
+\ExplSyntaxOff
+
+\myquestionbegin{heading}{Head}{Heading}
+  Something inside the section.
+\myquestionend{heading}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]QObject-Head=1. Heading
+[13]Variable[1]=1
+</pre></div></div><p class="caption">Grouping questions</p></div></div>
+<div class="section" id="multiple-choice">
+<h2>Multiple choice<a class="headerlink" href="#multiple-choice" title="Permalink to this headline">¶</a></h2>
+<p>The simple multiple choice question is of type <code class="docutils literal notranslate"><span class="pre">Choice</span></code>. We already saw the
+first example earlier. Simply add more checkboxes and answers as needed. SDAPS
+will match each checkbox to one answer in the order that it finds the defintions.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-6" class="tab-code" name="tab-group-6" ><label for="tab-code-6" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-6" class="tab-rendering" name="tab-group-6" checked><label for="tab-rendering-6" class="label-rendering">Result</label><input type="radio" id="tab-metadata-6" class="tab-metadata" name="tab-group-6"><label for="tab-metadata-6" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="c">% Prepare some stuff so that we can access the specialized commands more easily.</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\let\myquestionbegin\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>begin:nnn
+<span class="k">\let\mycheckbox\sdaps</span><span class="nb">_</span>checkbox:nn
+<span class="k">\let\myanswer\sdaps</span><span class="nb">_</span>answer:n
+<span class="k">\let\myquestionend\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>end:n
+<span class="k">\ExplSyntaxOff</span>
+
+<span class="k">\myquestionbegin</span><span class="nb">{</span>name<span class="nb">}{</span>Choice<span class="nb">}{</span>Attended events<span class="nb">}</span>
+Which of the following events did you attend?
+<span class="k">\begin</span><span class="nb">{</span>itemize<span class="nb">}</span>
+  <span class="k">\item</span><span class="na">[\mycheckbox{}{}]</span> <span class="k">\myanswer</span><span class="nb">{</span>Keynote<span class="nb">}</span> The Keynote
+  <span class="k">\item</span><span class="na">[\mycheckbox{}{}]</span> <span class="k">\myanswer</span><span class="nb">{</span>Workshop<span class="nb">}</span> A workshop
+  <span class="k">\item</span><span class="na">[\mycheckbox{}{}]</span> <span class="k">\myanswer</span><span class="nb">{</span>Party<span class="nb">}</span> Our glorious party
+  <span class="k">\item</span> Something else entirely <span class="k">\myanswer</span><span class="nb">{</span>other<span class="nb">}</span>
+    <span class="k">\ExplSyntaxOn</span>
+      <span class="k">\sdaps</span><span class="nb">_</span>textbox<span class="nb">_</span>hstretch:nnnnn<span class="nb">{}{</span>2mm<span class="nb">}{</span>5mm<span class="nb">}{</span>40mm<span class="nb">}{</span>1<span class="nb">}</span>
+    <span class="k">\ExplSyntaxOff</span>
+<span class="k">\end</span><span class="nb">{</span>itemize<span class="nb">}</span>
+<span class="k">\myquestionend</span><span class="nb">{</span>name<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-15a7c595951dc9c4d6cfe9d89f7174d3ae95bf57.svg" alt="% Prepare some stuff so that we can access the specialized commands more easily.
+\ExplSyntaxOn
+\let\myquestionbegin\sdaps_qobject_begin:nnn
+\let\mycheckbox\sdaps_checkbox:nn
+\let\myanswer\sdaps_answer:n
+\let\myquestionend\sdaps_qobject_end:n
+\ExplSyntaxOff
+
+\myquestionbegin{name}{Choice}{Attended events}
+Which of the following events did you attend?
+\begin{itemize}
+  \item[\mycheckbox{}{}] \myanswer{Keynote} The Keynote
+  \item[\mycheckbox{}{}] \myanswer{Workshop} A workshop
+  \item[\mycheckbox{}{}] \myanswer{Party} Our glorious party
+  \item Something else entirely \myanswer{other}
+    \ExplSyntaxOn
+      \sdaps_textbox_hstretch:nnnnn{}{2mm}{5mm}{40mm}{1}
+    \ExplSyntaxOff
+\end{itemize}
+\myquestionend{name}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]QObject-Choice=1. Attended events
+[14]Answer[1]=Keynote
+[13]Box[1]=Checkbox,0,46.08492pt,712.58836pt,9.95845pt,9.95845pt,box,1.00374pt,1_1,1
+[16]Answer[1]=Workshop
+[15]Box[1]=Checkbox,0,46.08492pt,694.27495pt,9.95845pt,9.95845pt,box,1.00374pt,1_2,2
+[18]Answer[1]=Party
+[17]Box[1]=Checkbox,0,46.08492pt,675.96153pt,9.95845pt,9.95845pt,box,1.00374pt,1_3,3
+[19]Answer[1]=other
+[20]Box[1]=Textbox,0,178.93889pt,659.36952pt,384.42575pt,19.9169pt,1.00374pt,1_4,
+[21]Variable[1]=1
+</pre></div></div><p class="caption">Multiple choice question using itemize</p></div><p>Note that we placed a textbox rather than a checkbox as one of the possible
+answers.</p>
+</div>
+<div class="section" id="single-choice">
+<h2>Single choice<a class="headerlink" href="#single-choice" title="Permalink to this headline">¶</a></h2>
+<p>We can also define a single choice question. For this, we need to make two
+small adjustments. The first is to use the <code class="docutils literal notranslate"><span class="pre">Option</span></code> question type. The second
+is to tell SDAPS that we would like to use the <code class="docutils literal notranslate"><span class="pre">singlechoice</span></code> style for
+checkboxes.</p>
+<p>The checkbox style change will be in effect for the scope of the question.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-7" class="tab-code" name="tab-group-7" ><label for="tab-code-7" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-7" class="tab-rendering" name="tab-group-7" checked><label for="tab-rendering-7" class="label-rendering">Result</label><input type="radio" id="tab-metadata-7" class="tab-metadata" name="tab-group-7"><label for="tab-metadata-7" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="c">% Prepare some stuff so that we can access the specialized commands more easily.</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\let\myquestionbegin\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>begin:nnn
+<span class="k">\let\mycheckbox\sdaps</span><span class="nb">_</span>checkbox:nn
+<span class="k">\let\myanswer\sdaps</span><span class="nb">_</span>answer:n
+<span class="k">\let\myquestionend\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>end:n
+<span class="k">\let\mysetcheckboxtype\sdaps</span><span class="nb">_</span>checkbox<span class="nb">_</span>set<span class="nb">_</span>type:n
+<span class="k">\ExplSyntaxOff</span>
+
+<span class="k">\myquestionbegin</span><span class="nb">{</span>name<span class="nb">}{</span>Option<span class="nb">}{</span>Attended events<span class="nb">}</span>
+<span class="k">\mysetcheckboxtype</span><span class="nb">{</span>singlechoice<span class="nb">}</span>
+Which one of the following events did you attend?
+<span class="k">\begin</span><span class="nb">{</span>itemize<span class="nb">}</span>
+  <span class="k">\item</span><span class="na">[\mycheckbox{}{}]</span> <span class="k">\myanswer</span><span class="nb">{</span>Talk room A<span class="nb">}</span> Talk in room A
+  <span class="k">\item</span><span class="na">[\mycheckbox{}{}]</span> <span class="k">\myanswer</span><span class="nb">{</span>Talk room B<span class="nb">}</span> Talk in room B
+  <span class="k">\item</span> Something else entirely <span class="k">\myanswer</span><span class="nb">{</span>other<span class="nb">}</span>
+    <span class="k">\ExplSyntaxOn</span>
+      <span class="k">\sdaps</span><span class="nb">_</span>textbox<span class="nb">_</span>hstretch:nnnnn<span class="nb">{}{</span>2mm<span class="nb">}{</span>5mm<span class="nb">}{</span>40mm<span class="nb">}{</span>1<span class="nb">}</span>
+    <span class="k">\ExplSyntaxOff</span>
+<span class="k">\end</span><span class="nb">{</span>itemize<span class="nb">}</span>
+<span class="k">\myquestionend</span><span class="nb">{</span>name<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-e0c44b7ccedea9b3cbbd2df1f1130048d795175a.svg" alt="% Prepare some stuff so that we can access the specialized commands more easily.
+\ExplSyntaxOn
+\let\myquestionbegin\sdaps_qobject_begin:nnn
+\let\mycheckbox\sdaps_checkbox:nn
+\let\myanswer\sdaps_answer:n
+\let\myquestionend\sdaps_qobject_end:n
+\let\mysetcheckboxtype\sdaps_checkbox_set_type:n
+\ExplSyntaxOff
+
+\myquestionbegin{name}{Option}{Attended events}
+\mysetcheckboxtype{singlechoice}
+Which one of the following events did you attend?
+\begin{itemize}
+  \item[\mycheckbox{}{}] \myanswer{Talk room A} Talk in room A
+  \item[\mycheckbox{}{}] \myanswer{Talk room B} Talk in room B
+  \item Something else entirely \myanswer{other}
+    \ExplSyntaxOn
+      \sdaps_textbox_hstretch:nnnnn{}{2mm}{5mm}{40mm}{1}
+    \ExplSyntaxOff
+\end{itemize}
+\myquestionend{name}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]QObject-Option=1. Attended events
+[14]Answer[1]=Talk room A
+[13]Box[1]=Checkbox,0,46.08492pt,712.58836pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_1,1
+[16]Answer[1]=Talk room B
+[15]Box[1]=Checkbox,0,46.08492pt,694.27495pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_2,2
+[17]Answer[1]=other
+[18]Box[1]=Textbox,0,178.93889pt,678.60309pt,384.42575pt,19.9169pt,1.00374pt,1_3,
+[19]Variable[1]=1
+</pre></div></div><p class="caption">Single choice question using itemize</p></div><p>Note that we placed a textbox rather than a checkbox as one of the possible
+answers.</p>
+</div>
+<div class="section" id="ranges">
+<h2>Ranges<a class="headerlink" href="#ranges" title="Permalink to this headline">¶</a></h2>
+<p>Quite often one has single choice question which represent a value on a range.
+One could create these using the <code class="docutils literal notranslate"><span class="pre">Option</span></code> type question, but with <code class="docutils literal notranslate"><span class="pre">Range</span></code>
+it becomes more convenient.</p>
+<p>Range questions can contain a single range and further answers like
+“Not applicable”.</p>
+<p>The range is specified with a separate command. For the purpose of this command,
+the first and last box that is part of the range needs to be specified. This is
+done with a zero based index (i.e. the first checkbox is 0, the second 1, …).</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-8" class="tab-code" name="tab-group-8" ><label for="tab-code-8" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-8" class="tab-rendering" name="tab-group-8" checked><label for="tab-rendering-8" class="label-rendering">Result</label><input type="radio" id="tab-metadata-8" class="tab-metadata" name="tab-group-8"><label for="tab-metadata-8" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="c">% Prepare some stuff so that we can access the specialized commands more easily.</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\let\myquestionbegin\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>begin:nnn
+<span class="k">\let\mycheckbox\sdaps</span><span class="nb">_</span>checkbox:nn
+<span class="k">\let\myanswer\sdaps</span><span class="nb">_</span>answer:n
+<span class="k">\let\myrange\sdaps</span><span class="nb">_</span>range:nnn
+<span class="k">\let\myquestionend\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>end:n
+<span class="k">\let\mysetcheckboxtype\sdaps</span><span class="nb">_</span>checkbox<span class="nb">_</span>set<span class="nb">_</span>type:n
+<span class="k">\ExplSyntaxOff</span>
+
+<span class="k">\myquestionbegin</span><span class="nb">{</span>name<span class="nb">}{</span>Option<span class="nb">}{</span>Attended events<span class="nb">}</span>
+<span class="k">\mysetcheckboxtype</span><span class="nb">{</span>singlechoice<span class="nb">}</span>
+Did you like the keynote?
+<span class="k">\begin</span><span class="nb">{</span>itemize<span class="nb">}</span>
+  <span class="k">\item</span>
+    it was bad
+      <span class="k">\mycheckbox</span><span class="nb">{}{}</span> ~
+      <span class="k">\mycheckbox</span><span class="nb">{}{}</span> ~
+      <span class="k">\mycheckbox</span><span class="nb">{}{}</span> ~
+      <span class="k">\mycheckbox</span><span class="nb">{}{}</span> ~
+      <span class="k">\mycheckbox</span><span class="nb">{}{}</span> ~
+    it was great
+  <span class="k">\item</span><span class="na">[\mycheckbox{}{}]</span> I did not attend the keynote
+<span class="k">\end</span><span class="nb">{</span>itemize<span class="nb">}</span>
+<span class="k">\myrange</span><span class="nb">{</span>lower<span class="nb">}{</span>0<span class="nb">}{</span>bad<span class="nb">}</span>
+<span class="k">\myrange</span><span class="nb">{</span>upper<span class="nb">}{</span>4<span class="nb">}{</span>great<span class="nb">}</span>
+<span class="k">\myanswer</span><span class="nb">{</span>did not attend<span class="nb">}</span>
+<span class="k">\myquestionend</span><span class="nb">{</span>name<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-e6f41b54e84049a7613982bd4f6a7ac2c5e3fa53.svg" alt="% Prepare some stuff so that we can access the specialized commands more easily.
+\ExplSyntaxOn
+\let\myquestionbegin\sdaps_qobject_begin:nnn
+\let\mycheckbox\sdaps_checkbox:nn
+\let\myanswer\sdaps_answer:n
+\let\myrange\sdaps_range:nnn
+\let\myquestionend\sdaps_qobject_end:n
+\let\mysetcheckboxtype\sdaps_checkbox_set_type:n
+\ExplSyntaxOff
+
+\myquestionbegin{name}{Option}{Attended events}
+\mysetcheckboxtype{singlechoice}
+Did you like the keynote?
+\begin{itemize}
+  \item
+    it was bad
+      \mycheckbox{}{} ~
+      \mycheckbox{}{} ~
+      \mycheckbox{}{} ~
+      \mycheckbox{}{} ~
+      \mycheckbox{}{} ~
+    it was great
+  \item[\mycheckbox{}{}] I did not attend the keynote
+\end{itemize}
+\myrange{lower}{0}{bad}
+\myrange{upper}{4}{great}
+\myanswer{did not attend}
+\myquestionend{name}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]QObject-Option=1. Attended events
+[13]Box[1]=Checkbox,0,114.51073pt,712.58836pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_1,1
+[14]Box[1]=Checkbox,0,131.73024pt,712.58836pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_2,2
+[15]Box[1]=Checkbox,0,148.94975pt,712.58836pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_3,3
+[16]Box[1]=Checkbox,0,166.16927pt,712.58836pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_4,4
+[17]Box[1]=Checkbox,0,183.38878pt,712.58836pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_5,5
+[18]Box[1]=Checkbox,0,46.08492pt,694.27495pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_6,6
+[19]Range-lower[1]=0,bad
+[20]Range-upper[1]=4,great
+[21]Answer[1]=did not attend
+[22]Variable[1]=1
+</pre></div></div><p class="caption">Range question</p></div><p>Note that <code class="docutils literal notranslate"><span class="pre">lower</span></code> must always be the earlier checkbox. You can however assign
+different values to each checkbox using the second parameter to the checkbox
+command, thereby redefining the numeric value. The main different to the
+<code class="docutils literal notranslate"><span class="pre">Option</span></code> question is simply how the question will be represented in the
+report.</p>
+</div>
+<div class="section" id="codeboxes">
+<span id="id1"></span><h2>Codeboxes<a class="headerlink" href="#codeboxes" title="Permalink to this headline">¶</a></h2>
+<p>There is experimental support for code boxes, that is not yet available using a
+nice wrapper. This can be used to create QR code read fields.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-9" class="tab-code" name="tab-group-9" ><label for="tab-code-9" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-9" class="tab-rendering" name="tab-group-9" checked><label for="tab-rendering-9" class="label-rendering">Result</label><input type="radio" id="tab-metadata-9" class="tab-metadata" name="tab-group-9"><label for="tab-metadata-9" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\myquestionbegin</span><span class="nb">{</span>name<span class="nb">}{</span>Text<span class="nb">}{</span>This is a QR code question<span class="nb">}</span>
+<span class="k">\mysettextboxtype</span><span class="nb">{</span>codebox<span class="nb">}</span>
+
+Place barcode sticker into the box:
+<span class="c">% Note that we use hspace + vrule for sizing here, that is a bit weird but</span>
+<span class="c">% a reasonable method of setting a size</span>
+<span class="k">\mytexthbox</span><span class="nb">{}{</span>3bp<span class="nb">}{</span> <span class="k">\hspace</span><span class="nb">{</span>8cm<span class="nb">}</span> <span class="k">\vrule</span> width 0pt height 3cm depth 2cm <span class="nb">}</span>
+<span class="k">\myquestionend</span><span class="nb">{</span>name<span class="nb">}</span>
+</pre></div>
+Required code in preamble:<div class="highlight"><pre><span></span><span class="c">% Prepare some stuff so that we can access the specialized commands more easily.</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\let\myquestionbegin\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>begin:nnn
+<span class="k">\let\mytexthbox\sdaps</span><span class="nb">_</span>textbox<span class="nb">_</span>hbox:nnn
+<span class="k">\let\myquestionend\sdaps</span><span class="nb">_</span>qobject<span class="nb">_</span>end:n
+<span class="k">\let\mysettextboxtype\sdaps</span><span class="nb">_</span>textbox<span class="nb">_</span>set<span class="nb">_</span>type:n
+<span class="c">% Set a global overlay with a nice icon (quite likely, you will just want</span>
+<span class="c">% to place text into the hbox below rather than just placing spacing).</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>set:n <span class="nb">{</span>
+  codebox = <span class="nb">{</span>
+    centered<span class="nb">_</span>text = <span class="nb">{</span>
+      <span class="k">\begin</span><span class="nb">{</span>tikzpicture<span class="nb">}</span>[yscale=-0.1, xscale=0.1]
+        <span class="k">\path</span><span class="na">[draw=black,fill=black,stroke=]</span> (-1,0)
+          -- (-1,5) -- (4,5) -- (4,0) -- cycle(7,0) -- (7,5) -- (12,5) -- (12,0) -- cycle(0,1) -- (3,1) -- (3,4)
+          -- (0,4) -- cycle(8,1) -- (11,1) -- (11,4) -- (8,4) -- cycle(1,2) -- (1,3) -- (2,3) -- (2,2) -- cycle(5,2) --
+          (5,3) -- (6,3) -- (6,2) -- cycle(9,2) -- (9,3) -- (10,3) -- (10,2) -- cycle(5,4) -- (5,6) -- (2,6) -- (2,7)
+          -- (6,7) -- (6,4) -- cycle(0,6) -- (0,7) -- (1,7) -- (1,6) -- cycle(7,6) -- (7,7) -- (8,7) -- (8,6) --
+          cycle(-1,8) -- (-1,13) -- (4,13) -- (4,8) -- cycle(5,8) -- (5,13) -- (6,13) -- (6,8) -- cycle(7,8) -- (7,9)
+          -- (8,9) -- (8,10) -- (7,10) -- (7,13) -- (8,13) -- (8,11) -- (9,11) -- (9,10) -- (10,10) -- (10,9) -- (9,9)
+          -- (9,8) -- cycle(10,9) -- (12,9) -- (12,8) -- (10,8) -- cycle(0,9) -- (3,9) -- (3,12) -- (0,12) --
+          cycle(1,10) -- (1,11) -- (2,11) -- (2,10) -- cycle(11,10) -- (11,11) -- (12,11) -- (12,10) -- cycle(11,11) --
+         (10,11) -- (10,12) -- (9,12) -- (9,13) -- (12,13) -- (12,12) -- (11,12) -- cycle;
+       <span class="k">\end</span><span class="nb">{</span>tikzpicture<span class="nb">}</span>
+    <span class="nb">}</span>,
+  <span class="nb">}</span>
+<span class="nb">}</span>
+<span class="k">\ExplSyntaxOff</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-49b0c5bc05b02f591b5a13cf5d1d27b20a0aef17.svg" alt="\myquestionbegin{name}{Text}{This is a QR code question}
+\mysettextboxtype{codebox}
+
+Place barcode sticker into the box:
+% Note that we use hspace + vrule for sizing here, that is a bit weird but
+% a reasonable method of setting a size
+\mytexthbox{}{3bp}{ \hspace{8cm} \vrule width 0pt height 3cm depth 2cm }
+\myquestionend{name}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]QObject-Text=1. This is a QR code question
+[13]Box[1]=Codebox,0,204.34308pt,729.6933pt,237.27507pt,148.28625pt,1.00374pt,1_1,
+[14]Variable[1]=1
+</pre></div></div><p class="caption">Codebox question and field</p></div></div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Creating custom layouts using base commands</a><ul>
+<li><a class="reference internal" href="#general-question-structure">General question structure</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-different-question-types">The different question types</a><ul>
+<li><a class="reference internal" href="#headings">Headings</a></li>
+<li><a class="reference internal" href="#multiple-choice">Multiple choice</a></li>
+<li><a class="reference internal" href="#single-choice">Single choice</a></li>
+<li><a class="reference internal" href="#ranges">Ranges</a></li>
+<li><a class="reference internal" href="#codeboxes">Codeboxes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="FAQ.html"
+                        title="previous chapter">Frequently Asked Questions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sdapsclassic.html"
+                        title="next chapter">sdapsclassic class</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/customlayout.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="sdapsclassic.html" title="sdapsclassic class"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="FAQ.html" title="Frequently Asked Questions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Creating custom layouts using base commands</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Benjamin Berg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

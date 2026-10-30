@@ -1,0 +1,417 @@
+% \iffalse meta-comment
+%
+% Copyright 2025-2026 Michael E. Hammer
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% 
+% The Current Maintainer of this work is Michael E. Hammer.
+%
+% This file is part of the "fhj-script bundle" and all files in that
+% bundle must be distributed together.
+%
+% \fi
+% \iffalse
+%<*driver>
+\ProvidesFile{fhjpaper.dtx}
+%</driver>
+%<class>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
+%<class>\ProvidesClass{fhjpaper}
+%<*class>
+    [2026-10-05 v4.3d A class for formatting papers in the FHJ style]
+%</class>
+%
+%<*driver>
+\documentclass[a4paper]{ltxdoc}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\OnlyDescription % We only want the description
+\begin{document}
+    \DocInput{fhjpaper.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \GetFileInfo{fhjpaper.dtx}
+% \newcommand{\classname}{fhjpaper}
+%
+% \changes{v4.0}{2025/08/03}{Initial package version}
+% \changes{v4.3d}{2026/10/05}{Make \cs{shorttitle} optional (empty footer); fix
+%   the title safeguard, which broke compilation when \cs{shorttitle} was missing}
+%
+% \title{The \textsf{\classname} class\thanks{This document
+% corresponds to \textsf{\classname}~\fileversion,
+% dated \filedate.}}
+% \author{Michael E. Hammer \\ \texttt{michael.hammer@fh-joanneum.at}}
+%
+% \maketitle
+% 
+% \begin{abstract}
+% This class is used to format papers in the FH Joanneum style.
+% It is based on the \textsf{scrartcl} class and provides a set of
+% commands to define the title, author, and other information.
+% It is mainly used to create the expose for a master thesis.
+% \end{abstract}
+%
+% \tableofcontents
+% 
+% \section{Configuration and styling}
+% 
+% This class is based on the \textsf{scrartcl} class and we support forwarding 
+% options to the base class (except the hardcoded options from below).
+%
+%    \begin{macrocode}
+\newcommand{\FHJ@ClassName}{fhjpaper}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
+\ProcessOptions\relax
+%    \end{macrocode}
+%
+% We load the \textsf{scrartcl} class with the following options:
+%
+% \begin{itemize}
+%     \item \texttt{a4paper}: We want to use A4 paper size
+%     \item \texttt{twocolumn}: The document should be typeset in two columns
+%     \item \texttt{fontsize=9pt}: The font size should be 9pt to increase density for 
+%           shorter papers and abstracts
+%     \item \texttt{DIV=16}: The DIV parameter should be set to 16 to ensure a good
+%           balance between text width and height
+% \end{itemize}
+%    
+%    \begin{macrocode}
+\LoadClass[a4paper,twocolumn,fontsize=9pt,DIV=16]{scrartcl}
+%    \end{macrocode}
+%
+% \subsection{Used packages}
+% 
+% For the styling of the document we use the following packages and therefore they are 
+% preloaded and you might not load them again in your document:
+%
+%    \begin{macrocode}
+\RequirePackage{fhjcommon}
+\RequirePackage{etoolbox}
+\PassOptionsToPackage{pagestyleset=standard}{scrlayer-scrpage}
+\RequirePackage{scrlayer-scrpage}
+\PassOptionsToPackage{hidelinks}{hyperref}
+\RequirePackage{hyperref}
+%    \end{macrocode}
+% 
+% \subsection{Multilingual support}
+% 
+% This class supports multilingual documents and therefore we recommend to load the 
+% \texttt{babel} package and set one of two supported languages -- either \texttt{ngerman} 
+% or \texttt{english}. A possible boilerplate for the preamble could look like this:
+% 
+% \begin{quote}
+%   |\usepackage[T1]{fontenc}|\\
+%   |\usepackage|\oarg{language}|{babel}|\\
+% \end{quote}
+%  
+% \section{Preamble}
+% 
+% To support typeset of title, abstract and header/footer we provide a
+% set of macros. To have the correct name for the study program typeset on the document, you
+% need to define it with the macro from \texttt{fhjcommon} package (see the according 
+% documentation):
+% 
+% \begin{quote}
+%  |\FHJProgram{DAT-25}|
+% \end{quote}
+%  
+% \DescribeMacro{\title}
+% This command defines the title of your document and is placed on top of the first page
+% on the according position. It is supported to use line breaks in the title, so you can
+% have multiple lines but we clearly recommend to limit it to three lines maximum.
+%
+%    \begin{macrocode}
+\renewcommand*{\title}[1]{\renewcommand*{\@title}{{#1}}}
+%    \end{macrocode}
+% 
+% \DescribeMacro{\shorttitle}
+% This optional command defines the short title of your document which is used in the
+% footer. This supports the reader if multiple documents are printed together in a single
+% collection. If it is omitted, the footer stays empty.
+% 
+%    \begin{macrocode}
+\newcommand{\FHJ@ShortTitle}{}
+\newcommand{\shorttitle}[1]{\renewcommand{\FHJ@ShortTitle}{{#1}}}
+%    \end{macrocode}
+% 
+% \vspace{1em}
+% \textit{Remark:} Most of above macros are safeguarded and you will get according 
+% warnings if macro definitions are missing and replacement text is set.
+% \vspace{1em}
+% 
+% \iffalse
+\newcommand{\FHJ@CheckTitle}{%
+  \@ifundefined{@title}{%
+    \ClassWarningNoLine{fhjpaper}{Title not defined}\title{Title}%
+  }{}%
+}
+% \fi
+%
+% \subsection{Authors and Affiliations}
+%  
+% This code is based on APA 7th edition style guide without including the deprecated 
+% commands. \par
+% 
+% \begin{itemize}
+% \item \DescribeMacro{\authorsnames}|\authorsnames|
+%       \oarg{comma separated list of superscripts}
+%       \marg{comma separated list of authors name(s)}: Authors names
+% \end{itemize}
+%
+% Where \marg{authors names} is a comma separated list of authors in display order
+% and \oarg{superscripts} is an optional comma separated list of affiliation superscripts. 
+% If there are multiple superscripts for one author, put the set of superscripts within |{ }|.
+%
+% \begin{itemize}
+% \item
+%   \DescribeMacro{\authorsaffiliations}|\authorsaffiliations|\marg{comma separated list
+%   of affiliation(s)}: Author affiliation(s). Put each affiliation within |{ }| and 
+%   separate each affiliation with a comma.
+% \end{itemize}
+%
+% \noindent \textbf{Examples:} \par
+% \noindent One author, one affiliation \par
+% |\authorsnames{Maggie C. Leonard}| \par
+% |\authorsaffiliations{{Department of Psychology,%| \par
+% \hspace*{2em}|George Mason University}}| \par
+% \noindent One author, two affiliations \par
+% |\authorsnames{Andrew K. Jones-Willoughby}| \par
+% |\authorsaffiliations{{School of Psychology,%| \par
+% \hspace*{2em}|University of Sydney},| \par
+% \hspace*{2em}|{Center for Behavioral Neuroscience, American University}}| \par
+% \noindent Two authors, shared affiliation \par
+% |\authorsnames{Mackenzie J. Clement,Talia R. Cummings}| \par
+% |\authorsaffiliations{{College of Nursing,%| \par
+% \hspace*{2em}|Michigan State University}}| \par
+% \noindent Two authors, different affiliations \par
+% |\authorsnames[1,2]{Wilhelm T. Webber,Latasha P. Jackson}| \par
+% |\authorsaffiliations{%| \par
+% \hspace*{2em}|{Max Planck Institute for Human Development, Berlin, Germany},%| \par
+% \hspace*{2em}|{College of Education, University of Georgia}}| \par
+% \noindent Three or more authors, different affiliations \par
+% |\authorsnames[1,{2,3},1]{%| \par
+% \hspace{2em}|Savannah C. St. John,%| \par
+% \hspace{2em}|Fen-Lei Chang,%| \par
+% \hspace{2em}|Carlos O. Vásquez III}| \par
+% |\authorsaffiliations{%| \par
+% \hspace{2em}|{Education Testing Service, Princeton, New Jersey, ...},| \par
+% \hspace{2em}|{MRC Cognition and Brain Science Unit, Cambridge, England},| \par
+% \hspace{2em}|{Department of Psychology, University of Cambridge}}| \par
+%
+% \iffalse
+%%-------------------------------------------------------------------------------------
+%% authors handling
+%% Taken von apa7 class --> See: https://ctan.org/tex-archive/macros/latex/contrib/apa7
+
+\newcommand{\FHJ@CheckAuthor}{%
+  \@ifundefined{FHJ@MultipleAuthors}{%
+    \ClassWarningNoLine{fhjpaper}{Author not defined \authorsnames{Author}}}
+  \@ifundefined{FHJ@MultipleAffils}{%
+    \ClassWarningNoLine{fhjpaper}{Affiliation not defined \authorsaffiliations{Affiliation}}}
+  \@ifundefined{FHJ@MultipleAuthors}{}{%
+	   \ifnum\value{NumberOfSuperscripts}=0%
+	   	% do nothing. If no superscripts are specified, print authors and affiliations without superscripts.
+	   \else%
+      \ifnum\value{NumberOfAuthors}=\value{NumberOfSuperscripts}%
+        % do nothing
+      \else 
+        \ClassError{fhjpaper}{Number of Authors does not match number of Superscripts}%
+          {Please provide an equal number of authors and superscripts.}%
+		  \fi
+	   \fi
+  }%
+}
+
+%% German and English!
+\newcommand*{\FHJ@LastAuthorSeparator}{UNDEF}
+\iflanguage{english}{\renewcommand*{\FHJ@LastAuthorSeparator}{and}}{}
+\iflanguage{ngerman}{\renewcommand*{\FHJ@LastAuthorSeparator}{und}}{}
+
+
+\newcommand*\FHJ@ListAuthors{}
+\newcommand*\FHJ@ListSuperscripts{}
+\newcommand*\FHJ@ListAffiliations{}
+\newcounter{NumberOfAuthors}
+\newcounter{NumberOfSuperscripts}
+
+\newcommand*{\authorsnames}[2][]{%
+  \def\FHJ@MultipleAuthors{} %
+  \renewcommand*\FHJ@ListAuthors{}
+  \renewcommand*\FHJ@ListSuperscripts{}
+  \setcounter{NumberOfAuthors}{0}
+  \setcounter{NumberOfSuperscripts}{0}
+  \forcsvlist{\stepcounter{NumberOfAuthors}\listadd\FHJ@ListAuthors}{#2}
+  \forcsvlist{\stepcounter{NumberOfSuperscripts}\listadd\FHJ@ListSuperscripts}{#1}
+}
+
+\newcounter{NumberOfAffiliations}
+\newcommand*{\authorsaffiliations}[1]{%
+  \def\FHJ@MultipleAffils{} %
+  \renewcommand*\FHJ@ListAffiliations{}
+  \setcounter{NumberOfAffiliations}{0}
+  \forcsvlist{\stepcounter{NumberOfAffiliations}\listadd\FHJ@ListAffiliations}{#1}
+}
+
+% etoolbox stores its list separator ``|'' at catcode 3 (see \cs{etb@catcodes}
+% in etoolbox); the ``|'' delimiters of \cs{FHJ@XTwo} must share that catcode to
+% match the separators in \cs{FHJ@ListAuthors}/\cs{FHJ@ListSuperscripts}, so we
+% switch ``|'' to catcode 3 for these definitions and restore it afterwards.
+\catcode`\|=3
+\def\FHJ@LoopTwo#1#2{%
+    \edef\FHJ@Tmp{\noexpand\FHJ@XTwo%
+      \unexpanded\expandafter{#1}\relax  % no added delimiter here
+      \unexpanded\expandafter{#2}\relax  % no added delimiter here
+    } \FHJ@Tmp%
+  }%
+  
+\def\FHJ@XTwo#1|#2\relax#3|#4\relax{%
+    \FHJ@DoTwo{#1}{#3}%
+    \def\FHJ@Tmp{#2}%
+    \ifx\empty\FHJ@Tmp%
+      \expandafter\@gobble%
+    \else%
+      \expandafter\@firstofone%
+    \fi%
+    {\FHJ@XTwo#2\relax#4\relax}%
+  }%
+
+\catcode`\|=12
+
+\newcommand*{\FHJ@DoTwo}[2]{}
+
+\newcommand*{\FHJ@AuthorSep}{}%
+\newcommand*{\FHJ@LastAuthor}{}%
+\newcommand*{\FHJ@PrelastAuthor}{}%
+\newcommand*{\FHJ@PrelastAuthorSep}{}%
+
+\newcommand{\FHJ@DisplayAuthors}{%
+  \renewcommand*{\FHJ@AuthorSep}{}%
+  \renewcommand*{\FHJ@LastAuthor}{}%
+  \renewcommand*{\FHJ@PrelastAuthor}{}%
+  \renewcommand*{\FHJ@PrelastAuthorSep}{}%
+  \ifnum\value{NumberOfSuperscripts}=0% If no superscripts are specified, print authors without superscripts.
+	  \renewcommand*{\do}[1]{%
+      \FHJ@AuthorSep%
+      \FHJ@LastAuthor%
+      \renewcommand{\FHJ@LastAuthor}{%
+        \renewcommand{\FHJ@AuthorSep}{, 
+          \renewcommand*{\FHJ@PrelastAuthorSep}{,}}%
+        \renewcommand{\FHJ@PrelastAuthor}{\FHJ@PrelastAuthorSep\ \FHJ@LastAuthorSeparator\ }% Terminated commands with \ to preserve following space
+        ##1%
+      }%
+    }%
+    \dolistloop{\FHJ@ListAuthors}%
+  \else
+    \renewcommand*{\FHJ@DoTwo}[2]{%
+      \FHJ@AuthorSep%
+      \FHJ@LastAuthor%
+      \renewcommand{\FHJ@LastAuthor}{%
+        \renewcommand{\FHJ@AuthorSep}{, 
+          \renewcommand*{\FHJ@PrelastAuthorSep}{,}}%
+        \renewcommand{\FHJ@PrelastAuthor}{\FHJ@PrelastAuthorSep\ \FHJ@LastAuthorSeparator\ }% Terminated commands with \ to preserve following space
+        ##1\textsuperscript{##2}%
+      }%
+    }%
+    \FHJ@LoopTwo\FHJ@ListAuthors\FHJ@ListSuperscripts%
+  \fi
+  \FHJ@PrelastAuthor \FHJ@LastAuthor%
+}
+
+\newcommand{\FHJ@DisplayAffiliations}{%
+  \ifnum\value{NumberOfSuperscripts}=0% If no superscripts are specified, print affiliations without superscripts.
+    \renewcommand*{\do}[1]{%
+        ##1\\%
+    }%
+  \else
+    \newcounter{AffiliationNumber}
+    \renewcommand*{\do}[1]{%
+        \stepcounter{AffiliationNumber}
+        \textsuperscript{\arabic{AffiliationNumber}}##1\\%
+    }%
+  \fi
+  \dolistloop{\FHJ@ListAffiliations}%
+}
+% \fi
+% 
+% \subsection{Page style}
+% 
+% The footer contains the short title of the document and the header contains the
+% long title of the study program. The section counter is limited to two levels 
+% (|subsection| maximum).
+%
+%    \begin{macrocode}
+\ofoot{\FHJ@ShortTitle}
+\ifoot{\FHJProgramLong}
+\setcounter{secnumdepth}{2}
+%    \end{macrocode}
+% 
+% \section{Document}
+%
+% \DescribeMacro{\maketitle}
+% The title block -- title, author names and their affiliations (APA~7th style) --
+% is produced by the standard \LaTeX\ \cs{maketitle}. This class customises it by
+% redefining the internal hook \cs{@maketitle} (which also runs the safeguards for
+% title, authors and affiliations); you only ever call \cs{maketitle}
+% yourself. With the preamble macros above in place, the document body is minimal:
+%
+% \begin{quote}
+% |\begin{document}|\\
+% \hspace*{2em}|\maketitle|\\
+% \hspace*{2em}$\dots$\\
+% |\end{document}|
+% \end{quote}
+%
+% \iffalse
+\renewcommand*{\@maketitle}{
+  \cleardoublepage
+  \FHJ@CheckAuthor
+  \FHJ@CheckTitle
+  % title
+  \begin{minipage}{\textwidth}\begin{center}
+    \fontsize{14}{18}\selectfont
+    \textbf{\@title}
+    \vspace{1em}
+  \end{center}\end{minipage}
+  % authors
+  \begin{minipage}{\textwidth}\begin{center}
+    \FHJ@DisplayAuthors
+    \vspace{1em}
+  \end{center}\end{minipage}
+  % affiliations
+  \begin{minipage}{\textwidth}\begin{center}
+    \FHJ@DisplayAffiliations
+    \vspace{2em}
+  \end{center}\end{minipage}
+}
+% \fi
+% 
+% \section{Acknowledgements}
+% 
+% The original work for creating a base class for the study program ``Data Science and
+% Artificial Intelligence'' was
+% done by \textbf{Klaus Lichtenegger}. All appreciation goes to him for creating the
+% first version of this class.
+% 
+% \MaybeStop{\PrintChanges}
+% 
+% \section{Implementation}
+% 
+%    \begin{macrocode}
+%%
+%%  Maybe some future additional macros ...
+%%
+%    \end{macrocode}
+% 
+% \Finale
+% 
+\endinput

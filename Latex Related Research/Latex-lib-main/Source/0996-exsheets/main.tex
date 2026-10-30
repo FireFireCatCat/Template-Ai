@@ -1,0 +1,64 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{exsheets}
+
+\title{Problem Set 6 --- Linear Algebra}
+\author{Course: MATH 220}
+\date{Due: October 9, 2026}
+
+\begin{document}
+\maketitle
+
+Answer every question below. Full solutions are collected at the end of the
+sheet via \verb|\printsolutions|, so students can be handed the questions
+alone and the answer key generated separately from the same source.
+
+\begin{question}{5}
+  Let $A = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$. Find the eigenvalues
+  of $A$.
+\end{question}
+\begin{solution}
+  The characteristic polynomial is
+  $\det(A - \lambda I) = (2-\lambda)^2 - 1 = \lambda^2 - 4\lambda + 3$, which
+  factors as $(\lambda - 1)(\lambda - 3)$. So the eigenvalues are
+  $\lambda = 1$ and $\lambda = 3$.
+\end{solution}
+
+\begin{question}{5}
+  For the same matrix $A$, find an eigenvector for each eigenvalue.
+\end{question}
+\begin{solution}
+  For $\lambda = 1$: $(A - I)v = 0$ gives $v = (1, -1)^\top$ (up to scale).
+  For $\lambda = 3$: $(A - 3I)v = 0$ gives $v = (1, 1)^\top$ (up to scale).
+\end{solution}
+
+\begin{question}{10}
+  Show that a $2 \times 2$ symmetric real matrix always has real eigenvalues.
+\end{question}
+\begin{solution}
+  For $A = \begin{pmatrix} a & b \\ b & c \end{pmatrix}$ the characteristic
+  polynomial is $\lambda^2 - (a+c)\lambda + (ac - b^2)$, with discriminant
+  $(a+c)^2 - 4(ac - b^2) = (a - c)^2 + 4b^2 \geq 0$. A non-negative
+  discriminant means both roots are real.
+\end{solution}
+
+\begin{question}{10}
+  Let $V$ be the vector space of polynomials of degree at most $2$. Show that
+  $\{1, x, x^2\}$ is a basis for $V$.
+\end{question}
+\begin{solution}
+  \textbf{Spanning:} any $p(x) = a_0 + a_1 x + a_2 x^2$ with $a_i \in
+  \mathbb{R}$ is by definition a linear combination of $1, x, x^2$.
+
+  \textbf{Independence:} if $a_0 + a_1 x + a_2 x^2 = 0$ for all $x$, comparing
+  coefficients forces $a_0 = a_1 = a_2 = 0$. So the three polynomials are
+  linearly independent, and together they form a basis.
+\end{solution}
+
+\clearpage
+\section*{Answer Key}
+\printsolutions
+
+\end{document}

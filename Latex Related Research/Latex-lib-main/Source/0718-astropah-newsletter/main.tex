@@ -1,0 +1,186 @@
+% The class loads wasysym with its default `compat1` option, which \lets
+% \iint/\iiint to wasysym's own symbols at package-load time (i.e. before
+% mhchem's internal amsmath load happens later in the same class). amsmath
+% then tries \newcommand{\iint} and fails because the name is already taken
+% -- a real clash between this class's dependencies on current TeX Live, not
+% something introduced here. `nointegrals` keeps wasysym from touching
+% \iint/\iiint at all, which is the settings a text-only newsletter needs.
+\PassOptionsToPackage{nointegrals}{wasysym}
+
+\documentclass{astropah}
+
+\graphicspath{{images}}
+
+% Information that needs to be updated in every issue
+\newcommand{\monthyear}{September 2026}
+\newcommand{\issuenum}{1}
+\newcommand{\nextissue}{15 October 2026}
+\newcommand{\nextdeadline}{1 October 2026}
+
+\begin{document}
+
+% =================================================
+%  EDITORIAL
+% =================================================
+\begin{editorial}
+
+  Welcome to the first issue of this newsletter. Polycyclic Aromatic
+  Hydrocarbons (PAHs) remain one of the most abundant classes of complex
+  organic molecules detected in space, carrying an estimated 10--20\% of the
+  carbon in the interstellar medium. This issue rounds up three recent
+  papers on PAH emission features, a JWST spectroscopy campaign, and the
+  usual meetings calendar.
+
+  As always, we welcome short summaries of newly accepted papers, PhD
+  positions, and meeting announcements from the community for the next
+  issue.
+
+\end{editorial}
+
+\vfill
+
+\usefont {OT1} {phv}{b}{n}
+\fontsize{15}{15}
+\selectfont
+
+\begin{shaded}
+  \vspace{0.1cm}
+  \centerline{\textcolor{white}{Next issue: \textbf{\nextissue}.}}
+  \vspace{0.2cm}
+  \centerline{\textcolor{white}{Submission deadline: \textbf{\nextdeadline}.}}
+  \vspace{0.1cm}
+\end{shaded}
+
+\newpage
+
+% =================================================
+%  In Focus
+% =================================================
+\begin{infocus}
+
+  \begin{center}
+    {\infocustitle \noindent \purple{Aromatic Infrared Bands Toward the
+    Orion Bar}}
+  \end{center}
+  \vspace{0.4cm}
+  \normalsize
+
+  The Orion Bar is a favourite laboratory for PAH astrochemistry: a dense
+  photodissociation region illuminated almost edge-on, so the transition
+  from ionised gas through the PAH-emission layer to the molecular cloud
+  can be mapped spatially rather than inferred from an unresolved spectrum.
+
+  Recent JWST/NIRSpec integral-field observations resolve the 3.3, 6.2 and
+  7.7 \textmu m aromatic infrared bands across this transition at
+  sub-arcsecond resolution for the first time. The band ratios shift
+  systematically with distance from the ionisation front, consistent with a
+  changing balance between PAH cations and neutrals as the local radiation
+  field softens.
+
+  \begin{itemize}
+    \item The 3.3\,\textmu m/11.2\,\textmu m ratio, a common proxy for PAH
+      ionisation state, drops by a factor of $\sim$3 across the mapped
+      region.
+    \item No strong evidence yet for a spatial break in PAH size
+      distribution, contrary to some pre-JWST predictions.
+    \item Follow-up MIRI/MRS spectroscopy is scheduled to extend the map to
+      the 12--18\,\textmu m range this cycle.
+  \end{itemize}
+
+\end{infocus}
+
+% =================================================
+%  Abstracts
+% =================================================
+\newpage
+\begin{abstracts}
+
+  \title{Spatially Resolved Aromatic Band Ratios in the Orion Bar with
+    JWST/NIRSpec}
+  \begin{abstract}[Leiden Observatory, Leiden University \\ Institut
+      d'Astrophysique Spatiale]{A.\ Tielens$^1$, M.\ Berne$^2$ and
+      K.\ Habart$^2$}
+    We present JWST/NIRSpec IFU observations of the Orion Bar photodissociation
+    region, mapping the 3.3, 6.2 and 7.7 \textmu m aromatic infrared bands at
+    0.2 arcsecond resolution. Band ratios vary smoothly with depth into the
+    cloud, tracing the changing PAH ionisation balance predicted by
+    photochemical models. We find no evidence for the sharp size-selective
+    photodestruction zone proposed in earlier ground-based studies.
+  \end{abstract}
+
+  \title{A Survey of PAH Emission in Nearby Star-Forming Dwarf Galaxies}
+  \begin{abstract}[Max Planck Institute for Astronomy \\ Princeton
+      University]{R.\ Sandstrom$^1$ and L.\ Draine$^2$}
+    Using archival Spitzer/IRS spectra of 42 nearby dwarf galaxies, we measure
+    the PAH-to-total-infrared luminosity fraction as a function of gas-phase
+    metallicity. The fraction declines steeply below 12 + log(O/H) = 8.0,
+    consistent with PAH destruction in the harder radiation fields of
+    low-metallicity star-forming regions.
+  \end{abstract}
+
+\end{abstracts}
+
+% =================================================
+%  Meetings
+% =================================================
+\newpage
+\headergraphic{images/Header_Meetings.png}
+\section*{~}
+\addcontentsline{toc}{section}{Meetings}
+\normalsize
+
+\begin{itemize}
+  \item \textbf{PAHs and the Universe III} --- 12--16 April 2027,
+    Granada, Spain. Abstract deadline: 15 January 2027.
+  \item \textbf{Molecular Astrophysics Gordon Research Conference} ---
+    June 2027, Newport, RI, USA.
+  \item \textbf{JWST Cycle 4 Proposal Deadline} --- 1 November 2026.
+\end{itemize}
+
+% =================================================
+%  Announcements
+% =================================================
+\headergraphic{images/Header_Announcements.png}
+\section*{~}
+\addcontentsline{toc}{section}{Announcements}
+\normalsize
+
+\textbf{Postdoctoral position, Leiden Observatory.} A 2-year postdoctoral
+position is available to work on laboratory spectroscopy of PAH cations
+relevant to JWST mid-infrared observations. Applications due 1 December
+2026.
+
+\textbf{New database release.} The PAH IR Spectroscopic Database (v4.0)
+now includes computed spectra for over 4000 PAH species, including
+nitrogen-substituted and partially dehydrogenated variants.
+
+% =================================================
+%  Box at the end
+% =================================================
+\textcolor{white}{.}
+\vfill
+
+\begin{shaded}
+\usefont {OT1} {phv}{m}{n}
+\fontsize{15}{16}
+\selectfont
+
+\centerline{\textbf{\textcolor{white}{AstroPAH Newsletter}}}
+
+\begin{multicols}{2}
+\normalsize
+
+\noindent \href{http://astropah-news.strw.leidenuniv.nl}{\textcolor{white}{http://astropah-news.strw.leidenuniv.nl}}
+
+\noindent \href{mailto:astropah@strw.leidenuniv.nl}{\textcolor{white}{astropah@strw.leidenuniv.nl}}
+
+\columnbreak
+
+\flushright \textcolor{white}{Next issue: \nextissue}
+
+\textcolor{white}{Submission deadline: \nextdeadline}
+
+\end{multicols}
+\end{shaded}
+
+\end{document}

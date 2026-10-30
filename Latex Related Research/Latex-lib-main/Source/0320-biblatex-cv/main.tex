@@ -1,0 +1,59 @@
+%% BibLaTeX CV — an academic CV where every section (education, publications,
+%% talks, funding, teaching, committees) is generated from entries in one
+%% .bib file, using Daniel E. Shub's biblatex-cv package.
+%%
+%% biblatex-cv is a THIN WRAPPER around biblatex: \RequirePackage{biblatex-cv}
+%% hardcodes backend=biber and its own bibliography style (custom entry types
+%% like @school/@degree/@presentation, each with their own \printbibliography
+%% driver and mandatory-field constraints defined in biblatex-cv.dbx). There
+%% is no bibtex fallback -- the package cannot run under classic bibtex at
+%% all, only under biber, which this compile pipeline now runs automatically
+%% when a document's main.bcf is present.
+%%
+%% Class documentation: texdoc biblatex-cv | https://ctan.org/pkg/biblatex-cv
+%% Licence: LPPL-1.3c, (c) Daniel E. Shub.
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[american]{babel}
+%% biblatex-cv.sty uses etoolbox's \listxadd/\xifinlist on
+%% \cv@blx@highlightname@hash@list (its \highlightname feature, for bolding
+%% one name across every CV entry) without ever initialising that list
+%% macro first -- etoolbox's list commands require the control sequence to
+%% already exist. Pre-declaring it as an empty macro here is the standard
+%% etoolbox fix for an uninitialised list and does not touch package internals.
+\usepackage{etoolbox}
+\makeatletter
+\newcommand{\cv@blx@highlightname@hash@list}{}
+\makeatother
+\usepackage{biblatex-cv}
+\addbibresource{cv.bib}
+
+\usepackage{parskip}
+
+\begin{document}
+
+\begin{center}
+  {\LARGE\bfseries Ada Lovelace}\\[2pt]
+  Department of Analytical Engineering, Springfield University\\
+  \texttt{ada.lovelace@example.edu}
+\end{center}
+
+\section*{Education}
+%% Only the @school entry is \nocite'd: its degreelist={degreePhD} field
+%% pulls the @degree entry in automatically via biblatex-cv's own data
+%% inheritance (\DeclareDataInheritance{school}{degree}{...}) and its
+%% "school" bibliography driver already prints the degree line beneath the
+%% institution -- \nocite'ing degreePhD directly would print it a second
+%% time as a standalone entry.
+\nocite{schoolPhD,degreePhD}
+\printbibliography[heading=none,resetnumbers=true,check=Education]
+
+\section*{Publications}
+\nocite{cvArticleOne,cvArticleTwo}
+\printbibliography[heading=none,resetnumbers=true,env=numbered,type=article]
+
+\section*{Invited Talks}
+\nocite{cvTalkOne}
+\printbibliography[heading=none,resetnumbers=true,check=Presentation]
+
+\end{document}

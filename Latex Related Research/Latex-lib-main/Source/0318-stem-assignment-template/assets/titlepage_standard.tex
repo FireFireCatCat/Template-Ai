@@ -1,0 +1,82 @@
+% !TeX root = ../main.tex
+% Copyright (c) 2026 Tyler Bignell
+% Licensed under the MIT License - see LICENSE file for details
+
+\pagenumbering{roman} % Titlepage is numbered in roman
+\begin{titlepage}
+	\Centering
+	\vspace*{2cm}
+	% SCHOOL ---------------------------------------------
+	\Large \seriftext{\metaUniversity}\par\vspace{0.1cm}
+	\large \seriftext{\metaFaculty}\par\vspace{0.1cm}
+	\ifthenelse{\equal{\metaDepartment}{}}{}{\normalsize \seriftext{\metaDepartment}\par\vspace{0.1cm}}
+	% TITLE -----------------------------------------------
+	\textcolor{themecolour}{\rule{\linewidth}{0.5mm}}
+	\vspace{0.2cm}
+	\par{\LARGE \seriftext{\textbf{\metaAssignmentTitle}}}\par
+	\vspace{0.2cm}
+	\textcolor{themecolour}{\rule{\linewidth}{0.5mm}}\par\vspace{0.2cm}
+	% COURSE CODE -----------------------------------------
+	\normalsize \metaCourseCode : \metaCourseName\par\vspace{0.2cm}
+	% STUDENT / INSTRUCTOR BLOCK --------------------------
+	\begin{minipage}[t]{0.4\textwidth}
+		\begin{FlushLeft}\normalsize
+			\ifthenelse{\equal{\metaPartners}{}}{%
+				\emph{Student:}\\
+				\metaStudentName\\
+				\metaStudentNumber\\
+				\metaStudentEmail
+			}{%
+				\emph{Students:}\\\vspace{0.2cm}
+				\begin{tabular}{@{}l@{\quad}l@{}}
+					\metaStudentName & \metaStudentNumber\\
+					\metaPartners
+				\end{tabular}
+			}
+		\end{FlushLeft}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.4\textwidth}
+		\begin{FlushRight}\normalsize
+			\emph{Instructor:}\\
+			\metaInstructor
+		\end{FlushRight}
+	\end{minipage}
+	% LOGO + DATE (BOTTOM) ---------------------------------
+	\vfill
+	\ifthenelse{\equal{\metaLogoLocation}{york}}{%
+		\vbox{
+			\vspace{0.8cm}
+			{\normalsize \metaDate}
+			\vspace{1cm}
+			% LOGO (BOTTOM RIGHT, REMOVE FILE FOR BLANK) ------
+			\ifthenelse{\equal{\metaLogoPath}{}}{}{
+				\IfFileExists{\metaLogoPath}{
+					\begin{FlushRight}
+						\begin{minipage}{\textwidth}
+							\RaggedLeft
+							\includegraphics[width=\linewidth, height=1.5cm, keepaspectratio]{\metaLogoPath}
+						\end{minipage}
+					\end{FlushRight}
+				}{}
+			}
+		}
+	}{%
+		\vbox{
+			% LOGO (CENTERED ABOVE DATE, REMOVE FILE FOR BLANK) ---
+			\ifthenelse{\equal{\metaLogoPath}{}}{}{
+				\IfFileExists{\metaLogoPath}{
+					\begin{center}
+						\begin{minipage}{\textwidth}
+							\centering
+							\includegraphics[width=\linewidth, height=3cm, keepaspectratio]{\metaLogoPath}
+						\end{minipage}
+					\end{center}
+				}{}
+			}
+			\vspace{0.5cm}
+			{\normalsize \metaDate}
+			\ifthenelse{\equal{\metaLogoPath}{}}{\vspace{2cm}}{\vspace{1cm}}
+		}
+	}
+\end{titlepage}

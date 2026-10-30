@@ -1,0 +1,60 @@
+% Scientific Book Starter — adapted from minireference/sample-book (MIT),
+% a starter template for scientific books with a print-production
+% pipeline (Softcover/PolyTeXnic).
+%
+% SIMPLIFIED SIGNIFICANTLY from upstream: upstream's actual compile path
+% requires a Ruby gem (`softcover`, `polytexnic`) to pre-process the .tex
+% source before LaTeX ever sees it (the README's own install
+% instructions are `gem install` steps, not `pdflatex`), and its 221-line
+% softcover.sty plus five auxiliary .sty files load `fontspec` (needing
+% xelatex/lualatex) alongside Type1 `helvet`/`courier` fonts (a pdflatex
+% assumption) — an internally inconsistent engine requirement that only
+% works because the Ruby preprocessor rewrites the source first. This
+% starter keeps the STRUCTURE (concept-map-style intro, a mathematics
+% fundamentals chapter, front/back matter with an answers section) but
+% is a plain, self-contained `book`-class document with ordinary LaTeX
+% packages, and entirely original text (the real repo's own chapter
+% content is Minireference Co.'s actual published book prose).
+\documentclass[10pt]{book}
+
+\usepackage[T1]{fontenc}
+\usepackage[svgnames]{xcolor}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage[colorlinks,linkcolor=DarkBlue,urlcolor=DarkBlue]{hyperref}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+{\Huge\bfseries Ideas Worth Knowing\par}
+\vspace{0.5cm}
+{\Large A Short Course in Scientific Thinking\par}
+\vspace{2cm}
+{\large Priya Anand\par}
+\vfill
+{\large 2026\par}
+\end{titlepage}
+
+\frontmatter
+\tableofcontents
+
+\include{chapters/00_concept_map}
+\include{chapters/00_preface}
+
+\mainmatter
+
+\include{chapters/01_fundamentals}
+\include{chapters/02_estimation}
+
+\backmatter
+
+\include{chapters/99_answers}
+
+\end{document}

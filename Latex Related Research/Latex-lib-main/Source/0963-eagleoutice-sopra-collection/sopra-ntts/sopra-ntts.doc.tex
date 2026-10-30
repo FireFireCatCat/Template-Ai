@@ -1,0 +1,96 @@
+\documentclass{sopra-base}
+
+\usepackage{sopra-documentation}
+\usepackage{sopra-ntts}
+
+\title{The 'sopra-ntts' package}
+\subtitle[Documentation for the 'sopra-ntts' package]{Documentation for the 'sopra-ntts' package | Version \thesonversion}
+
+\duedate{2019-12-2}
+
+\keywords{Documentation,sopra-ntts,sopra,uni ulm,uulm,package}
+\authors{Florian Sihler (florian.sihler@uni-ulm.de)}
+
+\group{Die Affenbande}
+\begin{document}
+
+    \maketitle
+
+\section{General}
+\subsection{Why, wherefore, whence?}
+    This \LaTeXe-package outsources the Futura-like Ti\textit{k}Z font from the Sopra project of the
+    winter semester 2019 and summer semester 2020.
+    This documentation was created together with
+    \T{sopra-base.cls}, as well as the \T{sopra-documentation.sty} package.\par
+    The \T{sopra-listings} package is used to visualize the
+    individual code snippets.
+    The corresponding package should also be embedded in this document: \scalebox{.65}{\attachfile[subject={sopra-ntts.sty}]{sopra-ntts.sty}}.
+\subsection{Dependencies}
+    This package includes the following packages:
+    \begin{multicols}{3}
+        \begin{itemize}
+            \def\pkgparse#1:#2\@nil{%
+                \T{#1}\ifx!#2!\else\textsuperscript{(#2)}\fi%
+            }
+            \foreach \pkg in {tikz:} {
+                \item \expandafter\pkgparse\pkg\@nil
+            }
+        \end{itemize}
+    \end{multicols}
+    All of these packages should be part of any common \LaTeX-distribution.
+
+\subsection{Installation}
+    The package is not distributed as a \T{.dtx} file, which is why the
+    following options are available:
+    \begin{itemize}
+        \item The package can be placed in the same directory as the document.
+                In this case, the inclusion command reads:
+\begin{plainlatex}
+\usepackage{sopra-ntts}
+\end{plainlatex}
+        \item The package can be placed in a subdirectory, or in a
+                directory shipped alongside the document. In
+                this case, it is specified via the (relative) path:
+\begin{plainlatex}
+\usepackage{./My/Path/to/sopra-ntts}
+\end{plainlatex}
+        \item The package can be placed (via a symlink or similar)
+              into your own \emph{texmf} tree.
+              For example, on Linux using texlive,
+              the package can be placed here: \bvoid{\~/texmf/tex/latex/}.
+              The directory can be created and then
+              updated using \bbash{texhash \~/texmf}. The
+              package can now be used like any other installed package:
+\begin{plainlatex}
+\usepackage{sopra-ntts}
+\end{plainlatex}
+    \end{itemize}
+
+\subsection{Further Notes}
+In version \thesonversion{} (\cmdref{thesonversion}) there are no further
+notes.
+
+\section{Commands and Environments}
+
+Note that the prefix \T{env@} only indicates the nature of an environment and is not part of the actual identifier!\par{}
+Also note: for all titles and lengths to be resolved correctly, the document
+generally needs to be compiled twice to produce a correct display.
+
+\begin{command}{sonNtts}{\optArg{scale=0.06}\manArg{color}}
+    Must be placed inside a \say{tikzpicture} environment and writes the lettering (here in black):
+    \begin{center}
+        \begin{tikzpicture}
+            \sonNtts{black}
+        \end{tikzpicture}
+    \end{center}
+    The command was never fundamentally designed for general use. The use of the coordinates can be found in the definition of the title pages of the document classes.
+\end{command}
+
+\subsection{General Commands}
+\begin{command}{thesonversion}{}
+    Returns the current version of the package. This gives: \cmd{thesonversion}: \thesonversion\\
+    \notetext{Note: via \blatex{\\value\{sonversion\}} the
+    version can be obtained as a $4$-digit number: \arabic{sonversion}.}
+\end{command}
+
+\end{document}

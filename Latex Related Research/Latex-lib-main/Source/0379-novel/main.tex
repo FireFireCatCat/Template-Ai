@@ -1,0 +1,132 @@
+% !TeX TS-program = lualatex
+% !TeX encoding = UTF-8
+%
+% novel — a LuaLaTeX class for popular fiction, aimed at print-on-demand
+% publishing (trim size, PDF/X output, running heads, chapter-opening
+% pages, scene breaks). Ships with TeX Live; not bundled.
+%
+% Class documentation: texdoc novel | https://ctan.org/pkg/novel
+% Licence: TeX code LPPL-1.3c; the bundled NovelDeco.otf decorative font
+% is OFL-1.1. (c) 2017-2024 Robert Allgeyer.
+\documentclass{novel}
+%%% METADATA (required for PDF/X):
+\SetTitle{The Clockmaker's Daughter}
+\SetSubtitle{A Novel}
+\SetAuthor{Isabelle Marchetti}
+\SetApplication{LuaLaTeX with novel and microtype}
+\SetProducer{LuaLaTeX with novel-pdfx and hyperref}
+\SetPDFX[CGATSTR001]{X-1a:2001}
+%%% DIMENSIONS: a standard mass-market trim size.
+\SetTrimSize{5.5in}{8.5in}
+\SetMargins{0.5in}{0.5in}{0.5in}{0.75in}
+%%% FONTS:
+\SetParentFont[%
+SmallCapsFeatures={Renderer=Basic},%
+Kerning=On,%
+Ligatures=TeX,%
+]{Libertinus Serif}
+\SetDecoFont{NovelDeco.otf}
+\setsansfont{Libertinus Sans}
+\setmonofont{Libertinus Mono}
+\setmathfont{Libertinus Math}
+%%% HEADERS/FOOTERS:
+\SetHeadFootStyle{1}
+\SetHeadJump{1.5}
+\SetFootJump{1.5}
+\SetLooseHead{50}
+\SetEmblems{}{}
+\SetHeadFont[\parentfontfeatures,Letters=SmallCaps,Scale=0.92]{\parentfontname}
+\SetPageNumberStyle{\thepage}
+\SetVersoHeadText{\theAuthor}
+\SetRectoHeadText{\theTitle}
+%%% CHAPTERS:
+\SetChapterStartStyle{footer}
+\SetChapterStartHeight{10}
+\SetChapterFont[Numbers=Lining,Scale=1.6]{\parentfontname}
+\SetSubchFont[Numbers=Lining,Scale=1.2]{\parentfontname}
+\SetScenebreakIndent{false}
+\microtypesetup{config=novel-microtype,stretch=20,shrink=20,final}
+
+\begin{document}
+
+\frontmatter
+
+\thispagestyle{empty}
+\begin{ChapterStart}[8]
+\vspace{\nbs}
+\ChapterTitle{The Clockmaker's Daughter}
+\vspace{\nbs}
+\ChapterSubtitle{A Novel}
+{\centering Isabelle Marchetti\par}
+\end{ChapterStart}
+
+\clearpage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+Also by Isabelle Marchetti\\
+\emph{The Glassblower's Wife}\\
+\emph{Winter in Trieste}
+\end{center}
+\vspace*{\fill}
+
+\clearpage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+\textsc{The Clockmaker's Daughter}\par
+Copyright \textcopyright{} 2026 by Isabelle Marchetti.\\
+All rights reserved. This is a work of fiction. Names, characters,
+places, and incidents either are products of the author's imagination
+or are used fictitiously.
+\end{center}
+\vspace*{\fill}
+
+\clearpage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+For my grandmother, who kept every clock in the house five minutes fast.
+\end{center}
+\vspace*{\fill}
+
+\mainmatter
+
+\clearpage
+\begin{ChapterStart}
+\vspace*{2\nbs}
+\ChapterTitle{--- 1 ---}
+\end{ChapterStart}
+Sofia Bellini had inherited three things from her father: his stubborn
+jaw, his workshop on the Via degli Orologi, and a clock that would not
+keep time no matter how many times she took it apart.
+
+She turned it over in her hands one more time before setting it back
+on the bench. Outside, Trieste was waking up in its usual unhurried
+way, fishing boats easing out past the breakwater, the smell of
+roasting coffee drifting up from the café below.
+
+\scenebreak
+
+The letter had arrived that morning, sealed with wax the colour of
+dried blood. She recognized the crest before she broke it: the
+Contessa's household, the one that had not written to her family in
+eleven years.
+
+\clearpage
+
+\begin{ChapterStart}
+\vspace*{2\nbs}
+\ChapterTitle{--- 2 ---}
+\end{ChapterStart}
+The villa on the hill had not changed. Sofia remembered the gate, the
+gravel drive, the particular green of the cypress trees against a sky
+that never seemed to make up its mind about rain.
+
+What had changed was the silence. No dogs barking. No servants in the
+courtyard. Just a single clock, visible through a ground-floor window,
+its pendulum frozen mid-swing.
+
+\clearpage
+
+\end{document}

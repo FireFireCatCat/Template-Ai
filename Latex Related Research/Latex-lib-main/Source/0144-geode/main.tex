@@ -1,0 +1,95 @@
+\documentclass[10pt]{beamer}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
+\usepackage[diamond]{beamertheme-geode}
+
+\title{Crystal Structures, Briefly}
+\author{Dana Whitfield}
+\date{\today}
+
+\begin{document}
+
+\geotitle
+
+\section{Why Crystals Matter}
+
+\geosection
+
+\begin{frame}
+  \frametitle{\subsecname}
+
+  \begin{definition}
+    A \textbf{crystal lattice} is a periodic arrangement of atoms
+    repeating in three dimensions.
+  \end{definition}
+  \vfill
+  Properties that follow from lattice symmetry:
+  \vfill
+  \begin{itemize}
+    \item Cleavage planes along low-index directions
+    \item Anisotropic optical and electrical behaviour
+    \item Characteristic X-ray diffraction patterns
+  \end{itemize}
+\end{frame}
+
+\subsection{The Seven Crystal Systems}
+
+\begin{frame}
+  \frametitle{\subsecname}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Cubic
+        \item Tetragonal
+        \item Orthorhombic
+        \item Hexagonal
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Trigonal
+        \item Monoclinic
+        \item Triclinic
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{A Coordination Example}
+
+\geosection
+
+\begin{frame}
+  \frametitle{\subsecname}
+  Coordination number in a simple cubic lattice:
+  \vfill
+  $$CN(\text{simple cubic}) = \textcolor{accent}{6}$$
+  \vfill
+  \begin{center}
+    \begin{tikzpicture}[
+      node/.style={circle, draw=accent!100, fill=bg1!40, very thick, minimum size=10mm},
+      ]
+      \node[node] (c) {A};
+      \node[node] (n) [above=of c] {};
+      \node[node] (s) [below=of c] {};
+      \node[node] (e) [right=of c] {};
+      \node[node] (w) [left=of c] {};
+
+      \draw (c) -- (n);
+      \draw (c) -- (s);
+      \draw (c) -- (e);
+      \draw (c) -- (w);
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\section{Closing}
+
+\begin{frame}
+  \frametitle{Thank you}
+  Questions welcome.\\[1em]
+  dana.whitfield@example.org
+\end{frame}
+
+\end{document}

@@ -1,0 +1,138 @@
+% This .sty file is provided with permission to edit.  
+% Authorized by: Riccardo Martelli  
+% Feel free to modify and adapt as needed.  
+
+\ProvidesPackage{beamerthemenovabeamer}[2026/03/29 v1.1 NovaBeamer Theme]
+
+\usepackage{tikz}      % For drawing frame borders
+\usepackage{comment}
+
+%Define theme colors
+\definecolor{black}{RGB}{0, 0, 0}       % Black
+\definecolor{sithred}{RGB}{159,18,18} % Cool Red
+
+% Set default colors in the theme
+\setbeamercolor{title}{fg=white, bg=sithred}
+\setbeamercolor{author}{fg=black, bg=}
+\setbeamercolor{institute}{fg=black, bg=}
+\setbeamercolor{date}{fg=black, bg=}
+
+
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}[triangle]
+
+% Ensure all links are underlined
+\let\oldhref\href
+\renewcommand{\href}[2]{\underline{\oldhref{#1}{#2}}}  % Underline all links
+
+
+% Custom title page template
+\setbeamertemplate{title page}{%
+    \vspace{5em} % Adjust vertical spacing
+    \begingroup
+    \centering
+    
+    %  Title Box (Sith Red)
+    \begin{beamercolorbox}[sep=12pt,center,shadow=true,rounded=true,wd=1\textwidth]{title}
+        \color{white} % Title text color
+        \bfseries\usebeamerfont{title}\inserttitle\par%
+        \ifx\insertsubtitle\@empty%
+        \else%
+        \vskip0.25em%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+        \fi%
+    \end{beamercolorbox}
+    
+    \vskip1em % Space between sections
+    
+    %  Author (Plain Text)
+    {\LARGE \usebeamerfont{author} \usebeamercolor[fg]{author} \insertauthor\par}
+    
+    \vskip0.5em
+    
+    %  Institute (Plain Text)
+    {\Huge \usebeamerfont{institute} \usebeamercolor[fg]{institute} \insertinstitute\par}
+    
+    \vskip0.5em
+    
+    %  Date (Plain Text)
+    {\usebeamerfont{date} \usebeamercolor[fg]{date} \insertdate\par}
+    
+    \vskip1em
+    {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+    
+    \endgroup
+    \vfill
+}
+    
+
+% Custom frame title with a full black border
+\setbeamertemplate{frametitle}
+{
+    \vspace{0.5cm} % Small offset adjustment
+    \begin{beamercolorbox}[wd=\paperwidth,ht=1cm,dp=0.0cm,center]{frametitle}
+        \begin{tikzpicture}
+            % Draw a black border box fully enclosing the title
+        \fill[sithred, rounded corners=5pt] (0,0) rectangle (\paperwidth,-2.2);
+            
+            % Position the title inside the black box
+            \node[anchor=center, xshift=\paperwidth/2, yshift=-1.4cm, text width=\paperwidth-1cm, align=center, white] 
+                {\usebeamerfont{frametitle}\insertframetitle};
+        \end{tikzpicture}
+    \end{beamercolorbox}
+}
+
+
+
+% define useful layout lengths
+\newlength{\textmargin}
+\setlength{\textmargin}{10mm} % Left and right margin for main content
+\setbeamersize{text margin left=\textmargin,text margin right=\textmargin}
+\newlength{\titlehmargin}
+\setlength{\titlehmargin}{5mm} % Left and right margin for title and footline
+\newlength{\titlevmargin}
+\setlength{\titlevmargin}{1mm} % Top and bottom margin for title and footline
+\newlength{\fullpagewidth}
+\setlength{\fullpagewidth}{\dimexpr\textwidth+\textmargin+\textmargin\relax}
+
+% Slide footer 
+\setbeamertemplate{footline}{%
+    \ifnum\value{framenumber}=0
+    \relax  % Do nothing on the title page
+  \else
+  \noindent\hspace{\titlehmargin}\rule{\dimexpr\fullpagewidth-\titlehmargin*2\relax}{0.4pt}\par%
+  \vspace{\titlevmargin}%
+  \leavevmode%
+  \noindent\hspace{\dimexpr\titlehmargin-\titlevmargin\relax}%
+  \begin{beamercolorbox}[sep=\titlevmargin,wd=\dimexpr\fullpagewidth-\titlehmargin*2+\titlevmargin*2\relax]{footline}%
+   {\usebeamercolor[fg]{author in head/foot}\usebeamerfont{author in head/foot}\insertshortauthor}
+    \hfill%
+    {\usebeamercolor[fg]{title in head/foot}\usebeamerfont{title in head/foot}\insertshorttitle}%
+    \hfill%
+    {\usebeamercolor[fg]{date in head/foot}\usebeamerfont{date in head/foot}\insertshortdate{}}%
+    \hfill%
+    {\usebeamercolor[fg]{page number in head/foot}\usebeamerfont{page number in head/foot}\usebeamertemplate{page number in head/foot}}%
+  \end{beamercolorbox}
+  \vspace{\titlevmargin}%
+  \fi
+}
+
+% Set author and date color to black
+\setbeamercolor{author in head/foot}{fg=black}
+\setbeamercolor{date in head/foot}{fg=black}
+\setcounter{framenumber}{-1}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\setbeamertemplate{itemize subitem}{\normalfont\textbullet} % Sub-items, default bullet
+\setbeamertemplate{itemize subsubitem}{\normalfont\(\square\)} % Subsub-items, square symbol

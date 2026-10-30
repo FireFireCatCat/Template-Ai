@@ -1,0 +1,30 @@
+% SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
+% SPDX-License-Identifier: MIT
+
+\input{regression-test.tex}
+\documentclass{article}
+\usepackage{ifluatex}
+\usepackage{ifxetex}
+\usepackage[nocn,nonumbers,noframes]{ffcode}
+\begin{document}
+
+\START
+
+\section{Example of |fibo| function}
+
+The function |fibo()| is recursive:
+
+\begin{ffcode}
+int fibo(int n) {
+  if (n < 2)   {
+    return n; (*@ \label{ln:ret} @*)
+  }
+  return fibo(n - 1) + fibo(n - 2);
+}
+\end{ffcode}
+
+The line~\ref{ln:ret} terminates it.
+
+This code is fixed-width font: |_hello\abc|.
+
+\END

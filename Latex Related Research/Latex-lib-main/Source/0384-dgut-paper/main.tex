@@ -1,0 +1,224 @@
+% Author: Mai
+% License: LaTeX Project Public License v1.3c (per the class author's own
+% licence statement, both on the Overleaf gallery page and in this class's
+% own usage-guide document — see README.md)
+% 完整编译: XeLaTex -> BibTex -> XeLaTex -> XeLaTex
+%
+% latextemplates.com: this starter targets the `config.cls` API as it
+% actually ships (verified by reading the class file directly) rather than
+% the calling convention shown in the upstream sample document, which is
+% written against an OLDER version of the class — several commands there
+% (`\ResetCounter`, 4-argument `\contentPage`) are not defined in the
+% version bundled here. See README.md for the font substitutions this
+% starter also makes (Source Han Serif/Sans CN were never obtainable — the
+% upstream project bundled them as binary files under `fonts/`, which is
+% not part of the public "View Source" text this was extracted from).
+
+%%%%%%%%%%%%%%%%%%%%%%%%  文档配置  %%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[report,oneside,UTF8,zihao=-4]{config}
+
+% 封面图片：DGUT 校徽与校名图片文件未随此下载提供（Overleaf 没有公开的项目
+% 压缩包下载接口，无法获取原始二进制图片）。留空后封面仍可正常生成，只是不
+% 显示校徽/校名图片；如需使用，请自行准备对应 PDF 文件并取消下方注释。
+% \def \titlePageImages{
+%     \includegraphics[width=0.195\textwidth]{DGUT-logo.pdf}\\
+%     \vspace{10pt}
+%     \includegraphics[width=0.425\textwidth]{DGUT-title-CN.pdf}\\
+%     \includegraphics[width=0.425\textwidth]{DGUT-title-EN.pdf}\\
+% }
+
+% 文档信息定义
+\def \majorTitle   {毕业设计（论文）}
+\def \minorTitleCN {基于卷积神经网络的手写数字识别系统设计}
+\def \minorTitleEN {Design of a Handwritten Digit Recognition System Based on Convolutional Neural Networks}
+
+% 个人信息定义
+%
+% latextemplates.com: #2 is a ctex \zihao SIZE CODE (an integer from this
+% class's fixed vocabulary, e.g. -4..8), not a raw length — the upstream
+% sample passed cm lengths here (e.g. "0.60cm"), which \zihao rejects
+% outright ("Undefined Chinese font size"). Confirmed by compiling the
+% sample's own calling convention directly against this class version.
+\def \titlePageInfoBox{
+    % 参数：#1 下划线长度 #2 字号(zihao代码) #3 标题 #4 内容
+    \infobox{6.00cm}{3}{学~~~~院}{计算机学院}\\
+    \infobox{6.00cm}{3}{专~~~~业}{计算机科学与技术}\\
+    \infobox{6.00cm}{3}{班~~~~级}{计科2201}\\
+    \infobox{6.00cm}{3}{姓~~~~名}{张三}\\
+    \infobox{6.00cm}{3}{学~~~~号}{202012345678}\\
+    \infobox{5.00cm}{3}{指导教师}{李四}\\
+}
+
+\def \currentDate {二〇二六年六月一日} % 日期
+
+%%%%%%%%%%%%%%%%%%%%%%%%  文档开始  %%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+% 封面
+%
+% latextemplates.com: same zihao-size-code issue as \titlePageInfoBox above —
+% #2/#3/#4 here are also \zihao codes, not lengths.
+\CoverPage
+    {empty} % 封面类型：empty、both、left、right
+    {-2} % 大标题字号
+    {-1} % 中文标题字号
+    {2} % 英文标题字号
+
+%%%%%%%%%%%%%%%%%%%%%  正文前页眉页脚  %%%%%%%%%%%%%%%%%%%%%%
+
+% 页眉（关闭页眉务必将页眉类型设为empty）
+\Header
+    {common} % 页眉类型：common、publish、empty
+    {1pt} % 上分隔线宽度
+    {1pt} % 两线距离
+    {0.5pt} % 下分割线宽度
+    {} % 页眉左自定义内容
+    {东莞理工学院} % 页眉中自定义内容
+    {} % 页眉右自定义内容
+
+\Footer
+    {common} % 页脚类型：common、publish、empty
+    {0pt}{0pt}{0pt}
+    {} % 页脚左
+    {\thepage} % 页脚中
+    {} % 页脚右
+
+% 页数样式
+\SetRomanPageNumber{1} % 设置罗马数字页码，起始页为1
+
+%%%%%%%%%%%%%%%%%%%%%%%%  摘要  %%%%%%%%%%%%%%%%%%%%%%%
+
+% latextemplates.com: the optional arg is a \zihao size code (see the
+% \CoverPage note above), not a length — the upstream sample's "0.65cm" here
+% has the same bug.
+\begin{abstractCN}[3]
+
+手写数字识别是模式识别与计算机视觉领域的经典问题，也是深度学习方法验证的常用基准任务之一。本文设计并实现了一个基于卷积神经网络（CNN）的手写数字识别系统，采用两层卷积层与两层全连接层构成的轻量级网络结构，在保证识别准确率的同时降低了模型的参数量与推理耗时。
+
+实验在标准手写数字数据集上进行训练与测试，结果表明该网络结构在测试集上取得了较高的识别准确率，且训练收敛速度较快。本文还讨论了不同超参数（学习率、批大小、卷积核数量）对识别效果的影响，为后续的模型优化提供了参考依据。
+
+\def\keywordsCN{卷积神经网络，手写数字识别，深度学习，模式识别}
+
+\end{abstractCN}
+
+\begin{abstractEN}[3]
+
+Handwritten digit recognition is a classic problem in pattern recognition and computer vision, and a common benchmark task for validating deep learning methods. This paper designs and implements a handwritten digit recognition system based on a convolutional neural network (CNN), using a lightweight architecture of two convolutional layers and two fully connected layers, reducing the parameter count and inference time while preserving recognition accuracy.
+
+Experiments were conducted on a standard handwritten digit dataset. Results show that the proposed network achieves high recognition accuracy on the test set with fast training convergence. This paper also discusses the effect of different hyperparameters (learning rate, batch size, number of convolution kernels) on recognition performance, providing a reference for further model optimisation.
+
+\def\keywordsEN{convolutional neural network, handwritten digit recognition, deep learning, pattern recognition}
+
+\end{abstractEN}
+
+%%%%%%%%%%%%%%%%%%%%%%%  启用目录  %%%%%%%%%%%%%%%%%%%%%%%%
+
+% latextemplates.com: \contentPage takes (line-spacing, title) in this
+% class version — the upstream sample's 4-argument call (with a leading
+% "next"/"current" type argument and a separate current-chapter-name arg)
+% does not match; confirmed by reading \contentPage's definition directly.
+\contentPage{1.5}{目~~~~录}
+
+%%%%%%%%%%%%%%%%%%%%%  正文页眉页脚  %%%%%%%%%%%%%%%%%%%%%%%
+
+\Header
+    {common}
+    {1pt}{1pt}{0.5pt}
+    {毕业设计（论文）}
+    {}
+    {\currentChapterInfo}
+
+\Footer
+    {common}
+    {0pt}{0pt}{0pt}
+    {}
+    {\thepage}
+    {}
+
+\SetArabicPageNumber{1} % 设置阿拉伯数字页码，起始页为1
+
+%%%%%%%%%%%%%%%%%%%%%%%  正文  %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{绪论}
+
+\section{研究背景}
+
+手写数字识别广泛应用于邮政编码识别、银行支票金额识别、表单数字化等场景。传统方法依赖人工设计特征（如方向梯度直方图），识别精度受限于特征设计的质量。近年来，卷积神经网络凭借其自动特征提取能力，在图像识别任务上取得了显著优于传统方法的效果\cite{lecun1998}。
+
+\section{研究内容}
+
+本文的主要工作包括：
+
+\begin{itemize}
+    \item 设计一个轻量级卷积神经网络结构，适合在资源受限设备上部署；
+    \item 在标准手写数字数据集上训练并评估模型性能；
+    \item 分析不同超参数设置对识别准确率与训练效率的影响。
+\end{itemize}
+
+\chapter{网络结构设计}
+
+\section{整体架构}
+
+本文设计的网络由两个卷积层、两个池化层与两个全连接层组成，如表 \ref{tab:architecture} 所示。
+
+\begin{table}
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \caption{网络结构参数}
+    \label{tab:architecture}
+    \begin{threeparttable}[c]
+        \begin{tabular}{ccc}
+            \toprule[1.5pt]
+            \textbf{层名称} & \textbf{参数} & \textbf{输出尺寸}\\
+            \midrule[0.8pt]
+            卷积层 1 & 5×5 卷积核，32 通道 & 24×24×32\\
+            池化层 1 & 2×2 最大池化 & 12×12×32\\
+            卷积层 2 & 5×5 卷积核，64 通道 & 8×8×64\\
+            池化层 2 & 2×2 最大池化 & 4×4×64\\
+            全连接层 1 & 128 个神经元 & 128\\
+            全连接层 2（输出） & 10 个神经元 & 10\\
+            \bottomrule[1.5pt]
+        \end{tabular}
+    \end{threeparttable}
+\end{table}
+
+\section{损失函数与优化器}
+
+模型采用交叉熵损失函数，公式如下：
+
+\begin{equation}
+    L = -\sum_{i=1}^{10} y_i \log(\hat{y}_i)
+    \label{eq:crossentropy}
+\end{equation}
+
+其中 $y_i$ 为真实标签的独热编码，$\hat{y}_i$ 为模型预测的第 $i$ 类概率。优化器选用 Adam，初始学习率设为 0.001。
+
+\chapter{实验结果与分析}
+
+\section{实验设置}
+
+实验在标准手写数字数据集上进行，训练集与测试集划分比例为 6:1，批大小设为 64，共训练 20 个周期。
+
+\section{结果分析}
+
+如图 \ref{fig:accuracy} 所示，模型在训练过程中准确率稳步上升，未出现明显过拟合现象。
+
+\begin{figure}[h!]
+    \centering
+    \fbox{\parbox{0.6\textwidth}{\centering\vspace{3cm}训练/测试准确率曲线示意图\\（替换为你自己的图片）\vspace{3cm}}}
+    \caption{训练与测试准确率随训练轮数变化曲线}
+    \label{fig:accuracy}
+\end{figure}
+
+\chapter{结论}
+
+本文设计并实现了一个轻量级卷积神经网络用于手写数字识别，实验结果验证了该结构在准确率与效率之间取得了较好的平衡。后续工作可考虑引入数据增强与模型压缩技术，进一步提升模型在资源受限设备上的部署效果。
+
+%% 参考文献
+%% 编译顺序：xelatex -> bibtex -> xelatex -> xelatex
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,1071 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2022 by Tanguy Ortolo <tanguy+latex@ortolo.eu>
+% 
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions are met:
+% 1. Redistributions of source code must retain the above copyright notice,
+%    this list of conditions and the following disclaimer.
+% 2. Redistributions in binary form must reproduce the above copyright notice,
+%    this list of conditions and the following disclaimer in the documentation
+%    and/or other materials provided with the distribution.
+% 3. Neither the name of the copyright holder nor the names of its
+%    contributors may be used to endorse or promote products derived from this
+%    software without specific prior written permission.
+% 
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+% POSSIBILITY OF SUCH DAMAGE.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{songproj.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}[2020/10/01]
+%<package>\ProvidesPackage{songproj}
+%<*package>
+    [2023/03/29 v1.2.0 Song projection]
+%</package>
+%
+%<*driver>
+\documentclass{l3doc}
+\usepackage{fontspec}
+\usepackage{bookmark}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{songproj.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{269}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{v0.1.0}{2021/09/19}{Initial version}
+% \changes{v0.3.0}{2021/09/26}{Use \textsf{expl3} naming conventions}
+% \changes{v1.0.0}{2021/11/07}{First public release}
+% \changes{v1.0.1}{2021/11/07}{Add the generated extension file to Git}
+% \changes{v1.1.0}{2023/03/27}{Allow couplet numbering with \cs{numbercouplets}}
+% \changes{v1.2.0}{2023/03/29}{Allow couplet numbering with \cs{inputsong*}}
+%
+% \GetFileInfo{songproj.dtx}
+%
+% \DoNotIndex{\newcommand,\newenvironment}
+% \DoNotIndex{\begin,\end}
+% \DoNotIndex{\bool,\bool_gset_false:N,\bool_gset_true:N,\bool_if:NTF,\bool_new:N}
+% \DoNotIndex{\cs_gset:Npn,\cs_new:Npn}
+% \DoNotIndex{\dim,\dim_compare:nNnTF,\dim_new:N,\dim_zero:N}
+% \DoNotIndex{\int,\int_compare:nNnTF,\int_gset_eq:NN,\int_new:N,\int_step_function:nN,\int_eval:n,\int_mod:nn,\int_step_inline:nn,\int_use:N}
+% \DoNotIndex{\seq,\seq_count:N,\seq_gclear:N,\seq_gput_right:Nn,\seq_gset_from_clist:Nn,\seq_if_empty:NTF,\seq_item:Nn,\seq_map_function:NN,\seq_new:N}
+% \DoNotIndex{\tl,\tl_gclear:N,\tl_gset:Nn,\tl_new:N,\tl_use:N,\tl_if_empty:NTF}
+% \DoNotIndex{\IfNoValueTF,\NewDocumentCommand,\NewDocumentEnvironment}
+% \DoNotIndex{\env,\cmd,\textsf,\vfill}
+%
+%
+% \title{The \textsf{songproj} package\thanks{This document
+%   corresponds to \textsf{songproj}~\fileversion, dated \filedate.}}
+% \author{Tanguy Ortolo \\ \texttt{tanguy+latex@ortolo.eu}}
+%
+% \maketitle
+% \section{Introduction}
+%
+% This package, together with the \cls{beamer} class, is used to generate
+% slideshows with song lyrics. This is typically used in religious services in
+% churches equipped with a projector, for which this package has been written,
+% but it can be useful for any type of singing assembly\footnote{Indeed, the
+% song used here as an example is not really a religious one! It was chosen
+% because it is in the public domain and the author likes it.}. It provides
+% environments to describe a song in a natural way, and formatting it into
+% slides with overlays.
+%
+% \section{Usage}
+%
+% \subsection{The \env{song} environment}
+%
+% The main feature of this package is the \env{song}, that allows the user to
+% describe an entire song that will be formatted into slides.
+%
+% \paragraph{}
+% \DescribeEnv{song}
+% The \env{song}\marg{stanzas per slide}\oarg{couplet list} environment is used
+% around an entire song. It takes a mandatory argument, \meta{stanzas per
+% slide}, to specify whether the user wants to show one or two
+% stanzas\footnote{including the refrain} on the slide. An optional argument,
+% \meta{couplet list} is a comma-separated list of couplet (or verse) indexes,
+% that allows the user to indicate that they want to include only these
+% couplets of a large song: without this, all couplets will be included.
+%
+% Inside of the \env{song} environment, the user will use the \cs{longest}
+% command and the \env{intro}, \env{refrain}, \env{couplet}\footnote{We
+% chose to use the French words \emph{refrain} and \emph{couplet} for several
+% reason: the author is French, these words are understandable in English and
+% their English equivalents, \emph{chorus} and \emph{verse}, have multiple
+% meanings that would make them very ambiguous in both usage and implementation
+% of this package.} and \env{final} environments.
+%
+% \paragraph{Warning} Inside a \env{song} environment, it is an error to write
+% anything that is not an \env{intro}, \env{refrain}, \env{couplet},
+% \env{final} environment or a \cs{longest} command. Direct text would be
+% typeset in a way that would disrupt the song formatting.
+%
+% \paragraph{}
+% \begin{function}{\longest}
+% \begin{syntax}
+% \cs{longest}\marg{song line}
+% \end{syntax}
+% Inside a \env{song} environment, the \cs{longest}\marg{song line} command is
+% used to declare the longest line of a song, that will be used to properly
+% center the song stanzas, as allowed by the \pkg{verse} package. That line
+% is only used to compute and record its length, and will not be typeset.
+% \end{function}
+%
+% \changes{v1.1.0}{2023/03/27}{Document the \cs{numbercouplets} command}
+% \begin{function}{\numbercouplets}
+% \label{doc-cs-numbercouplets}
+% Inside a \env{song} environment, the \cs{numbercouplets} command can be used
+% to enable couplet numbering. This can be useful when specific couplets have
+% been selected but the lead singer has a score a lyrics sheet that includes
+% all of them: indicating the couplet numbers in the projection will allow them
+% to check which couplet to sing.
+% \end{function}
+%
+% \changes{v0.4.0}{2021/09/29}{Document \env{intro} and \env{final} environments}
+%
+% \paragraph{}
+% \DescribeEnv{intro}
+% Inside a \env{song} environment, the optional \env{intro} environment
+% declares a number of lines meant to be sung once, at the beginning of the
+% song. In a psalm, this may be an antiphon.
+%
+% \paragraph{}
+% \DescribeEnv{refrain}
+% Inside a \env{song} environment, the optional \env{refrain} environment
+% declares the song refrain (or chorus). A song may start with its refrain, or
+% with a first couplet, followed by the refrain. It is not useful to declare
+% the refrain several time, as the \env{song} environment will take care of
+% repeating between the couplets.
+%
+% \paragraph{}
+% \DescribeEnv{couplet}
+% Inside a \env{song} environment, the \env{couplet} environment declares each
+% couplet (or verse) of the song.
+%
+% \paragraph{}
+% \DescribeEnv{final}
+% Inside a \env{song} environment, the optional \env{final} environment
+% declares a number of lines meant to be sung once, at the end of the song. In
+% an hymn, that may be a doxology.
+%
+% \paragraph{Example} \label{example/song}
+% The following song is defined with three couplets and a refrain. Since its
+% begins with a couplet, it will be formatted with the first couplet, the
+% refrain, the second couplet, the refrain, and so on.
+%
+% The \env{song} environment is given two arguments, |{2}[1,2]|. The first one
+% tells it to show two stanzas, that is, both a couplet and the refrain, on the
+% generated slide. The second argument tells it to include only the first two
+% couplets in the output.
+%
+% \begin{verbatim}
+% \begin{frame}
+%   \begin{song}{2}[1,2]
+%     \longest{Light she was, and like a fairy,}
+%     \begin{couplet}
+%       In a cavern, in a canyon, \\
+%       Excavating for a mine. \\
+%       Dwelt a miner, forty-niner, \\
+%       And his daughter, Clementine. \\
+%     \end{couplet}
+%     \begin{refrain}
+%       Oh my darling, oh my darling, \\
+%       Oh my darling Clementine, \\
+%       You are lost and gone forever, \\
+%       Dreadful sorry, Clementine. \\
+%     \end{refrain}
+%     \begin{couplet}
+%       Light she was, and like a fairy, \\
+%       And her shoes were number nine, \\
+%       Herring boxes, without topses, \\
+%       Sandals were for Clementine. \\
+%     \end{couplet}
+%     \begin{couplet}
+%       […]
+%     \end{couplet}
+%   \end{song}
+% \end{frame}
+% \end{verbatim}
+%
+% \subsection{The \cs{inputsong} command}
+% \changes{v1.0.0}{2021/11/07}{Document the \cs{inputsong} command}
+% \changes{v1.2.0}{2023/03/29}{Document the \cs{inputsong*} command}
+%
+% \begin{function}{\inputsong, \inputsong*}
+% \begin{syntax}
+% \cs{inputsong}\marg{file}\marg{stanzas per slide}\oarg{couplet list}
+% \cs{inputsong*}\marg{file}\marg{stanzas per slide}\oarg{couplet list}
+% \end{syntax}
+%
+% The \cs{inputsong} command environment is used as a shortcut for
+% typesetting a song written in an external file. That file should contain the
+% song content, including intro, refrain, couplet or final as needed, but
+% \emph{without} being wrapped in a \env{song} environment.
+%
+% For instance, one could write a file named \file{clementine.tex} containing
+% the \emph{content} of the \env{song} environment shown in example
+% page~\pageref{example/song}, and use it in a slideshow:
+%
+% \begin{verbatim}
+% \frame{\inputsong{clementine.tex}{2}[1,2]}
+% \end{verbatim}
+% \end{function}
+%
+% The starred version \cs{inputsong*} enables couplet numbering, as described
+% in \ref{doc-cs-numbercouplets}.
+%
+% \subsection{The \env{refrain}, \env{couplet}, \env{intro} and \env{final} environments}
+%
+% \changes{v0.4.0}{2021/09/29}{Document \env{intro} and \env{final} environments}
+%
+% These commands are also usable outside of a \env{song} environment. In that
+% case, they simply format a refrain or couplet, which can be useful when you
+% need more manual control.
+%
+% \paragraph{}
+% \DescribeEnv{refrain}
+% Outside of a \env{song} environment, this environment simply wraps its
+% content inside a \env{structure} and a \env{verse} environment. It takes an
+% optional \meta{verse width} argument, that is used to properly center the
+% refrain, as allowed by the \pkg{verse} package.
+%
+% \paragraph{}
+% \DescribeEnv{couplet}
+% Outside of a \env{song} environment, this environment simply wraps its
+% content inside a \env{verse} environment. It takes an optional \meta{verse
+% width} argument, that is used to properly center the refrain, as allowed by
+% the \pkg{verse} package.
+%
+% \paragraph{}
+% \DescribeEnv{intro}
+% \DescribeEnv{final}
+% Outside of a \env{song} environment, these environments simply wrap their
+% content inside a \env{em} and a \env{verse} environment. They takes an
+% optional \meta{verse width} argument, that is used to properly center the
+% refrain, as allowed by the \pkg{verse} package.
+%
+% \subsection{Usage tips}
+%
+% For regular offices, there are several suggestions that can ease the creation
+% and usage of lyric slideshows.
+%
+% \subsubsection{Using dedicated song files}
+%
+% It is suggested to write song lyrics in dedicated files, each containing a
+% single the \emph{content} of a \env{song} environment, without the
+% environment wrapping itself. They can then be used with the \cs{inputsong}
+% command.
+%
+% For instance, one could write a file named \file{clementine.tex} containing
+% the \emph{content} of the \env{song} environment shown in example
+% page~\pageref{example/song}. It would then be used in a slideshow such as:
+%
+% \begin{verbatim}
+% \documentclass{beamer}
+% \usepackage{songproj}
+%
+% \begin{document}
+%   \begin{frame}
+%     \inputsong{clementine.tex}{2}[1,2,3]
+%   \end{frame}
+% \end{document}
+% \end{verbatim}
+%
+% \subsubsection{Importing text lyrics}
+% \changes{v1.1.0}{2023/03/27}{Derivate output file name from input file name if not specified}
+%
+% Song lyrics are often found in text format with basic markup:
+%
+% \begin{verbatim}
+% 1. In a cavern, in a canon,
+% Excavating for a mine.
+% Dwelt a miner, forty-niner,
+% And his daughter, Clementine.
+%
+% C. Oh my darling, oh my darling,
+% Oh my darling Clementine
+% You are lost and gone forever,
+% Dreadful sorry Clementine.
+%
+% 2. Light she was, and like a fairy,
+% And her shoes were number nine,
+% Herring boxes, without topses,
+% Sandals were for Clementine.
+%
+% […]
+% \end{verbatim}
+%
+% To avoid the tedious task of manually removing text and adding \LaTeX{}
+% markup, we provide the \file{song2tex.py} helper. Please refer to its
+% embedded help for detailed instructions about its usage:
+%
+% \begin{verbatim}
+% $ ./song2tex.py --help
+% $ ./song2tex.py clementine.txt clementine.tex
+% \end{verbatim}
+%
+% \subsubsection{Projection layout advice}
+% \changes{v1.0.0}{2021/11/07}{Add projection layout advice}
+%
+% During a religious service, a song lyrics projection is only a support, and
+% should not draw their attention away from the main feature, which is the
+% common prayer.
+%
+% I therefore suggest using a very simple Beamer theme, such as its default one
+% with the \href{https://github.com/rchurchley/beamercolortheme-owl}{owl} color
+% theme, and removing the navigation symbols. I also suggest not showing song
+% titles (or anything else that is not actually sung by the assembly) unless
+% there is a good reason to do so, such as getting used to a song or set of
+% songs you intend to reuse often.
+%
+% \begin{verbatim}
+% \documentclass{beamer}
+% \usecolortheme{owl}
+% \setbeamertemplate{navigation symbols}{}
+% \usepackage{songproj}
+% \begin{document}
+%   […]
+% \end{document}
+% \end{verbatim}
+%
+% \subsubsection{Projection advice}
+% \changes{v1.0.0}{2021/11/07}{Add projection advice}
+%
+% For projecting song lyrics, you can take advantage of using a PDF
+% presentation software able to show a presenter console on your laptop screen,
+% and the current slide on the projector. Software like as
+% \href{https://pdfpc.github.io/}{pdfpc} or
+% \href{https://github.com/Cimbali/pympress/}{Pympress} can also understand and
+% adapt their display to the concept of Beamer overlay.
+%
+% \StopEventually{}
+%
+% \section{Implementation}
+%
+% \subsection{Dependencies}
+%
+% This module is written using \LaTeX3 programming interfaces and command
+% definitions:
+%
+%    \begin{macrocode}
+\RequirePackage{expl3}
+\RequirePackage{xparse}
+%    \end{macrocode}
+%
+% The implementation of the \env{song} environment and its friends is mainly
+% based on the \textsf{verse} package:
+%
+%    \begin{macrocode}
+\RequirePackage{verse}
+%    \end{macrocode}
+%
+% \subsection{Internal definitions}
+%
+% Almost all definitions use the \textsf{expl3} syntax:
+%
+%    \begin{macrocode}
+\ExplSyntaxOn
+%    \end{macrocode}
+%
+% \subsubsection{Internal variables}
+%
+% \changes{v0.2.0}{2021/09/23}{Use \texttt{sp} prefix for functions and
+%   variables}
+% \changes{v1.1.0}{2023/03/27}{Add the \cs{g__sp_show_numbers_bool} variable to
+%   number or not couplets}
+%
+% We define a number of internal variables, that are used when reading and
+% formatting a song. All of these variables are meant to be set globally: since
+% there is no notion of a song within a song, we are certain that we will
+% always be either outside of a song or inside a single song.
+%
+%    \begin{macrocode}
+\bool_new:N \g__sp_song_bool             % are we in a song?
+\bool_new:N \g__sp_song_start_bool       % are we at the start of a song?
+\bool_new:N \g__sp_refrain_first_bool    % does current song start with the
+                                         % refrain?
+\bool_new:N \g__sp_show_numbers_bool     % should we show the couplet numbers?
+\int_new:N  \g__sp_stanzas_per_slide_int % number of stanzas to show on each
+                                         % slide (1 or 2)
+\dim_new:N  \g__sp_linewidth_dim         % length of the longest line in current
+                                         % song
+\tl_new:N   \g__sp_intro_tl              % current song intro
+\tl_new:N   \g__sp_refrain_tl            % current song refrain
+\seq_new:N  \g__sp_couplets_seq          % current song couplets
+\tl_new:N   \g__sp_final_tl              % current song final
+\seq_new:N  \g__sp_couplet_indexes_seq   % indexes of couplets to include
+%    \end{macrocode}
+%
+% \subsubsection{Internal environments}
+%
+% These are high-level internal environments, that are used in the
+% implementation of user interface environments.
+%
+% \begin{environment}{__sp_refrain}
+% This environment simply formats a song refrain. It is used in the user interface
+% \env{refrain} environment.
+%
+%    \begin{macrocode}
+\NewDocumentEnvironment {__sp_refrain} {}
+  % The environment opening may be followed by a [length], in fact part of its
+  % body, and will appear just after the opening of the verse environment and
+  % constitute its optional argument.
+  {
+    \begin{structureenv}
+    \begin{verse}
+  }
+  {
+    \end{verse}
+    \end{structureenv}
+  }
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{__sp_couplet}
+% This environment simply formats a song couplet. It is used in the user interface
+% \env{couplet} environment.
+%
+%    \begin{macrocode}
+\NewDocumentEnvironment {__sp_couplet} {}
+  % The environment opening may be followed by a [length], in fact part of its
+  % body, and will appear just after the opening of the verse environment and
+  % constitute its optional argument.
+  { \begin{verse} }
+  { \end{verse} }
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{__sp_special} {}
+%
+% \changes{v0.4.0}{2021/09/29}{Add an environment to format intro and final}
+%
+% This environments simply formats a song intro of final. It is used in the
+% user interface \env{intro} and \env{final} environments.
+%
+%    \begin{macrocode}
+\NewDocumentEnvironment {__sp_special} {}
+  % The environment opening may be followed by a [length], in fact part of its
+  % body, and will appear just after the opening of the verse environment and
+  % constitute its optional argument.
+  {
+    \begin{em}
+    \begin{verse}
+  }
+  {
+    \end{verse}
+    \end{em}
+  }
+%    \end{macrocode}
+% \end{environment}
+%
+% \subsubsection{Internal macros}
+% \changes{v0.3.0}{2021/09/26}{Define aux functions at top-level}
+%
+% These are macros that are used in the implementation of the \env{song}
+% environment.
+%
+% \begin{macro}{\__sp_song_refrain}
+%
+% This macro uses the \env{__sp_refrain} environment to format the current song
+% refrain.
+%
+%    \begin{macrocode}
+\tl_gset:Nn \__sp_song_refrain
+  {
+    % Do we know the width of the longest song line?
+    \dim_compare:nNnTF \g__sp_linewidth_dim {=} {0pt}
+      { \begin{__sp_refrain} }
+      { \begin{__sp_refrain} [\g__sp_linewidth_dim] }
+    \tl_use:N \g__sp_refrain_tl
+    \end{__sp_refrain}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\__sp_song_couplet:n}
+% \changes{v1.1.0}{2023/03/27}{Print the couplet number when requested}
+%
+% This macro uses the \env{__sp_couplet} environment to format a specified couplet of
+% the current song. It takes a single argument:
+%
+% \begin{arguments}
+%   \item index of the couplet to format.
+% \end{arguments}
+%
+%    \begin{macrocode}
+\cs_gset:Npn \__sp_song_couplet:n #1
+  {
+    % Do we know the width of the longest song line?
+    \dim_compare:nNnTF \g__sp_linewidth_dim {=} {0pt}
+      { \begin{__sp_couplet} }
+      { \begin{__sp_couplet} [\g__sp_linewidth_dim] }
+    \bool_if:NTF \g__sp_show_numbers_bool
+      { \flagverse{#1.} }
+      {}
+    \seq_item:Nn \g__sp_couplets_seq {#1}
+    \end{__sp_couplet}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\__sp_song_couplets:n}
+%
+% This macro inserts an containing all couplets of the current song in an
+% \env{overprint} environment, in groups separated with \cs{onslide}
+% commands. It takes a single argument:
+%
+% \begin{arguments}
+%   \item number of couplets to show together on each slide.
+% \end{arguments}
+%
+%    \begin{macrocode}
+\cs_gset:Npn \__sp_song_couplets:n #1
+  {
+    \begin{overprint}
+    % Loop on all specified couplets
+    \int_step_inline:nn
+      { \seq_count:N \g__sp_couplet_indexes_seq }
+      {
+        % Before every #1 lines, i.e. when (##1 - 1) mod #1 == 0),
+        % insert an \onslide
+        \int_compare:nNnTF
+          { \int_mod:nn { \int_eval:n{##1 - 1} } {#1} } { = } { 0 }
+          { \onslide<+> }
+          { \vskip \stanzaskip }
+        \__sp_song_couplet:n { \seq_item:Nn \g__sp_couplet_indexes_seq {##1} }
+      }
+    \end{overprint}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\__sp_song_intro}
+%
+% \changes{v0.4.0}{2021/09/29}{Add an environment to format current song intro}
+%
+% This macro uses the \env{__sp_special} environment to format the current song
+% intro.
+%
+%    \begin{macrocode}
+\tl_gset:Nn \__sp_song_intro
+  {
+    % Do we know the width of the longest song line?
+    \dim_compare:nNnTF \g__sp_linewidth_dim {=} {0pt}
+      { \begin{__sp_special} }
+      { \begin{__sp_special} [\g__sp_linewidth_dim] }
+    \tl_use:N \g__sp_intro_tl
+    \end{__sp_special}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\__sp_song_final}
+%
+% \changes{v0.4.0}{2021/09/29}{Add an environment to format current song final}
+%
+% This macro uses the \env{__sp_refrain} environment to format the current song
+% final.
+%
+%    \begin{macrocode}
+\tl_gset:Nn \__sp_song_final
+  {
+    % Do we know the width of the longest song line?
+    \dim_compare:nNnTF \g__sp_linewidth_dim {=} {0pt}
+      { \begin{__sp_special} }
+      { \begin{__sp_special} [\g__sp_linewidth_dim] }
+    \tl_use:N \g__sp_final_tl
+    \end{__sp_special}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\__sp_song}
+%
+% \changes{v0.4.0}{2021/09/29}{Include intro and final in complete song}
+%
+% This macro inserts the entire song, alternating refrain and couplets in an
+% \env{overprint} environment.
+%
+%    \begin{macrocode}
+\tl_gset:Nn \__sp_song
+  {
+    % Is there a song intro?
+    \tl_if_empty:NTF \g__sp_intro_tl
+    {}
+    {
+      \visible<1> {\__sp_song_intro}
+      % The combination of overprint with verse that comes next somehow adds
+      % extra vertical space that needs to be removed.
+      \vskip -\stanzaskip
+    }
+
+    \begin{overprint}
+
+    % Does the song begin with the refrain?
+    \bool_if:NTF \g__sp_refrain_first_bool
+      {
+        % If so, print an initial refrain
+        \onslide<+>
+        \__sp_song_refrain
+      }
+      {}
+
+    % Is there a refrain?
+    \tl_if_empty:NTF \g__sp_refrain_tl
+      {
+        % No refrain, loop on all specified couplets and insert them
+        \seq_map_inline:Nn
+          \g__sp_couplet_indexes_seq
+          {
+            \onslide<+>
+            \__sp_song_couplet:n {#1}
+          }
+      }
+      {
+        % There is a refrain, loop on all specified couplets and, each time,
+        % insert both a couplet and the refrain
+        \seq_map_inline:Nn
+          \g__sp_couplet_indexes_seq
+          {
+            \onslide<+>
+            \__sp_song_couplet:n {#1}
+            \onslide<+>
+            \__sp_song_refrain
+          }
+      }
+    \end{overprint}
+
+    % Is there a song final?
+    \tl_if_empty:NTF \g__sp_final_tl
+    {}
+    {
+      % Add extra spacing
+      \vskip \stanzaskip
+      \visible<.> {\__sp_song_final}
+    }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{User interface}
+%
+% These environments constitute our user interface. They allow the user to
+% define songs, refrains and couplets.
+%
+% \begin{environment}{refrain}
+% This environment handles a refrain :
+% \begin{itemize}
+%   \item outside of a song, it uses the \env{__sp_refrain} environment to
+%     directly format it ;
+%   \item inside a song, it stores it into \cs{g__sp_retrain_tl}, so it can
+%     be formatted by the end of the \env{song} environment.
+% \end{itemize}
+%
+%    \begin{macrocode}
+\NewDocumentEnvironment {refrain} { +b }
+  % The environment opening may be followed by a [length], in fact part of its
+  % body, and will appear just after the opening of the __sp_refrain
+  % environment and constitute its optional argument.
+  {
+    % Are we in a song?
+    \bool_if:NTF \g__sp_song_bool
+      {
+        % We are in a song, are we at its start?
+        \bool_if:NTF \g__sp_song_start_bool
+          {
+            % Indicate that we are no longer at the start of the song
+            \bool_gset_false:N\g__sp_song_start_bool
+            % and that the refrain comes first
+            \bool_gset_true:N\g__sp_refrain_first_bool
+          }
+          {}
+        % Anyway, store the refrain
+        \tl_gset:Nn \g__sp_refrain_tl {#1}
+      }
+      {
+        % We are not in a song, use __sp_refrain to format the refrain
+          \begin{__sp_refrain}
+            #1
+          \end{__sp_refrain}
+      }
+  }
+  {}
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{couplet}
+% This environment handles a couplet, in a similar way:
+% \begin{itemize}
+%   \item outside of a song, it uses the \env{__sp_couplet} environment to
+%     directly format it ;
+%   \item inside a song, it stores it by appending it to to
+%     \cs{g__sp_couplets_seq}, so it can be formatted by the end of the
+%     \env{song} environment.
+% \end{itemize}
+%
+%    \begin{macrocode}
+\NewDocumentEnvironment {couplet} { +b }
+  % The environment opening may be followed by a [length], in fact part of its
+  % body, and will appear just after the opening of the __sp_couplet
+  % environment and constitute its optional argument.
+  {
+    % Are we in a song?
+    \bool_if:NTF \g__sp_song_bool
+      {
+        % Are we at in a song, are we at its start?
+        \bool_if:NTF \g__sp_song_start_bool
+          {
+            % Indicate that we are no longer at the start of the song
+            \bool_gset_false:N \g__sp_song_start_bool
+            % and that the refrain does not come first
+            \bool_gset_false:N \g__sp_refrain_first_bool
+          }
+          {}
+        % Anyway, store this couplet
+        \seq_gput_right:Nn \g__sp_couplets_seq { {#1} }
+      }
+      {
+        % We are not in a song, use __sp_couplet to format this couplet
+          \begin{__sp_couplet}
+            #1
+          \end{__sp_couplet}
+      }
+  }
+  {}
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{intro}
+%
+% \changes{v0.4.0}{2021/09/29}{Add an \env{intro} environment}
+%
+% This environment handles a song intro, in a similar way:
+% \begin{itemize}
+%   \item outside of a song, it uses the \env{__sp_special} environment to
+%     directly format it;
+%   \item inside a song, it stores it  into \cs{g__sp_intro_tl} so it can be
+%     formatted by the end of the \env{song} environment.
+% \end{itemize}
+%
+%    \begin{macrocode}
+\NewDocumentEnvironment {intro} { +b }
+  % The environment opening may be followed by a [length], in fact part of its
+  % body, and will appear just after the opening of the __sp_special
+  % environment and constitute its optional argument.
+  {
+    % Are we in a song?
+    \bool_if:NTF \g__sp_song_bool
+      {
+        % We are in a song, store its intro
+        \tl_gset:Nn \g__sp_intro_tl {#1}
+      }
+      {
+        % We are not in a song, use __sp_special to format the intro
+        \begin{__sp_special}
+          #1
+        \end{__sp_special}
+      }
+  }
+  {}
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{final}
+%
+% \changes{v0.4.0}{2021/09/29}{Add a \env{final} environment}
+%
+% This environment handles a song final, in a similar way:
+% \begin{itemize}
+%   \item outside of a song, it uses the \env{__sp_special} environment to
+%     directly format it;
+%   \item inside a song, it stores it  into \cs{g__sp_final_tl} so it can be
+%     formatted by the end of the \env{song} environment.
+% \end{itemize}
+%
+%    \begin{macrocode}
+\NewDocumentEnvironment {final} { +b }
+  % The environment opening may be followed by a [length], in fact part of its
+  % body, and will appear just after the opening of the __sp_special
+  % environment and constitute its optional argument.
+  {
+    % Are we in a song?
+    \bool_if:NTF \g__sp_song_bool
+      {
+        % We are in a song, store its intro
+        \tl_gset:Nn \g__sp_final_tl {#1}
+      }
+      {
+        % We are not in a song, use __sp_special to format the intro
+        \begin{__sp_special}
+          #1
+        \end{__sp_special}
+      }
+  }
+  {}
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{macro}{\longest}
+% This macro measures the length of a song line and stores it, so it can be
+% used by the \env{song} environment to properly center refrain and couplets.
+% It takes a single argument:
+%
+% \begin{arguments}
+%   \item a song line to measure.
+% \end{arguments}
+%
+%    \begin{macrocode}
+\NewDocumentCommand {\longest} { m } { \settowidth {\g__sp_linewidth_dim} {#1} }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\numbercouplets}
+% \changes{v1.1.0}{2023/03/27}{New command to enable couplet numbering}
+%
+% This macro can be used within a song to indicate that its couplets should be
+% numbered.
+%
+%    \begin{macrocode}
+    \NewDocumentCommand {\numbercouplets}{}
+      { \bool_gset_true:N \g__sp_show_numbers_bool }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{environment}{song}
+% \changes{v1.1.0}{2023/03/27}{Do not number couplets by default}
+%
+% This environment is used as a container for entire songs. On opening, it does several things:
+%   \begin{enumerate}
+%     \item its stores its arguments into variables with a descriptive name;
+%     \item it clears out any previously stored refrain, couplet, intro, final
+%       and longest song line;
+%     \item it sets the \cs{g__sp_song_bool} variable to indicate that we
+%       are inside a song, which will alter the behaviour of the
+%       \env{refrain} and \env{couplet} environments so they record their
+%       content rather than directly formatting it into the document;
+%     \item it sets the \cs{g__sp_song_start_bool} variable to indicate that
+%       we are at the start of the song, which will allow the next
+%       \env{refrain} or \env{couplet} to tell if the song starts with the
+%       refrain or with a couplet;
+%     \item it sets the \cs{g__sp_show_numbers_bool} variable to false, to
+%       indicate that the couplets should not be numbered by default (the user
+%       will be able to override this with the \cs{numbercouplets} command).
+%   \end{enumerate}
+%
+% This environment takes two arguments:
+%
+% \begin{arguments}
+%   \item number of stanzas (counting couplets and refrain, when there is one) per slide;
+%   \item list of couplets to include (defaults to all), for instance |1,3,4|.
+% \end{arguments}
+%
+%    \begin{macrocode}
+\NewDocumentEnvironment {song} { m o }
+  % {number of stanzas per slide (1 or 2)}
+  % [list of couplets to include (defaults to all)]
+  {
+    % Put arguments into variables with understandable names
+    \int_gset_eq:NN {\g__sp_stanzas_per_slide_int} {#1}
+    \IfNoValueTF {#2}
+      { \seq_gclear:N \g__sp_couplet_indexes_seq }
+      { \seq_gset_from_clist:Nn \g__sp_couplet_indexes_seq {#2} }
+  
+    % Clear out intro, refrain, couplet, final and longest song line
+    \tl_gclear:N \g__sp_intro_tl
+    \tl_gclear:N \g__sp_refrain_tl
+    \seq_gclear:N \g__sp_couplets_seq
+    \tl_gclear:N \g__sp_final_tl
+    \dim_zero:N {\g__sp_linewidth_dim}
+  
+    % Indicate that we are in a song, and at its start
+    \bool_gset_true:N \g__sp_song_bool
+    \bool_gset_true:N \g__sp_song_start_bool
+
+    % Couplets should not be numbered by default
+    \bool_gset_false:N \g__sp_show_numbers_bool
+  }
+%    \end{macrocode}
+%
+% And on closing:
+% \begin{itemize}
+%   \item if no list of couplet indexes to use have been given, it generates one
+%     covering all couplets in order;
+%   \item it uses internal functions to insert the intro, refrain, couplets and
+%     final into the document, in the right order according to the song
+%     structure (refrain or couplet first) and to the formatting instructions
+%     (one or two stanzas per slide).
+% \end{itemize}
+%
+% \changes{v0.4.0}{2021/09/29}{Include intro and final in formatted song}
+%
+%    \begin{macrocode}
+  {
+    % Have we been given indexes of specific couplets to use?
+    \seq_if_empty:NTF \g__sp_couplet_indexes_seq
+      {
+        % If not, generate it from the list of couplets
+        \int_step_inline:nn
+          { \seq_count:N \g__sp_couplets_seq }
+          { \seq_gput_right:Nn \g__sp_couplet_indexes_seq {##1} }
+      }
+      {}
+
+    % Now we actually start inserting things into the document.
+    % How many stanzas per side did the user request?
+    \int_compare:nNnTF \g__sp_stanzas_per_slide_int {>} {1}
+      {
+        % More than one stanza per slide
+        %
+        % Is there an intro?
+        \tl_if_empty:NTF \g__sp_intro_tl
+          {}
+          {
+            \visible<1> {\__sp_song_intro}
+            % Adjust vertical spacing depending on whether the refrain or the
+            % couplets follow.
+            \bool_if:NTF\g__sp_refrain_first_bool
+              {
+                % Refrain comes next, add extra space
+                \vskip \parsep
+              }
+              {
+                % Couplets come next, the combination of their overprint and
+                % verse environment somehow adds extra vertical space that
+                % needs to be removed.
+                \vskip -\stanzaskip
+              }
+          }
+
+        % Is there a refrain?
+        \tl_if_empty:NTF \g__sp_refrain_tl
+          {
+            % If there is no refrain, we use \__sp_song_couplets:n to write the
+            % couplets, \g__sp_stanzas_per_slide_int at a time.
+            \__sp_song_couplets:n { \int_use:N \g__sp_stanzas_per_slide_int }
+          }
+          {
+            % If there is a refrain, we use \__sp_song_refrain to write the
+            % refrain and \__sp_song_couplets:n to write overprint with all
+            % couplets.
+
+            % Does the song begin with the refrain?
+            \bool_if:NTF\g__sp_refrain_first_bool
+              {
+                \__sp_song_refrain
+                \vskip -\stanzaskip
+                \__sp_song_couplets:n 1
+              }
+              {
+                \__sp_song_couplets:n 1
+                \vskip \stanzaskip
+                \__sp_song_refrain
+              }
+          }
+
+        % Is there a final?
+        \tl_if_empty:NTF \g__sp_final_tl
+          {}
+          {
+            % Adjust vertical spacing depending on whether we follow the
+            % refrain or the couplets.
+            \tl_if_empty:NTF \g__sp_refrain_tl
+              {
+                % No refrain, we follow the couplets, add extra space
+                \vskip \stanzaskip
+              }
+              {
+                % There was a refrain, did it come first?
+                \bool_if:NTF \g__sp_refrain_first_bool
+                {
+                  % Refrain came first, we follow the couplets, add extra space
+                  \vskip \stanzaskip
+                }
+                {
+                  % Refrain came last, we follow it, add extra space
+                  \vskip \parsep
+                }
+              }
+            \visible<.> {\__sp_song_final}
+          }
+      }
+      {
+        % If the user requested one stanza per slide, we use \__sp_song to
+        % write the entire song in a single overprint environment.
+        \__sp_song
+      }
+    % Indicate that we are no longer in a song
+    \bool_gset_false:N\g__sp_song_bool
+  }
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{macro}{\inputsong}
+% \changes{v1.0.0}{2021/11/07}{Add an \cs{inputsong} command}
+% \changes{v1.2.0}{2023/03/29}{Add an \cs{inputsong*} command}
+%
+% This macro starts a \env{song} environment and \cs{input}s the song content
+% from an external file.
+%
+%    \begin{macrocode}
+\NewDocumentCommand {\inputsong} { s m m o }
+  {
+    \IfNoValueTF {#4}
+      { \begin{song} {#3} }
+      { \begin{song} {#3} [#4] }
+    \IfBooleanT {#1}
+      { \numbercouplets }
+    \input{#2}
+    \end{song}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Wrapping up}
+%
+% Now that we have defined everything we need, we can leave the \textsf{expl3}
+% syntax and return to normal \TeX{} syntax:
+%
+%    \begin{macrocode}
+\ExplSyntaxOff
+%    \end{macrocode}
+%
+% \Finale
+\endinput

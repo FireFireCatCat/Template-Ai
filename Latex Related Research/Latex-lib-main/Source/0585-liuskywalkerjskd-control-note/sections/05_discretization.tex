@@ -1,0 +1,456 @@
+%=============================================================================
+\section{Discretization and Implementation}
+%=============================================================================
+
+You have designed a beautiful continuous-time controller on paper (or in MATLAB). Now you need to make it run on an STM32 at 1 kHz inside a timer interrupt. This section bridges the gap between theory and embedded reality.
+
+\subsection{From Continuous to Discrete}
+
+A continuous-time transfer function $C(s)$ must be converted to a discrete-time transfer function $C(z)$ before it can be implemented in code. There are several methods, each with trade-offs.
+
+\subsubsection{Zero-Order Hold (ZOH)}
+
+The ZOH method assumes the input is held constant between samples (which is exactly what a DAC---Digital-to-Analog Converter, the chip that turns your microcontroller's digital number into a voltage---does). It is the most physically accurate discretization method.
+
+\textbf{The idea:} Between sampling instants, the control signal is constant. We compute exactly what the continuous system would do under this piecewise-constant input.
+
+For a first-order system $G(s) = \frac{a}{s + a}$ with sampling period $T_s$:
+\begin{equation}
+G(z) = \frac{1 - e^{-aT_s}}{z - e^{-aT_s}}
+\end{equation}
+
+\textbf{Derivation sketch.} The ZOH discretization computes $G(z) = (1 - z^{-1})\,\mathcal{Z}\!\left\{\frac{G(s)}{s}\right\}$. The continuous-time step response of $G(s)$ is $y(t) = 1 - e^{-at}$; sampling at $t = nT_s$ gives $y[n] = 1 - e^{-anT_s}$. Taking the $\mathcal{Z}$-transform and multiplying by $(1 - z^{-1})$ yields the result above.
+
+\textbf{When to use:} When you want the discrete system to match the continuous system exactly at the sampling instants. MATLAB's \texttt{c2d(sys, Ts, 'zoh')} uses this method.
+
+\textbf{Downside:} The conversion formulas can be complex for higher-order systems. Usually done with software tools, not by hand.
+
+\subsubsection{Tustin (Bilinear) Transform}
+
+The Tustin method replaces $s$ with:
+\begin{equation}
+s \leftarrow \frac{2}{T_s} \cdot \frac{z - 1}{z + 1}
+\end{equation}
+
+This is a simple algebraic substitution. You take your continuous transfer function, replace every $s$ with the expression above, and simplify.
+
+\textbf{Example:} A first-order low-pass filter $H(s) = \frac{\omega_c}{s + \omega_c}$ becomes:
+\begin{equation}
+H(z) = \frac{\omega_c T_s (z + 1)}{(2 + \omega_c T_s) z + (\omega_c T_s - 2)}
+\end{equation}
+
+\textbf{Why Tustin is popular:}
+\begin{itemize}
+    \item Simple to compute by hand for low-order systems.
+    \item Preserves stability: a stable continuous system maps to a stable discrete system.
+    \item Good frequency-domain match at low frequencies.
+\end{itemize}
+
+\textbf{Gotcha:} At high frequencies (near the Nyquist frequency), Tustin introduces \textbf{frequency warping}---the discrete filter's cutoff frequency is shifted relative to the continuous design. Use \textbf{pre-warping} to correct this:
+\begin{equation}
+\omega_{\text{pre-warped}} = \frac{2}{T_s} \tan\left(\frac{\omega_c T_s}{2}\right)
+\end{equation}
+
+\textbf{Intuition.} The bilinear transform maps the entire continuous frequency axis $\omega \in [0, \infty)$ onto a finite arc of the unit circle $\omega_d \in [0, \pi/T_s)$, compressing high frequencies. The exact relationship is $\omega = \frac{2}{T_s}\tan\frac{\omega_d T_s}{2}$. Pre-warping inverts this mapping: we feed the bilinear transform a ``stretched'' frequency so that our target frequency $\omega_c$ lands at exactly the right place after the compression.
+
+Replace $\omega_c$ with $\omega_{\text{pre-warped}}$ in your continuous design, then apply Tustin.
+
+\subsubsection{Matched Pole-Zero Method}
+
+This method maps the poles and zeros of the continuous system to the $z$-domain using $z = e^{sT_s}$. It preserves the time-domain response characteristics well.
+
+\textbf{When to use:} For systems where matching the transient response is more important than matching the frequency response. Less common in practice than ZOH or Tustin.
+
+\textbf{Bottom line:} For most competition applications, \textbf{Tustin is the go-to method}. It is simple, stable, and accurate enough. Use ZOH when you need exact sample-instant matching. If you are using MATLAB, just use \texttt{c2d()} and let it handle the math.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{discretization_comparison.pdf}
+\caption{ZOH vs Tustin discretization of an underdamped 2nd-order system ($\omega_n = 10$~rad/s, $\zeta = 0.3$, $T_s = 50$~ms). Left: step response---ZOH matches the continuous system exactly at sample instants. Center: Bode magnitude---Tustin shows frequency warping near the Nyquist frequency; pre-warping (green) corrects this. Right: pole-zero map showing how each method maps continuous poles to the $z$-plane.}
+\end{figure}
+
+\subsection{Digital Filter Structures: FIR vs.\ IIR}
+
+Now that we know how to convert continuous-time designs into discrete-time
+transfer functions, the natural next question is: what does the resulting digital
+filter actually look like in code?  There are two fundamental structures:
+\textbf{FIR} and \textbf{IIR}.  Understanding the difference is essential for
+choosing the right implementation on your microcontroller.
+
+\subsubsection{FIR (Finite Impulse Response)}
+
+An FIR filter computes the output as a weighted sum of the current and past input
+samples only---no feedback:
+
+\begin{equation}
+y[n] = \sum_{k=0}^{M} b_k \, x[n-k]
+\end{equation}
+
+In the $z$-domain:
+\begin{equation}
+H(z) = \sum_{k=0}^{M} b_k \, z^{-k}
+\end{equation}
+
+FIR filters have \textbf{only zeros} (no poles except trivially at $z = 0$), which
+gives them two important properties:
+\begin{itemize}
+    \item \textbf{Always stable}---no feedback means no risk of runaway oscillation.
+    \item \textbf{Linear phase} is achievable by making the coefficients symmetric
+          ($b_k = b_{M-k}$). This means every frequency component is delayed by the
+          same amount, so the signal shape is perfectly preserved.
+\end{itemize}
+
+The price you pay is \textbf{filter order}: to get a sharp cutoff you may need
+$M = 50$--$200$ taps, which means storing that many past samples and performing
+that many multiplications per output sample.
+
+\textbf{Common FIR design methods:}
+\begin{itemize}
+    \item \textbf{Window method}---truncate the ideal impulse response and apply a
+          window function (Hamming, Blackman, Kaiser) to reduce spectral leakage (energy ``spilling'' from one frequency bin into neighboring bins due to the abrupt truncation of the impulse response).
+    \item \textbf{Frequency sampling}---specify the desired magnitude response at
+          DFT sample points and inverse-transform.
+    \item \textbf{Parks--McClellan (Remez)}---an optimal algorithm that minimizes
+          the maximum approximation error (equiripple design).
+\end{itemize}
+
+\subsubsection{IIR (Infinite Impulse Response)}
+
+An IIR filter uses \textit{both} past inputs and past outputs---it has a feedback path:
+
+\begin{equation}
+y[n] = \sum_{k=0}^{M} b_k \, x[n-k] \;-\; \sum_{k=1}^{N} a_k \, y[n-k]
+\end{equation}
+
+In the $z$-domain:
+\begin{equation}
+H(z) = \frac{\displaystyle\sum_{k=0}^{M} b_k \, z^{-k}}
+            {1 + \displaystyle\sum_{k=1}^{N} a_k \, z^{-k}}
+     = \frac{B(z)}{A(z)}
+\end{equation}
+
+IIR filters have \textbf{both poles and zeros}. The poles enable sharp frequency
+selectivity with very low order (a 4th-order IIR can outperform a 50th-order FIR),
+but they come with risks:
+\begin{itemize}
+    \item \textbf{Potentially unstable}---if any pole lies outside the unit circle
+          ($|z| > 1$), the output grows without bound.
+    \item \textbf{Nonlinear phase}---different frequencies are delayed by different
+          amounts, which distorts the signal shape.
+    \item \textbf{Coefficient sensitivity}---on fixed-point microcontrollers,
+          rounding the coefficients can shift poles enough to cause instability.
+\end{itemize}
+
+\textbf{Classical IIR design} starts from an analog prototype and maps it to
+discrete time using the methods we just covered (Tustin, ZOH, etc.):
+\begin{itemize}
+    \item \textbf{Butterworth}---maximally flat passband, monotonic rolloff. The
+          ``vanilla'' choice; sounds boring but is the right default 80\% of the time.
+    \item \textbf{Chebyshev Type~I}---equiripple in the passband, monotonic in the
+          stopband. Sharper transition than Butterworth for the same order, at the
+          cost of passband ripple.
+    \item \textbf{Chebyshev Type~II}---monotonic in the passband, equiripple in the
+          stopband. Less common but useful when passband flatness matters more.
+    \item \textbf{Elliptic (Cauer)}---equiripple in \textit{both} bands. Gives the
+          sharpest possible transition for a given filter order, but with ripple
+          everywhere.
+\end{itemize}
+
+Note that the bilinear transform and impulse invariance (a method that samples the analog filter's impulse response at the discrete time instants, preserving the time-domain shape but risking aliasing at high frequencies) methods described in the
+previous subsection are precisely the tools used to convert these analog prototypes
+into discrete IIR filters.
+
+\subsubsection{FIR vs.\ IIR: Head-to-Head Comparison}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Property} & \textbf{FIR} & \textbf{IIR} \\
+\midrule
+Stability & Always stable & Must verify (poles inside unit circle) \\
+Phase & Linear phase achievable & Nonlinear phase \\
+Order for sharp cutoff & High (50--200+) & Low (4--10 typical) \\
+Computation per sample & $M+1$ multiplies & $M+N+1$, but $M,N$ are small \\
+Latency & Higher (longer filter) & Lower \\
+Design from analog prototype & No & Yes (Butterworth, Chebyshev, Elliptic) \\
+Coefficient sensitivity & Low & High \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{Practical Guidelines and Biquad Implementation}
+
+\begin{itemize}
+    \item Need \textbf{linear phase} (audio, symmetric pulse shaping, communications)?
+          Use \textbf{FIR}.
+    \item Need a \textbf{sharp cutoff with minimal computation} (real-time control
+          loops, resource-constrained MCUs)? Use \textbf{IIR}.
+    \item Need \textbf{guaranteed stability} without careful analysis? Use
+          \textbf{FIR}.
+    \item For higher-order IIR filters, \textbf{always} implement as cascaded
+          second-order sections (biquads) to reduce coefficient sensitivity:
+\end{itemize}
+\begin{equation}
+H(z) = \prod_{i=1}^{L}
+       \frac{b_{0i} + b_{1i}\,z^{-1} + b_{2i}\,z^{-2}}
+            {1   + a_{1i}\,z^{-1} + a_{2i}\,z^{-2}}
+\end{equation}
+
+Each section is a ``biquad''---a second-order IIR filter that is simple to
+implement and numerically well-behaved. Cascading $L$ biquads gives you a
+$2L$-th order filter while keeping coefficient quantization effects local to each
+section.
+
+\textbf{Example: a biquad in C (transposed direct-form~II)}
+\begin{verbatim}
+    // One biquad section --- two state variables, numerically stable
+    float biquad(float x, float *state,
+                 float b0, float b1, float b2,
+                 float a1, float a2) {
+        float y = b0*x + state[0];
+        state[0] = b1*x - a1*y + state[1];
+        state[1] = b2*x - a2*y;
+        return y;
+    }
+\end{verbatim}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Quick Decision Flowchart}
+
+\vspace{0.3em}
+\begin{enumerate}[nosep]
+    \item Is the application phase-sensitive (e.g., symmetric waveform matters)?
+          $\rightarrow$ \textbf{FIR} with symmetric coefficients.
+    \item Is real-time computation tight (MCU running a fast control loop)?
+          $\rightarrow$ \textbf{IIR} (Butterworth or Chebyshev), implemented as
+          cascaded biquads.
+    \item Is the filter order moderate and your platform has enough memory?
+          $\rightarrow$ Either works; default to \textbf{FIR} for simplicity and
+          robustness.
+    \item Do you need the sharpest possible transition band for a given order?
+          $\rightarrow$ \textbf{IIR} with an Elliptic prototype.
+\end{enumerate}
+
+\textbf{Rule of thumb for robotics:} Most sensor-smoothing filters on embedded
+systems are low-order IIR (often just 1st or 2nd order Butterworth). FIR filters
+shine in audio processing, communications, and any application where linear phase
+is non-negotiable.
+\end{mdframed}
+
+\subsection{Fixed-Point vs Floating-Point Arithmetic}
+
+Many microcontrollers used in competitions (STM32F1, STM32F4) have hardware floating-point units (FPU). If yours does, \textbf{use floating-point}. It is easier, less error-prone, and fast enough for most control loops.
+
+If you are stuck with a microcontroller without an FPU, or if you need maximum speed, you will need \textbf{fixed-point arithmetic}. The idea is to represent fractional numbers as scaled integers:
+\begin{equation}
+\text{fixed\_value} = \text{float\_value} \times 2^Q
+\end{equation}
+
+where $Q$ is the number of fractional bits. For example, in Q16 format, the number 3.14 is stored as $3.14 \times 65536 = 205,888$.
+
+\textbf{Pitfalls:}
+\begin{itemize}
+    \item Overflow: multiplication of two Q16 numbers produces a Q32 result that must be shifted back.
+    \item Range vs.\ precision trade-off: more fractional bits means more precision but less range.
+    \item Integral accumulation: the integral term in PID can overflow quickly in fixed-point.
+\end{itemize}
+
+\textbf{Recommendation:} Use 32-bit float unless you have a strong reason not to. STM32F4 and above can do single-precision float in one clock cycle.
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Why Computation Speed Directly Determines Control Performance}
+
+\vspace{0.3em}
+Many students assume that as long as the algorithm is ``correct,'' the control will work. This overlooks a critical fact: \textit{every control algorithm must finish executing within the sampling period $T_s$.} If the computation takes longer than $T_s$, the controller misses its deadline, the next cycle is delayed, and the effective control frequency drops. In the worst case, the system becomes unstable.
+
+\textbf{A concrete example.} Suppose your velocity loop runs at 1~kHz ($T_s = 1$~ms) on an STM32F407 at 168~MHz. How much time do different algorithms consume?
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+\textbf{Algorithm} & \textbf{Complexity} & \textbf{Approx.\ time} & \textbf{Fits in 1~ms?} \\
+\midrule
+PID (3 multiplies + adds) & $O(1)$ & $\sim$1~$\mu$s & Yes (1000$\times$ margin) \\
+2nd-order IIR filter & $O(1)$ & $\sim$1~$\mu$s & Yes \\
+Kalman filter ($4 \times 4$) & $O(n^3)$, $n=4$ & $\sim$20~$\mu$s & Yes (50$\times$ margin) \\
+LQR (gain multiply, $4 \times 1$) & $O(n \cdot m)$ & $\sim$2~$\mu$s & Yes \\
+MPC ($N=10$, $n=4$, $m=2$) & $O(N \cdot n^3)$ & $\sim$200--500~$\mu$s & Barely \\
+EKF with trig functions & $O(n^3) + \text{trig}$ & $\sim$50--100~$\mu$s & Yes, but watch out \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{What happens when computation overruns $T_s$:}
+\begin{itemize}[nosep]
+    \item \textbf{Missed update:} The actuator holds its previous command for an extra cycle. The system sees this as an increased time delay. Recall from the shower analogy (Section~4.1): more delay means less phase margin, which means closer to instability.
+    \item \textbf{Inconsistent $dt$:} If the overrun is intermittent (computation is sometimes fast, sometimes slow), the effective $dt$ fluctuates. The integral and derivative terms---which assume a constant $dt$---accumulate errors. This is \textit{jitter}, and it is often more damaging than a constant delay because it is unpredictable.
+    \item \textbf{Cascading failure:} In a cascaded architecture, if the inner loop overruns, the outer loop receives stale velocity data. The outer loop's response degrades, and disturbance rejection---the primary reason for using cascaded control---is compromised.
+\end{itemize}
+
+\textbf{Practical diagnostics.} Toggle a GPIO pin (General-Purpose Input/Output---a digital pin you can set high or low from code) at the start and end of your ISR (Interrupt Service Routine---the function the hardware calls automatically at each timer tick), and observe the pulse width on an oscilloscope. If the pulse width is close to $T_s$, you are in danger. If it ever exceeds $T_s$, you have a deadline violation that \textit{must} be fixed before tuning.
+
+\textbf{What to do when computation is too slow:}
+\begin{enumerate}[nosep]
+    \item \textbf{Reduce algorithm complexity.} Replace MPC with LQR if the constraints are not active. Replace EKF with a complementary filter if the nonlinearity is mild.
+    \item \textbf{Precompute offline.} LQR gains, lookup tables for trigonometric functions, and MPC gain sequences can all be computed in MATLAB/Python and stored as constants.
+    \item \textbf{Lower the control frequency.} If the system's bandwidth allows it, running at 500~Hz instead of 1~kHz doubles your computation budget. Check whether your system's time constant permits this (recall: $T_s \leq \tau / 10$).
+    \item \textbf{Distribute across loops.} Run the expensive outer loop at a lower frequency (e.g., MPC at 100~Hz) while keeping a simple inner loop (PID at 1~kHz). The inner loop maintains control between MPC updates.
+\end{enumerate}
+
+\textbf{The key insight:} The best algorithm is not the most sophisticated one---it is the one that reliably finishes within $T_s$ while meeting performance requirements. A perfectly tuned PID running at 1~kHz will always outperform an MPC that overruns its deadline at 200~Hz.
+\end{mdframed}
+
+\subsection{Sampling Rate Selection}
+
+How fast should your control loop run? Too slow and you cannot react to fast disturbances; too fast and you waste CPU time (and the derivative term amplifies quantization noise).
+
+\textbf{Rule of thumb:} The sampling rate should be 10--30$\times$ the bandwidth of the closed-loop system.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Application} & \textbf{Bandwidth} & \textbf{Sampling rate} \\
+\midrule
+Chassis velocity & $\sim$5 Hz & 50--200 Hz \\
+Gimbal position & $\sim$20 Hz & 200--1000 Hz \\
+Motor current loop & $\sim$500 Hz & 5--20 kHz \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Practical constraint:} Your sampling rate is bounded by:
+\begin{itemize}
+    \item Sensor update rate (no point sampling faster than your encoder/IMU updates).
+    \item Computation time (all control math must finish within one sampling period).
+    \item Communication latency (CAN bus, SPI, I2C can be bottlenecks).
+\end{itemize}
+
+\textbf{Key insight:} For cascaded control loops (e.g., position $\to$ velocity $\to$ current), the inner loop should run 5--10$\times$ faster than the outer loop. Current loop at 10 kHz, velocity loop at 1 kHz, position loop at 200 Hz is a common configuration.
+
+\subsection{Implementation on Embedded Systems}
+
+\subsubsection{Timer and Interrupt Configuration}
+
+On most microcontrollers (STM32, etc.), the control loop runs inside a \textbf{timer interrupt}. The timer triggers at a fixed period ($T_s$), and the interrupt service routine (ISR) executes the control algorithm.
+
+\textbf{Best practices:}
+\begin{itemize}
+    \item Use a dedicated hardware timer for each control loop.
+    \item Set the timer period to your desired $T_s$ using the prescaler and auto-reload register.
+    \item Keep the ISR \textbf{as short as possible}. Read sensor, compute output, set actuator. No printing, no UART, no memory allocation.
+    \item Use \texttt{volatile} for variables shared between the ISR and the main loop.
+    \item Set interrupt priorities correctly: current loop $>$ velocity loop $>$ position loop.
+\end{itemize}
+
+\textbf{Example (STM32 HAL):}
+\begin{verbatim}
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM6) {  // 1 kHz control loop
+        float measurement = read_encoder();
+        float error = setpoint - measurement;
+        float output = pid_compute(&pid, error);
+        set_motor_pwm(output);
+    }
+}
+\end{verbatim}
+
+\subsubsection{Computation Latency and Jitter}
+
+\textbf{Latency} is the time between reading the sensor and applying the output. Lower is better. Anything above $T_s / 2$ starts degrading performance significantly.
+
+\textbf{Jitter} is the variation in latency from one cycle to the next. If your loop usually takes 10 $\mu$s but occasionally takes 500 $\mu$s (because another interrupt preempted it), you get inconsistent behavior. Jitter is often more harmful than a constant latency.
+
+\textbf{How to minimize jitter:}
+\begin{itemize}
+    \item Give your control timer the highest interrupt priority.
+    \item Avoid disabling interrupts globally for long periods.
+    \item Do not use blocking waits (delay, polling) in any ISR.
+    \item Profile your ISR execution time and make sure it fits comfortably within $T_s$.
+\end{itemize}
+
+\subsubsection{Anti-Windup in Practice}
+
+We discussed anti-windup in the PID section, but it deserves special emphasis here because it is the \#1 source of ``mysterious'' PID misbehavior on real hardware.
+
+\textbf{When does windup happen in practice?}
+\begin{itemize}
+    \item Motor current limit is reached (you are commanding 20A but the ESC caps at 10A).
+    \item PWM is saturated (duty cycle at 100\%, cannot go higher).
+    \item Mechanical hard stop (gimbal hits its limit, wheels are stalled).
+    \item Communication failure (command sent but not received---output is effectively zero).
+\end{itemize}
+
+\textbf{Implementation checklist:}
+\begin{enumerate}
+    \item Clamp the integral term to a reasonable range.
+    \item Clamp the total output to the actuator's actual limits.
+    \item When the output is saturated, stop accumulating the integral (conditional integration).
+    \item When switching controllers or modes, reset or smoothly transition the integral term.
+    \item Test windup recovery explicitly: command a large step, let it saturate, then reverse.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{anti_windup.pdf}
+\caption{Without anti-windup (red), the integral term explodes during saturation, causing massive overshoot when the setpoint changes. With clamping (blue), the integral stays bounded and the response is clean.}
+\end{figure}
+
+\textbf{A debugging story:} Your robot's wheel motor oscillates wildly after recovering from a stall. You check $K_p$, $K_d$---they look fine. You try reducing gains---it helps but makes the system sluggish. The real cause? The integral term accumulated to a huge value during the stall and is now overdriving the motor in the opposite direction. Adding integral clamping fixes it instantly. This happens to everyone. It will happen to you. Now you know what to look for.
+
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Putting It All Together: From Continuous PID to STM32 Code}
+
+\vspace{0.3em}
+This example walks through the complete pipeline: start with a continuous-time PID, discretize it, and implement it in an STM32 timer interrupt.
+
+\textbf{Step 1: Continuous PID.} The textbook PID transfer function is:
+\[
+C(s) = K_p + \frac{K_i}{s} + K_d s
+\]
+With $K_p = 6$, $K_i = 0.3$, $K_d = 3$, and $T_s = 1\,\text{ms}$ (1\,kHz control loop).
+
+\textbf{Step 2: Tustin discretization.} Apply the bilinear transform $s \leftarrow \frac{2}{T_s}\frac{z-1}{z+1}$ to each term:
+\begin{itemize}[nosep]
+    \item \textbf{Integral:} $\frac{K_i}{s} \;\to\; \texttt{integral += Ki * Ts * 0.5 * (e + e\_prev)}$ (trapezoidal rule)
+    \item \textbf{Derivative:} $K_d s \;\to\; \texttt{deriv = Kd * (e - e\_prev) / Ts}$ (backward difference on error, or better: on measurement)
+\end{itemize}
+
+\textbf{Step 3: STM32 implementation.}
+\begin{verbatim}
+// In TIM6 interrupt handler, every 1ms:
+void TIM6_DAC_IRQHandler(void) {
+    HAL_TIM_IRQHandler(&htim6);
+
+    float y = read_encoder();        // measured output
+    float r = get_setpoint();        // reference
+    float e = r - y;
+
+    // Tustin integral (trapezoidal)
+    integral += Ki * Ts * 0.5f * (e + e_prev);
+    integral = clamp(integral, -IMAX, IMAX);  // anti-windup
+
+    // Derivative on measurement (avoids derivative kick)
+    float dy = (y - y_prev) / Ts;
+
+    // PID output
+    float u = Kp * e + integral - Kd * dy;
+    u = clamp(u, -UMAX, UMAX);
+
+    set_pwm(u);  // actuator output
+
+    e_prev = e;
+    y_prev = y;
+}
+\end{verbatim}
+
+\textbf{Key implementation details:}
+\begin{enumerate}[nosep]
+    \item \textbf{Derivative on measurement} ($-K_d \dot{y}$), not on error ($K_d \dot{e}$). A step change in $r$ creates an infinite $\dot{e}$ spike that slams the actuator. Using $\dot{y}$ avoids this ``derivative kick.''
+    \item \textbf{Integral clamping} prevents windup when the actuator saturates.
+    \item \textbf{Output clamping} ensures the PWM stays within hardware limits.
+    \item \textbf{No floating-point in critical path} on MCUs without FPU---use fixed-point Q16 or Q24 arithmetic instead.
+    \item \textbf{All state variables} (\texttt{integral}, \texttt{e\_prev}, \texttt{y\_prev}) are \texttt{static} or file-scope globals, persisting across ISR calls.
+\end{enumerate}
+\end{mdframed}

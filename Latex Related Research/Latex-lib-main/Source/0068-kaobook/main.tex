@@ -1,0 +1,137 @@
+% kaobook starter — a wide-margin book/notes class with sidenotes and a
+% mini table of contents at the start of each chapter.
+%
+% kaobook.cls, kao.sty, kaorefs.sty and kaotheorems.sty are VENDORED here
+% (LPPL-1.3c, (c) Francesco Marotta) because kaobook is not a CTAN package —
+% see the README for why and how to update them.
+\documentclass[
+	fontsize=10pt, % Base font size
+	twoside=false, % Use different layouts for even and odd pages
+	secnumdepth=1, % How deep to number headings
+]{kaobook}
+
+\usepackage[english]{babel}
+\usepackage[english=british]{csquotes}
+
+% Cross-references and margin notes, in that load order (kaorefs must load
+% after kaotheorems if both are used, and before hyperref is configured).
+\usepackage{kaotheorems}
+\usepackage{kaorefs}
+
+\graphicspath{{images/}{./}}
+
+\makeindex[columns=2, title=Index, intoc]
+
+\begin{document}
+
+\titlehead{Lecture Notes}
+\title[Notes on the Subject]{Notes on the Subject}
+\author[J. Doe]{Jane Doe}
+\date{\today}
+\publishers{Department of Whatever}
+
+\frontmatter
+
+\makeatletter
+\uppertitleback{\@titlehead}
+\lowertitleback{
+	\textbf{About this document} \\
+	Replace this page with your own front matter --- a colophon, a licence
+	statement, printing history, or nothing at all.
+
+	\medskip
+
+	\textbf{Colophon} \\
+	Typeset with \href{https://sourceforge.net/projects/koma-script/}{\KOMAScript}
+	and \href{https://www.latex-project.org/}{\LaTeX} using the
+	\href{https://github.com/fmarotta/kaobook/}{kaobook} class.
+}
+\makeatother
+
+\maketitle
+
+\chapter*{Preface}
+Say what this document is, who it is for, and how it is organised. This
+paragraph is the first thing a reader sees after the title page, so make it
+count.
+
+\begingroup
+\etocstandarddisplaystyle
+\etocstandardlines
+\tableofcontents
+\endgroup
+
+\mainmatter
+\setchapterstyle{kao}
+
+\chapter{Getting Started}
+\label{ch:intro}
+Start the first chapter here. kaobook keeps a mini table of contents in the
+margin for every chapter, updated automatically from your section headings.
+
+\section{Sidenotes}
+Use a sidenote for anything that would break the flow of the main
+text\sidenote{Like this. It appears in the wide margin, roughly level with
+where it is called.} but is still worth keeping close to the point it
+supports.
+
+\section{Cross-references}
+Refer back to earlier material with \cref{ch:intro}, or forward to
+\cref{ch:next} once it exists --- \texttt{kaorefs} loads \texttt{cleveref}
+configured for kaobook's numbering.
+
+\section{Figures and tables}
+Figures and tables belong in the margin by default in this class --- use
+\texttt{marginfigure} and \texttt{margintable} rather than the plain
+\texttt{figure}/\texttt{table} environments, which is also where kaobook's
+own caption styling is set up to work.\sidenote{Plain \texttt{figure} and
+\texttt{table} still typeset, but the class does not style their captions the
+way it styles a margin float's --- use \texttt{pagelayout\{wide\}} instead if
+you want a full-width figure.}
+
+\begin{marginfigure}
+	\centering
+	\fbox{\parbox{0.9\linewidth}{\centering\vspace{1.2cm}Your figure here\vspace{1.2cm}}}
+	\caption{A caption goes below the figure.}
+	\label{fig:example}
+\end{marginfigure}
+
+\cref{fig:example} shows a placeholder. Replace the \texttt{fbox} with
+\texttt{\textbackslash includegraphics}.
+
+\begin{margintable}
+	\centering
+	\begin{tabular}{lr}
+		\toprule
+		Condition & Rate \\
+		\midrule
+		Baseline & 0.42 \\
+		Ours     & 0.71 \\
+		\bottomrule
+	\end{tabular}
+	\caption{A small margin table.}
+	\label{tab:example}
+\end{margintable}
+
+\cref{tab:example} shows the same idea for a table.
+
+\chapter{Building on It}
+\label{ch:next}
+A second chapter, so the mini table of contents and cross-references above
+have somewhere real to point.
+
+\pagelayout{wide}
+\addpart{Appendix}
+\pagelayout{margin}
+
+\appendix
+\chapter{Supplementary Material}
+Appendices are numbered with letters by convention, switched on by
+\texttt{\textbackslash appendix}.
+
+\backmatter
+\setchapterstyle{plain}
+
+\printindex
+
+\end{document}

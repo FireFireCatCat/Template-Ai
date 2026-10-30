@@ -1,0 +1,127 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Plantilla para un artículo LaTeX en español.
+% Original catalogue starter based on the public Overleaf template by
+% Steph Migoni: https://www.overleaf.com/latex/templates/plantilla-para-un-
+% articulo-latex/ycmrsxnswcct
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm]{geometry}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+
+\title{Una guía breve para comunicar resultados experimentales}
+\author{Nombre de la autora\\
+  \small Departamento de Física\\
+  \small nombre@ejemplo.edu\\
+  \small Ciudad de México}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  Este ejemplo muestra cómo organizar un artículo corto en español. Incluye
+  una pregunta de investigación, una figura, una tabla, ecuaciones,
+  referencias cruzadas y una bibliografía para que pueda sustituirse por el
+  contenido propio de la autora.
+\end{abstract}
+
+\section{Introducción}
+La escritura científica se beneficia de una estructura explícita: primero se
+plantea una pregunta, después se describe el método y finalmente se presentan
+los resultados. En física, la notación matemática permite expresar esas
+relaciones con precisión; por ejemplo, la propagación de una señal puede
+modelarse mediante una velocidad media $v=\Delta x/\Delta t$. Una introducción
+clara también sitúa el trabajo en la literatura existente~\cite{griffiths2018}.
+
+\section{Método}
+Consideremos una medición de la posición $x$ de un móvil en distintos instantes
+$t$. Ajustamos una recta a los datos y estimamos la incertidumbre de la
+pendiente. La ecuación de trabajo es
+\begin{equation}
+  x(t)=x_0+v_0t+\frac{1}{2}at^2,
+  \label{eq:cinematica}
+\end{equation}
+ donde $x_0$ es la posición inicial, $v_0$ la velocidad inicial y $a$ la
+aceleración. La ecuación~\eqref{eq:cinematica} ilustra cómo etiquetar y citar
+una expresión dentro del texto.
+
+\subsection{Representación de una figura}
+La Figura~\ref{fig:esquema} es un esquema portátil, sin archivos externos.
+Para usar una imagen propia, puede reemplazarse el contenido de la caja por
+\verb|\includegraphics[width=0.5\textwidth]{archivo}|.
+\begin{figure}[ht]
+  \centering
+  \setlength{\fboxsep}{12pt}
+  \fbox{\rule{0pt}{3cm}\rule{0.72\textwidth}{0pt}}
+  \caption{Espacio reservado para un esquema experimental o una fotografía.}
+  \label{fig:esquema}
+\end{figure}
+
+\section{Resultados}
+La Tabla~\ref{tab:mediciones} resume un conjunto pequeño de observaciones.
+Los datos reales pueden sustituirse directamente en el entorno \verb|tabular|.
+\begin{table}[ht]
+  \centering
+  \caption{Ejemplo de mediciones de posición.}
+  \label{tab:mediciones}
+  \begin{tabular}{@{}ccc@{}}
+    \toprule
+    $t$ (s) & $x$ (m) & $u(x)$ (m) \\
+    \midrule
+    0.0 & 0.02 & 0.01 \\
+    0.5 & 0.39 & 0.01 \\
+    1.0 & 1.01 & 0.02 \\
+    1.5 & 1.86 & 0.02 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Una comprobación útil es comparar el ajuste con la predicción teórica. Para
+este ejemplo, la suma de cuadrados puede escribirse como
+\begin{equation}
+  S=\sum_{i=1}^{N}\left[x_i-x(t_i)\right]^2.
+  \label{eq:minimos}
+\end{equation}
+La notación vectorial y matricial también es frecuente:
+\[
+  \mathbf{A}=\begin{pmatrix}a&b\\c&d\end{pmatrix},\qquad
+  \det(\mathbf{A})=ad-bc.
+\]
+
+\section{Discusión}
+Los resultados deben interpretarse junto con sus incertidumbres y las
+limitaciones del método. Una lista de comprobación puede ayudar:
+\begin{enumerate}
+  \item declarar las unidades y el número de cifras significativas;
+  \item explicar qué supuestos entran en el modelo;
+  \item comparar el resultado con una referencia independiente.
+\end{enumerate}
+También es posible usar listas sin numeración:
+\begin{itemize}
+  \item revisar los ejes de cada figura;
+  \item describir todos los símbolos de una tabla;
+  \item enlazar cada afirmación importante con una fuente.
+\end{itemize}
+
+\section{Conclusión}
+Una plantilla no sustituye la argumentación científica, pero hace visibles sus
+componentes principales. La ecuación~\eqref{eq:minimos}, la Figura
+~\ref{fig:esquema} y la Tabla~\ref{tab:mediciones} forman un esqueleto que
+puede ampliarse con secciones, datos y material suplementario. Para el origen
+histórico de la formulación de campo, véase Maxwell~\cite{maxwell1865}.
+
+\begingroup
+\small
+\bibliographystyle{abbrv}
+\bibliography{references}
+\endgroup
+
+\end{document}

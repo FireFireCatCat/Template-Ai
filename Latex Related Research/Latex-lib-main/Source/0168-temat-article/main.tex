@@ -1,0 +1,92 @@
+% Portable starter following the public TEMat article structure.
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,english]{babel}
+\usepackage[margin=2.7cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,enumitem,xcolor,hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black}
+\newtheorem{proposition}{Proposición}
+\newtheorem{example}{Ejemplo}
+\title{Un modelo discreto para estudiar redes de transporte}
+\author{Lucía Fernández\thanks{Universidad de Ejemplo}\and André Martins}
+\date{TEMat -- artículo de muestra}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Presentamos un modelo discreto para analizar cómo una perturbación se propaga
+en una red pequeña. El modelo separa la topología de la regla de actualización,
+lo que permite comparar configuraciones sin cambiar el procedimiento de
+cálculo. Se incluyen una demostración, un ejemplo numérico y observaciones
+para futuras extensiones.
+\end{abstract}
+\noindent\textbf{Palabras clave:} grafos; sistemas discretos; redes; modelización
+
+\selectlanguage{english}
+\begin{abstract}
+We present a discrete model for studying how a perturbation propagates through
+a small network. The model separates topology from the update rule, allowing
+configurations to be compared without changing the calculation procedure.
+\end{abstract}
+\selectlanguage{spanish}
+
+\section{Introducción}
+Los modelos sencillos permiten aislar una hipótesis antes de incorporar
+detalles de una aplicación. Sea $G=(V,E)$ un grafo finito y sea $x_t(v)$ el
+estado del vértice $v$ en el instante $t$.
+
+\section{Modelo}
+Definimos la actualización por
+\begin{equation}
+ x_{t+1}(v)=\frac{1}{\deg(v)}\sum_{u\sim v}x_t(u),
+ \label{eq:update}
+\end{equation}
+para vértices con grado positivo. La ecuación~\ref{eq:update} representa un
+promedio local; en una aplicación real debe justificarse la elección de los
+pesos.
+
+\begin{proposition}
+Si $G$ es regular y conexo, el promedio global de los estados se conserva tras
+una actualización.
+\end{proposition}
+\begin{proof}
+En un grafo regular cada vértice recibe el mismo peso de sus vecinos. Al sumar
+la ecuación~\ref{eq:update} sobre todos los vértices, cada estado aparece el
+mismo número de veces en numerador y denominador. Por tanto, la suma y el
+promedio se conservan.
+\end{proof}
+
+\section{Ejemplo}
+\begin{example}
+Para un ciclo de cuatro vértices, el estado inicial $(1,0,0,0)$ produce
+$(0,1/2,0,1/2)$ después de una actualización y $(1/2,0,1/2,0)$ después de
+dos. La masa total permanece igual a uno.
+\end{example}
+
+\begin{table}[ht]
+\centering
+\caption{Iteraciones del ejemplo.}
+\begin{tabular}{crrrr}
+\toprule
+Iteración & $x_1$ & $x_2$ & $x_3$ & $x_4$\\
+\midrule
+0 & 1 & 0 & 0 & 0\\
+1 & 0 & 0.5 & 0 & 0.5\\
+2 & 0.5 & 0 & 0.5 & 0\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Conclusiones}
+La separación entre grafo y regla de actualización facilita experimentar con
+redes alternativas. El texto de ejemplo debe sustituirse por el resultado y
+las referencias del trabajo que se desea enviar.
+
+\appendix
+\section{Notas de implementación}
+Para reproducir los cálculos, registre la representación del grafo, la
+precisión numérica y la condición de parada. Mantenga los datos de prueba junto
+con el código que genera las tablas.
+
+\end{document}

@@ -1,0 +1,128 @@
+The LaTeX Calendar bundle (version 3.1)
+
+INTRODUCTION
+------------ 
+The files in this bundle provide an interface for the creation of calendars
+using LaTeX.  It is easy to use, flexible and powerful.  Promise me more,
+right?  Read on.
+
+Each calendar "style" provides an environment which will read its contents
+as a date or range of dates, and produce a corresponding calendar in a
+particular format.  For example, a calendar for the first two weeks in
+August 1997 in the "weekly" style would be expressed as follows:
+
+  \begin{weekly}{}{}
+   1 Aug 1997 to 8 Aug 1997
+  \end{weekly}
+
+The syntax for expressing dates is human-friendly: initial capitals are
+converted to lower case, abbreviations will be recognized, and within
+ordinary dates word order is irrelevant (i.e. both 1 aug 1997 and August 1
+1997 mean the same thing).
+
+Calendars may incorporate lists of events and appointments from external
+files.  The syntax for such files permits the use of recursive dates limited
+by a range or ranges of dates ("every second saturday" during school
+session, that sort of thing), with a stop-list of holidays.  Entries
+may also be color-coded if you have a color printer.  You can also manage
+complex data sets by building large lists from smaller files in an
+object-oriented fashion.
+
+INSTALLATION
+------------
+The simplest way to install the tools in the package is to make a
+subdirectory in the search path of your TeX, FTP all of the source files to
+that directory, and run "latex allcal.ins".  You should then be able to run
+the demonstration files.  Note that demoover.tex and demodate.tex do not
+produce any printed output; these files just demonstrate the capabilities of
+the relevant code on the terminal.
+
+UPGRADING
+---------
+If there is a previous version of the LaTeX Calendar package on your system,
+these files should be used as a complete replacement.  Each release
+is likely to incorporate bug-fixes or enhancements that affect several
+files, so it is best to save yourself the potential frustration of
+a broken installation and do it from scratch each time.
+
+WHAT'S NEW
+----------
+==Version 3.1==
+The LaTeX Calendar Bundle now speaks HTML.  Language support and
+documentation have also vastly improved.  You can now specify any language
+as the default, AND you can include multiple languages in a single *.cld
+file, choosing which text to include when a calendar is actually produced.
+There is now ONE manual, that tells you everything you need to know.
+
+==Version 2.2==
+Lots of bugfixes, large and small.
+
+First day in yearly calendars can now be selected at run time.
+
+Parsing code greatly optimized.  Note that only the first letter
+of words in date text is now downcased.
+
+Documentation in timetabl.dtx improved.
+
+==Version 2.1==
+A lot of redundant and ornamental processing has been eliminated,
+and the package is slightly faster now.
+
+A bug affecting 2nd and subseqent pages in the Timesheets package
+has been fixed.
+
+The behaviour of "every other" declarations has been modified
+to make this slightly more useful.  See calman.tex for details.
+
+Validation of entries has been tightened up somewhat.
+
+==Version 2.0==
+The "weekly" package and its supporting style "autofilo.sty" creates
+calendars in Filofax(TM) format (those little ring-binder-type things that
+seem such a good idea until you discover how much the commercially printed
+pages cost).  All page parameters, including the size, number and spacing
+of the punch-marks, are configurable.
+
+For Unix systems with Emacs and Tcl, the "mkaddr" package includes some
+hacks that can be used to generate Filofax(TM)-type-format address lists
+from an Emacs BBDB database (q.v.).
+
+The limitation in the code which demanded that a bogus entry be placed at
+the bottom of files in some circumstances to protect against reads beyond
+end of file has been eliminated.  The syntax for use in *.cld files has also
+been slightly modified to make the interface internally consistent; =all=
+declarations other than "freeze" are now meant to be followed by a
+description in squiggly braces.
+
+Anniversaries are now supported.
+
+Several cross-nested global/local assignments to the same variable, which
+produced "save size" errors with even relatively modest volumes of
+data, have been fixed.  I =think= that bugs of this kind have been
+eliminated from the code, but if you do see this error on a large job,
+send me the logfile and I'll try to track the problem down.
+
+CONTRIBUTORS
+------------
+
+Most of the code in this package was written by Frank Bennett
+<fb@soas.ac.uk>.  The core upon which it is based, however, is a collection
+of calendar macros for plain TeX, still available in the plain TeX area on
+CTAN.  Very slightly modified versions of these macros are the means used
+for generating dates, identifying days of the week and so forth.  These
+macros were released anonymously; if anyone can tell me who wrote them, I
+will include their author among the credits here.
+
+Christian Horn and Miroslav Novak did beta-testing of early versions of
+Bennett's LaTeX code, and their help is gratefully acknowledged here.  The
+"Timetable" package was suggested by Miroslav Novak, and implemented by
+Bennett.  Edward Czilli provided invaluable feedback in the testing phase of
+versions 2.0, 2.1 and 2.2.  Thanks are also due for comments and bug reports
+received from Jason Alexander, Edward J. Czilli, Bob Fiegel, Lico Hoekema,
+and Gabrielle Owen.  To everyone who has corresponded with me about the
+package, I want to convey my sincerest thanks.
+
+Enjoy!
+
+Frank Bennett
+fb@soas.ac.uk

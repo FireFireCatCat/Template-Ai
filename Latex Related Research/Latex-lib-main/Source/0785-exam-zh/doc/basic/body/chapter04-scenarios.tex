@@ -1,0 +1,477 @@
+% !TeX root = ../exam-zh-doc-basic.tex
+
+\section{常见场景}
+
+本章介绍实际使用中的常见需求和解决方案。
+
+\subsection{答案控制方案}
+
+\subsubsection{生成学生版和教师版}
+
+最常见的需求是生成两个版本的试卷：
+
+\textbf{学生版（默认）：}
+
+什么都不设置，默认就是学生版，所有答案都隐藏。
+
+\textbf{教师版：}
+
+在文档开头添加：
+
+\begin{latexcode}
+  \examsetup{
+    question/show-answer = true,        % 显示选择题和填空题答案
+    solution/show-solution = show-stay, % 显示解答题答案
+    question/show-points = true         % 显示分值（可选）
+  }
+\end{latexcode}
+
+\begin{tcolorbox}[colback=green!5!white, colframe=green!75!black, title=\textbf{最佳实践：版本切换方法对比}]
+\textbf{方法一：注释法（推荐新手）}
+
+适合场景：偶尔切换版本，手动编译
+
+\begin{latexcode}
+% 生成学生版：注释掉下面的代码
+% 生成教师版：取消注释
+% \examsetup{
+%   question/show-answer = true,
+%   solution/show-solution = show-stay
+% }
+\end{latexcode}
+
+\textbf{方法二：条件编译（推荐进阶用户）}
+
+适合场景：频繁切换版本，或需要自动化编译
+
+\begin{latexcode}
+% 在文档开头定义开关
+\newif\ifteacher
+\teachertrue   % 教师版：改为 \teachertrue
+% \teacherfalse  % 学生版：改为 \teacherfalse
+
+\ifteacher
+  \examsetup{
+    question/show-answer = true,
+    solution/show-solution = show-stay
+  }
+\fi
+\end{latexcode}
+
+\textbf{方法三：命令行参数（推荐批量生成）}
+
+适合场景：自动化脚本，一次编译生成两个版本
+
+创建主文件 \file{exam-main.tex}：
+\begin{latexcode}
+\ifdefined\SHOWANSWER
+  \examsetup{
+    question/show-answer = true,
+    solution/show-solution = show-stay
+  }
+\fi
+\end{latexcode}
+
+命令行编译：
+\begin{shellcode}
+# 学生版
+xelatex exam-main.tex
+
+# 教师版
+xelatex "\def\SHOWANSWER{1}\input{exam-main.tex}"
+\end{shellcode}
+\end{tcolorbox}
+
+\subsubsection{解答显示位置}
+
+解答题的答案可以在原位显示，也可以移到试卷最后：
+
+\begin{latexcode}
+  \examsetup{
+    % solution/show-solution = hide,       % 隐藏（学生版）
+    % solution/show-solution = show-stay,  % 原位显示（教师版）
+    solution/show-solution = show-move   % 移到最后
+  }
+\end{latexcode}
+
+|show-move| 模式适合制作"答案另附"的试卷。
+
+
+\subsection{页面设置}
+
+\subsubsection{纸张大小}
+
+\begin{latexcode}
+  \examsetup{
+    page/size = a4paper,  % A4 纸（默认）
+    % page/size = a3paper,  % A3 纸
+  }
+\end{latexcode}
+
+\subsubsection{页边距调整}
+
+`\cls{exam-zh}` 会在导言区末尾设置默认页面参数，所以自定义页边距时建议把 |\geometry| 放进 |\AtEndPreamble|：
+
+\begin{latexcode}[deletetexcs={\documentclass},morekeywords={\documentclass}]
+  \documentclass{exam-zh}
+
+  \AtEndPreamble{
+    \geometry{
+      top = 2.5cm,
+      bottom = 2cm,
+      left = 2cm,
+      right = 2cm
+    }
+  }
+\end{latexcode}
+
+\subsubsection{分栏设置}
+
+让试卷内容分成两栏：
+
+\begin{latexcode}
+  \usepackage{multicol}
+
+  \begin{document}
+    \title{标题}
+    \maketitle
+
+    \begin{multicols}{2}  % 开始两栏
+      % 题目内容...
+    \end{multicols}       % 结束两栏
+  \end{document}
+\end{latexcode}
+
+
+\subsection{图文混排详解}
+
+本节介绍 \cls{exam-zh} 自带的图文排版命令。
+
+\subsubsection{基本用法}
+
+\textbf{使用 \cmd{\textfigure}：}
+
+\begin{latexcode}
+  \textfigure{
+    如图所示，已知三角形 ABC 的三边长分别为 3、4、5，
+    求三角形的面积。
+  }{
+    \includegraphics[width=3cm]{triangle.pdf}
+  }
+\end{latexcode}
+
+图片位于文字左、右侧时，可以显式启用按图片实宽分配文字宽度：
+
+\begin{latexcode}
+  \textfigure[
+    fig-pos = right-top,
+    auto-text-width = true,
+    min-text-width = .4\linewidth,
+    column-gap = 1em
+  ]{
+    如图所示，求阴影部分的面积。
+  }{
+    \includegraphics[width=3cm]{figure.pdf}
+  }
+\end{latexcode}
+
+该功能默认关闭，不会覆盖既有的 |text-width| 行为；图片过宽时，文字部分会回退到 |min-text-width|，而不会继续压窄。
+
+\textbf{说明：}
+\begin{itemize}
+  \item 第一个大括号是文字内容
+  \item 第二个大括号是图片内容
+  \item 更细的控制参数可以在完整文档中查询 |textfigure/*| 键值
+\end{itemize}
+
+\subsubsection{多张图片}
+
+如果一题对应多张图片，可以使用 |multifigures| 环境：
+
+\begin{latexcode}
+  \begin{multifigures}[columns = 2]
+    \item[题 1 图] \includegraphics[width=3cm]{fig1.png}
+    \item[题 2 图] \includegraphics[width=3cm]{fig2.png}
+  \end{multifigures}
+\end{latexcode}
+
+\textbf{适用场景：}
+\begin{itemize}
+  \item 一段文字配一张图：优先用 |\textfigure|
+  \item 多张题图并排展示：优先用 |multifigures|
+  \item 只想简单插图：直接用 |\includegraphics|
+\end{itemize}
+
+\subsubsection{简单插图}
+
+\textbf{居中显示：}
+
+\begin{latexcode}
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{fig.png}
+  \end{center}
+\end{latexcode}
+
+更多示例见完整文档的“图文排版”章节。
+
+
+\subsection{行距和间距调整}
+
+本节介绍如何调整试卷的行距和各种间距，以适应不同需求（如节约纸张）。
+
+\subsubsection{全局行距调整}
+
+\textbf{方法 1：使用 \textbackslash linespread}
+
+\begin{latexcode}[deletetexcs={\documentclass},morekeywords={\documentclass}]
+  \documentclass{exam-zh}
+
+  \linespread{0.9}  % 行距缩小到 90%（默认 1.0）
+
+  \begin{document}
+    % 试卷内容...
+  \end{document}
+\end{latexcode}
+
+\textbf{方法 2：使用 setspace 宏包（更精细）}
+
+\begin{latexcode}[deletetexcs={\documentclass},morekeywords={\documentclass}]
+  \documentclass{exam-zh}
+
+  \usepackage{setspace}
+  \setstretch{0.85}  % 0.85 倍行距
+
+  % 或者使用预定义命令
+  % \singlespacing    % 单倍行距
+  % \onehalfspacing   % 1.5 倍行距
+  % \doublespacing    % 双倍行距
+\end{latexcode}
+
+\textbf{注意：}
+\begin{itemize}
+  \item 行距不要低于 0.8，否则阅读困难
+  \item 建议范围：0.85--1.2
+  \item 行距过小可能导致公式重叠
+\end{itemize}
+
+\subsubsection{题目间距调整}
+
+\textbf{调整题目之间的垂直间距：}
+
+\begin{latexcode}
+  \examsetup{
+    question/top-sep = 0.2em,
+    question/bottom-sep = 0.2em,
+  }
+\end{latexcode}
+
+\textbf{调整小题（problem）间距：}
+
+\begin{latexcode}
+  \examsetup{
+    problem/top-sep = 0.5em,
+    problem/bottom-sep = 0.5em,
+  }
+\end{latexcode}
+
+\subsubsection{选项间距调整}
+
+\textbf{调整选择题选项的垂直间距：}
+
+\begin{latexcode}
+  \examsetup{
+    choices/linesep = 0.3em,  % 多行选项之间的额外间距
+  }
+\end{latexcode}
+
+\textbf{调整选项的水平间距：}
+
+\begin{latexcode}
+  \examsetup{
+    choices/column-sep = 1em,  % 列与列之间的最小间距
+  }
+\end{latexcode}
+
+\subsubsection{段落间距调整}
+
+\textbf{调整段落间距：}
+
+\begin{latexcode}[deletetexcs={\documentclass},morekeywords={\documentclass}]
+  \documentclass{exam-zh}
+
+  % 减小段落间距
+  \setlength{\parskip}{0.3em}
+
+  % 取消首行缩进（可选）
+  \setlength{\parindent}{0pt}
+\end{latexcode}
+
+\subsubsection{紧凑模式示例}
+
+\textbf{综合示例：让试卷更紧凑以节约纸张}
+
+\begin{latexcode}[deletetexcs={\documentclass},morekeywords={\documentclass}]
+  \documentclass{exam-zh}
+
+  % === 全局行距 ===
+  \usepackage{setspace}
+  \setstretch{0.9}
+
+  % === 页边距 ===
+  \usepackage{geometry}
+  \geometry{
+    top = 2cm,
+    bottom = 1.5cm,
+    left = 1.8cm,
+    right = 1.8cm
+  }
+
+  % === 题目和选项间距 ===
+  \examsetup{
+    question/top-sep = 0.2em,
+    question/bottom-sep = 0.2em,
+    choices/linesep = 0.3em,
+    choices/column-sep = 0.8em,
+  }
+
+  % === 段落间距 ===
+  \setlength{\parskip}{0.2em}
+
+  \begin{document}
+    % 试卷内容...
+  \end{document}
+\end{latexcode}
+
+\textbf{效果：}
+\begin{itemize}
+  \item 可节约约 20--30\% 的纸张
+  \item 保持基本可读性
+  \item 适合练习题或非正式考试
+\end{itemize}
+
+\textbf{注意事项：}
+\begin{itemize}
+  \item 正式考试建议保持默认设置
+  \item 紧凑模式可能影响阅读体验
+  \item 图片密集的试卷效果不明显
+\end{itemize}
+
+\subsubsection{局部调整间距}
+
+如果只想在某些地方调整间距：
+
+\begin{latexcode}
+  % 增加间距
+  \vspace{1em}
+
+  % 减少间距
+  \vspace{-0.5em}
+
+  % 强制分页前的弹性间距
+  \vfill
+\end{latexcode}
+
+更多排版技巧见完整文档。
+
+
+\subsection{特殊功能}
+
+\subsubsection{方格纸}
+
+需要一串可填写的小方格时，可以使用 |\examsquare|：
+
+\begin{latexcode}
+  考号：\examsquare{10}
+\end{latexcode}
+
+\subsubsection{评分框}
+
+在试卷中添加评分表：
+
+\begin{latexcode}
+  \scoringbox
+\end{latexcode}
+
+详细配置见完整文档。
+
+\subsubsection{密封线}
+
+隐藏密封线：
+
+\begin{latexcode}
+  \examsetup{
+    sealline/show = false
+  }
+\end{latexcode}
+
+修改密封线文字：
+
+\begin{latexcode}
+  \examsetup{
+    sealline/text = {密封线内不要答题}
+  }
+\end{latexcode}
+
+更多密封线设置见完整文档。
+
+
+\subsection{学科专用功能}
+
+\subsubsection{语文试卷}
+
+\textbf{古诗排版：}
+
+使用 |poem| 环境：
+
+\begin{latexcode}
+  \begin{poem}
+    白日依山尽，\\
+    黄河入海流。\\
+    欲穷千里目，\\
+    更上一层楼。
+  \end{poem}
+\end{latexcode}
+
+\textbf{阅读材料：}
+
+使用 |material| 环境：
+
+\begin{latexcode}
+  \begin{material}[title = {文章标题}, author = {作者}]
+    文章内容...
+  \end{material}
+\end{latexcode}
+
+\subsubsection{英语试卷}
+
+\textbf{作文答题框：}
+
+\begin{latexcode}
+  \begin{writingbox}[title = {My Dream}]
+    \vspace*{10em}
+  \end{writingbox}
+\end{latexcode}
+
+
+\subsection{快速参考}
+
+\textbf{常用配置速查：}
+
+\begin{latexcode}
+  \examsetup{
+    % === 答案控制 ===
+    question/show-answer = true,  % 显示选择题和填空题答案
+    solution/show-solution = show-stay,  % 显示解答题答案
+
+    % === 分值显示 ===
+    question/show-points = true,  % 显示题目分值
+
+    % === 选项排列 ===
+    choices/columns = 2,  % 选项排成2列
+
+    % === 页面设置 ===
+    sealline/show = false,  % 隐藏密封线
+  }
+\end{latexcode}
+
+更多高级功能和详细参数，请查阅完整文档 \file{exam-zh-doc.pdf}。

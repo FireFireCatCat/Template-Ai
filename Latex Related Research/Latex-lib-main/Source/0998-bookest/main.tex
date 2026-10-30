@@ -1,0 +1,71 @@
+\documentclass[11pt]{bookest}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{natbib}
+
+\title{Field Notes on Book Layout}
+\author{Noor Fatima}
+\date{\today}
+
+\begin{document}
+
+% bookest's default \maketitle does not switch to a bare page style itself
+% (only its `article` option does), so the running header and page number
+% would otherwise print on the title page. Suppressed here instead.
+\pagestyle{empty}
+\maketitle
+\clearpage
+\pagestyle{headings}
+
+\tableofcontents
+
+\chapter{Preparing a Manuscript}
+
+\section{Structure Before Style}
+
+A manuscript's chapter and section divisions should be settled before any
+layout decision is made \citep{knuth1984texbook}. \texttt{bookest} extends
+the standard \texttt{book} class with coloured titling, running headers and a
+configurable cover, but the underlying sectioning commands are unchanged.
+
+\section{Front and Back Matter}
+
+Table~\ref{tab:matter} sketches the three regions of a typical manuscript and
+what belongs in each.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lp{7cm}}
+    \toprule
+    Region & Contents \\
+    \midrule
+    Front matter & Title page, table of contents, preface \\
+    Body & Numbered chapters and sections \\
+    Back matter & Appendices, bibliography, index \\
+    \bottomrule
+  \end{tabular}
+  \caption{Regions of a manuscript and what each one holds.}
+  \label{tab:matter}
+\end{table}
+
+\chapter{Working with the Extended Class}
+
+\section{Colour and Headers}
+
+\texttt{bookest} adds document-wide colour accents and header styling on top
+of \texttt{book}, without changing how chapters are declared or how
+cross-references resolve.
+
+\section{Citing and Concluding}
+
+The class does not alter bibliography handling either: a standard
+\texttt{natbib} bibliography, as used here \citep{knuth1984texbook}, compiles
+the same way it would under plain \texttt{book}.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

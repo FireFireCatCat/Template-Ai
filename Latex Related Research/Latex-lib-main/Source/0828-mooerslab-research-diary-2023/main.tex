@@ -1,0 +1,64 @@
+\documentclass[11pt,oneside]{book}
+\usepackage[paperwidth=7in,paperheight=9in,margin=0.72in]{geometry}
+\usepackage{booktabs,tabularx,enumitem,xcolor,hyperref}
+\definecolor{forest}{HTML}{356859}
+\definecolor{gold}{HTML}{B8860B}
+\hypersetup{colorlinks=true,linkcolor=forest,urlcolor=forest}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\newcommand{\logday}[2]{\section{#1}\textbf{Aim.} #2\par\textbf{Result.}\hspace{0.5em}\rule{0.7\linewidth}{0.4pt}\par}
+\title{Research Diary 2023\\\large A modular record for experiments and plans}
+\author{Your Name\\Laboratory or project}
+\date{Annual working copy}
+\begin{document}
+\frontmatter
+\maketitle
+\tableofcontents
+\chapter*{Working rules}
+Write the entry while the work is fresh. Keep a clear boundary between a
+measurement and its interpretation, record deviations from the planned method,
+and finish each session with a concrete next step. The compact page size is
+intended for a long-running diary that can later be searched as one PDF.
+\begin{enumerate}[leftmargin=*,label=\arabic*.]
+\item State the aim and the relevant setup.
+\item Record raw values before calculating a summary.
+\item Link files, samples or instrument runs by a stable name.
+\item Mark decisions and unresolved questions for the next session.
+\end{enumerate}
+
+\mainmatter
+\chapter{January}
+\logday{3 January --- instrument check}{Confirm the temperature controller and reference sample are ready for the week.}
+\begin{tabularx}{\textwidth}{@{}lXrr@{}}
+\toprule
+Check & Condition & Reading & Status\\
+\midrule
+Warm-up & 20 minutes & 21.1\,\textdegree C & pass\\
+Reference & Control sample & 1.018 & pass\\
+Noise & 10-minute window & 0.012 & monitor\\
+\bottomrule
+\end{tabularx}
+\logday{6 January --- comparison run}{Compare two preprocessing settings while holding the sample and operator constant.}
+The smoothed signal is easier to interpret, but the raw trace remains the
+authoritative record. Save both outputs with the same run identifier.
+\logday{13 January --- project review}{Turn the first fortnight of observations into a decision for the next experiment.}
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+Evidence & Decision & Follow-up\\
+\midrule
+Reference stable & Keep calibration procedure & Repeat at session end\\
+Preprocessing changes peak height & Compare on held-out sample & Add blind replicate\\
+\bottomrule
+\end{tabularx}
+\chapter{February}
+\logday{2 February --- new series}{Start the next sample series and preserve the link to the January calibration.}
+Use this chapter as the next month in the year. For a full annual diary,
+duplicate the chapter and replace each example section with a dated entry.
+\appendix
+\chapter{Annual plan}
+\begin{description}[leftmargin=2.4cm,style=sameline]
+\item[Measure] Complete the reference check before every comparison.
+\item[Review] Reserve one short entry each week for decisions and open questions.
+\item[Archive] Keep source data and processed results under the same run identifier.
+\end{description}
+\end{document}

@@ -1,0 +1,64 @@
+% bewerbung starter — ctan:bewerbung, LPPL-1.3. Ships with TeX Live (not
+% bundled). Full German job-application set: cover letter (Anschreiben) +
+% CV (Lebenslauf), both driven by the same personal-data macros.
+%
+% Two data files sit alongside main.tex and are picked up automatically by
+% the class's \AtBeginDocument hook:
+%   config.inc     — your personal details (name, address, phone, ...)
+%   anschrift.csv  — the target company for THIS application (one row per
+%                    application; \ID{n} below selects row n)
+\documentclass[%
+	lebenslaufColor=light-gray,
+	idPlain
+]{bewerbung}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+
+\definecolor{light-gray}{gray}{0.6}
+\definecolor{titlecolor}{gray}{0.62}
+\definecolor{addresscolor}{gray}{0.45}
+
+% Selects row 1 of anschrift.csv (idPlain: exact match on the KW column).
+\ID{1}
+
+\begin{document}
+	\begin{anschreiben}
+		mit gro{\ss}em Interesse habe ich Ihre Stellenausschreibung als
+		Softwareentwicklerin gelesen. In meiner aktuellen Position
+		entwickle ich Backend-Services in Go und Python und verantworte
+		die Weiterentwicklung unserer Auftragsverarbeitung.
+
+		Besonders reizt mich an der ausgeschriebenen Stelle die
+		Arbeit an skalierbaren, verteilten Systemen -- ein Bereich,
+		in dem ich in den letzten drei Jahren umfangreiche Erfahrung
+		gesammelt habe.
+
+		{\"U}ber die M{\"o}glichkeit eines pers{\"o}nlichen
+		Gespr{\"a}chs w{\"u}rde ich mich sehr freuen.
+	\end{anschreiben}
+
+	\begin{lebenslauf}[none][]
+		\maketitle
+		\makePerson
+
+		\section{Berufserfahrung}
+		\cventry{03/23}{Softwareentwicklerin}{Nordwind Systeme GmbH}{Berlin}{}{Migration der Auftragsverarbeitung auf eine Queue-basierte Architektur; Reduktion der p99-Latenz um 40\%.}
+		\cventry{07/19}{Softwareentwicklerin}{Fernbruecke Analytics}{Hamburg}{03/23}{Aufbau der Ingestion-Pipeline mit 2 Mio. Ereignissen pro Tag.}
+
+		\section{Studium}
+		\cventry{10/15}{M.Sc. Informatik}{Technische Universit\"at Berlin}{Berlin}{09/17}{}
+		\cventry{10/12}{B.Sc. Informatik}{Universit\"at Hamburg}{Hamburg}{09/15}{}
+
+		\section{Kenntnisse}
+		\cvlistitem{Go, Python, SQL}
+		\cvlistitem{Verteilte Systeme, API-Design}
+
+		\section{F\"uhrerschein}
+		\cvlistitem{Klasse B}
+
+		\section{Sprachen}
+		\cvlanguage{Deutsch}{Muttersprache}{}
+		\cvlanguage{Englisch}{verhandlungssicher}{}
+	\end{lebenslauf}
+\end{document}

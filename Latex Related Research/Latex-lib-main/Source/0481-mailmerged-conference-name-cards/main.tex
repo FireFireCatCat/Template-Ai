@@ -1,0 +1,42 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=.55cm]{geometry}
+\usepackage{fontspec}
+\setmainfont{Latin Modern Sans}
+\usepackage{tikz,xcolor,qrcode,datatool}
+\pagestyle{empty}
+\definecolor{conferenceblue}{HTML}{173F5F}
+\definecolor{conferencegold}{HTML}{F4B942}
+\newcommand{\namecard}[4]{%
+  \begin{tikzpicture}
+    \draw[rounded corners=3pt,fill=white,draw=conferenceblue,line width=.8pt]
+      (0,0) rectangle (8.6,5.4);
+    \fill[conferenceblue] (0,0) rectangle (8.6,1.0);
+    \node[anchor=west,text=white,font=\sffamily\bfseries\Large]
+      at (.55,.5) {OPEN METHODS};
+    \node[anchor=north west,font=\sffamily\bfseries\large,text=conferenceblue]
+      at (.58,4.65) {#1};
+    \node[anchor=north west,font=\sffamily\small,text=conferenceblue!80]
+      at (.6,4.18) {#2};
+    \node[anchor=north west,font=\sffamily\scriptsize]
+      at (.6,3.38) {#3};
+    \node[anchor=north west,font=\sffamily\scriptsize]
+      at (.6,2.95) {openmethods.example};
+    \node[anchor=south east] at (8.0,1.65)
+      {\qrcode[height=1.35cm]{#4}};
+  \end{tikzpicture}%
+}
+\begin{filecontents*}{participants.csv}
+Name,Role,Email,Site
+Mira Patel,Methods researcher,mira@example.org,https://openmethods.example/mira
+Jon Bell,Data editor,jon@example.org,https://openmethods.example/jon
+Ana Torres,Research designer,ana@example.org,https://openmethods.example/ana
+Sam Lee,Open-source maintainer,sam@example.org,https://openmethods.example/sam
+\end{filecontents*}
+\begin{document}
+\DTLloaddb{participants}{participants.csv}
+\newcounter{cardcount}
+\DTLforeach{participants}{\person=Name,\role=Role,\mail=Email,\site=Site}{%
+  \stepcounter{cardcount}\namecard{\person}{\role}{\mail}{\site}%
+  \ifodd\value{cardcount}\hfill\else\par\vspace{.22cm}\fi
+}
+\end{document}

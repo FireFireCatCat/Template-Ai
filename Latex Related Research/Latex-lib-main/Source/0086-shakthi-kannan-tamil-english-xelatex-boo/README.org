@@ -1,0 +1,84 @@
+#+TITLE: README
+* Introduction
+
+Tamil book PDF generation using XeTeX. The sources can be written
+using Emacs Org mode.
+
+* Required features [23/23]
+Write notes.
+
+- [X] Render Tamil text
+- [X] Odd page title
+- [X] Even page title
+- [X] Front page title, author
+- [X] One-half spacing
+- [X] Emergency stretch
+- [X] Margins (Set for two-side printing)
+- [X] Footnotes
+- [X] Table of Contents
+- [X] ஸ்ரீ rendition in PDF
+- [X] Roman numerals
+- [X] English and Tamil text
+- [X] Quotations, Poetry
+- [X] Letter height, width
+- [X] Words width
+- [X] Font size
+- [X] Latex template and layout
+- [X] -- renders as long dash
+- [X] 5x7 or 9x7 book size (chosen 7.5" by 9.5")
+- [X] Verse attrib renewcommand
+- [X] Italics
+- [X] Decorations to separate sections
+- [X] Title page
+* Conversion for .org to .tex file [8/8]
+On org file:
+
+- [X] Dynamically determine book title, chapter to config.sty
+  Fix in draft (set \booktitle)
+
+- [X] - புவலர் (8 அகலம்?) (Move to attrib) Run author-attrib.
+  Fix in draft.
+
+- [X] Convert quote block to verse (default latex export)
+  Fix in draft.
+
+- [X] {\englishfont{}}
+  Fix in draft.
+
+- [X] TEST org-mode /italics/
+  Fix in draft.
+
+  \emph and \textit are the same.
+
+- [X] TEST ToC names specify \tamilfont{}
+  Fix in draft.
+
+- [X] TEST Footnotes \footnote.
+  Fix in draft.
+
+  Use [fn:1], but, enclose text within \englishfont{} or \tamilfont{}.
+
+** Conversion and post-conversion
+- [X] Run headless-latex
+
+- [X] Run remove-orgmode-latex-labels on generated .tex file
+
+- [X] Convert orgmode top-level * to chapter (export to section and run regexp)
+  M-x query-replace
+  section -> chapter
+  subchapter -> section
+
+- [X] Convert \begin{verse} to \emph{\begin{verse} and
+              \end{verse} to \end{verse}}
+
+* License
+The sources are released under the MIT license.
+* Credits
+- Zdenek Wagner
+- Herbert Schulz
+- Max Klinger ("kaste")
+- Shakthi Kannan
+* Contact
+
+Shakthi Kannan
+author at shakthimaan dot com

@@ -1,0 +1,567 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a
+Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
+[Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [v0.6.10] - 2026-10-13
+
+- Warn if a frame subtitle is given (see issue
+  [\#73](https://github.com/josephwright/ltx-talk/issues/73))
+- Correct naming of `frame-style` key (see issue
+  [\#285](https://github.com/josephwright/ltx-talk/issues/285))
+- Support booleans without `= true` in frame optional argument
+
+## [v0.6.9] - 2026-10-06
+
+### Fixed
+
+- Correct behavior of overlays after `handout:0` is applied outside a frame (see
+  issue [\#284](https://github.com/josephwright/ltx-talk/issues/284))
+
+## [v0.6.8] - 2026-09-30
+
+### Fixed
+
+- Stretchable vertical glue in frame content (see issue
+  [\#279](https://github.com/josephwright/ltx-talk/issues/279))
+
+## [v0.6.7] - 2026-09-26
+
+### Changed
+
+- Internal adjustment to support font developers
+
+## [v0.6.6] - 2026-09-22
+
+### Changed
+
+- Wrap long frame titles (see issues
+  [\#187](https://github.com/josephwright/ltx-talk/issues/187))
+
+## [v0.6.5] - 2026-09-16
+
+### Fixed
+
+- Revert application opacity grouping to `tcolorbocx` environments (see issues
+  [\#272](https://github.com/josephwright/ltx-talk/issues/272) and
+  [\#274](https://github.com/josephwright/ltx-talk/issues/274))
+
+## [v0.6.4] - 2026-09-14
+
+### Changed
+
+- Automatically apply opacity grouping to `tcolorbox` environments (see issue
+  [\#256](https://github.com/josephwright/ltx-talk/issues/256))
+
+## [v0.6.3] - 2026-09-10
+
+### Fixed
+
+- Frame number when some frames are excluded (see issue
+  [\#270](https://github.com/josephwright/ltx-talk/issues/270))
+
+## [v0.6.2] - 2026-09-07
+
+### Fixed
+
+- Undefined control sequence in creation of theorems (see issue
+  [\#266](https://github.com/josephwright/ltx-talk/issues/266))
+
+## [v0.6.1] - 2026-09-02
+
+### Changed
+
+- Refine implementation of frame property storage (see issue 
+  [\#241](https://github.com/josephwright/ltx-talk/issues/241))
+
+## [v0.6.0] - 2026-08-23
+
+### Added
+
+- Definition for `thebibliography` environment (see issue 
+  [\#207](https://github.com/josephwright/ltx-talk/issues/207))
+- `\l_talk_frame_properties_clist` (see issue 
+  [\#241](https://github.com/josephwright/ltx-talk/issues/241))
+- `\appendix` command (see issue 
+  [\#252](https://github.com/josephwright/ltx-talk/issues/252))
+- Handling for supplementary frames (see issue 
+  [\#253](https://github.com/josephwright/ltx-talk/issues/253))
+- Frame options `auto-break` and `auto-break-coverage`
+
+### Changed
+
+- Require LaTeX 2026-06-01
+
+## [v0.5.3] - 2026-08-05
+
+### Fixed
+
+- Correct appearance of material which is alerted without an explicit overlay
+  specification (see issue
+  [\#244](https://github.com/josephwright/ltx-talk/issues/244))
+- Detect and error on over-specified overlay (see issue 
+  [\#245](https://github.com/josephwright/ltx-talk/issues/245))
+
+## [v0.5.2] - 2026-07-29
+
+### Fixed
+
+- Tagging of `onlyenv` when following a display environment (see issue 
+  [\#234](https://github.com/josephwright/ltx-talk/issues/234))
+- Support `frame-title-arg` in `\maketitle` (see issue 
+  [\#238](https://github.com/josephwright/ltx-talk/issues/238))
+
+## [v0.5.1] - 2026-07-02
+
+### Changed
+
+- Support *-form of `\newtheorem` (see issue 
+  [\#219](https://github.com/josephwright/ltx-talk/issues/219))
+
+### Fixed
+
+- Handling of whatsits at start of slide box (see issue
+  [\#217](https://github.com/josephwright/ltx-talk/issues/217))
+- Behavior of `\temporal` (see issue
+  [\#224](https://github.com/josephwright/ltx-talk/issues/224))
+- Suppress tagging inside `onlyenv` when content is omitted (see issue
+  [\#232](https://github.com/josephwright/ltx-talk/issues/232))
+
+## [v0.5.0] - 2026-04-30
+
+### Added
+
+- `\reuseframe` (see issue 
+  [\#190](https://github.com/josephwright/ltx-talk/issues/190))
+
+### Changed
+
+- Support `*` notation for (sub)sections (omitting from TOC)
+- Support for keyval optional argument for (sub)sections
+- Use after-item hook when available
+
+### Fixed
+
+- Only show current subsection if toc used in subsection (see issue
+  [\#203](https://github.com/josephwright/ltx-talk/issues/203))
+- Exclusion of modes when overlay spec is 'mixed'  (see issue
+  [\#206](https://github.com/josephwright/ltx-talk/issues/206))
+- Define handling of multiple action specifications (see issue
+  [\#208](https://github.com/josephwright/ltx-talk/issues/208))
+
+## [v0.4.11] - 2026-04-14
+
+### Changed
+
+- Output all slides in frame overlay spec (see issue 
+  [\#202](https://github.com/josephwright/ltx-talk/issues/202))
+
+### Fixed
+
+- Tag floats to avoid invalid caption tagging (see issue 
+  [\#199](https://github.com/josephwright/ltx-talk/issues/199))
+
+## [v0.4.10] - 2026-04-13
+
+### Fixed
+
+- Fix typos in header template doc
+- Typeset footer elements in separate boxes (see issue 
+  [\#191](https://github.com/josephwright/ltx-talk/issues/191))
+- Apply action spec uniformly to all 'action' aware environments (see issue 
+  [\#193](https://github.com/josephwright/ltx-talk/issues/193))
+- Update URL for maths fonts (see issue 
+  [\#197](https://github.com/josephwright/ltx-talk/issues/197))
+- Application of `action-spec` list environments when key is given for entire
+  frame with LaTeX 2026-06-01 (see issue
+  [\#198](https://github.com/josephwright/ltx-talk/issues/198))
+
+## [v0.4.9] - 2026-04-02
+
+### Fixed
+
+- Overlay behavior of `\textcolor` (see issue
+  [\#184](https://github.com/josephwright/ltx-talk/issues/184))
+
+## [v0.4.8] - 2026-03-31
+
+### Fixed
+
+- Drop transparency group for TikZ (see issue
+  [\#182](https://github.com/josephwright/ltx-talk/issues/182) and issue
+  [\#183](https://github.com/josephwright/ltx-talk/issues/183), and
+  [latex3/tagpdf\#133](https://github.com/latex3/tagpdf/issues/133))
+
+## [v0.4.7] - 2026-03-27
+
+### Fixed
+
+- Suppress link targets for 'floats' (see issue
+  [\#177](https://github.com/josephwright/ltx-talk/issues/177))
+- Suppress caption number for 'floats' (see issue
+  [\#178](https://github.com/josephwright/ltx-talk/issues/178))
+- Support hiding of PSTricks content (see issue
+  [\#179](https://github.com/josephwright/ltx-talk/issues/179))
+
+## [v0.4.6] - 2026-02-18
+
+### Changed
+
+- Revise signature for `\newtheorem` (see 
+  (https://github.com/latex3/tagging-project/issues/1239))
+
+## [v0.4.5] - 2026-02-16
+
+### Fixed
+
+- Correct interaction of `\onslide` and `\item` overlays (see issue
+  [\#170](https://github.com/josephwright/ltx-talk/issues/170))
+
+## [v0.4.4] - 2026-02-10
+
+### Changed
+
+- Revision of footnote code
+
+### Fixed
+
+- Apply overlay specs to heading commands (see issue
+  [\#164](https://github.com/josephwright/ltx-talk/issues/164))
+
+## [v0.4.3] - 2026-02-06
+
+### Changed
+
+- Spread columns to margin width
+- Simplify footnote code
+
+## [v0.4.2] - 2026-02-03
+
+### Fixed
+
+- Ignore section commands inside frames (see issue
+  [\#160](https://github.com/josephwright/ltx-talk/issues/160))
+
+## [v0.4.1] - 2026-02-02
+
+### Changed
+
+- Extend support for color in `pgf` (see issue
+  [\#159](https://github.com/josephwright/ltx-talk/issues/159))
+
+## [v0.4.0] - 2026-01-30
+
+### Added
+
+- Basic support for footnote output (see issue
+  [\#91](https://github.com/josephwright/ltx-talk/issues/91))
+
+## [v0.3.13] - 2026-01-26
+
+### Changed
+
+- Adapt for updated block code in LaTeX 2026-06-01
+
+### Fixed
+
+- Correct handling of combined overlay and action specs containing `+` in
+  both parts, for example `<+-| alter@+>` (see issue
+  [\#154](https://github.com/josephwright/ltx-talk/issues/154))
+
+## [v0.3.12] - 2026-01-21
+
+### Changed
+
+- Drop some 'no-op' opacity whatsits
+- Support classical font-size options (`10pt`, `11pt`, `12pt`)
+- Document `font-size` option
+
+## [v0.3.11] - 2026-01-16
+
+### Fixed
+
+- Avoid unreliable tabular width if last cell contains `\onslide` (see issue
+  [\#148](https://github.com/josephwright/ltx-talk/issues/148))
+
+## [v0.3.10] - 2026-01-16
+
+### Changed
+
+- Avoid adding redundant opacity where block environments have no overlays
+  active
+
+### Fixed
+
+- Handling of comma-separated overlay specs (see issue
+  [\#145](https://github.com/josephwright/ltx-talk/issues/145))
+- Opacity propagation to figures and tables (see issue
+  [\#146](https://github.com/josephwright/ltx-talk/issues/146))
+
+## [v0.3.9] - 2026-01-15
+
+### Fixed
+
+- Spacing after `\onslide` (see issue
+  [\#138](https://github.com/josephwright/ltx-talk/issues/138))
+
+## [v0.3.8] - 2026-01-12
+
+### Changed
+
+- Enable tagging of documentation
+- Switch to `lua-unicode-math` with LuaTeX
+
+### Fixed
+
+- Overlay tracking in `amsmath` environments (see issue
+  [\#137](https://github.com/josephwright/ltx-talk/issues/137))
+
+## [v0.3.7] - 2026-01-09
+
+### Fixed
+
+- Spanning overlays across tabular cells (see issue
+  [\#129](https://github.com/josephwright/ltx-talk/issues/129))
+- Application of `\pause` to block environments (see issue
+  [\#134](https://github.com/josephwright/ltx-talk/issues/134))
+- Support for `\color(f)box` (see issue
+  [\#135](https://github.com/josephwright/ltx-talk/issues/135))
+
+## [v0.3.6] - 2026-01-06
+
+### Fixed
+
+- Support `totalframes` in metadata (see issue
+  [\#127](https://github.com/josephwright/ltx-talk/issues/127))
+- Expansion of commands in overlay specs (see issue
+  [\#133](https://github.com/josephwright/ltx-talk/issues/133))
+
+### Changed
+
+- Revise approach to detecting 'short' metadata items (see issue
+  [\#127](https://github.com/josephwright/ltx-talk/issues/127))
+
+## [v0.3.5] - 2025-12-17
+
+### Fixed
+
+- Interaction of lists and `\pause` (see issue
+  [\#125](https://github.com/josephwright/ltx-talk/issues/125))
+
+## [v0.3.4] - 2025-12-01
+
+### Fixed
+
+- Definition of `\pagecolor` (see issue
+  [\#116](https://github.com/josephwright/ltx-talk/issues/116))
+- Suppression of spaces after `\color` (see
+  issue [\#117](https://github.com/josephwright/ltx-talk/issues/117))
+
+## [v0.3.3] - 2025-11-29
+
+### Fixed
+
+- Interpretation of `=` in mandatory argument for `\author` and `\title` (see
+  issue [\#114](https://github.com/josephwright/ltx-talk/issues/114))
+- Paragraph termination in columns (see issue
+  [\#115](https://github.com/josephwright/ltx-talk/issues/115))
+
+## [v0.3.2] - 2025-11-29
+
+### Fixed
+
+- Column output with pdfTeX (see issue
+  [\#112](https://github.com/josephwright/ltx-talk/issues/112))
+
+## [v0.3.1] - 2025-11-28
+
+### Fixed
+
+- Order of section titles in tagging structures (see issue
+  [\#111](https://github.com/josephwright/ltx-talk/issues/111))
+
+### Changed
+
+- Added ActualText to section structures for better reading experience
+  
+## [v0.3.0] - 2025-11-10
+
+### Added
+
+- Support for short versions of author, date, institution and (sub)title
+- Footer element `subtitle`
+
+### Changed
+
+- Normalize key names between header and footer templates
+
+### Fixed
+
+- Avoid error with `\footnote` (see issue
+  [\#91](https://github.com/josephwright/ltx-talk/issues/91))
+
+## [v0.2.3] - 2025-10-10
+
+### Fixed
+
+- Use of separator for empty footer elements (see issue
+  [\#99](https://github.com/josephwright/ltx-talk/issues/99))
+
+## [v0.2.2] - 2025-09-30
+
+### Added
+
+- Option `handout` as alias for `mode = handout` to match `beamer` syntax
+
+### Fixed
+
+- Spacing issue in columns (see issue
+  [\#93](https://github.com/josephwright/ltx-talk/issues/93))
+
+## [v0.2.1] - 2025-09-18
+
+### Fixed
+
+- Correct float caption info
+
+## [v0.2.0] - 2025-09-16
+
+### Added
+
+- Support for `figure` and `table` environments, and `\caption` command (see
+  issue [\#89](https://github.com/josephwright/ltx-talk/issues/89))
+
+## [v0.1.9] - 2025-09-01
+
+### Fixed
+
+- Missing code in fix for issue
+  [\#83](https://github.com/josephwright/ltx-talk/issues/83)
+
+## [v0.1.8] - 2025-08-31
+
+### Fixed
+
+- Implementation of `\pause` since update of counter method (see
+  issue [\#83](https://github.com/josephwright/ltx-talk/issues/83))
+
+## [v0.1.7] - 2025-08-26
+
+### Fixed
+
+- Overlay argument of `frame` producing an infinite loop in some cases (see
+  issue [\#79](https://github.com/josephwright/ltx-talk/issues/79))
+
+## [v0.1.6] - 2025-07-31
+
+### Fixed
+
+- Generate a required variant
+- Handling of optional argument to `\item`
+
+## [v0.1.5] - 2025-07-28
+
+### Changed
+
+- Revise handling of `pauses` counter and `+`/`.` implementation (see issue
+  [\#60](https://github.com/josephwright/ltx-talk/issues/60))
+
+## [v0.1.4] - 2025-07-19
+
+### Added
+
+- Documentation for `\framesubtitle`
+- Documentation for `\maketitle` extensions
+
+### Fixed
+
+- Reset frame continuation flag for all tagging states (see issue
+  [\#66](https://github.com/josephwright/ltx-talk/issues/66))
+
+## [v0.1.3] - 2025-07-18
+
+### Changed
+
+- Use Latin Modern for pdfTeX
+
+## [v0.1.2] - 2025-07-16
+
+### Changed
+
+- Error if kernel support is too old
+
+## [v0.1.1] - 2025-07-14
+
+### Changed
+
+- Load `amsmath` with all engines
+
+### Fixed
+
+- Support optional arg. for theorem envs. (see issue
+  [\#63](https://github.com/josephwright/ltx-talk/issues/63))
+
+## [v0.1.0] - 2025-07-12
+
+- Initial release
+
+[Unreleased]: https://github.com/josephwright/ltx-talk/compare/v0.6.10...HEAD
+[v0.6.10]: https://github.com/josephwright/ltx-talk/compare/v0.6.9...v0.6.10
+[v0.6.9]: https://github.com/josephwright/ltx-talk/compare/v0.6.8...v0.6.9
+[v0.6.8]: https://github.com/josephwright/ltx-talk/compare/v0.6.7...v0.6.8
+[v0.6.7]: https://github.com/josephwright/ltx-talk/compare/v0.6.6...v0.6.7
+[v0.6.6]: https://github.com/josephwright/ltx-talk/compare/v0.6.5...v0.6.6
+[v0.6.5]: https://github.com/josephwright/ltx-talk/compare/v0.6.4...v0.6.5
+[v0.6.4]: https://github.com/josephwright/ltx-talk/compare/v0.6.3...v0.6.4
+[v0.6.3]: https://github.com/josephwright/ltx-talk/compare/v0.6.2...v0.6.3
+[v0.6.2]: https://github.com/josephwright/ltx-talk/compare/v0.6.1...v0.6.2
+[v0.6.1]: https://github.com/josephwright/ltx-talk/compare/v0.6.0...v0.6.1
+[v0.6.0]: https://github.com/josephwright/ltx-talk/compare/v0.5.3...v0.6.0
+[v0.5.3]: https://github.com/josephwright/ltx-talk/compare/v0.5.2...v0.5.3
+[v0.5.2]: https://github.com/josephwright/ltx-talk/compare/v0.5.1...v0.5.2
+[v0.5.1]: https://github.com/josephwright/ltx-talk/compare/v0.5.0...v0.5.1
+[v0.5.0]: https://github.com/josephwright/ltx-talk/compare/v0.4.11...v0.5.0
+[v0.4.11]: https://github.com/josephwright/ltx-talk/compare/v0.4.10...v0.4.11
+[v0.4.10]: https://github.com/josephwright/ltx-talk/compare/v0.4.9...v0.4.10
+[v0.4.9]: https://github.com/josephwright/ltx-talk/compare/v0.4.8...v0.4.9
+[v0.4.8]: https://github.com/josephwright/ltx-talk/compare/v0.4.7...v0.4.8
+[v0.4.7]: https://github.com/josephwright/ltx-talk/compare/v0.4.6...v0.4.7
+[v0.4.6]: https://github.com/josephwright/ltx-talk/compare/v0.4.5...v0.4.6
+[v0.4.5]: https://github.com/josephwright/ltx-talk/compare/v0.4.4...v0.4.5
+[v0.4.4]: https://github.com/josephwright/ltx-talk/compare/v0.4.3...v0.4.4
+[v0.4.3]: https://github.com/josephwright/ltx-talk/compare/v0.4.2...v0.4.3
+[v0.4.2]: https://github.com/josephwright/ltx-talk/compare/v0.4.1...v0.4.2
+[v0.4.1]: https://github.com/josephwright/ltx-talk/compare/v0.4.0...v0.4.1
+[v0.4.0]: https://github.com/josephwright/ltx-talk/compare/v0.3.13...v0.4.0
+[v0.3.13]: https://github.com/josephwright/ltx-talk/compare/v0.3.12...v0.3.13
+[v0.3.12]: https://github.com/josephwright/ltx-talk/compare/v0.3.11...v0.3.12
+[v0.3.11]: https://github.com/josephwright/ltx-talk/compare/v0.3.10...v0.3.11
+[v0.3.10]: https://github.com/josephwright/ltx-talk/compare/v0.3.9...v0.3.10
+[v0.3.9]: https://github.com/josephwright/ltx-talk/compare/v0.3.8...v0.3.9
+[v0.3.8]: https://github.com/josephwright/ltx-talk/compare/v0.3.7...v0.3.8
+[v0.3.7]: https://github.com/josephwright/ltx-talk/compare/v0.3.6...v0.3.7
+[v0.3.6]: https://github.com/josephwright/ltx-talk/compare/v0.3.5...v0.3.6
+[v0.3.5]: https://github.com/josephwright/ltx-talk/compare/v0.3.4...v0.3.5
+[v0.3.4]: https://github.com/josephwright/ltx-talk/compare/v0.3.3...v0.3.4
+[v0.3.3]: https://github.com/josephwright/ltx-talk/compare/v0.3.2...v0.3.3
+[v0.3.2]: https://github.com/josephwright/ltx-talk/compare/v0.3.1...v0.3.2
+[v0.3.1]: https://github.com/josephwright/ltx-talk/compare/v0.3.0...v0.3.1
+[v0.3.0]: https://github.com/josephwright/ltx-talk/compare/v0.2.3...v0.3.0
+[v0.2.3]: https://github.com/josephwright/ltx-talk/compare/v0.2.2...v0.2.3
+[v0.2.2]: https://github.com/josephwright/ltx-talk/compare/v0.2.1...v0.2.2
+[v0.2.1]: https://github.com/josephwright/ltx-talk/compare/v0.2.0...v0.2.1
+[v0.2.0]: https://github.com/josephwright/ltx-talk/compare/v0.1.9...v0.2.0
+[v0.1.9]: https://github.com/josephwright/ltx-talk/compare/v0.1.8...v0.1.9
+[v0.1.8]: https://github.com/josephwright/ltx-talk/compare/v0.1.7...v0.1.8
+[v0.1.7]: https://github.com/josephwright/ltx-talk/compare/v0.1.6...v0.1.7
+[v0.1.6]: https://github.com/josephwright/ltx-talk/compare/v0.1.5...v0.1.6
+[v0.1.5]: https://github.com/josephwright/ltx-talk/compare/v0.1.4...v0.1.5
+[v0.1.4]: https://github.com/josephwright/ltx-talk/compare/v0.1.3...v0.1.4
+[v0.1.3]: https://github.com/josephwright/ltx-talk/compare/v0.1.2...v0.1.3
+[v0.1.2]: https://github.com/josephwright/ltx-talk/compare/v0.1.1...v0.1.2
+[v0.1.1]: https://github.com/josephwright/ltx-talk/compare/v0.1.0...v0.1.1

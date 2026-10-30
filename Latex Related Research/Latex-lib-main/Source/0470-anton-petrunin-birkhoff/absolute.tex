@@ -1,0 +1,529 @@
+%\part*{Non-Euclidean geometry}
+\addtocontents{toc}{\protect\contentsline{part}{\protect\numberline{}Non-Euclidean geometry}{}{}}
+
+\chapter{Neutral plane}\label{chap:non-euclid}
+
+Let us remove Axiom~\ref{def:birkhoff-axioms:4} from our axiomatic system (Section~\ref{sec:axioms}).
+This way we define a new object called the 
+\index{plane!neutral plane}\index{neutral plane}\emph{neutral plane} or \index{plane!absolute plane}\index{absolute plane}\emph{absolute plane}.
+(In a neutral plane, Axiom~\ref{def:birkhoff-axioms:4} may or may not hold.)
+
+Every theorem in neutral geometry holds in Euclidean geometry.
+In other words, the Euclidean plane is an example of a neutral plane. 
+In the next chapter, we will construct an example of a neutral plane that is not Euclidean.
+
+We use Axiom~\ref{def:birkhoff-axioms:4} starting from Chapter~\ref{chap:parallel},
+and all the statements before that hold in neutral geometry.
+This makes all the discussed results
+about
+half-planes,
+signs of angles,
+congruence conditions,
+perpendicular lines,
+and reflections 
+true in neutral geometry.
+Recall that a statement is marked with ``$\a$'' (for example, ``\textbf{Theorem\abs}'') if it holds in every neutral plane, and the same proof works.
+
+
+Let us give an example of a theorem in neutral geometry that admits a simpler proof in Euclidean geometry. 
+
+\begin{thm}{Hypotenuse-leg congruence condition}\label{thm:hypotenuse-leg}
+Assume that triangles $ABC$ and $A'B'C'$
+have right angles at $C$ and $C'$ respectively, 
+$AB\z=A'B'$ and $AC\z=A'C'$.
+Then $\triangle ABC\cong\triangle A'B'C'$.
+\end{thm}
+
+
+\parit{Euclidean proof.} 
+By the Pythagorean theorem $BC=B'C'$.
+Then the statement follows from the SSS congruence condition.
+\qeds
+
+The proof of the Pythagorean theorem used properties of similar triangles, which in turn used Axiom~\ref{def:birkhoff-axioms:4}. 
+Therefore this proof does not work in a neutral plane.
+
+\parit{Neutral proof.}
+Suppose that $D$ denotes the reflection of $A$ across $(BC)$
+and $D'$ denotes the reflection of $A'$ across $(B'C')$.
+Note that 
+$$
+AD=2\cdot AC=2\cdot A'C'=A'D',\qquad
+BD=BA=B'A'=B'D'.
+$$
+
+{
+
+\begin{wrapfigure}{r}{28mm}
+\vskip-0mm
+\centering
+\includegraphics{mppics/pic-180}
+\end{wrapfigure}
+
+By the SSS congruence condition (\ref{thm:SSS}), 
+we get that $\triangle ABD\cong \triangle A'B'D'$.
+
+The statement follows since $C$ is the midpoint of $[AD]$
+and $C'$ is the midpoint of $[A'D']$.  
+\qeds
+
+\begin{thm}{Exercise}\label{ex:tangent-angle-neutral}
+Read the proof of Theorem~\ref{thm:tangent-angle} and identify the first statement that does not work in the neutral plane.
+\end{thm}
+
+}
+
+
+\begin{thm}{Exercise}\label{ex:abs-bisect=median}
+Give a proof of Exercise~\ref{ex:bisect=median}
+that works in the neutral plane. 
+\end{thm}
+
+
+
+\begin{thm}{Exercise}\label{ex:abs-inscibed}
+Let $ABCD$ be an inscribed quadrangle in the neutral plane.
+Show that
+$$\measuredangle ABC+\measuredangle CDA\equiv \measuredangle BCD+\measuredangle DAB.$$
+
+\end{thm}
+
+One cannot use Corollary~\ref{cor:inscribed-quadrangle} to solve the exercise above since it uses Theorems~\ref{thm:tangent-angle} and \ref{thm:inscribed-angle},
+which in turn use Theorem~\ref{thm:3sum}.
+
+
+\section{Two angles of a triangle}
+
+In this section, we will prove a weaker form of Theorem~\ref{thm:3sum}
+which holds in every neutral plane.
+
+\begin{thm}{Proposition}\label{prop:2sum}
+Let $\triangle ABC$ be a nondegenerate triangle in the neutral plane.
+Then 
+$$|\measuredangle CAB|+|\measuredangle ABC|< \pi.$$
+
+\end{thm}
+
+\begin{wrapfigure}{r}{23mm}
+\vskip-1mm
+\centering
+\includegraphics{mppics/pic-182}
+\end{wrapfigure}
+
+According to \ref{thm:signs-of-triug}, the angles $ABC$, $BCA$, and $CAB$
+have the same sign.
+Therefore, in the Euclidean plane, the theorem follows immediately from Theorem~\ref{thm:3sum}.
+
+\parit{Proof.}
+Let $X$ be the reflection of $C$ across the midpoint $M$ of $[AB]$.
+Applying \ref{ex:between}, we get
+\[|\measuredangle CAX|=|\measuredangle CAB|+|\measuredangle ABC|.\eqlbl{eq:CAX=CAB+ABC}\]
+
+By Proposition~\ref{prop:point-reflection+}
+$\measuredangle BAX\z=\measuredangle ABC$.
+
+Note that $\measuredangle CAX\z{\not\equiv} \pi$; otherwise, $X$ would lie on $(AC)$.
+Therefore the identity \ref{eq:CAX=CAB+ABC} implies that
+\[|\measuredangle CAB|+|\measuredangle ABC|=|\measuredangle CAX|<\pi.\]
+\qedsf
+
+\begin{thm}[!]{Exercise}\label{ex:parallel-abs}
+Assume $A$, $B$, $C$, and $D$ are points in a neutral plane
+such that 
+$$2\cdot \measuredangle ABC+2\cdot\measuredangle BCD\equiv 0.$$
+Show that $(AB)\parallel (CD)$.
+\end{thm}
+
+Note that one cannot apply the transversal property (\ref{thm:parallel-2}) here.
+
+
+\begin{thm}{Exercise}\label{ex:SAA}
+Prove the \index{SAA congruence condition}\emph{side-angle-angle} congruence condition in neutral geometry.
+
+
+In other words, let $ABC$ and $A'B'C'$ be two triangles in a neutral plane;
+suppose that $\triangle A'B'C'$ is nondegenerate.
+Show that $\triangle ABC\z\cong \triangle A'B'C'$
+if 
+$$AB=A'B',
+\quad  
+\measuredangle ABC=\pm\measuredangle A'B'C',
+\quad 
+\text{and}
+\quad
+\measuredangle BCA=\pm\measuredangle B'C'A'.$$
+
+\end{thm}
+
+In the Euclidean plane, the above exercise follows from ASA and the theorem on the sum of angles of a triangle (\ref{thm:3sum}).
+However, Theorem~\ref{thm:3sum} cannot be used here, since its proof uses Axiom~\ref{def:birkhoff-axioms:4}.
+Later (Theorem~\ref{thm:3sum-h}) 
+we will show that Theorem~\ref{thm:3sum} does not hold in a neutral plane.
+
+\begin{thm}{Exercise}\label{ex:chev<side}
+Assume that point $D$ lies between vertices $A$ and $B$ of $\triangle ABC$ in the neutral plane.
+Show that 
+$$CD<CA
+\quad
+\text{or}
+\quad
+CD<CB.$$
+
+\end{thm}
+
+\section{Three angles of a triangle}
+
+\begin{thm}{Proposition}\label{prop:angle-side}
+Let $\triangle ABC$ and $\triangle A'B'C'$ be two triangles in the neutral plane
+such that $AC=A'C'$ and $BC=B'C'$.
+Then 
+$$AB\z<A'B'
+\quad
+\text{if and only if}
+\quad 
+|\measuredangle ACB|<|\measuredangle A'C'B'|.$$
+
+\end{thm}
+
+\begin{wrapfigure}{o}{38mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-184}
+\end{wrapfigure}
+
+\parit{Proof.}
+Without loss of generality, we may assume that $A=A'$, $C=C'$, and $\measuredangle ACB,\measuredangle ACB'\ge 0$.
+In this case, we need to show that 
+$$AB<AB'
+\ 
+\iff
+\  
+\measuredangle ACB<\measuredangle ACB'.$$
+
+Choose a point $X$ so that 
+$$\measuredangle ACX=\tfrac12\cdot(\measuredangle ACB+\measuredangle ACB').$$
+Note that 
+\begin{itemize}
+\item $(CX)$ bisects $\angle BCB'$.
+\item $(CX)$ is the perpendicular bisector of $[BB']$.
+\item $A$ and $B$ lie on the same side of $(CX)$ if and only if $$\measuredangle ACB<\measuredangle ACB'.$$
+\end{itemize}
+From Exercise~\ref{ex:pbisec-side}, $A$ and $B$ lie on the same side of $(CX)$ if and only if $AB<AB'$.
+Hence the result.
+\qeds
+
+\begin{thm}{Theorem}\label{thm:3sum-a}
+Let $\triangle ABC$ be a triangle in the neutral plane.
+Then 
+$$|\measuredangle ABC|+|\measuredangle BCA|+|\measuredangle CAB|\le \pi.$$
+
+\end{thm}
+
+The following proof is due to Adrien-Marie Legendre \cite{legendre}, 
+earlier proofs were given by Giovanni Saccheri \cite{saccheri}
+and Johann Lambert \cite{lambert}.
+
+\parit{Proof.} 
+Set 
+\begin{align*}
+a&=BC,
+&
+b&=CA,
+&
+c&=AB,
+\\
+\alpha&=\measuredangle CAB,
+&
+\beta&=\measuredangle ABC,
+&
+\gamma&=\measuredangle BCA.
+\end{align*}
+Without loss of generality, we may assume that $\alpha,\beta,\gamma\ge 0$.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics{mppics/pic-186}
+\end{figure}
+
+Fix a positive integer~$n$.
+Consider points $A_0$, $A_1,\dots,A_n$ on the half-line
+$[BA)$, such that $BA_i=i\cdot c$ for each~$i$.
+(In particular, $A_0=B$ and $A_1=A$.)
+Construct points $C_1$, $C_2,\dots,C_n$,
+so that
+$\measuredangle A_iA_{i-1}C_i\z=\beta$ and $A_{i-1}C_i=a$ for each~$i$.
+
+By SAS, we have constructed $n$ congruent triangles 
+\begin{align*}
+\triangle ABC&=\triangle A_{1}A_0C_1\cong\triangle A_2A_{1}C_2\cong
+\dots
+\cong\triangle A_nA_{n-1}C_n.
+\end{align*}
+
+
+Set $d=C_1C_2$ and $\delta=\measuredangle C_2A_1C_1$.
+Note that 
+$$\alpha+\beta+\delta=\pi.
+\eqlbl{eq:gamma'}$$
+By Proposition~\ref{prop:2sum}, we get that $\delta\ge 0$.
+
+By construction
+\begin{align*}
+\triangle A_1C_1C_2&\cong\triangle A_{2}C_2C_3\cong\dots
+\cong\triangle A_{n-1}C_{n-1}C_n.
+\end{align*}
+In particular, $C_iC_{i+1}=d$ 
+for each~$i$.
+
+Applying the triangle inequality several times, we get that
+\begin{align*}
+n\cdot c&=A_0A_n\le 
+\\
+&\le A_0C_1+C_1C_2+\dots+C_{n-1}C_n+C_nA_n=
+\\
+&=a+(n-1)\cdot d+b.
+\end{align*}
+
+In particular, 
+\[c\le  d+\tfrac1n\cdot (a+b-d).\]
+Since  $n$ is an arbitrary positive integer,
+the latter implies
+$c\le d$.
+By Proposition~\ref{prop:angle-side}, 
+it is equivalent to 
+\[\gamma\le \delta.\] 
+From \ref{eq:gamma'}, 
+the theorem follows.
+\qeds
+
+\begin{thm}{Exercise}\label{ex:neutral-quadrangle}
+Let $ABCD$ be a quadrangle in the neutral plane.
+Suppose that $\angle DAB$ and $\angle ABC$ are right.
+Show that $AB\le CD$.
+\end{thm}
+
+\section{The defect}\label{The defect}
+
+The \index{defect}\emph{defect} of triangle $\triangle ABC$ is defined as
+$$\defect(\triangle ABC)
+\df 
+\pi-|\measuredangle ABC|-|\measuredangle BCA|-|\measuredangle CAB|.$$
+
+Theorem~\ref{thm:3sum-a} states that \textit{the defect of each triangle in a neutral plane has to be nonnegative}.
+According to Theorem~\ref{thm:3sum}, every triangle in
+the Euclidean plane has zero defect.
+
+{
+
+\begin{wrapfigure}{o}{24mm}
+\vskip-6mm
+\centering
+\includegraphics{mppics/pic-188}
+\vskip4mm
+\includegraphics{mppics/pic-189}
+\end{wrapfigure}
+
+\begin{thm}[!]{Classroom exercise}\label{ex:defect}
+Let $\triangle ABC$ be a nondegenerate triangle in the neutral plane.
+Assume $D$ lies between $A$ and~$B$.
+Show that 
+$$\defect(\triangle ABC)=\defect(\triangle ADC)+\defect(\triangle DBC).$$
+
+\end{thm}
+
+
+\begin{thm}{Exercise}\label{ex:defect=} Let $ABC$ be a nondegenerate triangle in the neutral plane.
+Suppose $X$ is a reflection of $C$ across a midpoint $M$ of $[AB]$.
+Show that 
+$$\defect(\triangle ABC)=\defect(\triangle AXC).$$
+\end{thm}
+
+}
+
+\vskip-2mm
+
+\begin{thm}{Exercise}\label{ex:neutral-rectangle}
+Let $ABCD$ be a \index{rectangle}\emph{rectangle} in the neutral plane;
+that is, $ABCD$ is a quadrangle with all right angles.
+Show that $AB\z=CD$. 
+\end{thm}
+
+\begin{thm}{Advanced exercise}\label{ex:neutral-rectangle+}
+Show that if the neutral plane has a rectangle, then all its triangles have zero defect.
+\end{thm}
+
+\section{Proving that something cannot be proved}
+\label{sec:unprovable}
+
+Many attempts were made to prove that every theorem in Euclidean geometry holds in neutral geometry.
+The latter is equivalent to the statement that Axiom~\ref{def:birkhoff-axioms:4} is a \textit{theorem} in neutral geometry.
+
+Some of these attempts were accepted as proof for long periods until a mistake was found.
+
+Many statements in neutral geometry are equivalent to Axiom~\ref{def:birkhoff-axioms:4}.
+It means that if we exchange Axiom~\ref{def:birkhoff-axioms:4} for each of these statements, then we will obtain an equivalent axiomatic system.
+
+The following theorem provides a short list of such statements.
+We are not going to prove it in the book.
+
+\begin{thm}{Theorem}\label{thm:=IV}
+The neutral plane is Euclidean if and only if one of the following equivalent conditions holds:
+\begin{enumerate}[(a)]
+\item\label{thm:=IV:main} 
+There is a line $\ell$ 
+and a point $P\notin\ell$ 
+such that there is only one line passing thru $P$ 
+and parallel to~$\ell$.
+\item 
+Every nondegenerate triangle can be circumscribed.
+\item
+There exists a pair of distinct lines that lie at a bounded distance from each other.
+\item
+There is a triangle with an arbitrarily large inradius.
+\item\label{thm:=IV:defect}
+There is a nondegenerate triangle with zero defect.
+\item\label{thm:=IV:rectangle}
+There exists a \index{rectangle}\emph{rectangle}; that is, a quadrangle with all right angles.
+\end{enumerate}
+\end{thm}
+
+It is hard to imagine a neutral plane that does not satisfy some of the properties above.
+That is partly the reason for a large number of false proofs;
+each used one of such statements by accident.
+
+Let us formulate the negation of \textit{(\ref{thm:=IV:main})} above as a new axiom;
+we label it h-$\!$\ref{def:birkhoff-axioms:4} as a \textit{hyperbolic version} of Axiom~\ref{def:birkhoff-axioms:4}.
+
+\begin{framed}
+\begin{description}
+\item[{\rm h-$\!$\ref{def:birkhoff-axioms:4}.}]\label{def:hyperbolic-4a}  
+For every line $\ell$ and every point $P\notin\ell$
+there are at least two lines that pass thru $P$ and parallel to~$\ell$.
+\end{description}
+\end{framed}
+
+By Theorem~\ref{thm:parallel}, a neutral plane that satisfies Axiom~h-$\!$\ref{def:birkhoff-axioms:4} is not Euclidean. 
+Moreover, according to Theorem~\ref{thm:=IV} (which we do not prove) 
+in every non-Euclidean neutral plane, Axiom~h-$\!$\ref{def:birkhoff-axioms:4} holds.
+
+It opens a way to look for a proof by contradiction.
+Simply exchange Axiom~\ref{def:birkhoff-axioms:4} for Axiom~h-$\!$\ref{def:birkhoff-axioms:4}
+ and start to prove theorems in the obtained axiomatic system.
+If we arrive at a contradiction,
+we prove Axiom~\ref{def:birkhoff-axioms:4} in a neutral plane.
+This idea had been growing since the $5^\text{th}$ century;
+the most notable results were obtained by Giovanni Saccheri \cite{saccheri}.
+
+The system of axioms \ref{def:birkhoff-axioms:0}--\ref{def:birkhoff-axioms:3} and h-$\!$\ref{def:birkhoff-axioms:4} defines a new geometry which is now called \index{hyperbolic!geometry}\emph{hyperbolic} or \index{Lobachevsky  geometry}\emph{Lobachevsky  geometry}.
+The more this geometry was developed,
+the more believable it became that there is no contradiction;
+that is, the system of axioms \ref{def:birkhoff-axioms:0}--\ref{def:birkhoff-axioms:3} and h-$\!$\ref{def:birkhoff-axioms:4} is \index{consistent}\emph{consistent}.
+In fact, the following theorem holds true:
+
+
+\begin{thm}{Theorem}\label{thm:consistent}
+Hyperbolic geometry is consistent if and only if so is Euclidean geometry.
+\end{thm}
+
+The claims
+that hyperbolic geometry has no contradiction can be found in the private letters of
+Carl Friedrich Gauss, 
+Ferdinand  Schweikart, 
+and Franz Taurinus.%
+\footnote{The oldest surviving letters were the Gauss letter to Christian Gerling in 1816 
+and the yet more convincing letter dated 1818 
+of Schweikart sent to Gauss via Gerling.}
+They all seem to be afraid to state it in public.
+For instance, in 1818 Gauss writes to Gerling:
+
+\smallskip
+
+\begin{quotation}{\it
+\dots I am happy that you have the courage to express yourself as if you recognized the possibility that our parallels theory along with our entire geometry could be false.
+But the wasps whose nest you disturb will fly around your head.}
+\end{quotation}
+
+\smallskip
+
+Nikolai Lobachevsky came to the same conclusion independently.
+Unlike the others, he dared to state it in public and in print \cite{lobachevsky}.
+That cost him serious trouble.
+A couple of years later, also independently, János Bolyai published his work \cite{bolyai}.
+
+It seems that Lobachevsky was the first who had a proof of Theorem~\ref{thm:consistent} altho its formulation required rigorous axiomatics which was not developed in his time.
+Later, Beltrami gave a cleaner proof of the ``if'' part of the theorem.
+It was done by modeling points, lines, distances, and angle measures of one geometry using some other objects in another geometry.
+The same idea was used earlier by Lobachevsky \cite[\S34]{lobachevsky-1840}; 
+he modeled the Euclidean plane in the hyperbolic space.
+
+The proof of Beltrami is the subject of the next chapter. 
+
+%\medskip
+
+%Arguably, the discovery of hyperbolic geometry was the second main scientific discovery of the $19^\text{th}$ century, trailing only Mendel's laws. %Law of multiple proportions
+%The discovery of hyperbolic geometry was one of the main scientific discoveries of the $19^\text{th}$ century, on the same level are Mendel's laws and the law of multiple proportions.
+
+\section{Curvature}
+
+In a letter from 1824 Gauss writes: 
+
+\begin{quotation}{\it
+The assumption that the sum of the three angles is less than $\pi$ leads to a curious geometry, 
+quite different from ours but completely consistent, 
+which I have developed to my entire satisfaction, 
+so that I can solve every problem in it with the exception of a determination of a constant, which cannot be designated a priori. 
+The greater one takes this constant, the nearer one comes to Euclidean geometry, 
+and when it is chosen indefinitely large the two coincide.
+The theorems of this geometry appear to be paradoxical and, 
+to the uninitiated, absurd; but calm, steady reflection reveals that they contain nothing at all impossible. 
+For example, the three angles of a triangle become as small as one wishes, if only the sides are taken sufficiently large; 
+yet the area of the triangle can never exceed a definite limit, regardless how great the sides are taken, 
+nor indeed can it ever reach it.}
+\end{quotation} 
+
+In modern terminology, the constant that Gauss mentions 
+can be expressed as $1/\sqrt{-k}$, 
+where $k\le 0$, is the so-called \index{curvature}\emph{curvature} of the neutral plane, which we are about to introduce.
+
+The identity in Exercise~\ref{ex:defect} suggests that the defect of a triangle should be proportional to its area.%
+\footnote{The area in the neutral plane is discussed briefly at the end of Chapter~\ref{chap:area},
+but the reader could also refer to an intuitive understanding of area measurement.}
+
+In fact, for every neutral plane, there is a nonpositive real number $k$
+such that 
+$$k\cdot\area(\triangle ABC)+\defect(\triangle ABC)=0$$
+for every $\triangle ABC$.
+This number $k$ is called the \index{curvature}\emph{curvature} of the plane.
+
+For example, by Theorem~\ref{thm:3sum}, the Euclidean plane has zero curvature.
+By Theorem~\ref{thm:3sum-a}, the curvature of every neutral plane is nonpositive.
+
+It turns out that up to isometry, the neutral plane is characterized by its curvature;
+that is, two neutral planes are isometric if and only if they have the same curvature. 
+
+In the next chapter, we will construct a {}\emph{hyperbolic plane};
+this is an example of a neutral plane with curvature $k=-1$.
+
+Any neutral plane, distinct from Euclidean,
+can be obtained by rescaling the metric on the hyperbolic plane.
+Indeed,
+if we rescale the metric by a positive factor $c$,
+the area changes by factor $c^2$, while the defect stays the same.
+Therefore, taking $c=\sqrt{-k}$,
+we can get the neutral plane of the given curvature $k<0$.
+In other words, all the non-Euclidean neutral planes become identical
+if we use $r=1/\sqrt{-k}$ as the unit of length.
+
+\medskip
+
+In Chapter~\ref{chap:sphere}, we discuss spherical geometry.
+Altho spheres are not neutral planes,
+the spherical geometry is a close relative of Euclidean and hyperbolic geometries.
+
+Nondegenerate spherical triangles have negative defects.
+Moreover, 
+if $r$ is the radius of the sphere, then
+$$\tfrac1{r^2}\cdot\area(\triangle ABC)+\defect(\triangle ABC)=0$$
+for every spherical triangle $ABC$; compare to Lemma~\ref{lem:area-spher-triangle}.
+In other words, 
+the sphere of radius $r$ has the curvature $k=\tfrac1{r^2}$.

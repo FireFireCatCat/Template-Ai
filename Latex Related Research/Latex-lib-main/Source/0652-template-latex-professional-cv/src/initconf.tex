@@ -1,0 +1,171 @@
+% Template:     Professional-CV
+% Documento:    Configuraciones iniciales del documento
+% Versión:      4.1.8 (12/07/2026)
+% Codificación: UTF-8
+%
+% Autor: Pablo Pizarro R.
+%        pablo@ppizarror.com
+%
+% Manual template: [https://template-latex.github.io/professional-cv]
+% Licencia MIT:    [https://opensource.org/licenses/MIT]
+
+% Se revisa si las variables no han sido borradas
+\checkvardefined{\birthday}
+\checkvardefined{\birthmonth}
+\checkvardefined{\birthyear}
+\checkvardefined{\email}
+\checkvardefined{\name}
+\checkvardefined{\phonenumber}
+
+% Se añade \xspace a las variables
+\makeatletter
+	\g@addto@macro\birthday\xspace
+	\g@addto@macro\birthmonth\xspace
+	\g@addto@macro\birthyear\xspace
+	\g@addto@macro\name\xspace
+	\g@addto@macro\phonenumber\xspace
+\makeatother
+
+% Crea el título del documento
+\ifthenelse{\equal{\writetitleheader}{true}}{%
+	\def\cvdoctitle {\headertitle~ \name}
+}{
+	\def\cvdoctitle {\name}
+}%
+
+% Se define metadata del pdf
+\ifthenelse{\equal{\cfgshowbookmarkmenu}{true}}{
+	\def\cdfpagemodepdf {UseOutlines}
+}{
+	\def\cdfpagemodepdf {UseNone}
+}
+\hypersetup{
+	keeppdfinfo,
+	bookmarkstype={toc},
+	pdfauthor={\name},
+	pdfcenterwindow={\cfgpdfcenterwindow},
+	pdfcopyright={\headertitle, \name. Email: \email. Phone: \phonenumber},
+	pdfcreator={LaTeX},
+	pdfdisplaydoctitle={\cfgpdfdisplaydoctitle},
+	pdffitwindow={\cfgpdffitwindow},
+	pdfinfo={
+		Author.Email={\email},
+		Author.Name={\name},
+		Author.Phone={\phonenumber},
+		Template.Author.Alias={ppizarror},
+		Template.Author.Email={pablo@ppizarror.com},
+		Template.Author.Name={Pablo Pizarro R.},
+		Template.Author.Web={https://ppizarror.com/},
+		Template.Date={12/07/2026},
+		Template.Encoding={UTF-8},
+		Template.License.Type={MIT},
+		Template.License.Web={https://opensource.org/licenses/MIT/},
+		Template.Name={Professional-CV},
+		Template.Type={Normal},
+		Template.Version.Dev={4.1.8},
+		Template.Version.Hash={603B9F08E05597A395F9CF4A1C9B1E9B},
+		Template.Version.Release={4.1.8},
+		Template.Web.Dev={https://github.com/Template-Latex/Professional-CV/},
+		Template.Web.Manual={https://template-latex.github.io/Professional-CV/}
+	},
+	pdfkeywords={CV, \name, \headertitle, \email},
+	pdfmenubar={\cfgpdfmenubar},
+	pdfpagelayout={\cfgpdfpagemode},
+	pdfpagemode={\cdfpagemodepdf},
+	pdfproducer={Professional-CV v4.1.8 | (Pablo Pizarro R.) ppizarror.com},
+	pdfremotestartview={Fit},
+	pdfstartpage={1},
+	pdfstartview={\cfgpdfpageview},
+	pdfsubject={CV \name},
+	pdftitle={\cvdoctitle},
+	pdftoolbar={\cfgpdftoolbar},
+	pdftype={Text}
+}
+% El paquete bookmark (TeX Live 2026) reenvía el valor de bookmarksopen sin
+% expandir a su clave booleana 'open', que solo acepta true/false literales.
+% Se expanden los valores de configuración antes de pasarlos a \hypersetup.
+\begingroup
+\edef\x{\endgroup
+	\noexpand\hypersetup{%
+		bookmarksopen={\cfgpdfbookmarkopen},%
+		bookmarksopenlevel={\cfgbookmarksopenlevel}%
+	}%
+}\x
+
+% Establece la carpeta de imágenes por defecto
+\graphicspath{{./img}}
+
+% Ajuste del entrelineado
+\renewcommand{\baselinestretch}{\documentinterline}
+
+% Ajuste de tablas
+\setlength{\tabcolsep}{0.5em} % Horizontal
+\def\arraystretch {1} % Vertical
+
+% Configuración de los colores
+\color{\maintextcolor} % Color principal
+\arrayrulecolor{\tablelinecolor} % Color de las líneas de las tablas
+\sethlcolor{\highlightcolor} % Color del subrayado por defecto
+\ifthenelse{\equal{\showborderonlinks}{true}}{
+	\hypersetup{
+		% Color de links con borde
+		citebordercolor=\numcitecolor,
+		linkbordercolor=\urlcolor,
+		urlbordercolor=\urlcolor
+	}
+}{
+	\hypersetup{
+		% Color de links sin borde
+		hidelinks,
+		colorlinks=true,
+		citecolor=\numcitecolor,
+		filecolor=\urlcolor,
+		linkcolor=\urlcolor,
+		urlcolor=\urlcolor
+	}
+}
+\ifthenelse{\equal{\colorpage}{white}}{}{
+	\pagecolor{\colorpage}
+}
+
+% Configuración de la identación
+\newlength{\newparindent}
+\addtolength{\newparindent}{\indentwidth pt}
+\setenumerate{itemsep=0pt}
+\setitemize{itemsep=0pt}
+
+% Configuración de hbox y vbox
+\hfuzz=200pt
+\vfuzz=200pt
+\hbadness=\maxdimen
+\vbadness=\maxdimen
+
+% Se activa el word-wrap para textos con \texttt{}
+\ttfamily \hyphenchar\the\font=`\-
+
+% Se define el tipo de texto de los url
+\urlstyle{\fonturl}
+
+% Se define la versión menor a compilar
+\ifthenelse{\equal{\compilertype}{pdf2latex}}{
+	% Nivel de compresión
+	\pdfcompresslevel=9
+	
+	% El óptimo es 2, según
+	% https://texdoc.org/serve/pdftex-a.pdf/0 p.20
+	\pdfdecimaldigits=2
+	
+	% Inclusión de PDF
+	\pdfinclusionerrorlevel=0
+	
+	% Versión
+	\pdfminorversion=\pdfcompileversion
+	
+	% Compresión de objetos
+	\pdfobjcompresslevel=2
+}{}
+
+% Configura items
+\AfterEndEnvironment{itemize}{\vspace{-0.4\baselineskip}}
+\AfterEndEnvironment{enumerate}{\vspace{-0.4\baselineskip}}
+\renewcommand{\labelitemi}{\raisebox{0.5\height}{\scalebox{0.5}{$\blacksquare$}}}

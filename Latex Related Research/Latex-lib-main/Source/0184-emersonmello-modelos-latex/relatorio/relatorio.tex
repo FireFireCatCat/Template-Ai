@@ -1,0 +1,152 @@
+% ------------------------------------------------------------%
+% 2020-12-05
+% 2015-2020 - Emerson Ribeiro de Mello - mello@ifsc.edu.br
+% ------------------------------------------------------------%
+\documentclass[11pt]{ifscarticle}
+\usepackage{ifscapa}
+\usepackage{ifscutils}
+
+\usepackage{lipsum}
+\renewcommand*{\theusecase}{UC-\thesection.\arabic{usecase}}
+
+
+%-----------------------------%
+% Citações padrão ABNT com biblatex
+%-----------------------------%
+\usepackage[style=abnt,noslsn,justify]{biblatex}
+\usepackage{csquotes}
+% Arquivo com as referências bibliográficas
+\addbibresource{referencias.bib}
+
+% ------------------------------------------------------------%
+% Capa - modelo 1
+% ------------------------------------------------------------%
+\title{Relatório de Análise de Requisitos}
+\subtitle{Um modelo \LaTeX~que faz uso da classe \texttt{article}}
+\author{Emerson Ribeiro de Mello \\[0.5em] Segundo Autor do Trabalho}
+\date{05 de dezembro de 2020}
+% ------------------------------------------------------------%
+
+% ------------------------------------------------------------%
+% Capa - modelo 2
+% ------------------------------------------------------------%
+\labtitle{Laboratório 01}
+\labsubtitle{Método construtor e modificadores de acesso}
+\course{Engenharia de Telecomunicações}
+\discipline{POO29004 -- Programação Orientada a Objetos}
+\professor{Emerson Ribeiro de Mello}
+\students{Aluno 1 \\ Aluno 2}
+% ------------------------------------------------------------%
+
+\begin{document}
+
+
+% ------------------------------------------------------------%
+% Escolha do modelo de capa 
+% ------------------------------------------------------------%
+\capa{modelo1}{imagens/ifsc-v}
+% \capa{modelo2}{imagens/ifsc-v}
+
+
+
+
+% ------------------------------------------------------------%
+% Adicionando sumário
+% ------------------------------------------------------------%
+\tableofcontents
+\clearpage
+
+% ------------------------------------------------------------%
+% Início do documento
+% ------------------------------------------------------------%
+
+\section{Introdução}\label{sec:introducao}
+
+Na introdução é apresentada a organização do documento e uma breve descrição de como o mesmo foi construído.   Esse é um modelo em \LaTeX~ \cite{lamport94} e o estilo das referências bibliográficas segue as normas da ABNT, implementadas pelo pacote abnTeX2. A \autoref{fig:logolatex} apresentada o logo do \LaTeX.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.5\linewidth]{figuras/latex-logo}
+    \caption{Logo do \LaTeX}
+    \label{fig:logolatex}
+\end{figure}
+
+\lipsum[1]
+
+O restante do documento está organizado da seguinte forma. Na \autoref{sec:escopo} é apresentado o escopo do projeto. Na \autoref{sec:requisitos} são listados os requisitos do sistema.
+
+\subsection{Escopo do projeto}\label{sec:escopo}
+
+Indica o propósito do sistema a ser desenvolvido. Por exemplo, descreve a necessidade que foi apresentada pela área requisitante. \lipsum[2]
+
+
+\section{Requisitos do sistema}\label{sec:requisitos}
+
+Nessa seção deve ser apresentada a lista de pessoas que participaram do levantamento de requisitos. Pode-se basear nos livro de \textcite{bezerra02}.
+
+\lipsum[2]
+
+
+\subsection{Requisitos funcionais}\label{sec:reqfuncionais}
+
+\begin{enumerate}
+    \item O sistema deve permitir que alunos visualizem as notas obtidas
+    \item O sistema deve permitir que os alunos façam matrícula nas disciplinas do semestre letivo
+    \item O sistema deve permitir que os alunos possam obter seus históricos escolares
+\end{enumerate}
+
+\subsection{Requisitos não funcionais}\label{sec:reqnaofuncionais}
+
+\begin{enumerate}
+    \item A interface do usuário deve ser simplificada e evitar múltiplos cliques (passos) para chegar em qualquer funcionalidade
+    \item Fazer uso de protocolos criptográficos para troca de mensagens
+    \item O sistema deverá ser desenvolvido em uma linguagem para web e que não dependa de plugins para o navegador
+    \item O banco de dados precisar ser o MySQL
+\end{enumerate}
+
+\subsection{Regras de negócio}\label{sec:regrasdenegocio}
+
+\begin{enumerate}
+    \item \textbf{Número máximo de matrículas por semestre letivo}
+    \begin{itemize}
+        \item Em um semestre letivo um aluno não poderá se matricular em um número de disciplinas cujo o soma de créditos ultrapasse 18.
+    \end{itemize}
+    \item \textbf{Número máximo de alunos por turma}
+    \begin{itemize}
+        \item Uma oferta de disciplina não pode ter mais de 40 vagas para matrícula.
+    \end{itemize}
+    \item \textbf{Validação de créditos}
+    \begin{itemize}
+        \item Só poderá solicitar validação de uma disciplina caso nunca tenha se matriculado na mesma.
+    \end{itemize}
+\end{enumerate}
+
+
+\section{Casos de uso}\label{sec:casos_de_uso}
+
+
+\begin{usecase}{Consultar informações}{uc:consultarinfos}{Esse caso de uso descreve as etapas para o PAF obter informações como versão do SB, resumo criptográfico do SB, IdDAF, modelo, fabricante, valor atual do contador, certificado armazenado, estado do DAF, algoritmos criptográficos que o DAF provê suporte e identificadores dos documentos retidos na MT.}
+    \begin{cabecalhoUC}
+    \atorPrimario{PAF}
+    % \atoresSecundarios{ABC, DEF}
+    \precondicoesUC{DAF deve estar no estado \textsc{Pronto}, \textsc{Inativo} ou \textsc{Bloqueado}}
+    \end{cabecalhoUC}
+
+    \begin{fluxoprincipal}
+        \item O PAF solicita ao DAF suas informações 
+        \item O DAF retorna para o PAF o documento estruturado com suas informações
+    \end{fluxoprincipal}  
+
+    \begin{fluxoexcecao}{Pedido mal formado}
+        \item O DAF retorna para o PAF uma mensagem de erro informando que o pedido foi mal formado
+    \end{fluxoexcecao}   
+\end{usecase}
+
+
+% ----------------------------------------------------------
+% Referências bibliográficas
+% ----------------------------------------------------------
+\printbibliography[heading=bibintoc,title={Referências}]%
+
+\end{document}
+

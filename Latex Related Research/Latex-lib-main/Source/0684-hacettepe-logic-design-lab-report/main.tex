@@ -1,0 +1,63 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,booktabs,array,enumitem}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+\definecolor{labblue}{RGB}{26,76,115}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Logic Design Laboratory}
+\rhead{\thepage}
+\setlist{nosep,leftmargin=*}
+\title{Logic Design Laboratory Report}
+\author{Student name \quad Student number}
+\date{Experiment date: \rule{0.2\linewidth}{0.4pt}}
+\begin{document}
+\maketitle
+\noindent\colorbox{labblue}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}
+Experiment brief: design, implement, and test a two-input alarm controller.}}
+
+\section{Objective and specification}
+The output $Y$ should be high when the system is armed and either sensor $A$ or
+sensor $B$ is active. Define any active-high assumptions and list the hardware
+or simulator used.
+
+\section{Design}
+\[
+  Y = E(A+B), \qquad E=\text{armed state}.
+\]
+Describe the chosen gates, simplifications, pin assignments, and the reason
+the design satisfies the specification. Insert a circuit diagram or waveform
+in this section when one is available.
+
+\section{Truth table}
+\begin{table}[ht]
+\centering
+\caption{Complete test plan. Mark the observed output in the final column.}
+\begin{tabular}{@{}cccccc@{}}
+\toprule
+$E$ & $A$ & $B$ & $Y$ predicted & $Y$ observed & Notes\\
+\midrule
+0&0&0&0&\rule{1.4cm}{0.4pt}&\\
+0&0&1&0&\rule{1.4cm}{0.4pt}&\\
+0&1&0&0&\rule{1.4cm}{0.4pt}&\\
+0&1&1&0&\rule{1.4cm}{0.4pt}&\\
+1&0&0&0&\rule{1.4cm}{0.4pt}&\\
+1&0&1&1&\rule{1.4cm}{0.4pt}&\\
+1&1&0&1&\rule{1.4cm}{0.4pt}&\\
+1&1&1&1&\rule{1.4cm}{0.4pt}&\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Implementation and evidence}
+Record the build steps, test equipment, simulator settings, and any warnings.
+Attach screenshots or measured waveforms only when they support a stated
+claim. Include at least one negative test and one boundary case.
+
+\section{Discussion and conclusion}
+Explain discrepancies, propagation delay, switch bounce, or loading where
+relevant. Conclude whether every row of the specification was met and suggest
+one change that would make the design easier to verify.
+\end{document}

@@ -1,0 +1,588 @@
+\chapter{Parallel lines}\label{chap:angle-sum}
+
+{
+
+\begin{wrapfigure}{o}{19mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-72}
+\end{wrapfigure}
+
+Recall that in consequence of Axiom~\ref{def:birkhoff-axioms:1},
+any two distinct lines $\ell$ and $m$ have either one point in common or none; see \ref{lem:line-line}.
+In the first case they are \index{intersecting lines}\emph{intersecting} (briefly $\ell\nparallel m$); 
+in the second case, $\ell$ and $m$ are said to be \index{parallel!lines}\emph{parallel} (briefly, \index{36@\hskip.4mm$\parallel$\hskip.4mm, \hskip.4mm$\nparallel$\hskip.4mm}$\ell\parallel m$);
+in addition, a line is always regarded as parallel to itself.
+
+}
+
+To emphasize that two lines in a picture are parallel we will mark them with arrows of the same type.
+
+
+
+\begin{thm}[\abs]{Proposition}\label{prop:perp-perp} Let $\ell$, $m$, and $n$ be three lines.
+Assume that $n\perp \ell$ and $n\perp m$.
+Then $\ell\parallel m$.
+\end{thm}
+
+\parit{Proof.}
+Assume the contrary; 
+that is, $\ell$ and~$m$ meet at one point, say $Z$.
+Then by Theorem~\ref{perp:ex+un},
+$\ell=m$.
+Since every line is parallel to itself, we have that $\ell\parallel m$ --- a contradiction.
+\qeds
+
+\begin{thm}{Theorem}\label{thm:parallel}
+For every point $P$ and every line $\ell$,
+there is a unique line $m$
+that passes thru $P$ and is parallel to~$\ell$.
+\end{thm}
+
+The above theorem has two parts, existence and uniqueness.
+In the proof of uniqueness, we will use the method of similar triangles.
+
+\parit{Proof; existence.} 
+Apply Theorem~\ref{perp:ex+un} two times,
+first to construct the line $n$ thru $P$ that is perpendicular to $\ell$,
+and second to construct the line $m$ thru $P$ that is perpendicular to~$n$.
+Then apply Proposition~\ref{prop:perp-perp}.
+
+\parit{Uniqueness.}
+If $P\in\ell$, then $m=\ell$ by the definition of parallel lines.
+Now, assume $P\notin\ell$.
+
+Let us construct the lines $n\ni P$ and $m\ni P$ as in the proof of existence; so $n\perp \ell$, $m\perp n$, and $m\parallel \ell$.
+
+Assume there is another line $s\ni P$ parallel to~$\ell$.
+Choose a point $Q\in s$ that lies with $\ell$ on the same side as~$m$.
+Let $R$ be the footpoint of $Q$ on~$n$.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics{mppics/pic-74}
+\end{figure}
+
+Let $D$ be the point of intersection of $n$ and~$\ell$.
+According to Proposition~\ref{prop:perp-perp} $(QR)\parallel m$. 
+Therefore, $Q$, $R$, and $\ell$ lie on the same side of~$m$. 
+In particular, $R\in [P D)$.
+
+Choose $Z\in [P Q)$ such that 
+$$\frac{PZ}{PQ}=\frac{PD}{PR};$$
+it exists by Exercise~\ref{ex:trig==}.
+By SAS similarity condition (or equivalently by Axiom~\ref{def:birkhoff-axioms:4})
+we have that $\triangle RPQ\sim \triangle DPZ$;
+therefore $(Z D)\perp(P D)$.
+It follows that $Z$ lies on $\ell$ and $s$ --- a contradiction.\qeds
+
+\begin{thm}{Corollary}\label{cor:parallel-1}
+Assume $\ell$, $m$, and $n$ are lines
+such that $\ell\parallel m$ and $m\parallel n$.
+Then $\ell\parallel n$.
+\end{thm}
+
+\parit{Proof.}
+Assume the contrary; that is, $\ell\nparallel n$.
+Then there is a point $P\in \ell\cap n$.
+By Theorem~\ref{thm:parallel},
+$n=\ell$ --- a contradiction.
+\qeds
+
+By the definition, we have that $\ell\parallel m$ if and only if $m\z\parallel \ell$.
+Therefore, according to the above corollary, ``$\parallel$'' is an 
+\index{equivalence relation}\emph{equivalence relation}.
+That is, for any lines $\ell$, $m$, and $n$ the following conditions hold:
+\begin{enumerate}[(i)]
+\item $\ell\parallel \ell$;
+\item if $\ell\parallel m$, then $m\parallel \ell$;
+\item if $\ell\parallel m$ and $m\parallel n$, then 
+$\ell\parallel n$.
+\end{enumerate}
+
+The following exercise provides a partial converse to Proposition \ref{prop:perp-perp}.
+
+\begin{thm}[!]{Exercise}\label{ex:perp-perp}
+Let $k$, $\ell$, $m$, and $n$ be lines.
+\begin{enumerate}[(a)]
+ \item\label{ex:perp-perp:a}
+ Assume $\ell\parallel m$ and $m\perp n$.
+ Show that $\ell\perp n$.
+ \item\label{ex:perp-perp:b}
+ Assume $k\perp \ell$, $\ell\parallel m$, and $m\perp n$.
+ Show that $k\parallel n$.
+\end{enumerate}
+
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:construction-parallel}
+Perform a ruler-and-compass construction of a line thru a given point that is parallel to a given line.
+\end{thm}
+
+\section{Reflection across a point}
+
+Recall that if $O$ is the midpoint of the line segment $[XX']$,
+then we say that $X'$ is a \index{reflection across a point}\emph{reflection} of $X$ across a point $O$.
+In addition, we assume that $O'=O$; that is, $O$ is a reflection of itself across itself.
+
+The following statement is a refinement of Proposition~\ref{prop:point-reflection}.
+
+\begin{thm}[\abs]{Proposition}\label{prop:point-reflection+}
+A reflection across a point is a direct motion.
+\end{thm}
+
+\parit{Proof.}
+Choose a point $O$.
+By Proposition~\ref{prop:point-reflection}, the reflection across $O$ is a motion.
+Note that any angle $\angle XOY$ is vertical to its reflection $\angle X'OY'$.
+By \ref{prop:vert}, $\measuredangle XOY\z=\measuredangle X'OY'$.
+Therefore, the reflection cannot be indirect.
+
+By \ref{prop:direct-indirect}, any motion is either direct or indirect.
+Therefore, the reflection across $O$ must be direct.
+\qeds
+
+\begin{thm}{Exercise}\label{ex:reflections}
+Suppose $\angle AOB$ is right.
+Show that the composition of reflections across the lines $(OA)$ and $(OB)$ is a reflection across $O$.
+
+Use this statement and Corollary~\ref{cor:reflection+angle} to build another proof of~\ref{prop:point-reflection+}.
+\end{thm}
+
+{
+
+\begin{wrapfigure}{r}{23mm}
+\vskip-6mm
+\centering
+\includegraphics{mppics/pic-78}
+\end{wrapfigure}
+
+
+\begin{thm}{Theorem}\label{thm:parallel-point-reflection}
+Let $\ell$ and $m$ be lines passing thru points $P$ and $Q$, respectively.
+Suppose that $O$ is the midpoint of $[PQ]$.
+Then $m \parallel \ell$ if and only if $m$ is the reflection of $\ell$ across $O$.
+\end{thm}
+
+}
+
+\parit{Proof; ``if'' part.}
+Assume $m$ is a reflection of $\ell$ across $O$.
+Suppose $\ell\nparallel m$; that is $\ell$ and $m$ intersect at a single point $Z$.
+Denote by $Z'$ the reflection of $Z$ across $O$.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics{mppics/pic-80}
+\end{figure}
+
+The point $Z'$ lies on both lines $\ell$ and $m$.
+It follows that $Z'=Z$ or equivalently $Z=O$.
+In this case, $O\in \ell$ and therefore the reflection of $\ell$ across $O$ is $\ell$ itself;
+that is, $\ell=m$ and in particular $\ell\parallel m$ --- a contradiction. 
+
+\parit{``Only-if'' part.}
+Let $\ell'$ be the reflection of $\ell$ across $O$.
+According to the ``if'' part of the theorem, $\ell'\parallel \ell$.
+Both lines $\ell'$ and $m$ pass thru $P$.
+By uniqueness of parallel lines (\ref{thm:parallel}), if $m\parallel \ell$, then $\ell'=m$; whence the statement follows.
+\qeds
+
+\pagebreak%???
+
+\section{The transversal property}
+
+{
+
+\begin{wrapfigure}{r}{25mm}
+\centering
+\vskip-10mm
+\includegraphics{mppics/pic-82}
+\end{wrapfigure}
+
+If the line $t$ intersects each line $\ell$ and $m$ at one point, then we say that $t$ is a \index{transversal}\emph{transversal} to $\ell$ and~$m$.
+For example, in the picture, line $(CB)$ is a transversal
+to $(AB)$ and~$(CD)$.
+
+}
+
+\begin{thm}{Transversal property}\label{thm:parallel-2} 
+Let $A$, $B$, $C$, and $D$ be points such that $A\ne B$, $B\ne C$, and $C\ne D$.
+Then $(AB)\parallel(C D)$ if and only if
+$$2\cdot(\measuredangle A B C+\measuredangle B C D)\equiv 0.
+\eqlbl{A B C + B C D}$$ 
+Equivalently, 
+$$\measuredangle A B C+\measuredangle B C D
+\equiv 
+0
+\quad
+\text{or}
+\quad
+\measuredangle A B C+\measuredangle B C D
+\equiv
+\pi.$$
+
+Moreover, if $(AB)\ne(C D)$, then in the first case, 
+$A$ and $D$ lie on opposite sides of $(BC)$;
+in the second case,
+$A$ and $D$ lie on the same side of~$(BC)$.
+\end{thm}
+
+
+
+\parit{Proof; ``only-if'' part.}
+Denote by $O$ the midpoint of $[BC]$.
+
+Assume $(AB)\parallel(C D)$.
+According to Theorem~\ref{thm:parallel-point-reflection},
+$(CD)$ is a reflection of $(AB)$ across $O$.
+
+\begin{wrapfigure}{r}{31mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-84}
+\end{wrapfigure}
+
+Let $A'$ be the reflection of $A$ across $O$.
+Then $A'\in (CD)$ and by Proposition~\ref{prop:point-reflection+} we have that
+\[\measuredangle ABO=\measuredangle A'CO.\eqlbl{A B O = A' C O}\]
+Note that 
+\[\measuredangle ABO\equiv\measuredangle ABC,
+\qquad
+\measuredangle A'CO\equiv-\measuredangle BCA'.\eqlbl{eq:A B O= A B C}
+\]
+Since $A'$, $C$, and $D$ lie on one line, Exercise~\ref{ex:ABCO-line} implies that 
+\[2\cdot \measuredangle BCD\equiv 2\cdot \measuredangle BCA'.\eqlbl{eq:2BCD= 2BCA'}\]
+Finally, \ref{A B O = A' C O}, \ref{eq:A B O= A B C}, and \ref{eq:2BCD= 2BCA'} imply \ref{A B C + B C D}.
+\qeds
+
+\parit{``If''-part.}
+By Theorem~\ref{thm:parallel} there is a unique line $(CD)$ thru $C$ that is parallel to $(AB)$.
+From the ``only-if'' part we know that  \ref{A B C + B C D} holds.
+
+On the other hand, there is a \textit{unique} line $(CD)$ such that \ref{A B C + B C D} holds.
+Indeed, suppose there are two such lines $(CD)$ and $(CD')$, then
+$$2\cdot(\measuredangle A B C+\measuredangle B C D)\equiv 2\cdot(\measuredangle A B C+\measuredangle B C D')\equiv0.
+$$ 
+Therefore 
+$2\cdot\measuredangle B C D\equiv 2\cdot\measuredangle B C D'$
+and by Exercise~\ref{ex:ABCO-line},  $D'\in (CD)$, or equivalently the line $(CD)$ coincides with $(CD')$.
+
+Therefore if \ref{A B C + B C D} holds, then $(CD)\parallel (AB)$.
+
+
+\parit{Last statement.}
+If $(AB)\ne(C D)$ and $A$ and $D$ lie on the opposite sides of $(BC)$, then $\angle ABC$ and $\angle BCD$ have opposite signs.
+Therefore
+\[-\pi\z<\measuredangle A B C+\measuredangle B C D<\pi.\]
+Applying \ref{A B C + B C D}, we get $\measuredangle A B C+\measuredangle B C D=0$.
+
+Similarly, if $A$ and $D$ lie on the same side of $(BC)$,
+then $\angle ABC$ and $\angle BCD$ have the same sign.
+Therefore
+\[0<|\measuredangle A B C+\measuredangle B C D|<2\cdot\pi,\]
+and \ref{A B C + B C D} implies that $\measuredangle A B C+\measuredangle B C D\z\equiv\pi$.
+\qeds
+
+\begin{thm}{Exercise}\label{ex:parallel-angles}
+Suppose that $(AB) \parallel (A'B')$ and $(BC) \parallel (B'C')$.
+Show that
+$2\cdot \measuredangle ABC \equiv 2\cdot \measuredangle A'B'C'$.
+Conclude that either
+\[
+\measuredangle ABC \equiv \measuredangle A'B'C' \quad \text{or} \quad \measuredangle ABC \equiv \pi + \measuredangle A'B'C',
+\]
+and draw a pair of angles to illustrate each case.
+\end{thm}
+
+
+\begin{thm}[!]{Exercise}\label{ex:smililar+parallel}
+Let $\triangle ABC$ be a nondegenerate triangle, and suppose $P$ lies between $A$ and $B$.
+Suppose that a line $\ell$ passes thru $P$ and is parallel to $(AC)$.
+Show that $\ell$ crosses the side $[BC]$ at another point, say $Q$, and 
+\[\triangle ABC\sim\triangle PBQ.\]
+In particular, $\tfrac{PB}{AB}=\tfrac{QB}{CB}$.
+\end{thm} 
+
+\begin{thm}{Exercise}\label{ex:trisection}
+Trisect a given segment with a ruler and a compass.
+\end{thm}
+
+\section{Angles of triangles}
+
+\begin{thm}{Theorem}\label{thm:3sum}
+In each $\triangle A B C$, we have
+$$\measuredangle A B C+ \measuredangle B C A + \measuredangle C A B \equiv \pi.$$
+
+\end{thm}
+
+\parit{Proof.} 
+If $\triangle A B C$ is degenerate, then the equality follows from Corollary~\ref{cor:degenerate=pi}.
+Now, assume that $\triangle A B C$ is nondegenerate.
+
+Let $X$ be the reflection of $C$ across the midpoint $M$ of $[AB]$.
+By Proposition~\ref{prop:point-reflection+}
+$\measuredangle BAX\z=\measuredangle ABC$.
+Note that $(AX)$ is a reflection of $(CB)$ across $M$;
+therefore by Theorem~\ref{thm:parallel-point-reflection}, $(AX)\z\parallel (CB)$.
+
+
+\begin{wrapfigure}{o}{23mm}
+\centering
+\vskip-0mm
+\includegraphics{mppics/pic-86}
+\end{wrapfigure}
+
+Since $[BM]$ and $[MX]$ do not intersect $(CA)$,
+the points $B$, $M$, and $X$ lie on the same side of $(CA)$.
+Applying the transversal property for the transversal $(CA)$ to $(AX)$ and $(CB)$, we get that 
+\[\measuredangle BCA+\measuredangle CAX\equiv \pi.\eqlbl{eq:ABC+CAB}\]
+
+Since $\measuredangle BAX=\measuredangle ABC$,
+we have 
+\[\measuredangle CAX\equiv\measuredangle CAB+\measuredangle ABC.\]
+The latter identity and \ref{eq:ABC+CAB} imply the theorem.\qeds
+
+\begin{thm}[!]{Classroom exercise}\label{ex:|3sum|}
+Show that 
+$$|\measuredangle A B C|+ |\measuredangle B C A| + |\measuredangle C A B| = \pi$$
+for every $\triangle ABC$.
+\end{thm} 
+
+{
+
+\begin{wrapfigure}{r}{30mm}
+\vskip-0mm
+\centering
+\includegraphics{mppics/pic-88}
+\vskip4mm
+\includegraphics{mppics/pic-90}
+%\vskip4mm
+%\includegraphics{mppics/pic-92}
+\end{wrapfigure}
+
+\begin{thm}{Exercise}\label{ex:pent}
+Let $\triangle ABC$ be a nondegenerate triangle.
+Assume there is a point $D\in [BC]$ 
+such that 
+\[\measuredangle BAD=\measuredangle DAC,
+\quad
+BA=AD=DC.\]
+Show that $\measuredangle CBA= \measuredangle BAC$ and $AC=BC$.
+\end{thm}
+
+
+\begin{thm}{Exercise}\label{ex:right-isos}
+Let $\triangle ABC$ be an isosceles nondegenerate triangle with the base~$[AC]$.
+Suppose $D$ is a reflection of $A$ across $B$.
+Show that $\angle ACD$ is right.
+\end{thm}
+
+
+
+%\begin{thm}{Exercise}\label{ex:pi/4-isos}
+%Let $\triangle ABC$ be an isosceles nondegenerate triangle with base~$[AC]$. 
+%Assume that a circle is passing thru $A$, centered at a point on $[AB]$, and tangent to $(BC)$ at the point~$X$.
+%Show that $\measuredangle CAX\z=\pm\tfrac\pi4$.
+%\end{thm}
+
+}
+
+\begin{thm}[!]{Exercise}\label{ex:quadrangle}
+Show that for every quadrangle $ABCD$, we have
+$$\measuredangle ABC+\measuredangle BCD+\measuredangle CDA+\measuredangle DAB\equiv 0.$$
+
+\end{thm}
+
+
+\section{Parallelograms}
+
+{
+
+\begin{wrapfigure}{r}{26mm}
+\vskip-10mm
+\centering
+\includegraphics{mppics/pic-94}
+\end{wrapfigure}
+
+A quadrangle $ABCD$ in the Euclidean plane is called \index{quadrangle!degenerate quadrangle}\index{degenerate!quadrangle}\emph{nondegenerate} if no three points from $A,B,C,D$ lie on one line.
+
+}
+
+A nondegenerate quadrangle  is called a \index{parallelogram}\emph{parallelogram}
+if its opposite sides are parallel.
+
+
+
+\begin{thm}{Lemma}\label{lem:parallelogram}
+Any parallelogram is \index{central symmetry}\emph{centrally symmetric} with respect to the midpoint of one of its diagonals;
+that is, the reflection across the midpoint maps the parallelogram to itself.
+
+In particular, if $\square A B C D$ is a parallelogram, then
+\begin{enumerate}[(a)]
+\item\label{lem:parallelogram:midpoint} its diagonals $[AC]$ and $[BD]$ intersect each other at their midpoints;
+\item $\measuredangle A B C= \measuredangle C D A$;
+\item $AB=CD$.
+\end{enumerate}
+\end{thm}
+
+{
+
+\begin{wrapfigure}{r}{33mm}
+\centering
+\includegraphics{mppics/pic-96}
+\end{wrapfigure}
+
+\parit{Proof.} Let $\square A B C D$ be a parallelogram.
+Denote by $M$ the midpoint of $[AC]$.
+
+Since $(AB)\parallel (CD)$, Theorem~\ref{thm:parallel-point-reflection} implies that $(CD)$ is a reflection of $(AB)$ across $M$.
+In the same way, $(BC)$ is a reflection of $(DA)$ across $M$.
+Since $\square A B C D$ is nondegenerate, it follows that $D$ is a reflection of $B$ across $M$; in other words, $M$ is the midpoint of $[BD]$.
+
+The remaining statements follow since reflection across $M$ is a direct motion of the plane (see \ref{prop:point-reflection+}).
+\qeds
+
+}
+
+\begin{thm}{Exercise}\label{ex:4parallels}
+Assume that point $P$ is distinct from the vertices of a parallelogram $ABCD$.
+Let $a$, $b$, $c$, and $d$ be lines thru points $A$, $B$, $C$, and $D$ such that
+$a\parallel (CP)$,
+$b\parallel (DP)$,
+$c\parallel (AP)$, and
+$d\parallel (BP)$.
+Show that the lines $a$, $b$, $c$ and $d$ intersect at one point.
+\end{thm}
+
+
+\begin{thm}{Exercise}\label{ex:romb}
+Assume $ABCD$ is a quadrangle such that
+\[AB=CD=BC=DA.\]
+Show that $ABCD$ is a parallelogram.
+\end{thm}
+
+A quadrangle as in the exercise above is called a \index{rhombus}\emph{rhombus}.
+
+A quadrangle $ABCD$ is called a \index{rectangle}\emph{rectangle} if the angles $ABC$, $BCD$, $CDA$, and $DAB$ are right.
+According to the transversal property (\ref{thm:parallel-2}),
+any rectangle is a parallelogram.
+
+A rectangle with equal sides is called a \index{square}\emph{square}.
+
+\begin{thm}{Exercise}\label{ex:rectangle}
+Show that a parallelogram $ABCD$ is a rectangle
+if and only if $AC=BD$.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:romb2}
+Show that a parallelogram $ABCD$ is a rhombus
+if and only if $(AC)\perp (BD)$.
+\end{thm}
+
+Assume $\ell\parallel m$, and $X,Y\in m$.
+Let $X'$ and $Y'$ denote the footpoints of $X$ and $Y$ on~$\ell$.
+Note that $\square XYY'X'$ is a rectangle.
+By Lemma~\ref{lem:parallelogram}, $XX'=YY'$.
+That is, every point on $m$ lies at the same distance from $\ell$.
+This distance is called the \index{distance!between parallel lines}\emph{distance between} $\ell$ and~$m$.
+
+\begin{thm}{Exercise}\label{ex:inscribed-rhombus}
+A rhombus $AXYZ$ with side length $s$ is inscribed in a nondegenerate triangle $ABC$ so that $X\in [AB]$, $Y\in [BC]$, and $Z\in[CA]$.
+Show that $s=\sqrt{XB\cdot ZC}$.
+\end{thm}
+
+\section{The method of coordinates}
+
+The following exercise is important;
+it shows that our axiomatic definition agrees with the model described in Section~\ref{page:model}.
+
+
+\begin{thm}{Exercise}\label{ex:coordinates} 
+Let $\ell$ and $m$ be perpendicular lines in the Euclidean plane.
+Given a point $P$, let $P_\ell$ and $P_m$ denote the footpoints of $P$ on $\ell$ and $m$ respectively.
+
+\begin{enumerate}[(a)]
+\item Show that for every $X\in \ell$ and $Y\in m$ there is a unique point $P$ such that $P_\ell=X$ and $P_m=Y$.
+\end{enumerate}
+
+\begin{enumerate}[(a)]\addtocounter{enumi}{1}
+\item
+Show that 
+$PQ^2=P_\ell Q_\ell^2+P_mQ_m^2$
+for every pair of points $P$ and~$Q$.
+\end{enumerate}
+
+\begin{enumerate}[(a)]\addtocounter{enumi}{2}
+\item Conclude that the plane is isometric to $(\mathbb{R}^2,d_2)$; see \ref{sec:Metric spaces}.
+\end{enumerate}
+
+\end{thm}
+
+\begin{wrapfigure}{r}{37mm}
+\centering
+\includegraphics{mppics/pic-98}
+\end{wrapfigure}
+
+Once this exercise is solved, we can apply 
+the method of coordinates
+to solve any problem in Euclidean plane geometry.
+This method is powerful and universal;
+it will be developed further in Chapter~\ref{chap:complex}.
+
+\begin{thm}{Exercise}\label{ex:abc}
+Use Exercise~\ref{ex:coordinates}
+to give an alternative proof of Theorem~\ref{thm:abc} in the Euclidean plane.
+
+That is, prove that given the real numbers $a$, $b$, and $c$ such that 
+ $$0<a\le b\le c\le a+b,$$
+there is a triangle $ABC$
+such that $a=BC$, $b=CA$, and $c=AB$.
+\end{thm} 
+
+\begin{thm}[!]{Exercise}\label{ex:line-coord}
+Consider two distinct points $A=(x_A,y_A)$ and $B\z=(x_B,y_B)$ on the coordinate plane.
+Show that the perpendicular bisector of $[AB]$ is described by the equation
+\[2\cdot (x_B-x_A)\cdot x+2\cdot (y_B-y_A)\cdot y=x_B^2+y_B^2-x_A^2-y_A^2.\]
+
+Conclude that a line can be defined as a subset of the coordinate plane of any of the following types:
+\begin{enumerate}[(a)]
+\item  Solutions of an equation $a\cdot x+b\cdot y=c$
+for constants $a$, $b$, and $c$ such that $a\ne 0$ or $b\ne0$.
+\item\label{ex:line-coord:parameter} The set of points $(a\cdot t+c,b\cdot t+d)$ for all $t\in \mathbb{R}$, where  $a$, $b$, $c$, $d$ are constants with $a\ne 0$ or $b\ne0$.
+\end{enumerate}
+
+\end{thm}
+
+\section{Apollonian circles}\label{sec:Apollonian circle}
+The exercises in this section illustrate the method of coordinates; they will not be used further in the sequel.
+
+\begin{thm}{Exercise}\label{ex:circle-coord}
+Show that for fixed real values $a$, $b$, and $c$ the equation 
+\[x^2+y^2+a\cdot x+b\cdot y+c=0\]
+describes a circle, a point, or an empty set.
+
+Show that if it is a circle, then $(-\tfrac a2,-\tfrac b2)$ is its center,
+and $r\z=\tfrac12\cdot \sqrt{a^2+b^2-4\cdot c}$ is its radius.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:apolonnius}
+Use the previous exercise to show that given a positive real number $k\ne1$,
+the locus of points $M$ such that $AM=k\cdot BM$ 
+for distinct points $A$ and $B$
+is a circle. 
+\end{thm}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics{mppics/pic-100}
+\end{figure}
+
+The circle in the exercise above is an example of the so-called \index{Apollonian circle}\emph{Apollonian circle with focuses $A$ and $B$}.
+A few of these circles for different values of $k$ are shown in the picture;
+for $k=1$, it becomes the perpendicular bisector of $[AB]$.
+
+
+\begin{thm}{Exercise}\label{ex:apolonnius-construction}
+Construct an Apollonian circle with given focuses $A$ and $B$ thru a given point $M$ using ruler and compass.
+\end{thm}

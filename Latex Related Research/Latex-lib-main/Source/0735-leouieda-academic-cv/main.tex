@@ -1,0 +1,252 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A clean template for an academic CV. Data-driven: personal details and
+% coauthor citation keys are all \newcommand macros defined once at the top,
+% so an entry's citation text stays consistent across the whole document.
+%
+% Uses tabularx to create two-column entries (date and job/education/
+% citation). Original content written for latextemplates.com — this is not
+% the upstream author's own CV.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[9pt,a4paper]{article}
+
+% Useful aliases
+\newcommand{\UCT}{University of Cape Town}
+\newcommand{\WITS}{University of the Witwatersrand}
+\newcommand{\STELL}{Stellenbosch University}
+\newcommand{\GEOL}{Department of Geological Sciences}
+
+% Identifying information
+\newcommand{\Title}{Curriculum Vit\ae\ Summary}
+\newcommand{\FirstName}{Naledi}
+\newcommand{\LastName}{Mokoena}
+\newcommand{\Initials}{N}
+\newcommand{\MyName}{Dr. \FirstName\ \LastName}
+\newcommand{\Me}{\underline{\LastName, \Initials}}  % For citations
+\newcommand{\Email}{n.mokoena@uct.ac.za}
+\newcommand{\PersonalWebsite}{www.naledimokoena.example}
+\newcommand{\LabWebsite}{www.seismotectonics-uct.example}
+\newcommand{\ORCID}{0000-0002-4321-8765}
+\newcommand{\GitHubProfile}{nmokoena}
+
+% Names for citing coauthors
+\newcommand{\Thabo}{Nkosi, T}
+\newcommand{\Anja}{van der Merwe, A}
+\newcommand{\Kagiso}{Dlamini, K}
+
+% Load packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[TU]{fontenc}
+
+\usepackage[sfdefault]{atkinson}
+\usepackage[ttdefault]{sourcecodepro}
+
+\usepackage{fontawesome5}
+\usepackage{academicons}
+
+\usepackage[none]{hyphenat}
+\usepackage{anyfontsize}
+\usepackage{tabularx}
+\usepackage{ltablex}
+\usepackage{environ}
+\usepackage{datetime}
+\usepackage{geometry}
+\usepackage{lastpage}
+\usepackage{enumitem}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[colorlinks=true]{hyperref}
+
+% Template configuration
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\geometry{%
+  margin=12.5mm,
+  headsep=0mm,
+  headheight=0mm,
+  footskip=5mm,
+  includehead=true,
+  includefoot=true
+}
+
+\definecolor{mediumgray}{gray}{0.5}
+\definecolor{lightgray}{gray}{0.9}
+\definecolor{mediumblue}{HTML}{2060c2}
+
+\setlength\parindent{0cm}
+\renewcommand{\baselinestretch}{1.1}
+\renewcommand{\arraystretch}{1.25}
+\setlist{nosep}
+
+\titleformat{\section}
+  {\normalfont\Large\mdseries}
+  {}
+  {0pt}
+  {}
+  [\titlerule]
+\titlespacing*{\section}
+  {0pt}
+  {0.1cm}
+  {0cm}
+
+\makeatletter
+\renewcommand{\@seccntformat}[1]{}
+\makeatother
+
+\newcommand{\TablePad}{\vspace{-0.2cm}}
+\NewEnviron{EntriesTableDuration}{
+\TablePad
+\begin{tabularx}{\textwidth}{@{}p{0.10\textwidth}@{\hspace{0.02\textwidth}}p{0.88\textwidth}@{}}
+  \BODY
+\end{tabularx}
+\TablePad
+}
+\NewEnviron{EntriesTableYear}{
+\TablePad
+\begin{tabularx}{\textwidth}{@{}p{0.05\textwidth}@{\hspace{0.01\textwidth}}p{0.94\textwidth}@{}}
+  \BODY
+\end{tabularx}
+\TablePad
+}
+
+\newcommand{\Duration}[2]{\fontsize{10pt}{0}\selectfont \texttt{#1-#2}}
+\newcommand{\Year}[1]{\fontsize{10pt}{0}\selectfont \texttt{#1}}
+\newcommand{\Ongoing}{on}
+
+\newcommand{\DOI}[1]{doi:\href{https://doi.org/#1}{#1}}
+\newcommand{\Website}[1]{\href{https://#1}{#1}}
+\newcommand{\GitHub}[1]{\faGithub{} \href{https://github.com/#1}{#1}}
+
+\newdateformat{monthyear}{\monthname[\THEMONTH], \THEYEAR}
+
+\newcommand{\Separator}{\hspace{3pt}|\hspace{3pt}}
+\newcommand{\FooterFont}{\footnotesize\color{mediumgray}}
+\pagestyle{fancy}
+\fancyhf{}
+\lfoot{%
+  \FooterFont{}
+  \MyName{}
+  \Separator{}
+  \Title{}
+}
+\rfoot{%
+  \FooterFont{}
+  Last updated: \monthyear\today{}
+  \Separator{}
+  \thepage\space of\space \pageref*{LastPage}
+}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{1pt}
+
+\hypersetup{
+  colorlinks,
+  allcolors=mediumblue,
+  breaklinks=true,
+  pdftitle={\Title{} - \MyName},
+  pdfauthor={\MyName},
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{minipage}[t]{0.5\textwidth}
+  {\fontsize{20pt}{0}\selectfont\MyName}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+  \begin{flushright}
+    \Title{}
+  \end{flushright}
+\end{minipage}
+\\[-0.1cm]
+\textcolor{lightgray}{\rule{\textwidth}{3pt}}
+\begin{minipage}[t]{0.5\textwidth}
+  ORCID: \href{https://orcid.org/\ORCID}{\ORCID}
+  \\
+  Email: \href{mailto:\Email}{\Email}
+  \\
+  Website: \Website{\PersonalWebsite}
+  \\
+  Research Group: \Website{\LabWebsite}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+  \begin{flushright}
+  Rondebosch, Cape Town, South Africa, 7700
+  \\
+  \GEOL{}
+  \\
+  \UCT{}
+  \end{flushright}
+\end{minipage}
+\vspace{0.3cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Professional Appointments}
+
+\begin{EntriesTableDuration}
+  \Duration{2022}{\Ongoing}  &
+  \textbf{Senior Lecturer}, \UCT{}, South Africa
+  \\
+  \Duration{2018}{2022}  &
+  \textbf{Lecturer}, \WITS{}, South Africa
+  \\
+  \Duration{2015}{2018}  &
+  \textbf{Postdoctoral Fellow}, \STELL{}, South Africa
+\end{EntriesTableDuration}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Education}
+
+\begin{EntriesTableYear}
+  \Year{2015}  &
+  PhD in Geophysics, \STELL{}. Thesis: \textit{Crustal Deformation Along the
+  Cape Fold Belt from GNSS Time Series}
+  \\
+  \Year{2010}  &
+  MSc in Geophysics, \UCT{}
+  \\
+  \Year{2008}  &
+  BSc in Geological Sciences, \UCT{}
+\end{EntriesTableYear}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Open Research Software}
+
+\begin{EntriesTableYear}
+  \Year{2021}  &
+  \textbf{gnsspy} --- Python library for processing regional GNSS
+  networks. \GitHub{nmokoena/gnsspy}
+\end{EntriesTableYear}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Grants and Fellowships}
+
+\begin{EntriesTableDuration}
+  \Duration{2023}{2026}  &
+  National Research Foundation, South Africa. \textit{Crustal strain
+  accumulation along the southern Cape Fold Belt.} Principal Investigator.
+  R2,400,000
+  \\
+  \Duration{2019}{2021}  &
+  Andrew W. Mellon Foundation Early Career Fellowship. R850,000
+\end{EntriesTableDuration}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Publication Highlights}
+
+\begin{EntriesTableYear}
+  \Year{2023}  &
+  \Me{}, \Thabo{}. Crustal strain rates from a decade of continuous GNSS
+  in the southern Cape Fold Belt. \textit{Journal of Geophysical Research:
+  Solid Earth}. \DOI{10.1029/2023JB000001}
+  \\
+  \Year{2020}  &
+  \Me{}, \Anja{}, \Kagiso{}. Seismotectonic segmentation of the
+  Ceres-Tulbagh fault zone. \textit{Tectonophysics}.
+  \DOI{10.1016/j.tecto.2020.000002}
+\end{EntriesTableYear}
+
+\end{document}

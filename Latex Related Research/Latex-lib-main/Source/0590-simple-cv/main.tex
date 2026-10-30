@@ -1,0 +1,52 @@
+\documentclass[letterpaper,11pt]{article}
+
+% PATCH (latextemplates.com): this pipeline's bibliography pass is classic
+% bibtex, not biber — upstream's plain [style=ieee,...]{biblatex} defaults to
+% biber, which this pipeline never runs, so citations would silently stay
+% "[?]" with a clean-looking compile log. Force the bibtex backend explicitly
+% before \documentclass, per research/README.md's bibliography-backend note.
+\PassOptionsToPackage{backend=bibtex}{biblatex}
+
+% Choose bibliography style for formatting list of publications
+\usepackage[style=ieee,url=false,doi=false,maxbibnames=99,sorting=ydnt,dashed=false]{biblatex}
+\bibliography{papers}
+
+% Choose theme, e.g. black, RedViolet, ForestGreen, MidnightBlue, Blue
+\def\theme{MidnightBlue}
+
+\usepackage{simplecv}
+
+\boldname{Alvarez}{Sofia}{S.}
+
+\begin{document}
+
+% Heading
+\headinginline{Sofia Alvarez}{
+    \faEnvelope: \email{sofia.alvarez@example.com} \\
+    \faGlobe: \website{sofia-alvarez.dev}
+    \faGithub: \github{salvarez-dev}
+}
+
+% \headingphoto{Sofia Alvarez}{
+%     Website: \website{sofia-alvarez.dev} \\
+%     Email: \email{sofia.alvarez@example.com} \\
+%     GitHub: \github{salvarez-dev}
+% }{photo.png}
+
+% Page One
+\import{sections/}{education.tex}
+\import{sections/}{experience.tex}
+\import{sections/}{publications.tex}
+
+\pagebreak
+
+% Page Two
+\import{sections/}{teaching.tex}
+\sidebyside
+    {\import{sections/}{skills.tex}}
+    {\import{sections/}{languages.tex}}
+\import{sections/}{projects.tex}
+\import{sections/}{awards.tex}
+\import{sections/}{volunteering.tex}
+
+\end{document}

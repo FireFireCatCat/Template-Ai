@@ -1,0 +1,414 @@
+%=============================================================================
+\section{System Description}
+%=============================================================================
+
+Before you can control something, you need to understand what it \textit{does}. A system is anything that takes an input and produces an output. Your DC brushed motor takes voltage and produces angular velocity. Your chassis takes wheel speeds and produces a trajectory. Your gimbal takes motor torques and produces angles.
+
+The art of control engineering begins with writing down a mathematical description of these input-output relationships. This is called \textbf{modeling}, and it is simultaneously the most important and most underappreciated step in the process.
+
+\textbf{A word of wisdom:} A mediocre controller on a good model will outperform a perfect controller on a bad model, every single time. Spend time understanding your system.
+
+We describe systems as either \textbf{SISO} (Single-Input, Single-Output) or \textbf{MIMO} (Multiple-Input, Multiple-Output). A single motor is SISO. A holonomic chassis with four wheels is MIMO. We will start with SISO because it is simpler, and generalize later.
+
+\subsection{Mathematical Models of Systems}
+
+There are three main ways to describe a system mathematically, each with its own strengths.
+
+\subsubsection{Differential Equations}
+
+The most fundamental description. We use physics (Newton's laws, Kirchhoff's laws, etc.) to write equations relating inputs, outputs, and their derivatives.
+
+\textbf{Example: DC brushed motor}
+
+A DC brushed motor is the most common actuator in robotics competitions. Here is its simplified model:
+
+Electrical equation (Kirchhoff's voltage law):
+\begin{equation}
+V = L \frac{di}{dt} + Ri + K_e \omega
+\end{equation}
+
+Mechanical equation (Newton's second law for rotation):
+\begin{equation}
+J \frac{d\omega}{dt} = K_t i - b\omega - \tau_{\text{load}}
+\end{equation}
+
+where:
+\begin{itemize}[nosep]
+    \item $V$: input voltage, $i$: armature current
+    \item $L$: inductance, $R$: resistance
+    \item $K_e$: back-EMF constant, $K_t$: torque constant
+    \item $J$: moment of inertia, $b$: viscous friction
+    \item $\omega$: angular velocity, $\tau_{\text{load}}$: load torque
+\end{itemize}
+
+These are two coupled first-order differential equations. In practice, the electrical dynamics ($L \frac{di}{dt}$) are much faster than the mechanical dynamics, so we often simplify by setting $L \approx 0$, giving us:
+\begin{equation}
+J \frac{d\omega}{dt} = \frac{K_t}{R}(V - K_e \omega) - b\omega - \tau_{\text{load}}
+\end{equation}
+
+This is a first-order ODE relating input voltage $V$ to output speed $\omega$. Now we can analyze and control it.
+
+\subsubsection{Transfer Functions}
+
+Take the Laplace transform of the differential equation (assuming zero initial conditions), and you get a \textbf{transfer function}: the ratio of output to input in the $s$-domain.
+
+Let us sketch the derivation. From the simplified equation ($L \approx 0$), Ohm's law gives $I = (V - K_e \omega)/R$. Substituting into the mechanical equation $J\frac{d\omega}{dt} = K_t I - b\omega$:
+\[
+J\frac{d\omega}{dt} = \frac{K_t}{R}(V - K_e \omega) - b\omega
+\]
+Taking the Laplace transform (zero initial conditions): $(Js + b + K_t K_e / R)\,\Omega(s) = (K_t / R)\,V(s)$, hence:
+
+For our simplified DC brushed motor:
+\begin{equation}
+G(s) = \frac{\Omega(s)}{V(s)} = \frac{K_t / R}{Js + (b + K_t K_e / R)}
+\end{equation}
+
+This can be rewritten in standard first-order form:
+\begin{equation}
+G(s) = \frac{K}{\tau s + 1}
+\end{equation}
+
+where $K$ is the DC gain (steady-state speed per volt) and $\tau$ is the time constant (how fast the motor reaches steady state).
+
+\textbf{Why transfer functions are great.}\;They are compact---one fraction describes the entire system. Cascading systems is just multiplication: $G_{\text{total}}(s) = G_1(s) \cdot G_2(s)$. Stability analysis is straightforward: check the roots of the denominator (poles). And the frequency response is obtained by simply substituting $s = j\omega$.
+
+\textbf{Why transfer functions are limited.}\;They only work for linear, time-invariant (LTI) systems. They assume zero initial conditions. They are naturally SISO---extending to MIMO requires transfer function matrices, which get unwieldy. And they hide the internal states of the system. This last point is why we need the state-space representation.
+
+\subsubsection{State-Space Representation}
+
+The state-space representation describes a system as a set of first-order differential equations in matrix form:
+
+\begin{align}
+\dot{\mathbf{x}} &= A\mathbf{x} + B\mathbf{u} \quad \text{(state equation)} \\
+\mathbf{y} &= C\mathbf{x} + D\mathbf{u} \quad \text{(output equation)}
+\end{align}
+
+where:
+\begin{itemize}[nosep]
+    \item $\mathbf{x}$: state vector (the internal variables that describe the system's condition)
+    \item $\mathbf{u}$: input vector
+    \item $\mathbf{y}$: output vector
+    \item $A$: system matrix, $B$: input matrix, $C$: output matrix, $D$: feedthrough matrix
+\end{itemize}
+
+\textbf{What each matrix physically means:}
+\begin{itemize}
+    \item $A$ (system/dynamics matrix): Describes how the states evolve on their own, without any input. If you disconnect the motor ($\mathbf{u} = 0$), the system evolves as $\dot{\mathbf{x}} = A\mathbf{x}$. The eigenvalues of $A$ determine the natural behavior: stable decay, oscillation, or divergence. Entry $A_{ij}$ tells you how state $j$ influences the rate of change of state $i$.
+    \item $B$ (input matrix): Describes how the inputs affect the states. Entry $B_{ij}$ tells you how input $j$ influences the rate of change of state $i$. If a row of $B$ is all zeros, that state cannot be directly driven by any input---it can only be influenced indirectly through coupling in $A$.
+    \item $C$ (output matrix): Describes which states you can measure. Entry $C_{ij}$ tells you how much state $j$ contributes to measurement $i$. If $C = [1\;0\;\ldots\;0]$, you are measuring only the first state.
+    \item $D$ (feedthrough matrix): Describes direct input-to-output coupling that bypasses the dynamics. In most physical systems, $D = 0$ because inputs must go through the dynamics before affecting the output. $D \neq 0$ appears when there is a direct algebraic path from input to output (e.g., a resistive voltage divider).
+\end{itemize}
+
+\textbf{Example: DC brushed motor in state-space}
+
+Choose states $\mathbf{x} = \begin{bmatrix} \omega \\ i \end{bmatrix}$ (angular velocity and current):
+
+\begin{equation}
+\begin{bmatrix} \dot{\omega} \\ \dot{i} \end{bmatrix} =
+\begin{bmatrix} -b/J & K_t/J \\ -K_e/L & -R/L \end{bmatrix}
+\begin{bmatrix} \omega \\ i \end{bmatrix} +
+\begin{bmatrix} 0 \\ 1/L \end{bmatrix} V
+\end{equation}
+
+\begin{equation}
+y = \begin{bmatrix} 1 & 0 \end{bmatrix} \begin{bmatrix} \omega \\ i \end{bmatrix}
+\end{equation}
+
+\textbf{Why state-space is powerful:}
+\begin{itemize}
+    \item Handles MIMO systems naturally---just make the matrices bigger.
+    \item Exposes internal states, which we can estimate (observers) and control (state feedback).
+    \item Works seamlessly with modern control techniques (LQR, MPC, Kalman filter).
+    \item Easily extended to nonlinear systems (replace $A\mathbf{x}$ with $f(\mathbf{x})$).
+\end{itemize}
+
+\textbf{The trade-off:} State-space is more powerful but more abstract. Transfer functions give you better physical intuition for SISO systems. Good engineers are fluent in both.
+
+\subsection{System Analysis via Transfer Functions}
+\label{sec:system_analysis_tf}
+
+Given a transfer function $G(s)$, we can extract a wealth of information about the system.
+
+\textbf{Poles and zeros revisited.} We introduced poles and zeros informally in the DSP chapter. Now let us be precise. Write $G(s) = \frac{N(s)}{D(s)}$. The roots of $N(s)$ are the \textbf{zeros}; the roots of $D(s)$ are the \textbf{poles}.
+
+\begin{itemize}
+    \item \textbf{Poles determine stability.} If all poles have negative real parts (i.e., they are in the left half of the complex plane), the system is stable. If any pole has a positive real part, the system is unstable and will blow up. Poles on the imaginary axis mean the system is marginally stable (perpetual oscillation).
+    \item \textbf{Poles determine speed.} Poles farther to the left mean faster dynamics. The \textit{dominant poles} (closest to the imaginary axis) determine the overall system speed.
+    \item \textbf{Complex poles mean oscillation.} A pair of complex conjugate poles $s = -\sigma \pm j\omega_d$ produces oscillatory behavior. The real part $\sigma$ determines how fast the oscillation decays; the imaginary part $\omega_d$ determines the oscillation frequency.
+    \item \textbf{Zeros shape the response.} Zeros can cancel poles, reshape the transient response, or cause non-minimum phase behavior (the system initially moves in the wrong direction).
+\end{itemize}
+
+\textbf{Quick trick: determining system order by counting integrations.} Before diving into the math, here is an intuitive shortcut. The order of a system equals the number of times you must integrate the input variable to arrive at the output variable in a physical sense. For a DC brushed motor controlled by voltage:
+\begin{itemize}[nosep]
+    \item Voltage $\to$ current (one integration through the inductance $L\frac{di}{dt} = V - \ldots$) $\to$ that is one integrator.
+    \item Current $\to$ angular velocity (one integration through the inertia $J\frac{d\omega}{dt} = K_t i - \ldots$) $\to$ that is a second integrator.
+\end{itemize}
+Two integrations from voltage to velocity $\Rightarrow$ second-order system. If we simplify $L \approx 0$ (current responds instantly), we remove one integration, leaving a first-order system. If the output is \textit{position} instead of velocity, add one more integration ($\theta = \int \omega\,dt$), making it third-order (or second-order with the $L \approx 0$ simplification). This counting trick works for any physical system: springs, thermal systems, fluid tanks---count the independent energy storage elements (inductors, capacitors, masses, springs), and you have the system order.
+
+\textbf{Standard second-order system.} Many physical systems can be approximated as:
+\begin{equation}
+G(s) = \frac{\omega_n^2}{s^2 + 2\zeta\omega_n s + \omega_n^2}
+\end{equation}
+
+where $\omega_n$ is the natural frequency and $\zeta$ is the damping ratio. The damping ratio tells you everything about the transient response:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+$\zeta$ & \textbf{Behavior} \\
+\midrule
+$\zeta > 1$ & Overdamped: slow, no oscillation \\
+$\zeta = 1$ & Critically damped: fastest without oscillation \\
+$0 < \zeta < 1$ & Underdamped: oscillation with decay \\
+$\zeta = 0$ & Undamped: perpetual oscillation \\
+$\zeta < 0$ & Unstable: growing oscillation \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+For most robotics applications, you want $\zeta$ between 0.5 and 0.8---fast response with acceptable overshoot.
+
+\textbf{Useful formulas for the underdamped case ($0 < \zeta < 1$):}
+
+The step response is:
+\begin{equation}
+y(t) = 1 - \frac{e^{-\zeta\omega_n t}}{\sqrt{1 - \zeta^2}} \sin\left(\omega_d t + \phi\right), \quad \omega_d = \omega_n\sqrt{1 - \zeta^2}, \quad \phi = \arccos(\zeta)
+\end{equation}
+
+where $\omega_d$ is the \textbf{damped natural frequency} --- the actual frequency at which the system oscillates (always less than $\omega_n$).
+
+To derive this, we take the Laplace transform of the step response: $Y(s) = \frac{\omega_n^2}{s(s^2 + 2\zeta\omega_n s + \omega_n^2)}$. Partial fraction expansion with complex poles at $s = -\zeta\omega_n \pm j\omega_d$ (where $\omega_d = \omega_n\sqrt{1-\zeta^2}$) and inverse Laplace transform yields the result. The overshoot occurs at the first peak, $t_p = \pi/\omega_d$; substituting into $y(t)$ gives $M_p$.
+
+From this, we can derive closed-form expressions for the performance metrics:
+\begin{align}
+\text{Percent overshoot:} \quad M_p &= e^{-\pi\zeta / \sqrt{1-\zeta^2}} \times 100\% \\
+\text{Peak time:} \quad t_p &= \frac{\pi}{\omega_d} = \frac{\pi}{\omega_n\sqrt{1-\zeta^2}} \\
+\text{Settling time (2\%):} \quad t_s &\approx \frac{4}{\zeta\omega_n} \\
+\text{Rise time (approx):} \quad t_r &\approx \frac{1.8}{\omega_n}
+\end{align}
+
+\textbf{What these formulas tell you:}
+\begin{itemize}
+    \item Overshoot depends \textit{only} on $\zeta$, not on $\omega_n$. A faster system ($\omega_n$ higher) overshoots by the same percentage---it just does it faster.
+    \item Settling time depends on the product $\zeta\omega_n$ --- this is the real part of the poles. Faster settling requires poles farther left in the complex plane.
+    \item There is a direct trade-off: lower $\zeta$ gives faster rise time but more overshoot. Higher $\zeta$ gives less overshoot but slower response.
+    \item For $\zeta = 0.707$ ($1/\sqrt{2}$): overshoot $\approx 4.3\%$, which is often cited as the ``optimal'' damping for the best compromise between speed and smoothness.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{second_order_response.pdf}
+\caption{Second-order step response for different damping ratios. Notice how $\zeta = 0.707$ (blue) gives the fastest rise without significant overshoot --- this is the ``sweet spot'' for most control applications.}
+\end{figure}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Case Study: The Spring-Mass-Damper --- A System You Can Feel}
+
+\vspace{0.3em}
+Before we get more abstract, let us build intuition with the simplest second-order system that you have literally felt with your own body: a car's suspension.
+
+A car hitting a bump is a textbook spring-mass-damper: the car body (mass $m$) bounces on the suspension spring (stiffness $k$) while the shock absorber (damping coefficient $b$) dissipates energy.
+
+\[
+m\ddot{x} + b\dot{x} + kx = F(t)
+\]
+
+Transfer function: $G(s) = \frac{1}{ms^2 + bs + k} = \frac{1/m}{s^2 + \frac{b}{m}s + \frac{k}{m}}$
+
+Natural frequency: $\omega_n = \sqrt{k/m}$. \quad Damping ratio: $\zeta = \frac{b}{2\sqrt{km}}$. These follow from matching coefficients: $ms^2 + bs + k = m(s^2 + 2\zeta\omega_n s + \omega_n^2)$ gives $\omega_n^2 = k/m$ and $2\zeta\omega_n = b/m$, hence $\zeta = b/(2m\omega_n) = b/(2\sqrt{km})$.
+
+\textbf{Now feel the math:}
+\begin{itemize}[nosep]
+    \item \textbf{No shock absorber ($\zeta = 0$):} You hit a bump and bounce forever. This is a trampoline, not a car. Undamped.
+    \item \textbf{Worn-out shocks ($\zeta = 0.2$):} You hit a bump and bounce 5--6 times before settling. Passengers feel seasick. Underdamped.
+    \item \textbf{Good shocks ($\zeta = 0.5$--$0.7$):} You hit a bump, bounce once or twice gently, and settle quickly. Comfortable. This is the sweet spot.
+    \item \textbf{Off-road truck shocks ($\zeta = 1$):} You hit a bump and slowly return to center with no bounce at all. Safe but stiff. Critically damped.
+    \item \textbf{Shocks filled with concrete ($\zeta = 3$):} You hit a bump and it takes forever to return to center. You feel every pebble. Overdamped.
+\end{itemize}
+
+\textbf{The connection to your robot:} Your gimbal, your chassis, your robotic arm---they all have natural frequencies and damping. When your gimbal oscillates after a step command, it is underdamped ($\zeta$ too low). When it responds sluggishly, it is overdamped ($\zeta$ too high). The PID controller's job (Section 4) is essentially to \textit{change the effective $\zeta$ and $\omega_n$} of your system by adding virtual springs (P), virtual dampers (D), and memory (I).
+
+\textbf{Why $\omega_n$ matters:} A heavy gimbal with a weak motor has a low $\omega_n$---it physically cannot respond fast. No amount of PID tuning can make a system respond faster than its natural frequency allows. If you need more speed, you need a bigger motor (increase $k$) or a lighter load (decrease $m$). This is why hardware design and control design must go hand in hand.
+\end{mdframed}
+
+\subsection{System Analysis via State-Space}
+
+For the state-space model $\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}$, system behavior is determined by the \textbf{eigenvalues of $A$}.
+
+Here is the beautiful connection: \textit{the eigenvalues of $A$ are exactly the poles of the transfer function.} So everything we said about poles applies here too. The eigenvalue analysis just extends naturally to MIMO systems where transfer functions become awkward.
+
+\textbf{Matrix exponential.} The free response (no input) of the state-space system is:
+\begin{equation}
+\mathbf{x}(t) = e^{At}\mathbf{x}(0)
+\end{equation}
+
+The matrix exponential $e^{At}$ encodes all the dynamics. If you diagonalize $A$ (when possible), you get:
+\begin{equation}
+e^{At} = P \begin{bmatrix} e^{\lambda_1 t} & & \\ & \ddots & \\ & & e^{\lambda_n t} \end{bmatrix} P^{-1}
+\end{equation}
+
+Each eigenvalue $\lambda_i$ contributes an exponential mode. Negative real eigenvalues decay. Positive ones grow. Complex ones oscillate. This is the state-space way of saying ``poles determine everything.''
+
+\subsection{Motor Modeling: The Most Common Plant}
+
+Every controller needs a plant model. In robotics competitions, 95\% of your plants are electric motors. Whether you are driving wheels, spinning flywheels, or controlling a turret, understanding how to model a motor is the single most useful skill you can have before touching any control algorithm.
+
+\subsubsection*{DC Brushed Motor Model}
+
+A \textbf{DC brushed motor} has two coupled subsystems: electrical and mechanical.
+
+\textbf{Electrical dynamics} (KVL around the armature loop):
+\begin{equation}
+V = L\frac{di}{dt} + Ri + K_e\omega
+\end{equation}
+
+\textbf{Mechanical dynamics} (Newton's second law on the rotor):
+\begin{equation}
+J\frac{d\omega}{dt} = K_t i - b\omega - \tau_{\text{load}}
+\end{equation}
+
+where $V$ is input voltage, $i$ armature current, $\omega$ angular velocity, $L$ inductance, $R$ resistance, $K_e$ back-EMF constant, $K_t$ torque constant, $J$ rotor inertia, $b$ viscous friction, and $\tau_{\text{load}}$ external load torque.
+
+Taking the Laplace transform (with $\tau_{\text{load}} = 0$) and eliminating $I(s)$ yields the \textbf{full second-order transfer function}:
+\begin{equation}
+\frac{\Omega(s)}{V(s)} = \frac{K_t}{JLs^2 + (JR + bL)s + (bR + K_t K_e)}
+\end{equation}
+
+\textbf{First-order simplification.} For most motors used in robotics competitions, the electrical time constant $\tau_e = L/R$ is on the order of milliseconds---far faster than any mechanical response. Setting $L \approx 0$ collapses the model to a much more tractable first-order system:
+\begin{equation}
+\frac{\Omega(s)}{V(s)} = \frac{K_m}{\tau_m s + 1}
+\end{equation}
+
+where the \textbf{motor gain} and \textbf{mechanical time constant} are:
+\begin{equation}
+K_m = \frac{K_t}{bR + K_t K_e}, \qquad \tau_m = \frac{JR}{bR + K_t K_e}
+\end{equation}
+
+This first-order model is what you will use for PID tuning, feedforward design, and most practical work.
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Demystifying the Time Constant $\tau$}
+
+\vspace{0.3em}
+The time constant $\tau$ appears everywhere in control theory, yet many students struggle to develop an intuition for it. Let us fix that.
+
+\textbf{What $\tau$ really means.} For any first-order system $G(s) = \frac{K}{\tau s + 1}$, the step response is:
+\[
+y(t) = K\left(1 - e^{-t/\tau}\right)
+\]
+
+At $t = \tau$, the output has reached $1 - e^{-1} \approx 63.2\%$ of its final value. This is where the ``63\% rule'' comes from. But why 63\%? Because the first-order system's behavior has a beautiful property: \textit{at every instant, the rate of change is proportional to the remaining distance to the target.} At $t = 0$, the system has full ``motivation'' and moves the fastest. As it approaches the target, it slows down---like a runner who sprints at the start but slows as the finish line approaches. After one $\tau$, it has covered 63.2\% of the gap. After another $\tau$, 63.2\% of the \textit{remaining} gap. And so on:
+
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+\textbf{Time} & \textbf{\% of final value} & \textbf{Practical meaning} \\
+\midrule
+$1\tau$ & 63.2\% & Barely past halfway---still rising noticeably \\
+$2\tau$ & 86.5\% & Getting close, but not there yet \\
+$3\tau$ & 95.0\% & Good enough for most applications \\
+$4\tau$ & 98.2\% & Within 2\% error band (settling time!) \\
+$5\tau$ & 99.3\% & Essentially at steady state \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{A physical analogy: filling a leaky bucket.} Imagine filling a bucket that has a hole in the bottom. When the bucket is empty, water flows in fast because there is no pressure pushing it back out. As the bucket fills, the water level creates back-pressure that pushes water out of the hole. The higher the level, the more water leaks out, until eventually inflow equals outflow and the level stops rising. The time it takes to reach 63\% of the equilibrium level is $\tau$---and it depends on both the bucket size (capacitance/inertia) and the hole size (resistance/friction).
+
+This is exactly what happens in a motor: voltage drives current into the winding (inflow), but back-EMF and friction resist motion (outflow). The mechanical time constant $\tau_m$ tells you how quickly the motor speed ``fills up'' to its steady-state value.
+
+\textbf{Why $\tau$ connects to everything:}
+\begin{itemize}[nosep]
+    \item \textbf{Settling time:} $t_s \approx 4\tau$ (for 2\% criterion). If your motor has $\tau_m = 50$~ms, settling takes $\sim$200~ms. Too slow? You need a bigger motor or a feedback controller.
+    \item \textbf{Bandwidth:} The $-3$~dB bandwidth of a first-order system is $\omega_{bw} = 1/\tau$. A motor with $\tau_m = 50$~ms has a bandwidth of $20$~rad/s $\approx 3.2$~Hz. It physically cannot track signals faster than this without a controller.
+    \item \textbf{Pole location:} The pole of $G(s) = K/(\tau s + 1)$ is at $s = -1/\tau$. Smaller $\tau$ means the pole is farther left---faster dynamics. This is the transfer-function way of saying ``a faster motor has a smaller time constant.''
+    \item \textbf{Sampling rate:} Your controller's sampling period should be at most $\tau/10$ for adequate control. For $\tau_m = 50$~ms, sample at $\leq 5$~ms (200~Hz minimum).
+\end{itemize}
+
+\textbf{DC gain $K$ is the other half of the story.} The time constant tells you \textit{how fast} the system responds; the DC gain tells you \textit{how far} it goes. For a motor, $K_m$ gives the steady-state speed per volt. If $K_m = 10$~rad/s/V, then 1~V eventually produces 10~rad/s. If your application requires 100~rad/s, you need at least 10~V. No controller can change the DC gain of the plant---it can only change how fast you get there.
+
+\textbf{Electrical vs.\ mechanical time constant.} A motor actually has \textit{two} time constants: $\tau_e = L/R$ (electrical, typically $\sim$1~ms) and $\tau_m = JR/(bR + K_tK_e)$ (mechanical, typically 20--200~ms). Since $\tau_e \ll \tau_m$, the electrical dynamics ``settle'' before the mechanical dynamics even get started. This is why we can simplify the second-order model to first-order: by the time you notice the motor moving, the current has already reached its steady-state value. In control theory language, the fast electrical pole is so far left in the $s$-plane that it has negligible effect on the response---it is not a \textit{dominant pole}.
+
+\textbf{The dominant pole concept.} When a system has multiple time constants, the \textit{slowest} one (largest $\tau$, i.e., the pole closest to the imaginary axis) dominates the response. This is why we can often approximate high-order systems by simple first- or second-order models---the fast poles contribute only brief transients that die out before we even notice them. This is not sloppy engineering; it is justified approximation, and it is the reason first-order models work so well in practice.
+\end{mdframed}
+
+\subsubsection*{BLDC Motors and FOC}
+
+\textbf{Brushless DC (BLDC) motors} are three-phase machines, but modern ESCs running \textbf{Field Oriented Control (FOC)} handle the three-phase complexity internally. FOC uses the Park and Clarke transforms to project the three-phase currents onto a rotating $d$-$q$ reference frame, producing an equivalent DC brushed motor in the $q$-axis. From your controller's perspective, the ESC exposes a \emph{virtual DC brushed motor}---you command a voltage (or current) and observe angular velocity, and the same transfer function applies directly. You do not need to think about phase commutation at all.
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Understanding FOC: Why It Matters and How It Works}
+
+\vspace{0.3em}
+A BLDC motor has three stator windings arranged 120\textdegree{} apart. To spin the rotor, these windings must be energized in a specific sequence that keeps the magnetic field always ``pulling'' the rotor forward. The challenge is: the required currents are sinusoidal and their phase depends on the rotor's angular position. Controlling three time-varying, position-dependent sinusoids simultaneously is messy.
+
+\textbf{The key idea of FOC: transform the problem until it looks like a DC motor.}
+
+\textbf{Step 1: Clarke transform} ($abc \to \alpha\beta$). The three phase currents $i_a, i_b, i_c$ are projected onto a fixed two-axis coordinate system ($\alpha, \beta$). This eliminates one redundant variable (since $i_a + i_b + i_c = 0$) without losing any information. The result: two sinusoidal signals instead of three.
+
+\textbf{Step 2: Park transform} ($\alpha\beta \to dq$). The two-axis fixed frame is rotated to align with the rotor's magnetic axis, using the measured rotor angle $\theta_e$. In this \textbf{rotating reference frame}:
+\begin{itemize}[nosep]
+    \item The $q$-axis current ($i_q$) produces torque---exactly like the armature current in a DC brushed motor.
+    \item The $d$-axis current ($i_d$) controls the magnetic field strength. For most applications, $i_d$ is set to zero (no need to weaken or strengthen the field).
+\end{itemize}
+
+After the Park transform, the three time-varying sinusoids have become two \textit{constant} values ($i_d$ and $i_q$) in steady state. Controlling constants is trivial---just use PI controllers.
+
+\textbf{Step 3: PI control in $dq$ frame.} Two simple PI controllers:
+\begin{itemize}[nosep]
+    \item $d$-axis PI: keeps $i_d = 0$ (or a reference for field weakening at high speeds).
+    \item $q$-axis PI: tracks the desired torque current $i_q^* = \tau_{\text{desired}} / K_t$.
+\end{itemize}
+
+\textbf{Step 4: Inverse transforms.} The $dq$ voltage commands are transformed back to three-phase voltages (inverse Park $\to$ inverse Clarke), which are applied to the motor windings via PWM.
+
+\textbf{Why FOC matters for your robot:}
+\begin{itemize}[nosep]
+    \item \textbf{Precise torque control.} Since $i_q$ directly determines torque, FOC enables accurate torque (and therefore current) control---essential for force-controlled applications and smooth low-speed operation.
+    \item \textbf{Maximum efficiency.} By keeping $i_d = 0$, all current goes to producing torque. No energy is wasted on useless field components. This means less heat and longer battery life.
+    \item \textbf{Smooth at all speeds.} Unlike simpler commutation methods (trapezoidal/six-step), FOC produces smooth sinusoidal currents with no torque ripple. Your gimbal does not ``cog'' at low speeds.
+    \item \textbf{Simplifies your work.} The ESC handles all the FOC math internally at 10--40~kHz. Your outer controller sees a clean current (or voltage) interface---a virtual DC brushed motor. You only need to design the velocity and position loops.
+\end{itemize}
+
+\textbf{What you need to provide:} FOC requires accurate rotor position feedback. Typically a magnetic encoder (e.g., AS5048) or Hall sensors. Without position feedback, the Park transform cannot be computed, and sensorless FOC (which estimates position from back-EMF) is used instead---common on drone ESCs but less precise for robotics.
+\end{mdframed}
+
+\subsubsection*{State-Space Form}
+
+For observer design, LQR, or MPC, you need the full state-space representation. Using $\mathbf{x} = \begin{bmatrix} i & \omega \end{bmatrix}^T$ and $u = V$:
+\begin{equation}
+\dot{\mathbf{x}} = A\mathbf{x} + Bu, \qquad
+A = \begin{bmatrix} -R/L & -K_e/L \\ K_t/J & -b/J \end{bmatrix}, \quad
+B = \begin{bmatrix} 1/L \\ 0 \end{bmatrix}
+\end{equation}
+
+With $L \approx 0$ the current state $i$ becomes an algebraic variable and the state reduces to $\mathbf{x} = [\,\omega\,]$, recovering the first-order model. The full two-state form is what you feed into an LQR or Kalman filter when current sensing is available.
+
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Practical Tip: How to Get Motor Parameters}
+
+\vspace{0.3em}
+You rarely have a datasheet with $J$, $b$, $L$. Measure them yourself:
+
+\begin{itemize}[nosep]
+    \item \textbf{Stall test} --- apply a known low voltage $V_s$, hold the shaft still, measure stall current $I_s$. Then $R = V_s / I_s$.
+    \item \textbf{Free-run test} --- no load, apply rated voltage $V_0$, wait for steady state, measure $\omega_{\text{free}}$. Then $K_e = (V_0 - I_{\text{free}} R)\,/\,\omega_{\text{free}}$ (SI units: V$\cdot$s/rad). In SI units, $K_t = K_e$ exactly.
+    \item \textbf{Step response} --- command a voltage step, log $\omega(t)$. The time to reach 63\% of the final value is $\tau_m$.
+    \item \textbf{Inertia} --- rearrange $\tau_m = JR/(bR + K_t K_e)$ to solve for $J$, or use a \emph{swing test}: attach a known mass on a known arm, measure angular acceleration $\alpha$ under a known torque, and compute $J = \tau/\alpha$.
+\end{itemize}
+
+\textbf{Shortcut when using an FOC ESC with a current controller:} most modern FOC ESCs close an inner current loop at very high bandwidth. If that loop is active, the current $i$ tracks your command almost instantly. Your effective plant simplifies to \emph{pure mechanical dynamics}:
+\begin{equation*}
+\frac{\Omega(s)}{I_{\text{ref}}(s)} = \frac{K_t}{Js + b}
+\end{equation*}
+You only need $K_t$, $J$, and $b$---and $b$ is often negligible. This is the plant you will tune your outer velocity loop against.
+\end{mdframed}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{motor_step_response.pdf}
+\caption{DC brushed motor step response: voltage to angular velocity. Left: full second-order model showing the fast electrical transient ($\tau_e \approx 1$~ms) followed by the slow mechanical rise ($\tau_m \approx 50$~ms). Right: first-order approximation ($L \approx 0$) matches the mechanical response almost perfectly --- the electrical pole is too fast to matter.}
+\end{figure}

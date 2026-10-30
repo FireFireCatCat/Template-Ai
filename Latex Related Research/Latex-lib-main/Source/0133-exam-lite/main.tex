@@ -1,0 +1,71 @@
+% exam-lite starter -- no institution logo bundled, so \aboutexam is
+% redefined here to drop the \includegraphics call the upstream class makes
+% (it otherwise requires \ImagePath{...} pointing at a crest/logo image).
+% Everything else follows the class's documented usage.
+\documentclass[english, exam]{exam-lite} % options: {slovene, english}, {exam, midterm, seminar}
+
+\renewcommand{\aboutexam}[1]{
+    \noindent
+    \fancyfoot{}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    \pagestyle{fancy}
+    \fancyhf{}
+    \setlength{\headheight}{85pt}
+    \fancyhead[R]{\leavevmode\large
+        \begin{tabular}[t]{l@{}}
+            #1
+        \end{tabular}}
+    \vspace*{2\baselineskip}
+}
+
+\begin{document}
+
+% Exam metadata -- change to match your course.
+\subject{Introduction to Algorithms}
+\academicyear{2026-2027}
+\studyprogram{Computer Science}
+\examid{1}
+\location{Room A-204}
+\newdate{examdate}{14}{01}{2027}
+\subacronym{ALG}
+\writingtimeminutes{90}
+
+\instructionstext{
+    \begin{enumerate}
+        \item The exam consists of 5 questions.
+        \item The use of a calculator is not allowed.
+        \item Write only what the question asks for.
+        \item You do not get minus points for wrong answers.
+    \end{enumerate}
+}
+
+\makefirstpage
+\makenextheaders
+\setcounter{page}{1}
+
+% \question{...}{points}{vspace in cm} -- points shown next to the question.
+\question{State the time complexity of binary search on a sorted array of $n$ elements.}{2}{1}
+
+\question{What is the worst-case time complexity of quicksort, and when does it occur?}{3}{2}
+
+% \longquestion{...}{points}{vspace} -- points shown under the question, for
+% longer prompts.
+\longquestion{Describe how a hash table resolves collisions using separate chaining, and state the average-case time complexity of a lookup.}{5}{3}
+
+% \alinea{...}{points}{vspace} -- used inside enumerate/itemize for
+% multi-part questions.
+\question{Answer both parts about graph traversal:}{0}{0}
+\begin{enumerate}[i]
+    \alinea{Which traversal (BFS or DFS) finds the shortest path in an unweighted graph? Why?}{3}{2}
+    \alinea{Give the time complexity of both BFS and DFS on a graph with $V$ vertices and $E$ edges.}{2}{2}
+\end{enumerate}
+
+\question{Circle the letter of the correct answer.}{1}{0}
+\begin{enumerate}
+    \item[a)] $\mathcal{O}(\log n)$
+    \item[b)] $\mathcal{O}(n)$
+    \item[c)] $\mathcal{O}(n \log n)$
+\end{enumerate}
+
+\end{document}

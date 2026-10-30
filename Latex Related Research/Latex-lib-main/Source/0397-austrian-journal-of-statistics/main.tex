@@ -1,0 +1,73 @@
+% Austrian Journal of Statistics article structure starter.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.25cm]{geometry}
+\usepackage{amsmath,booktabs,tabularx,xcolor,hyperref,microtype}
+\hypersetup{colorlinks=true,urlcolor=blue!50!black,linkcolor=blue!50!black,citecolor=blue!50!black}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\title{Estimating service reliability from incomplete observations}
+\author{Clara Novak\\\small Institute for Data Analysis\\\small Example University}
+\date{Austrian Journal of Statistics --- Volume 55, Issue 1 (2026)}
+\begin{document}
+\maketitle
+\begin{abstract}
+This article demonstrates an AJS-style manuscript with a concise summary,
+author information, reproducible methods, and clearly labelled tables. The
+fictional study estimates weekly service reliability when a small fraction of
+observations is missing.
+\end{abstract}
+\textbf{Keywords:} reliability; missing data; bootstrap; reproducibility
+
+\section{Introduction}
+Operational datasets often contain gaps that are small in number but unevenly
+distributed over time. A transparent estimator should report both the point
+estimate and the sensitivity to plausible missingness mechanisms.
+
+\section{Model}
+Let $y_t$ be the observed weekly success rate and $m_t$ the fraction of
+missing records. We estimate the adjusted rate as
+\begin{equation}
+  \widehat{r}_t = \frac{y_t}{1-m_t}, \qquad 0 \leq m_t < 1.
+\end{equation}
+The reported interval is obtained from 2,000 bootstrap resamples stratified
+by week.
+
+\section{Results}
+Table~\ref{tab:estimate} gives the illustrative estimates. All values are
+fictional and should be replaced with a reproducible analysis.
+\begin{table}[ht]
+\centering
+\caption{Illustrative weekly reliability estimates.}
+\label{tab:estimate}
+\begin{tabularx}{0.78\linewidth}{@{}lrrX@{}}
+\toprule
+Week & Observed & Adjusted & 95\% interval \\
+\midrule
+1 & 0.91 & 0.94 & [0.90, 0.97] \\
+2 & 0.88 & 0.92 & [0.87, 0.96] \\
+3 & 0.93 & 0.95 & [0.92, 0.98] \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Discussion}
+The adjustment is useful only when the missingness assumption is defensible.
+Sensitivity analysis should therefore be included whenever the missing
+records could be related to the outcome.
+
+\section{Conclusion}
+An explicit estimator, a stated resampling procedure, and a compact table
+make the statistical argument easier to inspect and reproduce.
+
+\section*{Address}
+Clara Novak\\
+Institute for Data Analysis, Example University\\
+Example Street 12, 1010 Example City, Austria\\
+\texttt{clara.novak@example.org}
+
+\begin{thebibliography}{9}
+\bibitem{efron}
+Efron, B. and Tibshirani, R. J. (1993). \emph{An Introduction to the
+Bootstrap}. Chapman and Hall.
+\end{thebibliography}
+\end{document}

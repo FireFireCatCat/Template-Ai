@@ -1,0 +1,135 @@
+\documentclass{sopra-base}
+
+\usepackage{sopra-documentation}
+\usepackage{sopra-attachments}
+
+\title{The 'sopra-attachments' Package}
+\subtitle[Documentation for the 'sopra-attachments' package]{Documentation for the 'sopra-attachments' package | Version \thesoaversion}
+\duedate{2020-01-5}
+
+\keywords{Documentation,sopra-attachments,sopra,uni ulm,uulm,package}
+\authors{Florian Sihler (florian.sihler@uni-ulm.de)}
+
+\group{Die Affenbande}
+\begin{document}
+    \maketitle
+
+\section{General}
+\subsection{Why, what for?}
+    This \LaTeXe\ package was written as part of the Sopra in the
+    winter semester 2019 and summer semester 2020 and serves as a
+    small wrapper for embedding documents
+    of \imptext{Team 20}. This documentation was created together with the
+    \T{sopra-base.cls} as well as the \T{sopra-documentation.sty} package.\par
+    The \T{sopra-listings} package is used to visualize the individual code
+    excerpts.
+    The associated package should also be embedded in this document: \attachTexText{sopra-attachments.sty}{sopra-attachments.sty}.
+\subsection{Dependencies}
+    This package includes the following packages:
+    \begin{multicols}{3}
+        \begin{itemize}
+            \def\pkgparse#1:#2\@nil{%
+                \T{#1}\ifx!#2!\else\textsuperscript{(#2)}\fi%
+            }
+            \foreach \pkg in {xcolor:,attachfile2:,graphicx:{\jmark[\T{attsymbols}]{mrk:attsymbols}, \jmark[\T{usefa}]{mrk:usefa}},fontawesome:{\jmark[\T{usefa}]{mrk:usefa}}} {
+                \item \expandafter\pkgparse\pkg\@nil
+            }
+        \end{itemize}
+    \end{multicols}
+    All of these packages should be part of a common \LaTeX\ distribution.
+
+\subsection{Installation}
+    The package is not delivered as a \T{.dtx}, which is why the
+    following options arise:
+    \begin{itemize}
+        \item The package can be placed in the same directory as the
+                document. In this case the inclusion instruction reads:
+\begin{plainlatex}
+\usepackage{sopra-attachments}
+\end{plainlatex}
+        \item The package can be placed in a subdirectory/a directory
+                shipped with the document. In this case it is specified
+                via the (relative) path:
+\begin{plainlatex}
+\usepackage{./My/Path/to/sopra-attachments}
+\end{plainlatex}
+        \item The package can be placed (via a symlink or similar)
+              in one's own \emph{texmf} tree.
+              For example, on Linux using texlive,
+              the package can be placed here: \bvoid{\~/texmf/tex/latex/}.
+              The directory can be created and then updated using
+              \bbash{texhash \~/texmf}. Now
+              the package can be used like any other installed package:
+\begin{plainlatex}
+\usepackage{sopra-attachments}
+\end{plainlatex}
+    \end{itemize}
+
+\subsection{Further peculiarities}
+In version \thesoaversion{} (\cmdref{thesoaversion}) the following applies: no default color is set anymore, to make it easier to configure it yourself. Furthermore \argref{usefa}{nousefa} was added.
+
+\subsection{Accepted Parameters}
+    Like most packages, this package accepts arguments.
+    For arguments with a \say{counter} option, the one that is respectively active by default is written first and the other one in parentheses.
+    So implicitly:
+\begin{plainlatex}
+    \usepackage[attsymbols,nodocheck,usefa]{sopra-attachments}
+\end{plainlatex}
+    is called. Whereas with:
+\begin{plainlatex}
+    \usepackage[docheck]{sopra-attachments}
+\end{plainlatex}
+    no error is thrown if the file does not exist!
+
+    \begin{argument}{attsymbols}{noattsymbols}
+        With \T{noattsymbols}, text is used instead even in cases where a symbol
+        would actually be used.
+    \end{argument}
+
+    \begin{argument}{nodocheck}{docheck}
+        With \T{docheck} it is checked whether the file actually exists. It is only attached
+        if it exists; otherwise \emph{no} error is thrown. This can, for example,
+        be useful when the graphic to be embedded is only generated later in the document
+        using Ti\textit{k}Z's \T{external}.
+    \end{argument}
+
+    \begin{argument}{usefa}{nousefa}
+        With \T{usefa}, the packages \emph{fontawesome} and \emph{graphicx} are loaded. A paperclip is prepended to the attached files for the text commands like \cmdref{attachDocumentText}, to make the attachment clear. With \T{nousefa} you get the behavior from before version \T{v1.1.00} back.
+    \end{argument}
+
+\subsection{Further Notes}
+
+    Using \cmd{attachfilesetup} from the \T{attachfile2} package, further
+    settings can be made. If \T{sopra-base} is not used, the author
+    of the documents must be set via \cmd{author}.
+
+\section{Commands and Environments}
+
+\subsection{General Commands}
+
+\begin{command}{thesoaversion}{}
+    Returns the current version of the package. So \cmd{thesoaversion} results in: \thesoaversion\\
+    \notetext{Note: via \blatex{\\value\{soaversion\}} the
+    version can be obtained as a $4$-digit number: \arabic{soaversion}.}
+\end{command}
+
+\begin{command}{attachPdf}{\optArg{search path}\manArg{File}}
+    Attempts to embed \T{File}. If it is not located in the same folder,
+    \T{search path} can be specified as a prefix. \notetext{A trailing \say{slash} is
+    expected!}
+\end{command}
+
+\begin{command}{attachPdfText}{\optArg{search path}\manArg{File}\manArg{Text}}
+    Analogous to \cmdref{attachPdf}, but instead of the symbol (if enabled),
+    the \T{Text} is displayed.
+\end{command}
+
+\begin{command}{attachDocument}{\optArg{search path}\manArg{File}}
+    Analogous to \cmdref{attachPdf}, but the document type is set to \T{text/plain}. \notetext{The alias \cmd{attachTex} exists.}
+\end{command}
+
+\begin{command}{attachDocumentText}{\optArg{search path}\manArg{File}\manArg{Text}}
+    Analogous to \cmdref{attachPdfText}, but the document type is set to \T{text/plain}. \notetext{The alias \cmd{attachTexText} exists.}
+\end{command}
+
+\end{document}

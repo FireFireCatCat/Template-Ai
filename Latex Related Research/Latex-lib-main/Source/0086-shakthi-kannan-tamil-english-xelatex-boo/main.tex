@@ -1,0 +1,48 @@
+% A small XeLaTeX starter adapted from Shakthi Kannan's Tamil/English book
+% workflow. Keep the original Org-mode example in example/ for conversion.
+\documentclass[11pt,openany]{book}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+\setmainfont{DejaVu Serif}
+\newfontfamily\tamilfont{DejaVu Sans}
+\usepackage{geometry}
+\geometry{paperwidth=7in,paperheight=9in,margin=1in,twoside}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\onehalfspacing
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE,LO]{\slshape\leftmark}
+\title{A Tamil and English Book}
+\author{Author Name}
+\date{\today}
+\begin{document}
+\frontmatter
+\maketitle
+\thispagestyle{empty}
+\begin{center}
+  \Large\tamilfont தமிழ் புத்தகம்\\[1em]
+  \normalsize A bilingual book starter built with XeLaTeX.
+\end{center}
+\cleardoublepage
+\tableofcontents
+\mainmatter
+\chapter{Getting started}
+This starter follows the structure of the original Tamil book workflow:
+front matter, a table of contents, and independently editable chapters.
+Unicode text can be written directly in the source when a suitable font is
+selected with \texttt{fontspec}.
+\section{A bilingual paragraph}
+English and \tamilfont தமிழ் can appear together in the same document.
+Replace this chapter with content generated from the Org-mode files in
+\texttt{example/}, or add further chapters with \texttt{\\include}.
+\chapter{Next steps}
+Tune the page size, headers, fonts, and chapter styling in this file. The
+original project’s fuller configuration remains in \texttt{styles/}.
+\end{document}

@@ -1,0 +1,747 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2023 by Naoki Pross <np@0hm.ch>
+% -------------------------------------------------------
+% 
+% OSTStud.dtx is licensed under a Creative Commons
+% Attribution-ShareAlike 4.0 International License.
+% 
+% You should have received a copy of the license along
+% with this work. If not, see 
+% <http://creativecommons.org/licenses/by-sa/4.0/>.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{oststud.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}[2005/12/01]
+%<package>\ProvidesPackage{oststud}
+%<*package>
+    [2023/05/20 v0.4 OST Student's package]
+%</package>
+%
+%<*driver>
+\documentclass{ltxdoc}
+
+\usepackage{oststud}
+\usepackage{enumitem}
+\usepackage{esint}
+\usepackage{tikz}
+\usepackage{framed}
+\usepackage[
+    type={CC},
+    modifier={by-sa},
+    version={4.0},
+]{doclicense}
+
+
+\EnableCrossrefs         
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{oststud.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \changes{v0.1}{2022/11/18}{Initial version}
+% \changes{v0.2}{2022/11/22}{Port features of \texttt{hsrstud}}
+% \changes{v0.3}{2023/04/18}{Cleanup for CTAN upload}
+% \changes{v0.4}{2023/05/20}{Fix probability operators and improve documentation}
+%
+% \GetFileInfo{oststud.dtx}
+%
+% \DoNotIndex{\newcommand,\newenvironment,\fi,\else}
+%
+% \title{
+%   \texttt{\textcolor{OSTBlackberry}{ost}stud} --- 
+%    OST-Stud Style and Macros\thanks{
+%        This document corresponds to \textsf{oststud}~\fileversion, last
+%        revised \filedate.
+%   }
+% }
+% \author{Naoki Sean Pross \texttt{<np@0hm.ch>}}
+% \date{Released \filedate}
+%
+% \maketitle
+% \tableofcontents
+%
+% \section*{License}
+% \doclicenseThis
+%
+% \section{Purpose of this Package}
+%
+% This package is made for the OST Studenten organization to provide an easy to
+% use interface that gives a more consistent look and feel to the works
+% produced by its members. This package is the successor after the fusion of
+% the old |hsrstud| package.
+%
+% \section{Package Options}
+% \begin{description}[align=right]
+%    \item[|dontrenew|] Do not renew existing \LaTeX{} commands and
+%        environments. This is useful when the package is loaded on a document
+%         that is already partially written.
+%    \item[|textvecdiff|] Disables the ``Nabla'' or ``Del'' notation for vector
+%        derivatives. Instead the symbols \(\vec{\nabla}, \vec{\nabla}\dotp,
+%         \vec{\nabla}\crossp, \nabla^2, \vec{\nabla}^2\) are be replaced with
+%         grad, div, curl and div grad.
+%    \item[|bfemph|] Change the behaviour of |\emph| to use a bold font for
+%        emphasis (instead of italics). This option cannot be used together
+%        with the |dontrenew| option.
+%    \item[|bbprobability|] Use blackboard symbols $\mathbb{P}$, $\mathbb{E}$
+%        and $\mathbb{V}$ instead of Pr, E and Var for the probability,
+%        expectation and variance respectively.
+%    \item[|scrtransforms|] \textit{Work in progress.}
+% \end{description}
+%
+% \section{Usage}
+%
+% \subsection{Vectors and Vector Calculus}
+%
+% \DescribeMacro{\vec} 
+% \DescribeMacro{\uvec}
+% In the physics used by electrical engineers it is common to use lowercase
+% bold letters for vectors (with the exception of electromagnetic fields
+% $\vec{E},\vec{B},\vec{A},\ldots$). If the |dontrenew| option is set a new
+% macro |\bvec| (bold |\vec|) that takes a \marg{symbol} defines the bold
+% vector notation. Otherwise the default vector notation with the tiny ugly
+% arrow ($\oldvec{u}$) is replaced by bold and the arrow notation saved in
+% |\oldvec|. In vector calculus it is common to denote unit vectors by putting
+% a hat, so there is a macro |\uvec| that does just that:
+% ^^A \begin{leftbar}
+% ^^A |\uvec{u} = \vec{u}/u|
+% ^^A \end{leftbar}
+% \[
+%   \uvec{u} = \vec{u}/u.
+% \]
+%
+% \DescribeMacro{\dotp}
+% \DescribeMacro{\crossp}
+% To differentiate the dot and cross products (between vectors) from normal
+% product between scalars ($a \cdot b$ and $a \times b$), the macros |\dotp|
+% and |\crossp| provide a bold variant:
+% \begin{leftbar}
+% |\vec{u} \dotp \vec{v},        \vec{u} \crossp \vec{v}|
+% \end{leftbar}
+% \[
+%   \vec{u} \dotp \vec{v}, \qquad
+%   \vec{u} \crossp \vec{v}.
+% \]
+%
+% \DescribeMacro{\grad}
+% \DescribeMacro{\div}
+% \DescribeMacro{\curl}
+% The macros |\grad|, |\div| and |\curl| provide symbols for the gradient,
+% divergence and curl operators used in vector calculus. If the option
+% |textvecdiff| is set, they symbols are written as words, otherwise they will
+% he written (ab)using the Nabla symbol, i.e. by pretending that the symbol
+% $\vec{\nabla}$ is a ``vector'' (sometime referred to as ``del'') of partial
+% derivates: $\vec{\nabla} = (\partial_x, \partial_y, \partial_z)^\mathsf{T}$.
+% Unless the option |dontrenew| is set, the division symbol is replaced by the
+% divergence and the symbol $\divsymb$ is saved in |\divsymb|. For a scalar
+% field $\phi$ or a vector field $\vec{F}$ the notation (in order) of the
+% gradient, divergence and curl appear as follows:
+% \begin{leftbar}
+% |\grad \phi,    \div \vec{F},    \curl \vec{F}|
+% \end{leftbar}
+% \[
+%   \grad \phi, \quad
+%   \div \vec{F}, \quad
+%   \curl \vec{F}.
+% \]
+%
+% \DescribeMacro{\laplacian}
+% \DescribeMacro{\vlaplacian}
+% Continuing with the (ab)use of the ``Nabla'' or ``Del'' notation, the
+% there is a macro |\laplacian| for the Laplacian operator
+% \begin{leftbar}
+% |\laplacian \equiv \div \grad \equiv \sum_i \partial^2_i|
+% \end{leftbar}
+% \[
+%   \laplacian \equiv \div \grad \equiv \sum_i \partial^2_i.
+% \]
+% Notice that the Nabla symbol is not bold, that is because the Laplacian
+% operator results in a scalar value. Though, sometimes in electrodynamics the
+% vector Laplacian is used (which applies the Laplacian operator to each
+% component). To differentiate the two there is a macro |\vlaplacian| which 
+% uses the bold nabla symbol: $\vlaplacian$. If the option |dontrenew| is set
+% both symbols are replaced by div grad.
+%
+% \subsection{Linear Algebra}
+% 
+% \DescribeMacro{\mx}
+% Similarly to vectors it is common to write matrices as uppercase bold
+% letters, thus the |\mx| macro takes a \marg{symbol} and typesets it as
+% upright bold.
+%
+% \DescribeMacro{\mt}
+% \DescribeMacro{\mh}
+% The ``normal'' and Hermitian (complex conjugate) transpose of a matrix
+% $\mx{F}$ are denoted by a superscript sans-serif T or H respectively
+% ($\mt{\mx{F}}$ resp. $\mh{\mx{F}}$). The |\mt| and |\mh| macros (matrix
+% transpose and Hermitian transpose) provide this notation; They both take a
+% \marg{symbol}. In abstract vector spaces the Hermitian transpose becomes the
+% adjoint, for which it is common to use a superscript dagger (adjoint of
+% $\mathcal{Q}$ is $\mathcal{Q}^\dagger$), but since it does not come up very
+% often this package does \emph{not} provide a macro for the adjoint.
+%
+% \DescribeMacro{\minv}
+% Another common matrix operation that is annoying to write is the matrix
+% inverse, which is usually written as a superscript -1. The |\minv| command
+% takes a \marg{matrix} and adds the -1 superscript.
+%
+% Using all of the above we can typeset the matrix form of the linear least
+% squares approximation by writing
+% \begin{leftbar}
+% |\vec{a} = \minv{(\mt{\mx{Q}} \mx{Q})} \mt{\mx{Q}}\vec{y}|
+% \end{leftbar}
+% \noindent which results in the following:
+% \[
+%   \vec{a} = \minv{(\mt{\mx{Q}} \mx{Q})} \mt{\mx{Q}}\vec{y}
+%   \iff 
+%   \argmin_{(a_1,a_2)} \left(\sum_{i=0}^n y_i - a_1 x_i + a_2\right).
+% \]
+%
+% \DescribeMacro{\tr}
+% This package also provides a macro for the trace of a matrix.
+%
+% \subsection{Mathematical Programming}
+%
+% \DescribeMacro{\argmin}
+% \DescribeMacro{\argmax}
+% ^^A TODO: write section
+% \textit{Work in progress.}
+%
+% \subsection{Complex Numbers}
+%
+% \DescribeMacro{\Re}
+% \DescribeMacro{\Im}
+% AMS maths's default notation for the real and imaginary parts of a complex
+% number use the Fraktur font capital letters $\mathfrak{R}$ and
+% $\mathfrak{I}$. However, in engineering it is more common to see the notation
+% $\Re{z}$ and $\Im{z}$, thus, unless the |dontrenew| option is set this
+% package replaces the notation with the former symbols. Both of the macros
+% were also modified to take an argument \marg{expression}, to surround the
+% expression with opening and closing curly brackets.
+%
+% \subsection{Probability Operators}
+%
+% \DescribeMacro{\Pr}
+% \DescribeMacro{\E}
+% \DescribeMacro{\Var}
+% Since according to quantum mechanics it seems that ultimately the universe
+% can only be described using probabilities there are the operators |\Pr|, |\E|
+% and |\Var| for the probability, expectation and variance respectively. If the
+% |dontrenew| option is set, the probability is defined in the csname |\P|.
+%
+% All three operators take an argument \marg{expression} which is automatically
+% surrounded using curly braces. If the expression contains multiple random
+% variables, to disambiguate with respect to which variable the operation is
+% being taken it is possible to specify an optional argument \oarg{rv}. An
+% example:
+% \begin{leftbar}
+% |\E[x]{g(x)} = \int_\mathcal{X} g(\bar{x}) p_x(\bar{x}) \, d\bar{x}|
+% \end{leftbar}
+% \[
+%   \E[x]{g(x)} = \int_\mathcal{X} g(\bar{x}) p_x(\bar{x}) \, d\bar{x}.
+% \]
+%
+% Because some people like to use the blackboard font for the probability
+% operators (such as in the machine learning community), there is an option
+% |bbprobability| that changes the look of the three operators to $\mathbb{P}$,
+% $\mathbb{E}$ and $\mathbb{V}$.
+%
+% \subsection{Transformation Operators}
+%
+% \DescribeMacro{\corresponds}
+% \DescribeMacro{\rcorresponds}
+% When working with transformations it is common to use the ``correspondence
+% symbol'' show below for example with the Laplace transformation:
+% \begin{leftbar}
+% |\laplace\{f(t)\} = F(s) \corresponds f(t) \rcorresponds F(s)|
+% \end{leftbar}
+% \[
+%   \laplace\{f(t)\} = F(s) \corresponds f(t) \rcorresponds F(s)
+% \]
+%
+% \DescribeMacro{\fourier}
+% \DescribeMacro{\ifourier}
+% \DescribeMacro{\laplace}
+% \DescribeMacro{\ilaplace}
+% \DescribeMacro{\ztransf}
+% \DescribeMacro{\iztransf}
+% \DescribeMacro{\hilbert}
+% As shown in the example above the for the Laplace transform operator symbol
+% there is a macro |\laplace|. Similar operators are also defined for other
+% transformations and their inverses. Here is their usual definition:
+% \begin{align*}
+% \fourier\left\{f(t)\right\}(\omega)
+%   &= \frac{1}{\sqrt{2\pi}} \int_\mathbb{R} f(t) e^{-i\omega t} \, dt, &
+% \ifourier\left\{F(\omega)\right\}(t)
+%   &= \frac{1}{\sqrt{2\pi}} \int_\mathbb{R} F(\omega) e^{i\omega t} \, d\omega, \\
+% \laplace\left\{f(t)\right\}(s)
+%   &= \int_\mathbb{R^+} f(t) e^{-st} \, dt, &
+% \ilaplace\left\{F(s)\right\}(t)
+%   &= \frac{1}{2\pi i}\int_{\gamma + i\mathbb{R}} F(s) e^{st} \, ds, \\
+% \ztransf \left\{f_k\right\}(z) 
+%   &= \sum_{k \in \mathbb{Z}^+} f_k z^{-k}, &
+% \iztransf \left\{F(z)\right\}(k)
+%   &= \frac{1}{2\pi i} \ointctrclockwise_C F(z) z^{k-1} \, dz, \\
+% \hilbert \left\{ f(t) \right\}(\tau)
+%   &= \mathrm{P.V.} \frac{1}{\pi} \int_\mathbb{R} \frac{f(t)}{\tau - t} \, dt,
+% \end{align*}
+% in order they are the Fourier transform (|\fourier|, |\ifourier|), the
+% Laplace transform (|\laplace|, |\ilaplace|), the Z-transform (|\ztransf|,
+% |\iztransf|), and the Hilbert transform (|\hilbert|). The Hilbert has no
+% inverse since $-\hilbert \hilbert f(t) = f(t)$, tough of course one could
+% write |\hilbert^{-1}| to get $\hilbert^{-1}$.
+%
+% \subsection{References}
+%
+% ^^A TODO: write section
+% \textit{Work in progress.}
+%
+% ^^A \DescribeMacro{\skriptum}
+% ^^A \DescribeMacro{\sref}
+%
+% ^^A \DescribeMacro{\textbook}
+% ^^A \DescribeMacro{\bref}
+%
+% \subsection{OST Colors}
+% 
+% The official OST color palette provides the following ``primary'' or
+% ``accent'' colors.
+% \begin{center}
+%   \begin{tikzpicture}
+%      \begin{scope}
+%           \foreach [count=\i] \c in {Black,Gray,Blackberry,Raspberry} {
+%               \node[
+%                   thick, draw=white, fill={OST\c},
+%                   minimum width=3cm, minimum height=1cm,
+%               ] (\c) at ({3.2cm*\i},0) {\texttt{OST\c}};
+%           }
+%           ^^A Because you can't see black on black
+%           \node[text=white] at (Black) {\texttt{OSTBlack}};
+%      \end{scope}
+%   \end{tikzpicture}
+% \end{center}
+% And then there are the other ``design colors''.
+% \begin{center}
+%   \begin{tikzpicture}
+%      \begin{scope}[yshift=-2cm]
+%           \foreach [count=\i] \c in {Orange,Red,Purple,Blue,Green} {
+%               \foreach [count=\j] \s in {Dark,{},Light}{
+%                   \node[
+%                       thick, draw=white, fill={OST\s\c},
+%                       minimum width=3cm, minimum height=1cm,
+%                   ] (\c\s) at ({3.2cm*\j},{-1.2cm*\i}) {\texttt{OST\s\c}};
+%               }
+%           }
+%       \end{scope}
+%   \end{tikzpicture}
+% \end{center}
+%
+% \subsection{Sane Defaults}
+%
+% ^^A TODO: write section
+% \textit{Work in progress.}
+%
+% ^^A This macros separates the documentation from the implementation
+% \StopEventually{}
+%
+% \section{Implementation}
+%
+% \subsection{Dependencies and Parse Options}
+%
+% First, we have the dependencies necessary for typesetting.
+%    \begin{macrocode}
+\RequirePackage{xcolor}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{bm}
+%    \end{macrocode}
+% This package also sets sane defaults to the following packages.
+%    \begin{macrocode}
+\RequirePackage{hyperref}
+\RequirePackage{listings}
+%    \end{macrocode}
+% Then we create the options for the package.
+%    \begin{macrocode}
+\SetupKeyvalOptions{
+    family=ost,
+    prefix=ost@
+}
+\DeclareBoolOption[false]{dontrenew}
+\DeclareBoolOption[false]{textvecdiff}
+\DeclareBoolOption[false]{bfemph}
+\DeclareBoolOption[false]{bbprobability}
+% \DeclareBoolOption[false]{scrtransforms}
+\ProcessLocalKeyvalOptions*
+%    \end{macrocode}
+%
+% \subsection{Bold emphasis}
+%
+% \begin{macro}{\emph}
+% Change the behaviour of |\emph|.
+%    \begin{macrocode}
+\ifost@bfemph
+    \ifost@dontrenew
+        \PackageError{The options \noexpand\dontrenew and \noexpand\bfemph cannot be used at the same time!}
+    \fi
+    \long\expandafter\def\csname em \endcsname{%
+        \@nomath\em
+        \if b\expandafter\@car\f@series\@nil
+            \itshape\else\bfseries\fi
+    }
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Vectors and Vector Calculus}
+%
+% \begin{macro}{\vec}
+% Set up bold notation for vectors.
+%    \begin{macrocode}
+\newcommand{\ost@vec}[1]{\mathbf{\bm{#1}}}
+\ifost@dontrenew
+    \newcommand{\bvec}[1]{\ost@vec{#1}}
+\else
+    \let\oldvec\vec
+    \renewcommand{\vec}[1]{\ost@vec{#1}}
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\uvec}
+% In vector calculus unit vectors are usually denoted by a hat.
+%    \begin{macrocode}
+\newcommand{\uvec}[1]{\vec{\hat{#1}}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\dotp,\crossp}
+% To differentiate them from |\cdot| and |\times| which are for scalars.
+%    \begin{macrocode}
+\DeclareMathOperator{\dotp}{\boldsymbol\cdot}
+\DeclareMathOperator{\crossp}{\boldsymbol\times}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\grad}
+% Gradient of a vector valued scalar functon.
+%    \begin{macrocode}
+\ifost@textvecdiff
+    \DeclareMathOperator{\grad}{grad}
+\else
+    \DeclareMathOperator{\grad}{\vec{\nabla}}
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\div}
+% Divergence operator. If the option |dontrenew| is a new macro |\divg| is
+% defined. Otherwise |\div| is renamed to |\divsymb|.
+%    \begin{macrocode}
+\ifost@textvecdiff
+    \DeclareMathOperator{\ost@div}{div}
+\else
+    \DeclareMathOperator{\ost@div}{\vec{\nabla}\dotp}
+\fi
+\ifost@dontrenew
+    \DeclareMathOperator{\divg}{\ost@div}
+\else
+    \let\divsymb\div
+    \renewcommand{\div}{\ost@div}
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\curl}
+% Curl of a vector field.
+%    \begin{macrocode}
+\ifost@textvecdiff
+    \DeclareMathOperator{\curl}{curl}
+\else
+    \DeclareMathOperator{\curl}{\vec{\nabla}\crossp}
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\laplacian,\vlaplacian}
+% Laplacian of a scalar and vector field.
+%    \begin{macrocode}
+\ifost@textvecdiff
+    \DeclareMathOperator{\laplacian}{\div\grad}
+    \DeclareMathOperator{\vlaplacian}{\div\grad}
+\else
+    \DeclareMathOperator{\laplacian}{\nabla^2}
+    \DeclareMathOperator{\vlaplacian}{\vec{\nabla}^2}
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Linear Algebra}
+%
+% \begin{macro}{\mx}
+% Notation for matrices as bold (uppercase) letters.
+%    \begin{macrocode}
+\newcommand{\mx}[1]{\mathbf{\bm{#1}}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\mt,\mh}
+% Normal and Hermitian (conjugate) transpose of a matrix.
+%    \begin{macrocode}
+\newcommand{\mt}[1]{{#1}^\mathsf{T}}
+\newcommand{\mh}[1]{{#1}^\mathsf{H}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\minv}
+% Matrix inverse.
+%    \begin{macrocode}
+\newcommand{\minv}[1]{{#1}^{-1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tr}
+% Trace of a matrix.
+%    \begin{macrocode}
+\DeclareMathOperator{\tr}{tr}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Mathematical Programming}
+% \begin{macro}{\argmin,\argmax}
+%    \begin{macrocode}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Complex Numbers}
+%
+% \begin{macro}{\Re,\Im}
+% Replace the real and imaginary operators to look ``normal'', that is not
+% using the Fraktur fonts.
+%    \begin{macrocode}
+\ifost@dontrenew\else
+    \let\oldRe\Re \let\oldIm\Im
+    \renewcommand{\Re}[1]{\mathrm{Re} \left\{#1\right\}}
+    \renewcommand{\Im}[1]{\mathrm{Im} \left\{#1\right\}}
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Probability Operators}
+%
+% \begin{macro}{\E}
+% Expectation of a random variable.
+%    \begin{macrocode}
+\ifost@bbprobability
+    \DeclareMathOperator*{\ost@expectation}{\mathbb{E}}
+\else
+    \DeclareMathOperator*{\ost@expectation}{E}
+\fi
+\newcommand*{\E}[2][]{\ost@expectation_{#1}\left\{#2\right\}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\Var}
+% Variance of a random variable.
+%    \begin{macrocode}
+\ifost@bbprobability
+    \DeclareMathOperator*{\ost@variance}{\mathbb{V}}
+\else
+    \DeclareMathOperator*{\ost@variance}{Var}
+\fi
+\newcommand*{\Var}[2][]{\ost@variance_{#1}\left\{#2\right\}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\Pr}
+% Probability operator.
+%    \begin{macrocode}
+\ifost@bbprobability
+    \DeclareMathOperator*{\ost@probability}{\mathbb{P}}
+\else
+    \DeclareMathOperator*{\ost@probability}{Pr}
+\fi
+\ifost@dontrenew
+    \newcommand*{\P}[2][]{\ost@probabiliy_{#1}\left\{#2\right\}}
+\else
+    \renewcommand*{\P}[2][]{\ost@probabiliy_{#1}\left\{#2\right\}}
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Transformation Operators}
+%
+% \begin{macro}{\fourier,\ifourier}
+% Fourier transform and its inverse.
+%    \begin{macrocode}
+\DeclareMathOperator{\fourier}{\mathcal{F}}
+\DeclareMathOperator{\ifourier}{\mathcal{F}^{-1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\laplace,\ilaplace}
+% Laplace transform and its inverse.
+%    \begin{macrocode}
+\DeclareMathOperator{\laplace}{\mathcal{L}}
+\DeclareMathOperator{\ilaplace}{\mathcal{L}^{-1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ztransf,\iztransf}
+% Z-transform and its inverse.
+%    \begin{macrocode}
+\DeclareMathOperator{\ztransf}{\mathcal{Z}}
+\DeclareMathOperator{\iztransf}{\mathcal{Z}^{-1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\hilbert}
+% Hilbert transform.
+%    \begin{macrocode}
+\DeclareMathOperator{\hilbert}{\mathcal{H}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\corresponds,\rcorresponds}
+% Correspondence symbols.
+%    \begin{macrocode}
+\newcommand{\corresponds}{%
+    \mbox{\setlength{\unitlength}{0.1em}%
+        \begin{picture}(20,10)%
+          \put(5,3){\circle{4}}%
+          \put(7,3){\line(1,0){7}}%
+          \put(16,3){\circle*{4}}%
+        \end{picture}}}
+\newcommand{\rcorresponds}{%
+    \mbox{\setlength{\unitlength}{0.1em}%
+        \begin{picture}(20,10)%
+          \put(5,3){\circle*{4}}%
+          \put(7,3){\line(1,0){7}}%
+          \put(16,3){\circle{4}}%
+        \end{picture}}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{References}
+%
+% \begin{macro}{\skriptum,\sref}
+% Reference material in the skriptum (lecture notes) of the course.
+%    \begin{macrocode}
+\newcommand{\ost@skriptum}{\PackageWarning{No \noexpand\skriptum given}}
+\newcommand{\skriptum}[1]{\gdef\ost@skriptum{#1}}
+\newcommand{\sref}[1]{%
+    \texttt{\textcolor{OSTBlackberry}{#1}}\nocite{\ost@skriptum}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\textbook,\bref}
+% Reference material in the textbook of the course.
+%    \begin{macrocode}
+\newcommand{\ost@textbook}{\PackageWarning{No \noexpand\textbook given}}
+\newcommand{\textbook}[1]{\gdef\ost@textbook{#1}}
+\newcommand{\bref}[1]{%
+    \texttt{\textcolor{OSTRaspberry}{#1}}\nocite{\ost@textbook}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{OST Colors}
+%
+% Define the colors according to the OST corporate design. The code was kindly
+% stolen from H. Badertscher's \texttt{OSTColors.sty}
+% \cite{hbadertscher-ostcolors}. First there are the ``primary colors''.
+%    \begin{macrocode}
+\definecolor{OSTBlack}{RGB}{25,25,25}
+\definecolor{OSTGray}{RGB}{198,198,198}
+\definecolor{OSTBlackberry}{RGB}{140,25,95}
+\definecolor{OSTRaspberry}{RGB}{215,40,100}
+%    \end{macrocode}
+% Then the ``design colors''.
+%    \begin{macrocode}
+\definecolor{OSTPurple}{RGB}{149,96,164}
+\definecolor{OSTDarkPurple}{RGB}{107,56,129}
+\definecolor{OSTLightPurple}{RGB}{208,169,208}
+%    \end{macrocode}
+%    \begin{macrocode}
+\definecolor{OSTGreen}{RGB}{29,175,142}
+\definecolor{OSTDarkGreen}{RGB}{0,126,107}
+\definecolor{OSTLightGreen}{RGB}{167,213,194}
+%    \end{macrocode}
+%    \begin{macrocode}
+\definecolor{OSTRed}{RGB}{232,78,15}
+\definecolor{OSTDarkRed}{RGB}{195,46,21}
+\definecolor{OSTLightRed}{RGB}{243,154,139}
+%    \end{macrocode}
+%    \begin{macrocode}
+\definecolor{OSTBlue}{RGB}{0,134,205}
+\definecolor{OSTDarkBlue}{RGB}{0,115,176}
+\definecolor{OSTLightBlue}{RGB}{95,191,237}
+%    \end{macrocode}
+%    \begin{macrocode}
+\definecolor{OSTOrange}{RGB}{251,186,0}
+\definecolor{OSTDarkOrange}{RGB}{209,143,0}
+\definecolor{OSTLightOrange}{RGB}{253,214,175}
+%    \end{macrocode}
+%
+% \subsection{Sane Defaults}
+%
+% First, set up |hyperref| to not look hideous.
+%    \begin{macrocode}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=OSTBlack,
+    citecolor=OSTBlackberry,
+    filecolor=OSTBlack,
+    urlcolor=OSTDarkBlue,
+}
+%    \end{macrocode}
+% Then create a listings style.
+%    \begin{macrocode}
+\lstdefinestyle{ost-base}{
+    belowcaptionskip=\baselineskip,
+    breaklines=true,
+    frame=none,
+    inputencoding=utf8,
+    % margin
+    xleftmargin=\parindent,
+    % numbers
+    numbers=left,
+    numbersep=5pt,
+    numberstyle=\ttfamily\footnotesize\color{OSTGray},
+    % background
+    backgroundcolor=\color{white},
+    showstringspaces=false,
+    % default language
+    language=TeX,
+    % break long lines, and show an arrow where the line was broken
+    breaklines=true,
+    postbreak=\mbox{\textcolor{OSTDarkBlue}{$\hookrightarrow$}\space},
+    % font
+    basicstyle=\ttfamily\small,
+    identifierstyle=\color{OSTBlack},
+    keywordstyle=\color{OSTBlue},
+    commentstyle=\color{OSTGray},
+    stringstyle=\color{OSTBlackberry},
+}
+%    \end{macrocode}
+% Then we set this style to be default.
+%    \begin{macrocode}
+\lstset{style=ost-base, escapechar=`}
+%    \end{macrocode}
+%
+% ^^A\begin{thebibliography}{1}
+% ^^A\bibitem[hbadertscher-ostcolors] OST Colorscheme.
+% ^^A\url{https://github.com/HBadertscher/OSTReport/blob/master/header/OSTColors.sty}
+% ^^A\end{thebibliography}
+% \Finale
+\endinput
+% vim:ts=4 sw=4 et spell spelllang=en ft=tex:

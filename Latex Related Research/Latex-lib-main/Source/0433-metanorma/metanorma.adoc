@@ -1,0 +1,1650 @@
+//
+// tex2mn 0.5.0 - converts Metanorma documents from LaTeX to AsciiDoc
+//
+// Copyright (C) 2019-2020 Ribose Inc. <open.source@ribose.com>
+// This project is available under the terms of the MIT License.
+//
+
+= tex2mn manual
+:epoch: 1574615272
+:ctan-pkg-url: https://ctan.org/pkg
+:repo-url: https://github.com/metanorma/tex2mn
+:repo-tag: master
+:repo-blob-url: {repo-url}/blob/{repo-tag}
+:repo-tree-url: {repo-url}/tree/{repo-tag}
+:toc:
+:toclevels: 5
+
+:leveloffset: +1
+
+= Reading the manual
+
+Since `tex2mn` is a tool to transform `LaTeX` source files, some familiarity with `LaTeX` and its de-facto standard packages is assumed.
+
+We will graphically differentiate between:
+
+* `\standard` well-known macros which have standard behaviour, and
+* `*\NonStandard*` macros which are unique to `tex2mn` and will be documented thoroughly.
+
+[NOTE]
+====
+In either case we will point out which `LaTeX` packages are used to define them (if any).
+====
+
+Code samples will _always_ be presented as pairs of equivalent `LaTeX`/`AsciiDoc` listings to help you acquaint with both regardless of which side you're more familiar with:
+
+[cols="5a,4a"]
+|===
+|[source,latex]
+----
+What a \textbf{bold} statement.
+----
+|[source,asciidoc]
+----
+What a *bold* statement.
+----
+|===
+
+That's it.
+You can confidently start reading, now!
+
+If you happen to find any unexpected behaviour in the software or lack of clarity in the manual, please report it on our {repo-url}/issues[issue tracker] to help us make this tool better for everyone.
+
+:leveloffset!:
+
+== Document
+:leveloffset: +2
+
+= Document title
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_title.rb[test_title.rb].
+
+You can define the document's title by using the `\title` macro _in the preamble_:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\documentclass{metanorma}
+\title{My first document}
+\begin{document}
+  Document contents here.
+\end{document}
+----
+|[source,asciidoc]
+----
+= My first document
+
+Document contents here.
+----
+|===
+
+:leveloffset!:
+:leveloffset: +2
+
+= Document attributes
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_document_attributes.rb[test_document_attributes.rb].
+
+Document attributes are global metadata that can be interpreted by `metanorma` when processing the `AsciiDoc` output.
+Which attributes you should use depend upon the Metanorma flavour you're targeting.
+Attributes supported by most Metanorma flavours can be found in the https://www.metanorma.com/author/ref/document-attributes/[generic attributes reference].
+
+You can define a document attribute by using the `*\set*` macro _in the preamble_:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\documentclass{metanorma}
+\set{my-attribute}{foobar}
+\begin{document}
+  Document contents here.
+\end{document}
+----
+|[source,asciidoc]
+----
+:my-attribute: foobar
+
+Document contents here.
+----
+|===
+
+You can define a boolean attribute by using the `*\set*` with an empty argument:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\documentclass{metanorma}
+\set{my-boolean-attribute}{}
+\begin{document}
+  Document contents here.
+\end{document}
+----
+|[source,asciidoc]
+----
+:my-boolean-attribute:
+
+Document contents here.
+----
+|===
+
+
+You can use an attribute's value by using the `*\get*` macro:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\documentclass{metanorma}
+\set{my-attribute}{some value}
+\begin{document}
+  The attribute value is \get{my-attribute}.
+\end{document}
+----
+|[source,asciidoc]
+----
+:my-attribute: some value
+
+The attribute's value is {my-attribute}.
+----
+|===
+
+:leveloffset!:
+:leveloffset: +2
+
+= Document authors
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_document_authors.rb[test_document_authors.rb].
+
+Document authors are handled as document attributes.
+
+You can `*\set*` a single author by specifying it in the preamble:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\documentclass{metanorma}
+\set{author}{John Doe}
+\begin{document}
+  Document authored by \get{author}.
+\end{document}
+----
+|[source,asciidoc]
+----
+:author: John Doe
+
+Document authored by {author}.
+----
+|===
+
+You can `*\set*` a multiple authors by enumerating them in the preamble:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\documentclass{metanorma}
+\set{author_1}{Tom Sawyer}
+\set{author_2}{Dick Tracy}
+\set{author_3}{Harry Potter}
+\begin{document}
+  Document authored by \get{author_1}, \get{author_2}, and \get{author_3}.
+\end{document}
+----
+|[source,asciidoc]
+----
+:author_1: Tom Sawyer
+:author_2: Dick Tracy
+:author_3: Harry Potter
+
+Document authored by {author_1}, {author_2}, and {author_3}.
+----
+|===
+
+:leveloffset!:
+
+== `*\mn*`: TODO
+
+:leveloffset: +1
+
+= Sections
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_headings.rb[test_headings.rb].
+
+You can perform sectioning with the usual hierarchy of macros: `\section`, `\subsection`, `\subsubsection`, `\paragraph`, and `\subparagraph`:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\section{My section}
+
+\subsection{My subsection}
+
+\subsubsection{My subsubsection}
+
+\paragraph{My paragraph}
+
+\subparagraph{My subparagraph}
+----
+|[source,asciidoc]
+----
+== My section
+
+=== My subsection
+
+==== My subsubsection
+
+===== My paragraph
+
+====== My subparagraph
+----
+|===
+
+
+
+
+== Fixed names
+
+Metanorma relies on (case insensitive) canonical names to recognize a few standard sections:
+
+* `Abstract`
+* `Introduction`
+* `Scope`
+* `Normative References`
+* `Terms and Definitions`
+* `Symbols and Abbreviations`
+* `Bibliography`
+
+NOTE: `Terms and Definitions` and `Symbols and Abbreviations` expect a fixed structure, explained in the respective sections of this manual. Conversely, the heading for `Bibliography` is tipically generated automatically.
+
+If you need to name these sections in a different way (e.g. in non-english documents), you can set the canonical name to be recognized by Metanorma as an attribute:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\section{Mõisted ja määratlused}
+\mn{heading=terms and definitions}
+----
+|[source,asciidoc]
+----
+[heading=terms and definitions]
+== Mõisted ja määratlused
+----
+|===
+
+
+
+
+== Foreword
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_foreword.rb[test_foreword.rb].
+
+Another special section is the foreword, which has the canonical name `Foreword` and should be used at the very beginning:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\section{Foreword}
+First paragraph of foreword.
+
+Second paragraph of foreword.
+----
+|[source,asciidoc]
+----
+[[Foreword]]
+.Foreword
+First paragraph of foreword.
+
+Second paragraph of foreword.
+----
+|===
+
+Just like the other standard sections, you can also pass the canonical name as an attribute:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\section{Prefazione}
+\mn{heading=foreword}
+Primo paragrafo della prefazione.
+
+Secondo paragrafo della prefazione.
+----
+|[source,asciidoc]
+----
+[[Foreword]]
+.Prefazione
+Primo paragrafo della prefazione.
+
+Secondo paragrafo della prefazione.
+----
+|===
+
+
+
+
+== Blank headings
+
+To define a subclause which is numbered but bears no header text, you can use a blank name:
+
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\subsection{}
+
+This subclause bears no title text.
+----
+|[source,asciidoc]
+----
+=== {blank}
+
+This subclause bears no title text.
+----
+|===
+
+
+
+
+== Deep levels
+
+Metanorma allows headings up to seven levels.
+`LaTeX` has only 5 macros, so we account for the two deepest levels by attaching a `*level*` attribute to `\subparagraph`:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\subparagraph{Heading at level 6}
+\mn{level=6}
+
+\subparagraph{Heading at level 7}
+\mn{level=7}
+----
+|[source,asciidoc]
+----
+[level=6]
+====== Heading at level 6
+
+[level=7]
+====== Heading at level 7
+----
+|===
+
+CAUTION: This feature has bad ergonomics and might change before the next major release.
+
+
+
+
+== Appendices
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_appendix.rb[test_appendix.rb].
+
+You can typeset appendices (i.e. annexes) by using the `\appendix` macro as it's customary in LaTeX.
+After you've called it all `\sections` will be treated as appendices.
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\section{Ordinary section}
+
+Lorem ipsum.
+
+\appendix
+
+\section{My first appendix}
+
+Lorem ipsum.
+
+\section{Another appendix}
+
+Lorem ipsum.
+
+----
+|[source,asciidoc]
+----
+== The last ordinary section
+
+Lorem ipsum.
+
+[appendix]
+== My first appendix
+
+Lorem ipsum.
+
+[appendix]
+== Another appendix
+
+Lorem ipsum.
+----
+|===
+
+Just like other sections, you can pass attributes to appendices. E.g. to change the `obligation`:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\appendix
+\section{My appendix}
+\mn[obligation=informative]
+
+Lorem ipsum.
+----
+|[source,asciidoc]
+----
+[appendix,obligation=informative]
+== My appendix
+
+Lorem ipsum.
+----
+|===
+
+
+
+
+=== Inline headings
+
+You can typeset inline headings by passing `\%inline-header` as an attribute:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\subsection{Inline header,}
+\mn{\%inline-header}
+
+which begins this line.
+----
+|[source,asciidoc]
+----
+[%inline-header]
+=== Inline header,
+
+which begins this line.
+----
+|===
+
+CAUTION: This feature has bad ergonomics and might change before the next major release.
+
+
+
+
+== Language and script
+
+You can set the `language` and the `script` of a section using attributes:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\section{French section}
+\mn{language=fr}
+
+\section{Math section}
+\mn{script=Zmth}
+----
+|[source,asciidoc]
+----
+[language=fr]
+== French section
+
+[script=Zmth]
+== Math section
+----
+|===
+
+
+
+
+== Obligations
+
+You can set the `obligation` of a section (which can be either `informative` or `normative`) using an attribute:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\section{Informative section}
+\mn{obligation=informative}
+----
+|[source,asciidoc]
+----
+[obligation=informative]
+== Informative section
+----
+|===
+
+Note that most sections have a fixed default.
+Annexes and clauses default to `normative` but you can set them to `informative`.
+
+
+
+
+:leveloffset: +1
+
+= Symbols and abbreviations
+
+`Symbols and Abbreviations` sections are expected to be simple <<_description_lists,description lists>>.
+
+Metanorma takes care of sorting the symbol entries in the order prescribed by ISO/IEC DIR 2, but it does not support sorting LaTeX math entries.
+Also note that the PDF rendered directly by LaTeX will not be sorted.
+
+:leveloffset!:
+:leveloffset: +1
+
+= Terms and definitions
+
+`Terms and Definitions` subsections must be composed by these elements, in order:
+
+1. a heading of the appropriate level containing the term
+2. an optional `\label` to cross-reference the term from the others
+3. these optional macros, _whose parameter can contain markup_:
+  `\alt`:: to specify alternative/admitted terms
+  `\deprecated`:: to specify deprecated terms
+  `\domain`:: to specify the term domain
+4. the term definition as a normal paragraph
+5. optional examples using the `*example*` environment
+6. optional notes using the `*note*` environment
+7. an optional citation using the `*source*` environment composed by a bibliographic reference followed by optional modification details
+
+Here is a full example:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\section{Terms and Definitions}
+
+\subsection{paddy}
+\label{paddy}
+\alt{paddy rice}
+\alt{rough \textbf{rice}}
+\deprecated{cargo rice}
+\domain{rice}
+
+rice retaining its husk after threshing
+
+\begin{example}
+  Foreign seeds, husks, bran, sand, dust.
+\end{example}
+
+\begin{note}
+  The starch of waxy rice consists almost entirely of amylopectin. The kernels have a tendency to stick together after cooking.
+\end{note}
+
+\begin{source}
+  \mncite[section 3.2]{ISO7301}, The term "cargo rice" is shown as deprecated, and Note 1 to entry is not included here
+\end{source}
+----
+|[source,asciidoc]
+----
+== Terms and Definitions
+
+[[paddy]]
+=== paddy
+alt:[paddy rice]
+alt:[rough **rice**]
+deprecated:[cargo rice]
+domain:[rice]
+
+rice retaining its husk after threshing
+
+[example]
+Foreign seeds, husks, bran, sand, dust.
+
+NOTE: The starch of waxy rice consists almost entirely of amylopectin. The kernels have a tendency to stick together after cooking.
+
+[.source]
+<<ISO7301,section 3.2>>, The term "cargo rice" is shown as deprecated,
+and Note 1 to entry is not included here
+----
+|===
+
+To treat a subsection of `Terms and Definitions` as a normal subsection instead of a term, e.g. an introductory section, you apply the `*.nonterm*` attribute to it as follows:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\section{Terms and definitions}
+
+\subsection{Introduction}
+\mn{.nonterm}
+
+The following terms have non-normative effect, and should be ignored by the ametrical.
+----
+|[source,asciidoc]
+----
+== Terms and definitions
+
+[.nonterm]
+=== Introduction
+The following terms have non-normative effect, and should be ignored by the ametrical.
+----
+|===
+
+:leveloffset!:
+
+:leveloffset!:
+
+:leveloffset: +1
+
+= Text formatting
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_text_formatting.rb[test_text_formatting.rb].
+
+You can set bold, italic, monospace and small caps text using respectively `\textbf`, `\textit`, `\texttt` and `\textsc`.
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\textbf{Bold} text.
+
+\textit{Italic} text.
+
+\texttt{Monospace} text.
+
+\textsc{Small caps} text.
+----
+|[source,asciidoc]
+----
+**Bold** text.
+
+__Italic__ text.
+
+``Monospace`` text.
+
+[smallcap]#Small caps# text.
+----
+|===
+
+The _switch_ versions of these macros are available too: `\bfseries`, `\itshape`, `\ttfamily` and `\scshape`.
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+{\bfseries Bold} text.
+
+{\itshape Italic} text.
+
+{\ttfamily Monospace} text.
+
+{\scshape Small caps} text.
+----
+|[source,asciidoc]
+----
+**Bold** text.
+
+__Italic__ text.
+
+``Monospace`` text.
+
+[smallcap]#Small caps# text.
+----
+|===
+
+You can set strikethrough, superscript and subscript text using respectively `*\textst*`, `\textsuperscript` and `\textsubscript`.
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+Strikethrough \textst{text}.
+
+Superscript \textsuperscript{text}.
+
+Subscript \textsubscript{text}.
+----
+|[source,asciidoc]
+----
+Strikethrough [strike]#text#.
+
+Superscript ^text^.
+
+Subscript ~text~.
+----
+|===
+
+NOTE: Strikethrough text is implemented using the {ctan-pkg-url}/ulem[ulem] package.
+
+:leveloffset!:
+:leveloffset: +1
+
+= Paragraph alignment
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_paragraph_alignment.rb[test_paragraph_alignment.rb].
+
+You can set paragraph alignment explicitly using the `flushleft`, `center` and `flushright` environments.
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\begin{flushleft}
+  This paragraph is left aligned.
+\end{flushleft}
+----
+|[source,asciidoc]
+----
+[align=left]
+This paragraph is left aligned.
+----
+|===
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\begin{center}
+  This paragraph is centered.
+\end{center}
+----
+|[source,asciidoc]
+----
+[align=center]
+This paragraph is centered.
+----
+|===
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\begin{flushright}
+  This paragraph is right aligned.
+\end{flushright}
+----
+|[source,asciidoc]
+----
+[align=right]
+This paragraph is right aligned.
+----
+|===
+
+The default alignment is _justified_, so no environment is provided for that.
+
+:leveloffset!:
+:leveloffset: +1
+
+= Cross-references (aka internal references)
+
+[NOTE]
+====
+These features are verified by tests in {repo-blob-url}/test/test_cross_references.rb[test_cross_references.rb].
+====
+
+To reference some part of the document you must first of all label it using `\label`.
+Many parts of the document accept labels (headings, tables, list items, etc.) and you will find an example in the related section when that's the case.
+
+For the sake of the next examples, let's assume a section labeled `sec:foo` exists.
+
+You can reference `sec:foo` by using the `\ref` macro:
+
+[cols="a,a"]
+|===
+|[source,latex]
+Go look at \ref{sec:foo}.
+|[source,asciidoc]
+Go look at <<sec:foo>>.
+|===
+
+To reference `sec:foo` with a custom text you can use the `\hyperref` macro:
+
+[cols="a,a"]
+|===
+|[source,latex]
+Go look at \hyperref[sec:foo]{this}.
+|[source,asciidoc]
+Go look at <<sec:foo, this>>.
+|===
+
+:leveloffset!:
+:leveloffset: +1
+
+= Links (aka external references)
+
+[NOTE]
+====
+These features are verified by tests in {repo-blob-url}/test/test_links.rb[test_links.rb].
+====
+
+References can also point to URLs identifying resources external to the document.
+
+You can link to a website by using the `\url` macro:
+
+[cols="a,a"]
+|===
+|[source,latex]
+Go look at \url{https://www.metanorma.com/}.
+|[source,asciidoc]
+Go look at link:++https://www.metanorma.com/++[].
+|===
+
+To link to a website with a custom text you can use the `\href` macro:
+
+[cols="a,a"]
+|===
+|[source,latex]
+Go look at \href{https://www.metanorma.com/}{Metanorma home}.
+|[source,asciidoc]
+Go look at link:++https://www.metanorma.com/++[Metanorma home].
+|===
+
+:leveloffset!:
+
+== Bibliography and citations
+:leveloffset: +2
+
+= Bibliography
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_bibliography.rb[test_bibliography.rb].
+
+You can cite a bibliographic source using the `\cite` macro as usual.
+
+CAUTION: Multiple citations, e.g. `\cite{KEY1,KEY2}` are not supported.
+
+The bibliographic database can be specified in two different ways.
+
+If the bibliography is small or you want to typeset each entry manually you can use the `thebibliography` environment to wrap a list of bibliographic items described by `\bibitem`.
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\documentclass{metanorma}
+
+\begin{document}
+
+  This document cites \cite{ISO7301}.
+  It also cites \cite{einstein}.
+
+  \begin{thebibliography}{2}
+    \bibitem[ISO 7301]{ISO7301}
+    Rice -- Specification
+
+    \bibitem{einstein}
+    Albert Einstein.
+    \textit{Zur Elektrodynamik bewegter K{\"o}rper}. (German)
+    [\textit{On the electrodynamics of moving bodies}].
+    Annalen der Physik, 322(10):891–921, 1905.
+  \end{thebibliography}
+\end{document}
+----
+|
+[source,asciidoc]
+----
+This document cites <<ISO7301>>.
+It also cites <<einstein>>.
+
+[bibliography]
+== References
+
+* [[[ISO7301,ISO 7301]]]
+Rice – Specification
+
+* [[[einstein,2]]]
+Albert Einstein.
+__Zur Elektrodynamik bewegter Körper__. (German)
+[__On the electrodynamics of moving bodies__].
+Annalen der Physik, 322(10):891–921, 1905.
+----
+|===
+
+If the bibliography is big or you have an existing BibTeX database, you can use that too by passing the filename to the `\bibliography` macro.
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\documentclass{metanorma}
+
+\begin{document}
+  Everyone should read \cite{einstein}.
+  Many interesting books are found in \cite{knuthwebsite}.
+
+  \bibliography{my_database.bib}
+\end{document}
+----
+.Contents of `my_database.bib`
+[source,bibtex]
+----
+@article{einstein,
+    author =  "Albert Einstein",
+    title =   "{Zur Elektrodynamik bewegter K{\"o}rper}. ({German})
+        [{On} lectrodynamics of moving bodies]",
+    journal = "Annalen der Physik",
+    volume =  "322",
+    number =  "10",
+    pages =   "891--921",
+    year =    "1905",
+    DOI =     "http://dx.doi.org/10.1002/andp.19053221004"
+}
+
+@misc{knuthwebsite,
+    author = "Donald Knuth",
+    title  = "Knuth: Computers and Typesetting",
+    url    = "http://www-cs-faculty.stanford.edu/\~{}uno/abcde.html"
+}
+----
+|
+[source,asciidoc]
+----
+Everyone should read <<einstein>>.
+Many interesting books are found in <<knuthwebsite>>.
+
+[bibliography]
+== References
+
+* [[[einstein,1]]]
+{blank}A. Einstein (1905)
+Zur Elektrodynamik bewegter Körper. (German) [On the electrodynamics of moving bodies].
+Annalen der Physik322 (10),  pp. 891–921.
+External Links: http://dx.doi.org/10.1002/andp.19053221004[Document]
+
+* [[[knuthwebsite,3]]]
+{blank}D. Knuth
+Knuth: computers and typesetting.
+External Links: http://www-cs-faculty.stanford.edu/\~uno/abcde.html[Link]
+----
+|===
+
+CAUTION: While you can use bibliographic styles on the `LaTeX` side and
+https://www.relaton.com/[Relaton] databases on the `Adoc` side,
+these features are still not supported on the opposing side.
+
+:leveloffset!:
+:leveloffset: +2
+
+= Advanced citations
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_mncite.rb[test_mncite.rb].
+
+To leverage the full power of Metanorma you can use `*\mncite*` to typeset bibliographic references.
+
+`*\mncite*` accepts three arguments as `\mncite[<1>]{<2>}[<3>]`:
+
+1. the first argument (optional) is the citation which will be rendered literally;
+2. the second argument (mandatory) is the bibliographic key;
+3. the third argument (optional) is a list of https://www.metanorma.com/author/topics/document-format/bibliography/#localities[localities].
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\mncite{ISO712}
+
+\mncite[the foregoing reference]{ISO712}
+
+\mncite{ISO712}[section=5,page=8-10]
+
+\mncite[5:8-10]{ISO712}[section=5,page=8-10]
+----
+|
+[source,asciidoc]
+----
+<<ISO712>>
+
+<<ISO712,the foregoing reference>>
+
+<<ISO712,section=5,page=8-10>>
+
+<<ISO712,section=5,page=8-10,5:8-10>>
+----
+|===
+
+
+CAUTION: Multiple citations, e.g. `\cite{KEY1,KEY2}` are not supported.
+
+CAUTION: Localities are not rendered by the LaTeX class yet, only by Metanorma compilation.
+
+:leveloffset!:
+
+:leveloffset: +1
+
+= Block quotations
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_block_quotations.rb[test_block_quotations.rb].
+
+You can typeset block quotations using the `quote` environment:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\begin{quote}
+  This is a block quotation.
+\end{quote}
+----
+|
+[source,asciidoc]
+----
+  [quote]
+  ____
+  This is a block quotation.
+  ____
+----
+|===
+
+The attribution and the citation title can be passed through to AsciiDoc by using the `*\mn*` macro:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\begin{quote}
+  \mn{ISO,"ISO7301, section 1"}
+  This is a block quotation.
+\end{quote}
+----
+|
+[source,asciidoc]
+----
+  [quote,ISO,"ISO7301, section 1"]
+  ____
+  This is a block quotation.
+  ____
+----
+|===
+
+CAUTION: This feature is not complete; attribution and citation title are currently not rendered by `LaTeX`.
+
+:leveloffset!:
+:leveloffset: +1
+
+= Lists
+
+All usual typologies of lists available in `LaTeX` can be used;
+as usual, they work by listing items usinf the `\item` macro inside a specific environment.
+
+== Ordered lists
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_ordered_lists.rb[test_ordered_lists.rb].
+
+You can typeset ordered lists using the `enumerate` environment:
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{enumerate}
+  \item Hey,
+  \item ho,
+  \item let's go!
+\end{enumerate}
+|[source,asciidoc]
+. Hey,
+. ho,
+. let’s go!
+|===
+
+== Unordered lists
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_unordered_lists.rb[test_unordered_lists.rb].
+
+You can typeset unordered lists using the `itemize` environment:
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{itemize}
+  \item Foo
+  \item Bar
+  \item Baz
+\end{itemize}
+|[source,asciidoc]
+* Foo
+* Bar
+* Baz
+|===
+
+== Description lists
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_description_lists.rb[test_description_lists.rb].
+
+You can typeset description lists using the `description` environment:
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{description}
+  \item[Lee] bass guitar and lead vocals
+  \item[Lifeson] guitars and backing vocals
+  \item[Peart] drums and percussion
+\end{description}
+|[source,asciidoc]
+Lee:: bass guitar and lead vocals
+Lifeson:: guitars and backing vocals
+Peart:: drums and percussion
+|===
+
+
+
+
+== Nested lists
+
+NOTE: These features are verified by tests in {repo-blob-url}/test/test_stressed_lists.rb[test_stressed_lists.rb].
+
+You can nest ordered, unordered and description lists freely.
+
+CAUTION: While `AsciiDoc` has no depth limit, `LaTeX` is limited to a depth of 4.
+
+
+
+
+// TODO: == Long items and paragraph breaks
+
+:leveloffset!:
+:leveloffset: +1
+
+= Math
+
+[NOTE]
+====
+These features are verified by tests in
+{repo-blob-url}/test/test_math_inline.rb[test_math_inline.rb] and
+{repo-blob-url}/test/test_math_display.rb[test_math_display.rb].
+====
+
+You can typeset inline math delimiting it with `S`/`$` pairs:
+
+[cols="a,a"]
+|===
+|[source,latex]
+Euler's identity is $e^{i\pi}+1=0$.
+|[source,asciidoc]
+Euler's identity is stem:[e^{i\pi}+1=0].
+|===
+
+You can typeset display math delimiting it with `\[`/`\]` pairs:
+
+[cols="a,a"]
+|===
+|[source,latex]
+Here is the Binomial Theorem:
+\[(1+x)^n = \sum_{k=0}^n {n \choose k}x^k\]
+|[source,asciidoc]
+----
+Here is the Binomial Theorem:
+
+[stem]
+++++
+(1+x)^n = \sum_{k=0}^n {n \choose k}x^k
+++++
+----
+|===
+
+// TODO: Whould we make it explicit about `:stem: latexmath`?
+// TODO: == Math environments
+// TODO: == Formulae, see https://www.metanorma.com/author/topics/document-format/text/#formulae
+
+:leveloffset!:
+:leveloffset: +1
+
+= Tables
+
+[NOTE]
+====
+These features are verified by tests in {repo-blob-url}/test/test_tables.rb[test_tables.rb].
+====
+
+You can typeset simple tables using the `tabular` environment:
+
+[cols="a,a",separator=!]
+!===
+![source,latex]
+\begin{tabular}{ll}
+  A & B \\
+  C & D \\
+\end{tabular}
+![source,asciidoc]
+----
+[cols=2*]
+|===
+| A
+| B
+
+| C
+| D
+|===
+----
+!===
+
+You can add labels and captions by wrapping a `tabular` with the `table` environment and using the `\label` and `\caption` macros:
+
+[cols="a,a",separator=!]
+!===
+![source,latex]
+\begin{table}
+  \label{tab:example}
+  \caption{This is the caption}
+  \begin{tabular}{ll}
+    A & B \\
+    C & D \\
+  \end{tabular}
+\end{table}
+![source,asciidoc]
+----
+[[tab:example]]
+.This is the caption
+[cols=2*]
+|===
+| A
+| B
+
+| C
+| D
+|===
+----
+!===
+
+:leveloffset!:
+:leveloffset: +1
+
+= Figures
+
+[NOTE]
+====
+These features are verified by tests in {repo-blob-url}/test/test_figures.rb[test_figures.rb].
+====
+
+You can typeset figures by using the `figure` environment.
+
+Use `\includegraphics` to include an image.
+
+Use `\label` and `\caption` to add labels and captions to figures.
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{figure}
+  \label{fig:example}
+  \caption{This is the caption}
+  \includegraphics{example.jpg}
+\end{figure}
+|[source,asciidoc]
+----
+[[fig:example]]
+.This is the caption
+image::example.jpg[]
+----
+|===
+
+
+
+
+== Subfigures
+
+[NOTE]
+====
+These features are verified by tests in {repo-blob-url}/test/test_subfigures.rb[test_subfigures.rb].
+====
+
+To typeset a figure containing subfigures you can nest the `subfigure` environment inside a `figure`.
+
+The macros `\caption` and `\label` work as you would expect inside subfigures too.
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{figure}\centering
+  \begin{subfigure}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{left.jpg}
+    \caption{A subfigure on the left}
+    \label{fig:left}
+  \end{subfigure}
+  \qquad
+  \begin{subfigure}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{right.jpg}
+    \caption{A subfigure on the right}
+    \label{fig:right}
+  \end{subfigure}
+  \caption{A figure with two subfigures}
+  \label{fig:whole}
+\end{figure}
+|[source,asciidoc]
+----
+[[fig:whole]]
+.A figure with two subfigures
+====
+[[fig:left]]
+.A subfigure on the left
+image::left.jpg[]
+
+[[fig:right]]
+.A subfigure on the right
+image::right.jpg[]
+
+====
+----
+|===
+
+NOTE: Subfigures are implemented using the {ctan-pkg-url}/subcaption[subcaption] package.
+
+
+
+
+== Keys
+
+[NOTE]
+====
+These features are verified by tests in {repo-blob-url}/test/test_figures_key.rb[test_figures_key.rb].
+====
+
+
+To typeset the key for a figure you can use a `*key*` environment (which behaves like a `description`) inside a `\paragraph` titled `Key`.
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{figure}
+  \includegraphics{example.jpg}
+  \label{fig:example}
+  \caption{This is the caption}
+  \paragraph*{Key}
+  \begin{key}
+    \item[A] First letter
+    \item[B] Second letter
+    \item[C] Third letter
+  \end{key}
+\end{figure}
+|[source,asciidoc]
+----
+[[fig:example]]
+.This is the caption
+image::example.jpg[]
+
+*Key*
+
+A::
+First letter
+B::
+Second letter
+C::
+Third letter
+----
+|===
+
+NOTE: Figures keys are implemented using the {ctan-pkg-url}/enumitem[enumitem] package.
+
+:leveloffset!:
+:leveloffset: +1
+
+= Footnotes
+
+[NOTE]
+====
+These features are verified by tests in {repo-blob-url}/test/test_footnotes.rb[test_footnotes.rb].
+====
+
+You can typeset footnotes by using `\footnote`:
+
+[cols="a,a"]
+|===
+|[source,latex]
+Footnotes are useful\footnote{Unless abused.}.
+|[source,asciidoc]
+Footnotes are useful footnote:[Unless abused.].
+|===
+
+// TODO: === Footnotes in tables
+// TODO: === Footnotes in figures
+
+:leveloffset!:
+:leveloffset: +1
+
+= Requirements, Recommendations, and Permissions
+
+[NOTE]
+====
+These features are verified by tests in {repo-blob-url}/test/test_blocks.rb[test_blocks.rb].
+====
+
+You can typeset requirements, recommendations, and permissions by using the homonymous environments `*requirement*`, `*recommendation*` and `*permission*`:
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{requirement}
+  This is a requirement block.
+\end{requirement}
+|[source,asciidoc]
+----
+[.requirement]
+====
+This is a requirement block.
+====
+----
+|===
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{recommendation}
+  This is a recommendation block.
+\end{recommendation}
+|[source,asciidoc]
+----
+[.recommendation]
+====
+This is a recommendation block.
+====
+----
+|===
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{permission}
+  This is a permission block.
+\end{permission}
+|[source,asciidoc]
+----
+[.permission]
+====
+This is a permission block.
+====
+----
+|===
+
+== Attributes
+
+CAUTION: TODO
+
+== Nesting
+
+Requirements, recommendations and permissions can be nested:
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\begin{requirement}
+  Here is a nested requirement.
+
+  \begin{requirement}
+    First nested requirement.
+  \end{requirement}
+
+  Here is another nested requirement.
+
+  \begin{requirement}
+    Second nested requirement.
+  \end{requirement}
+\end{requirement}
+----
+|[source,asciidoc]
+----
+[.requirement]
+====
+Here is a nested requirement.
+
+[.requirement]
+=====
+First nested requirement.
+=====
+
+Here is another nested requirement.
+
+[.requirement]
+======
+Second nested requirement.
+======
+====
+----
+|===
+
+== Internal structure
+
+The internal structure of requirements, recommendations and permissions can be further marked up with environments which will help making the document machine-readable. Such environments are: `*specification*`, `*measurement-target*`, `*verification*`, and `*import*`.
+
+[cols="a,a"]
+|===
+|[source,latex]
+----
+\begin{requirement}
+  This is descriptive text.
+
+  \begin{specification}
+    This is a formal statement, which may be considered the object of the requirement.
+  \end{specification}
+
+  \begin{measurement-target}
+    This is a quantitative measure for the requirement.
+  \end{measurement-target}
+
+  \begin{verification}
+    This is a verification step for the requirement
+  \end{verification}
+
+  \begin{import}
+    This is a code stub.
+  \end{import}
+\end{requirement}
+----
+|[source,asciidoc]
+----
+[.requirement]
+====
+This is descriptive text.
+
+[.specification]
+--
+This is a formal statement, which may be considered the object of the requirement.
+--
+
+[.measurement-target]
+--
+This is a quantitative measure for the requirement.
+--
+
+[.verification]
+--
+This is a verification step for the requirement
+--
+
+[.import]
+--
+This is a code stub.
+--
+====
+----
+|===
+
+:leveloffset!:
+:leveloffset: +1
+
+= Reviewer notes
+
+[NOTE]
+====
+These features are verified by tests in {repo-blob-url}/test/test_reviewer_notes.rb[test_reviewer_notes.rb].
+====
+
+You can typeset reviewer notes by using the `*reviewernotes*` environment.
+
+By using `*\mn*` at the beginning of the environment you can set the following attributes:
+
+`reviewer` (_mandatory_)::
+Name of the reviewer
+`from` (_mandatory_)::
+Starting target anchor
+`to` (_optional_)::
+Ending target anchor
+`date` (_optional_)::
+Date attribute (optionally including time)
+
+Here is a full example:
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{reviewernote}
+  \mn{reviewer="John Doe",date=20180125T0121,from=A,to=B}
+  Lorem ipsum.
+\end{reviewernote}
+|[source,asciidoc]
+----
+[reviewer="John Doe",date=20180125T0121,from=A,to=B]
+****
+Lorem ipsum.
+****
+----
+|===
+
+CAUTION: The `reviewer` and `date` attributes are currently not rendered by LaTeX but only passed to Adoc.
+
+:leveloffset!:
+:leveloffset: +1
+
+= Todos
+
+[NOTE]
+====
+These features are verified by tests in {repo-blob-url}/test/test_todos.rb[test_todos.rb].
+====
+
+You can typeset todo notes by using the `*todo*` environment.
+
+By using `*\mn*` at the beginning of the environment you can set the following attributes:
+
+`reviewer` (_optional_)::
+Name of the reviewer
+`from` (_optional_)::
+Starting target anchor
+`to` (_optional_)::
+Ending target anchor
+`date` (_optional_)::
+Date attribute (optionally including time)
+
+Here is a full example:
+
+[cols="a,a"]
+|===
+|[source,latex]
+\begin{todo}
+  \mn{reviewer="John Doe",date=20180125T0121,from=A,to=B}
+  Lorem ipsum.
+\end{todo}
+|[source,asciidoc]
+----
+[TODO,reviewer="John Doe",date=20180125T0121,from=A,to=B]
+====
+Lorem ipsum.
+====
+----
+|===
+
+CAUTION: The `reviewer` and `date` attributes are currently not rendered by LaTeX but only passed to Adoc.
+
+:leveloffset!:

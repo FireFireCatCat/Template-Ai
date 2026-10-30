@@ -1,0 +1,28 @@
+\chapter{Introduction}
+Distributed consensus is a foundational problem in distributed computing: a set
+of nodes must agree on a single value even when some nodes may fail or messages
+may be lost or delayed. Classical results such as the FLP impossibility theorem
+show that deterministic consensus cannot be guaranteed in a fully asynchronous
+system with even a single faulty process \cite{Fischer1985}. Practical systems
+work around this by making partial synchrony assumptions, but these assumptions
+are frequently violated in real wide-area deployments.
+
+\section{Motivation}
+Modern distributed applications increasingly run across wide-area networks with
+variable latency and non-trivial packet loss. Protocols designed and tuned for
+data-centre networks, where loss is rare and latency is predictable, often behave
+poorly once deployed across such links \cite{Ongaro2014}.
+
+\section{Contributions}
+This thesis makes the following contributions:
+\begin{itemize}
+  \item A formal model of consensus under bounded but non-zero message loss.
+  \item A protocol whose expected termination time degrades smoothly with loss
+    rate, rather than failing once a fixed threshold is crossed.
+  \item An experimental evaluation comparing the protocol against Raft-style
+    baselines \cite{Ongaro2014} under simulated partition and loss.
+\end{itemize}
+
+\input{figure}
+\input{table}
+\input{algorithm}

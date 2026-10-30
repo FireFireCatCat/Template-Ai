@@ -1,0 +1,114 @@
+%% UCAS Homework starter -- homework.sty, adapted for the University of
+%% Chinese Academy of Sciences from Josh Davis's well-known homework
+%% template (the vendored .sty's own MIT header credits Josh Davis,
+%% 2014).
+%%
+%% homework.sty IS BUNDLED here: it is not on CTAN, so there is nothing
+%% for a system install to resolve.
+%%
+%% Source: https://github.com/HuangZhenyang/Latex-Template-for-UCAS-Homework
+%% Licence: MIT, (c) 2014 Josh Davis (original template).
+%%
+%% engine.txt: xelatex (required -- the class \usepackage{fontspec} and
+%% \usepackage[UTF8]{ctex} for CJK).
+%%
+%% THE FONT TRAP: the vendored homework.sty ORIGINALLY called
+%% \setmonofont{Consolas}, a Windows-only commercial font absent from
+%% this (and most Linux) TeX installations -- confirmed via both
+%% fc-list and kpsewhich in the pinned image. Patched in homework.sty
+%% to DejaVu Sans Mono, which resolves both ways and ships with every
+%% modern TeX distribution. See the PATCH comment in homework.sty.
+\documentclass{article}
+\usepackage{homework}
+
+%% This starter drops the upstream title page's UCAS logo image
+%% (images/title/ucas-logo.png) so the download has no external asset
+%% dependency -- plain text title instead.
+\title{
+    \textmd{\textbf{\hmwkClass\ \hmwkTitle}}\\
+    \textmd{\textbf{\hmwkSubTitle}}\\
+    \normalsize\vspace{0.1in}\small{\hmwkCompleteTime}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor\ }}\\
+    \vspace{1in}
+}
+
+\renewcommand{\hmwkClass}{\textit{《算法设计与分析》}}
+\renewcommand{\hmwkTitle}{Homework 4}
+\renewcommand{\hmwkSubTitle}{Asymptotic Notation and Recurrences}
+\renewcommand{\hmwkCompleteTime}{January 8, 2027}
+\renewcommand{\hmwkClassInstructor}{Professor: Example Instructor}
+\renewcommand{\hmwkAuthorName}{\textbf{Ada Lovelace} }
+\renewcommand{\hmwkAuthorStuID}{\textbf{2027000001} }
+
+\author{\hmwkAuthorName \\
+	\hmwkAuthorStuID}
+\date{}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+\begin{document}
+
+\maketitle
+
+\begin{homeworkProblem}
+	Give an appropriate positive constant $c$ such that $f(n) \leq c \cdot
+	g(n)$ for all $n > 1$.
+
+	\begin{enumerate}
+		\item $f(n) = n^2 + n + 1$, $g(n) = 2n^3$
+		\item $f(n) = n\sqrt{n} + n^2$, $g(n) = n^2$
+		\item $f(n) = n^2 - n + 1$, $g(n) = n^2 / 2$
+	\end{enumerate}
+
+	\solution
+
+	\begin{enumerate}
+		\item For $n > 1$: $n^2 + n + 1 \le n^2 + n^2 + n^2 = 3n^2 < 2n^3$
+		when $n > 1$, so $c = 1$ works for all $n > 1$.
+		\item $n\sqrt{n} + n^2 \le n^2 + n^2 = 2n^2$ for $n \ge 1$, so $c=2$
+		works.
+		\item $n^2 - n + 1 \le n^2$ for $n \ge 1$, and $n^2 \le 2 \cdot
+		(n^2/2)$, so $c = 2$ works.
+	\end{enumerate}
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+	Solve the recurrence $T(n) = 2T(n/2) + n$ using the recursion-tree
+	method, and verify your answer using the Master Theorem.
+
+	\solution
+
+	At depth $i$ there are $2^i$ subproblems, each of size $n/2^i$, so
+	the total work at depth $i$ is $2^i \cdot (n/2^i) = n$. The tree has
+	$\log_2 n$ levels (down to subproblems of size 1), so
+	\begin{equation}
+		T(n) = \sum_{i=0}^{\log_2 n} n = n(\log_2 n + 1) = \Theta(n\log n).
+	\end{equation}
+	By the Master Theorem with $a = 2$, $b = 2$, $f(n) = n$: since
+	$n^{\log_b a} = n^{\log_2 2} = n = f(n)$, this is Case 2, giving
+	$T(n) = \Theta(n \log n)$, matching the recursion-tree result.
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+	Sample pseudocode listing (demonstrates the monospace font used for
+	code blocks):
+	\begin{algorithm}
+		\caption{MergeSort($A$, $p$, $r$)}
+		\begin{algorithmic}[1]
+			\If{$p < r$}
+				\State $q \gets \lfloor (p+r)/2 \rfloor$
+				\State MergeSort($A$, $p$, $q$)
+				\State MergeSort($A$, $q+1$, $r$)
+				\State Merge($A$, $p$, $q$, $r$)
+			\EndIf
+		\end{algorithmic}
+	\end{algorithm}
+
+	\solution
+
+	The recurrence for merge sort is $T(n) = 2T(n/2) + \Theta(n)$, which
+	by the same Master Theorem case as Problem 2 gives
+	$T(n) = \Theta(n \log n)$.
+\end{homeworkProblem}
+
+\end{document}

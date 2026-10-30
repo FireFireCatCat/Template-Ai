@@ -1,0 +1,84 @@
+\documentclass[output=book,minimal,biblatexbackend=bibtex]{langscibook}
+
+\title{Notes on Open-Access Book Production}
+\subtitle{A worked example}
+\author{Noor Fatima}
+\BackBody{A short example of the langscibook class, used by Language Science
+Press for open-access linguistics monographs.}
+
+\addbibresource{references.bib}
+
+\begin{document}
+
+% langscibook's `minimal` mode (chosen because it skips loading fonts this
+% image does not have — Libertinus, XITS, Arimo) also redefines \maketitle to
+% print only "You are using the minimal mode.", since the mode exists for
+% fast draft compiles rather than a finished cover. That placeholder is fine
+% mid-draft but wrong as the first thing a downloaded starter shows, so it is
+% overridden back to a plain title block here.
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begingroup
+  \centering
+  \vspace*{3cm}
+  {\LARGE\bfseries \@title\par}
+  \vspace{0.5cm}
+  {\large \@subtitle\par}
+  \vspace{1.5cm}
+  {\large \@author\par}
+  \endgroup
+  \clearpage
+}
+\makeatother
+\maketitle
+\frontmatter
+\tableofcontents
+
+\mainmatter
+
+\chapter{Preparing a Manuscript}
+
+\section{Why a Press-Specific Class}
+
+A publisher-specific class encodes house style directly, so authors do not
+have to reproduce it by hand \citep{knuth1984texbook}. \texttt{langscibook}
+covers title pages, running heads and a bibliography style consistent across
+every book in the series.
+
+\section{Structure of This Example}
+
+Table~\ref{tab:sections} outlines the two chapters in this starter and what
+each demonstrates.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    Chapter & Demonstrates \\
+    \midrule
+    1 & Sectioning and a table \\
+    2 & Citation and bibliography \\
+    \bottomrule
+  \end{tabular}
+  \caption{What each chapter in this starter covers.}
+  \label{tab:sections}
+\end{table}
+
+\chapter{Citing Sources}
+
+\section{A Resolved Citation}
+
+The reference below is resolved by \texttt{biblatex} in bibtex-backend mode,
+which keeps the compile loop the same as a plain \texttt{book} document
+\citep{knuth1984texbook}.
+
+\section{Closing Remarks}
+
+The two chapters above are enough to show a working title page, table of
+contents, sectioning, a table and a bibliography under
+\texttt{langscibook}'s \texttt{minimal} mode, which skips cover generation and
+does not load font files.
+
+\printbibliography
+
+\end{document}

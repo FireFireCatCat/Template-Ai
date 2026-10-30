@@ -1,0 +1,114 @@
+% !TeX program = xelatex
+%
+% Original starter for latextemplates.com -- not upstream's own main.tex,
+% which is a tutorial deck documenting the theme's own macros (and uses
+% minted, which needs -shell-escape + pygments, unavailable in this
+% compile pipeline). Only the theme files and background/logo images are
+% vendored from github.com/Thysrael/GreenParkBeamerTheme.
+\documentclass{ctexbeamer}
+
+\usetheme{gpark}
+\usepackage{booktabs}
+
+\title{无人机集群协同路径规划}
+\subtitle{北航六系 2026 年秋季组会报告}
+\author{李明轩}
+\date{\today}
+\titlebackground{images/titlebackground}
+\background{images/background2}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{目录}
+  \tableofcontents
+\end{frame}
+
+\section{研究背景}
+
+\begin{frame}{问题描述}
+  \begin{itemize}
+    \item 多无人机协同任务对实时路径规划提出更高要求
+    \item 传统集中式规划在节点数增加时计算开销急剧上升
+    \item 本报告提出一种分布式局部规划方法
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{相关工作对比}
+  \begin{table}
+    \centering
+    \begin{tabular}{lrr}
+      \toprule
+      方法 & 节点规模 & 平均耗时 (ms) \\
+      \midrule
+      集中式 A* & 50 & 820 \\
+      分布式 RRT & 50 & 340 \\
+      本文方法 & 50 & \textbf{126} \\
+      \bottomrule
+    \end{tabular}
+    \caption{三种方法在相同场景下的耗时对比}
+  \end{table}
+\end{frame}
+
+\section{方法}
+
+\begin{frame}{总体框架}
+  \begin{itemize}
+    \item 每个无人机仅依赖局部通信半径内的邻居信息
+    \item 采用势场法结合局部避碰约束生成候选路径
+    \item 通过一致性协议在邻居间同步路径意图，避免死锁
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{关键公式}
+  路径代价函数定义为：
+  \[
+    J(\mathbf{p}) = \alpha \cdot d(\mathbf{p}, \mathbf{p}_{\text{goal}}) + \beta \cdot \sum_{i \in \mathcal{N}} \phi(\mathbf{p}, \mathbf{p}_i)
+  \]
+  其中 $\phi$ 为邻居间的排斥势场，$\alpha, \beta$ 为可调权重。
+\end{frame}
+
+\section{实验结果}
+
+\begin{frame}{仿真设置}
+  \begin{itemize}
+    \item 仿真环境：50 架无人机，随机分布起点与目标点
+    \item 通信半径：15 米，更新频率：10 Hz
+    \item 对比集中式 A* 与分布式 RRT 两种基线方法
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{成功率与耗时}
+  \begin{table}
+    \centering
+    \begin{tabular}{lrr}
+      \toprule
+      节点规模 & 成功率 & 平均耗时 (ms) \\
+      \midrule
+      20 & 99.2\% & 58 \\
+      50 & 97.6\% & 126 \\
+      100 & 94.1\% & 241 \\
+      \bottomrule
+    \end{tabular}
+    \caption{不同规模下的成功率与耗时}
+  \end{table}
+\end{frame}
+
+\section{总结}
+
+\begin{frame}{结论与展望}
+  \begin{itemize}
+    \item 分布式方法在保持较高成功率的同时显著降低了耗时
+    \item 通信半径是影响成功率的关键参数，仍需进一步调优
+    \item 后续工作将扩展至动态障碍物场景
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{谢谢聆听}
+  \centering
+  {\Large 谢谢！欢迎提问}\\[1em]
+  li.mingxuan@buaa.edu.cn
+\end{frame}
+
+\end{document}

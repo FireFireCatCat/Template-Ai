@@ -1,0 +1,25 @@
+
+
+# The `hep-title` package
+
+Extensions for the title page
+
+## Introduction
+
+The `hep-title` package extends the title macros of the standard classes
+with macros for a preprint, affiliation, editors, and endorsers.
+
+To use the `hep-title` package include it with `\usepackage{hep-title}`.
+
+## Author
+
+Jan Hajer
+
+## License
+
+This file may be distributed and/or modified under the conditions of the
+`LaTeX` Project Public License, either version 1.3c of this license or
+(at your option) any later version. The latest version of this license is
+in `http://www.latex-project.org/lppl.txt` and version 1.3c or later is
+part of all distributions of LaTeX version 2005/12/01 or later.
+

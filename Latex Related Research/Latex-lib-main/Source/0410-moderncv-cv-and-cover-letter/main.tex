@@ -1,0 +1,75 @@
+% moderncv — the upstream class itself (CTAN: moderncv, v2.5.1), styled
+% "classic". moderncv is not bundled: it ships in every modern TeX
+% distribution, so this starter uses it the way a real user would.
+%
+% moderncv also defines a matching COVER LETTER document class — see
+% cover_letter.tex alongside this file. Compile them separately; a CV and its
+% cover letter are two PDFs, not one.
+%
+% To try another built-in style, change ONE line below:
+%   \moderncvstyle{classic}     <- this file
+%   \moderncvstyle{casual}      slightly more relaxed spacing
+%   \moderncvstyle{banking}     conservative, right-aligned dates
+%   \moderncvstyle{oldstyle}    serif, old-style figures
+%   \moderncvstyle{fancy}       thin horizontal rules under each section
+%   \moderncvstyle{contemporary} two-tone header band
+\documentclass[11pt,a4paper,sans]{moderncv}
+
+\moderncvstyle{classic}
+\moderncvcolor{blue}
+
+\usepackage[scale=0.85]{geometry}
+
+\firstname{Elena}
+\familyname{Kowalczyk}
+\title{Senior Data Engineer}
+\address{14 Boren Ave}{Seattle, WA 98104}{USA}
+\phone[mobile]{+1~206~555~0148}
+\email{elena.kowalczyk@example.com}
+\social[linkedin]{elena-kowalczyk}
+\social[github]{ekowalczyk}
+\extrainfo{Portfolio: \href{https://elenak.dev}{elenak.dev}}
+
+\begin{document}
+\makecvtitle
+
+\section{Experience}
+\cventry{2021--Present}{Senior Data Engineer}{Orbital Analytics}{Seattle, WA}{}
+  {Lead the team rebuilding the event-ingestion pipeline onto Kafka and
+  dbt, cutting p99 latency from 40s to under 3s at 200M events/day.
+  Mentor two junior engineers and own the on-call rotation for the
+  data platform.}
+\cventry{2018--2021}{Data Engineer}{Northlight Retail}{Portland, OR}{}
+  {Built the warehouse's incremental-load framework on Airflow and
+  Snowflake, replacing a nightly full-refresh job that regularly missed
+  its SLA.}
+\cventry{2016--2018}{Software Engineer}{Northlight Retail}{Portland, OR}{}
+  {Shipped the inventory-forecasting service consumed by store
+  replenishment; first production use of the company's internal ML
+  platform.}
+
+\section{Education}
+\cventry{2014--2016}{MSc in Computer Science}{University of Washington}{Seattle, WA}{}
+  {Thesis on approximate query processing over streaming data.}
+\cventry{2010--2014}{BSc in Computer Science}{Oregon State University}{Corvallis, OR}{}{}
+
+\section{Skills}
+\cvitem{Languages}{Python, SQL, Scala, Go}
+\cvitem{Data}{Kafka, Airflow, dbt, Snowflake, Spark}
+\cvitem{Infrastructure}{Terraform, Kubernetes, AWS}
+
+\section{Publications}
+\nopagebreak
+\cvitem{2020}{E.~Kowalczyk, R.~Ferreira. \emph{Approximate Aggregation over
+  Bounded-Memory Streams.} SIGMOD Industrial Track.}
+
+\section{Languages}
+\cvitemwithcomment{Polish}{Native}{}
+\cvitemwithcomment{English}{Fluent}{}
+
+\renewcommand{\listitemsymbol}{-~}
+\section{Interests}
+\cvitem{}{Ultramarathon running, modular synthesis, keeping a home Kubernetes
+  cluster no bigger than it needs to be.}
+
+\end{document}

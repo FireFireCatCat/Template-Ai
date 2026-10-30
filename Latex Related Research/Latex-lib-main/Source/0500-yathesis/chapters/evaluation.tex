@@ -1,0 +1,41 @@
+\chapter{\'Evaluation}
+\label{ch:evaluation}
+
+\section{Protocole exp\'erimental}
+
+Les exp\'eriences ont \'et\'e men\'ees sur un cluster de cinq
+n\oe{}uds. Le tableau~\ref{tab:resultats} r\'esume le d\'ebit obtenu
+pour des taux de partition croissants.
+
+\begin{table}[htbp]
+  \centering
+  \caption{D\'ebit (requ\^etes/s) selon le taux de partition simul\'e.}
+  \label{tab:resultats}
+  \begin{tabular}{@{}lrr@{}}
+    \toprule
+    Taux de partition & R\'ef\'erence & Propos\'e \\
+    \midrule
+    0\%  & 12\,400 & 12\,100 \\
+    5\%  & 9\,800  & 11\,600 \\
+    10\% & 6\,200  & 10\,900 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Latence sous charge}
+
+La figure~\ref{fig:latence} montre la latence m\'ediane des requ\^etes
+lorsque le taux de partition augmente.
+
+\begin{figure}[htbp]
+  \centering
+  \rule{0.6\textwidth}{4cm}
+  \caption{Latence m\'ediane en fonction du taux de partition simul\'e.}
+  \label{fig:latence}
+\end{figure}
+
+\section{Discussion}
+
+Le protocole propos\'e maintient un meilleur d\'ebit que la
+r\'ef\'erence d\`es que le taux de partition d\'epasse 5~\%, au prix
+d'un faible surco\^ut de latence constant \citep{ongaro2014search}.

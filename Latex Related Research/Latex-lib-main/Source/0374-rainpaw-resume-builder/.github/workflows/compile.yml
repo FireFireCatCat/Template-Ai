@@ -1,0 +1,35 @@
+name: Build and Commit Resume PDF
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/resume.tex'
+      - 'Dockerfile'
+      - '.github/workflows/compile.yml'
+  workflow_dispatch:
+
+jobs:
+  build_and_commit_pdf:
+    name: Build and Commit Resume PDF
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Compile Resume PDF
+        uses: ./
+
+      - name: Commit and Push PDF
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Actions"
+          git add docs/resume.pdf
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Automated build of resume.pdf"
+            git push
+          fi

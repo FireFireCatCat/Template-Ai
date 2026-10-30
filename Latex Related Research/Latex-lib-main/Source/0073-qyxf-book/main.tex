@@ -1,0 +1,91 @@
+% !TEX program = xelatex
+% qyxf-book — a minimalist ctexbook-based Chinese course-material class
+% (originally developed for Qian Yuan Xue Fu, a student club at Xi'an
+% Jiaotong University's Qian Xuesen College). Ships with TeX Live; not
+% bundled.
+%
+% Simplified from upstream: dropped \cover{} (optional, defaults empty).
+% \org{}/\footorg{}/\license{} are explicitly cleared below — unlike
+% \cover, these are NOT empty by default: the class's own \@orginfo
+% default is the club's real college name ("Qian Xuesen College
+% Academic Support Centre / Xi'an Jiaotong University") and its
+% \@licenseinfo default renders "This work is licensed under CC
+% BY-NC-ND 4.0" directly on the title page. Left unset, this starter
+% would display a non-commercial licence notice on every copy, which
+% is wrong for a generic starter — cleared explicitly, the way
+% upstream's own demo.tex does with \license{}.
+%
+% xits=false: the class's default (xits=true) sets \setmainfont{XITS}
+% and \setmathfont{XITS Math} via fontspec — the XITS *.otf files are
+% present in this image (kpsewhich resolves them) but fontconfig does
+% not register the "XITS" family name (fc-list has no entry), so
+% fontspec's by-name lookup fails even though the files exist. Turning
+% xits off skips that font selection entirely.
+%
+% Class documentation: the class's own demo.tex (a self-documenting
+% manual) | https://ctan.org/pkg/qyxf-book
+% Licence: MIT, (c) 2020 Qian Yuan Xue Fu.
+\documentclass[
+  10pt,
+  twoside,
+  openany,
+  b5paper,
+  colorscheme = basic,
+  xits = false,
+]{qyxf-book}
+
+\usepackage{amssymb}
+
+\title{线性代数复习讲义}
+\subtitle{A Review of Linear Algebra}
+\author{陈静}
+\date{\today}
+\org{}
+\footorg{}
+\license{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\chapter{向量空间}
+
+\section{基本定义}
+
+设 $V$ 是域 $F$ 上的向量空间。$V$ 的一个子集 $W$ 称为\textbf{子空间}，如果 $W$ 对加法和数乘封闭，且包含零向量。
+
+\begin{tcolorbox}[title=定理 1.1]
+向量空间 $V$ 的任意子集族的交集仍是 $V$ 的子空间。
+\end{tcolorbox}
+
+\section{线性无关与基}
+
+一组向量 $v_1, \dots, v_n$ 称为\emph{线性无关}，如果
+\[
+c_1 v_1 + c_2 v_2 + \cdots + c_n v_n = 0 \implies c_1 = c_2 = \cdots = c_n = 0.
+\]
+向量空间的一组\textbf{基}是一个线性无关的生成集；所有基的元素个数相同，称为该空间的\textbf{维数}。
+
+\chapter{线性变换}
+
+\section{矩阵表示}
+
+设 $T: V \to W$ 是线性变换，$V$ 与 $W$ 分别取定基后，$T$ 可以唯一地表示为一个矩阵 $A$，使得对任意 $v \in V$，$T(v)$ 对应的坐标向量等于 $Av$。
+
+\begin{tcolorbox}[title=例 2.1]
+考虑 $T: \mathbb{R}^2 \to \mathbb{R}^2$，$T(x, y) = (x + y,\, x - y)$。取标准基，则
+\[
+A = \begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}.
+\]
+\end{tcolorbox}
+
+\section{特征值与特征向量}
+
+若存在非零向量 $v$ 和标量 $\lambda$，使得 $Av = \lambda v$，则称 $\lambda$ 为矩阵 $A$ 的\textbf{特征值}，$v$ 为对应的\textbf{特征向量}。特征值是方程 $\det(A - \lambda I) = 0$ 的根，参见 \citet{strang2016linear} 第五章的系统讨论。
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

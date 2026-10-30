@@ -1,0 +1,162 @@
+%-------------------------
+% Jake's Resume, MIT licensed, https://github.com/jakegut/resume
+% Based off of: https://github.com/sb2nov/resume
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge \scshape Morgan Ellery} \\ \vspace{1pt}
+    \small 555-234-8871 $|$ \href{mailto:morgan.ellery@example.com}{\underline{morgan.ellery@example.com}} $|$
+    \href{https://linkedin.com/in/morganellery}{\underline{linkedin.com/in/morganellery}} $|$
+    \href{https://github.com/morganellery}{\underline{github.com/morganellery}}
+\end{center}
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {University of Washington}{Seattle, WA}
+      {B.S. in Computer Science}{Sep. 2019 -- Jun. 2023}
+  \resumeSubHeadingListEnd
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Software Engineer}{Jul. 2023 -- Present}
+      {Zendly}{Remote}
+      \resumeItemListStart
+        \resumeItem{Built a webhook-delivery service in Go handling 3M+ events/day with at-least-once delivery guarantees}
+        \resumeItem{Migrated the billing pipeline from cron-triggered batch jobs to an event-driven queue, cutting invoice latency from hours to minutes}
+        \resumeItem{Introduced contract tests between the API and its three internal consumers, catching breaking changes before deploy}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Software Engineering Intern}{Jun. 2022 -- Sep. 2022}
+      {Zendly}{Remote}
+      \resumeItemListStart
+        \resumeItem{Implemented a rate limiter for the public API using Redis, replacing an in-memory limiter that reset on deploy}
+        \resumeItem{Wrote integration tests covering the authentication flow, raising coverage on that module from 40\% to 90\%}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Undergraduate Teaching Assistant}{Sep. 2021 -- Jun. 2023}
+      {University of Washington, Dept. of Computer Science}{Seattle, WA}
+      \resumeItemListStart
+        \resumeItem{Held weekly office hours for a 200-student data structures course}
+        \resumeItem{Graded and gave feedback on weekly programming assignments in Java}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+\section{Projects}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+          {\textbf{Routewise} $|$ \emph{Python, FastAPI, PostgreSQL, Docker}}{Jan. 2023 -- Present}
+          \resumeItemListStart
+            \resumeItem{Built a route-planning API that scores commute options by cost, time and carbon estimate}
+            \resumeItem{Deployed with Docker Compose behind an nginx reverse proxy on a single VPS}
+            \resumeItem{Wrote a CLI client in Python distributed via PyPI, with 300+ downloads}
+          \resumeItemListEnd
+      \resumeProjectHeading
+          {\textbf{ClassSync} $|$ \emph{TypeScript, React, Node.js}}{Sep. 2021 -- May 2022}
+          \resumeItemListStart
+            \resumeItem{Built a scheduling tool for study groups, used by 150+ students in one academic term}
+            \resumeItem{Implemented calendar-conflict detection using an interval-tree data structure}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+%-----------PROGRAMMING SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: Go, Python, TypeScript, Java, SQL} \\
+     \textbf{Frameworks}{: FastAPI, React, Node.js, JUnit} \\
+     \textbf{Developer Tools}{: Git, Docker, GitHub Actions, PostgreSQL, Redis} \\
+     \textbf{Libraries}{: pandas, NumPy}
+    }}
+ \end{itemize}
+
+%-------------------------------------------
+\end{document}

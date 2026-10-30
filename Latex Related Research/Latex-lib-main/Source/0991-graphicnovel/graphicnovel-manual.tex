@@ -1,0 +1,722 @@
+% Copyright (c) 2026 Tom Bronte.
+% Distribution and modification are governed by the
+% LaTeX Project Public License, version 1.3c or later.
+% LPPL maintenance status: maintained.
+% Current maintainer: Tom Bronte
+% Contact: craftsyntax@craftsyntax.uk
+% The licensed work is listed in README.md.
+
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=22mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{pdflscape}
+\usepackage{listings}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\setlist{nosep}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\newcommand{\gnclass}{\texttt{graphicnovel.cls}}
+\newcommand{\cmd}[1]{\texttt{\textbackslash#1}}
+\newcommand{\env}[1]{\texttt{#1}}
+\newcommand{\argm}[1]{\texttt{\{#1\}}}
+\lstset{
+  language=[LaTeX]TeX,
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  breaklines=true,
+  frame=single,
+  xleftmargin=0.5em,
+  xrightmargin=0.5em,
+  aboveskip=8pt,
+  belowskip=8pt,
+  showstringspaces=false
+}
+\title{\texttt{graphicnovel.cls}\\User Manual and Command Reference}
+\author{Version 0.5 -- 22 September 2026}
+\date{}
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+
+\section{Purpose}
+
+\gnclass{} is a semantic LaTeX class for writing graphic-novel and comic scripts. Its central design rule is that the \emph{reference bible is authoritative}. Characters, places, persistent objects, eras, expressions, tells, and continuity information are defined in the bible; the script then refers back to those definitions. The class checks those references while the document is compiled.
+
+The class separates three kinds of information in a panel:
+\begin{itemize}
+  \item \textbf{background}: the bible-backed location selected with \cmd{location};
+  \item \textbf{composition}: the camera/framing information selected with \cmd{shot};
+  \item \textbf{foreground}: the panel-specific activity selected with \cmd{action}.
+\end{itemize}
+
+It also supports era-specific appearances for characters, places, and persistent objects. A script reference to one of these entities is checked against the story's current era.
+
+\section{Installation and document class}
+
+Put \gnclass{} somewhere TeX can find it, or in the same directory as the script source, and begin the document with:
+
+\begin{lstlisting}
+\documentclass{graphicnovel}
+\end{lstlisting}
+
+The class uses 11pt \texttt{article} as its base and passes unrecognised class options to \texttt{article}.
+
+\subsection{Compact mode}
+
+Normally a new story, comic page, or double-page spread begins after a page break. For proofing a script in a denser continuous form, use:
+
+\begin{lstlisting}
+\documentclass[compact]{graphicnovel}
+\end{lstlisting}
+
+Compact mode replaces those forced page breaks with vertical separation. It does not disable semantic checks.
+
+\section{Recommended document structure}
+
+A useful source-file order is:
+\begin{enumerate}
+  \item declare all eras;
+  \item write the reference bible;
+  \item optionally print the reference bible;
+  \item write one or more stories/vignettes;
+  \item let end-of-document validation run automatically.
+\end{enumerate}
+
+A small skeleton is:
+
+\begin{lstlisting}
+\documentclass{graphicnovel}
+
+\DeclareEra{1973}
+\DeclareEra{1998}
+\DeclareEra{Present Day}
+
+\begin{character}{Alice}
+  \appearance{1973}{Long dark hair; heavy wool coat.}
+  \appearance{1998}{Short hair; wire-framed glasses.}
+  \appearance{Present Day}{Grey hair; dark wool coat.}
+  \expression{guarded}{Eyes narrowed; mouth held still.}
+  \tell{lying}{Touches the ring on her right hand.}
+\end{character}
+
+\begin{locationentry}{The Hall}
+  \architecture{Victorian entrance hall.}
+  \appearance{1973}{Dark panelling and patterned carpet.}
+  \appearance{1998}{Cream walls and replacement carpet.}
+  \appearance{Present Day}{White walls and exposed floorboards.}
+  \continuityRule{The staircase always rises left-to-right.}
+\end{locationentry}
+
+\begin{propentry}{Kitchen Table}
+  \appearance{1973}{New pine with four matching chairs.}
+  \appearance{1998}{Scratched; one chair has been replaced.}
+  \appearance{Present Day}{Heavily worn; repaired at one corner.}
+\end{propentry}
+
+\begin{document}
+
+\printReferenceBible
+
+\newStory{Chapter One}
+\era{1973}
+
+\newComicPage
+\pageLayout{1}
+\newPanel
+\location{The Hall}
+\shot{Wide shot from the foot of the stairs.}
+\action{Alice stands in the foreground holding an unopened letter.}
+\prop{Kitchen Table}
+\expression{Alice}{guarded}
+\dialogue{Alice}{I thought you had gone.}
+
+\end{document}
+\end{lstlisting}
+
+\section{The reference bible}
+
+\subsection{Declare eras first}
+
+Every era used by \cmd{appearance} or \cmd{era} must first be registered:
+
+\begin{lstlisting}
+\DeclareEra{1973}
+\DeclareEra{1998}
+\DeclareEra{Present Day}
+\end{lstlisting}
+
+Era matching is normalised internally, so leading/trailing spaces and letter case are not significant for lookup. The declared spelling is still the spelling you should use for readable source.
+
+An undeclared era is a class error.
+
+\subsection{Characters}
+
+The preferred way to define a character is the \env{character} environment:
+
+\begin{lstlisting}
+\begin{character}{Alice}
+  \aka{Al}
+  \height{1.72 m}
+  \ageRange{Late twenties in 1973; seventies in the present day}
+  \wardrobe{Practical clothes; muted colours}
+
+  \appearance{1973}{Long dark hair; heavy wool coat.}
+  \appearance{1998}{Short hair; wire-framed glasses.}
+  \appearance{Present Day}{Grey hair; dark wool coat.}
+
+  \expression{guarded}{Eyes narrowed; mouth held still.}
+  \expression{amused}{One eyebrow raised; restrained half-smile.}
+  \tell{lying}{Touches the ring on her right hand.}
+
+  \continuityRule{The small scar above the left eyebrow is always visible.}
+\end{character}
+\end{lstlisting}
+
+The environment registers the character automatically. A separate \cmd{DeclareCharacter} is therefore normally unnecessary.
+
+\paragraph{Era-specific appearance.}
+The syntax is:
+
+\begin{lstlisting}
+\appearance{ERA}{DESCRIPTION}
+\end{lstlisting}
+
+Within a character, each era may have at most one appearance. The era must already have been declared.
+
+\paragraph{Expressions and tells.}
+Inside a character entry these commands \emph{define} named states:
+
+\begin{lstlisting}
+\expression{guarded}{Eyes narrowed; mouth held still.}
+\tell{lying}{Touches the ring on her right hand.}
+\end{lstlisting}
+
+Names must be unique within that character. In the script, the same commands have a different role: they refer back to those definitions and validate them.
+
+\subsection{Places}
+
+Use \env{locationentry} for a place:
+
+\begin{lstlisting}
+\begin{locationentry}{The Hall}
+  \architecture{Victorian entrance hall.}
+  \furniture{Narrow console table beside the stairs.}
+  \lighting{Single ceiling pendant; daylight from the fanlight.}
+  \technology{Changes with era; no fixed electronic installation.}
+  \mood{Narrow, enclosed and acoustically live.}
+
+  \appearance{1973}{Dark wood panelling and patterned carpet.}
+  \appearance{1998}{Cream walls and replacement carpet.}
+  \appearance{Present Day}{White walls and exposed floorboards.}
+
+  \continuityRule{The staircase always rises left-to-right.}
+\end{locationentry}
+\end{lstlisting}
+
+A location referenced in the script must have an appearance for the story's current era. It is not enough for the location merely to exist in the bible.
+
+\subsection{Persistent objects and props}
+
+Use \env{propentry} for an object whose identity or appearance matters to continuity:
+
+\begin{lstlisting}
+\begin{propentry}{Kitchen Table}
+  \technology{None.}
+  \appearance{1973}{New pine with four matching chairs.}
+  \appearance{1998}{Scratched; one chair has been replaced.}
+  \appearance{Present Day}{Heavily worn; repaired at one corner.}
+  \continuityRule{The burn mark near the rear-left corner appears after 1986.}
+\end{propentry}
+\end{lstlisting}
+
+A script reference made with \cmd{prop} or \cmd{object} checks both the object's existence and its appearance in the current era.
+
+\subsection{Continuity items}
+
+Use \env{continuityitem} for invariant or cross-cutting facts that are not themselves an era-specific visual state:
+
+\begin{lstlisting}
+\begin{continuityitem}{House Orientation}
+  \continuityRule{The front of the house faces east.}
+  \technology{Electrical service enters on the north wall.}
+  \continuityfield{Reference}{Floor plans are drawn with north at the top.}
+\end{continuityitem}
+\end{lstlisting}
+
+Continuity items do not use \cmd{appearance}. They are for rules and facts that do not belong to a single era-state row.
+
+\subsection{Introduced-in information}
+
+Characters, places, and props can carry an informational introduction field:
+
+\begin{lstlisting}
+\introducedIn{Chapter One, page 3}
+\end{lstlisting}
+
+This is bible metadata. It does not itself impose a page-number validation rule.
+
+\subsection{Generic fields}
+
+The class provides four escape hatches for unusual invariant information:
+
+\begin{lstlisting}
+\charfield{Accent}{Soft Yorkshire accent}
+\locfield{Smell}{Old polish and damp wool}
+\propfield{Material}{English oak}
+\continuityfield{Reference}{See elevation drawing A-12}
+\end{lstlisting}
+
+Prefer dedicated semantic commands when they fit. Examples include \cmd{height}, \cmd{architecture}, \cmd{technology}, and \cmd{continuityRule}. Generic fields are intended for information for which no dedicated command exists.
+
+\section{Printing the bible}
+
+The complete bible is printed with:
+
+\begin{lstlisting}
+\printReferenceBible
+\end{lstlisting}
+
+Individual sections can be printed with:
+
+\begin{lstlisting}
+\printCharacterBible
+\printLocationBible
+\printPropBible
+\printContinuityBible
+\end{lstlisting}
+
+Entries are rendered as two-column tables. The entity name spans the table in a larger bold face and is separated by horizontal rules. Ordinary field names are bold in the narrow left column. Era names, expression names, and tell names appear in the same narrow first column as state labels, with their descriptions in the wider second column.
+
+The four section headings are \textbf{Characters}, \textbf{Places}, \textbf{Objects}, and \textbf{Continuity}.
+
+\section{Stories and eras}
+
+\subsection{Graphic-novel title}
+
+\begin{lstlisting}
+\graphicNovelTitle{The Long House}
+\end{lstlisting}
+
+Version 0.5 stores this value as document metadata for the class's internal state, but does not automatically typeset it. Use normal LaTeX title material if you want a visible title page.
+
+\subsection{Start a story or vignette}
+
+\begin{lstlisting}
+\newStory{Chapter One}
+\end{lstlisting}
+
+or equivalently:
+
+\begin{lstlisting}
+\newVignette{Interlude}
+\end{lstlisting}
+
+Starting a new story closes and validates any open page, resets the current era, forgets the previous location used by \cmd{sameLocation}, and resets the panel counter.
+
+\subsection{Set the current era}
+
+\begin{lstlisting}
+\era{1973}
+\end{lstlisting}
+
+The era must have been declared with \cmd{DeclareEra}. It remains current until changed or until \cmd{newStory}/\cmd{newVignette} resets it.
+
+Era-sensitive entities cannot be safely referenced without a current era. A missing current era is a class error when such a reference is checked.
+
+\section{Pages, spreads, and layouts}
+
+\subsection{Comic pages}
+
+Start the next numbered page with:
+
+\begin{lstlisting}
+\newComicPage
+\end{lstlisting}
+
+When importing an existing script, force a positive page number with:
+
+\begin{lstlisting}
+\newComicPage[12]
+\end{lstlisting}
+
+Starting a page closes and validates the previous page. A page begun before \cmd{newStory} produces a warning.
+
+\subsection{Double-page spreads}
+
+A double-page spread is a single spanning image over two comic pages:
+
+\begin{lstlisting}
+\newDoublePageSpread
+\end{lstlisting}
+
+or:
+
+\begin{lstlisting}
+\newDoublePageSpread[12]
+\end{lstlisting}
+
+The optional number is the first page of the spread. \cmd{newSpread} is an alias with the same optional argument.
+
+The spread automatically opens its one spanning panel. Do \emph{not} call \cmd{newPanel} inside it. Starting a spread on an odd page produces a warning so that left/right pagination can be checked.
+
+\subsection{Standard page layout}
+
+Use a comma-separated row grammar:
+
+\begin{lstlisting}
+\pageLayout{2,1,2}
+\end{lstlisting}
+
+This means three rows containing 2, 1, and 2 panels, for a total expected count of 5. Each row value must be a positive integer.
+
+Optional descriptive heights can be attached:
+
+\begin{lstlisting}
+\pageLayout[heights={short,tall,short}]{2,1,2}
+\end{lstlisting}
+
+The heights are printed as layout guidance; they do not affect the panel-count calculation.
+
+\subsection{Custom layout}
+
+For irregular designs:
+
+\begin{lstlisting}
+\customLayout[panels=4]{Large central panel with three inset panels}
+\end{lstlisting}
+
+If \texttt{panels=N} is supplied and greater than zero, the final panel count is checked against \texttt{N}. Without it, the custom layout is printed but no exact panel-count expectation is established.
+
+\section{Panels}
+
+Start a normal panel with:
+
+\begin{lstlisting}
+\newPanel
+\end{lstlisting}
+
+A panel cannot begin before a comic page, and \cmd{newPanel} cannot be used inside a double-page spread.
+
+When a new panel begins, the previous panel is validated. A normal panel is expected to specify:
+\begin{itemize}
+  \item a location/background; and
+  \item at least one of \cmd{shot} or \cmd{action}.
+\end{itemize}
+
+Missing these produces warnings rather than fatal errors.
+
+\subsection{Background: location}
+
+\begin{lstlisting}
+\location{The Hall}
+\end{lstlisting}
+
+This is not free-form scenery text. It is a bible reference. The class checks that:
+\begin{enumerate}
+  \item the location exists;
+  \item there is a current declared era; and
+  \item the location has an \cmd{appearance} entry for that exact era.
+\end{enumerate}
+
+The output is labelled \textbf{LOCATION (BACKGROUND)}.
+
+To reuse the previous explicit location:
+
+\begin{lstlisting}
+\sameLocation
+\end{lstlisting}
+
+The location's appearance is checked again against the \emph{current} era. Therefore changing era and then using \cmd{sameLocation} does not bypass continuity checking.
+
+\subsection{Persistent objects}
+
+Reference a bible-backed object with:
+
+\begin{lstlisting}
+\prop{Kitchen Table}
+\end{lstlisting}
+
+or the alias:
+
+\begin{lstlisting}
+\object{Kitchen Table}
+\end{lstlisting}
+
+The object must exist and have an appearance for the current era.
+
+\subsection{Composition: shot}
+
+\begin{lstlisting}
+\shot{Wide shot from the foot of the stairs.}
+\end{lstlisting}
+
+The description must not be blank.
+
+\subsection{Foreground: action}
+
+\begin{lstlisting}
+\action{Alice crosses the hall and tears open the letter.}
+\end{lstlisting}
+
+The description must not be blank. The output is labelled \textbf{ACTION (FOREGROUND)}.
+
+\subsection{Character expressions and tells in the script}
+
+Inside a panel, the two-argument forms refer to definitions in the character bible:
+
+\begin{lstlisting}
+\expression{Alice}{guarded}
+\tell{Alice}{lying}
+\end{lstlisting}
+
+For either reference, the class checks that the character exists, that the character has an appearance for the current era, and that the named expression/tell was defined for that character.
+
+\section{Dialogue and other panel material}
+
+\subsection{Dialogue}
+
+Basic dialogue is:
+
+\begin{lstlisting}
+\dialogue{Alice}{I thought you had gone.}
+\end{lstlisting}
+
+The character is bible-backed and must have an appearance for the current era.
+
+Three optional keys are supported:
+
+\begin{lstlisting}
+\dialogue[off]{Alice}{Do not open it.}
+\dialogue[position={upper left}]{Alice}{Not yet.}
+\dialogue[note={small, hesitant lettering}]{Alice}{Perhaps.}
+\dialogue[off,position={upper left},note={from upstairs}]{Alice}{Wait.}
+\end{lstlisting}
+
+\begin{description}
+  \item[\texttt{off}] marks the speaker as off-panel and prints \textbf{(OFF)}.
+  \item[\texttt{position=...}] prints a balloon-position note.
+  \item[\texttt{note=...}] prints an italic production note beneath the dialogue.
+\end{description}
+
+\subsection{Captions}
+
+\begin{lstlisting}
+\caption{Yorkshire, 1973.}
+\end{lstlisting}
+
+The alias \cmd{captiontext} has the same effect.
+
+\textbf{Important:} the class deliberately redefines standard LaTeX \cmd{caption}. It is a comic-script caption command, not the normal caption mechanism for \texttt{figure}, \texttt{table}, or \texttt{longtable} floats.
+
+\subsection{Sound effects and notes}
+
+\begin{lstlisting}
+\sfx{BANG}
+\note{Keep the envelope readable but do not reveal the address.}
+\end{lstlisting}
+
+Both are panel-only directives.
+
+\subsection{Declaring a page silent or caption-free}
+
+\begin{lstlisting}
+\noDialogue
+\noCaptions
+\end{lstlisting}
+
+These are page-level declarations. If dialogue or a caption is nevertheless supplied on the same page, end-of-page validation emits a warning.
+
+\subsection{Explicit page turns}
+
+\begin{lstlisting}
+\turnTo{14}
+\end{lstlisting}
+
+The argument must be a positive integer. The class compares it with the next page implied by the current page or spread and warns if it does not match.
+
+\section{Consistency and error checking}
+
+\subsection{Bible-backed references}
+
+The following script operations are checked against the reference bible:
+\begin{itemize}
+  \item \cmd{location} -- location existence plus current-era appearance;
+  \item \cmd{sameLocation} -- previous location's current-era appearance;
+  \item \cmd{prop}/\cmd{object} -- object existence plus current-era appearance;
+  \item \cmd{dialogue} -- character existence plus current-era appearance;
+  \item script-side \cmd{expression} -- character existence, current-era appearance, and named expression;
+  \item script-side \cmd{tell} -- character existence, current-era appearance, and named tell.
+\end{itemize}
+
+Unknown entities and missing current-era appearances are class errors.
+
+\subsection{What ``complete bible'' means in version 0.5}
+
+At final validation, every registered \textbf{character}, \textbf{location}, and \textbf{prop/object} must have at least one era-specific \cmd{appearance}. This check runs both when \cmd{validateGraphicNovel} is called and automatically at \cmd{end\{document\}}.
+
+Version 0.5 does \emph{not} require every entity to have an appearance for every declared era merely because that era exists. Instead, exact era completeness is enforced when the script actually references the entity. Thus:
+
+\begin{lstlisting}
+\era{1998}
+\location{The Hall}
+\end{lstlisting}
+
+is an error unless \texttt{The Hall} has:
+
+\begin{lstlisting}
+\appearance{1998}{...}
+\end{lstlisting}
+
+This is the key script-to-bible consistency check.
+
+\subsection{Duplicate state definitions}
+
+Within an entity:
+\begin{itemize}
+  \item a character/location/prop may have only one appearance per era;
+  \item a character may have only one expression of a given name;
+  \item a character may have only one tell of a given name.
+\end{itemize}
+
+Duplicates are class errors.
+
+\subsection{Page and panel warnings}
+
+The class warns when:
+\begin{itemize}
+  \item a normal panel has no location/background;
+  \item a normal panel has neither a shot nor an action/foreground;
+  \item a page has no page layout;
+  \item the number of supplied panels differs from the declared layout count;
+  \item \cmd{noDialogue} conflicts with actual dialogue;
+  \item \cmd{noCaptions} conflicts with an actual caption;
+  \item an explicit \cmd{turnTo} does not match the implied next page;
+  \item a double-page spread begins on an odd page;
+  \item a page or spread begins before a story has been started.
+\end{itemize}
+
+\subsection{Explicit validation}
+
+Normally no explicit call is necessary because validation runs at the end of the document. To close the current page and run bible validation early, use:
+
+\begin{lstlisting}
+\validateGraphicNovel
+\end{lstlisting}
+
+\section{Authoring conventions}
+
+For the strongest continuity checking, use these conventions consistently:
+\begin{enumerate}
+  \item Declare eras before defining era-dependent appearances.
+  \item Put enduring visual facts in the bible, not in repeated panel prose.
+  \item Use \cmd{appearance}\argm{ERA}\argm{DESCRIPTION} for things that change over time.
+  \item Use \cmd{continuityRule} for facts that should remain invariant.
+  \item Use \cmd{location} only for a named bible location; reserve \cmd{action} for panel-specific foreground activity.
+  \item Reference durable objects with \cmd{prop} or \cmd{object} rather than describing their continuity state freehand.
+  \item Define recurring expressions and tells once in the character entry and reference them by name in panels.
+  \item Set \cmd{era} before the first era-sensitive reference in every story.
+\end{enumerate}
+
+\appendix
+\clearpage
+\begin{landscape}
+\section{Command index}
+
+\scriptsize
+\renewcommand{\arraystretch}{0.94}
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\begin{longtable}{@{}p{0.31\linewidth}p{0.15\linewidth}p{0.49\linewidth}@{}}
+\toprule
+\textbf{Command / environment} & \textbf{Context} & \textbf{Purpose}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Command / environment} & \textbf{Context} & \textbf{Purpose}\\
+\midrule
+\endhead
+\cmd{ageRange}\argm{TEXT} & character bible & Add an age-range field.\\
+\cmd{aka}\argm{TEXT} & character bible & Add an ``Also known as'' field.\\
+\cmd{appearance}\argm{ERA}\argm{TEXT} & character/place/object bible & Define one era-specific visual state; era must be declared and the entity may have only one appearance per era.\\
+\cmd{architecture}\argm{TEXT} & place bible & Add an architecture field.\\
+\cmd{caption}\argm{TEXT} & panel & Add a script caption; replaces standard LaTeX float-caption semantics.\\
+\cmd{captiontext}\argm{TEXT} & panel & Alias of \cmd{caption}.\\
+\cmd{charfield}\argm{LABEL}\argm{TEXT} & character bible & Generic character field for unusual invariant data.\\
+\texttt{\string\begin\{character\}\{NAME\}} & bible environment & Define/register a character and its fields, appearances, expressions, tells, and rules.\\
+\cmd{continuityfield}\argm{LABEL}\argm{TEXT} & continuity bible & Generic continuity field.\\
+\texttt{\string\begin\{continuityitem\}\{NAME\}} & bible environment & Define/register a cross-cutting invariant continuity item.\\
+\cmd{continuityRule}\argm{TEXT} & any bible entry & Add a continuity rule; labelled ``Rule'' inside a continuity item.\\
+\cmd{customLayout}[panels=N]\argm{TEXT} & comic page & Describe an irregular page layout; optional panel count is validated.\\
+\cmd{DeclareCharacter}\argm{NAME} & preamble/bible & Lightweight character registration; normally unnecessary if \env{character} is used.\\
+\cmd{DeclareContinuityItem}\argm{NAME} & preamble/bible & Lightweight continuity-item registration.\\
+\cmd{DeclareEra}\argm{ERA} & preamble/bible & Register an era for later \cmd{appearance} and \cmd{era} use.\\
+\cmd{DeclareLocation}\argm{NAME} & preamble/bible & Lightweight location registration; normally unnecessary if \env{locationentry} is used.\\
+\cmd{DeclareProp}\argm{NAME} & preamble/bible & Lightweight prop/object registration; normally unnecessary if \env{propentry} is used.\\
+\cmd{dialogue}[OPTIONS]\argm{CHARACTER}\argm{TEXT} & panel & Add character dialogue; validates character and current-era appearance. Options: \texttt{off}, \texttt{position=...}, \texttt{note=...}.\\
+\cmd{era}\argm{ERA} & story & Set the current declared era used by consistency checks.\\
+\cmd{expression}\argm{NAME}\argm{TEXT} & character bible & Define a named expression for the current character.\\
+\cmd{expression}\argm{CHARACTER}\argm{NAME} & panel & Reference and validate a named expression for a character.\\
+\cmd{expressionsummary}\argm{TEXT} & character bible & Add a general expression-summary field.\\
+\cmd{furniture}\argm{TEXT} & place bible & Add a furniture field.\\
+\cmd{graphicNovelTitle}\argm{TITLE} & document setup & Store the graphic-novel title; v0.5 does not automatically typeset it.\\
+\cmd{height}\argm{TEXT} & character bible & Add a height field.\\
+\cmd{introducedIn}\argm{TEXT} & character/place/object bible & Add informational introduction metadata.\\
+\cmd{lighting}\argm{TEXT} & place bible & Add a lighting field.\\
+\cmd{locfield}\argm{LABEL}\argm{TEXT} & place bible & Generic location field for unusual invariant data.\\
+\cmd{location}\argm{NAME} & panel & Select the bible-backed background and validate it for the current era.\\
+\texttt{\string\begin\{locationentry\}\{NAME\}} & bible environment & Define/register a place and its invariant and era-specific information.\\
+\cmd{mood}\argm{TEXT} & place bible & Add a mood field.\\
+\cmd{newComicPage}[N] & story & Start the next page or explicitly set a positive comic-page number.\\
+\cmd{newDoublePageSpread}[N] & story & Start a two-page, one-panel spread; optional N is its first page.\\
+\cmd{newPanel} & comic page & Start a normal panel and validate the previous panel.\\
+\cmd{newSpread}[N] & story & Alias of \cmd{newDoublePageSpread}.\\
+\cmd{newStory}\argm{TITLE} & document body & Start a story; closes prior page and resets era and previous-location state.\\
+\cmd{newVignette}\argm{TITLE} & document body & Alias of \cmd{newStory}.\\
+\cmd{noCaptions} & comic page & Declare that the page has no captions; conflict is warned at validation.\\
+\cmd{noDialogue} & comic page & Declare that the page has no dialogue; conflict is warned at validation.\\
+\cmd{note}\argm{TEXT} & panel & Add an italic production note.\\
+\cmd{object}\argm{NAME} & panel & Alias of \cmd{prop}.\\
+\cmd{pageLayout}[heights=...]\argm{ROWS} & comic page & Declare row panel counts and optionally descriptive row heights.\\
+\cmd{printCharacterBible} & document body & Print the Characters bible section.\\
+\cmd{printContinuityBible} & document body & Print the Continuity bible section.\\
+\cmd{printLocationBible} & document body & Print the Places bible section.\\
+\cmd{printPropBible} & document body & Print the Objects bible section.\\
+\cmd{printReferenceBible} & document body & Print Characters, Places, Objects, and Continuity in that order.\\
+\cmd{prop}\argm{NAME} & panel & Reference and current-era validate a persistent object.\\
+\cmd{propfield}\argm{LABEL}\argm{TEXT} & object bible & Generic prop/object field for unusual invariant data.\\
+\texttt{\string\begin\{propentry\}\{NAME\}} & bible environment & Define/register a persistent object and its era-specific appearance.\\
+\cmd{sameLocation} & panel & Reuse the previous explicit location and revalidate it against the current era.\\
+\cmd{sfx}\argm{TEXT} & panel & Add a sound effect in small caps.\\
+\cmd{shot}\argm{TEXT} & panel & Add nonblank camera/framing/composition guidance.\\
+\cmd{technology}\argm{TEXT} & place/object/continuity bible & Add a Technology field.\\
+\cmd{tell}\argm{NAME}\argm{TEXT} & character bible & Define a named behavioural tell.\\
+\cmd{tell}\argm{CHARACTER}\argm{NAME} & panel & Reference and validate a named tell for a character.\\
+\cmd{turnTo}\argm{PAGE} & comic page & Print an explicit page-turn instruction and warn if it differs from the implied next page.\\
+\cmd{validateGraphicNovel} & document body & Close/validate the current page and run final bible completeness checks.\\
+\cmd{wardrobe}\argm{TEXT} & character bible & Add a wardrobe field.\\
+\bottomrule
+\end{longtable}
+\normalsize
+\renewcommand{\arraystretch}{1}
+
+\section{Class option index}
+
+\begin{longtable}{@{}p{0.22\linewidth}p{0.72\linewidth}@{}}
+\toprule
+\textbf{Option} & \textbf{Effect}\\
+\midrule
+\texttt{compact} & Replaces forced page breaks at story/page/spread boundaries with vertical separation for denser proofing.\\
+other \texttt{article} options & Unrecognised options are passed to the base \texttt{article} class.\\
+\bottomrule
+\end{longtable}
+\end{landscape}
+
+\end{document}

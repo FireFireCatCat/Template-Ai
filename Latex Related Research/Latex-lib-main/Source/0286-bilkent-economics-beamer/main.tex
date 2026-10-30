@@ -1,0 +1,71 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usepackage{fontspec}
+% The upstream theme requests Arial.  The pinned compiler does not ship that
+% proprietary family, so select a redistributable TeX Live family instead.
+\setmainfont{DejaVu Sans}
+\setsansfont{DejaVu Sans}
+\let\cataloguesetmainfont\setmainfont
+\def\setmainfont#1{\cataloguesetmainfont{DejaVu Sans}}
+\usepackage{beamertheme-bilkent-econ}
+\let\setmainfont\cataloguesetmainfont
+\usepackage{booktabs}
+\usepackage{tikz}
+\setmainfont{DejaVu Sans}
+\title{A clear signal in a noisy system}
+\subtitle{A presentation starter with a disciplined visual hierarchy}
+\author{Your Name}
+\institute{Your Organisation}
+\coauthors{Your Name \quad · \quad Collaborator Name}
+\location{City, Country}
+\date{August 2026}
+
+\begin{document}
+\begin{frame}[plain]\maketitle\end{frame}
+
+\begin{frame}{Start with the question}
+  \begin{columns}[T,onlytextwidth]
+    \column{.55\textwidth}
+    A useful deck makes the decision visible before it shows every detail.
+    \begin{block}{Working question}
+      Which small change shortens the handoff without losing evidence?
+    \end{block}
+    \column{.4\textwidth}
+    \begin{itemize}
+      \item Name the decision.
+      \item Show one measure.
+      \item End with an owner and date.
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{A result in context}
+  \begin{columns}[T,onlytextwidth]
+    \column{.56\textwidth}
+    \begin{tikzpicture}[x=1cm,y=1cm]
+      \draw[bilkentblue!30] (0,0) grid (6,3.2);
+      \draw[bilkentred,line width=1.6pt]
+        (0.2,.6) .. controls (1.4,2.8) and (2.1,.5) .. (3.2,2.3)
+        .. controls (4.2,3.1) and (5.0,1.1) .. (5.8,2.7);
+      \fill[bilkentred] (3.2,2.3) circle (2pt);
+      \node[anchor=west] at (0,3.45) {handoff time over four trials};
+    \end{tikzpicture}
+    \column{.38\textwidth}
+    \textbf{Takeaway}\par\medskip
+    The intervention reduced median handoff time while keeping the evidence
+    record complete.
+    \medskip
+    \begin{tabular}{@{}lr@{}}\toprule
+    Measure & Change\\\midrule
+    Handoff time & $-31\%$\\
+    Repeat questions & $-18\%$\\
+    \bottomrule\end{tabular}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Close with the next useful action}
+  \centering\vfill
+  \LARGE\textbf{Make the next decision easier to see.}\par
+  \vspace{.5cm}\normalsize
+  Questions, owner, and next checkpoint\vfill
+\end{frame}
+\end{document}

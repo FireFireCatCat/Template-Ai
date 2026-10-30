@@ -1,0 +1,90 @@
+% SINTEF poster starter — a self-contained tikzposter rendering of the
+% sintefposter class's block/innerblock/column workflow.
+\documentclass[final]{beamer}
+\usepackage[size=a0,scale=1.1]{beamerposter}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx,booktabs,tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\definecolor{sintefgreen}{HTML}{00843D}
+\definecolor{sintefdark}{HTML}{173F35}
+\definecolor{sinteflight}{HTML}{E9F4EE}
+\definecolor{sintefgray}{HTML}{F2F4F3}
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{normal text}{fg=sintefdark,bg=sintefgray}
+\setbeamercolor{block title}{fg=white,bg=sintefgreen}
+\setbeamercolor{block body}{fg=sintefdark,bg=white}
+\setbeamertemplate{block begin}{\begin{beamercolorbox}[wd=\linewidth,sep=0.65em]{block title}\Large\bfseries\insertblocktitle\end{beamercolorbox}\nointerlineskip\begin{beamercolorbox}[wd=\linewidth,sep=0.9em]{block body}}
+\setbeamertemplate{block end}{\end{beamercolorbox}\vspace{0.9em}}
+\title{Designing a transparent monitoring loop}
+\author{Nora Berg · Example Systems Group · example.org/project}
+\begin{document}
+\begin{frame}[t]
+\begin{beamercolorbox}[wd=\paperwidth,sep=1.5em,leftskip=2em,rightskip=2em]{block title}
+  {\fontsize{43}{50}\selectfont\bfseries\inserttitle}\par\vspace{0.25em}
+  {\Large\insertauthor}
+\end{beamercolorbox}
+\vspace{1.1em}
+\begin{beamercolorbox}[wd=0.96\paperwidth,sep=0.9em]{block body}
+  A scientific poster should make its main claim visible before the reader
+  reaches the details. This SINTEF-style starter uses a strong green frame,
+  a dark title field, full-width blocks, and two columns for the method and
+  evidence. The measurements below are fictional and demonstrate editable
+  structure only.
+\end{beamercolorbox}
+\begin{columns}
+\column{0.47\paperwidth}
+\begin{block}{Class description}
+  The upstream `sintefposter` workflow reconfigures `tikzposter`: the
+  \texttt{\\block} command gives the page its primary rhythm, the
+  \texttt{\\innerblock} command creates a secondary level, and
+  \texttt{\\column} controls the narrative width. This self-contained variant
+  uses the same concepts with the TeX Live `tikzposter` class.
+  \par\medskip\textbf{\color{sintefgreen}Requirements}\par
+    Keep the title short enough for the A0 header. Use `pgfplots` for real
+    plots, `graphicx` for figures, and replace this paragraph with the
+    assumptions that govern your own result.
+  \par\medskip\textbf{\color{sintefgreen}Caveat}\par
+    A model can look accurate while hiding a distribution shift. Include a
+    limitation block next to the headline result.
+\end{block}
+\begin{block}{Pipeline}
+  \centering
+  \begin{tikzpicture}[node distance=1.8cm,box/.style={draw=sintefdark,fill=sinteflight,rounded corners,minimum width=12cm,minimum height=1.5cm,align=center},>=Latex]
+    \node[box] (a) {measure\\quality checks};
+    \node[box,below=of a] (b) {estimate\\uncertainty};
+    \node[box,below=of b] (c) {act\\review};
+    \draw[->,very thick,sintefgreen] (a)--(b);\draw[->,very thick,sintefgreen] (b)--(c);
+  \end{tikzpicture}
+\end{block}
+\column{0.47\paperwidth}
+\begin{block}{Writing}
+  Use the right column for the result and the decisions it enables. A reader
+  should be able to understand what changed, how large the effect is, and
+  what remains uncertain without opening the supplementary material.
+\end{block}
+\begin{block}{Results}
+  \centering\begin{tabular}{lrrr}\toprule
+  condition & precision & recall & review time\\\midrule
+  manual & 0.78 & 0.84 & 31 min\\
+  assisted & 0.86 & 0.87 & 19 min\\
+  audited & 0.85 & 0.89 & 21 min\\\bottomrule
+  \end{tabular}
+  \vspace{0.5em}\raggedright\small The assisted workflow reduces review time
+  while the audit pass catches the remaining ambiguous cases.
+\end{block}
+\begin{block}{Outline}
+  The outline of this block is intentionally green. Use a local colour change
+  when a conclusion needs emphasis, then close the group before opening the
+  next block.
+\end{block}
+\begin{block}{Suggestions and links}
+  Replace this block with a figure, a QR code, or a short list of resources.
+  For plots, \texttt{pgfplots} keeps the font scale consistent with the surrounding
+  text. For long titles, use a \texttt{\\parbox} in the title argument.
+\end{block}
+\end{columns}
+\vfill
+\begin{center}\Large\color{sintefgreen}\bfseries Technology for a better society\par\normalsize\color{sintefdark}Replace this footer with your contact information and acknowledgements.\end{center}
+\end{frame}
+\end{document}

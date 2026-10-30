@@ -1,0 +1,55 @@
+%% Various character options here.
+% Backgrounds, feats, etc...
+
+\RequirePackage{fp}
+\RequirePackage{xstring}
+\usepackage{graphicx,calc}
+\usepackage{ragged2e}
+\usepackage{changepage}
+\usepackage{setspace}
+
+% One box to rule them all...
+\newtcolorbox{pf@charoption}[3][]{
+  arc=0mm,
+  boxrule=0pt,
+  boxsep=0pt,
+  breakable,
+  colframe=title1,
+  coltitle=creature,
+  enhanced,
+  fonttitle=\pfStatBlockTitleFont,
+  fontupper=\pfStatBlockBodyFont,
+  frame hidden,
+  left=0pt,
+  parbox=false,
+  opacityback=0,
+  % look into overlay boxes to make them spiffy
+  right=0pt,
+  title={#2 \hfill #3},
+  toptitle=3mm,
+  % Use the following for debugging
+  % enhanced,show bounding box,
+  {#1}
+}
+
+\newcommand{\pfGenOption}[3]{
+  \begin{pf@charoption}{#1}{#2}
+    #3
+  \end{pf@charoption}
+}
+
+\newcommand{\pfBackground}[6]{%
+  \begin{pf@charoption}{#1}{Background}%
+  #2%
+
+  Choose two ability boosts. One must be in {#3}, and one is a free ability boost.
+
+  You're trained in the {#4} skill, and the {#5} Lore skill.  You gain the {#6} skill feat.
+  \end{pf@charoption}
+}
+
+\newcommand{\pfFeat}[3]{
+  \begin{pf@charoption}{#1}{Feat #2}%
+  #3%
+  \end{pf@charoption}
+}

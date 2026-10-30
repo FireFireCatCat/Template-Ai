@@ -1,0 +1,101 @@
+% !TeX Program=lualatex
+%
+% Demo file for the LaTeX-ZUGFeRD project
+% This file corresponds to version 0.13 (2026-07-23)
+% it is a modified Version!
+%
+% Copyright (C) 2024--2026 Marei Peischl <marei@peitex.de>
+% ---------------------------------------------------------
+%
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in:
+%
+%    http://www.latex-project.org/lppl.txt
+%
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008-05-04 or later.
+%
+% We used \DocumentMetadata before, but since this also loads the new tagging code, we currently workaround this loading the pdfmanagement directly:
+\RequirePackage{pdfmanagement}
+\SetKeys[document/metadata]{
+	pdfversion=1.7, % necessary as it would be 2.0 by default for the current releas
+	pdfstandard=a-3b,
+	lang=de,	
+}
+\documentclass[parskip=half-,german]{scrartcl}
+
+\usepackage[
+	format=xrechnung3.0% 3.0 is the default anyway, but you can select the format to avoid automatic changes.
+	%format=basic
+]{zugferd-invoice}
+
+\setkomavar{invoice}{2024:1337}
+\setkomavar{date}{{\InsertZUGFeRDData[set-today]{date}\today}}
+\setkomavar{title}{Rechnung}
+
+\SetZUGFeRDData{
+%	document-type =  commercial-invoice, % commented as this setting matches the initial value
+	id=komavar,
+%	date=auto, % commented as this setting matches the initial value
+%	delivery-date = auto, % commented as this setting matches the initial value
+	subject=komavar,
+	fromaddress=komavar,
+	unit=hour,
+	seller/vatid = {DE123456789},
+%	seller/id=1123,% If no VatID exists a seller/id is required. This might be an ID provided by the buyer
+	seller/name = {Kleinunternehmer*in X},
+	seller/legal-description = {Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG},
+	seller/postcode = {20253},
+	seller/city ={Hamburg},
+	seller/country = DE,
+	seller/address = {Address 1},
+	seller/contact= {Marei\\+4900000000\\marei@peitex.de},
+	seller/email = {kontakt@peitex.de},
+	seller/taxid=XXXXX,
+	buyer/reference = {buyer-reference}, %oder Leitweg-ID
+	buyer/name = {Käufer Name},
+	buyer/postcode = {20253},
+	buyer/city ={Hamburg},
+	buyer/country = DE,
+	buyer/address = {Address 1\\Address 2},
+	buyer/vatid = {DE123456789},
+	buyer/email = {invoice@example.org},
+	currency=€,
+	payment-terms={Zahlbar innerhalb von 14 Tagen},% either this one or the due-date below is required
+	due-date={20240118},
+	payment-means / type = 58, % SEPA Übereisung,
+	payment-means / iban = DE68430609671013251700,
+	payment-means / account-holder = Marei Peischl,
+	payment-means / bic =GENODEM1GLS,
+	tax/add-exemption-reason-auto={E={{Kein Ausweis von Umsatzsteuer, da Kleinunternehmer*in gemäß § 19 UStG}}}
+}
+
+\InitVATExempt{E}% Tax Exempt
+
+\AddInvoiceItem<unit=hour>[E]{3}{Support}{90}
+
+\setkomavar{firsthead}{%
+	\InsertZUGFeRDData[AddressData]{seller}\\
+	Steuernummer: \UseZUGFeRDAddressItem{seller}{taxid}\\
+	Umsatzsteuer-ID: \UseZUGFeRDAddressItem{seller}{vatid}\\
+	IBAN: \InsertZUGFeRDData{payment-means/iban}
+}
+
+\begin{document}
+\begin{letter}{\InsertZUGFeRDData[AddressData]{buyer}}
+\opening{Guten Tag,}
+
+hiermit stelle ich Ihnen meine Arbeit im Rahmen des Projektes XX in Rechnung. Die Leistung wurde im Januar 2024 erbracht. 
+
+
+
+\PrintInvoiceTabular
+Ich bitte Sie oben genannte Betrag binnen 30 Tagen auf oben genanntes Konto zu überweisen.
+
+%Falls gewünscht
+\closing{Happy \TeX{}ing}
+
+\end{letter}
+\end{document}

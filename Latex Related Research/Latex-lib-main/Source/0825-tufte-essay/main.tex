@@ -1,0 +1,97 @@
+\documentclass{tufte-handout}
+
+\title{The Map That Ate the Territory}
+\author{J. Okonkwo-Reyes}
+\date{}
+
+\usepackage{booktabs}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Metrics dashboards are supposed to represent an organisation's work.
+This essay argues that past a certain size, the dashboard stops
+representing the work and starts \emph{replacing} it as the object of
+attention --- and that the failure mode is structural, not a matter
+of picking better metrics.
+\end{abstract}
+
+Every growing organisation eventually builds a dashboard: a single
+screen distilling the state of the business into a handful of
+numbers a leader can absorb in ten seconds.\sidenote{The instinct is
+sound. A CEO cannot personally read every support ticket, every
+commit, every customer call --- a dashboard is a necessary
+compression of information that would otherwise be inaccessible at
+scale.} The trouble begins once the dashboard stops being a
+\emph{window} onto the work and becomes the thing people manage
+\emph{to}.
+
+\section{The compression is lossy by construction}
+
+A dashboard number is, definitionally, a lossy compression of
+something richer. ``Support tickets resolved per day'' compresses
+away whether the resolution actually helped the customer. ``Commits
+per engineer per week'' compresses away whether any given commit made
+the codebase better or worse. This is not a flaw that better metric
+design can fix --- it is what a metric \emph{is}: a projection from a
+high-dimensional reality onto one number, and every projection
+discards information along whichever dimensions it does not
+capture.\sidenote{This is the same shape of argument mathematicians
+make about projections in linear algebra: a projection onto a
+subspace necessarily loses whatever lay outside that subspace, no
+matter how well-chosen the subspace is.}
+
+\begin{marginfigure}
+\begin{tabular}{ll}
+\toprule
+\textbf{Reality} & \textbf{Dashboard} \\
+\midrule
+customer helped & ticket closed \\
+code improved & commit merged \\
+user retained & session logged \\
+\bottomrule
+\end{tabular}
+\caption{Each dashboard column discards everything in its row except
+the one thing it counts.}
+\end{marginfigure}
+
+\section{Optimisation pressure finds the seam}
+
+The lossiness would be harmless if nobody optimised against the
+compressed number specifically. But once a team's performance is
+\emph{evaluated} on ``tickets resolved per day'', the fastest way to
+raise that number is not necessarily to help customers faster --- it
+is to find whatever behaviour raises the count with the least effort,
+which is exactly the behaviour the compression was blind to in the
+first place. The dashboard did not merely fail to capture the
+seam between the metric and the goal; its existence as a target
+actively widens that seam, because now there is a reason to search
+for it.
+
+\section{Why "add more metrics" does not fix this}
+
+The standard response to a gamed metric is to add a second metric
+that catches the gaming --- customer satisfaction alongside ticket
+count, code review approval alongside commit count. This narrows the
+seam but cannot close it, for the same reason one projection plus a
+second projection still is not the full-dimensional reality: two
+numbers are still two numbers, and an organisation with enough scale
+to need a dashboard in the first place has a process too
+high-dimensional for any small fixed set of numbers to fully pin
+down.\sidenote{This is why the healthiest organisations tend to pair
+dashboards with judgment --- a manager who actually reads a sample of
+the underlying tickets, not just the count --- rather than trying to
+solve the problem with a bigger dashboard.}
+
+\section{The map is not obligated to become the territory}
+
+None of this is an argument against dashboards. It is an argument
+against treating the dashboard as a sufficient substitute for
+looking at the underlying work. The map is useful precisely because
+it is smaller than the territory; the failure mode is forgetting
+that a smaller thing was ever a compression at all, and starting to
+manage the map as though it were the territory itself.
+
+\end{document}

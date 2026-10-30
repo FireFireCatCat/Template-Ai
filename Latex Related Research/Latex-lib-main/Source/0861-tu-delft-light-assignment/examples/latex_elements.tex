@@ -1,0 +1,142 @@
+\chapter{Problem Statement}
+\pagenumbering{arabic} %DO NOT REMOVE FROM THE INTRODUCTION CHAPTER
+This template has been adapted for TU Delft assignments and reports. Replace
+this chapter, and the ones that follow, with your own work --- the structure
+below (problem statement, analysis, results, appendix) is a starting point,
+not a requirement.
+
+\section{Assignment}
+An aluminium 6061-T6 L-bracket cantilevers a \SI{2.4}{\kilo\gram} vibration
+sensor a distance $L$ from a vertical mounting plate, as sketched in
+\cref{fig:bracket}. The bracket has a rectangular cross-section of width $b$
+and thickness $t$, and a bolt hole of diameter $d$ is drilled through the
+root section to fix it to the plate. During operation the sensor mount
+experiences a cyclic vertical load oscillating between $F_{\text{min}}$ and
+$F_{\text{max}}$ at the rig's operating frequency.
+
+\begin{questions}
+    \item What is the maximum bending stress at the root section, and does
+    the bracket meet the static factor-of-safety requirement of
+    \cref{tab:requirements}?
+    \begin{questions}
+        \item What is the stress-concentration factor $K_t$ at the bolt
+        hole, and what is the resulting local peak stress?
+    \end{questions}
+    \item Using a Goodman diagram, estimate the fatigue life at the bolt
+    hole. Does the bracket meet the minimum fatigue-life requirement of
+    \cref{tab:requirements}?
+    \item Propose one design change that improves the fatigue margin without
+    increasing bracket mass by more than 10\%.
+\end{questions}
+
+\begin{table}[H]
+    \centering
+    \caption{Design requirements}
+    \label{tab:requirements}
+    \begin{tabularx}{\textwidth}{L C C}
+        \toprule
+        Requirement & Symbol & Value \\
+        \midrule
+        Static factor of safety & $\mathrm{FoS}_{\text{static}}$ & $\geq 1.5$ \\
+        Minimum fatigue life & $N_f$ & $\geq \num{1e6}$ cycles \\
+        \hdashline
+        Maximum bracket mass & $m$ & $\leq \SI{0.4}{\kilo\gram}$ \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\section{Free-Body Analysis}
+Treating the bracket as a cantilever beam fixed at the mounting plate, the
+root bending moment under the peak load $F_{\text{max}}$ is
+\begin{equation}
+    \label{eq:moment}
+    M = F_{\text{max}} \, L \, ,
+\end{equation}
+and the corresponding nominal bending stress at the outer fibre of the root
+section is
+\begin{equation}
+    \label{eq:stress}
+    \sigma_{\text{nom}} = \frac{M \, c}{I} = \frac{6\,F_{\text{max}}\,L}{b\,t^{2}} \, ,
+\end{equation}
+where $c = t/2$ and $I = b\,t^{3}/12$ for the rectangular section. The
+governing symbols are summarised in \cref{tab:exampletable}; the notation
+follows the standard beam-theory convention, e.g.\ \citet{crandall2012energy}.
+
+\begin{table}[H]
+    \centering
+    \caption{Symbols used in the free-body analysis}
+    \label{tab:exampletable}
+    \begin{tabularx}{\textwidth}{L C L}
+        \toprule
+        Symbol & Units & Description \\
+        \midrule
+        $L$ & \unit{\meter} & Cantilever length, plate to sensor mount \\
+        $b$ & \unit{\meter} & Bracket cross-section width \\
+        $t$ & \unit{\meter} & Bracket cross-section thickness \\
+        $d$ & \unit{\meter} & Bolt-hole diameter at root section \\
+        $K_t$ & -- & Stress-concentration factor at the bolt hole \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\section{Figures}
+\Cref{fig:bracket} shows the bracket geometry and load case, and
+\cref{fig:sbs} demonstrates placing two related figures side by side --- use
+this layout for a loaded diagram next to its corresponding free-body
+diagram, for example.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \draw[thick] (0,0) rectangle (0.3,3);
+        \draw[thick, fill=tudelft-cyan!15] (0.3,1.35) rectangle (3,1.65);
+        \draw[thick] (3,1.5) circle (0.12);
+        \draw[->, thick] (3,1.5) -- (3,0.6) node[below] {$F(t)$};
+        \draw[dashed] (0.3,1.5) -- (3,1.5);
+        \draw[<->] (0.3,1.9) -- (3,1.9) node[midway, above] {$L$};
+        \node[below] at (0.15,-0.1) {mounting plate};
+        \node[above right] at (3,1.6) {sensor mount};
+    \end{tikzpicture}
+    \caption{Cantilevered sensor bracket, load case, and key dimension $L$}
+    \label{fig:bracket}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw[thick,->] (0,0) -- (2,0) node[right] {$x$};
+            \draw[thick,->] (0,0) -- (0,1.5) node[above] {$M(x)$};
+            \draw[thick, tudelft-cyan] (0,0) -- (2,1.2);
+        \end{tikzpicture}
+        \caption{Bending moment diagram}
+        \label{fig:sbs-moment}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \draw[thick,->] (0,0) -- (2,0) node[right] {$x$};
+            \draw[thick,->] (0,0) -- (0,1.5) node[above] {$V(x)$};
+            \draw[thick, tudelft-cyan] (0,0) -- (2,0.9);
+        \end{tikzpicture}
+        \caption{Shear force diagram}
+        \label{fig:sbs-shear}
+    \end{subfigure}
+    \caption{Internal load distributions along the bracket span}
+    \label{fig:sbs}
+\end{figure}
+
+\section{Nomenclature}
+\nomenclature[B]{$M$}{Bending moment \nomunit{\newton\meter}}
+\nomenclature[B]{$F$}{Applied load \nomunit{\newton}}
+\nomenclature[B]{$\sigma$}{Bending stress \nomunit{\mega\pascal}}
+\nomenclature[G]{$\sigma_y$}{Yield stress of 6061-T6 aluminium \nomunit[276]{\mega\pascal}}
+\nomenclature[A]{FoS}{Factor of safety}
+\nomenclature[A]{DSE}{Design Synthesis Exercise}
+
+This section illustrates the \texttt{questions} environment, tables,
+side-by-side figures, TikZ diagrams, \texttt{siunitx} units, and the
+nomenclature/list-of-symbols machinery inherited from the class. Replace it
+with your own analysis chapters.

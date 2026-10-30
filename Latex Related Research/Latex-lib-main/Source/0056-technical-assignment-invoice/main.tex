@@ -1,0 +1,31 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=1.8cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{simpleinvoice}
+\pagestyle{empty}
+\begin{document}
+\setinvoicetitle{Technical assignment invoice}
+\setinvoicenumber{TA--2026--018}
+\setreceivername{Northwind Systems GmbH}
+\setreceiveraddress{Werkstattgasse 12\\1010 Vienna}
+\setname{Harbor Light Consulting}
+\setaddress{18 Alder Street\\Portland, OR 97202}{18 Alder Street / Portland, OR 97202}
+\setphonenumber{+1 503 555 0142}
+\setemail{billing@example.org}
+\setyourref{Assignment brief NW--17}
+\setourref{TA--2026--018}
+\setinvoicedate{September 15, 2026}
+\setdeadline{30}
+\additem{Technical architecture assignment}{1,250.00 USD}{1}{1,250.00 USD}
+\additem{Written findings and handover call}{350.00 USD}{1}{350.00 USD}
+\setsubtotal{1,600.00 USD}
+\setvat{0.00 USD}
+\settotal{1,600.00 USD}
+\setaccountnumber{Account 0042042}
+% simpleinvoice's fixed-width footer is 2.2pt wider than the text block in
+% this pinned class version; tolerate that harmless rounding overflow.
+\hfuzz=3pt
+\makeinvoice
+\end{document}

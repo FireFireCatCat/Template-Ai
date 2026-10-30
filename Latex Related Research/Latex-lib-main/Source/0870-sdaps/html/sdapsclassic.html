@@ -1,0 +1,1297 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sdapsclassic class &#8212; sdaps-class 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/sdapstex.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="sdapslayout package" href="sdapslayout.html" />
+    <link rel="prev" title="Creating custom layouts using base commands" href="customlayout.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="sdapslayout.html" title="sdapslayout package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="customlayout.html" title="Creating custom layouts using base commands"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sdapsclassic class</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sdapsclassic-class">
+<span id="sdapsclassic"></span><h1>sdapsclassic class<a class="headerlink" href="#sdapsclassic-class" title="Permalink to this headline">¶</a></h1>
+<p>This is the main class which currently should be used to create questionnaires.
+It builds on top of the other packages and adds new macros and environments
+which are similar to the ones from the original SDAPS LaTeX class.</p>
+<p>Please note that the environments from the sdapslayout package cannot be used
+directly as using these environments will cause conflicting macro definitions.
+Instead one can simply use the aliases provided in this class.</p>
+<p>The entire document should be wrapped using the <a class="reference internal" href="#questionnaire" title="questionnaire"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">questionnaire</span></code></a> environment.</p>
+<p>The following macros and environments exist:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="#questionnaire" title="questionnaire"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">questionnaire</span></code></a>: Main environment wrapping everything</p></li>
+<li><p><a class="reference internal" href="#info" title="info"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">info</span></code></a>: Style definition for information block</p></li>
+<li><p><a class="reference internal" href="#\addinfo" title="\addinfo"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\addinfo</span></code></a>: Add metadata to the project</p></li>
+<li><p><a class="reference internal" href="#\sdapsinfo" title="\sdapsinfo"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\sdapsinfo</span></code></a>: Print the standard instructions for filling out</p></li>
+</ul>
+</div></blockquote>
+<p>The following question types exists for your use:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#\singlemark" title="\singlemark"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\singlemark</span></code></a>: A single range or mark question</p></li>
+<li><p><a class="reference internal" href="#\singlemarkother" title="\singlemarkother"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\singlemarkother</span></code></a>: A single range or makr question with an alternative answer in case it isn’t applicable</p></li>
+<li><p><a class="reference internal" href="#\textbox" title="\textbox"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\textbox</span></code></a>: A large and optionally scalable textbox for freeform content</p></li>
+<li><p><a class="reference internal" href="#choicequestion" title="choicequestion"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicequestion</span></code></a>: A multiple choice question with a number of answers</p></li>
+<li><p><a class="reference internal" href="#choicegroup" title="choicegroup"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicegroup</span></code></a>: A list of multiple choice questions layed out in rows (or columns)</p></li>
+<li><p><a class="reference internal" href="#optionquestion" title="optionquestion"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">optionquestion</span></code></a>: A single choice question with a number of answers</p></li>
+<li><p><a class="reference internal" href="#optiongroup" title="optiongroup"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">optiongroup</span></code></a>: A list of single choice questions layed out in rows (or columns)</p></li>
+<li><p><a class="reference internal" href="#markgroup" title="markgroup"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">markgroup</span></code></a>: A list of range or mark questions layed out in rows (or columns)</p></li>
+</ul>
+<p>You should only use <code class="docutils literal notranslate"><span class="pre">\section{}</span></code> for structuring the document.</p>
+<div class="section" id="class-options">
+<h2>Class Options<a class="headerlink" href="#class-options" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Argument</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>sdaps_style</p></td>
+<td><p>The markings style to use. Either “code128”, “qr”  (default: code128)</p></td>
+</tr>
+<tr class="row-odd"><td><p>checkmode</p></td>
+<td><dl class="simple">
+<dt>The mode for checkbox recognition can be any of:</dt><dd><ul class="simple">
+<li><p><strong>checkcorrect</strong>: check to mark, fill to correct (unmark) (default)</p></li>
+<li><p><strong>check</strong>: check or fill to mark</p></li>
+<li><p><strong>fill</strong>: fill to mark</p></li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td><p>disable_recognition</p></td>
+<td><p>Disable all recognition related page markings. This must not be used
+when intending to ues the SDAPS program for optical mark recognition.
+An example use case would be creating a PDF form using the SDAPS
+LaTeX classes. (default: not set)</p></td>
+</tr>
+<tr class="row-odd"><td><p>twoside_barcode</p></td>
+<td><dl class="simple">
+<dt>Where to draw barcodes if in twoside/duplex mode:</dt><dd><ul class="simple">
+<li><p><strong>both</strong>: draw on front and back (default)</p></li>
+<li><p><strong>front</strong>: only draw on the front of the page</p></li>
+<li><p><strong>back</strong>: only draw on the back of the page</p></li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td><p>globalid</p></td>
+<td><p>A global identifier to be printed on the document (as barcode)</p></td>
+</tr>
+<tr class="row-odd"><td><p>globalidlabel</p></td>
+<td><p>The label for the barcode (only code128)</p></td>
+</tr>
+<tr class="row-even"><td><p>no_print_questionnaire_id</p></td>
+<td><p>Disable printing of questionnaire IDs</p></td>
+</tr>
+<tr class="row-odd"><td><p>print_questionnaire_id</p></td>
+<td><p>Enable printing of questionnaire IDs</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="general-macros-and-environments">
+<h2>General macros and environments<a class="headerlink" href="#general-macros-and-environments" title="Permalink to this headline">¶</a></h2>
+<dl class="tex environ">
+<dt id="questionnaire">
+<em class="property">\begin{</em><code class="sig-name descname">questionnaire</code><em class="property">}</em><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span></span><br/><span class="sig">  content
+</span><br/><em class="property">\end{</em><code class="sig-name descname">questionnaire</code><em class="property">}</em><a class="headerlink" href="#questionnaire" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><p><strong>noinfo</strong> – Suppress the generation of the standard information text</p>
+</dd>
+</dl>
+<p>This is the main environment. You should have exactly one of these
+environments containing the entire document.</p>
+</dd></dl>
+
+<dl class="tex environ">
+<dt id="info">
+<em class="property">\begin{</em><code class="sig-name descname">info</code><em class="property">}</em><br/><span class="sig">  content
+</span><br/><em class="property">\end{</em><code class="sig-name descname">info</code><em class="property">}</em><a class="headerlink" href="#info" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple environment which places a line on top and below the content.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\addinfo">
+<code class="sig-name descname">\addinfo</code><span class="sig"> <span class="sig-paren">{</span><em>key</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>value</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\addinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attach further metadata to the SDAPS project. This may be used for any
+purpose and the information will also appear on the cover page when
+generating a report using the main SDAPS program.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdapsinfo">
+<code class="sig-name descname">\sdapsinfo</code><a class="headerlink" href="#\sdapsinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the instruction text that is printed at the top of the page
+unless the <cite>noinfo</cite> keyword argument is given to <a class="reference internal" href="#questionnaire" title="questionnaire"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">questionnaire</span></code></a>.</p>
+<p>Place into a <a class="reference internal" href="#info" title="info"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">info</span></code></a> block to get the same visual appearance as the
+default information text.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdapspagemark">
+<code class="sig-name descname">\sdapspagemark</code><a class="headerlink" href="#\sdapspagemark" title="Permalink to this definition">¶</a></dt>
+<dd><p>This macro must be executed once for every page. By default it is placed
+into the center footer and as such should not be executed unless the footer
+is modified.</p>
+<p>While this command is provided, use it at your own risk. No guarantees are
+made on how the class uses this macro internally. If you use it, you need
+to verify the behaviour whenever the class is updated and ensure that
+everything is functioning appropriately. In particular, this macro must not
+be executed twice per page.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="question-related-macros">
+<h2>Question related macros<a class="headerlink" href="#question-related-macros" title="Permalink to this headline">¶</a></h2>
+<dl class="tex macro">
+<dt id="\checkbox">
+<code class="sig-name descname">\checkbox</code><span class="sig"> <em>*</em></span><a class="headerlink" href="#\checkbox" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>*</strong> – If given, a single choice checkbox is shown instead of a multi choice.</p>
+</dd>
+</dl>
+<p>Shows an unchecked checkbox for demonstration purposes.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\checkedbox">
+<code class="sig-name descname">\checkedbox</code><span class="sig"> <em>*</em></span><a class="headerlink" href="#\checkedbox" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>*</strong> – If given, a single choice checkbox is shown instead of a multi choice.</p>
+</dd>
+</dl>
+<p>Shows a checked checkbox for demonstration purposes.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\filledbox">
+<code class="sig-name descname">\filledbox</code><span class="sig"> <em>*</em></span><a class="headerlink" href="#\filledbox" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>*</strong> – If given, a single choice checkbox is shown instead of a multi choice.</p>
+</dd>
+</dl>
+<p>Shows a filled checkbox for demonstration purposes.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\correctedbox">
+<code class="sig-name descname">\correctedbox</code><span class="sig"> <em>*</em></span><a class="headerlink" href="#\correctedbox" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>*</strong> – If given, a single choice checkbox is shown instead of a multi choice.</p>
+</dd>
+</dl>
+<p>Shows a filled and checked checkbox for demonstration purposes.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\singlemark">
+<code class="sig-name descname">\singlemark</code><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>question</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>lower</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>upper</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\singlemark" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple “mark” question, i.e. a range. The command does not currently allow adding
+an alternate answer in a way similar to the markgroup or rangearray environments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>question</strong> – The question text</p></li>
+<li><p><strong>lower</strong> – The text for the lower label</p></li>
+<li><p><strong>upper</strong> – The text for the upper label</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>var</strong> – The variable for the question (to be appended to context).</p></li>
+<li><p><strong>count</strong> – The number of checkboxes (default: <code class="docutils literal notranslate"><span class="pre">markcheckboxcount</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-15" class="tab-code" name="tab-group-15" ><label for="tab-code-15" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-15" class="tab-rendering" name="tab-group-15" checked><label for="tab-rendering-15" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\singlemark</span><span class="nb">{</span>A range question<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}</span>
+<span class="k">\singlemark</span><span class="na">[count=6]</span><span class="nb">{</span>A range question with 6 answers<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}</span>
+<span class="k">\setcounter</span><span class="nb">{</span>markcheckboxcount<span class="nb">}{</span>7<span class="nb">}</span>
+<span class="k">\singlemark</span><span class="nb">{</span>A range question with 7 answers<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-b3d7aacf19c05aea886e6eb9b8a3eff001085a30.svg" alt="\singlemark{A range question}{lower}{upper}
+\singlemark[count=6]{A range question with 6 answers}{lower}{upper}
+\setcounter{markcheckboxcount}{7}
+\singlemark{A range question with 7 answers}{lower}{upper}" /></p>
+</div></div><p class="caption">Simplest form of a range question</p></div></dd></dl>
+
+<dl class="tex macro">
+<dt id="\singlemarkother">
+<code class="sig-name descname">\singlemarkother</code><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>question</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>lower</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>upper</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>other</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\singlemarkother" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <a class="reference internal" href="#\singlemark" title="\singlemark"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\singlemark</span></code></a> but also takes an alternative answer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>question</strong> – The question text</p></li>
+<li><p><strong>lower</strong> – The text for the lower label</p></li>
+<li><p><strong>upper</strong> – The text for the upper label</p></li>
+<li><p><strong>other</strong> – The text for the other label</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>var</strong> – The variable for the question (to be appended to context).</p></li>
+<li><p><strong>count</strong> – The number of checkboxes (default: <code class="docutils literal notranslate"><span class="pre">markcheckboxcount</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-16" class="tab-code" name="tab-group-16" ><label for="tab-code-16" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-16" class="tab-rendering" name="tab-group-16" checked><label for="tab-rendering-16" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\singlemarkother</span><span class="nb">{</span>A range question<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}{</span>other<span class="nb">}</span>
+<span class="k">\singlemarkother</span><span class="na">[count=6]</span><span class="nb">{</span>A range question with 6 answers<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}{</span>other<span class="nb">}</span>
+<span class="k">\setcounter</span><span class="nb">{</span>markcheckboxcount<span class="nb">}{</span>7<span class="nb">}</span>
+<span class="k">\singlemarkother</span><span class="nb">{</span>A range question with 7 answers<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}{</span>other<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-0af490a3ed080fa7140be542f0aa6ef6566a7680.svg" alt="\singlemarkother{A range question}{lower}{upper}{other}
+\singlemarkother[count=6]{A range question with 6 answers}{lower}{upper}{other}
+\setcounter{markcheckboxcount}{7}
+\singlemarkother{A range question with 7 answers}{lower}{upper}{other}" /></p>
+</div></div><p class="caption">A range question with an alternative answer</p></div></dd></dl>
+
+<dl class="tex macro">
+<dt id="\textbox">
+<code class="sig-name descname">\textbox</code><span class="sig"> <em>*</em> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>height</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>question</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\textbox" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*</strong> – If given, the textbox is scalable in height</p></li>
+<li><p><strong>height</strong> – The height of the text including a unit. If the <cite>*</cite> parameter is given, then this is the minimal height only</p></li>
+<li><p><strong>question</strong> – The question text, may not contain fragile content</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>text</strong> – The question text for the metadata. Fragile content is currently <em>not</em> supported.</p></li>
+<li><p><strong>var</strong> – The variable name for this textbox (to be appended to context)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p><a class="reference internal" href="#\textbox" title="\textbox"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\textbox</span></code></a> should be able to handle an optional keyword
+argument and then allow the question text to include fragile content.</p>
+</div>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-17" class="tab-code" name="tab-group-17" ><label for="tab-code-17" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-17" class="tab-rendering" name="tab-group-17" checked><label for="tab-rendering-17" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\textbox*</span><span class="nb">{</span>2cm<span class="nb">}{</span>A textbox which is 2cm high, not scaling up to the page size<span class="nb">}</span>
+<span class="k">\textbox</span><span class="nb">{</span>2cm<span class="nb">}{</span>A textbox which is at least 2cm high and can scale up to the page size<span class="nb">}</span>
+<span class="k">\textbox</span><span class="nb">{</span>10cm<span class="nb">}{</span>A textbox which is at least 10cm high sharing the rest of the page with the previous one<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-a81d3fed988dc6e4d07f6553a88bb029c2a68ab5.svg" alt="\textbox*{2cm}{A textbox which is 2cm high, not scaling up to the page size}
+\textbox{2cm}{A textbox which is at least 2cm high and can scale up to the page size}
+\textbox{10cm}{A textbox which is at least 10cm high sharing the rest of the page with the previous one}" /></p>
+</div></div><p class="caption">A textbox</p></div></dd></dl>
+
+<p>Note that the SDAPS class supports rather fancy textbox handling including textboxes around
+other content!</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The following examples are missing code for proper use! They mostly exist to show off the features but are not quite ready for easy consumption.</p>
+</div>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-18" class="tab-code" name="tab-group-18" ><label for="tab-code-18" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-18" class="tab-rendering" name="tab-group-18" checked><label for="tab-rendering-18" class="label-rendering">Result</label><input type="radio" id="tab-metadata-18" class="tab-metadata" name="tab-group-18"><label for="tab-metadata-18" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="c">% Prepare some stuff so that we can access the specialized commands more easily.</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\let\sdapshbox\sdaps</span><span class="nb">_</span>textbox<span class="nb">_</span>hbox:nnn
+<span class="k">\let\sdapshstretch\sdaps</span><span class="nb">_</span>textbox<span class="nb">_</span>hstretch:nnnnn
+<span class="k">\let\sdapsvbox\sdaps</span><span class="nb">_</span>textbox<span class="nb">_</span>vbox:nnnn
+<span class="k">\ExplSyntaxOff</span>
+
+<span class="k">\sdapshbox</span> <span class="nb">{}</span> <span class="nb">{</span>3bp<span class="nb">}</span> <span class="nb">{</span> This hbox <span class="nb">}</span> should have the same baseline. And one can see that a hbox on the left edge
+is <span class="k">\sdapshbox</span><span class="nb">{}{</span>3bp<span class="nb">}{</span> nicely aligned <span class="nb">}</span> with the edge. And some in a formula: <span class="s">$</span><span class="nb"> f</span><span class="o">(</span><span class="nb">x</span><span class="o">)</span><span class="nb"> </span><span class="o">=</span><span class="nb"> </span><span class="nv">\frac</span><span class="nb">{</span><span class="m">1</span><span class="nb">}{c</span><span class="nv">\,\sdapshbox</span><span class="nb">{}{</span><span class="m">3</span><span class="nb">bp}{box}} </span><span class="nv">\sdapshstretch</span><span class="nb">{}{</span><span class="m">2</span><span class="nb">mm}{</span><span class="m">5</span><span class="nb">mm}{</span><span class="m">40</span><span class="nb">mm}{</span><span class="m">1</span><span class="nb">} </span><span class="s">$</span>
+
+See how even the horizontally stretching box in math mode works fine and fills up to the whole width!
+
+Some complex inline content:
+  <span class="k">\sdapsvbox</span> <span class="nb">{}</span> <span class="nb">{</span>0.6<span class="k">\linewidth</span><span class="nb">}</span> <span class="nb">{</span>3bp<span class="nb">}</span> <span class="nb">{</span>
+    <span class="k">\begin</span><span class="nb">{</span>tabularx<span class="nb">}{</span><span class="k">\linewidth</span><span class="nb">}{</span>l|l|X<span class="nb">}</span>
+      adsf  lkasjd lksj flkjsfd <span class="nb">&amp;</span> blub <span class="nb">&amp;</span> gah <span class="k">\\</span>
+      <span class="k">\hline</span>
+      asdf <span class="nb">&amp;</span> <span class="nb">&amp;</span> <span class="k">\\</span>
+    <span class="k">\end</span><span class="nb">{</span>tabularx<span class="nb">}</span>
+
+    This is a paragraph with more text. This is a paragraph with more text. This is a paragraph with more text.
+    This is a paragraph with more text. This is a paragraph with more text. This is a paragraph with more text.
+  <span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-7b5f67fcc26f98d4c44cf020d79590112811dccc.svg" alt="% Prepare some stuff so that we can access the specialized commands more easily.
+\ExplSyntaxOn
+\let\sdapshbox\sdaps_textbox_hbox:nnn
+\let\sdapshstretch\sdaps_textbox_hstretch:nnnnn
+\let\sdapsvbox\sdaps_textbox_vbox:nnnn
+\ExplSyntaxOff
+
+\sdapshbox {} {3bp} { This hbox } should have the same baseline. And one can see that a hbox on the left edge
+is \sdapshbox{}{3bp}{ nicely aligned } with the edge. And some in a formula: $ f(x) = \frac{1}{c\,\sdapshbox{}{3bp}{box}} \sdapshstretch{}{2mm}{5mm}{40mm}{1} $
+
+See how even the horizontally stretching box in math mode works fine and fills up to the whole width!
+
+Some complex inline content:
+  \sdapsvbox {} {0.6\linewidth} {3bp} {
+    \begin{tabularx}{\linewidth}{l|l|X}
+      adsf  lkasjd lksj flkjsfd &amp; blub &amp; gah \\
+      \hline
+      asdf &amp; &amp; \\
+    \end{tabularx}
+
+    This is a paragraph with more text. This is a paragraph with more text. This is a paragraph with more text.
+    This is a paragraph with more text. This is a paragraph with more text. This is a paragraph with more text.
+  }" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+</pre></div></div><p class="caption">Fancy textboxes, for real use additional metadata writing is required!</p></div></div></blockquote>
+<dl class="tex macro">
+<dt>
+<code class="sig-name descname">\addinfo</code><span class="sig"> <span class="sig-paren">{</span><em>key</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>value</em><span class="sig-paren">}</span></span></dt>
+<dd><p>Adds a bit of metadata. This metadata will for example appear on the cover page of the report.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – The key to set</p></li>
+<li><p><strong>value</strong> – The value to set the key to</p></li>
+</ul>
+</dd>
+</dl>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-19" class="tab-code" name="tab-group-19" ><label for="tab-code-19" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-19" class="tab-rendering" name="tab-group-19" checked><label for="tab-rendering-19" class="label-rendering">Result</label><input type="radio" id="tab-metadata-19" class="tab-metadata" name="tab-group-19"><label for="tab-metadata-19" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\addinfo</span><span class="nb">{</span>Key 1<span class="nb">}{</span>Value 1<span class="nb">}</span>
+<span class="k">\addinfo</span><span class="nb">{</span>Key 2<span class="nb">}{</span>Value 2<span class="nb">}</span>
+<span class="k">\addinfo</span><span class="nb">{</span>Key 3<span class="nb">}{</span>Value 3<span class="nb">}</span>
+<span class="k">\addinfo</span><span class="nb">{</span>Key 4<span class="nb">}{</span>Value 4<span class="nb">}</span>
+
+Almost empty document, look at the metadata to see what this is about.
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-5f42eed06d6b1410d331c26cd6ee76d40ce7129d.svg" alt="\addinfo{Key 1}{Value 1}
+\addinfo{Key 2}{Value 2}
+\addinfo{Key 3}{Value 3}
+\addinfo{Key 4}{Value 4}
+
+Almost empty document, look at the metadata to see what this is about." /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]Info-Key 1=Value 1
+[13]Info-Key 2=Value 2
+[14]Info-Key 3=Value 3
+[15]Info-Key 4=Value 4
+</pre></div></div><p class="caption">An example showing the generated metadata</p></div></dd></dl>
+
+</div>
+<div class="section" id="question-environments">
+<h2>Question Environments<a class="headerlink" href="#question-environments" title="Permalink to this headline">¶</a></h2>
+<dl class="tex environ">
+<dt id="choicequestion">
+<em class="property">\begin{</em><code class="sig-name descname">choicequestion</code><em class="property">}</em><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><br/><span class="sig">  content
+</span><br/><em class="property">\end{</em><code class="sig-name descname">choicequestion</code><em class="property">}</em><a class="headerlink" href="#choicequestion" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>text</strong> – Text of the choice question. Fragile content is currently <em>not</em> supported.</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cols</strong> – Number of columns</p></li>
+<li><p><strong>colsep</strong> – Spacing added on the left/right of every cell. This defaults to <cite>6pt</cite>.</p></li>
+<li><p><strong>rowsep</strong> – Extra distance between rows. This defaults to <cite>0pt</cite>.</p></li>
+<li><p><strong>var</strong> – Variable name for this question (to be appended to context).</p></li>
+<li><p><strong>text</strong> – Replacement text for metadata</p></li>
+<li><p><strong>type</strong> – the question type “multichoice” or “singlechoice”</p></li>
+<li><p><strong>multichoice</strong> – switch to multichoice “Choice” question mode</p></li>
+<li><p><strong>singlechoice</strong> – switch to singlechoice “Option” question mode</p></li>
+</ul>
+</dd>
+</dl>
+<p>The content should only contain <a class="reference internal" href="#\choiceitem" title="\choiceitem"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\choiceitem</span></code></a>, <a class="reference internal" href="#\choicemulticolitem" title="\choicemulticolitem"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\choicemulticolitem</span></code></a> and <a class="reference internal" href="#\choiceitemtext" title="\choiceitemtext"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\choiceitemtext</span></code></a>.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-20" class="tab-code" name="tab-group-20" ><label for="tab-code-20" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-20" class="tab-rendering" name="tab-group-20" checked><label for="tab-rendering-20" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>choicequestion<span class="nb">}</span>[cols=3]<span class="nb">{</span>This is a choice question<span class="nb">}</span>
+  <span class="k">\choiceitem</span><span class="nb">{</span>First choice<span class="nb">}</span>
+  <span class="k">\choicemulticolitem</span><span class="nb">{</span>2<span class="nb">}{</span>Second choice with a lot of text<span class="nb">}</span>
+  <span class="k">\choiceitemtext</span><span class="nb">{</span>1.2cm<span class="nb">}{</span>3<span class="nb">}{</span>Other:<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicequestion<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-1395f613e9b0d555d4a73f1f91e950f35c0c7fbf.svg" alt="\begin{choicequestion}[cols=3]{This is a choice question}
+  \choiceitem{First choice}
+  \choicemulticolitem{2}{Second choice with a lot of text}
+  \choiceitemtext{1.2cm}{3}{Other:}
+\end{choicequestion}" /></p>
+</div></div><p class="caption">A choicequestion</p></div><dl class="tex macro">
+<dt id="\choiceitem">
+<code class="sig-name descname">\choiceitem</code><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\choiceitem" title="Permalink to this definition">¶</a></dt>
+<dd><p>A possible choice in a <a class="reference internal" href="#choicequestion" title="choicequestion"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicequestion</span></code></a>. Will span exactly one column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>text</strong> – The text for the choice. Fragile content is currently <em>not</em> supported.</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>var</strong> – Variable name for this answer for multichoice (to be appended to context).</p></li>
+<li><p><strong>val</strong> – Value for this answer for singlechoice.</p></li>
+<li><p><strong>text</strong> – Replacement text for metadata.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\choicemulticolitem">
+<code class="sig-name descname">\choicemulticolitem</code><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>cols</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\choicemulticolitem" title="Permalink to this definition">¶</a></dt>
+<dd><p>A possible choice in a <a class="reference internal" href="#choicequestion" title="choicequestion"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicequestion</span></code></a>. Will span exactly <cite>cols</cite> columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cols</strong> – The number of columns to span.</p></li>
+<li><p><strong>text</strong> – The text for the choice. Fragile content is currently <em>not</em> supported.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>var</strong> – Variable name for this answer for multichoice (to be appended to context).</p></li>
+<li><p><strong>val</strong> – Value for this answer for singlechoice.</p></li>
+<li><p><strong>text</strong> – Replacement text for metadata.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\choiceitemtext">
+<code class="sig-name descname">\choiceitemtext</code><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>height</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>cols</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\choiceitemtext" title="Permalink to this definition">¶</a></dt>
+<dd><p>A possible freeform choice in a <a class="reference internal" href="#choicequestion" title="choicequestion"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicequestion</span></code></a>. The text field
+will be of height <cite>height</cite> and it will span exactly <cite>cols</cite> columns.</p>
+<p>The text item can currently only be used in multichoice environments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cols</strong> – The number of columns to span.</p></li>
+<li><p><strong>text</strong> – The text for the choice. Fragile content is currently <em>not</em> supported.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>var</strong> – Variable name for this question (to be appended to context).</p></li>
+<li><p><strong>text</strong> – Replacement text for metadata.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="tex environ">
+<dt id="optionquestion">
+<em class="property">\begin{</em><code class="sig-name descname">optionquestion</code><em class="property">}</em><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><br/><span class="sig">  content
+</span><br/><em class="property">\end{</em><code class="sig-name descname">optionquestion</code><em class="property">}</em><a class="headerlink" href="#optionquestion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <a class="reference internal" href="#choicequestion" title="choicequestion"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicequestion</span></code></a> which simply sets it into <code class="docutils literal notranslate"><span class="pre">singlechoice</span></code> mode by default.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-21" class="tab-code" name="tab-group-21" ><label for="tab-code-21" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-21" class="tab-rendering" name="tab-group-21" checked><label for="tab-rendering-21" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>optionquestion<span class="nb">}</span>[cols=3,singlechoice]<span class="nb">{</span>This is a single choice question<span class="nb">}</span>
+  <span class="k">\choiceitem</span><span class="nb">{</span>First choice<span class="nb">}</span>
+  <span class="k">\choicemulticolitem</span><span class="nb">{</span>2<span class="nb">}{</span>Second choice with a lot of text<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>optionquestion<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-140b633ca968d1f54a6223f2fa226fc8e59a05f6.svg" alt="\begin{optionquestion}[cols=3,singlechoice]{This is a single choice question}
+  \choiceitem{First choice}
+  \choicemulticolitem{2}{Second choice with a lot of text}
+\end{optionquestion}" /></p>
+</div></div><p class="caption">A choicequestion</p></div></dd></dl>
+
+<dl class="tex environ">
+<dt>
+<em class="property">\begin{</em><code class="sig-name descname">info</code><em class="property">}</em><br/><span class="sig">  content
+</span><br/><em class="property">\end{</em><code class="sig-name descname">info</code><em class="property">}</em></dt>
+<dd><p>A simple block to typeset important information differently.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-22" class="tab-code" name="tab-group-22" ><label for="tab-code-22" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-22" class="tab-rendering" name="tab-group-22" checked><label for="tab-rendering-22" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>info<span class="nb">}</span>
+  Just a block to write some information in, will have a line above and below.
+<span class="k">\end</span><span class="nb">{</span>info<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-faa44b67d89e6956ec791297e12883a9ddd31c6b.svg" alt="\begin{info}
+  Just a block to write some information in, will have a line above and below.
+\end{info}" /></p>
+</div></div><p class="caption">An info block</p></div></dd></dl>
+
+<dl class="tex environ">
+<dt id="markgroup">
+<em class="property">\begin{</em><code class="sig-name descname">markgroup</code><em class="property">}</em><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><br/><span class="sig">  content
+</span><br/><em class="property">\end{</em><code class="sig-name descname">markgroup</code><em class="property">}</em><a class="headerlink" href="#markgroup" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Common question for all subquestions. Fragile content is currently <em>not</em> supported</p></li>
+<li><p><strong>kwags</strong> – Same as <a class="reference internal" href="sdapslayout.html#rangearray" title="rangearray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">rangearray</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-23" class="tab-code" name="tab-group-23" ><label for="tab-code-23" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-23" class="tab-rendering" name="tab-group-23" checked><label for="tab-rendering-23" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>markgroup<span class="nb">}</span>[align=mygroupalignment]<span class="nb">{</span>A set of mark questions<span class="nb">}</span>
+  <span class="k">\markline</span><span class="nb">{</span>First question<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}</span>
+  <span class="k">\markline</span><span class="nb">{</span>Second question<span class="nb">}{</span>lower 2<span class="nb">}{</span>upper 2<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>markgroup<span class="nb">}</span>
+
+<span class="k">\begin</span><span class="nb">{</span>markgroup<span class="nb">}</span>[align=mygroupalignment]<span class="nb">{</span>Another set of mark questions which is aligned to the first<span class="nb">}</span>
+  <span class="k">\markline</span><span class="nb">{</span>First question<span class="nb">}{</span>a<span class="nb">}{</span>c<span class="nb">}</span>
+  <span class="k">\markline</span><span class="nb">{</span>Second question<span class="nb">}{</span>b<span class="nb">}{</span>d<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>markgroup<span class="nb">}</span>
+
+<span class="k">\begin</span><span class="nb">{</span>markgroup<span class="nb">}</span>[other]<span class="nb">{</span>Another further set of questions with an alternative answer<span class="nb">}</span>
+  <span class="k">\markline</span><span class="nb">{</span>First question<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}{</span>other<span class="nb">}</span>
+  <span class="k">\markline</span><span class="nb">{</span>Second question<span class="nb">}{</span>a<span class="nb">}{</span>b<span class="nb">}{</span>c<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>markgroup<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-45058fe18d19b32583523bb2185816768f37ddb9.svg" alt="\begin{markgroup}[align=mygroupalignment]{A set of mark questions}
+  \markline{First question}{lower}{upper}
+  \markline{Second question}{lower 2}{upper 2}
+\end{markgroup}
+
+\begin{markgroup}[align=mygroupalignment]{Another set of mark questions which is aligned to the first}
+  \markline{First question}{a}{c}
+  \markline{Second question}{b}{d}
+\end{markgroup}
+
+\begin{markgroup}[other]{Another further set of questions with an alternative answer}
+  \markline{First question}{lower}{upper}{other}
+  \markline{Second question}{a}{b}{c}
+\end{markgroup}" /></p>
+</div></div><p class="caption">A group of range questions (used to be called mark)</p></div></dd></dl>
+
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>The spacing in the “other” case is not sane, we need a larger default spacing in general.</p>
+</div>
+<dl class="tex environ">
+<dt id="choicegroup">
+<em class="property">\begin{</em><code class="sig-name descname">choicegroup</code><em class="property">}</em><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><br/><span class="sig">  content
+</span><br/><em class="property">\end{</em><code class="sig-name descname">choicegroup</code><em class="property">}</em><a class="headerlink" href="#choicegroup" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Common question for all subquestions. Fragile content is currently <em>not</em> supported</p></li>
+<li><p><strong>kwags</strong> – Same as <a class="reference internal" href="sdapslayout.html#choicearray" title="choicearray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicearray</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The choicegroup environment is an alias for the <a class="reference internal" href="sdapslayout.html#choicearray" title="choicearray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicearray</span></code></a> environment. At this
+point the only difference is that the choicegroup environment correctly prints the
+header and that it creates the <a class="reference internal" href="#\groupaddchoice" title="\groupaddchoice"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\groupaddchoice</span></code></a> and <a class="reference internal" href="#\choiceline" title="\choiceline"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\choiceline</span></code></a> aliases.</p>
+</div>
+<dl class="tex macro">
+<dt id="\choice">
+<code class="sig-name descname">\choice</code><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\choice" title="Permalink to this definition">¶</a></dt>
+<dd><p>A possible choice inside inside the group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>text</strong> – The choices (header) text.</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>text</strong> – A replacement text for the metadata, if set fragile content is
+permitted inside the <cite>text</cite> argument.</p></li>
+<li><p><strong>var</strong> – Variable name for this answer for multichoice (to be appended to context).</p></li>
+<li><p><strong>val</strong> – Value for this answer for singlechoice.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\groupaddchoice">
+<code class="sig-name descname">\groupaddchoice</code><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\groupaddchoice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <a class="reference internal" href="#\choice" title="\choice"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\choice</span></code></a> for compatibility.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\question">
+<code class="sig-name descname">\question</code><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\question" title="Permalink to this definition">¶</a></dt>
+<dd><p>A single question inside the group. All choices need to be defined earlier using <a class="reference internal" href="#\choice" title="\choice"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\choice</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>text</strong> – Question text.</p>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>text</strong> – A replacement text for the metadata, if set fragile content is
+permitted inside the <cite>text</cite> argument.</p></li>
+<li><p><strong>var</strong> – Variable name for this question (to be appended to context).</p></li>
+<li><p><strong>range</strong> – Specify which chekcboxes to show. Needs ot be given an <strong>in order list</strong> of variables (multichoice) or values (singlechoice) also allowing specifying <cite>…</cite> for any amount of items.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\choiceline">
+<code class="sig-name descname">\choiceline</code><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\choiceline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <a class="reference internal" href="#\question" title="\question"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\question</span></code></a> for compatibility.</p>
+</dd></dl>
+
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-24" class="tab-code" name="tab-group-24" ><label for="tab-code-24" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-24" class="tab-rendering" name="tab-group-24" checked><label for="tab-rendering-24" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}{</span>A group of questions<span class="nb">}</span>
+  <span class="k">\choice</span><span class="nb">{</span>Choice 1<span class="nb">}</span>
+  <span class="k">\choice</span><span class="nb">{</span>Choice 2<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question one<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question two<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+
+<span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}</span>[align=something]<span class="nb">{</span>Another question<span class="nb">}</span>
+  <span class="k">\choice</span><span class="nb">{</span>Some choice 1<span class="nb">}</span>
+  <span class="k">\choice</span><span class="nb">{</span>Some choice 2<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question one<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question two<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+
+<span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}</span>[align=something]<span class="nb">{</span>Another group of questions which is automatically aligned to the previous<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>1<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>2<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Question one<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Question two<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-c561b59ed06e4787b2c57421bf3566668f4f99ce.svg" alt="\begin{choicegroup}{A group of questions}
+  \choice{Choice 1}
+  \choice{Choice 2}
+  \question{Question one}
+  \question{Question two}
+\end{choicegroup}
+
+\begin{choicegroup}[align=something]{Another question}
+  \choice{Some choice 1}
+  \choice{Some choice 2}
+  \question{Question one}
+  \question{Question two}
+\end{choicegroup}
+
+\begin{choicegroup}[align=something]{Another group of questions which is automatically aligned to the previous}
+  \groupaddchoice{1}
+  \groupaddchoice{2}
+  \choiceline{Question one}
+  \choiceline{Question two}
+\end{choicegroup}" /></p>
+</div></div><p class="caption">Example of a choicegroup environment</p></div><div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-25" class="tab-code" name="tab-group-25" ><label for="tab-code-25" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-25" class="tab-rendering" name="tab-group-25" checked><label for="tab-rendering-25" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}</span>[layouter=rotated,vertical]<span class="nb">{</span>A group of questions<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>Choice 1<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>Choice 2<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Question one<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Question two<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+
+<span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}</span>[layouter=rotated,angle=45,vertical]<span class="nb">{</span>A group of questions with a smaller angle<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>Choice 1<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>Choice 2<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Question one<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Question two<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-8db1f62ade3508f33e8dc6385a9b25d2067ff275.svg" alt="\begin{choicegroup}[layouter=rotated,vertical]{A group of questions}
+  \groupaddchoice{Choice 1}
+  \groupaddchoice{Choice 2}
+  \choiceline{Question one}
+  \choiceline{Question two}
+\end{choicegroup}
+
+\begin{choicegroup}[layouter=rotated,angle=45,vertical]{A group of questions with a smaller angle}
+  \groupaddchoice{Choice 1}
+  \groupaddchoice{Choice 2}
+  \choiceline{Question one}
+  \choiceline{Question two}
+\end{choicegroup}" /></p>
+</div></div><p class="caption">Example of a vertical choicegroup environment also showing the &quot;rotated&quot; header layouter</p></div><div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-26" class="tab-code" name="tab-group-26" ><label for="tab-code-26" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-26" class="tab-rendering" name="tab-group-26" checked><label for="tab-rendering-26" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}</span>[colsep=2pt,singlechoice]<span class="nb">{</span>Please select a date<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>1<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>2<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>3<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>4<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>5<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>6<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>7<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>8<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>9<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>10<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>11<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>12<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>13<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>14<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>15<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>16<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>17<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>18<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>19<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>20<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>21<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>22<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>23<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>24<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>25<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>26<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>27<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>28<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>29<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>30<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>31<span class="nb">}</span>
+  <span class="c">% Note that the automatically assigned values match the choices.</span>
+  <span class="k">\question</span><span class="nb">{</span>Day<span class="nb">}</span>
+  <span class="k">\question</span><span class="na">[range={...,12}]</span><span class="nb">{</span>Month<span class="nb">}</span>
+  <span class="k">\question</span><span class="na">[range={2,5,...,9,28,...}]</span><span class="nb">{</span>Range<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-7f0603689480961b8d497b11f52a0f5c96f37a09.svg" alt="\begin{choicegroup}[colsep=2pt,singlechoice]{Please select a date}
+  \groupaddchoice{1}
+  \groupaddchoice{2}
+  \groupaddchoice{3}
+  \groupaddchoice{4}
+  \groupaddchoice{5}
+  \groupaddchoice{6}
+  \groupaddchoice{7}
+  \groupaddchoice{8}
+  \groupaddchoice{9}
+  \groupaddchoice{10}
+  \groupaddchoice{11}
+  \groupaddchoice{12}
+  \groupaddchoice{13}
+  \groupaddchoice{14}
+  \groupaddchoice{15}
+  \groupaddchoice{16}
+  \groupaddchoice{17}
+  \groupaddchoice{18}
+  \groupaddchoice{19}
+  \groupaddchoice{20}
+  \groupaddchoice{21}
+  \groupaddchoice{22}
+  \groupaddchoice{23}
+  \groupaddchoice{24}
+  \groupaddchoice{25}
+  \groupaddchoice{26}
+  \groupaddchoice{27}
+  \groupaddchoice{28}
+  \groupaddchoice{29}
+  \groupaddchoice{30}
+  \groupaddchoice{31}
+  % Note that the automatically assigned values match the choices.
+  \question{Day}
+  \question[range={...,12}]{Month}
+  \question[range={2,5,...,9,28,...}]{Range}
+\end{choicegroup}" /></p>
+</div></div><p class="caption">Example of choice filtering</p></div></dd></dl>
+
+<dl class="tex environ">
+<dt id="optiongroup">
+<em class="property">\begin{</em><code class="sig-name descname">optiongroup</code><em class="property">}</em><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><br/><span class="sig">  content
+</span><br/><em class="property">\end{</em><code class="sig-name descname">optiongroup</code><em class="property">}</em><a class="headerlink" href="#optiongroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <a class="reference internal" href="#choicegroup" title="choicegroup"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicegroup</span></code></a> which simply sets it into <code class="docutils literal notranslate"><span class="pre">singlechoice</span></code> mode by default.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-27" class="tab-code" name="tab-group-27" ><label for="tab-code-27" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-27" class="tab-rendering" name="tab-group-27" checked><label for="tab-rendering-27" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>optiongroup<span class="nb">}{</span>A group of questions<span class="nb">}</span>
+  <span class="k">\choice</span><span class="nb">{</span>Choice 1<span class="nb">}</span>
+  <span class="k">\choice</span><span class="nb">{</span>Choice 2<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question one<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question two<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>optiongroup<span class="nb">}</span>
+
+<span class="k">\begin</span><span class="nb">{</span>optiongroup<span class="nb">}</span>[align=something]<span class="nb">{</span>Another question<span class="nb">}</span>
+  <span class="k">\choice</span><span class="nb">{</span>Some choice 1<span class="nb">}</span>
+  <span class="k">\choice</span><span class="nb">{</span>Some choice 2<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question one<span class="nb">}</span>
+  <span class="k">\question</span><span class="nb">{</span>Question two<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>optiongroup<span class="nb">}</span>
+
+<span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}</span>[align=something,singlechoice]<span class="nb">{</span>Another group of questions which is automatically aligned to the previous<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>1<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>2<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Question one<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Question two<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-7e1e43f790675c82f7e2b5065f9650fd709e6f3b.svg" alt="\begin{optiongroup}{A group of questions}
+  \choice{Choice 1}
+  \choice{Choice 2}
+  \question{Question one}
+  \question{Question two}
+\end{optiongroup}
+
+\begin{optiongroup}[align=something]{Another question}
+  \choice{Some choice 1}
+  \choice{Some choice 2}
+  \question{Question one}
+  \question{Question two}
+\end{optiongroup}
+
+\begin{choicegroup}[align=something,singlechoice]{Another group of questions which is automatically aligned to the previous}
+  \groupaddchoice{1}
+  \groupaddchoice{2}
+  \choiceline{Question one}
+  \choiceline{Question two}
+\end{choicegroup}" /></p>
+</div></div><p class="caption">Example of a choicegroup environment</p></div></dd></dl>
+
+</div>
+<div class="section" id="complex-typesetting-and-images">
+<h2>Complex typesetting and images<a class="headerlink" href="#complex-typesetting-and-images" title="Permalink to this headline">¶</a></h2>
+<p>SDAPS allows replacing the text which is exported for the metadata (i.e. what will show
+up in the report). This can make sense for convenience reasons, if shortened answers
+are sufficient for e.g. the report, but it also allows inserting complicated LaTeX
+expressions into the document without having to fear any issues.</p>
+<p>Apart from the advantage of having a better string in the report or similar you
+also get the advantage that more TeX commands can be used in the document. Usually
+environments like <cite>verbatim</cite> or <cite>array</cite> would not work inside an SDAPS environment,
+but they will work if a replacement text is specified.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-28" class="tab-code" name="tab-group-28" ><label for="tab-code-28" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-28" class="tab-rendering" name="tab-group-28" checked><label for="tab-rendering-28" class="label-rendering">Result</label><input type="radio" id="tab-metadata-28" class="tab-metadata" name="tab-group-28"><label for="tab-metadata-28" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}</span>[layouter=rotated]<span class="nb">{</span>A group of questions<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="na">[text=choice 1]</span><span class="nb">{</span><span class="s">$</span><span class="nv">\left</span><span class="o">(</span><span class="nb"> </span><span class="nv">\begin</span><span class="nb">{array}{cc} a &amp; b </span><span class="nv">\\</span><span class="nb"> c &amp; d </span><span class="nv">\end</span><span class="nb">{array} </span><span class="nv">\right</span><span class="o">)</span><span class="nb"> </span><span class="o">+</span><span class="nb"> </span><span class="nv">\log</span><span class="nb">{</span><span class="nv">\alpha</span><span class="nb">}</span><span class="s">$</span><span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="na">[text=choice 2]</span><span class="nb">{</span>Choice 2 -- <span class="k">\LaTeX</span><span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="na">[text=question 1]</span><span class="nb">{</span><span class="k">\verb</span><span class="nb">^</span>Inline verbatim<span class="nb">^}</span>
+  <span class="k">\choiceline</span><span class="na">[text=question 2]</span><span class="nb">{</span>
+    <span class="k">\begin</span><span class="nb">{</span>tabularx<span class="nb">}{</span>0.5<span class="k">\linewidth</span><span class="nb">}{</span>llX<span class="nb">}</span>
+      cell 1 <span class="nb">&amp;</span> cell 2 <span class="nb">&amp;</span> tabularx over half the page width fit used as the question text. This cell is the X column filling the rest of the half page.
+    <span class="k">\end</span><span class="nb">{</span>tabularx<span class="nb">}</span><span class="c">%</span>
+  <span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="na">[text=question 3]</span><span class="nb">{</span>
+<span class="k">\begin</span><span class="nb">{</span>verbatim<span class="nb">}</span>Even such things as verbatim environments work.
+However, verbatim does have some weird spacing issues (which can be partially
+solved by wrapping it into a vbox or similar).
+<span class="k">\end</span><span class="nb">{</span>verbatim<span class="nb">}</span>
+  <span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Question 4 ends up unmodified in the metadata<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-33cc9f194559178b6d8f6e8d6f092bcf0c81faf3.svg" alt="\begin{choicegroup}[layouter=rotated]{A group of questions}
+  \groupaddchoice[text=choice 1]{$\left( \begin{array}{cc} a &amp; b \\ c &amp; d \end{array} \right) + \log{\alpha}$}
+  \groupaddchoice[text=choice 2]{Choice 2 -- \LaTeX}
+  \choiceline[text=question 1]{\verb^Inline verbatim^}
+  \choiceline[text=question 2]{
+    \begin{tabularx}{0.5\linewidth}{llX}
+      cell 1 &amp; cell 2 &amp; tabularx over half the page width fit used as the question text. This cell is the X column filling the rest of the half page.
+    \end{tabularx}%
+  }
+  \choiceline[text=question 3]{
+\begin{verbatim}Even such things as verbatim environments work.
+However, verbatim does have some weird spacing issues (which can be partially
+solved by wrapping it into a vbox or similar).
+\end{verbatim}
+  }
+  \choiceline{Question 4 ends up unmodified in the metadata}
+\end{choicegroup}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]QObject-Head=1. A group of questions
+[13]QObject-Choice=1.1. question 1
+[14]Answer[1.1]=choice 1
+[15]Answer[1.1]=choice 2
+[16]Box[1.1]=Checkbox,0,487.78635pt,623.35944pt,9.95845pt,9.95845pt,box,1.00374pt,1_1_1,1
+[17]Box[1.1]=Checkbox,0,522.22534pt,623.35944pt,9.95845pt,9.95845pt,box,1.00374pt,1_1_2,2
+[18]Variable[1.1]=1_1
+[19]QObject-Choice=1.2. question 2
+[20]Answer[1.2]=choice 1
+[21]Answer[1.2]=choice 2
+[22]Box[1.2]=Checkbox,0,487.78635pt,591.21346pt,9.95845pt,9.95845pt,box,1.00374pt,1_2_1,1
+[23]Box[1.2]=Checkbox,0,522.22534pt,591.21346pt,9.95845pt,9.95845pt,box,1.00374pt,1_2_2,2
+[24]Variable[1.2]=1_2
+[25]QObject-Choice=1.3. question 3
+[26]Answer[1.3]=choice 1
+[27]Answer[1.3]=choice 2
+[28]Box[1.3]=Checkbox,0,487.78635pt,529.00714pt,9.95845pt,9.95845pt,box,1.00374pt,1_3_1,1
+[29]Box[1.3]=Checkbox,0,522.22534pt,529.00714pt,9.95845pt,9.95845pt,box,1.00374pt,1_3_2,2
+[30]Variable[1.3]=1_3
+[31]QObject-Choice=1.4. Question 4 ends up unmodified in the metadata
+[32]Answer[1.4]=choice 1
+[33]Answer[1.4]=choice 2
+[34]Box[1.4]=Checkbox,0,487.78635pt,486.20479pt,9.95845pt,9.95845pt,box,1.00374pt,1_4_1,1
+[35]Box[1.4]=Checkbox,0,522.22534pt,486.20479pt,9.95845pt,9.95845pt,box,1.00374pt,1_4_2,2
+[36]Variable[1.4]=1_4
+[37]Variable[1]=1
+</pre></div></div><p class="caption">Example of using fragile content together with metadata text replacement</p></div></div>
+<div class="section" id="variables">
+<h2>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h2>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-29" class="tab-code" name="tab-group-29" ><label for="tab-code-29" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-29" class="tab-rendering" name="tab-group-29" checked><label for="tab-rendering-29" class="label-rendering">Result</label><input type="radio" id="tab-metadata-29" class="tab-metadata" name="tab-group-29"><label for="tab-metadata-29" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}{</span>A group of questions<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="na">[var=alice]</span><span class="nb">{</span>Choice &quot;alice&quot;<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="na">[var=eve]</span><span class="nb">{</span>Choice &quot;eve&quot;<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>Unnamed choice<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="na">[var=adam]</span><span class="nb">{</span>Question &quot;adam&quot;<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="na">[var=bob]</span><span class="nb">{</span>Question &quot;bob&quot;<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Unnamed question<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+
+<span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}</span>[var=flower]<span class="nb">{</span>A group of questions with variable &quot;flower&quot;<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="na">[var=alice]</span><span class="nb">{</span>Choice &quot;alice&quot;<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="na">[var=eve]</span><span class="nb">{</span>Choice &quot;eve&quot;<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="nb">{</span>Unnamed choice<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="na">[var=adam]</span><span class="nb">{</span>Question &quot;adam&quot;<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="na">[var=bob]</span><span class="nb">{</span>Question &quot;bob&quot;<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="nb">{</span>Unnamed question<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-55711c827f0e10a87ddf5733f44551a8d0723a99.svg" alt="\begin{choicegroup}{A group of questions}
+  \groupaddchoice[var=alice]{Choice &quot;alice&quot;}
+  \groupaddchoice[var=eve]{Choice &quot;eve&quot;}
+  \groupaddchoice{Unnamed choice}
+  \choiceline[var=adam]{Question &quot;adam&quot;}
+  \choiceline[var=bob]{Question &quot;bob&quot;}
+  \choiceline{Unnamed question}
+\end{choicegroup}
+
+\begin{choicegroup}[var=flower]{A group of questions with variable &quot;flower&quot;}
+  \groupaddchoice[var=alice]{Choice &quot;alice&quot;}
+  \groupaddchoice[var=eve]{Choice &quot;eve&quot;}
+  \groupaddchoice{Unnamed choice}
+  \choiceline[var=adam]{Question &quot;adam&quot;}
+  \choiceline[var=bob]{Question &quot;bob&quot;}
+  \choiceline{Unnamed question}
+\end{choicegroup}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]QObject-Head=1. A group of questions
+[13]QObject-Choice=1.1. Question &quot;adam&quot;
+[14]Answer[1.1]=Choice &quot;alice&quot;
+[15]Answer[1.1]=Choice &quot;eve&quot;
+[16]Answer[1.1]=Unnamed choice
+[17]Box[1.1]=Checkbox,0,354.78316pt,699.3666pt,9.95845pt,9.95845pt,box,1.00374pt,adam_alice,1
+[18]Box[1.1]=Checkbox,0,431.50972pt,699.3666pt,9.95845pt,9.95845pt,box,1.00374pt,adam_eve,2
+[19]Box[1.1]=Checkbox,0,513.3727pt,699.3666pt,9.95845pt,9.95845pt,box,1.00374pt,adam_3,3
+[20]Variable[1.1]=adam
+[21]QObject-Choice=1.2. Question &quot;bob&quot;
+[22]Answer[1.2]=Choice &quot;alice&quot;
+[23]Answer[1.2]=Choice &quot;eve&quot;
+[24]Answer[1.2]=Unnamed choice
+[25]Box[1.2]=Checkbox,0,354.78316pt,685.76659pt,9.95845pt,9.95845pt,box,1.00374pt,bob_alice,1
+[26]Box[1.2]=Checkbox,0,431.50972pt,685.76659pt,9.95845pt,9.95845pt,box,1.00374pt,bob_eve,2
+[27]Box[1.2]=Checkbox,0,513.3727pt,685.76659pt,9.95845pt,9.95845pt,box,1.00374pt,bob_3,3
+[28]Variable[1.2]=bob
+[29]QObject-Choice=1.3. Unnamed question
+[30]Answer[1.3]=Choice &quot;alice&quot;
+[31]Answer[1.3]=Choice &quot;eve&quot;
+[32]Answer[1.3]=Unnamed choice
+[33]Box[1.3]=Checkbox,0,354.78316pt,672.16658pt,9.95845pt,9.95845pt,box,1.00374pt,1_3_alice,1
+[34]Box[1.3]=Checkbox,0,431.50972pt,672.16658pt,9.95845pt,9.95845pt,box,1.00374pt,1_3_eve,2
+[35]Box[1.3]=Checkbox,0,513.3727pt,672.16658pt,9.95845pt,9.95845pt,box,1.00374pt,1_3_3,3
+[36]Variable[1.3]=1_3
+[37]Variable[1]=1
+[38]QObject-Head=2. A group of questions with variable &quot;flower&quot;
+[39]QObject-Choice=2.1. Question &quot;adam&quot;
+[40]Answer[2.1]=Choice &quot;alice&quot;
+[41]Answer[2.1]=Choice &quot;eve&quot;
+[42]Answer[2.1]=Unnamed choice
+[43]Box[2.1]=Checkbox,0,354.78316pt,624.29645pt,9.95845pt,9.95845pt,box,1.00374pt,flower_adam_alice,1
+[44]Box[2.1]=Checkbox,0,431.50972pt,624.29645pt,9.95845pt,9.95845pt,box,1.00374pt,flower_adam_eve,2
+[45]Box[2.1]=Checkbox,0,513.3727pt,624.29645pt,9.95845pt,9.95845pt,box,1.00374pt,flower_adam_3,3
+[46]Variable[2.1]=flower_adam
+[47]QObject-Choice=2.2. Question &quot;bob&quot;
+[48]Answer[2.2]=Choice &quot;alice&quot;
+[49]Answer[2.2]=Choice &quot;eve&quot;
+[50]Answer[2.2]=Unnamed choice
+[51]Box[2.2]=Checkbox,0,354.78316pt,610.69644pt,9.95845pt,9.95845pt,box,1.00374pt,flower_bob_alice,1
+[52]Box[2.2]=Checkbox,0,431.50972pt,610.69644pt,9.95845pt,9.95845pt,box,1.00374pt,flower_bob_eve,2
+[53]Box[2.2]=Checkbox,0,513.3727pt,610.69644pt,9.95845pt,9.95845pt,box,1.00374pt,flower_bob_3,3
+[54]Variable[2.2]=flower_bob
+[55]QObject-Choice=2.3. Unnamed question
+[56]Answer[2.3]=Choice &quot;alice&quot;
+[57]Answer[2.3]=Choice &quot;eve&quot;
+[58]Answer[2.3]=Unnamed choice
+[59]Box[2.3]=Checkbox,0,354.78316pt,597.09644pt,9.95845pt,9.95845pt,box,1.00374pt,flower_3_alice,1
+[60]Box[2.3]=Checkbox,0,431.50972pt,597.09644pt,9.95845pt,9.95845pt,box,1.00374pt,flower_3_eve,2
+[61]Box[2.3]=Checkbox,0,513.3727pt,597.09644pt,9.95845pt,9.95845pt,box,1.00374pt,flower_3_3,3
+[62]Variable[2.3]=flower_3
+[63]Variable[2]=flower
+</pre></div></div><p class="caption">A choicegroup example using variables. Notice that the boxes in the metadata
+ have variables named e.g. &quot;flower_adam_alice&quot;. The first group of questions does
+ not have a common prefix. The second group of questions has the common &quot;flowerd&quot; prefix.</p></div><div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-30" class="tab-code" name="tab-group-30" ><label for="tab-code-30" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-30" class="tab-rendering" name="tab-group-30" checked><label for="tab-rendering-30" class="label-rendering">Result</label><input type="radio" id="tab-metadata-30" class="tab-metadata" name="tab-group-30"><label for="tab-metadata-30" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>markgroup<span class="nb">}{</span>A group of questions<span class="nb">}</span>
+  <span class="k">\markline</span><span class="na">[var=alice]</span><span class="nb">{</span>Question &quot;alice&quot;<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}</span>
+  <span class="k">\markline</span><span class="na">[var=bob]</span><span class="nb">{</span>Question &quot;bob&quot;<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}</span>
+  <span class="k">\markline</span><span class="nb">{</span>Unnamed question<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>markgroup<span class="nb">}</span>
+
+<span class="k">\begin</span><span class="nb">{</span>markgroup<span class="nb">}</span>[var=car]<span class="nb">{</span>A group of questions with variable &quot;car&quot;<span class="nb">}</span>
+  <span class="k">\markline</span><span class="na">[var=alice]</span><span class="nb">{</span>Question &quot;alice&quot;<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}</span>
+  <span class="k">\markline</span><span class="na">[var=bob]</span><span class="nb">{</span>Question &quot;bob&quot;<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}</span>
+  <span class="k">\markline</span><span class="nb">{</span>Unnamed question<span class="nb">}{</span>lower<span class="nb">}{</span>upper<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>markgroup<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-994d531070d44373a381c5d15bcfbe632c3ff224.svg" alt="\begin{markgroup}{A group of questions}
+  \markline[var=alice]{Question &quot;alice&quot;}{lower}{upper}
+  \markline[var=bob]{Question &quot;bob&quot;}{lower}{upper}
+  \markline{Unnamed question}{lower}{upper}
+\end{markgroup}
+
+\begin{markgroup}[var=car]{A group of questions with variable &quot;car&quot;}
+  \markline[var=alice]{Question &quot;alice&quot;}{lower}{upper}
+  \markline[var=bob]{Question &quot;bob&quot;}{lower}{upper}
+  \markline{Unnamed question}{lower}{upper}
+\end{markgroup}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]QObject-Head=1. A group of questions
+[13]QObject-Range=1.1. Question &quot;alice&quot;
+[14]Range-lower[1.1]=0,lower
+[15]Box[1.1]=Checkbox,0,424.49905pt,712.9666pt,9.95845pt,9.95845pt,ellipse,1.00374pt,alice_1,1
+[16]Box[1.1]=Checkbox,0,445.34537pt,712.9666pt,9.95845pt,9.95845pt,ellipse,1.00374pt,alice_2,2
+[17]Box[1.1]=Checkbox,0,466.19168pt,712.9666pt,9.95845pt,9.95845pt,ellipse,1.00374pt,alice_3,3
+[18]Box[1.1]=Checkbox,0,487.038pt,712.9666pt,9.95845pt,9.95845pt,ellipse,1.00374pt,alice_4,4
+[19]Box[1.1]=Checkbox,0,507.88431pt,712.9666pt,9.95845pt,9.95845pt,ellipse,1.00374pt,alice_5,5
+[20]Range-upper[1.1]=4,upper
+[21]Variable[1.1]=alice
+[22]QObject-Range=1.2. Question &quot;bob&quot;
+[23]Range-lower[1.2]=0,lower
+[24]Box[1.2]=Checkbox,0,424.49905pt,699.3666pt,9.95845pt,9.95845pt,ellipse,1.00374pt,bob_1,1
+[25]Box[1.2]=Checkbox,0,445.34537pt,699.3666pt,9.95845pt,9.95845pt,ellipse,1.00374pt,bob_2,2
+[26]Box[1.2]=Checkbox,0,466.19168pt,699.3666pt,9.95845pt,9.95845pt,ellipse,1.00374pt,bob_3,3
+[27]Box[1.2]=Checkbox,0,487.038pt,699.3666pt,9.95845pt,9.95845pt,ellipse,1.00374pt,bob_4,4
+[28]Box[1.2]=Checkbox,0,507.88431pt,699.3666pt,9.95845pt,9.95845pt,ellipse,1.00374pt,bob_5,5
+[29]Range-upper[1.2]=4,upper
+[30]Variable[1.2]=bob
+[31]QObject-Range=1.3. Unnamed question
+[32]Range-lower[1.3]=0,lower
+[33]Box[1.3]=Checkbox,0,424.49905pt,685.76659pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_3_1,1
+[34]Box[1.3]=Checkbox,0,445.34537pt,685.76659pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_3_2,2
+[35]Box[1.3]=Checkbox,0,466.19168pt,685.76659pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_3_3,3
+[36]Box[1.3]=Checkbox,0,487.038pt,685.76659pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_3_4,4
+[37]Box[1.3]=Checkbox,0,507.88431pt,685.76659pt,9.95845pt,9.95845pt,ellipse,1.00374pt,1_3_5,5
+[38]Range-upper[1.3]=4,upper
+[39]Variable[1.3]=1_3
+[40]Variable[1]=1
+[41]QObject-Head=2. A group of questions with variable &quot;car&quot;
+[42]QObject-Range=2.1. Question &quot;alice&quot;
+[43]Range-lower[2.1]=0,lower
+[44]Box[2.1]=Checkbox,0,424.49905pt,651.49646pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_alice_1,1
+[45]Box[2.1]=Checkbox,0,445.34537pt,651.49646pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_alice_2,2
+[46]Box[2.1]=Checkbox,0,466.19168pt,651.49646pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_alice_3,3
+[47]Box[2.1]=Checkbox,0,487.038pt,651.49646pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_alice_4,4
+[48]Box[2.1]=Checkbox,0,507.88431pt,651.49646pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_alice_5,5
+[49]Range-upper[2.1]=4,upper
+[50]Variable[2.1]=car_alice
+[51]QObject-Range=2.2. Question &quot;bob&quot;
+[52]Range-lower[2.2]=0,lower
+[53]Box[2.2]=Checkbox,0,424.49905pt,637.89645pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_bob_1,1
+[54]Box[2.2]=Checkbox,0,445.34537pt,637.89645pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_bob_2,2
+[55]Box[2.2]=Checkbox,0,466.19168pt,637.89645pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_bob_3,3
+[56]Box[2.2]=Checkbox,0,487.038pt,637.89645pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_bob_4,4
+[57]Box[2.2]=Checkbox,0,507.88431pt,637.89645pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_bob_5,5
+[58]Range-upper[2.2]=4,upper
+[59]Variable[2.2]=car_bob
+[60]QObject-Range=2.3. Unnamed question
+[61]Range-lower[2.3]=0,lower
+[62]Box[2.3]=Checkbox,0,424.49905pt,624.29645pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_3_1,1
+[63]Box[2.3]=Checkbox,0,445.34537pt,624.29645pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_3_2,2
+[64]Box[2.3]=Checkbox,0,466.19168pt,624.29645pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_3_3,3
+[65]Box[2.3]=Checkbox,0,487.038pt,624.29645pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_3_4,4
+[66]Box[2.3]=Checkbox,0,507.88431pt,624.29645pt,9.95845pt,9.95845pt,ellipse,1.00374pt,car_3_5,5
+[67]Range-upper[2.3]=4,upper
+[68]Variable[2.3]=car_3
+[69]Variable[2]=car
+</pre></div></div><p class="caption">A markgroup example using variables. The variable is e.g. &quot;car_alice&quot;
+ and the boxes have a value assigned to them. Grouping is handled as in the
+ previous case, adding the prefix when given.</p></div></div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">sdapsclassic class</a><ul>
+<li><a class="reference internal" href="#class-options">Class Options</a></li>
+<li><a class="reference internal" href="#general-macros-and-environments">General macros and environments</a></li>
+<li><a class="reference internal" href="#question-related-macros">Question related macros</a></li>
+<li><a class="reference internal" href="#question-environments">Question Environments</a></li>
+<li><a class="reference internal" href="#complex-typesetting-and-images">Complex typesetting and images</a></li>
+<li><a class="reference internal" href="#variables">Variables</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="customlayout.html"
+                        title="previous chapter">Creating custom layouts using base commands</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sdapslayout.html"
+                        title="next chapter">sdapslayout package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/sdapsclassic.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="sdapslayout.html" title="sdapslayout package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="customlayout.html" title="Creating custom layouts using base commands"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sdapsclassic class</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Benjamin Berg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

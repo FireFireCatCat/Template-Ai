@@ -1,0 +1,193 @@
+%-------------------------
+% Resume in LaTeX
+% Popular engineering-student CV, very widely forked as a starting point.
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{hyphenat}
+% latextemplates.com: upstream loads fontawesome (v4), whose icon glyphs
+% resolve through an unregistered system font family here and vanish
+% silently. fontawesome5's `fixed` compatibility mode remaps every \faXxx
+% name used below (faMobile, faAt, faLinkedinSquare, faGithub, faGlobe,
+% faMapMarker) onto real v5 glyphs.
+\usepackage[fixed]{fontawesome5}
+\input{glyphtounicode}
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generated pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeEducationHeading}[6]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+      \textit{\small#5} & \textit{\small #6} \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%---------- HEADING ----------
+
+\begin{center}
+    \textbf{\Huge \scshape Mert Yildirim} \\ \vspace{3pt}
+    \small
+    \faMobile \hspace{.5pt} \href{tel:905321234567}{+90 532 123 4567}
+    $|$
+    \faAt \hspace{.5pt} \href{mailto:mert.yildirim@example.com}{mert.yildirim@example.com}
+    $|$
+    \faLinkedin \hspace{.5pt} \href{https://www.linkedin.com/in/mertyildirim}{LinkedIn}
+    $|$
+    \faGithub \hspace{.5pt} \href{https://github.com/mertyildirim}{GitHub}
+    $|$
+    \faMapMarker \hspace{.5pt} Ankara, Turkey
+\end{center}
+
+%----------- EDUCATION -----------
+
+\section{Education}
+  \vspace{3pt}
+  \resumeSubHeadingListStart
+    \resumeEducationHeading
+      {Middle East Technical University}{Ankara, Turkey}
+      {B.Sc. in Computer Engineering; \textbf{GPA: 3.58/4.00}}{Sep 2019 \textbf{--} Jun 2023}
+      {Minor Degree in Mathematics; \textbf{GPA: 3.51/4.00}}{Oct 2021 \textbf{--} Jun 2023}
+  \resumeSubHeadingListEnd
+
+%----------- SKILLS -----------
+
+\section{Skills}
+  \vspace{2pt}
+  \resumeSubHeadingListStart
+    \small{\item{
+        \textbf{Languages:}{ C, C++, Python, Go, TypeScript, SQL} \\ \vspace{3pt}
+        \textbf{Technologies:}{ PostgreSQL, Redis, Docker, Kubernetes, gRPC, Kafka} \\ \vspace{3pt}
+    }}
+  \resumeSubHeadingListEnd
+
+%----------- EXPERIENCE -----------
+
+\section{Experience}
+  \vspace{3pt}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Getir}{Istanbul, Turkey}
+      {Backend Engineer}{Aug 2023 \textbf{--} Present, Full-time}
+        \resumeItemListStart
+            \resumeItem{Rebuilt the courier-dispatch matching service in Go, cutting median assignment latency from 900ms to 140ms during peak demand.}
+            \resumeItem{Introduced a Kafka-based event log for order-state transitions, replacing polling and eliminating a class of stale-status bugs reported by the driver app.}
+        \resumeItemListEnd
+
+    \resumeSubheading
+      {TUBITAK B\.ILGEM}{Ankara, Turkey}
+      {Software Engineering Intern}{Jun 2022 \textbf{--} Aug 2022, Internship}
+        \resumeItemListStart
+            \resumeItem{Built a C++ log-parsing pipeline for a network-security appliance, reducing false-positive alert rate by 30\% after retraining the classification thresholds on labelled traffic.}
+        \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%----------- PROJECTS -----------
+
+\section{Projects}
+    \vspace{3pt}
+    \resumeSubHeadingListStart
+
+      \resumeProjectHeading
+        {\textbf{METU Course Planner} $|$ \emph{\href{https://github.com/mertyildirim/metu-course-planner}{\color{blue}GitHub}}}{}
+          \resumeItemListStart
+            \resumeItem{A Go service that scrapes the university's course-catalogue system and solves for a conflict-free semester schedule given a student's required courses, used by roughly 300 students in its first term.}
+          \resumeItemListEnd
+
+      \resumeProjectHeading
+        {\textbf{tinykv} $|$ \emph{\href{https://github.com/mertyildirim/tinykv}{\color{blue}GitHub}}}{}
+          \resumeItemListStart
+            \resumeItem{A minimal key-value store implementing the Raft consensus protocol from scratch in Go, built to understand leader election and log replication in depth.}
+          \resumeItemListEnd
+
+    \resumeSubHeadingListEnd
+
+%----------- AWARDS \& ACHIEVEMENTS -----------
+
+\section{Awards \& Achievements}
+  \vspace{2pt}
+  \resumeSubHeadingListStart
+    \small{\item{
+        \textbf{Dean's Honor List:}{ Awarded each semester GPA $\geq$ 3.50, four out of eight semesters. (2019 \textbf{--} 2023)} \\ \vspace{3pt}
+        \textbf{METU CENG Hackathon, 2nd place:}{ Team project building a real-time campus-shuttle tracker. (Nov 2021)}
+    }}
+  \resumeSubHeadingListEnd
+
+%-------------------------------------------
+\end{document}

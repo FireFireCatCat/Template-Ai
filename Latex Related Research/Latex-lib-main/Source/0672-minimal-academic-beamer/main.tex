@@ -1,0 +1,119 @@
+% !TeX program = xelatex
+\documentclass[8pt]{beamer}
+
+\usepackage[english]{minimalistslides}
+\usepackage{booktabs}
+
+% This starter keeps upstream's own default logo (figs/logo.jpg, Southeast
+% University's crest) as the worked example of \setthemelogo -- the
+% template is explicitly designed to be rebranded (see upstream's README:
+% "Fast institutional rebranding through logo, metadata, and color
+% overrides"), so the institution name below matches the bundled crest
+% rather than inventing an unrelated one.
+\setthemename{Southeast University}
+\setthemelogo{figs/logo.jpg}
+
+\renewcommand{\presentationtitle}{Battery Degradation Under Fast Charging}
+\renewcommand{\presentationauthor}{Sofia Mendes}
+\renewcommand{\presentationinstitution}{\themename}
+\renewcommand{\presentationdate}{\today}
+
+\begin{document}
+
+\makeboxedcover
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Motivation}
+
+\makesection
+
+\begin{frame}{Why Fast Charging Matters}
+  Fast charging cuts wait time from hours to minutes, but every extra
+  \highlight{amp} pushed through a cell accelerates capacity loss.
+
+  \begin{itemize}
+    \item Consumer demand for sub-20-minute charging keeps growing
+    \item Degradation mechanisms are well studied at low rates, less so above 3C
+    \item This work isolates the fast-charging contribution specifically
+  \end{itemize}
+\end{frame}
+
+\section{Method}
+
+\makesection
+
+\begin{frame}{Test Protocol}
+  \begin{table}
+    \small
+    \centering
+    \begin{tabular}{lrr}
+      \toprule
+      Group & Charge rate & Cycles \\
+      \midrule
+      Baseline & 1C & 500 \\
+      Fast & 3C & 500 \\
+      Ultra-fast & 5C & 500 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  Capacity measured every 25 cycles under identical discharge conditions.
+\end{frame}
+
+\begin{frame}{What We Tracked}
+  \begin{itemize}
+    \item Capacity fade relative to first-cycle baseline
+    \item Internal resistance growth
+    \item Post-mortem electrode imaging on a subset of cells
+  \end{itemize}
+\end{frame}
+
+\section{Results}
+
+\makesection
+
+\begin{frame}{Capacity Fade by Charge Rate}
+  \begin{table}
+    \small
+    \centering
+    \begin{tabular}{lrrr}
+      \toprule
+      Rate & 100 cyc. & 300 cyc. & 500 cyc. \\
+      \midrule
+      1C & 98.4\% & 94.1\% & 89.7\% \\
+      3C & 96.2\% & 88.3\% & 79.5\% \\
+      5C & \stronghighlight{93.8\%} & \stronghighlight{79.6\%} & \stronghighlight{64.2\%} \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  \stronghighlight{5C charging} loses capacity roughly three times faster
+  than the 1C baseline by cycle 500.
+\end{frame}
+
+\begin{frame}{Where the Loss Comes From}
+  Post-mortem imaging on the 5C group shows visible lithium plating on the
+  anode edge, concentrated near the tab -- consistent with localized
+  current density rather than uniform aging.
+\end{frame}
+
+\section{Conclusion}
+
+\makesection
+
+\begin{frame}{Takeaways}
+  \begin{itemize}
+    \item Fast charging above 3C accelerates fade disproportionately
+    \item Plating, not uniform SEI growth, drives most of the extra loss
+    \item Edge-focused current density suggests a tab-design fix is worth testing
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Thank You}
+  \centering
+  \Large Questions?\\[1em]
+  \normalsize sofia.mendes@example.edu
+\end{frame}
+
+\end{document}

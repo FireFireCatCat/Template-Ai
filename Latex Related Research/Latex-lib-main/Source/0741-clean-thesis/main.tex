@@ -1,0 +1,109 @@
+\documentclass[%
+    paper=A4,
+    twoside=false,
+    openright,
+    parskip=half,
+    11pt,
+    headings=normal,
+    bibliography=totoc,
+    listof=totoc,
+    titlepage=on,
+    captions=tableabove,
+    chapterprefix=false,
+    appendixprefix=false,
+    draft=false,
+]{scrreprt}
+
+\PassOptionsToPackage{utf8}{inputenc}
+\usepackage{inputenc}
+
+\newcommand{\thesisTitle}{On the Configurability of Long Documents}
+\newcommand{\thesisName}{Noor Fatima}
+\newcommand{\thesisSubject}{Dissertation}
+\newcommand{\thesisDate}{\today}
+\newcommand{\thesisVersion}{First Submission}
+
+\newcommand{\thesisFirstReviewer}{Jane Doe}
+\newcommand{\thesisFirstReviewerUniversity}{\protect{Clean Thesis University}}
+\newcommand{\thesisFirstReviewerDepartment}{Department of Computer Science}
+
+\newcommand{\thesisFirstSupervisor}{John Smith}
+
+\newcommand{\thesisUniversity}{\protect{Clean Thesis University}}
+\newcommand{\thesisUniversityDepartment}{Department of Computer Science}
+\newcommand{\thesisUniversityInstitute}{Institute for Document Engineering}
+\newcommand{\thesisUniversityGroup}{Typesetting Systems Group}
+\newcommand{\thesisUniversityCity}{City}
+\newcommand{\thesisUniversityStreetAddress}{Street address}
+\newcommand{\thesisUniversityPostalCode}{Postal Code}
+
+\usepackage[english]{babel}
+\PassOptionsToPackage{
+    figuresep=colon,
+    hangfigurecaption=false,
+    hangsection=true,
+    hangsubsection=true,
+    sansserif=false,
+    configurelistings=true,
+    colorize=full,
+    colortheme=bluemagenta,
+    configurebiblatex=true,
+    bibsys=bibtex,
+    bibfile=references,
+    urlcolor=true,
+    linkcolor=true,
+    citecolor=true,
+}{cleanthesis}
+\usepackage{cleanthesis}
+
+\begin{document}
+
+\pagenumbering{roman}
+\pagestyle{empty}
+
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\huge \thesisTitle \par}
+    \vspace{2cm}
+    {\Large \thesisName \par}
+    \vspace{1cm}
+    \thesisSubject \par
+    \thesisUniversity \\
+    \thesisUniversityDepartment \par
+    \vspace{1cm}
+    Supervised by \thesisFirstSupervisor \\
+    Reviewed by \thesisFirstReviewer, \thesisFirstReviewerUniversity \par
+    \vspace{1cm}
+    \thesisDate
+\end{titlepage}
+
+\pagestyle{plain}
+\chapter*{Abstract}
+This thesis argues that a clean, distraction-free thesis style can carry the
+same structural rigour as a full document class. We demonstrate the approach
+with a worked chapter, a cited source, and a compiled bibliography.
+
+\tableofcontents
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{scrheadings}
+
+\chapter{Introduction}
+\section{Motivation}
+Thesis styles are often bundled with heavyweight document classes. This
+starter shows that a style package layered on a standard class, such as
+\texttt{scrreprt}, is enough to produce a clean, well-structured document, as
+argued by \textcite{knuth1984texbook}.
+
+\section{Structure of this Document}
+The remaining chapter extends this with a short worked example.
+
+\chapter{Related Work}
+Prior systems addressing long-document typesetting are surveyed in
+\textcite{knuth1984texbook}.
+
+\printbibliography
+
+\end{document}

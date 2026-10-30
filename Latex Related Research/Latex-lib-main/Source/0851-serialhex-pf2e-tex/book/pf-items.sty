@@ -1,0 +1,119 @@
+\usepackage{setspace}
+
+% Item Box
+\newtcolorbox{itemBoxXXX}[3][]{
+  enhanced,
+  frame hidden,
+  boxrule=0pt,
+  breakable,
+  boxsep=0pt,
+  toptitle=3mm,
+  left=0pt,
+  right=0pt,
+  arc=0mm,
+  opacityback=0,
+  % colframe=title1,
+  %
+  colframe=blue!50!black
+  colbacktitle=red!10!white,
+  colback=blue!10!white,
+  % coltitle=red!70!black,
+  %
+  fonttitle=\pfStatBlockTitleFont,
+  fontupper=\pfStatBlockBodyFont,
+  title={#2 \hfill #3},
+  coltitle=creature,
+  #1
+}
+
+\newcommand{\itemBoxXX}[3]{%
+  \begin{tcolorbox}[enhanced,
+                    frame hidden,
+                    boxrule=0pt,
+                    breakable,
+                    boxsep=0pt,
+                    parbox=false,
+                    before upper=\par\medskip\pfStatBlockTitleFont\noindent,
+                    before lower=\par\medskip\pfStatBlockBodyFont\noindent,
+                    toptitle=3mm,
+                    left=0pt,
+                    right=0pt,
+                    arc=0mm,
+                    opacityback=0,
+                    colframe=title1,
+                    colbacktitle=red!10!white,
+                    colback=blue!10!white,
+                    % fontupper=\pfStatBlockTitleFont,
+                    % fontlower=\pfStatBlockBodyFont,
+                    colupper=creature,
+                    collower=black,
+                    segmentation style={solid, black},
+                    ]
+    {#1 \hfill #2}
+    \tcblower%\raggedright\hangindent=\baselineskip\unskip
+    {#3}
+  \end{tcolorbox}
+}
+
+\newcommand{\itemBox}[3]{%
+\begingroup%
+  \bigskip%
+  {\pfStatBlockTitleFont{}\noindent #1 \hfill #2\tiny
+
+  \pfhline}
+
+  {\pfStatBlockBodyFont{}
+    #3
+  }%
+  \medskip%
+\endgroup
+}
+
+% Helpful for defining attributes
+\newcommand{\pf@itemattr}[2]{%
+  \textbf{#2}~\commandkey{#1}%
+}
+
+\newcommand{\pf@ifitemattr}[3]{%
+  \ifcommandkey{#1}{%
+    \textbf{#2}~\commandkey{#1}{#3}%
+  }{}%
+}
+
+% Macros for use within the item environment
+\newkeycommand\itemBasics[
+    price=,
+    usage=,
+    bulk=L,
+    unit=\bulktext,
+    activate=,
+    onset=,
+    ]{%
+\begingroup
+
+\raggedright
+\noindent
+
+\pf@ifitemattr{price}{\pricetext}{\\}
+\pf@ifitemattr{usage}{\usagetext}{; }\pf@itemattr{bulk}{\commandkey{unit}}\\
+\pf@ifitemattr{activate}{\activatetext}{}\pf@ifitemattr{onset}{; \onsettext}{}
+
+\vspace{-1ex}\noindent\hrulefill\\
+\endgroup
+}
+
+\newkeycommand\degreeSuccess[
+  critsuccess={The target is unaffected.},
+  success=,
+  fail=,
+  critfail=,
+  ]{%
+  \pfdescblock{Critical Success}{\commandkey{critsuccess}}
+
+  \pfdescblock{Success}{\commandkey{success}}
+
+  \pfdescblock{Failure}{\commandkey{fail}}
+
+  \pfdescblock{Critical Failure}{\commandkey{critfail}}
+
+}

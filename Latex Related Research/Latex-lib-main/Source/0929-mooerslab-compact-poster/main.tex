@@ -1,0 +1,97 @@
+\documentclass[final]{beamer}
+\usepackage[size=a1,scale=1.15]{beamerposter}
+\usepackage{tikz}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{ragged2e}
+\usetheme{default}
+\definecolor{ink}{HTML}{17324D}
+\definecolor{teal}{HTML}{0B7285}
+\definecolor{mist}{HTML}{E8F1F5}
+\setbeamercolor{normal text}{fg=ink,bg=white}
+\setbeamercolor{block title}{fg=white,bg=ink}
+\setbeamercolor{block body}{fg=ink,bg=mist}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{block alerted begin}{\begin{beamercolorbox}[rounded=true,sep=1.2em]{block body alerted}\justifying}
+\setbeamertemplate{block alerted end}{\end{beamercolorbox}}
+\newcommand{\metric}[2]{\begin{beamercolorbox}[rounded=true,sep=0.7em,wd=\linewidth]{block body}\centering{\fontsize{34}{38}\selectfont\color{teal}\bfseries #1}\\[-2pt]{\large #2}\end{beamercolorbox}}
+\title{A compact observation can reveal a system-level pattern}
+\author{Maya Chen \and Theo Martins}
+\institute{North Coast Systems Lab \quad\texttt{research@example.org}}
+\begin{document}
+\begin{frame}[t]
+  \begin{beamercolorbox}[wd=\paperwidth,sep=1.4em,leftskip=2em,rightskip=2em]{block title}
+    {\fontsize{42}{48}\selectfont\bfseries\inserttitle}\par\vspace{0.3em}
+    {\Large\insertauthor}\hfill{\large\insertinstitute}
+  \end{beamercolorbox}
+  \vspace{1.1em}
+  \begin{columns}[t,totalwidth=0.96\paperwidth]
+    \begin{column}{0.31\paperwidth}
+      \metric{37\%}{faster detection}
+      \vspace{0.9em}
+      \begin{block}{Question}
+        Can a small, carefully chosen observation replace a long monitoring
+        window when the underlying process changes in bursts?
+      \end{block}
+      \begin{block}{Approach}
+        We combine an adaptive sampler with a lightweight change detector.
+        The sampler spends its budget near transitions and the detector
+        reports both the change point and its confidence.
+        \begin{enumerate}\itemsep0.25em
+          \item Calibrate on a quiet baseline.
+          \item Sample densely when the signal bends.
+          \item Confirm with an independent window.
+        \end{enumerate}
+      \end{block}
+    \end{column}
+    \begin{column}{0.36\paperwidth}
+      \begin{alertblock}{Main finding}
+        Adaptive sampling reaches the same decision quality with 43\% fewer
+        observations, while preserving the false-alarm rate of the fixed
+        schedule. The gain comes from spending attention at the boundary,
+        not from changing the decision threshold.
+      \end{alertblock}
+      \vspace{0.8em}
+      \begin{block}{Signal and decision boundary}
+        \centering
+        \begin{tikzpicture}[x=1cm,y=1cm]
+          \draw[->,thick] (0,0)--(8.1,0) node[right]{time};
+          \draw[->,thick] (0,0)--(0,4.2) node[above]{signal};
+          \draw[teal,very thick] plot[smooth] coordinates{(0,1.0)(1,1.2)(2,1.1)(3,1.4)(4,2.0)(5,3.0)(6,3.1)(7,3.3)(8,3.2)};
+          \draw[ink,dashed] (0,2.2)--(8,2.2) node[right]{threshold};
+          \fill[teal!20] (3.7,0)--(5.5,0)--(5.5,4)--(3.7,4)--cycle;
+          \node[teal,align=center] at (4.6,3.75){adaptive\\window};
+        \end{tikzpicture}
+      \end{block}
+      \begin{block}{Evaluation}
+        \centering
+        \begin{tabular}{lrrr}
+          \toprule
+          Schedule & Recall & False alarms & Samples\\\midrule
+          Fixed & 0.81 & 0.06 & 1200\\
+          Adaptive & 0.82 & 0.06 & 684\\
+          \bottomrule
+        \end{tabular}
+      \end{block}
+    \end{column}
+    \begin{column}{0.25\paperwidth}
+      \metric{0.06}{false-alarm rate}
+      \vspace{0.9em}
+      \begin{block}{What to remember}
+        \begin{itemize}\itemsep0.45em
+          \item Concentrate measurements around transitions.
+          \item Keep a confirmation window to protect precision.
+          \item Report the budget and uncertainty together.
+        \end{itemize}
+      \end{block}
+      \begin{block}{Next step}
+        Test the sampler on a second site with a different noise profile and
+        pre-register the alert budget before collecting data.
+      \end{block}
+      \vfill
+      {\small\textbf{Code/data:} example.org/project\\
+      \textbf{Acknowledgements:} Coastal Data Initiative}
+    \end{column}
+  \end{columns}
+\end{frame}
+\end{document}

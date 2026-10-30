@@ -1,0 +1,71 @@
+%% ----------------------------------------------------------------
+%% main.tex — University of Southampton PhD thesis (phdthesis.cls)
+%% ----------------------------------------------------------------
+\documentclass[a4paper]{phdthesis}
+
+\usepackage[round]{natbib}
+\usepackage{booktabs}
+
+\hypersetup{colorlinks=true}
+\graphicspath{{.}}
+
+\renewcommand{\bibname}{References}
+
+\input{lstdefinitions}
+
+%% ----------------------------------------------------------------
+\begin{document}
+\frontmatter
+\title      {Reduced-Order Models for Real-Time Cardiovascular Flow Simulation}
+\date       {June 2026}
+\author     {Sarah J. Whitfield}
+\supervisor {Prof. Nigel Bressloff}
+\university {University of Southampton}
+\department {Computational Engineering and Design}
+\group      {Computational Engineering and Design Group}
+\faculty    {Faculty of Engineering and Physical Sciences}
+
+\maketitle
+
+\begin{abstract}
+Full three-dimensional computational fluid dynamics simulations of blood
+flow are too slow to use in a clinical setting, where results are often
+needed within minutes. This thesis develops a reduced-order one-dimensional
+blood flow model that captures pulse wave propagation through the major
+arteries at a fraction of the computational cost of a full 3D simulation.
+We validate the model against 3D simulations and in vivo measurements
+across a range of vessel geometries, and show that it reproduces pressure
+and flow waveforms with clinically acceptable accuracy while running
+several orders of magnitude faster, making real-time patient-specific
+simulation feasible.
+\end{abstract}
+
+\tableofcontents
+\listoffigures
+\listoftables
+\lstlistoflistings
+\listofsymbols{llc}{
+$p$ & pressure & Pa\\
+$q$ & volumetric flow rate & m$^3$/s\\
+$A$ & cross-sectional area & m$^2$\\
+$c$ & pulse wave velocity & m/s}
+\listofacronyms{ll}{
+CFD & Computational Fluid Dynamics\\
+1D & One-Dimensional\\
+ROM & Reduced-Order Model}
+\declaration{Whitfield, S.J. (2026). Parts of Chapter 2 have been presented at the International Conference on Computational Biomechanics.}
+\acknowledgements{I thank my supervisor for his guidance throughout this project, and the Computational Engineering and Design Group for many helpful discussions. This work was supported by an EPSRC studentship.}
+\mainmatter
+%% ----------------------------------------------------------------
+\input{chapter1}
+\input{chapter2}
+
+\appendix
+\input{appendixA}
+
+%% ----------------------------------------------------------------
+\backmatter
+\bibliographystyle{plainnat}
+\bibliography{references}
+\end{document}
+%% ----------------------------------------------------------------

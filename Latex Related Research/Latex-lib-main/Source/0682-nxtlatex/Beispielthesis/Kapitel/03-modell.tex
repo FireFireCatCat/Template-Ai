@@ -1,0 +1,382 @@
+\chapter{Ausarbeitung des linearen Problems}
+\label{kap:modell}
+
+Kapitel~2 hat die Werkzeuge bereitgestellt, mit denen sich ein
+Zuordnungsproblem als ganzzahliges lineares Programm fassen lässt. Das
+vorliegende Kapitel wendet diese Werkzeuge auf die Fragestellung der Erpolino
+Metallverarbeitung GmbH an. Es entwickelt zunächst die Annahmen, unter denen die
+betriebliche Situation überhaupt einer mathematischen Beschreibung zugänglich
+wird, formuliert anschließend Mengen, Parameter und Variablen, stellt
+Zielfunktion und Nebenbedingungen auf und diskutiert die Eigenschaften der
+gewonnenen Formulierung. Den Abschluss bildet eine methodische Gegenüberstellung
+der Verfahren, die zur Lösung des Modells in Frage kommen.
+
+\section{Modellannahmen}
+\label{sec:annahmen}
+
+Ein Modell ist niemals ein Abbild der Wirklichkeit, sondern eine bewusste
+Vereinfachung. Welche Vereinfachungen zulässig sind, entscheidet sich daran, ob
+sie den Kern der Fragestellung berühren. Für die hier untersuchte Zuordnung von
+Arbeitsgängen zu Mitarbeitern werden fünf Annahmen getroffen, die im Folgenden
+begründet werden.
+
+Erstens bleiben \Index{Rüstzeiten} unberücksichtigt. Die Bearbeitungsdauer eines
+Arbeitsgangs hängt allein davon ab, welche Person ihn ausführt, nicht davon,
+welche Tätigkeit dieser Person unmittelbar vorausging. In der Fertigung der
+Erpolino Metallverarbeitung GmbH fallen Rüstvorgänge zwar an, sie sind jedoch
+überwiegend an das Betriebsmittel und nicht an die Reihenfolge der Arbeitsgänge
+gebunden und daher bereits in den erhobenen Grundzeiten enthalten. Wären
+reihenfolgeabhängige Rüstzeiten zu berücksichtigen, so entstünde ein Problem mit
+Rundreisecharakter, dessen Komplexität die des Zuordnungsproblems deutlich
+übersteigt \parencite{pinedo2016scheduling}.
+
+Zweitens werden keine \Index{Reihenfolgeabhängigkeiten} modelliert. Alle
+Arbeitsgänge gelten als voneinander unabhängig und zu jedem Zeitpunkt ausführbar.
+Diese Annahme ist der eigentliche Grund dafür, dass das Problem ein reines
+Zuordnungsproblem bleibt und keine zeitliche Einplanung erfordert. Sobald
+feststeht, welche Person welche Arbeitsgänge übernimmt, ist die Reihenfolge
+innerhalb einer Person für die Zielgröße bedeutungslos, denn die Summe der
+Bearbeitungszeiten ändert sich durch Umsortieren nicht. Damit entfallen die
+Zeitpunktvariablen, die ein Ablaufplanungsmodell sonst mit sich brächte.
+
+Drittens sind die Aufgaben \Index{unteilbar}. Ein Arbeitsgang wird vollständig
+von genau einer Person ausgeführt; eine Aufteilung auf zwei Mitarbeiter oder ein
+Wechsel während der Bearbeitung ist ausgeschlossen. Diese Annahme entspricht der
+betrieblichen Praxis, in der ein Arbeitsgang zusammen mit dem zugehörigen
+Werkstück und dem Prüfprotokoll einer Person zugewiesen wird. Sie ist zugleich
+die Ursache dafür, dass das Modell ganzzahlige Variablen benötigt und nicht als
+lineares Programm gelöst werden kann. Ließe man Teilbarkeit zu, so wäre das
+Problem in polynomieller Zeit lösbar; die \Index{Ganzzahligkeitsforderung} ist
+also nicht Beiwerk, sondern der Grund für die Schwierigkeit des Problems
+\parencite{garey1979computers}.
+
+Viertens stehen alle Mitarbeiter über den Planungshorizont hinweg gleichermaßen
+zur Verfügung. Schichtmodelle, Pausen, Urlaub und Krankheit bleiben außer
+Betracht. Der Planungshorizont ist eine Kalenderwoche, für die die
+Arbeitsvorbereitung ein Fertigungslos freigibt; innerhalb dieser Woche gilt jede
+Person als ganztags einsatzbereit.
+
+Fünftens ist die \Index{Effizienz} einer Person je Qualifikation konstant.
+Lerneffekte, Ermüdung und Tagesform werden nicht abgebildet. Die
+Bearbeitungszeit ergibt sich damit deterministisch aus der Grundzeit des
+Arbeitsgangs und einem personenbezogenen Effizienzfaktor. Stochastische
+Schwankungen der Bearbeitungsdauer wären grundsätzlich modellierbar, führten
+aber auf ein stochastisches Optimierungsproblem und damit auf eine andere
+Klasse von Verfahren.
+
+Diese Annahmen idealisieren die Fertigung erheblich. Sie lassen jedoch genau
+jenen Effekt unangetastet, um den es der Fertigungsleitung geht: die ungleiche
+Auslastung, die entsteht, wenn Qualifikationen ungleich verteilt sind.
+
+\section{Mengen, Parameter und Variablen}
+\label{sec:mengen}
+
+Sei $I$ die Menge der Mitarbeiter der Fertigung und $J$ die Menge der
+Arbeitsgänge des Planungshorizonts. Für die untersuchte Instanz gilt
+$|I| = \ZahlMitarbeiter{}$ und $|J| = \ZahlAufgaben{}$. Jeder Arbeitsgang
+$j \in J$ verlangt genau eine der \ZahlQualifikationen{} Qualifikationen; jeder
+Mitarbeiter $i \in I$ beherrscht eine Teilmenge davon.
+
+Aus dieser Qualifikationsstruktur ergibt sich die zentrale Menge des Modells. Es
+bezeichne
+\begin{equation}
+  Z \subseteq I \times J
+  \label{eq:zulaessig}
+\end{equation}
+die Menge der \Index{zulässigen Paare}, also derjenigen Kombinationen $(i,j)$,
+für die Mitarbeiter $i$ die von Arbeitsgang $j$ geforderte Qualifikation besitzt.
+In der Scheduling-Notation entspricht dies der Restriktion $M_j$, die für jeden
+Auftrag die Menge der zulässigen Maschinen einschränkt
+\parencite{pinedo2016scheduling}. Die Menge $Z$ ist keine bloße
+Schreibvereinfachung, sondern trägt die gesamte Information über die
+\Index{Qualifikationsschranken}; ihre Rolle wird in
+Abschnitt~\ref{sec:eigenschaften} ausführlich behandelt.
+
+Für jedes zulässige Paar $(i,j) \in Z$ ist die \Index{Bearbeitungszeit}
+$p_{ij} > 0$ in Minuten definiert. Sie wird nicht frei erhoben, sondern aus zwei
+Größen berechnet: der Grundzeit $g_j$ des Arbeitsgangs, die die
+Arbeitsvorbereitung für eine Normalleistung vorgibt, und dem Effizienzfaktor
+$e_i(q_j)$, mit dem Mitarbeiter $i$ die von Arbeitsgang $j$ geforderte
+Qualifikation $q_j$ ausübt. Es gilt
+\begin{equation}
+  p_{ij} = \frac{g_j}{e_i(q_j)}
+  \qquad \text{für alle } (i,j) \in Z .
+  \label{eq:bearbeitungszeit}
+\end{equation}
+Ein Effizienzfaktor von $1{,}00$ bedeutet Normalleistung, ein Wert über $1{,}00$
+eine überdurchschnittliche und ein Wert darunter eine unterdurchschnittliche
+Leistung. Ein Mitarbeiter mit dem Faktor $1{,}25$ benötigt für einen
+Arbeitsgang mit der Grundzeit $95$ Minuten folglich $76$ Minuten. Wichtig ist,
+dass die Effizienzfaktoren nicht in einer festen Rangfolge stehen: Eine Person
+kann beim Drehen überdurchschnittlich und beim Schleifen unterdurchschnittlich
+sein. Genau deshalb liegt kein Problem mit gleichförmigen Maschinen vor, bei dem
+sich alle Bearbeitungszeiten aus einer einzigen personenbezogenen Geschwindigkeit
+ergäben, sondern ein Problem mit \Index{unabhängigen parallelen Maschinen}, in
+der Kendall-artigen Notation $R \mid M_j \mid C_{\max}$
+\parencite{pinedo2016scheduling}.
+
+Das Modell benötigt zwei Arten von Variablen. Zum einen die
+\Index{Binärvariable}
+\begin{equation}
+  x_{ij} \in \{0,1\}
+  \qquad \text{für alle } (i,j) \in Z ,
+  \label{eq:xvar}
+\end{equation}
+die den Wert $1$ annimmt, wenn Mitarbeiter $i$ den Arbeitsgang $j$ übernimmt, und
+sonst $0$. Zum anderen die stetige Variable
+\begin{equation}
+  C_{\max} \geq 0 ,
+  \label{eq:cmaxvar}
+\end{equation}
+die den \Index{Makespan} abbildet, also den Zeitpunkt, zu dem auch der zuletzt
+fertig werdende Mitarbeiter seine Arbeit abgeschlossen hat. Bemerkenswert ist,
+dass $C_{\max}$ keine Entscheidungsvariable im eigentlichen Sinne ist: Ihr Wert
+ist durch die Belegung der $x_{ij}$ vollständig bestimmt. Sie dient allein dazu,
+das Maximum über die Auslastungen, das für sich genommen keine lineare Funktion
+ist, in eine lineare Formulierung zu überführen.
+
+\section{Zielfunktion und Nebenbedingungen}
+\label{sec:zielfunktion}
+
+Das vollständige Modell lautet
+\begin{align}
+  \min \quad & C_{\max} \label{eq:ziel} \\
+  \text{u.\,d.\,N.} \quad
+  & \sum_{i \,:\, (i,j) \in Z} x_{ij} = 1
+    && \text{für alle } j \in J , \label{eq:vergabe} \\
+  & \sum_{j \,:\, (i,j) \in Z} p_{ij}\, x_{ij} \leq C_{\max}
+    && \text{für alle } i \in I , \label{eq:auslastung} \\
+  & x_{ij} \in \{0,1\}
+    && \text{für alle } (i,j) \in Z , \label{eq:binaer} \\
+  & C_{\max} \geq 0 . \label{eq:nichtneg}
+\end{align}
+
+Die Zielfunktion~\eqref{eq:ziel} minimiert den Makespan. Sie besteht aus einer
+einzigen Variablen und ist damit denkbar einfach; die gesamte Modellierungsarbeit
+steckt in den Nebenbedingungen.
+
+Die \Index{Vergabebedingung}~\eqref{eq:vergabe} stellt sicher, dass jeder
+Arbeitsgang genau einmal vergeben wird. Die Summation läuft ausschließlich über
+diejenigen Mitarbeiter, für die das Paar $(i,j)$ zulässig ist. Die Gleichung
+verlangt zweierlei zugleich: Kein Arbeitsgang bleibt liegen, und kein
+Arbeitsgang wird doppelt ausgeführt. Da die Menge $Z$ zu jedem $j \in J$
+mindestens einen Mitarbeiter enthält -- jede Qualifikation ist in der Fertigung
+mehrfach vorhanden --, ist das Modell zulässig.
+
+Die \Index{Auslastungsbedingung}~\eqref{eq:auslastung} verknüpft die
+Zuordnungsvariablen mit dem Makespan. Die linke Seite summiert die
+Bearbeitungszeiten aller Arbeitsgänge, die Mitarbeiter $i$ übernimmt, und
+beschreibt damit dessen Auslastung. Für jeden Mitarbeiter wird gefordert, dass
+diese Auslastung den Wert $C_{\max}$ nicht übersteigt. Es gibt genau
+$\ZahlMitarbeiter{}$ solcher Bedingungen, eine je Mitarbeiter, und
+$\ZahlAufgaben{}$ Vergabebedingungen.
+
+Die Formulierung enthält weder Zeitpunkte noch Reihenfolgevariablen. Sie ist
+damit erheblich kleiner als ein allgemeines Ablaufplanungsmodell und verdankt
+diese Kompaktheit unmittelbar den Annahmen aus Abschnitt~\ref{sec:annahmen}.
+
+\section{Eigenschaften des Modells}
+\label{sec:eigenschaften}
+
+Vier Eigenschaften der Formulierung verdienen eine genauere Betrachtung, weil sie
+weniger selbstverständlich sind, als sie auf den ersten Blick erscheinen.
+
+\subsection*{Die Ungleichung in der Auslastungsbedingung}
+
+Warum steht in~\eqref{eq:auslastung} ein Kleiner-gleich-Zeichen und kein
+Gleichheitszeichen? Die Frage ist berechtigt, denn $C_{\max}$ soll ja gerade das
+Maximum der Auslastungen sein, und ein Maximum wird von mindestens einem
+Mitarbeiter angenommen.
+
+Der Punkt ist, dass die Ungleichung zusammen mit der Minimierung genau das
+Gewünschte leistet. Die Bedingungen~\eqref{eq:auslastung} erzwingen, dass
+$C_{\max}$ mindestens so groß ist wie jede einzelne Auslastung, also
+$C_{\max} \geq \max_{i \in I} \sum_{j} p_{ij} x_{ij}$. Die Zielfunktion drückt
+$C_{\max}$ so weit nach unten, wie es die Bedingungen erlauben. In jeder
+Optimallösung gilt daher Gleichheit für mindestens einen Mitarbeiter, und
+$C_{\max}$ nimmt exakt den Wert des Maximums an. Die Kombination aus unterer
+Schranke und Minimierungsrichtung ist die übliche lineare Darstellung einer
+Maximumsfunktion \parencite{wolsey2020integer}.
+
+Ein Gleichheitszeichen wäre dagegen schlicht falsch. Es würde verlangen, dass
+alle \ZahlMitarbeiter{} Mitarbeiter exakt dieselbe Auslastung erreichen. Bei
+unteilbaren Aufgaben und personenabhängigen Bearbeitungszeiten ist eine solche
+perfekt gleichmäßige Verteilung im Allgemeinen nicht erreichbar; das Modell wäre
+unzulässig und der Solver meldete, dass keine Lösung existiert -- obwohl die
+Fertigung selbstverständlich jeden Tag zulässige Pläne umsetzt. Der Unterschied
+zwischen $\leq$ und $=$ entscheidet hier also nicht über Eleganz, sondern über
+Lösbarkeit.
+
+\subsection*{Unzulässige Paare existieren nicht}
+
+Eine naheliegende Alternative zur Menge $Z$ bestünde darin, für alle
+$\ZahlMitarbeiter{} \times \ZahlAufgaben{} = 192$ Kombinationen eine Variable
+anzulegen und unzulässige Zuordnungen durch eine sehr große Bearbeitungszeit zu
+bestrafen. Dieses \Index{Big-M}-Vorgehen ist verbreitet und in vielen
+Modellierungssituationen unvermeidlich -- hier ist es jedoch ein Nachteil.
+
+Der Grund liegt in der \Index{LP-Relaxation}. Verfahren vom Typ
+\Index{Branch-and-Bound} lösen zunächst das Modell ohne
+Ganzzahligkeitsforderung, verwenden dessen Zielfunktionswert als untere Schranke
+und verzweigen anschließend über fraktionale Variablen
+\parencite{land1960automatic,nemhauser1988integer}. Die Qualität dieser Schranke
+bestimmt maßgeblich, wie viele Knoten der Suchbaum umfasst. Eine große Konstante
+$M$ erzeugt nun eine Relaxation, in der die bestrafte Variable einen kleinen
+Bruchteil ihres Wertes annehmen kann, ohne die Zielfunktion nennenswert zu
+belasten. Der relaxierte Zielfunktionswert liegt dann weit unter dem
+ganzzahligen Optimum, die \Index{Dualitätslücke} ist groß, und der Suchbaum
+wächst entsprechend. Big-M-Formulierungen sind für schwache Relaxationen
+bekannt \parencite{wolsey2020integer}.
+
+Lässt man die unzulässigen Paare dagegen von vornherein weg, so kann die
+Relaxation gar nicht erst auf sie ausweichen. Die Schranke wird schärfer, weil
+sie über einem kleineren und wahrheitsgetreuen Lösungsraum gebildet wird.
+Zugleich schrumpft das Modell. Der Vorteil ist damit doppelt und in beiden
+Hinsichten echt: Das Modell ist kleiner \emph{und} seine Relaxation ist besser.
+Dass sich die Qualifikationsschranken so sauber ausdrücken lassen, ist ein
+Glücksfall der vorliegenden Struktur; er sollte genutzt werden.
+
+\subsection*{Modellgröße}
+
+Die Auswirkung lässt sich beziffern. Bei \ZahlMitarbeiter{} Mitarbeitern und
+\ZahlAufgaben{} Arbeitsgängen wären $192$ Kombinationen denkbar. Da jeder
+Mitarbeiter aber nur zwei bis drei der \ZahlQualifikationen{} Qualifikationen
+beherrscht, bleiben lediglich \ZahlPaare{} zulässige Paare übrig. Das Modell
+besitzt also \ZahlPaare{} Binärvariablen und eine stetige Variable, zusammen mit
+$\ZahlAufgaben{} + \ZahlMitarbeiter{} = 32$ Nebenbedingungen. Die
+Qualifikationsschranken dünnen das Modell auf weniger als die Hälfte seines
+nominellen Umfangs aus.
+
+Diese Beobachtung hat einen bemerkenswerten Nebeneffekt. Die
+Qualifikationsschranken erschweren die Planung aus betrieblicher Sicht, weil sie
+Handlungsspielraum nehmen. Aus Sicht des Solvers hingegen sind sie eine Hilfe:
+Sie verkleinern den Suchraum. Was den Menschen behindert, entlastet die
+Maschine.
+
+\subsection*{Untere Schranken und ihre Schärfe}
+
+Eine untere Schranke für den Makespan lässt sich ohne jede Optimierung angeben.
+Kein Arbeitsgang kann schneller erledigt werden als von der dafür am besten
+geeigneten Person; die dabei anfallende Arbeit muss auf \ZahlMitarbeiter{}
+Mitarbeiter verteilt werden. Damit gilt
+\begin{equation}
+  C_{\max} \;\geq\; \frac{1}{|I|} \sum_{j \in J} \; \min_{i \,:\, (i,j) \in Z} p_{ij}
+  \;=\; \UntereSchranke{}\ \text{Minuten}.
+  \label{eq:schranke}
+\end{equation}
+Eine zweite, ebenso einfache Schranke ist die längste unvermeidbare
+Einzelaufgabe: Da Aufgaben unteilbar sind, ist der Makespan mindestens so groß
+wie
+$\max_{j \in J} \min_{i : (i,j) \in Z} p_{ij}$, also so groß wie derjenige
+Arbeitsgang, der selbst unter der günstigsten Zuordnung am längsten dauert. Für
+die vorliegende Instanz ist die Lastschranke~\eqref{eq:schranke} die stärkere
+der beiden; Schranken dieser Art bilden den Ausgangspunkt der klassischen
+Gütegarantien für Listenverfahren \parencite{graham1969bounds} und der
+Approximationsalgorithmen für unabhängige parallele Maschinen
+\parencite{lenstra1990approximation}.
+
+Das tatsächliche Optimum liegt jedoch bei \Optimum{} Minuten. Die Lücke zur
+trivialen Schranke beträgt \LueckeSchranke{} Prozent. Die Schranke ist somit
+nicht scharf, und dafür gibt es zwei Gründe.
+
+Der erste Grund sind die Qualifikationsschranken. Schranke~\eqref{eq:schranke}
+unterstellt, dass jeder Arbeitsgang von seinem jeweils besten Bearbeiter
+ausgeführt wird und die Last dennoch gleichmäßig verteilt werden kann. Beides
+zugleich ist unmöglich. Weist man jeden Arbeitsgang seinem schnellsten
+Bearbeiter zu, so häufen sich die Arbeitsgänge einer Qualifikation bei
+derjenigen Person, die diese Qualifikation am besten beherrscht, während andere
+Personen leer ausgehen. Wer die Last umverteilen will, muss Arbeitsgänge an
+langsamere Personen abgeben und damit die Gesamtarbeit erhöhen. Der Konflikt
+zwischen Bestbesetzung und Gleichverteilung ist die eigentliche Schwierigkeit
+des Problems -- und genau der Punkt, an dem die Schranke die Wirklichkeit
+verfehlt.
+
+Der zweite Grund ist die Unteilbarkeit. Selbst wenn die
+Qualifikationsstruktur eine ausgewogene Verteilung zuließe, ließe sich die
+mittlere Last~\eqref{eq:schranke} nur dann exakt erreichen, wenn sich die
+Arbeitsgänge beliebig fein aufteilen ließen. Da sie das nicht tun, bleibt stets
+ein Rest, um den die beste erreichbare Verteilung über dem Mittelwert liegt.
+
+Die Schranke bleibt gleichwohl nützlich. Sie liefert eine Zahl, gegen die sich
+jede heuristische Lösung sofort einordnen lässt, und sie ist es, die
+Branch-and-Bound überhaupt erst erlaubt, Teilbäume zu verwerfen.
+
+\section{Vergleich nutzbarer Methoden}
+\label{sec:verfahrensvergleich}
+
+Für ein Modell dieser Struktur kommen drei Gruppen von Verfahren in Betracht.
+Sie unterscheiden sich in Gütegarantie, Rechenzeit, Skalierbarkeit,
+Implementierungsaufwand und Erweiterbarkeit.
+
+\Index{Exakte Verfahren} lösen das Modell~\eqref{eq:ziel} bis
+\eqref{eq:nichtneg} in seiner ursprünglichen Form. Das Standardverfahren ist
+Branch-and-Bound \parencite{land1960automatic}: Es löst die LP-Relaxation,
+verzweigt über eine fraktionale Binärvariable und verwirft Teilbäume, deren
+Schranke die beste bekannte Lösung nicht mehr unterbieten kann. Der Vorzug ist
+die \Index{Gütegarantie}: Das Verfahren liefert nicht nur eine gute Lösung,
+sondern zugleich den Beweis, dass keine bessere existiert. Der Preis ist eine
+Rechenzeit, die im schlechtesten Fall exponentiell wächst -- das
+zugrundeliegende Problem ist \Index{NP-schwer} \parencite{garey1979computers}.
+Der Implementierungsaufwand ist gering, sofern ein Solver eingesetzt wird; das
+Modell wird deklarativ notiert und von der Software gelöst \parencite{glpk}.
+Auch die Erweiterbarkeit ist hoch: Zusätzliche Anforderungen wie Termine oder
+Obergrenzen je Person lassen sich als weitere lineare Nebenbedingungen ergänzen,
+ohne den Lösungsalgorithmus anzutasten.
+
+\Index{Konstruktionsheuristiken} bauen eine Lösung in einem einzigen Durchlauf
+auf und revidieren keine Entscheidung. Das \Index{Greedy}-Verfahren geht die
+Arbeitsgänge in gegebener Reihenfolge durch und weist jeden derjenigen
+qualifizierten Person zu, die anschließend am frühesten fertig wäre. Die
+\ac{lpt}-Regel sortiert die Arbeitsgänge zuvor absteigend nach Dauer und
+bearbeitet die langen zuerst; dahinter steht die Einsicht, dass eine spät
+eingeplante lange Aufgabe den Makespan unnötig in die Höhe treibt
+\parencite{graham1969bounds}. Beide Verfahren sind in wenigen Zeilen
+implementiert und laufen in Bruchteilen einer Millisekunde. Eine Gütegarantie
+besitzen sie im vorliegenden Fall jedoch nicht: Die klassischen Schranken für
+\ac{lpt} gelten für identische Maschinen, während hier unabhängige Maschinen mit
+Qualifikationsschranken vorliegen \parencite{lenstra1990approximation}. Ihre
+Erweiterbarkeit ist gering -- jede neue Anforderung verlangt einen Eingriff in
+die Konstruktionslogik.
+
+\Index{Metaheuristiken} verbessern eine vorhandene Lösung durch wiederholte
+lokale Veränderungen. \ac{sa} akzeptiert dabei nicht nur Verbesserungen, sondern
+mit einer temperaturabhängigen Wahrscheinlichkeit auch Verschlechterungen, um
+lokale Optima wieder verlassen zu können; die Temperatur wird im Verlauf gesenkt,
+sodass das Verfahren am Ende nur noch Verbesserungen zulässt
+\parencite{kirkpatrick1983optimization}. Verwandte Ansätze sind die
+\Index{Tabu-Suche}, die kürzlich besuchte Lösungen für eine gewisse Zahl von
+Schritten sperrt und so Zyklen verhindert, sowie \Index{genetische Algorithmen},
+die eine Population von Lösungen führen und durch Rekombination und Mutation
+weiterentwickeln. Allen gemeinsam ist, dass sie keine Gütegarantie liefern und
+über eine Reihe von Parametern verfügen, deren Einstellung Erfahrung verlangt.
+Ihre Stärke ist die Skalierbarkeit: Die Rechenzeit wird durch die
+Iterationszahl vorgegeben und nicht durch die Instanzgröße bestimmt. Ihre
+Erweiterbarkeit ist mittelmäßig; zusätzliche Anforderungen lassen sich in die
+Bewertungsfunktion aufnehmen, doch die Nachbarschaft muss weiterhin zulässige
+Lösungen erzeugen.
+
+\begin{table}[tb]
+  \centering
+  \input{Tabellen/verfahren}
+  \caption[Vergleich der Verfahren]{Die untersuchten Verfahren auf der Instanz von Erpolino}
+  \label{tab:verfahren}
+\end{table}
+
+Tabelle~\ref{tab:verfahren} stellt die Verfahren mit den Ergebnissen zusammen,
+die sie auf der Instanz der Erpolino Metallverarbeitung GmbH erzielen; die
+Vorgriffe auf Kapitel~\ref{kap:ergebnisse} sind hier nur als Beleg der
+methodischen Argumentation zu lesen. Das Bild ist eindeutig. Das
+\ac{milp}-Modell liefert den Makespan \Optimum{} Minuten und damit die
+beweisbar optimale Lösung, und zwar in weniger als einer Sekunde. \ac{lpt}
+kommt auf \MakespanLPT{} Minuten und verfehlt das Optimum um \AbstandLPT{}
+Prozent; \ac{sa} erreicht \MakespanSA{} Minuten und bleibt \AbstandSA{} Prozent
+darüber. Die Heuristiken sind schneller, doch bei einer Rechenzeit des exakten
+Verfahrens von unter einer Sekunde ist dieser Vorteil ohne praktischen Wert.
+
+Für die vorliegende Problemgröße gibt es damit keinen Grund, auf eine Heuristik
+auszuweichen. Die Wahl fällt auf das exakte Verfahren, und zwar nicht, weil es
+grundsätzlich überlegen wäre, sondern weil die Instanz klein genug ist, um seine
+Schwäche -- die im schlechtesten Fall exponentielle Rechenzeit -- gar nicht erst
+wirksam werden zu lassen. Ab welcher Größe sich dieses Verhältnis umkehrt und
+die Heuristiken ihre Berechtigung erhalten, untersucht
+Kapitel~\ref{kap:ergebnisse} anhand künstlich vergrößerter Instanzen.

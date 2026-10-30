@@ -1,0 +1,625 @@
+\chapter{Complex coordinates}\label{chap:complex}
+
+In this chapter, we give an interpretation of inversive geometry using complex coordinates.
+The results of this chapter lead to a deeper understanding of both concepts.
+
+\section{Complex numbers}
+
+Informally,
+a complex number has the form
+$$z=x+i\cdot y,
+\eqlbl{eq:z=x+iy}$$ 
+where $x$ and $y$ 
+are real numbers and $i^2=-1$. 
+
+The set of complex numbers 
+will be denoted by~$\mathbb{C}$.
+If $x$, $y$, and $z$ are as in \ref{eq:z=x+iy}, 
+then $x$ is called the \index{real!part}\emph{real part} and $y$ is the \index{imaginary!part}\emph{imaginary part} of the complex number~$z$.
+Briefly, it is written as 
+\[x=\Re z
+\quad
+\text{and}
+\quad 
+y=\Im z.\]
+
+On a more formal level, the expression $x + i\cdot y$ 
+is just a convenient way 
+to write the pair $(x,y)$.
+Furthermore, addition and multiplication of the pairs are defined as follows:
+\[
+\begin{aligned}
+(x_1+i\cdot y_1) + (x_2+i\cdot y_2) 
+&\df (x_1+x_2) + i\cdot(y_1+y_2);
+\\
+(x_1+i\cdot y_1)\cdot(x_2+i\cdot y_2) 
+&\df 
+(x_1\cdot x_2-y_1\cdot y_2) + i\cdot(x_1\cdot y_2+y_1\cdot x_2).
+\end{aligned}
+\eqlbl{eq:comlex+x}
+\] 
+
+\section{Complex coordinates}
+
+Remember that we can view the Euclidean plane as the set of all pairs of real numbers $(x,y)$ equipped with the metric 
+$$AB=\sqrt{(x_A-x_B)^2+(y_A-y_B)^2},$$
+where $A=(x_A,y_A)$ and $B=(x_B,y_B)$.
+
+We can pack the coordinates $(x,y)$ of a point in a single complex number $z=x+i\cdot y$.
+This creates a direct link between points in the Euclidean plane and~$\mathbb{C}$ (the set of complex numbers).
+Given a point $Z=(x,y)$, 
+the complex number $z=x+ i\cdot y$ is referred to as the \index{complex coordinate}\emph{complex coordinate} of~$Z$.
+
+If $O$, $E$, and $I$ are points in the plane 
+with complex coordinates $0$, $1$, and $i$ respectively, then $\measuredangle EOI=\pm\tfrac\pi2$.
+We will assume that $\measuredangle EOI=\tfrac\pi2$;
+if not, one needs to adjust the direction of the $y$-coordinate. 
+
+\section{Conjugation and absolute value}
+\label{sec:complex-conjugation}
+
+Let $z=x+i\cdot y$; 
+that is, $z$ is a complex number with real part $x$ and imaginary part $y$.
+If $y=0$, we say that the complex number $z$ is \index{real!complex number}\emph{real}; if $x=0$, we say that $z$ is \index{imaginary!number}\emph{imaginary}.
+The set of points with real (imaginary) complex coordinates forms a line in the plane, known as the real (or imaginary) line. 
+The real line will be denoted as $\mathbb{R}$.
+
+The complex number
+\[\bar z\df x-i\cdot y\] is called the \index{complex conjugate}\emph{complex conjugate} of $z=x+i\cdot y$.
+Let $Z$ and $\bar Z$ be the points in the plane with the complex coordinates $z$ and $\bar z$ respectively.
+The point $\bar Z$ is the reflection of $Z$ across the real line.
+
+It is straightforward to check that
+$$\begin{aligned}
+x&=\Re z=\frac{z+\bar z}2,
+&
+y&=\Im z=\frac{z-\bar z}{i\cdot2},
+\quad\text{and}
+&
+x^2+y^2&=z\cdot\bar z.
+\end{aligned}\eqlbl{eq:conj-1}$$
+
+The last formula in \ref{eq:conj-1} allows us to express the quotient $\tfrac{w}{z}$ of two complex numbers $w$ and $z=x+i\cdot y$:
+$$\frac{w}{z}=\tfrac{1}{z\cdot\bar z}\cdot w\cdot\bar z=\tfrac{1}{x^2+y^2}\cdot w\cdot\bar z.$$
+
+\label{page:cojugation=authomorphism}
+Note that
+\begin{align*}
+\overline {z+ w}&=\bar z+\bar w,
+&
+\overline {z- w}&=\bar z-\bar w,
+&
+\overline {z\cdot w}&=\bar z\cdot\bar w,
+&
+\overline {z/w}&=\bar z/\bar w.
+\end{align*}
+That is, complex conjugation
+\textit{respects}
+all the arithmetic operations.
+
+The value 
+\begin{align*}
+|z|&\df\sqrt{x^2+y^2}=\sqrt{(x+i\cdot y)\cdot(x-i\cdot y)}
+=
+\sqrt{z\cdot\bar z}
+\end{align*}
+is called the
+\index{absolute value}\emph{absolute value} of $z$.
+If $|z|=1$, then $z$ is called a \index{unit complex number}\emph{unit complex number}.
+
+\begin{thm}{Exercise}\label{ex:|zw|}
+Show that $|v\cdot w|=|v|\cdot |w|$ for all $v,w\in\mathbb{C}$.
+\end{thm}
+
+Suppose that $Z$ and $W$ are points with complex coordinates $z$ and $w$.
+Note that
+$$ZW=|z-w|.\eqlbl{eq:C-dist}$$
+The triangle inequality for points with complex coordinates $0$, $v$, and $v+w$ implies that
+\[|v+w|\le |v|+|w|\]
+for all $v,w\in\mathbb{C}$;
+this inequality is also called the \index{triangle!inequality}\emph{triangle inequality}.
+
+\begin{thm}{Exercise}\label{ex:ptolemy}
+Use the identity 
+\[u\cdot (v-w)+v\cdot (w-u)+w\cdot(u-v)=0\]
+for $u,v,w\in\mathbb{C}$ and the triangle inequality
+to prove Ptolemy's inequality (\ref{ptolemy-inq}).
+\end{thm}
+
+\section{Euler's formula}\label{sec:Euler's formula}
+
+{
+
+\begin{wrapfigure}{r}{36mm}
+\vskip-15mm
+\centering
+\includegraphics{mppics/pic-272}
+\end{wrapfigure}
+
+Let $\alpha$ be a real number.
+The following identity 
+$$e^{i\cdot\alpha}=\cos\alpha+i\cdot\sin\alpha
+\eqlbl{eq:euler}$$
+is called \index{Euler's formula}\emph{Euler's formula}.
+In particular, $e^{i\cdot\pi}\z=-1$ and $e^{i\cdot\frac\pi2}\z=i$.
+
+Geometrically, Euler’s formula can be understood as follows: Imagine
+$O$ and $E$ as points with complex coordinates $0$ and $1$ respectively.
+Assume 
+\[OZ=1\quad \text{and}\quad \measuredangle EOZ\z\equiv \alpha,\]
+then $e^{i\cdot\alpha}$ is the complex coordinate of $Z$.
+In particular, the complex coordinate of every point on the unit circle centered at~$O$
+can be uniquely expressed as $e^{i\cdot\alpha}$ for some $\alpha\in(-\pi,\pi]$.
+
+}
+
+\parbf{Why is this true?}
+The proof of Euler's identity depends on how you define the exponential function.
+
+If you have never applied the exponential function to an imaginary number, 
+you may take the right-hand side in \ref{eq:euler} 
+as the definition of $e^{i\cdot\alpha}$.
+In this case, nothing has to be proved,
+but it is better to check that $e^{i\cdot\alpha}$ satisfies familiar identities.
+Primarily,
+$$e^{i\cdot \alpha}\cdot e^{i\cdot \beta}= e^{i\cdot(\alpha+\beta)}.$$
+The latter can be proved using \ref{eq:comlex+x} and the following well-known trigonometric formulas:
+\begin{align*}
+\cos(\alpha+\beta)&=\cos\alpha\cdot\cos\beta-\sin\alpha\cdot\sin\beta,
+\\
+\sin(\alpha+\beta)&=\sin\alpha\cdot\cos\beta+\cos\alpha\cdot\sin\beta.
+\end{align*}
+
+If you are familiar with the power series for sine, cosine, and the exponential function, then the following might convince you that identity \ref{eq:euler} holds:
+\begin{align*}
+ e^{i\cdot \alpha } &{}= 1 + i\cdot \alpha  + \frac{(i\cdot \alpha )^2}{2!} + \frac{(i\cdot \alpha  )^3}{3!} + \frac{(i\cdot \alpha )^4}{4!} + \frac{(i\cdot  \alpha )^5}{5!} +  \cdots =
+ \\
+&= 1 + i\cdot \alpha  - \frac{\alpha ^2}{2!} - i\cdot\frac{ \alpha ^3}{3!} + \frac{\alpha ^4}{4!} + i\cdot\frac{ \alpha ^5}{5!} -  \cdots =
+\\
+&= \left( 1 - \frac{\alpha ^2}{2!} + \frac{\alpha ^4}{4!}  - \cdots \right) +  i\cdot\left( \alpha  - \frac{\alpha ^3}{3!} + \frac{\alpha ^5}{5!} -  \cdots \right) =
+\\
+&= \cos \alpha  +  i\cdot\sin \alpha.
+\end{align*}
+
+\section{Argument and polar coordinates}
+
+As before, we assume that $O$ and $E$ are the points with complex coordinates $0$ and $1$ respectively.
+
+Let $Z$ be a point distinct from $O$.
+Set $\rho=OZ$ and $\theta=\measuredangle EOZ$;
+these are called the \index{polar!coordinates}\emph{polar coordinates} of the point~$Z$.
+
+If $z$ is the complex coordinate of $Z$, then $\rho=|z|$. 
+The value $\theta$ is called the \index{argument}\emph{argument} of $z$
+(briefly, $\theta=\arg z$).
+In this case, 
+$$z=\rho\cdot e^{i\cdot\theta}=\rho\cdot(\cos\theta+i\cdot\sin\theta).\qquad\qquad\qquad\qquad $$
+
+\begin{wrapfigure}[4]{o}{30mm}
+\vskip-14mm
+\centering
+\includegraphics{mppics/pic-274}
+\end{wrapfigure}
+
+Note that 
+\begin{align*}
+\arg (z\cdot w)&\equiv \arg z+\arg w,
+\shortintertext{and}
+\arg \tfrac z w&\equiv \arg z-\arg w
+\end{align*}
+if $z\ne0 $ and $w\ne0$.
+In particular, if $Z$, $V$, and $W$ are points with complex coordinates $z$, $v$, and $w$ respectively, then
+$$
+\begin{aligned}
+\measuredangle VZW
+&=\arg\left(\frac{w-z}{v-z}\right)\equiv
+\\
+&\equiv \arg(w-z)-\arg(v-z)
+\end{aligned}
+\eqlbl{eq:angle-arg}$$
+if $\measuredangle VZW$ is defined.
+
+\begin{thm}{Exercise}\label{ex:3-sum-C}
+Use the formula \ref{eq:angle-arg} to show that  
+$$\measuredangle ZVW+\measuredangle VWZ+\measuredangle WZV\equiv \pi$$
+for every triangle $ZVW$ in the Euclidean plane.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:C-sim}
+Suppose that points $O$, $E$, $V$, $W$, and $Z$ have complex coordinates $0$, $1$, $v$, $w$, and $z=v\cdot w$ respectively.
+Show that 
+\[\triangle OEV\sim \triangle OWZ.\]
+
+\end{thm}
+
+The following theorem is a translation of Corollary~\ref{cor:inscribed-quadrangle} into complex-number language.
+
+\begin{thm}{Theorem}\label{thm:inscribed-quadrangle-C}
+Let $a$, $b$, $c$, and $d$ be the complex coordinates of vertices of $\square ABCD$.
+Then $\square ABCD$ is inscribed
+if and only if the number
+$$\frac{(a-b)\cdot(c-d)}{(a-d)\cdot(c-b)}$$
+is real.
+\end{thm}
+
+The value $\frac{(a-b)\cdot(c-d)}{(a-d)\cdot(c-b)}$ is called the
+\index{cross-ratio!complex cross-ratio}\emph{complex cross-ratio} of $a$, $c$, $b$, and $d$;
+it will be denoted by \index{64@$(u,v;w,z)$}$(a,c;b,d)$.
+
+
+
+\begin{thm}{Exercise}\label{ex:real-cross-ratio}
+Observe that the complex number $z\ne 0$ is real if and only if $\arg z=0$ or $\pi$;
+in other words, $2\cdot\arg z\equiv 0$.
+
+Use this observation to show that Theorem~\ref{thm:inscribed-quadrangle-C}
+is indeed a reformulation of Corollary~\ref{cor:inscribed-quadrangle}.
+\end{thm}
+
+\section{The method of complex coordinates}
+
+The following problem illustrates the method of complex coordinates.
+
+\begin{thm}{Problem}\label{prob:2right-tringles}
+Let $\triangle OPV$ and $\triangle OQW$ be isosceles right triangles such that 
+\[\measuredangle VPO=\measuredangle OQW=\tfrac\pi2\] 
+and let $M$ be the midpoint of $[VW]$.
+Assume $P$, $Q$, and $M$ are distinct points.
+Show that  $\triangle PMQ$ is an isosceles right triangle.
+\end{thm}
+
+\parit{Solution.}
+Choose complex coordinates so that $O$ is the origin.
+Denote by $v, w, p, q, m$ the complex coordinates of the remaining points respectively.
+
+Since $\triangle OPV$ and $\triangle OQW$ are isosceles and $\measuredangle VPO=\measuredangle OQW=\tfrac\pi2$,
+\ref{eq:C-dist} and \ref{eq:angle-arg} imply that
+\begin{align*}
+v-p&=i\cdot p,
+&
+q-w&=i\cdot q.
+\end{align*}
+
+\begin{wrapfigure}{o}{37mm}
+\centering
+\includegraphics{mppics/pic-276}
+\end{wrapfigure}
+
+Therefore
+\begin{align*}
+m
+&=\tfrac12\cdot(v+w)=
+\\
+&=\tfrac{1+i}2\cdot p+\tfrac{1-i}2\cdot q.
+\end{align*}
+
+By straightforward computations, we get that
+\[p-m=i\cdot (q-m).\]
+In particular, $|p-m|=|q-m|$ and  $\arg\frac{p-m}{q-m}=\tfrac\pi2$;
+that is, $PM=QM$ and $\measuredangle QMP =\tfrac\pi2$.  
+\qeds
+
+{
+
+\begin{wrapfigure}{r}{36mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-278}
+\end{wrapfigure}
+
+\begin{thm}{Exercise}\label{ex:3-squares}
+Consider three squares with common sides as shown in the picture.
+Use the method of complex coordinates to show that 
+\[\measuredangle EOA+\measuredangle EOB+\measuredangle EOC=\pm\tfrac\pi2.\]
+
+\end{thm}
+
+}
+
+\begin{thm}{Exercise}\label{ex:6-circles}
+Check the following identity with six complex cross-ratios:
+\[(u,w;v,z)\cdot(u',w';v',z')=\frac{(v,w';v',w)\cdot(z,u';z',u)}{(u,v';u',v)\cdot(w,z';w',z)}.\]
+Use it together with Theorem~\ref{thm:inscribed-quadrangle-C} to prove that if
+$\square UVWZ$, $\square UVV'U'$, $\square VWW'V'$, $\square WZZ'W'$, and $\square ZUU'Z'$
+are inscribed, then  $\square U'V'W'Z'$ is inscribed as well.
+
+\end{thm}
+
+\begin{minipage}{.47\textwidth}
+\centering
+\includegraphics{mppics/pic-280}
+\end{minipage}
+\hfill
+\begin{minipage}{.47\textwidth}
+\centering
+\includegraphics{mppics/pic-282}
+\end{minipage}
+
+\medskip
+
+\begin{thm}{Exercise}\label{ex:4-sim}
+Suppose that points $U$, $V$, and $W$ lie on one side of line $(AB)$ and 
+$\triangle UAB\sim \triangle BVA \sim \triangle ABW$.
+Denote by $a$, $b$, $u$, $v$, and $w$ the complex coordinates of $A$, $B$, $U$, $V$, and $W$ respectively.
+\begin{enumerate}[(a)]
+ \item Show that $\tfrac{u-a}{b-a}=\tfrac{b-v}{a-v}=\tfrac{a-b}{w-b}=\tfrac{u-v}{w-v}$.
+ \item Conclude that $\triangle UAB\sim \triangle BVA \sim \triangle ABW\sim \triangle UVW$.
+\end{enumerate}
+ 
+\end{thm}
+
+\section{Fractional linear transformations}
+
+\begin{thm}{Exercise}\label{ex:movie}
+Watch the video ``Möbius transformations revealed'' by Douglas Arnold and Jonathan Rogness.
+(It is available on \href{http://youtu.be/JX3VmDgiFnY}{YouTube}.)
+\end{thm}
+
+
+The complex plane $\mathbb{C}$ extended by one ideal number $\infty$ 
+is called the \index{extended complex plane}\emph{extended complex plane}.
+It is denoted by $\hat{\mathbb{C}}$, so $\hat{\mathbb{C}}=\mathbb{C}\cup\{\infty\}$.
+
+A \index{fractional linear transformation}\emph{fractional linear transformation} or \index{M\"obius transformation}\emph{M\"obius transformation} of  $\hat{\mathbb{C}}$ is a function of one complex variable $z$
+that can be written as
+$$f(z) = \frac{a\cdot z + b}{c\cdot z + d},$$
+where the coefficients $a$, $b$, $c$, $d$ are complex numbers satisfying $a\cdot d \z- b\cdot c \not= 0$.
+(If $a\cdot d - b\cdot c = 0$ the function defined above is a constant; it is not a fractional linear transformation.) 
+
+In case $c\not=0$, we assume that
+$$f(-d/c) = \infty
+\quad
+\text{and}
+\quad
+f(\infty) = a/c;$$
+and if $c=0$ we assume
+$f(\infty) = \infty$.
+
+\section{Elementary transformations}
+
+The following three types of fractional linear transformations are called \index{elementary transformation}\emph{elementary}:
+\begin{enumerate}
+\item $z\mapsto z+w,$
+\item $z\mapsto w\cdot z$ for $w\ne0,$
+\item $z\mapsto \frac1z.$
+\end{enumerate}
+ 
+\parbf{The geometric interpretations.}
+Suppose that $O$ denotes the point with the complex coordinate~$0$.
+
+The first map $z\mapsto z+w$ corresponds to the so-called
+\index{parallel!translation}\emph{parallel translation} 
+of the Euclidean plane; its geometric meaning should be evident.
+
+The second map is called the \index{rotational homothety}\emph{rotational homothety} with the center at~$O$.
+That is, the point $O$ maps to itself,
+and any other point $Z$ maps to a point $Z'$ such that $OZ'=|w|\cdot OZ$ and $\measuredangle ZOZ'=\arg w$.
+
+The third map can be described as a composition of the inversion across the unit circle centered at $O$ and the reflection across $\mathbb{R}$ 
+(the composition can be taken in any order).
+
+Indeed, $\arg z\equiv -\arg \tfrac1z$.
+Therefore, 
+$$\arg z=\arg (1/\bar z);$$
+that is, if the points $Z$ and $Z'$ have complex coordinates $z$ and $1/\bar z$,
+then $Z'\in[OZ)$.
+Clearly, $OZ=|z|$ and $OZ'=|1/\bar z|=\tfrac{1}{|z|}$.
+Therefore, $Z'$ is the inverse of $Z$ across the unit circle centered at~$O$.
+Finally, $\tfrac1z\z=\overline{(1/\bar z)}$ is the complex coordinate of
+the reflection of $Z'$ across $\mathbb{R}$.
+
+\begin{thm}{Proposition}\label{prop:mob-comp}
+A map $f\:\hat{\mathbb{C}}\to\hat{\mathbb{C}}$ is a fractional linear transformation if and only if $f$ can be expressed as a composition of elementary transformations. 
+\end{thm}
+
+\parit{Proof; the ``only if'' part.}
+Fix a fractional linear transformation
+\begin{align*}
+f(z) &= \frac{a\cdot z + b}{c\cdot z + d}.
+\shortintertext{Assume $c\ne 0$. Then}
+f(z) &= \frac ac-\frac{a\cdot d-b\cdot c}{c\cdot(c\cdot z + d)} =
+\\
+&= \frac ac-\frac{a\cdot d-b\cdot c}{c^2}\cdot \frac1{z + \frac dc}.
+\end{align*}
+That is, 
+$$f(z)=f_4\circ f_3\circ f_2\circ f_1 (z),
+\eqlbl{eq:moebius-compose}$$
+where $f_1$, $f_2$, $f_3$, and $f_4$ are the following elementary transformations:
+\begin{align*}
+f_1(z)&= z+\tfrac dc,
+&
+f_2(z)&= \tfrac1z,
+\\
+f_3(z)&= - \tfrac{a\cdot d-b\cdot c}{c^2} \cdot z,
+&
+f_4(z)&= z+\tfrac ac.
+\end{align*}
+
+If $c=0$, then
+\[f(z) = \frac{a\cdot z + b}{ d}.\]
+In this case, $f(z)=f_2\circ f_1 (z)$,
+where 
+\begin{align*}
+f_1(z)&= \tfrac ad\cdot z,
+&
+f_2(z)= z+\tfrac bd.
+\end{align*}
+
+\parit{``If'' part.}
+We need to show that by composing elementary transformations,
+we can only get fractional linear transformations.
+It is sufficient to check that the composition of a fractional linear transformation
+$$f(z) = \frac{a\cdot z + b}{c\cdot z + d}.$$
+with every elementary transformation $z\mapsto z+w$, $z\mapsto w\cdot z$, or $z\mapsto \tfrac1z$ is a fractional linear transformation.
+
+The latter is done by means of direct calculations.
+\begin{align*}
+\frac{a\cdot (z+w) + b}{c\cdot (z+w) + d}
+&=
+\frac{a\cdot z + (b+a\cdot w)}{c\cdot z + (d+c\cdot w)},
+\\
+\frac{a\cdot (w\cdot z) + b}{c\cdot (w\cdot z) + d}
+&=
+\frac{(a\cdot w)\cdot z + b}{(c\cdot w)\cdot z + d},
+\\
+\frac{a\cdot \frac1z + b}{c\cdot \frac1z + d}
+&=
+\frac{b\cdot z + a}{d\cdot z + c}.
+\end{align*}
+\qedsf
+
+
+\begin{thm}{Corollary}\label{cor:cline-Moeb}
+The fractional linear transformations map circlines to circlines.
+\end{thm}
+
+\parit{Proof.}
+By Proposition~\ref{prop:mob-comp},
+it is sufficient to check that each elementary transformation sends a circline to a circline.
+
+For the first and second elementary transformations, the latter is evident.
+
+As noted above,
+the map $z\mapsto\tfrac1z$ is a composition of inversion and reflection.
+By Theorem~\ref{thm:inverse}, the inversion sends a circline to a circline.
+Hence the result.
+\qeds
+
+\begin{thm}{Exercise}\label{ex:inverse-Mob}
+Show that if $f$ is a fractional linear transformation, then so is its inverse $f^{-1}$.
+\end{thm}
+
+
+\begin{thm}{Exercise}\label{ex:3-point-Mob}
+Given distinct values $z_0,z_1,z_\infty\in \hat{\mathbb{C}}$,
+construct a fractional linear transformation $f$ such that 
+$f(z_0)=0$,
+$f(z_1)=1$,
+and 
+$f(z_\infty)\z=\infty$.
+Show that such a transformation is unique.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:inversion-Mob}
+Show that every inversion is a composition of complex conjugation and a fractional linear transformation.
+
+Use \ref{ex:inversions-inversive} to conclude that every inversive transformation is either a fractional linear transformation or a complex conjugate of a fractional linear transformation.
+\end{thm}
+
+\section{The complex cross-ratio}
+
+Let $u$, $v$, $w$, and $z$ be four distinct complex numbers.
+Recall that 
+the complex number
+$$
+\frac{(u-w)\cdot(v-z)}{(v-w)\cdot(u-z)}$$
+is called the \index{cross-ratio!complex cross-ratio}\emph{complex cross-ratio} of $u$, $v$, $w$, and $z$; 
+it is denoted by $(u,v;w,z)$.
+
+If one of the numbers $u$, $v$, $w$, $z$ is $\infty$, 
+then the complex cross-ratio has to be defined by taking the appropriate limit; in other words, we assume that $\frac\infty\infty=1$.
+For example,
+$$(u, v; w, \infty)=\frac{(u-w)}{(v-w)}.$$
+
+Assume that $U$, $V$, $W$, and  $Z$ are the points with complex coordinates  
+$u$, $v$, $w$, and $z$ respectively.
+Note that 
+\begin{align*}
+\frac{UW\cdot VZ}{VW\cdot UZ}&=|(u,v;w,z)|,
+\\
+\measuredangle WUZ +\measuredangle ZVW&=\arg\frac{u-w}{u-z}+\arg\frac{v-z}{v-w}\equiv \arg(u,v;w,z).
+\end{align*}
+These equations give the following reformulation of Theorem~\ref{lem:inverse-4-angle}.
+
+\begin{thm}{Theorem}\label{lem:inverse-4-angle-C}
+Let $UWVZ$ and $U'W'V'Z'$  be two quadrangles 
+such that the points $U'$, $W'$, $V'$, and $Z'$ are inverses of $U$, $W$, $V$, and $Z$ respectively.
+Assume $u$, $w$, $v$, $z$, $u'$, $w'$, $v'$, and $z'$ are the complex coordinates of $U$, $W$, $V$, $Z$, $U'$, $W'$, $V'$, and $Z'$ respectively.
+
+Then 
+$$(u',v';w',z')=\overline{(u,v;w,z)}.$$
+
+\end{thm}
+
+The following exercise is a generalization of the theorem above.
+It has a short solution using Proposition~\ref{prop:mob-comp}.
+
+\begin{thm}{Exercise}\label{ex:C-cross-ratio}
+Show that the complex cross-ratio is {}\emph{invariant} under fractional linear transformations. 
+
+That is, if a fractional linear transformation maps four distinct complex numbers $u, v, w, z$ to complex numbers $u', v', w', z'$ respectively, then
+$$
+(u',v';w',z')
+=
+(u,v;w,z).
+$$
+
+\end{thm}
+
+\section{The Schwarz--Pick theorem}
+
+The following theorem shows 
+that the metric in the conformal disc model naturally appears in other branches of mathematics.
+We do not give its proof, but it can be found in any textbook on geometric complex analysis.
+
+Let $\mathbb{D}$ be the \index{disc}\emph{open unit disc} in the complex plane centered at~$0$;
+that is, a complex number $z$
+belongs to $\mathbb{D}$ if and only if $|z|<1$.
+
+Let us use the disc $\mathbb{D}$ as an h-plane in the conformal disc model;
+the h-distance between $z, w\in\mathbb{D}$ will be denoted by $d_h(z,w)$;
+that is,
+\[d_h(z,w)\df ZW_h,\]
+where $Z$ and $W$ are h-points with complex coordinates $z$ and $w$ respectively.
+
+A function $f\:\mathbb{D}\to \mathbb{C}$ is called \index{holomorphic function}\emph{holomorphic} if for every $z\in \mathbb{D}$
+there is a complex number $s$ such that
+\[f(z+w)=f(z)+s\cdot w+o(|w|).\]
+In other words, $f$ is {}\emph{complex-differentiable}
+at any $z\in\mathbb{D}$.
+The complex number $s$ is called the {}\emph{derivative} of $f$ at $z$ (briefly $s=f'(z)$).
+
+\begin{thm}{Schwarz--Pick theorem}\index{Schwarz--Pick theorem}
+Assume $f\: \mathbb{D}\to \mathbb{D}$ is a holomorphic function.
+Then 
+\[d_h(f(z),f(w))\le d_h(z,w)\]
+for all $z,w\in \mathbb{D}$.
+
+If the equality holds for one pair of distinct numbers $z,w\in \mathbb{D}$, then it holds for each pair.
+In this case, $f$ is a fractional linear transformation as well as a motion of the h-plane.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:schwarz-moebius}
+Show that if a fractional linear transformation $f$ appears in the equality case of the Schwarz--Pick theorem, then it can be written as 
+\[f(z)=\frac{v\cdot z+\bar w}{w\cdot z+\bar v}.\]
+where $v$ and $w$ are complex constants such that $|v|>|w|$.
+\end{thm}
+
+Recall that hyperbolic tangent $\tanh$ is defined in Section~\ref{sec:hyp-trig}.
+
+\begin{thm}{Exercise}\label{ex:schwarz-tanh}
+Show that 
+\[\tanh [\tfrac12\cdot d_h(z,w)]=\left|\frac{z-w}{1-z\cdot\bar w}\right|.\]
+Conclude that the inequality in the Schwarz--Pick theorem can be rewritten as
+\[\left|\frac{z'-w'}{1-z'\cdot\bar w'}\right|\le\left|\frac{z-w}{1-z\cdot\bar w}\right|,\]
+where
+$z'=f(z)$ and $w'=f(w)$.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:schwarz}
+Show that the Schwarz lemma stated below 
+follows from the Schwarz--Pick theorem.
+\end{thm}
+
+\begin{thm}{Schwarz lemma}
+Let $f\: \mathbb{D}\to \mathbb{D}$ be a holomorphic function
+and $f(0)=0$.
+Then 
+$|f(z)|\le |z|$
+for every $z\in \mathbb{D}$.
+
+Moreover, if equality holds for some $z\ne 0$, then there is a unit complex number $u$ 
+such that 
+$f(z)=u\cdot z$
+for every $z\in\mathbb{D}$.
+\end{thm}

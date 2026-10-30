@@ -1,0 +1,156 @@
+\documentclass[a4paper]{article}
+
+% The CC BY-SA notice stamped along the bottom of every page. This
+% template's own source states CC BY-SA 4.0 in this footer, which is
+% MORE restrictive than the gallery page's CC-BY-4.0 tag and is the
+% notice that governs — see README.md. Do not remove it without
+% checking your own right to relicense the result.
+\usepackage[pages=all, color=black, position={current page.south}, placement=bottom, scale=1, opacity=1, vshift=5mm]{background}
+\SetBgContents{
+	\tt This work is shared under a \href{https://creativecommons.org/licenses/by-sa/4.0/}{CC BY-SA 4.0 license} unless otherwise noted
+}
+
+\usepackage[margin=1in]{geometry}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\hypersetup{
+	unicode,
+	pdfauthor={Author One, Author Two},
+	pdftitle={A Simple Article Template},
+	pdfsubject={A simple article template},
+	pdfkeywords={article, template, simple},
+	pdfproducer={LaTeX},
+	pdfcreator={pdflatex}
+}
+
+\usepackage[sort&compress,numbers,square]{natbib}
+\bibliographystyle{plainnat}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+\usepackage{graphicx, color}
+\usepackage{algorithm, algpseudocode}
+\usepackage{mathrsfs}
+
+\title{A Simple Article Template}
+\author{Author One$^1$\thanks{Author One was partially supported by Grant XXX} \and Author Two$^2$}
+
+\date{
+	$^1$Organization One \\ \texttt{author.one@org1.edu}\\%
+	$^2$Organization Two \\ \texttt{author.two@org2.edu}\\[2ex]%
+}
+
+\begin{document}
+	\maketitle
+
+	\begin{abstract}
+		This starter demonstrates the pieces a research article
+		typically needs: theorem environments, a resolved
+		bibliography, a table, and a figure, laid out with natbib
+		and standard AMS math packages. Replace this paragraph
+		with a real abstract once the sections below are filled in.
+
+		\noindent\textbf{Keywords:} article, template, simple
+	\end{abstract}
+
+	\tableofcontents
+
+	\section{Introduction}
+	\label{sec:intro}
+
+	State the problem the paper addresses and summarise the
+	contribution in a paragraph or two before diving into
+	preliminaries.
+
+	\subsection{Preliminaries}
+	\label{sec:pre}
+
+	Introduce notation and any definitions the rest of the paper
+	depends on.
+
+	\subsection{Related Work}
+	\label{sec:related}
+
+	Prior results relevant to this paper are discussed
+	in~\citep{HararyR74}, and the underlying combinatorial notion
+	used throughout is due to~\citep{Berge57,Berge58}.
+
+	\begin{theorem}
+		\label{thrm:1}
+		State the main result here.
+	\end{theorem}
+	\begin{proof}
+		Give the proof, or a sketch with a pointer to the appendix.
+	\end{proof}
+
+	\begin{corollary}
+	\label{cor:1}
+	A direct consequence of Theorem~\ref{thrm:1}.
+	\end{corollary}
+
+	\begin{itemize}
+		\item A first supporting point.
+		\item A second supporting point.
+	\end{itemize}
+
+	\begin{enumerate}
+		\item A first step in a procedure.
+		\item A second step, following from the first.
+	\end{enumerate}
+
+	\begin{table}[ht]
+		\centering
+		\begin{tabular}{|c|c|}
+			\hline
+			\textbf{Odd} & \textbf{Even} \\
+			\hline\hline
+			One & Two \\
+			\hline
+			Three & Four \\
+			\hline
+		\end{tabular}
+		\caption{An example table}
+		\label{tbl:1}
+	\end{table}
+
+	Table~\ref*{tbl:1} is referenced from the body text like this.
+
+	\section{Results}
+	\label{sec:results}
+
+	Present the paper's results here.
+	(See Figure~\ref{fig:example} for an illustration.)
+	\begin{figure}[ht]
+		\centering
+		\includegraphics[width=0.3\textwidth]{example-image}
+		\caption{An example figure}
+		\label{fig:example}
+	\end{figure}
+
+	\paragraph{Acknowledgements} Thank funding sources and
+	colleagues who reviewed drafts here.
+
+	\bibliography{references}
+
+	\appendix
+
+	\section{Omitted Proof from Section~\ref{sec:results}}
+	\label{app:1}
+
+	Long derivations that would break up the main text's flow go
+	here instead.
+
+\end{document}

@@ -1,0 +1,129 @@
+% \instlogo{} is deliberately left unset -- see tiet-question-paper.cls
+% for the patch that makes that work correctly (upstream hard-errors
+% otherwise). Call \instlogo{path/to/logo.pdf} to add your own crest.
+\documentclass[11pt,a4paper,onecolumn]{tiet-question-paper}
+\date{8 December 2026}
+\institute{Riverside Institute of Technology}
+\schoolordepartment{%
+  Computer Science \& Engineering Department}
+\examname{%
+  End Semester Examination}
+\coursecode{UCS505}
+\coursename{Computer Graphics}
+\timeduration{3 hours}
+\maxmarks{45}
+\faculty{ANG,AMK,HPS}
+
+\begin{document}
+\maketitle
+\textbf{Instructions:}
+\begin{enumerate}
+\item Attempt any 5 questions;
+\item Attempt all the subparts of a question at one
+  place.
+\end{enumerate}
+\bvrhrule[0.4pt]
+\begin{enumerate}
+\item
+  \begin{enumerate}
+  \item Given the control polygon
+    $\textbf{b}_0, \textbf{b}_1, \textbf{b}_2,
+    \textbf{b}_3$ of a Cubic Bezier curve; determine
+    the coordinates for parameter values
+    $\forall t\in T$. \hfill [7 marks]
+
+    \begin{align*}
+      T \equiv
+      & \{0, 0.15, 0.35, 0.5, 0.65, 0.85, 1\} \\
+      \begin{bmatrix}
+        \textbf{b}_0 &\textbf{b}_1& \textbf{b}_2& \textbf{b}_3
+      \end{bmatrix} \equiv
+      & \begin{bmatrix}
+        1&2&4&3\\ 1&3&3&1
+      \end{bmatrix}
+    \end{align*}
+  \item Explain the role of the convex hull property in
+    bounding a Bezier curve. \hfill[2 marks]
+  \end{enumerate}
+\end{enumerate}
+\bvrhrule[0.4pt]
+\begin{enumerate}[resume]
+\item
+  \begin{enumerate}
+  \item Describe the continuity conditions
+    ($C^0$, $C^1$, $C^2$) for curvilinear geometry.
+    \hfill[5 marks]
+  \item Define formally, a B-Spline curve. \hfill [2
+    marks]
+  \item How is a Bezier curve different from a B-Spline
+    curve? \hfill [3 marks]
+  \end{enumerate}
+\end{enumerate}
+\bvrhrule[0.4pt]
+\begin{enumerate}[resume]
+\item
+  \begin{enumerate}
+  \item Given a triangle, with vertices defined by
+    column vectors of $P$; find its vertices after
+    reflection across the XZ plane. \hfill [3 marks]
+    \begin{align*}
+      P\equiv
+      &\begin{bmatrix}
+        3&6&5 \\ 4&4&6 \\ 1&2&3
+      \end{bmatrix}
+    \end{align*}
+  \item Given a pyramid with vertices defined by the
+    column vectors of $P$, and an axis of rotation $A$
+    with direction $\textbf{v}$ and passing through
+    $\textbf{p}$, find the coordinates of the vertices
+    after rotation about $A$ by an angle of
+    $\theta=\pi/4$.\hfill [6 marks]
+    \begin{align*}
+      P\equiv
+      &\begin{bmatrix}
+        0&1&0&0 \\ 0&0&1&0 \\0&0&0&1
+      \end{bmatrix} \\
+      \begin{bmatrix}
+        \mathbf{v} & \mathbf{p}
+      \end{bmatrix}\equiv
+      &\begin{bmatrix}
+        0&0 \\1&1\\1&0
+      \end{bmatrix}
+    \end{align*}
+  \end{enumerate}
+\end{enumerate}
+\bvrhrule[0.4pt]
+\begin{enumerate}[resume]
+\item
+  \begin{enumerate}
+    \item Explain the two winding-number rules used for
+      inside/outside tests in polygon filling. \hfill [4 marks]
+    \item Explain the working principle of a
+      CRT display. \hfill [5 marks]
+  \end{enumerate}
+\end{enumerate}
+\bvrhrule[0.4pt]
+\begin{enumerate}[resume]
+\item
+  \begin{enumerate}
+  \item Given a projection plane $P$ defined by normal
+    $\textbf{n}$ and a reference point $\textbf{a}$,
+    and the centre of projection as $\mathbf{p}_0$,
+    find the perspective projection of the point
+    $\textbf{x}$ onto $P$. \hfill [5 marks]
+    \begin{align*}
+      \begin{bmatrix}
+        \mathbf{a}&\mathbf{n}&\mathbf{p}_0&\mathbf{x}
+      \end{bmatrix}\equiv
+      &
+        \begin{bmatrix}
+          3&-1&1&8\\4&2&1&10\\5&-1&3&6
+        \end{bmatrix}
+    \end{align*}
+  \item State the two main differences between a
+    perspective projection and a parallel (orthographic)
+    projection. \hfill [2 marks]
+  \end{enumerate}
+\end{enumerate}
+\bvrhrule[0.4pt]
+\end{document}

@@ -1,0 +1,34 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[margin=18mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{tikz-cookingsymbols}
+\usepackage{multicol}
+\definecolor{herb}{HTML}{496A4A}
+\definecolor{paprika}{HTML}{B5533C}
+\pagestyle{empty}
+\newcommand{\card}[4]{%
+  \subsection*{\color{herb}#1}\textit{#2}\hfill\textcolor{paprika}{#3}\par
+  \smallskip
+  \begin{multicols}{2}
+  \textbf{Ingredients}\par #4
+  \columnbreak
+  \textbf{Method}\par
+  Prepare, combine, and cook until tender. Taste, rest, and serve.
+  \end{multicols}\medskip}
+\begin{document}
+\begin{center}
+  {\Huge\sffamily\bfseries Weeknight Table}\par
+  {\large Scalable cooking symbols for modern recipe cards}\par
+  \medskip
+  \TopBottomHeat[scale=0.8,color=paprika]\quad
+  \ConvectionOven[scale=0.8,color=herb]\quad
+  \AirFryer[scale=0.8,color=paprika]\quad
+  \Pizza[scale=0.8,color=herb]
+\end{center}
+\card{Roasted vegetables}{Serves 4}{\ConvectionOven\ 35 minutes}{%
+  2 carrots, 1 pepper, 1 onion, olive oil, salt, and pepper.}
+\card{Crisp flatbread}{Serves 2}{\Pizza\ 12 minutes}{%
+  Flatbread, tomato, herbs, mozzarella, and a pinch of chilli.}
+\end{document}

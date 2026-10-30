@@ -1,0 +1,129 @@
+% simple-resume-cv starter — ctan:simple-resume-cv, Public Domain (Unlicense).
+%
+% Engine: xelatex. simpleresumecv.cls loads fontspec unconditionally — this is
+% genuinely XeLaTeX-only, unlike AltaCV. Upstream also bundles the Tinos and
+% GNU FreeFont families as font files under Fonts/, loaded by a relative Path=;
+% this starter does not bundle those fonts (see the substitution note in
+% simpleresumecv.cls) and uses DejaVu Serif/DejaVu Sans instead, both in the
+% pinned image. This changes the look from upstream's Tinos-based screenshots.
+\documentclass[letterpaper,MMMyyyy,nonstopmode]{simpleresumecv}
+
+\newcommand{\CVAuthor}{Jordan Kaminski}
+\newcommand{\CVTitle}{Jordan Kaminski's CV}
+\newcommand{\CVNote}{CV compiled on {\today}}
+\newcommand{\CVWebpage}{https://jordankaminski.example.com}
+
+\hypersetup{
+pdftitle={\CVTitle},
+pdfauthor={\CVAuthor},
+pdfsubject={\CVWebpage},
+pdfcreator={XeLaTeX},
+unicode=true,
+bookmarks=true,
+bookmarksopen=true,
+pdfstartview=FitH,
+pdfpagelayout=OneColumn,
+pdfpagemode=UseOutlines,
+hidelinks,
+breaklinks}
+
+\begin{document}
+
+\Title{\CVAuthor}
+
+\begin{SubTitle}
+\href{mailto:jordan.kaminski@example.com}
+{jordan.kaminski@example.com}
+\,\SubBulletSymbol\,
++1\,(415)\,555-0132
+\,\SubBulletSymbol\,
+\href{\CVWebpage}
+{\url{\CVWebpage}}
+\end{SubTitle}
+
+\begin{Body}
+
+\Section
+{Education}
+{Education}
+{PDF:Education}
+
+\Entry
+\href{https://www.example.edu}
+{\textbf{State University}},
+Columbus, Ohio, USA
+
+\Gap
+\BulletItem
+M.S. in Computer Science
+\hfill
+\DatestampYMD{2016}{08}{15} --
+\DatestampYMD{2018}{05}{15}
+\begin{Detail}
+\SubBulletItem
+Thesis: Approximate Nearest-Neighbour Search over Streaming Data
+\end{Detail}
+
+\Gap
+\BulletItem
+B.S. in Computer Science
+\hfill
+\DatestampYMD{2012}{08}{15} --
+\DatestampYMD{2016}{05}{15}
+\begin{Detail}
+\SubBulletItem
+Cumulative GPA: 3.8 / 4.0
+\end{Detail}
+
+\Section
+{Experience}
+{Experience}
+{PDF:Experience}
+
+\Entry
+\href{https://www.example.com}
+{\textbf{Cascade Analytics}},
+Columbus, Ohio, USA
+
+\Gap
+\BulletItem
+Senior Data Engineer
+\hfill
+\DatestampYMD{2020}{03}{01} --
+\Timestamp
+\begin{Detail}
+\SubBulletItem
+Redesigned the nightly ETL pipeline, reducing runtime from 6 hours to 45 minutes.
+\SubBulletItem
+Introduced automated schema-drift detection now running across 40+ data sources.
+\end{Detail}
+
+\Gap
+\BulletItem
+Data Engineer
+\hfill
+\DatestampYMD{2018}{06}{01} --
+\DatestampYMD{2020}{02}{28}
+\begin{Detail}
+\SubBulletItem
+Built the first version of the company's internal feature store.
+\end{Detail}
+
+\Section
+{Skills}
+{Skills}
+{PDF:Skills}
+
+\Entry
+Languages
+\hfill
+Python, SQL, Scala, Go
+
+\Gap
+\Entry
+Tools
+\hfill
+Airflow, Spark, dbt, Snowflake, Docker
+
+\end{Body}
+\end{document}

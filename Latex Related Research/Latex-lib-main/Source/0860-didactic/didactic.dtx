@@ -1,0 +1,1241 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2019--2020, 2022, 2024 by Daniel Bosk <daniel@bosk.se>
+% -------------------------------------------------------
+% 
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in:
+%
+%    http://www.latex-project.org/lppl.txt
+%
+% and version 1.3 or later is part of all distributions of LaTeX 
+% version 2005/12/01 or later.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{didactic.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{didactic}
+%<*package>
+    [2024/04/08 v1.7 didactic]
+%</package>
+%<package>\RequirePackage{xparse}
+%<package>\RequirePackage{xkeyval}
+%<package>\RequirePackage{xstring}
+%<package>\RequirePackage{etoolbox}
+%<package>\RequirePackage{pythontex}
+%<package>\RequirePackage{minted}
+%<package>\RequirePackage{babel}
+%<package>\RequirePackage{translations}
+%<package>\RequirePackage{amsthm}
+%<package>\RequirePackage{thmtools}
+%<package>\PassOptionsToPackage{unq}{unique}
+%<package>\RequirePackage{unique}
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[utf8]{inputenc}
+\usepackage[swedish,british]{babel}
+\usepackage{pythontex}
+\usepackage[notheorems]{beamerarticle}
+\usepackage[marginparmargin=left]{didactic}
+\usepackage{lipsum}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\EnableCrossrefs         
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{didactic.dtx}
+  \PrintChanges
+  %\PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{v1.0}{2019/01/29}{Initial version}
+% \changes{v1.1}{2019/03/26}{Adds summary environment}
+% \changes{v1.2}{2019/10/26}{Adds lightblock, darkblock and coloured blocks}
+% \changes{v1.3}{2019/01/29}{Renames to didactic; adds tools for code examples}
+% \changes{v1.4}{2023/03/20}{%
+%   Adds settings for memoir and beamer, contrasting code examples, 
+%   translations.
+% }
+% \changes{v1.5}{2023/03/25}{Adds |\ProvideSemanticEnv|}
+% \changes{v1.6}{2024/04/07}{%
+%   Sets beamer bibliography item correctly.
+%   Adds |fullwidth| environment, handles margins better.
+%   Adds |sidecaption| environment and |\flushscap| command.
+% }
+% \changes{v1.7}{2024/04/08}{%
+%   Adds |\NewNoteType| that improves |\newnotetype| with toggles.
+% }
+%
+% \GetFileInfo{didactic.dtx}
+%
+% \DoNotIndex{\newcommand,\newenvironment}
+% 
+%
+% \title{The \textsf{didactic} package\thanks{This document
+%   corresponds to \textsf{didactic}~\fileversion, dated \filedate.
+%   Licensed under the terms of LPPL, version 1.3c or later.}}
+% \author{Daniel Bosk\\\texttt{daniel@bosk.se}}
+%
+% \maketitle
+%
+% \tableofcontents
+%
+% \section{Introduction}
+%
+% This package introduces some environments that are useful for writing 
+% teaching material.
+% It also provides a few settings for |beamer| and |memoir| to make the 
+% resulting document more readable.
+%
+% \section{Usage}
+%
+% The package automatically detects if |beamer| or |memoir| is loaded and 
+% customizes the document accordingly.
+% \DescribeEnv{nobeamer}
+% \DescribeEnv{noarticle}
+% \DescribeEnv{nomemoir}
+% That can be prevented, however, by using the |nobeamer| or |nomemoir| 
+% options.
+% The |noarticle| is to prevent the article versions of the (|beamer|) 
+% environments to be defined.
+%
+% \DescribeEnv{notheorems}
+% The package also provides a few environments for |beamer| and |article| mode.
+% Particularly, it can define theorems and definitions, which might be defined 
+% also by other packages.
+% To prevent this, use the |notheorems| option.
+%
+% \DescribeEnv{inner}
+% \DescribeEnv{outer}
+% \DescribeEnv{top}
+% \DescribeEnv{bottom}
+% When the package customizes |memoir| it sets the inner and outer margins to 
+% fit margin notes better.
+% The |inner| and |outer| options can be used to set the inner and outer 
+% margins to be used.
+% The |top| and |bottom| options can be used to set the top and bottom margins.
+%
+% \subsection{Beamer blocks and semantic environments for papers}
+%
+% \DescribeEnv{assumption}
+% \DescribeEnv{idea}
+% \DescribeEnv{question}
+% \DescribeEnv{exercise}
+% \DescribeEnv{activity}
+% \DescribeEnv{remark}
+% These environments provides wrappers around Beamer's |block| environment.
+% The idea is to complement the blocks provided by Beamer, such as |theorem|, 
+% |definition| and |example|, with some more useful blocks.
+% Each of them provides a block with an appropriate title and optional subtitle 
+% and is of a suitable colour.
+% For instance, consider the following.
+% \input{idea.tex}
+% That can be produced by the following code.
+% \inputminted[linenos]{latex}{idea.tex}
+%
+% \DescribeMacro{\ProvideSemanticEnv}
+% We can create new such block environments, that work both with |beamer| and
+% without, by using the |\ProvideSemanticEnv| command.
+% This command takes five arguments:
+% \begin{enumerate}
+% \item the name of the environment,
+% \item the name of the block environment to use (optional),
+% \item the title of the block,
+% \item options to pass to |thmtools| (optional),
+% \item the key of the translation of the refname of the block,
+% \item the key of the translation of the refnames of the block.
+% \item the key of the translation of the Refname of the block,
+% \item the key of the translation of the Refnames of the block.
+% \end{enumerate}
+% For example, the |idea| block above was created by the following code:
+% \inputminted{latex}{ProvideSemanticEnv.tex}
+%
+% \DescribeEnv{lightblock}
+% \DescribeEnv{darkblock}
+% We provide two shades of boxes, light coloured and dark coloured boxes.
+% These can be used to create boxes of various colours easily.
+% These two environments take two mandatory arguments: the first one is a 
+% colour, the second is the title.
+%
+% In the text (not slides) the blocks are not coloured.
+% For instance, consider the following.
+% \input{lightblock.tex}
+% That can be produced by the following code.
+% \inputminted[linenos]{latex}{lightblock.tex}
+%
+% \DescribeEnv{blackblock}
+% \DescribeEnv{whiteblock}
+% \DescribeEnv{bwblock}
+% For instance, we provide a black block, white block and a black-white block.
+% These take only one mandatory argument: a title.
+%
+% \DescribeEnv{redblock}
+% \DescribeEnv{blueblock}
+% \DescribeEnv{purpleblock}
+% \DescribeEnv{greenblock}
+% \DescribeEnv{yellowblock}
+% \DescribeEnv{orangeblock}
+% We also provide a few predefined blocks in various common colours.
+% They all take a title as mandatory argument.
+%
+% \subsection{Tools for code examples}
+%
+% We also provide two commands for working with code examples: |lstexample| and 
+% |runpython|.
+%
+% \DescribeMacro{\lstexample}
+% The |\lstexample| command allows us to typeset the source code of the 
+% example.
+% For instance, |\lstexample{python}{hello.py}| produces the following:
+% \lstexample{python}{hello.py}
+%
+% We can also pass optional arguments directly to |minted| that is used to 
+% typeset the code.
+% \begin{example}
+% |\lstexample[linenos,highlightlines=4]{python}{hello.py}| produces the 
+% following.
+% \lstexample[linenos,highlightlines=4]{python}{hello.py}
+% \end{example}
+%
+% \DescribeMacro{\runpython}
+% We can also run the example code and include its output using the 
+% |\runpython| macro.
+% \begin{example}
+% For instance, |\runpython{hello.py}| produces the following.
+% \runpython{hello.py}
+% \end{example}
+%
+% \DescribeMacro{\codebycode}
+% The |\codebycode| command is simply two |\lstexample| commands side by side:
+% |\codebycode[opt1]{lang1}{file1}[opt2]{lang2}{file2}|.
+% \codebycode
+%   [breaklines,linenos]{python}{hello.py}
+%   [breaklines,linenos,highlightlines=4]{python}{hello.py}
+%
+% \DescribeMacro{\runbyrun}
+% We can also put the output side by side using 
+% |\runbyrun{hello.py}{hello.py}|.
+% \runbyrun{hello.py}{hello.py}
+%
+% \subsection{Adding margin notes of different kinds}
+%
+% \DescribeMacro{\indentedmarginpar}
+% We want to be able to put quite some content in the margins.
+% For this reason we want to have indented paragraphs in the margin notes.
+% We can use the |\indentedmarginpar{text}| command to do this.
+% For instance, consider the output in the margin.
+% \indentedmarginpar{%
+%   This is an example of an indented margin paragraph.
+%
+%   It can contain multiple paragraphs.
+% }
+%
+% \DescribeMacro{\newnotetype}
+% \DescribeMacro{\ltnote}
+% We also want to be able to use titled notes of different kinds.
+% We can use the |\newnotetype[fmtcmd]{type}{title}| command to define a new 
+% type of note.
+% For instance |\ltnote| is defined as
+% \begin{center}
+% |\newnotetype{\ltnote}{\GetTranslationWarn{Learning theory}}|.
+% \end{center}
+% \ltnote{This is an example of a learning theory note.}
+%
+% We can also change the formatting of the title.
+% |\newnotetype[\textbf]{\bfnote}{Bold note}| and
+% |\bfnote{This is a bold note.}| gives us the note in the margin.
+% \newnotetype[\textbf]{\bfnote}{Bold note}
+% \bfnote{This is a bold note.}
+% \ltnote{Another example of a learning theory note.}
+%
+% \DescribeMacro{\NewNoteType}
+% We also have |\NewNoteType| which is almost synonymous to |\newnotetype|.
+% The difference is that |\NewNoteType| doesn't take a command as argument, but 
+% just a name:
+% |\NewNoteType{ltnote}{Learning theory}| instead.
+% Then we also get |\ltnoteoff| to turn off the note and |\ltnoteon| to turn it 
+% back on.
+%
+% Notes are off by default in |beamer|, but on by default otherwise.
+%
+% \StopEventually{}
+%
+% \section{Implementation}
+%
+% Let's start with the options.
+%
+% \subsection{Options}
+%
+% We have a few negative options, that is, if specified we don't want to do 
+% them.
+% This means that we'll need to use conditionals.
+% So each option definition consists first of a |\newif| then setting it to 
+% true, and finnally, a |\DeclareOption|.
+% The body of the |\DeclareOption| then sets the |\if| to false.
+% After all the options are declared we'll use |\ProcessOptions|.
+% After that we can have all code actually doing the work, all wrapped in |\if| 
+% statements.
+%
+% \begin{environment}{nobeamer}
+% \begin{environment}{nobeamertheme}
+% \begin{environment}{noarticle}
+% This option is used to disable the |beamer| specific parts of the package.
+% Meaning that we don't customize |beamer| even when we find that it is loaded.
+%    \begin{macrocode}
+\newif\if@didactic@beamer
+\@ifclassloaded{beamer}{\@didactic@beamertrue}{\@didactic@beamerfalse}
+\DeclareOptionX{nobeamer}{\@didactic@beamerfalse}
+\newif\if@didactic@article
+\@ifclassloaded{beamer}{\@didactic@articlefalse}{\@didactic@articletrue}
+\newif\if@didactic@beamertheme
+\@didactic@beamerthemetrue
+\DeclareOptionX{nobeamertheme}{\@didactic@beamerthemefalse}
+\DeclareOptionX{noarticle}{\@didactic@articlefalse}
+%    \end{macrocode}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+%
+% \begin{environment}{nomemoir}
+% This option is used to disable the |memoir| specific parts of the package.
+% Meaning that we don't customize |memoir| even when we find that it is loaded.
+%    \begin{macrocode}
+\newif\if@didactic@memoir
+\@ifclassloaded{memoir}{\@didactic@memoirtrue}{\@didactic@memoirfalse}
+\DeclareOptionX{nomemoir}{\@didactic@memoirfalse}
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{notheorems}
+% This option is used to disable defining the usual environments provided by 
+% |amsmath|: definition, theorem, etc.
+%    \begin{macrocode}
+\newif\if@didactic@theorems
+\@didactic@theoremstrue
+\DeclareOptionX{notheorems}{\@didactic@theoremsfalse}
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{inner}
+% \begin{environment}{outer}
+% \begin{environment}{top}
+% \begin{environment}{bottom}
+% We also have some key--value options to control the margins.
+%    \begin{macrocode}
+\newcommand\@didactic@margin@inner{20mm}
+\newcommand\@didactic@margin@outer{70mm}
+\newcommand\@didactic@margin@top{25mm}
+\newcommand\@didactic@margin@bottom{40mm}
+\DeclareOptionX{inner}[25mm]{\renewcommand\@didactic@margin@inner{#1}}
+\DeclareOptionX{outer}[65mm]{\renewcommand\@didactic@margin@outer{#1}}
+\DeclareOptionX{top}[25mm]{\renewcommand\@didactic@margin@top{#1}}
+\DeclareOptionX{bottom}[40mm]{\renewcommand\@didactic@margin@bottom{#1}}
+%    \end{macrocode}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+%
+% \begin{environment}{marginparmargin}
+% We also have an option to set the marginpar margin.
+% We simply pass this on to |memoir| and keep a record ourselves too.
+% We know that the default in |memoir| is |outer|.
+%    \begin{macrocode}
+\newcommand\@didactic@marginparmargin{outer}
+\DeclareOptionX{marginparmargin}{%
+  \renewcommand\@didactic@marginparmargin{#1}
+  \@ifclassloaded{memoir}{%
+    \marginparmargin{#1}
+    \strictpagechecktrue
+    \checkandfixthelayout
+  }{}
+}
+%    \end{macrocode}
+% \end{environment}
+%
+% Now that we've declared the options we can process them.
+%    \begin{macrocode}
+\ProcessOptionsX\relax
+%    \end{macrocode}
+%
+% \subsection{Customizing \texttt{beamer}}
+%
+% If |beamer| is loaded we want to customize it.
+% However, only if the user hasn't disabled this with the |nobeamer| option.
+%    \begin{macrocode}
+\if@didactic@beamer
+%    \end{macrocode}
+
+% If we use |beamer| we want to use the Berlin theme.
+% This theme guides the viewer very nicely, how must is left and where we are
+% in the presentation.
+% (The same is true for the presenter.)
+%    \begin{macrocode}
+\if@didactic@beamertheme
+  \usetheme{Berlin}
+%    \end{macrocode}
+% However, we want to customize the footline.
+% We want to add two lines in the footline.
+% We want to add the author (left) and institute (right) to the first line.
+% Then we add the title (left) and page number (right) to the bottom line.
+%    \begin{macrocode}
+  \setbeamertemplate{footline}%{miniframes theme}
+  {%
+    \begin{beamercolorbox}[colsep=1.5pt]{upper separation line foot}
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+      leftskip=.3cm,rightskip=.3cm plus1fil]{author in head/foot}%
+      \leavevmode{\usebeamerfont{author in head/foot}\insertshortauthor}%
+      \hfill%
+      {\usebeamerfont{institute in head/foot}%
+        \usebeamercolor[fg]{institute in head/foot}\insertshortinstitute}%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+      leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+      {\usebeamerfont{title in head/foot}\insertshorttitle}%
+      \hfill%
+      \insertframenumber%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[colsep=1.5pt]{lower separation line foot}
+    \end{beamercolorbox}
+  }
+%    \end{macrocode}
+%
+% We also want to set the transparency of the covered items.
+% We also want to set the bibliography item to text, we need this to get proper 
+% references (not icons) in the bibliography.
+% (We need that for certain bibliography styles.)
+%    \begin{macrocode}
+  \setbeamercovered{transparent}
+  \setbeamertemplate{bibliography item}{\relax}
+\fi
+%    \end{macrocode}
+%
+% Finally, we want to add a table of contents at the beginning of each section 
+% and subsection.
+% We want these to be shaded, so that the current section is highlighted.
+% We also want to hide the subsections of the other sections.
+%    \begin{macrocode}
+\AtBeginSection[]{%
+  \begin{frame}<beamer>
+    \tableofcontents[currentsection,
+                     subsectionstyle=show/show/hide]
+  \end{frame}
+}
+\AtBeginSubsection[]{%
+  \begin{frame}<beamer>
+    \tableofcontents[currentsection,
+                     subsectionstyle=show/shaded/hide]
+  \end{frame}
+}
+\fi% end \if@didactic@beamer
+%    \end{macrocode}
+%
+% \subsection{Customizing \texttt{memoir}}
+%
+% If |memoir| is loaded we want to customize it.
+% However, only if the user hasn't disabled this with the |nomemoir| option.
+%    \begin{macrocode}
+\if@didactic@memoir
+%    \end{macrocode}
+%
+% We want to set up |memoir| to use the Tufte style.
+% This means that we want to put a lot of text in the margin.
+% We'll use margin notes and put all the footnotes in the margin.
+% We also want to use footnotes for references so that they also appear in the
+% margin.
+%
+% We want to use the |marginfix| package to fix the margin notes.
+%    \begin{macrocode}
+\RequirePackage{marginfix}
+\setlrmarginsandblock{\@didactic@margin@inner}
+                     {\@didactic@margin@outer}
+                     {*}
+\setulmarginsandblock{\@didactic@margin@top}
+                     {\@didactic@margin@bottom}
+                     {*}
+
+\footnotesinmargin
+
+\RequirePackage{ragged2e}
+\renewcommand{\sidefootform}{\RaggedRight}
+\renewcommand{\foottextfont}{\footnotesize\RaggedRight}
+
+\setmpjustification{\RaggedRight}{\RaggedRight}
+
+% margin figure and caption typeset ragged against text block
+\setfloatadjustment{marginfigure}{\mpjustification}
+\setmarginfloatcaptionadjustment{figure}{\captionstyle{\mpjustification}}
+
+% side captions
+% https://tex.stackexchange.com/a/275626/17418
+\sidecapmargin{outer}
+\setsidecappos{t}
+\checkandfixthelayout
+\setsidecaps{\marginparsep}{\marginparwidth}
+\renewcommand{\sidecapstyle}{%
+  \captionstyle{\RaggedRight}
+}
+
+% From https://tex.stackexchange.com/a/324757/17418
+% Palatino for main text and math
+\RequirePackage[osf,sc]{mathpazo}
+% Helvetica for sans serif
+% (scaled to match size of Palatino)
+\RequirePackage[scaled=0.90]{helvet}
+% Bera Mono for monospaced
+% (scaled to match size of Palatino)
+\RequirePackage[scaled=0.85]{beramono}
+\setlxvchars\setxlvchars
+\checkandfixthelayout
+\nouppercaseheads
+%    \end{macrocode}
+%
+% We also want to adapt the citation commands of a few packages to use 
+% footnotes.
+% For these, we check if the package is loaded, if it is, we do the changes.
+% We don't load the packages ourselves, we assume the user has done that.
+% This also means that the |didactic| package should be loaded last.
+%    \begin{macrocode}
+\@ifpackageloaded{biblatex}{%
+  \ExecuteBibliographyOptions{%
+    autocite=footnote,
+    singletitle=false,
+    %style=verbose,
+    %citestyle=verbose,
+    maxbibnames=99,
+    isbn=false,doi=false,url=false
+  }
+  % from https://tex.stackexchange.com/a/374059/17418
+  \DeclareCiteCommand{\fullauthorcite}
+    {\usebibmacro{prenote}}
+    {\usedriver
+      {\setcounter{maxnames}{99}% use up to 99 authors
+        \DeclareNameAlias{sortname}{default}}
+      {\thefield{entrytype}}}
+    {\multicitedelim}
+    {\usebibmacro{postnote}}
+}{}
+\@ifpackageloaded{csquotes}{%
+  \SetCiteCommand{\footcite}
+}{}
+%    \end{macrocode}
+%
+% And that concludes the |memoir| part.
+%    \begin{macrocode}
+\fi% end \if@didactic@memoir
+%    \end{macrocode}
+%
+% \subsection{A side-caption environment for \texttt{beamer}}
+%
+% \begin{environment}{sidecaption}
+% When using |memoir|, we can use the |sidecaption| environment to put the 
+% caption in the margin.
+% However, when using |beamer| we don't have this environment, so we need to 
+% provide it with a suitable behaviour.
+% It's suitable to just translate it to a normal caption, as usually used in 
+% |beamer|.
+%    \begin{macrocode}
+\ProvideDocumentEnvironment{sidecaption}{omo+b}{%
+  #4
+  \caption{#2\IfValueT{#3}{\label{#3}}}
+}{\relax}
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{macro}{\flushscap}
+% We also want to provide a command to flush a figure towards the caption.
+%    \begin{macrocode}
+\NewDocumentCommand{\flushscap}{O{\centering}}{%
+  \@ifclassloaded{memoir}{%
+    \ifscapmargleft%
+      \flushleft%
+    \else%
+      \flushright%
+    \fi%
+  }{%
+    #1%
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsection{More semantic environments}
+%
+% We want to provide a set of environments (blocks) for |beamer|.
+% We want the names of the blocks to be translated.
+% We'll use the |translations| package for this.
+% That way we get the language used through the normal use of |babel|.
+%
+% We also want to have the same environments for the article mode, but in a 
+% nicer format that the default of |beamerarticle|.
+% For instance, instead of
+% \begin{block}{Example}
+% This is an example.
+% \end{block}
+% we want something like
+% \begin{example}
+% This is an example.
+% \end{example}
+%
+% This means that we'll need to do one thing if |beamer| is loaded and another 
+% if |beamerarticle| is loaded---or rather, when |beamer| is not loaded, we 
+% should be able to use this without |beamer| and |beamerarticle|.
+%
+% We want to provide environments like this one:
+% \begin{exercise}\label{exercise}
+%   This is an exercise.
+% \end{exercise}
+% \begin{exercise}\label{anotherexercise}
+%   This is another exercise.
+% \end{exercise}
+% We can use |\cref| to refer to them, getting something like \cref{exercise} or 
+% \cref{exercise,anotherexercise}.
+%
+% We also want it to work with different languages, provided there is a
+% translation.
+% We do Swedish here.
+%
+% \selectlanguage{swedish}
+% Vi kan också skapa exempel på svenska.
+% \begin{exercise}\label{exempel}
+%   Detta är ett exempel.
+% \end{exercise}
+% \begin{exercise}\label{ytterligareexempel}
+%   Detta är ytterligare ett exempel.
+% \end{exercise}
+% Vi kan referera till dem med |\cref|, vilket ger något som \cref{exempel}
+% eller \cref{exempel,ytterligareexempel}.
+% \selectlanguage{british}
+%
+% Let's also add another idea, but in Swedish.
+%
+% \selectlanguage{swedish}
+% \begin{idea}\label{ide}
+%   Detta är en idé.
+% \end{idea}
+% Då har vi \cref{ide}, men vi hade även tidigare \cref{theidea}.
+% Tillsammans är de \cref{ide,theidea}.
+% \selectlanguage{british}
+%
+% We can also refer to them in English, \cref{ide} and \cref{theidea}
+% separately and together as \cref{ide,theidea}.
+%
+% \begin{macro}{\ProvideSemanticEnv}
+% We provide a command to create such environments.
+% This way we just run this command in the preamble, if |beamer| is loaded it 
+% creates the block environments for |beamer|, otherwise it creates the 
+% environments for the article.
+%
+% It can be used like this:
+% \begin{center}
+% |\ProvideSemanticEnv{test}[alertblock]{Test}[style=definition]|\\
+% \qquad|{test}{tests}{Test}{Tests}|
+% \end{center}
+%    \begin{macrocode}
+\ProvideDocumentCommand{\ProvideSemanticEnv}{m o m o mmmm}{%
+  \@ifundefined{#1}{%
+    \@ifclassloaded{beamer}{% beamer
+%    \end{macrocode}
+% For |beamer| we want to use the |block| environment, or one of the coloured
+% blocks that we provide below.
+% We let the second argument (optional) be the name of the block environment to
+% use.
+% This will be the easiest way to set the colour of the block.
+%
+% Lastly, we let the third argument be the title of the block.
+% This is the English title and also the key used to translate the title of the
+% block.
+%    \begin{macrocode}
+      \IfValueTF{#2}{%
+        \ProvideDocumentEnvironment{#1}{o}{%
+          \begin{#2}{\GetTranslationWarn{#3}\IfValueT{##1}{: ##1}}
+        }{%
+          \end{#2}
+        }
+      }{%
+        \ProvideDocumentEnvironment{#1}{o}{%
+          \begin{block}{\GetTranslationWarn{#3}\IfValueT{##1}{: ##1}}
+        }{%
+          \end{block}
+        }
+      }
+%    \end{macrocode}
+%
+% If we don't use |beamer|, we want to use the |thmtools| package to define the
+% environments.
+% The fourth argument (optional), will be passed as options to
+% |\declaretheorem|.
+% The fifth to eighth arguments are the keys of (meaning English) translations
+% of the refnames of the block.
+%    \begin{macrocode}
+    }{% not beamer
+      \IfValueTF{#4}{%
+        \declaretheorem[
+          name=\GetTranslationWarn{#3},
+          refname={{\GetTranslationWarn{#5}},{\GetTranslationWarn{#6}}},
+          Refname={{\GetTranslationWarn{#7}},{\GetTranslationWarn{#8}}},
+          #4
+        ]{#1}
+      }{%
+        \declaretheorem[
+          style=definition,
+          name=\GetTranslationWarn{#3},
+          refname={{\GetTranslationWarn{#5}},{\GetTranslationWarn{#6}}},
+          Refname={{\GetTranslationWarn{#7}},{\GetTranslationWarn{#8}}}
+        ]{#1}
+      }
+    }
+%    \end{macrocode}
+%
+% Since the |refname| and |Refname| options of |thmtools| doesn't seem to work
+% we will add the necessary |\crefname| and |\Crefname| commands at the
+% beginning of the document, for both |beamer| and non-|beamer| case.
+%    \begin{macrocode}
+    \AtBeginDocument{%
+      \@ifpackageloaded{cleveref}{%
+        \crefname{#1}
+          {\GetTranslationWarn{#5}}
+          {\GetTranslationWarn{#6}}
+        \Crefname{#1}
+          {\GetTranslationWarn{#7}}
+          {\GetTranslationWarn{#8}}
+      }{%
+        \relax
+      }
+    }
+  }{\relax} % \@ifundefined{#1}
+} % \ProvideSemanticEnv
+%    \end{macrocode}
+% \end{macro}
+% \begin{environment}{assumption}
+% \begin{environment}{idea}
+% \begin{environment}{question}
+% \begin{environment}{exercise}
+% \begin{environment}{activity}
+% \begin{environment}{remark}
+% \begin{environment}{summary}
+% Then let's define some useful environments.
+%    \begin{macrocode}
+\ProvideSemanticEnv{assumption}[alertblock]{Assumption}
+  {assumption}{assumptions}{Assumption}{Assumptions}
+\ProvideSemanticEnv{idea}[greenblock]{Idea}
+  {idea}{ideas}{Idea}{Ideas}
+\ProvideSemanticEnv{question}[orangeblock]{Question}
+  {question}{questions}{Question}{Questions}
+\ProvideSemanticEnv{exercise}[yellowblock]{Exercise}
+  {exercise}{exercises}{Exercise}{Exercises}
+\ProvideSemanticEnv{activity}[yellowblock]{Activity}
+  {activity}{activities}{Activity}{Activities}
+\ProvideSemanticEnv{remark}[alertblock]{Remark}[%
+    numbered=no,style=remark
+  ]{remark}{remarks}{Remark}{Remarks}
+\ProvideSemanticEnv{summary}[block]{Summary}[%
+    numbered=no,style=remark
+  ]{summary}{summaries}{Summary}{Summaries}
+%    \end{macrocode}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+%
+% We also want to provide the normal environments for theorems and definitions
+% and such.
+%    \begin{macrocode}
+\if@didactic@theorems
+  \ProvideSemanticEnv{definition}[block]{Definition}
+    {definition}{definitions}{Definition}{Definitions}
+  \ProvideSemanticEnv{theorem}[block]{Theorem}[%
+      numbered=unless unique,style=theorem
+    ]{theorem}{theorems}{Theorem}{Theorems}
+  \ProvideSemanticEnv{corollary}[block]{Corollary}[%
+      numbered=unless unique,style=theorem
+    ]{corollary}{corollaries}{Corollary}{Corollaries}
+  \ProvideSemanticEnv{lemma}[block]{Lemma}[%
+      numbered=unless unique,style=theorem
+    ]{lemma}{lemmas}{Lemma}{Lemmas}
+  \ProvideSemanticEnv{proof}[block]{Proof}[%
+      numbered=no,style=proof
+    ]{proof}{proofs}{Proof}{Proofs}
+  \ProvideSemanticEnv{solution}[block]{Solution}[%
+      numbered=no,style=proof
+    ]{solution}{solutions}{Solution}{Solutions}
+  \ProvideSemanticEnv{example}[exampleblock]{Example}
+    {example}{examples}{Example}{Examples}
+\fi
+%    \end{macrocode}
+%
+%
+% \subsection{Translations}
+%
+% We also want to provide translations for the environments.
+% We want to provide those even if none of the packages above are loaded.
+%    \begin{macrocode}
+\ProvideTranslation{swedish}{Assumption}{Antagande}
+\ProvideTranslation{swedish}{Assumptions}{Antagandena}
+\ProvideTranslation{swedish}{assumption}{antagande}
+\ProvideTranslation{swedish}{assumptions}{antagandena}
+\ProvideTranslation{swedish}{Idea}{Idé}
+\ProvideTranslation{swedish}{Ideas}{Idéerna}
+\ProvideTranslation{swedish}{idea}{idé}
+\ProvideTranslation{swedish}{ideas}{idéerna}
+\ProvideTranslation{swedish}{Question}{Fråga}
+\ProvideTranslation{swedish}{Questions}{Frågor}
+\ProvideTranslation{swedish}{question}{fråga}
+\ProvideTranslation{swedish}{questions}{frågor}
+\ProvideTranslation{swedish}{Exercise}{Övningsuppgift}
+\ProvideTranslation{swedish}{Exercises}{Övningsuppgifterna}
+\ProvideTranslation{swedish}{exercise}{övningsuppgift}
+\ProvideTranslation{swedish}{exercises}{övningsuppgifterna}
+\ProvideTranslation{swedish}{Activity}{Aktivitet}
+\ProvideTranslation{swedish}{Activities}{Aktiviteter}
+\ProvideTranslation{swedish}{activity}{aktivitet}
+\ProvideTranslation{swedish}{activities}{aktiviteter}
+\ProvideTranslation{swedish}{Note}{Anmärkning}
+\ProvideTranslation{swedish}{Notes}{Anmärkningar}
+\ProvideTranslation{swedish}{note}{anmärkning}
+\ProvideTranslation{swedish}{notes}{anmärkningar}
+\ProvideTranslation{swedish}{Remark}{Anmärkning}
+\ProvideTranslation{swedish}{Remarks}{Anmärkningar}
+\ProvideTranslation{swedish}{remark}{anmärkning}
+\ProvideTranslation{swedish}{remarks}{anmärkningar}
+\ProvideTranslation{swedish}{Summary}{Sammanfattning}
+\ProvideTranslation{swedish}{Summaries}{Sammanfattningar}
+\ProvideTranslation{swedish}{summary}{sammanfattning}
+\ProvideTranslation{swedish}{summaries}{sammanfattningar}
+\ProvideTranslation{swedish}{definition}{definition}
+\ProvideTranslation{swedish}{definitions}{definitionerna}
+\ProvideTranslation{swedish}{Definition}{Definition}
+\ProvideTranslation{swedish}{Definitions}{Definitionerna}
+\ProvideTranslation{swedish}{theorem}{sats}
+\ProvideTranslation{swedish}{theorems}{satserna}
+\ProvideTranslation{swedish}{Theorem}{Sats}
+\ProvideTranslation{swedish}{Theorems}{Satserna}
+\ProvideTranslation{swedish}{corollary}{följdsats}
+\ProvideTranslation{swedish}{Corollary}{Följdsats}
+\ProvideTranslation{swedish}{corollaries}{följdsatser}
+\ProvideTranslation{swedish}{Corollaries}{Följdsatser}
+\ProvideTranslation{swedish}{lemma}{hjälpsats}
+\ProvideTranslation{swedish}{lemmas}{hjälpsatserna}
+\ProvideTranslation{swedish}{Lemma}{Hjälpsats}
+\ProvideTranslation{swedish}{Lemmas}{Hjälpsatserna}
+\ProvideTranslation{swedish}{proof}{bevis}
+\ProvideTranslation{swedish}{Proof}{Bevis}
+\ProvideTranslation{swedish}{proofs}{bevisen}
+\ProvideTranslation{swedish}{Proofs}{Bevisen}
+\ProvideTranslation{swedish}{Solution}{Lösningsförslag}
+\ProvideTranslation{swedish}{Solutions}{Lösningsförslagen}
+\ProvideTranslation{swedish}{solution}{lösningsförslag}
+\ProvideTranslation{swedish}{solutions}{lösningsförslagen}
+\ProvideTranslation{swedish}{Example}{Exempel}
+\ProvideTranslation{swedish}{Examples}{Exempelen}
+\ProvideTranslation{swedish}{example}{exempel}
+\ProvideTranslation{swedish}{examples}{exempelen}
+%    \end{macrocode}
+%
+%
+% \subsection{Coloured blocks}
+%
+% \begin{environment}{lightblock}
+% \begin{environment}{darkblock}
+% \begin{environment}{blackblock}
+% \begin{environment}{whiteblock}
+% \begin{environment}{bwblock}
+% \begin{environment}{redblock}
+% \begin{environment}{blueblock}
+% \begin{environment}{purpleblock}
+% \begin{environment}{greenblock}
+% \begin{environment}{yellowblock}
+% \begin{environment}{orangeblock}
+% Now we have the coloured blocks.
+% These we want to define even if |beamer| is not loaded, but for this we need 
+% |beamerarticle| instead.
+%    \begin{macrocode}
+\ProvideDocumentEnvironment{lightblock}{mm}{%
+  \setbeamercolor{block body}{bg=#1!10,fg=black}
+  \setbeamercolor{block title}{bg=#1,fg=black}
+  \setbeamercolor{local structure}{fg=#1}
+  \begin{block}{#2}
+}{%
+  \end{block}
+}
+\ProvideDocumentEnvironment{darkblock}{mm}{%
+  \setbeamercolor{block body}{bg=#1!10,fg=black}
+  \setbeamercolor{block title}{bg=#1,fg=white}
+  \setbeamercolor{local structure}{fg=#1}
+  \begin{block}{#2}
+}{%
+  \end{block}
+}
+\ProvideDocumentEnvironment{blackblock}{m}
+{\begin{darkblock}{black}{#1}}
+{\end{darkblock}}
+\ProvideDocumentEnvironment{whiteblock}{m}{%
+  \setbeamercolor{block body}{bg=white!10,fg=black}
+  \setbeamercolor{block title}{bg=white,fg=black}
+  \setbeamercolor{local structure}{fg=black}
+  \begin{block}{#1}
+}{%
+  \end{block}
+}
+\ProvideDocumentEnvironment{bwblock}{m}{%
+  \setbeamercolor{block body}{bg=white!10,fg=black}
+  \setbeamercolor{block title}{bg=black,fg=white}
+  \setbeamercolor{local structure}{fg=black}
+  \begin{block}{#1}
+}{%
+  \end{block}
+}
+\ProvideDocumentEnvironment{redblock}{m}
+{\begin{darkblock}{red}{#1}}
+{\end{darkblock}}
+\ProvideDocumentEnvironment{blueblock}{m}
+{\begin{darkblock}{blue}{#1}}
+{\end{darkblock}}
+\ProvideDocumentEnvironment{purpleblock}{m}
+{\begin{darkblock}{purple}{#1}}
+{\end{darkblock}}
+\ProvideDocumentEnvironment{greenblock}{m}
+{\begin{lightblock}{green}{#1}}
+{\end{lightblock}}
+\ProvideDocumentEnvironment{yellowblock}{m}
+{\begin{lightblock}{yellow}{#1}}
+{\end{lightblock}}
+\ProvideDocumentEnvironment{orangeblock}{m}
+{\begin{lightblock}{orange}{#1}}
+{\end{lightblock}}
+%    \end{macrocode}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+% \end{environment}
+%
+% \subsection{Adding margin notes of different kinds}
+%
+% We want to add titled margin notes.
+% These margin notes should use indentation since they might contains several 
+% paragraphs.
+%
+% \begin{macro}{\indentedmarginpar}
+% We start with the indented margin notes.
+% They simply take a text as argument and typeset it in the margin: 
+% |\indentedmarginpar{this is the text}|.
+% \indentedmarginpar{this is the text}
+%    \begin{macrocode}
+% Gives us indentation in the margin notes.
+% Adapted from https://tex.stackexchange.com/a/257171
+\NewDocumentCommand{\indentedmarginpar}{+m}{%
+  \@ifclassloaded{memoir}{\strictpagecheck}{\relax}%
+  \marginpar{%
+    \setlength{\parindent}{1.0em}\footnotesize
+    \@afterindentfalse\@afterheading #1
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\newnotetype}
+% Now, let's add a command to add margin notes with a title.
+% The |\newnotetype{\titlenote}{Title]| command creates a new command 
+% |\titlenote| that takes a text as argument and typesets it in the margin with 
+% the title |Title|: |\titlenote{this is the text}|.
+% \newnotetype{\titlenote}{Title}
+% \titlenote{this is the text}
+%    \begin{macrocode}
+\NewDocumentCommand{\newnotetype}{omm}{%
+  \@ifclassloaded{beamer}{%
+    \NewDocumentCommand{#2}{+m}{\relax}
+  }{%
+    \IfValueTF{#1}
+      {\NewDocumentCommand{#2}{+m}{%
+        \indentedmarginpar{#1{#3:} ##1}%
+      }}
+      {\NewDocumentCommand{#2}{+m}{%
+        \indentedmarginpar{\emph{#3:} ##1}%
+      }}%
+  }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\NewNoteType}
+% It can also be useful to be able to turn the notes off.
+% For instance, we might want notes to appear in one version, but not in 
+% others.
+% Then we'd like a switch to simply turn them off.
+% Also, we don't want these notes to appear in |beamer|, so we define them to 
+% be off by default in that case.
+%
+% However, to achieve this, we must change the behaviour when creating new 
+% notes: we need the name, not the |\command| as an argument.
+% This is why we have the |\NewNoteType| command.
+%
+% \ltnote{This is a note with a title, using the note defined by the package.}
+% We can use it like this:
+% |\NewNoteType{lt}{Learning theory}|
+% \NewNoteType{lt}{Learning theory}
+% This creates a new note type |\lt|.
+% |\lt{This is a note}| yields the note on the side.
+% \lt{This is a note}
+%
+% We can also turn the notes off and on with |\ltoff| and |\lton|.
+% \ltoff
+% \lt{This is another note while off.}
+% \lton
+% \lt{This is another note while on, we didn't see the one we used while off.}
+% \ltnote{This is a note with a title, using the note defined by the package.}
+%
+% Let's look at the implementation.
+% We first create a new boolean for the note type.
+% This will keep track of whether the note type is on or off, should be typeset 
+% in the margin or if it does nothing.
+% As mentioned above, we want to turn the notes off by default in |beamer|.
+%    \begin{macrocode}
+\NewDocumentCommand{\NewNoteType}{omm}{%
+  \newbool{#2}
+  \@ifclassloaded{beamer}
+    {\boolfalse{#2}}
+    {\booltrue{#2}}
+%    \end{macrocode}
+% Then we create the commands to turn the notes off and on.
+% These must be created with |\expandafter\newcommand| to get the name of the
+% note type.
+% (|\NewDocumentCommand| can't accept names constructed with |\csname|.)
+%    \begin{macrocode}
+  \expandafter\newcommand\csname #2off\endcsname{\boolfalse{#2}}
+  \expandafter\newcommand\csname #2on\endcsname{\booltrue{#2}}
+%    \end{macrocode}
+% We define the command differently depending on whether we want a custom
+% formatting for the title of not.
+% Same as before, we must use |\expandafter\newcommand| to construct these
+% commands.
+%    \begin{macrocode}
+  \IfValueTF{#1}{%
+    \expandafter\newcommand\csname #2\endcsname[1]{%
+      \ifbool{#2}{%
+        \indentedmarginpar{#1{#3:} ##1}%
+      }{\relax}%
+  }}{%
+    \expandafter\newcommand\csname #2\endcsname[1]{%
+      \ifbool{#2}{%
+        \indentedmarginpar{\emph{#3:} ##1}%
+      }{\relax}%
+  }}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ltnote}
+% We provide a few different types of margin notes.
+% That way we can also include translations for them.
+%    \begin{macrocode}
+\ProvideTranslation{swedish}{Learning theory}{Lärandeteori}
+\NewNoteType{ltnote}{\GetTranslationWarn{Learning theory}}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \subsection{Listing and running code examples}
+%
+% Let's turn our focus to |\lstexample| and |\runpython|.
+% We want to make it easy to typeset and print the output of example Python 
+% programs in slides and texts.
+% We want to use PythonTeX to automatically run the code and typeset the source 
+% code using |minted|.
+%
+% These are the same for both |beamer| and article mode.
+%
+% \begin{macro}{\lstexample}
+% The first part is easy.
+% To typeset the source file we simply need to use the minted package.
+% We provide an optional argument to pass options to minted.
+%    \begin{macrocode}
+\NewDocumentCommand{\lstexample}{omm}{%
+  \IfValueTF{#1}
+    {\inputminted[escapeinside=||,#1]{#2}{#3}}
+    {\inputminted[escapeinside=||]{#2}{#3}}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\runpython}
+% Now, for the second part, printing the output, we do this in two steps.
+% First, we create a function using PythonTeX that runs a Python program and 
+% prints it output.
+% We can use it like |\runpython{hello.py}| to run the program in |hello.py|.
+% The output is printed in verbatim mode.
+% Alternatively we could use |\runpython[opt]{hello.py}| to pass |opt| to the 
+% underlying |fancyvrb| environment.
+%
+% Let's create that function in PythonTeX to run the example program file.
+% We simply execute it with Python 3 and capture its output.
+% Then we print the output to stdout, which is then captured by PythonTeX.
+% We use |pytex.add_dependencies| to add the file as a dependency to rerun the 
+% code when necessary.
+%    \begin{macrocode}
+\begin{pycode}
+import subprocess
+
+def run_module(m):
+  result = subprocess.run(["python3", m], capture_output=True)
+  print(result.stdout.decode("utf8").strip())
+  pytex.add_dependencies(m)
+
+def mintedoutput(m, opt):
+  if opt:
+      print(r'\begin{minted}[{}]{{text}}'.format(opt))
+  else:
+      print(r'\begin{minted}{text}')
+  run_module(m)
+  print(r'\end{minted}')
+\end{pycode}
+%    \end{macrocode}
+%
+% Then we simply create a command that run that function with the file as 
+% argument.
+% Then print the output in verbatim mode.
+%    \begin{macrocode}
+\NewDocumentCommand{\runpython}{om}{%
+  \setpythontexautoprint{false}%
+  \pyc{run_module("#2")}%
+  \printpythontex[verbatim]%
+}
+%    \end{macrocode}
+% \end{macro}
+% 
+% \subsection{Contrasting code examples}
+%
+% Sometimes we want to contrast two code examples side by side.
+% \begin{macro}{\textbytext}
+% For example |\textbytext{\lipsum[1]}{\lipsum[1]}| should typeset the two 
+% examples side by side.
+% \textbytext{\lipsum[1]}{\lipsum[1]}
+% If we use the |memoir| class and our settings (|\if@didactic@memoir|), we 
+% want to use the |adjustwidth| environment to expand the text block to better 
+% fit them.
+% Otherwise we use the standard text block.
+%
+% To do this we first add a |fullwidth| environment\footnote{%
+%   Similarly to \url{https://tex.stackexchange.com/a/350944/17418}.
+% }.
+% We can get the |adjustwidth| environment from the |changepage| package 
+% whenever |memoir| isn't used.
+%    \begin{macrocode}
+\RequirePackage{changepage}
+\newlength{\@didactic@textbytext@oldcolumnwidth}
+\NewDocumentEnvironment{fullwidth}{+b}{%
+  \setlength{\@didactic@textbytext@oldcolumnwidth}{\columnwidth}
+  \setlength{\columnwidth}{\textwidth+2em+\marginparwidth+\marginparsep}
+  \IfStrEqCase{\@didactic@marginparmargin}{%
+    {inner}{\begin{adjustwidth*}{-\marginparwidth-\marginparsep}{-2em}}
+    {left}{\begin{adjustwidth}{-\marginparwidth-\marginparsep}{-2em}}
+    {outer}{\begin{adjustwidth*}{-2em}{-\marginparwidth-\marginparsep}}
+    {right}{\begin{adjustwidth}{-2em}{-\marginparwidth-\marginparsep}}
+  }[\relax]
+    #1
+  \IfStrEqCase{\@didactic@marginparmargin}{%
+    {inner}{\end{adjustwidth*}}
+    {left}{\end{adjustwidth}}
+    {outer}{\end{adjustwidth*}}
+    {right}{\end{adjustwidth}}
+  }[\relax]
+  \setlength{\columnwidth}{\@didactic@textbytext@oldcolumnwidth}
+}{\relax}
+%    \end{macrocode}
+%
+% Now to the |\textbytext| command.
+% We simply set up a |tabularx| environment with two columns and use it inside 
+% a |fullwidth| environment.
+%    \begin{macrocode}
+\NewDocumentCommand{\textbytext}{+m+m}{%
+  \begin{fullwidth}
+    \begin{tabularx}{\columnwidth}{XX}
+      #1 & #2
+    \end{tabularx}
+  \end{fullwidth}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\codebycode}
+% When we deal with code, we deal with verbatim data.
+% The easiest way to deal with this is to simply keep the code in files and 
+% supply the file names to |\inputminted|.
+% The |\codebycode| command is simply two |\inputminted| commands side by side:
+% |\codebycode[opt1]{lang1}{file1}[opt2]{lang2}{file2}|.
+% \codebycode
+%   [breaklines,linenos]{python}{hello.py}
+%   [breaklines,linenos]{python}{hello.py}
+%
+% This gives us the following implementation.
+% We can reuse |\textbytext| to typeset the two examples side by side.
+%    \begin{macrocode}
+\RequirePackage{tabularx}
+\RequirePackage{minted}
+\NewDocumentCommand{\codebycode}{ommomm}{%
+  \textbytext{%
+    \IfValueTF{#1}
+      {\lstexample[#1]{#2}{#3}}
+      {\lstexample{#2}{#3}}%
+  }{%
+    \IfValueTF{#4}
+      {\lstexample[#4]{#5}{#6}}
+      {\lstexample{#5}{#6}}%
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\runbyrun}
+% We also want to typeset the runs (|\runpython|).
+% We can use |\textbytext| to typeset the two outputs side by side.
+%    \begin{macrocode}
+\NewDocumentCommand{\runbyrun}{mm}{%
+  \textbytext{\runpython{#1}}{\runpython{#2}}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \Finale
+\endinput

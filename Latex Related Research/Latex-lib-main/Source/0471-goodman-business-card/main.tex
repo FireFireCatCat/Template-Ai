@@ -1,0 +1,62 @@
+% !TEX TS-program = xelatex
+%
+% Business card sheet: 8 cards (2 columns x 4 rows) imposed on US Letter,
+% each card at the standard 3.5in x 2in size.
+%
+% Based on the single-card design at github.com/opieters/business-card
+% (GPL-3.0), reworked into a full imposed sheet: the upstream is one loose
+% card specifying Fira Sans / Fira Mono and Font Awesome icon glyphs, none of
+% which this image ships (FontAwesome.otf is on TeX Live's disk but not
+% registered under fontconfig, so xelatex cannot resolve it by name). Nimbus
+% Sans substitutes for Fira Sans (metric-compatible Helvetica clone) and the
+% icon column is replaced with plain text labels rather than depending on a
+% font this image cannot load.
+\documentclass[10pt]{article}
+
+\usepackage[paperwidth=8.5in,paperheight=11in,margin=0.5in,noheadfoot]{geometry}
+\usepackage{parskip}
+\usepackage{fontspec}
+\usepackage{tikz}
+\usepackage{xcolor}
+
+\setmainfont{Nimbus Sans}
+\setsansfont{Nimbus Sans}
+\setmonofont{DejaVu Sans Mono}
+
+\newlength{\cardwidth}  \setlength{\cardwidth}{3.5in}
+\newlength{\cardheight} \setlength{\cardheight}{2in}
+
+\definecolor{seplinecolour}{HTML}{357f2d}
+\definecolor{labelcolour}{HTML}{357f2d}
+\definecolor{textcolour}{HTML}{2f3142}
+\definecolor{jobtitlecolour}{HTML}{474a65}
+
+\newcommand{\BusinessCardFace}{%
+\begin{tikzpicture}[x=1in, y=1in]
+  \useasboundingbox (0,0) rectangle (\cardwidth,\cardheight);
+  \draw[color=black!25] (0,0) rectangle (\cardwidth,\cardheight);
+  \node[anchor=center,font=\Large,color=textcolour] at (\cardwidth/2,1.65in) {Mara Jensen};
+  \node[anchor=center,font=\normalsize\itshape,color=jobtitlecolour] at (\cardwidth/2,1.42in) {Principal Engineer};
+  \draw[line width=1pt,color=seplinecolour] (\cardwidth/2-0.8in,1.22in) -- (\cardwidth/2+0.8in,1.22in);
+  \node[anchor=west,color=labelcolour,font=\footnotesize\bfseries] at (\cardwidth/2-0.9in,1.00in) {W};
+  \node[anchor=west,color=textcolour,font=\footnotesize] at (\cardwidth/2-0.62in,1.00in) {marajensen.dev};
+  \node[anchor=west,color=labelcolour,font=\footnotesize\bfseries] at (\cardwidth/2-0.9in,0.78in) {E};
+  \node[anchor=west,color=textcolour,font=\footnotesize] at (\cardwidth/2-0.62in,0.78in) {mara@marajensen.dev};
+  \node[anchor=west,color=labelcolour,font=\footnotesize\bfseries] at (\cardwidth/2-0.9in,0.56in) {P};
+  \node[anchor=west,color=textcolour,font=\footnotesize] at (\cardwidth/2-0.62in,0.56in) {+1 415 555 0148};
+  \node[anchor=west,color=labelcolour,font=\footnotesize\bfseries] at (\cardwidth/2-0.9in,0.34in) {GH};
+  \node[anchor=west,color=textcolour,font=\footnotesize] at (\cardwidth/2-0.62in,0.34in) {marajensen};
+  \draw[line width=1pt,color=seplinecolour] (\cardwidth/2-0.8in,0.16in) -- (\cardwidth/2+0.8in,0.16in);
+  \node[anchor=center,font=\footnotesize\bfseries,color=labelcolour,text width=2.6in,align=center] at (\cardwidth/2,0.08in) {DESIGN \textbullet\ BUILD \textbullet\ SHIP};
+\end{tikzpicture}%
+}
+
+\begin{document}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\noindent
+\BusinessCardFace\BusinessCardFace\par\vspace{0pt}
+\BusinessCardFace\BusinessCardFace\par\vspace{0pt}
+\BusinessCardFace\BusinessCardFace\par\vspace{0pt}
+\BusinessCardFace\BusinessCardFace\par
+\end{document}

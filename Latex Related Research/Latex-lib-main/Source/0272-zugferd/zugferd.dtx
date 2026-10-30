@@ -1,0 +1,3476 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2021–2026 Marei Peischl <marei@peitex.de>
+% ---------------------------------------------------------
+%
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in:
+%
+%    http://www.latex-project.org/lppl.txt
+%
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008-05-04 or later.
+%
+% \fi
+% \iffalse
+%<*driver>
+\ProvidesFile{zugferd.dtx}[2026-07-23 v0.13 ZUGFerd Invoice and Faktur-X]
+% \changes{v0.11}{2026-07-06}{Require \LaTeX{} 2024-11-01 \issue{70}}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}[2024-11-01]
+%<package>\ProvidesExplPackage{zugferd}{2026-07-23}{0.13}{Create ZUGFerd invoices using LaTeX}
+%<*driver>
+\RequirePackage{pdfmanagement}
+\SetKeys[document/metadata]{
+	pdfstandard=a-3b,
+	pdfversion=1.7,
+	lang=en
+}
+\documentclass[english,lm-default=false,cs-break-nohyphen]{l3doc}
+\usepackage{babel}
+\usepackage{zugferd}[2026-07-23]
+\EnableCrossrefs
+%\CodelineIndex
+\RecordChanges
+\usepackage{biblatex}
+
+\usepackage[highlightmode=immediate]{minted}
+\newenvironment{examplecode}{%
+        \VerbatimEnvironment%
+        \fvset{gobble=0}%
+        \begin{VerbatimOut}[tabsize=3,gobble=1]{examplecode.out}%
+}{%
+        \end{VerbatimOut}%
+        \inputminted[autogobble, escapeinside=||]{latex}{examplecode.out}%
+}
+
+\usepackage{accsupp}
+\setminted{breaksymbol={\BeginAccSupp{method=escape,ActualText={}}\tiny\ensuremath{\hookrightarrow}\EndAccSupp{}},breaklines}
+
+\ExplSyntaxOn
+\makeatletter
+\tl_new:N \l_ptxtools_doc_values_tl
+\newcommand*{\codefamily}{\MacroFont}
+\DeclareTextFontCommand{\codefont}{\codefamily}
+\providecommand{\option}[1]{\codefont{#1}}
+\providecommand{\value}[1]{\codefont{#1}}
+
+\cs_new:Npn \_ptxtools_parse_key_option:w #1 #2 #3 #4 = #5 \q_stop {
+	\par
+	\begingroup
+	\def\PrintDescribeOption##1{
+		\parbox[b]{\marginparwidth}{\raggedleft\MacroFont ##1=}
+		\rlap{
+			\hskip\marginparsep\small
+			\IfBooleanTF{#3}
+				{\textsf{#5}}
+				{\textsf{(\codefont{#5})}}
+		}
+}
+	\noindent\DescribeOption{#4}\hfill
+	\small
+	\tl_if_blank:nTF {#2} {\meta{\textrm{initially~unset}}} {
+		\IfBooleanTF{#1}
+			{#2}
+			{(default:~\codefont{#2})}
+	}\strut
+	\seq_if_empty:NF \l_ptxtools_BTkey_seq {
+	\rlap{\qquad\int_compare:nNnTF {\seq_count:N \l_ptxtools_BTkey_seq} = 1 {\seq_use:Nn \l_ptxtools_BTkey_seq {,}\seq_gclear:N \l_ptxtools_BTkey_seq} {BT-\meta{n}}}
+	}
+	\seq_if_empty:NF \l_ptxtools_BTkey_seq {
+		\par\strut\hfill
+		\seq_use:Nn \l_ptxtools_BTkey_seq {,~}
+	}
+	\par
+	\endgroup
+}
+
+\newcommand*{\PrintDescribeKeyOption}[1]{
+	{\MacroFont #1=}\rlap{\hskip\marginparsep \l_ptxtools_doc_values_tl}
+}
+
+\bool_new:N \l_ptxtools_last_was_describe_bool
+\seq_new:N \l_ptxtools_BTkey_seq
+
+\NewDocumentCommand{\DescribeKeyOption}{sO{}mms}{
+	\seq_set_from_clist:Nn \l_ptxtools_BTkey_seq {#2}
+	\bool_if:NTF \l_ptxtools_last_was_describe_bool {
+		\vskip -\lastskip
+	}{
+		\par
+		\dim_compare:nNnF {\parskip} > {\c_zero_dim} {\medskip}
+	}
+	\_ptxtools_parse_key_option:w #1 {#4} #5 #3 \q_stop
+	\bool_set_true:N \l_ptxtools_last_was_describe_bool
+	\AddToHookNext{para/begin}{
+		\bool_set_false:N \l_ptxtools_last_was_describe_bool
+		\OmitIndent
+	}
+	\smallskip
+}
+
+\newenvironment{valuelist}{
+	\list{}{
+		\labelwidth0pt
+		\itemindent0pt
+		\leftmargin0pt
+		\let\makelabel\valuelistlabel
+		\parskip\z@\itemsep\z@
+	}
+}{
+	\endlist
+}
+\newcommand*\valuelistlabel[1]{
+	\makebox[\labelwidth][r]{
+		\normalfont\codefamily\color_select:n {black!60}
+		\begin{tabular}[t]{@{}r@{}}
+			\clist_use:nn {#1} {\\}
+		\end{tabular}
+	}
+}
+
+\newcommand*{\accessTaxExemptionReason}[1]{
+	\keys_set:nn {zugferd / tax } {category=#1}
+	Exemption~reason:~\tl_if_empty:NTF \l__zugferd_tax_exemption_reason_tl {\meta{empty}} {\l__zugferd_tax_exemption_reason_tl};~
+	Exemption~reason~code:~\tl_if_empty:NTF \l__zugferd_tax_exemption_code_tl {\meta{empty}} {\l__zugferd_tax_exemption_code_tl}
+}
+% to support small layout adjustments for the texdoc version
+\newcommand*{\IfOnlyDocumentation}[1]{
+	\bool_if_exist:NT \g__codedoc_typeset_implementation_bool {
+		\bool_if:NF \g__codedoc_typeset_implementation_bool {#1}
+	}
+}
+% add a subtitle
+\def\@maketitle{%
+  \newpage
+  \null
+  \vskip 2em%
+  \begin{center}%
+    \let \footnote \thanks
+    {\LARGE \@title \par}%
+    \vskip 1.5em%
+    {\large \@subtitle \par}%
+        \vskip 1em%
+    {\large
+      \lineskip .5em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+    \vskip 1em%
+    {\large \@date}%
+  \end{center}%
+  \par
+  \vskip 1.5em}
+\newcommand{\subtitle}[1]{\def\@subtitle{#1}}
+\subtitle{}
+\makeatother
+\ExplSyntaxOff
+
+\usepackage{underscore-ltx}
+
+\begin{filecontents}{zugferd.bib}
+@online{x-rechnung,
+	url={https://xeinkauf.de/dokumente/},
+	urldate={2024-08-20}
+}
+@online{spec-xrechnung,
+	url={https://xeinkauf.de/app/uploads/2024/07/302-XRechnung-2024-06-20.pdf},
+	author={{Koodinierungsstelle für IT-Standards}},
+	title={Spezifikation Standard XRechnung},
+	subtitle={CIUS und Extension},
+	edition={Version XRechnung 3.0.2},
+	date={2024-06-20},
+	urldate={2024-08-20},
+	langid={german}
+}
+@online{mustang-project,
+	title={Mustang Project},
+	url={https://github.com/ZUGFeRD/mustangproject},
+	urldate={2024-08-20}
+}
+@online{country-codes,
+	title={ECE/TRADE/201},
+	subtitle={ISO COUNTRY CODE for Representation of Names of Countries},
+	url={https://unece.org/trade/documents/iso-country-code-representation-names-countries},
+	urldate={2024-08-20},
+}
+@online{unit-codes,
+	title={Rec 20 – Codes for Units of Measure Used in International Trade},
+	url={https://unece.org/sites/default/files/2023-10/rec20_Rev17e-2021.xlsx},
+	urldate={2024-08-20},
+	note={Link directly to xlsx. \cite[see][for all revisions]{cl-recommendations}.}
+}
+@online{cl-recommendations,
+	author={United Nations Economic Commission for Europe (UNECE)},
+	title={Code List Recommendations},
+	url={https://unece.org/trade/uncefact/cl-recommendations},
+	urldate={2024-08-20}
+}
+@online{VAT-exemption-codes,
+	title={VAT exemption reason code list},
+	url={https://www.xrepository.de/details/urn:xoev-de:kosit:codeliste:vatex_1},
+	urldate={2024-08-20}
+}
+@online{zugferd-download,
+	title={ZUGFeRD 2.2},
+	subtitle={Download page},
+	url={https://ferd-net.de/standards/zugferd-2.2/zugferd-2.2.html},
+	urldate={2024-09-02},
+}
+@manual{scrletter,
+  title = {The scrletter package},
+  subtitle = {Letter extension to KOMA-Script classes},
+  author = {Kohm, Markus},
+  url = {https://komascript.de/},
+  urldate = {2024-09-03},
+  documentation = {ctan://macros/latex/contrib/koma-script/doc/scrguide-en.pdf},
+  date = {2023-07-07},
+  version = {3.41},
+}
+@online{leitweg-id,
+	title={Xeinkauf FAQ},
+	subtitle={Leitweg ID},
+	author={{Koordinierungsstelle für IT Standards (KoSIT)}},
+	url={https://xeinkauf.de/faq/xrechnung#leitweg-id},
+	urldate={2024-09-04}
+}
+@online{LaTeX-ZUGFeRD-GitHub,
+	title={ZUGFeRD - Create ZUGFeRD and other kinds of E-invoices using \LaTeX},
+	subtitle={GitHub Repository},
+	author={Peischl, Marei},
+	url={https://github.com/TeXhackse/LaTeX-ZUGFeRD}
+}
+@online{hyperref,
+	title = {CTAN: Package hyperref},
+	urldate = {2025-01-02},
+	language = {english},
+	author={Rahtz, Sebastian and Oberdiek, Heiko and {The \LaTeX{} Project}},
+	date={2024-11-05},
+	url = {https://ctan.org/pkg/hyperref},
+	documentation = {ctan://macros/latex/contrib/hyperref/doc/hyperref-doc.pdf}
+}
+\end{filecontents}
+\addbibresource{zugferd.bib}
+\nocite{cl-recommendations}
+
+\usepackage{xspace}
+\newcommand*{\XML}{XML\xspace}
+\newcommand*{\XMLfile}{\XML file\xspace}
+
+\DeclareRobustCommand{\issue}[1]{%
+	{\DeclareFieldFormat{citeurlpostfix}{\href{##1/issues/#1}{\##1}}\citefield{LaTeX-ZUGFeRD-GitHub}[citeurlpostfix]{url}}%
+}
+\newcommand*{\version}[1]{v#1}
+
+\ExplSyntaxOn
+\DoNotIndex{today,\bool_new:N,\bool_new:N,\str_gset:Nn,\newcommand,\newenvironment,\jobname,\def,\begin,\begingroup,
+\let,\SetZugferdData,\today,\str_new:N,\keys,\tl_new:N,\str_gset:Nn,\bool_gset_false:N,\keys_set:nn,\tl_gset:Nn,
+\char_set_catcode_parameter:N,\cs_if_exist:NTF,\iow_new:N,\pdfmeta_xmp_xmlns_new:nn,
+\msg_new:nnnn,\msg_new:nnn,\keys_define:nn,\char_set_catcode_other:N,\bool_gset_true:N,\c_hash_str,\pdfmeta_xmp_property_new:nnnnn,\iow_newline:,\bool_if:NTF,\NewExpandableDocumentCommand,\NewDocumentEnvironment,\NewDocumentCommand,\IfPackageAtLeastTF,\IfNoValueTF,\IfNoValueT,\IfNoValueF,\IfNoValueTF,\iffalse,\fi,\ExplSyntaxOn,\ExplSyntaxOff}
+\ExplSyntaxOff
+
+\begin{document}
+\EnableDocumentation\DisableImplementation
+\DocInput{zugferd.dtx}
+
+% don't typeset implementation for CTAN
+\expandafter\ifx\csname DoNotTypesetImplementation\endcsname\relax
+\DisableDocumentation\EnableImplementation
+\DocInputAgain
+\fi
+
+\PrintChanges
+\printbibliography
+\PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \changes{v0.8}{2024-09-11}{First CTAN version}
+%
+% \GetFileInfo{zugferd.dtx}
+%
+% \begin{documentation}
+% \title{The \pkg{zugferd} package\thanks{This document
+%   corresponds to \textsf{zugferd}~\fileversion, dated \filedate.}}
+% \subtitle{Creating electronic and hybrid invoices using \LaTeX}
+% \author{Marei Peischl \\ \texttt{marei@peitex.de}}
+%
+% \maketitle
+%
+% \begin{abstract}
+% Invoicing is getting more and more automated.
+% Starting with public sector, within Germany there already is a requirement to stick to the Faktur-X Standard.
+% First invoices based on this implementation here have been created back in 2021.
+% And this is now the trial to create a more universal and public package to support the current version of ZUGFeRD and therefore also X-Rechung and Faktur-X.
+%
+% \indent The fundamental idea of this package was to use the calculation within \LaTeX{} as well. So it also creates the \XMLfile for the attachment on the fly.
+% To match typical setups there is a wrapper package which usually would also hold the personal invoicing layout configuration.
+% \end{abstract}
+%
+% \IfOnlyDocumentation{\vfill}
+% \section*{Sponsors \& Supporters}
+% Most of this package has been created within my free time and for my personal use. At start, it was not a paid project at all.
+% Since it is addressing business users it would be great if we could keep this actively maintained.
+% If you are able to support this either financially for the maintenance effort, a custom extension, I'd love to hear from you.
+%
+% This project was financially supported by:
+% \begin{itemize}
+% \item Pengutronix e.K., \url{https://pengutronix.de}\newline
+% Special thanks to them, as they also sponsored the minimal portable \TeX{} Live setup.
+% \item Frederik Schwan (\href{https://schwan.it}{\nolinkurl{Schwan.IT}})
+% \item byte physics e.K., \url{https://www.byte-physics.de}
+% \end{itemize}
+%
+% \IfOnlyDocumentation{\clearpage}
+%
+% \tableofcontents
+%
+% \IfOnlyDocumentation{\clearpage}
+%
+% \section{Quick start}
+% This package is still in development and does not provide any validation.
+% To ensure your invoice is created correctly you should also validate the output files.
+% There are tools like the \citetitle{mustang-project} \cite{mustang-project} providing an easy-to-use interface for the validation.
+% In the appendix I will add some notes on my setup and how I use it within pipelines.
+%
+% The bundle provides an example file called \file{DEMO-rechnung-zugferd.tex}.
+% This includes a basic setup for a valid X-Rechnung currently matching Version 3.0.2 of the standard.
+% Details on the requirements can be found in the documentation at \cite{x-rechnung}.
+%
+% \subsection{Disclaimer concerning the \pkg{zugferd-invoice} Package}
+% The included package \pkg{zugferd-invoice} is an example project which might match your own invoicing structure.
+% It holds all the layout information which is static across all the invoices.
+% This package is an example implementation and should not be used in production.
+% It is published as a part of the documentation.
+%
+% The idea is to create your own version of this package to use your own layout and internally load the \pkg {zugferd} package that way.
+% Of course, it's possible to use a copy of this package within your personal setup.
+% But the syntax used in the DEMO file may change, so you have to ensure yourself to be compatible with updates.
+%
+% The interfaces for \pkg{zugferd} will hopefully stay the same.
+% At least changes will be announced and build compatible during a deprecation period.
+%
+% \end{documentation}
+% \iffalse
+%    \begin{macrocode}
+%<*package>
+%<@@=zugferd>
+%    \end{macrocode}
+% Workaround to replace module name without having a visible <@@=zugferd> in the documentation
+%</package>
+% \fi
+% \ExplSyntaxOn
+% \tl_gset:Nn \g__codedoc_module_name_tl {zugferd}
+% \ExplSyntaxOff
+% \iffalse
+%<*driver>
+% \fi
+% \begin{documentation}
+\ExplSyntaxOn
+\tl_gset:Nn \g__codedoc_module_name_tl {zugferd}
+\ExplSyntaxOff
+% \end{documentation}
+% \iffalse
+%</driver>
+%<*package>
+% \fi
+% \begin{implementation}
+% \section{Implementation}
+% \changes{v0.11}{2025-12-28}{Move definition of globa temporary tl}
+% \begin{variable}{\l_@@_tmp_tl,\g_@@_tmp_tl,\g_@@_format_str,\g_@@_businessProcessId_str,\g_@@_writeTradeContact_bool,\g_@@_writePaymentMeans_bool,\g_@@_minimum_bool,\g_@@_conformance_level_str,\g_@@_xml_embedded_file_tl}
+%    \begin{macrocode}
+\tl_new:N \l_@@_tmp_tl
+\tl_new:N \g_@@_tmp_tl
+\str_new:N \g_@@_format_str
+\str_new:N \g_@@_businessProcessId_str
+\bool_new:N \g_@@_writeTradeContact_bool
+\bool_new:N \g_@@_writePaymentMeans_bool
+\bool_new:N \g_@@_minimum_bool
+\str_new:N \g_@@_conformance_level_str
+\tl_new:N \g_@@_xml_embedded_file_tl
+%    \end{macrocode}
+% \end{variable}
+% \end{implementation}
+% \begin{documentation}
+% \section{Package Options}\label{sec:package-options}
+% The package supports a few fundamental settings.
+% These have to be set when the package is loaded as they are used internally to setup the scheme or activate the \XML mechanism.
+%
+% \DescribeKeyOption{format=xrechnung/xrechnung3.0/xrechnung2.3/basic/minimum}{xrechnung}
+% \option{format} selects the scheme to be used for the zugferd invoice.
+% Currently xrechnung3.0, xrechnung2.3, and the basic and minimum schemes are supported.
+%
+% The value \option{xrechnung} is set as an alias to |xrechnung3.0| and will always use the latest version supported by \pkg{zugferd}.
+%
+% This option also adjusts the file name which is used for embedding the \XML.
+% It will be called |factur-x.xml| for all formats but the |xrechnung| ones.
+% In that case it will be |xrechnung.xml|.
+%
+% \DescribeKeyOption{zugferd=\meta{boolean}}{true}*
+% This option can be used to deactivate the \XML embedding.
+% It would also disable the the \option{write-xml} option.
+% This can be used to create a package which can use the same structure to also create invoices without \XML attachment.
+% It can also be used with older \LaTeX{} releases than this package requires.
+% There will be a warning, but the visible part should be okay.
+%
+% \DescribeKeyOption{write-xml=\meta{boolean}}{true}*
+% Disable the \XML output.
+% This can be used if you want to create the \XML attachment with different software than this package.
+%
+% In that case you can either rename your file to \meta{\cs[no-index]{jobname}\_zugferd.xml} or also adjust the \option{xml-file} option.
+%
+% \DescribeKeyOption{xml-file=\meta{filename}}{\cs[no-index]{jobname}_zugferd.xml}*
+% Adjust the file name of the created or loaded \XMLfile.
+%
+% The option \option{xrechnung} is only used internally to set the global parameters for all |xrechnung| variants.
+%
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{format,xrechnung,write-xml,zugferd,xml-file}
+% \changes{v0.9a}{2024-11-07}{Add support for format=minimum}
+% \changes{v0.11}{2026-05-25}{change format and profile options to .usage=general}
+%    \begin{macrocode}
+\char_set_catcode_other:N \#%
+\keys_define:nn {zugferd} {
+	xrechnung .code:n = {
+		\bool_gset_true:N \g_@@_writeTradeContact_bool
+		\bool_gset_true:N \g_@@_writePaymentMeans_bool
+		\str_gset:Nn \g_@@_conformance_level_str {XRECHNUNG}
+		\tl_gset:Nn \g_@@_xml_embedded_file_tl {xrechnung.xml}
+	},
+	format .choice:,
+	format / xrechnung3.0 .code:n = {
+		\str_gset:Nx \g_@@_format_str {
+			urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0
+		}
+		\str_gset:Nx \g_@@_businessProcessId_str {
+			urn:fdc:peppol.eu:2017:poacc:billing:01:1.0
+		}
+		\keys_set:nn {zugferd}{xrechnung}
+	},
+	format / xrechnung2.3 .code:n = {
+		\str_gset:Nx \g_@@_format_str {
+			urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3
+		}
+		\keys_set:nn {zugferd}{xrechnung}
+	},
+	format / basic .code:n = {
+		\str_gset:Nx \g_@@_format_str {
+			urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic
+		}
+		\bool_gset_false:N \g_@@_writeTradeContact_bool
+%		\bool_gset_false:N \g_@@_writePaymentMeans_bool
+		\str_gset:Nn \g_@@_conformance_level_str {BASIC}
+		\tl_gset:Nn \g_@@_xml_embedded_file_tl {factur-x.xml}
+	},
+	format / minimum .code:n = {
+		\str_gset:Nx \g_@@_format_str {
+			urn:factur-x.eu:1p0:minimum
+		}
+		\bool_gset_true:N \g_@@_minimum_bool
+		\bool_gset_false:N \g_@@_writeTradeContact_bool
+		\bool_gset_false:N \g_@@_writePaymentMeans_bool
+		\str_gset:Nn \g_@@_conformance_level_str {MINIMUM}
+		\tl_gset:Nn \g_@@_xml_embedded_file_tl {factur-x.xml}
+	},
+	format / xrechnung .meta:n = { format = xrechnung3.0 },
+	format .initial:n = xrechnung,
+	format .usage:n = general,
+	write-xml .bool_gset:N = \g_@@_write_xml_bool,
+	write-xml .initial:n = true,
+	write-xml .usage:n = general,
+	zugferd .bool_gset:N = \g_@@_active_bool,
+	zugferd .initial:n = true,
+	zugferd .default:n = true,
+	zugferd .usage:n = general,
+	ZUGFerD .meta:n = {zugferd = #1},
+	xml-file .tl_gset:N = \g_@@_xml_file_tl,
+	xml-file .initial:n = \jobname _zugferd.xml,
+	xml-file .usage:n = general,
+%    \end{macrocode}
+% Option to log variables for interface tests.
+%    \begin{macrocode}
+	testing .bool_gset:N = \g_@@_testing_bool,
+	testing .initial:n = false,
+	testing .usage:n = load,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption{auto-exemption=\meta{boolean}}{true}
+% \pkg{zugferd} tries to automatically add an exemption-reason for the most common VAT categories.
+% In case a more specific reason is required this setting can be disabled and everything should be configured manually.
+% See \autoref{sec:tax-category} for more explanation of this feature and the categories this applies to.
+%
+% \end{documentation}
+% \begin{implementation}
+% \changes{v0.7}{2024-09-10}{Added auto-exemption option}
+% \begin{optionenv}{auto-exemption}
+%    \begin{macrocode}
+	auto-exemption .bool_gset:N = \g_@@_auto_exemption_bool,
+	auto-exemption .initial:n = true,
+	auto-exemption .default:n = true,
+	auto-exemption .usage:n = load,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption{unknown-value-warning=\meta{boolean}}{true}
+% There are predefined values for units, tax categories and payment-means.
+% Since there are a lot of options \pkg{zugferd} does not define all of them.
+% In case you want to use another one as the predefined options you there will a warning to make you aware of the fact, that the package does not know if that's a valid selection.
+% This is to help you avoiding typos.
+% In case you are sure about your selection and don't want to define an own value for this you can also disable the warning by setting \option{unknown-value-warning} to false.
+%
+% \end{documentation}
+% \begin{implementation}
+% \changes{v0.9d}{2025-01-02}{Added unknown-value-warning option}
+% \begin{optionenv}{unknown-value-warning}
+%    \begin{macrocode}
+	unknown-value-warning .bool_gset:N = \g_@@_unknown_value_warning_bool,
+	unknown-value-warning .initial:n = true,
+%    \end{macrocode}
+% \end{optionenv}
+%    \begin{macrocode}
+}
+\char_set_catcode_parameter:N \#%
+
+\ProcessKeyOptions[zugferd]
+%    \end{macrocode}
+% \subsection{Preparation to write the \file{.xml} file}
+% \begin{variable}{\_@@_xml_writer_iow}
+%    \begin{macrocode}
+\iow_new:N \_@@_xml_writer_iow
+%    \end{macrocode}
+% \end{variable}
+% To adjust the metadata it is necessary to use the \pkg{pdfmanagement-testphase} by Ulrike Fischer from the \LaTeX{} Project Team.
+% She had prepared some experiment files for the PDF attachment in the experiments of the repository.
+% We use these to embed the \XMLfile \issue{7}.
+%
+% This part prepares the XMP metadata according to the required scheme.
+% \changes{v0.8a}{2024-09-17}{Use the new public interface for l3pdfmeta.}
+% \changes{v0.11}{2026-05-25}{Use command to check for pdfmanagement is compatible in case it is activated later.}
+%    \begin{macrocode}
+\cs_new:Nn \_@@_check_for_pdfmanagement: {
+	\IfPDFManagementActiveTF{}{
+			\msg_new:nnnn {zugferd} {PDFmanagement-not-active} {
+				The~\LaTeX~PDF~management~is~not~active.\\
+				Activate~it~using~\string\DocumentMetadata.
+			} {
+				See~ZUGFeRD~or~PDFmanagement~documentation~for~more~information.
+			}
+			\msg_error:nn {zugferd} {PDFmanagement-not-active}
+	}
+%    \end{macrocode}
+% \changes{v0.9a}{2024-11-07}{Add error message if pdfmanagement is outdated.}
+% \changes{v0.9c}{2024-12-08}{Compatbility to show the error message in older formats versions.}
+% \changes{v0.12}{2026-07-06}{Simplify Checks \issue{70}}
+% Deactivate test, as this has to be done only once.
+%    \begin{macrocode}
+	\cs_gset_eq:NN \_@@_check_for_pdfmanagement: \prg_do_nothing:
+}
+\bool_if:NT \g_@@_active_bool {
+	\_@@_check_for_pdfmanagement:
+}
+%    \end{macrocode}
+% \changes{v0.11}{2026-03-13}{Move metadata setup to enddocument}
+% \changes{v0.12}{2026-07-06}{Move metadata setup to shipout/lastpage \issue{73}}}
+% \changes{v0.13}{2026-07-23}{Move metadata setup to pdfmeta/xmp \issue{74}}}
+% As the PDF metadata is written at the end of a document it's not necessary to select the type at beginning.
+%    \begin{macrocode}
+\hook_gput_code:nnn {pdfmeta/xmp} {zugferd/set-metadata} {
+	\bool_if:NT \g_@@_active_bool {
+		\_@@_check_for_pdfmanagement:
+		%% based on experiments for l3pdfmeta by Ulrike Fischer
+		\pdfmeta_xmp_xmlns_new:nn {fx}{
+			urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str
+		}
+
+		\pdfmeta_xmp_schema_new:nnn
+			  {Factur-X~PDFA~Extension~Schema}
+			  {fx}
+			  {urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0\c_hash_str}
+
+		\pdfmeta_xmp_property_new:nnnnn
+			  {fx}
+			  {DocumentFileName}
+			  {Text}
+			  {external}
+			  {name~of~the~embedded~XML~invoice~file}
+
+		\pdfmeta_xmp_property_new:nnnnn
+			  {fx}
+			  {DocumentType}
+			  {Text}
+			  {external}
+			  {INVOICE}
+
+		\pdfmeta_xmp_property_new:nnnnn
+			  {fx}
+			  {Version}
+			  {Text}
+			  {external}
+			  {The~actual~version~of~the~factur-x~schema}
+
+		\pdfmeta_xmp_property_new:nnnnn
+			  {fx}
+			  {ConformanceLevel}
+			  {Text}
+			  {external}
+			  {The~conformance~level~of~the~factur-x~data}
+
+		\exp_args:Ne \pdfmeta_xmp_add:n {
+			% fix INVOICE
+			<fx:DocumentType>INVOICE</fx:DocumentType>
+			\iow_newline:
+			<fx:DocumentFileName>\g_@@_xml_embedded_file_tl</fx:DocumentFileName>
+			\iow_newline:
+			% fix schema version
+			<fx:Version>1.0</fx:Version>
+			\iow_newline:
+			% zulässige Werte MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED, XRECHNUNG
+			<fx:ConformanceLevel>\g_@@_conformance_level_str%
+				</fx:ConformanceLevel>%
+			\iow_newline:
+			%
+		}
+	}
+}
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \section{User Commands}
+% The end user is only asked to set or access the data to be used by \pkg{zugferd}.
+%
+% \subsection{Setting Data}
+% \begin{function}{\SetZUGFeRDData,\SetZugferdData}
+% \begin{syntax}
+% \cs[no-index]{SetZUGFeRDData}*\marg{key value list}
+% \end{syntax}
+%
+% The two modes of \cs[no-index]{SetZUGFeRDData} control if the argument is expanded before the data is processed.
+% Depending on the source of the data this might be necessary.
+% In that case activate the expansion by using the star argument.
+% Fields which are involved in the calculation will be expanded anyway, but the text fields will not, to support special characters.
+% \end{function}
+% \end{documentation}
+% \begin{implementation}
+% \begin{macro}{\SetZUGFeRDData}
+%    \begin{macrocode}
+\NewDocumentCommand{\SetZUGFeRDData}{sm}{
+	\IfBooleanTF{#1}
+		{\keys_set:ne}
+		{\keys_set:nn}
+			{zugferd} {#2}
+}
+\let\SetZugferdData\SetZUGFeRDData
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+% \begin{documentation}
+% \subsection{Accessing Data for PDF output}
+% \begin{function}{\InsertZUGFeRDData}
+% \begin{syntax}
+% \cs[no-index]{InsertZugferdData}\oarg{special mode option}\marg{data-selection}
+% \end{syntax}
+% ZUGFerd uses the same data as the \XMLfile inside the PDF.
+% To simplify the reuse of data this command is designed to simplify the access to data fields, for example:
+%
+% \begin{examplecode}
+% \InsertZUGFeRDData{id}
+% \end{examplecode}
+%
+% By default \pkg{zugferd} tries to find the variable holding the data itself.
+% First it looks for a token list, afterwards a string.
+% Global variables are prefered over local ones.
+%
+% As the variable names may contain underscores and the option usually prefers dashes, dashes are converted to underscores for the detection.
+%
+% Some Variables have a more complex structure either with setting or saving them.
+% To simplify accessing those \version{0.10-dev} also added a \pkg{l3keys} interface.
+% The first variables using this by default are the |payment-means|.
+% It's possible to use the same structure to access as to set the variable.
+% Other variabels will follow.
+% \begin{examplecode}
+% \InsertZUGFeRDData{payment-means/iban}
+% \end{examplecode}
+%
+% \subsubsection{Special data formats}
+% For some data elements there already have been interfaces implemented to simplify the output.
+% \begin{examplecode}
+% {\InsertZUGFeRDData[set-today]{date}\today}
+% \InsertZUGFeRDData[AddressData]{seller}
+% \InsertZUGFeRDData[iso-date]{date}
+% \end{examplecode}
+% As special modes the command currently supports the options \option{AddressData}, \option{set-today} and \option{iso-date}.
+% \end{function}
+% \end{documentation}
+%
+% \begin{implementation}
+% Auxiliary command to support unit testing on the output interfaces.
+% \begin{macro}{\_@@_access_data:c}
+%    \begin{macrocode}
+\bool_if:NTF \g_@@_testing_bool {
+	\cs_new:Nn \_@@_access_data:n {\tl_log:n {#1} #1}
+	\cs_new:Nn \_@@_access_data:N {\tl_log:N #1 #1}
+	\cs_generate_variant:Nn \_@@_access_data:N {c}
+} {
+	\cs_set_eq:NN \_@@_access_data:c \use:c
+	\cs_set_eq:NN \_@@_access_data:n \use:n
+}
+\cs_generate_variant:Nn {\_@@_access_data:n} {e}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\InsertZUGFeRDData,\InsertZugferdData}
+% To simplify the usage in letters we also add fields to be able to use the zugferd data within \LaTeX{} output.
+% \version{0.11} added more fleixble interfaces.
+% \changes{v0.10}{2025-07-22}{Add Mechanism to provide explicit interface for data elements}
+%    \begin{macrocode}
+\NewDocumentCommand{\InsertZUGFeRDData}{om}{
+	\IfNoValueTF{#1} {
+%    \end{macrocode}
+% There are some mappings between the input and variable name.
+% We can use those to define specific data keys to access the field content.
+%    \begin{macrocode}
+		\keys_if_exist:nnTF {zugferd/data} {#2} {
+			\keys_set:nn {zugferd/data} {#2}
+		} {
+%    \end{macrocode}
+% If no specific interface is defined, we try to find the variable automatially.
+% \begin{itemize}
+%	\item replace dashes by underscores
+%	\item try if a tokenlist or a string
+%	\item prefer global over local
+%	\item take the first existing variable and break the loop
+% \end{itemize}
+%    \begin{macrocode}
+			\str_set:Ne \l_tmpa_str {#2}
+			\str_replace_all:Nnn \l_tmpa_str {-} {_}
+			\str_replace_all:Nnn \l_tmpa_str {/} {_}
+			\bool_set_true:N \g_tmpa_bool
+			\clist_map_inline:nn {tl, str} {
+				\clist_map_inline:nn {g, l} {
+					\use:c {##1 _if_exist:cT} {####1_@@_ \l_tmpa_str _##1}
+						{
+							\_@@_access_data:c {####1_@@_ \l_tmpa_str _##1}
+							\bool_gset_false:N \g_tmpa_bool
+						}
+					\bool_if:NF \g_tmpa_bool {\clist_map_break:}
+				}
+				\bool_if:NF \g_tmpa_bool {\clist_map_break:}
+			}
+		}
+%    \end{macrocode}
+% Optional Argument was used.
+%    \begin{macrocode}
+	} {
+			\cs_if_exist_use:cTF {zugferd_print_#1:n} {
+				{#2}
+			} {
+				%TODO
+			}
+	}
+}
+\providecommand{\InsertZugferdData}{\InsertZUGFeRDData}
+\providecommand{\insertZugferdData}{\InsertZUGFeRDData}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeOption{AddressData}
+% Allows |seller|, |buyer| or |shipto| for the data selection.
+% Will print the address, to be used in letters.
+%
+% \DescribeOption{set-today}
+% For dates there also exists the variant which will not print the variable but parse the variable to be used as \cs{today}.
+% Using this the date format can be controlled easier using the language setting of the document.
+% Here you should take care to use it within a group to restore the real value of \cs[no-index]{today} afterwards as shown in the example above.
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\cs_new:cn {zugferd_print_set-today:n} {
+			\_@@_set_today:v {g_@@_#1_tl}
+}
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeOption{iso-date}
+% \changes{v0.10}{2025-07-28}{add iso-date Option for \InsertZUGFeRDData}
+% This option enhances the \option{set-today} variant and will group the setting and convert the date to ISO format (YYYY-MM-DD).
+% In contrast to set-today this is creating the date as output and keeps the change local.
+% \end{documentation}
+% \begin{implementation}
+% \begin{macro}{\zugferd_print_iso-date:n}
+%    \begin{macrocode}
+\cs_new:cn {zugferd_print_iso-date:n} {
+	{
+		\_@@_set_today:v {g_@@_#1_tl}
+		\the\year
+		-
+		\int_compare:nNnT {\month} < {10} {0} \the\month
+		-
+		\int_compare:nNnT {\day} < {10} {0}\the\day
+	}
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\_@@_set_today:c}
+% Auxiliary function to use a date variable within the current group to be used as \cs[no-index]{today}.
+%    \begin{macrocode}
+\cs_new:Nn \_@@_set_today:n {
+	\_@@_set_today_aux:w #1 \q_stop
+}
+\cs_generate_variant:Nn \_@@_set_today:n {v}
+\cs_new:Npn \_@@_set_today_aux:w #1 #2 #3 #4 #5 #6 #7 #8 \q_stop{
+	\int_set:Nn \year {#1#2#3#4}
+	\int_set:Nn \month {#5#6}
+	\int_set:Nn \day {#7#8}
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+%
+% \begin{documentation}
+%
+% \changes{v0.10}{2025-07-01}{Add expandable interfaces to access data entries.}
+% \begin{function}{\UseZUGFeRDElement}
+% For all simple entries it's possible to use this expandable interface to data items.
+% \begin{syntax}
+%   \cs[no-index]{UseZUGFeRDElement}\oarg{scope l/c/g}\marg{name}
+% \end{syntax}
+% This does not apply for the AddressData, see \cs[no-index]{UseZUGFeRDAddressItem} for an expandable way to access these.
+% \end{function}
+% \end{documentation}
+% \begin{implementation}
+% \begin{macro}{\UseZUGFeRDElement}
+%    \begin{macrocode}
+\NewExpandableDocumentCommand{\UseZUGFeRDElement}{O{l}m}{
+	\use:c {#1_@@_#2_tl}
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+% \begin{documentation}
+% \begin{function}{\UseZUGFeRDAddressItem,\zugferd_use_AddressData_item:nn}
+% Expandable command to access single items of a trade party address.
+% \begin{syntax}
+% \cs{UseZUGFeRDAddressItem}\marg{trade party (one of seller/buyer/shipto)}\marg{Item}
+% \end{syntax}
+% \end{function}
+% \end{documentation}
+% \begin{implementation}
+% \begin{macro}{\UseZUGFeRDAddressItem,\zugferd_use_AddressData_item:nn}
+%    \begin{macrocode}
+\NewExpandableDocumentCommand{\UseZUGFeRDAddressItem}{mm}{
+	\zugferd_use_AddressData_item:nn {#1} {#2}
+}
+\cs_new:Nn \zugferd_use_AddressData_item:nn {
+	\_@@_access_data:e
+		{\prop_item:cn {g_@@_#1_AddressData_prop } {#2}}
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+%
+% \begin{documentation}
+% \section{Commands for template authors}
+%
+% \DescribeEnv{ZUGFeRD}
+% To simplify the structure of the wrapper package, \pkg{zugferd} provides an environment for the \XML mechanism and does the attachment to the PDF file (of course only, if enabled, see \autoref{sec:package-options}).
+% This provides the public interface bundling some steps together to reduce maintenance effort for any template maintainer using this package.
+% It also avoids the use of internal commands.
+%
+% This environment opens the \XMLfile using \cs{startWritingZUGFeRDxml} and afterwards writes the \XML header including the File and Scheme information, the |ExchangedDocumentContext| and information of the |ExchangedDocument|.
+% Notes will also be written within this step.
+% Afterwards the environment should include all the mechanisms to write the invoice positions as well as summation.
+%
+% At the end of the environment the footer is inserted, before the output stream is closed using \cs{stopWritingZUGFeRDxml}. Which also attaches the \XMLfile to the PDF.
+%
+%
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\NewDocumentEnvironment{ZUGFeRD}{o}{
+	\IfNoValueF{#1}{
+		\SetZUGFeRDData{#1}
+	}
+	\zugferd_enable_XML_interfaces:
+	\startWritingZUGFeRDxml
+	\zugferd_write_Header:
+	\ignorespaces
+}{
+	\zugferd_enable_XML_interfaces:
+	\zugferd_write_Footer:
+	\stopWritingZUGFeRDxml
+	\zugferd_disable_XML_interfaces:
+}
+%    \end{macrocode}
+% \end{implementation}
+%
+% \begin{documentation}
+% \begin{function}{\startWritingZUGFeRDxml}
+% \cs[no-index]{startWritingZUGFeRDxml} is opening the output stream for the \XMLfile.
+% It also adjusts the indentation.
+% If \option{write-xml} is false, this option only opens a group to achieve the same structure in both modes.
+% \end{function}
+%
+% \begin{function}{\stopWritingZUGFeRDxml}
+% Here the output stream is closed and the \XMLfile is attached.
+% In case \option{write-xml} is not active, the attachment will be made if that's not deactivated separately using \option{zugferd}.
+% It also ends the group started by \cs[no-index]{startWritingZUGFeRDxml}.
+% \end{function}
+% \end{documentation}
+%
+% \begin{implementation}
+% \begin{macro}{\startWritingZUGFeRDxml}
+%    \begin{macrocode}
+\newcommand*{\startWritingZUGFeRDxml}{
+	\begingroup
+	\bool_if:NTF \g_@@_write_xml_bool {
+		\char_set_active_eq:nN {13} \_@@_xml_newline_indent:
+		\iow_open:Nn \_@@_xml_writer_iow {\g_@@_xml_file_tl}
+	}{
+		\msg_info:nn {zugferd} {no-xml-write}
+	}
+}
+\msg_new:nnn {zugferd} {no-xml-write} {
+	The~option~write-xml=false~was~set.\\
+	Writing~of~XML~file~is~deactivated.
+}
+%    \end{macrocode}
+% \end{macro}
+% The PDF attachment is done after the writing stream is closed.
+% \begin{macro}{\stopWritingZUGFeRDxml}
+%    \begin{macrocode}
+%% The metadata elements are taken from Ulrike Fischer's faktur-x experiments
+%% https://github.com/latex3/pdfresources/tree/main/experiments/factur-x-bills
+\newcommand*{\stopWritingZUGFeRDxml}{%
+	\bool_if:NT \g_@@_write_xml_bool
+		{\iow_close:N \_@@_xml_writer_iow}%
+	\endgroup
+	\bool_if:NT \g_@@_active_bool {
+		\group_begin:
+			\pdfdict_put:nnn {l_pdffile/Filespec} {AFRelationship}{/Alternative}
+			%or /Source in some cases
+			\pdfdict_put:nnn {l_pdffile/Filespec} {Desc}{(Factur-X/ZUGFeRD-Rechnung)}
+			\exp_args:NnV \pdffile_embed_file:nnn {\g_@@_xml_file_tl}
+				\g_@@_xml_embedded_file_tl
+				{zugferd/rechnung}
+		\group_end:
+%    \end{macrocode}
+% Since some tools require the Catalog entry to match the file name of the embedded file this this has to be set separately (\issue{26}).
+% \changes{v0.9b}{2024-11-17}{Fix file name of embedded file for the zugferd profile.}
+% \changes{v0.9c}{2024-12–08}{Remove second catalog entry linking to xml \issue{32}}
+%    \begin{macrocode}
+		\pdfmanagement_add:nee
+			{Catalog/Names/EmbeddedFiles}
+			{\g_@@_xml_embedded_file_tl}
+			{\pdf_object_ref:n{zugferd/rechnung}}
+			% steht in der doku ist aber pdf 2.0 ....
+		\pdfmanagement_add:nnx{Catalog}{AF}{\pdf_object_ref:n{zugferd/rechnung}}
+	}
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+%
+% \subsection{Formatting ZUGFeRD data for PDF output}
+% \begin{documentation}
+% \begin{function}{\zugferd_print_AddressDataSep:nnn}
+% \begin{syntax}
+% \cs[no-index]{zugferd_print_AddressDataSep:nnn}
+% \marg{trade party (one of seller/buyer/shipto)}
+% \marg{element}
+% \marg{separator}
+% \end{syntax}
+% Dynamic interface to format address data fields.
+% It would check if a specific command has been defined otherwhise the address item would be used after adding the separator.
+% The separator would not be added if a specific formatting macro was found, so be aware to add it to the definition if necessary.
+% Same applies to checks for empty items.
+% \end{function}
+%
+% \DescribeMacro{\zugferd_print_AddressData:nn}
+% There also is a variant without the separator argument.
+% This one would only access the formatted value.
+%
+% \DescribeMacro{\zugferd_print_address_country:n}
+% The commands which can be (re-)defined to adjust the output are called: \cs[no-index]{zugferd_print_address_\meta{field}:n}.
+% The argument will receive the value of the element.
+% So e.g. to enable to output the country code one can use:
+% \begin{examplecode}
+%	\cs_set_nopar:Nn \zugferd_print_address_country:n {#1}
+% \end{examplecode}
+% \end{documentation}
+% \begin{implementation}
+% \begin{macro}{\zugferd_print_AddressDataSep:nnn}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_print_AddressDataSep:nnn {
+	\cs_if_exist:cTF {zugferd_print_address_#2:n} {
+		\exp_args:Nne \use:c {zugferd_print_address_#2:n}
+			{\zugferd_use_AddressData_item:nn {#1}{#2}}
+	} {
+%    \end{macrocode}
+% Add line break before item to avoid issues using the newline at the end of a paragraph.
+%    \begin{macrocode}
+		\prop_if_in:cnT { g_@@_#1_AddressData_prop } {#2} {
+			#3
+			\zugferd_use_AddressData_item:nn {#1}{#2}
+		}
+	}
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\zugferd_print_AddressData:nn}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_print_AddressData:nn {
+	\zugferd_print_AddressDataSep:nnn {#1} {#2} {}
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+% \begin{documentation}
+% \begin{function}{\zugferd_print_AddressData:n}
+% \begin{syntax}
+% \cs[no-index]{zugferd_print_AddressData:n}
+% \marg{type (one of seller/buyer/shipto)}
+% \end{syntax}
+% Used by the \option{AddressData} option of \cs[no-index]{InsertZUGFeRDData}.
+% It uses \cs[no-index]{zugferd_print_AddressData:nn} to print the name and would be followed by the
+% entries |lineone|, |linetwo|, |linethree|, |postcode|, |city| and |country|.
+% These entries would use \cs[no-index]{zugferd_print_AddressDataSep:nnn} using |\\| as a separator in case the following entry has been set.
+% |\\| is used instead of a more specific command to allow template developers to redefine it locally.
+%
+% This command also could be redefined to support different order of the entries.
+% \end{function}
+% \end{documentation}
+% \begin{implementation}
+% \begin{macro}{\zugferd_print_AddressData:n}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_print_AddressData:n {
+	\zugferd_print_AddressData:nn {#1} {name}
+	\clist_map_inline:nn {
+		lineone,
+		linetwo,
+		linethree,
+		postcode,
+		city,
+		country
+	} {
+		\zugferd_print_AddressDataSep:nnn {#1} {##1} {\\}
+	}
+}
+%    \end{macrocode}
+% \end{macro}
+% \subsubsection{Pre-defined exceptions for AdressData}
+% For compatibility reasons by default |city| and |country| will be treated differently.
+% The default setting matches how national addresses are printed within Germany.
+% There is no new line added before the city which is printed after the postcode and the country will not be printed.
+% \begin{macro}{\zugferd_print_address_city:n}
+%    \begin{macrocode}
+\cs_if_exist:NF \zugferd_print_address_city:n {
+	\cs_new_nopar:Nn \zugferd_print_address_city:n {\space#1}
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\zugferd_print_address_country:n}
+%   Default is empty, for compatbility reasons.
+%    \begin{macrocode}
+\cs_if_exist:NF \zugferd_print_address_country:n {
+	\cs_new_nopar:Nn \zugferd_print_address_country:n {}
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+%
+% \begin{documentation}
+% \subsection{Interfaces to write the \XML content}
+% \changes{v0.6}{2024-09-05}{Provide public interfaces and first version of the documentation.}
+% \label{sec:xml-interfaces}
+% In case you are using |write-xml=true| (which is the default) you need to ensure to call the \XML writing functions in the correct order.
+% For example after setting the global invoice data, like it's done in the example file.
+% The minimal example below would create a valid XML.
+% The interface commands are described afterwards.
+%
+% \begin{examplecode}
+% \begin{ZUGFeRD}
+%	\zugferd_write_Item:nnnnnn {1} {} {Plushie~\TeX\ lion} {31.89} {2} {63.78}
+%	\zugferd_startInvoiceSums:
+%	\zugferd_write_TaxEntry:nnnn {S} {19} {63.78} {12.12}
+%	\zugferd_write_Summation:nnnnnnnn {63.78} {0} {0} {63.78} {12.12} {75.90} {0} {75.90}
+%	\zugferd_stopInvoiceSums:
+% \end{ZUGFeRD}
+% \end{examplecode}
+%
+% \begin{function}{\zugferd_write_Item:nnnnnn}
+% This command is the interface to write invoice items to the \XMLfile.
+% If the \XML interface is enabled this is a reference to the internal command \cs{_@@_insert_TradeLineItem:nnnnnn}.
+% \begin{syntax}
+% \cs[no-index]{zugferd_write_Item:nnnnn}
+%    \marg{LineID}\marg{optional: item id (\enquote{SellerAssignedID})}\marg{item name}
+%    \marg{NetPriceProductTradePrice}
+%    \marg{BilledQuantity}
+%    \marg{LineTotalAmount}
+% \end{syntax}
+% Within the product name macros are disabled using \cs[no-index]{zugferd_disable_macros:}, see \autoref{sec:disable_macros}.
+%
+% This command is using the local values of tax information as well as the unit code.
+% If you want to overwrite them, adjust them locally using the corresponding options, e.g.:
+% \begin{examplecode}
+% \group_begin:
+%	\keys_set:nn {zugferd/item}{tax/rate=19, tax/category=S}
+%	\zugferd_write_Item:nnnnnn {1} {} {Plushie \TeX\ lion} {31.89} {2} {63.78}
+%	% Code using the data for visual representation
+% \group_end:
+% \end{examplecode}
+% This will set the tax rate to 19\,\% unregarding the global setting.
+%
+% This structure might look a bit overcomplicated as one might think the options could also be set as an additional argument.
+% This works as long as the Code for the visual part of the invoice is not referencing the internal data.
+% In case you don't do this it's also possible to use the following variant:
+% \end{function}
+%
+% \begin{function}{\zugferd_write_Item:nnnnnnn,\zugferd_write_Item:ennnnnn}
+% This is grouping the command and adding an argument in front to add additional options.
+% \begin{syntax}
+% \cs[no-index]{zugferd_write_Item:nnnnnnn}
+%   \marg{additional local options}
+%   \marg{LineID}\marg{optional: item id (\enquote{SellerAssignedID})}\marg{item name}
+%   \marg{NetPriceProductTradePrice}
+%   \marg{BilledQuantity}
+%   \marg{LineTotalAmount}
+% \end{syntax}
+% The example above could then be replaced by
+% \begin{examplecode}
+% \zugferd_write_Item:nnnnnnn {tax/rate=19,tax/category=S} {1} {Plushie-01} {Plushie \TeX\ lion} {31.89} {2} {63.78}
+%  % visual representation now may not refer to the data
+% \end{examplecode}
+% \end{function}
+%
+% \begin{function}{\zugferd_startInvoiceSums:, \zugferd_stopInvoiceSums:}
+% There is some global data which hast to be placed in the \XMLfile behind the invoice items.
+% As usually this this is where the summation block starts these commands have been named that way to enclose them.
+%
+% The starting includes the so called \enquote{ApplicableHeaderTradeAgreement} which contains the address data of both trade parties, see \autoref{sec:TradeParties}
+% And this will also print the \enquote{SpecifiedTradeSettlementPaymentMeans}, see \autoref{sec:PaymentMeans}.
+% \end{function}
+%
+% \begin{function}{\zugferd_write_TaxEntry:nnnn, \zugferd_write_TaxEntry:ennn}
+% \changes{v0.9c}{2024-12-08}{Added \cs{zugferd_write_TaxEntry:ennn} variant}
+% This command is writing the sum over a tax rate. This command has to be used once per rate applied to the items.
+% \begin{syntax}
+% \cs[no-index]{zugferd_write_TaxEntry:nnnn} \marg{tax category code} \marg{tax rate in \%} \marg{basis amount the tax applies to} \marg{tax amount}
+% \end{syntax}
+% The tax amount could of course be calculated internally.
+% In the example package this is done automatically, but the interface needs to support manual input as a lot of use cases for \LaTeX{} invoicing use it only to create the output file.
+% \end{function}
+%
+% \begin{function}{\zugferd_write_AllowanceCharge:, \zugferd_write_AllowanceCharge:n}
+% \changes{v0.10}{2025-09-08}{Add user interface for document level allowancaes and charges}
+% \begin{syntax}
+% \cs[no-index]{zugferd_write_AllowanceCharge:n} \marg{key-value settings to configure allowance/charge}
+% \end{syntax}
+% The command to write allowances or charges exists in two variants.
+% \cs[no-index]{zugferd_write_AllowanceCharge:n} takes an argument with the values, whereas \cs[no-index]{zugferd_write_AllowanceCharge:} iterates over the sequence configured by \option{add-allowance} and \option{add-charge}.
+% Examples can be found within the corresponding testfile \file{allowance-charge.lvt}.
+% \end{function}
+%
+% \begin{function}{\zugferd_write_Summation:nnnnnnnn}
+% \noindent The total values are all collected with a single macro.
+% \begin{syntax}
+% \cs[no-index]{zugferd_write_Summation:nnnnnnnn}
+%	\marg{LineTotalAmount}\marg{ChargeTotalAmount}\marg{AllowanceTotalAmount}
+%   \marg{TaxBasisTotalAmount}\marg{TaxTotalAmount}
+%    \marg{GrandTotalAmount}\marg{TotalPrepaidAmount}\marg{DuePayableAmount}
+% \end{syntax}
+% This commnd is also writing the payment terms to the \XMLfile.
+% Please be aware that it's in general not possible to calculate the tax values in here, as there might be multiple tax rates applied.
+% This is only taking the sums over all tax entries.
+%
+% In case you are using some specials like category \enquote{E} the exemption reason will also be written at that point.
+% For that it is referencing the current value of the setting.
+% \end{function}
+%
+% \subsection{Commands to temporary disable/re-enable the \XML writing interfaces}
+% \begin{function}{\zugferd_enable_XML_interfaces:,\zugferd_disable_XML_interfaces:}
+% As there are a lot of use cases where code is processed multiple times, it's necessary to provide an interface to temporary disable the \XML writing mechanism.
+% A lot of these situations appear within table structures whereas a local adjustment would not be helpful.
+% Therefore these adjustments have to be done globally.
+%
+% The example package \pkg{zugferd-invoice} provides an example for this to ensure the \XML data is not written multiple times.
+% The \env{ZUGFeRD} environment has been constructed in a way, so it would automatically enable the interface when it begins and also when it ends, to write the data. So you should ensure this environment is only processed once or use the lower level interfaces directly.
+% \end{function}
+% \end{documentation}
+% \begin{implementation}
+% Provide public interfaces and the ZUGFeRD environment.
+% \begin{macro}{\zugferd_enable_XML_interfaces:,\zugferd_disable_XML_interfaces:}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_enable_XML_interfaces: {
+	\bool_if:NT \g_@@_write_xml_bool {
+		\cs_gset:Nn \zugferd_write_Header: {
+			\_@@_insert_Header:
+			\_@@_insert_FrontMatter:
+		}
+		\cs_gset:Nn \zugferd_write_Footer: {
+			\_@@_insert_Footer:
+		}
+		\bool_if:NTF \g_@@_minimum_bool {
+			\cs_gset_eq:NN \zugferd_write_Item:nnnnnn \use_none:nnnnnn
+		}{
+			\cs_gset_eq:NN \zugferd_write_Item:nnnnnn
+				\_@@_insert_TradeLineItem:nnnnnn
+		}
+		\cs_gset:Nn \zugferd_startInvoiceSums: {
+			\_@@_ApplicableHeaderTradeAgreement:
+			\_@@_ApplicableHeaderTradeSettlement_start:
+			\_@@_SpecifiedTradeSettlementPaymentMeans:
+		}
+		\cs_gset:Nn \zugferd_stopInvoiceSums: {
+			\_@@_ApplicableHeaderTradeSettlement_stop:
+		}
+		\bool_if:NTF \g_@@_minimum_bool {
+			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \use_none:nnnn
+		} {
+			\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn
+				\_@@_ApplicableTradeTax:nnnn
+		}
+		\cs_gset_eq:NN 	\zugferd_write_AllowanceCharge:n
+			\_@@_SpecifiedTradeAllowanceCharge:n
+		\cs_gset:Nn \zugferd_write_Summation:nnnnnnnn {
+			\_@@_SpecifiedTradePaymentTerms:
+
+			\_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn
+				{##1} {##2} {##3} {##4} {##5} {##6} {##7} {##8}
+		}
+	}
+}
+\cs_new:Nn \zugferd_disable_XML_interfaces: {
+	\cs_gset_eq:NN \zugferd_write_Header: \prg_do_nothing:
+	\cs_gset_eq:NN \zugferd_write_Footer: \prg_do_nothing:
+	\cs_gset_eq:NN \zugferd_write_Item:nnnnnn \use_none:nnnnnn
+	\cs_gset_eq:NN \zugferd_startInvoiceSums: \prg_do_nothing:
+	\cs_gset_eq:NN \zugferd_stopInvoiceSums: \prg_do_nothing:
+	\cs_gset_eq:NN \zugferd_write_TaxEntry:nnnn \use_none:nnnn
+	\cs_gset_eq:NN \zugferd_write_AllowanceCharge:n \use_none:n
+	\cs_gset_eq:NN \zugferd_write_Summation:nnnnnnnn \use_none:nnnnnnnn
+}
+\bool_if:NTF \g_@@_write_xml_bool {
+	\zugferd_enable_XML_interfaces:
+}{
+	\zugferd_disable_XML_interfaces:
+}
+%    \end{macrocode}
+% \end{macro}
+% \changes{v0.9}{2024-10-23}{Add interface using an argument for the keyval options locally per item}
+% \begin{macro}{\zugferd_write_Item:nnnnnnn}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_write_Item:nnnnnnn {
+	\group_begin:
+	\keys_set:nn {zugferd/item} {#1}
+	\zugferd_write_Item:nnnnnn {#2} {#3} {#4} {#5} {#6} {#7}
+	\group_end:
+}
+\cs_generate_variant:Nn \zugferd_write_Item:nnnnnnn {ennnnnn}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\zugferd_write_TaxEntry:ennn}
+%    \begin{macrocode}
+\cs_generate_variant:Nn \zugferd_write_TaxEntry:nnnn {ennn}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\zugferd_write_AllowanceCharge:}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_write_AllowanceCharge: {
+	\_@@_SpecifiedTradeAllowanceCharge:
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\_@@_write_xml:n,\_@@_define_xml_writer:Nn,\_@@_define_xml_content:Nn}
+% These commands are used to toggle the writing of the \XMLfile. This corresponds to the option \option{write-xml}.
+%    \begin{macrocode}
+\bool_if:NTF \g_@@_write_xml_bool {
+	\cs_new:Nn \_@@_write_xml:n {
+		\tl_if_blank:nF {#1} {
+			\exp_last_unbraced:Nnf \tl_if_head_eq_charcode:nNTF {#1} \iow_newline: {
+				\iow_now:Ne \_@@_xml_writer_iow {\use_none:n #1}
+			} {
+				\iow_now:Ne \_@@_xml_writer_iow {\_@@_xml_auto_indent: #1}
+			}
+		}
+	}
+	\cs_new_eq:NN \_@@_define_xml_writer:Nn \cs_new:Nn
+	\cs_new_eq:NN \_@@_define_xml_content:Nn \cs_new:Nn
+} {
+	\cs_set_eq:NN \_@@_write_xml:n \use_none:n
+	\cs_set:Nn \_@@_define_xml_writer:Nn {\cs_new:Nn #1 {}}
+	\cs_set:Nn \_@@_define_xml_content:Nn {\cs_new:Nn #1 {}}
+}
+
+\cs_generate_variant:Nn \_@@_write_xml:n {e}
+%    \end{macrocode}
+% \end{macro}
+% \subsection{Number rounding}
+% As \pkg{siunitx} is implementing this, \pkg{zugferd} uses it instead of building our own mechanism.
+% In version \version{0.9a} a public interface was added, as described in section \ref{sec:rounding-interface}.
+%    \begin{macrocode}
+\RequirePackage{siunitx}
+%    \end{macrocode}
+% \begin{macro}{\_@@_number_format:nNn,\_@@_number_format:nNe}
+% \changes{v0.11}{2025-12-28}{Bugfix: Group the change of siunitx options to keep it local}
+% \cs{\_@@_gset_formatted_number:nNn} does only exist as a global variant.
+% To keep the change local one can use \variable{\g_@@_tmp_tl } and use that value for a local assignment.
+%    \begin{macrocode}
+\cs_new:Nn \_@@_gset_formatted_number:nNn {
+	\group_begin:
+	\sisetup{
+		parse-numbers=true,
+		round-mode=places,
+		round-precision=#1,
+		round-pad = false,
+		group-digits=none,
+		minimum-decimal-digits=#1,
+		output-decimal-marker=.
+	}
+	\siunitx_number_format:nN {#3} \l_@@_tmp_tl
+	\tl_gset_eq:NN #2 \l_@@_tmp_tl
+	\group_end:
+}
+\cs_generate_variant:Nn \_@@_gset_formatted_number:nNn {nNe}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\_@@_write_rounded:nnnn,\_@@_write_rounded:nnn}
+%    \begin{macrocode}
+\cs_new:Nn \_@@_write_rounded:nnnn {
+	\_@@_gset_formatted_number:nNn {#1} \g_@@_tmp_tl {#4}
+	\_@@_write_xml:e {<ram:#2#3>\g_@@_tmp_tl</ram:#2>}
+}
+\cs_new:Nn \_@@_write_rounded:nnn {
+	\_@@_write_rounded:nnnn {#1} {#2} {} {#3}
+}
+%    \end{macrocode}
+% \end{macro}
+% \subsection{XML indentation}
+% The indentation of the \XML does not really matter.
+% For debugging, it's a lot simpler to have it included and this also helped to maintain the structure of the code during development, so I decided to keep it.
+% The indentation is created using a bunch of auxiliary commands and variables which are defined here.
+% \begin{variable}{\g_@@_indent_int}
+%    \begin{macrocode}
+\int_new:N \g_@@_indent_int
+%    \end{macrocode}
+% \end{variable}
+% \begin{function}{\_@@_indent:,\_@@_xml_auto_indent:,\_@@_xml_newline_indent: }
+%    \begin{macrocode}
+\cs_new:Nn \_@@_indent: {
+	\space\space
+}
+\cs_new:Nn \_@@_indent:n {
+	\prg_replicate:nn {#1} {\_@@_indent:}
+}
+\cs_new:Nn \_@@_xml_auto_indent:n {
+	\_@@_indent:n {\g_@@_indent_int #1}
+}
+\cs_new:Nn \_@@_xml_auto_indent: {
+	\_@@_xml_auto_indent:n {}
+}
+%    \end{macrocode}
+% \end{function}
+% The idea was to redefine the \cs[no-index]{newlinechar} to automatically indent the following line.
+%    \begin{macrocode}
+\cs_new:Nn \_@@_xml_newline_indent:n {
+	\iow_newline: \_@@_xml_auto_indent:n {#1}
+}
+\cs_new:Nn \_@@_xml_newline_indent: {
+	\_@@_xml_newline_indent:n {}
+}
+%    \end{macrocode}
+% \end{implementation}
+% Setting up the catcodes to simplify the \XML indentation.
+% \iffalse
+%    \begin{macrocode}
+\cctab_new:N \g_@@_xml_cctab
+\begingroup%
+\endlinechar=13%
+\char_set_catcode:nn {13}{13}%
+\cctab_gsave_current:N \g_@@_xml_cctab%
+\endgroup
+%    \end{macrocode}
+% \fi
+% \begin{documentation}
+% \subsection{Escaping macros inside \XML data}
+% \label{sec:disable_macros}
+% \begin{function}{\zugferd_disable_macros:}
+% Since we allow the use of \LaTeX{} code in some fields there has to be a mechanism to disable macros inside the \XML output.
+% The mechanism is created similar to the one by \pkg{hyperref}, and we also use some definitions from there to use those as a starting point.
+% To have a detailed list of all redefinitions, please have a look at the implementation of this command.
+%
+% There exists a hook to extend or overwrite these definitions |zugferd/disable-macros|.
+% You can add own redefinitions using this. For example if you want to overwrite the setting mapping a \cs[no-index]{newline} to a new line char instead of space, you could add the following to your setup:
+% \begin{examplecode}
+% \hook_gput_code:nnn {zugferd/disable-macros}
+%     {newline-to-LF}
+%     {\def\newline{\iow_newline:}}
+% \end{examplecode}
+% \end{function}
+% \end{documentation}
+% \begin{implementation}
+% \begin{macro}{\zugferd_disable_macros:}
+% The definition was mostly taken from \pkg{hyperref} \cite{hyperref}.
+% Most likely not all of these are required, but it's probably easier to take this as a reasonable choice instead of creating an own collection.
+% \iffalse
+%    \begin{macrocode}
+%% modified list taken from hyperref.sty v7.01i
+%% Copyright
+%% 1995-2001 Sebastian Rahtz, with portions written by David Carlisle and Heiko Oberdiek
+%% 2001-2015 Heiko Oberdiek
+%% 2016-2019 Oberdiek Package Support Group
+%% 2019-2024 LaTeX Project
+%% modifications have been made to support the mechanism if hyperref is not loaded
+%    \end{macrocode}
+% \fi
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_disable_macros: {
+	\let\{\c_left_brace_str
+	\let\textbraceleft\c_left_brace_str
+	\let\}\c_right_brace_str
+	\let\textbraceright\c_right_brace_str
+	\let\#\c_hash_str
+%    \end{macrocode}
+% This only is a part of the list.
+% There is no real use of printing the whole list, it's inside \file{zugferd.sty} anyway.
+% \comment
+%    \begin{macrocode}
+	\let\textnumbersign\c_hash_str
+	\let\$\c_dollar_str
+	\let\textdollar\c_dollar_str
+	\let\%\c_percent_str
+	\let\&\c_ampersand_str
+	\let\_\c_underscore_str
+	\def\P{§}
+	\def\ldots{…}
+	\def\dots{…}
+	\def\\{\space}%
+	\def\newline{\space}%
+	\def\TeX{TeX}%
+	\def\LaTeX{La\TeX}%
+	\def\LaTeXe{\LaTeX2e}%
+	\def\eTeX{e-\TeX}%
+	\def\SliTeX{Sli\TeX}%
+	\def\MF{Metafont}%
+	\def\MP{Metapost}%
+	\let\fontencoding\@gobble
+	\let\fontfamily\@gobble
+	\let\fontseries\@gobble
+	\let\fontshape\@gobble
+	\let\fontsize\@gobbletwo
+	\let\selectfont\@empty
+	\let\usefont\@gobblefour
+	\let\emph\@firstofone
+	\let\textnormal\@firstofone
+	\let\textrm\@firstofone
+	\let\textsf\@firstofone
+	\let\texttt\@firstofone
+	\let\textbf\@firstofone
+	\let\textmd\@firstofone
+	\let\textit\@firstofone
+	\let\textsc\@firstofone
+	\let\textsl\@firstofone
+	\let\textup\@firstofone
+	\let\normalfont\@empty
+	\let\rmfamily\@empty
+	\let\sffamily\@empty
+	\let\ttfamily\@empty
+	\let\bfseries\@empty
+	\let\mdseries\@empty
+	\let\itshape\@empty
+	\let\scshape\@empty
+	\let\slshape\@empty
+	\let\upshape\@empty
+	\let\em\@empty
+	\let\rm\@empty
+	\let\Huge\@empty
+	\let\LARGE\@empty
+	\let\Large\@empty
+	\let\footnotesize\@empty
+	\let\huge\@empty
+	\let\large\@empty
+	\let\normalsize\@empty
+	\let\scriptsize\@empty
+	\let\small\@empty
+	\let\tiny\@empty
+	\let\mathversion\@gobble
+	\let\phantom\@gobble
+	\let\vphantom\@gobble
+	\let\hphantom\@gobble
+	\let\ding\HyPsd@ding
+	\let\Cube\HyPsd@DieFace
+%    \end{macrocode}
+% \changes{v0.11}{2026-03-11}{Fix Grouping of environments in xml data}
+%    \begin{macrocode}
+	\def\begin##1{\begingroup\csname##1\endcsname}%
+	\def\end##1{\csname end##1\endcsname\endgroup}%
+	\def\textcolor##1##{\@secondoftwo}%
+	\def\TextOrMath{\ifmmode\expandafter\@secondoftwo\else\expandafter\@firstoftwo\fi}%
+	\let\foreignlanguage\@secondoftwo
+	\let\textlatin\@firstofone
+	\let\cyr\relax
+	\let\glqq\textglqq
+	\let\grqq\textgrqq
+	\let\glq\textglq
+	\let\grq\textgrq
+	\let\flqq\textflqq
+	\let\frqq\textfrqq
+	\let\flq\textflq
+	\let\frq\textfrq
+	\let\if@mid@expandable\@firstoftwo
+	\let\hspace\@gobble
+	\let\label\@gobble
+	\let\index\@gobble
+	\let\glossary\@gobble
+	\let\@mkboth\@gobbletwo
+	\let\leavevmode\@empty
+	\let\mbox\@empty
+	\def\halign{\@gobble}%
+	\let\Hy@SectionAnchorHref\@gobble
+	\let\ref\@gobble
+	\let\href\@gobble
+	\let\pageref\@gobble
+	\let\nameref\@gobble
+	\let\autoref\@gobble
+	\let\ignorespaces\relax
+	\let\ensuremath\@firstofone
+	\def\ {\space\relax}% space
+	\exp_args:NV \cs_set_nopar:cpn \c_space_tl {\space}
+	\let\nobreakspace\space
+	\hook_use:n {zugferd/disable-macros}
+%    \end{macrocode}
+% \endcomment
+%    \begin{macrocode}
+}
+%    \end{macrocode}
+% To provide a possibility to extend or overwrite the macro list a hook is added.
+%    \begin{macrocode}
+\hook_new:n {zugferd/disable-macros}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+% \begin{documentation}
+% \begin{function}{\zugferd_tl_set_escaped_xml:Nn, \zugferd_tl_gset_escaped_xml:Nn}
+% \changes{v0.9c}{2024-12-08}{Added mechanism to escape XML special characters.}
+% As described before and also in \issue{9} there are characters which are special in \XML but not within \LaTeX.
+% Additionally there are also characters which aren't special in \LaTeX{} but within \XML.
+% In version \version{0.9c} \pkg{zugferd} added some auxiliary commands to support users escaping those.
+% This mechanism involves turning the category codes of characters like |"<>'&| to active and might have side effects.
+% It is an experimental feature and should be handled with care!
+% \end{function}
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\cs_new:Nn \zugferd_tl_gset_escaped_xml:Nn {
+	\group_begin:
+		\zugferd_disable_macros:
+		\_@@_escape_xml_aux:
+		\tl_gset_rescan:Nnn #1 {
+			\cctab_select:N \c_str_cctab
+			\_@@_escape_xml_activate:
+		 } {#2}
+		\tl_gset:Ne #1 {#1}
+	\group_end:
+}
+\cs_new:Nn \zugferd_tl_set_escaped_xml:Nn {
+	\zugferd_tl_gset_escaped_xml:Nn \g_@@_tmp_tl {#2}
+	\tl_set_eq:NN #1 \g_@@_tmp_tl
+}
+\cs_new:Nn \_@@_escape_xml_aux: {
+	\edef\&{\tl_to_str:n {&amp;}}
+	\edef\textgreater{\tl_to_str:n {&gt;}}
+	\edef\textless{\tl_to_str:n {&lt;}}
+	\edef\textquotedbl{\tl_to_str:n {&quot;}}
+	\edef\textquotesingle{\tl_to_str:n {&apos;}}
+	\char_set_active_eq:NN > \textgreater
+	\char_set_active_eq:NN < \textless
+	\char_set_active_eq:NN " \textquotedbl
+	\char_set_active_eq:NN ' \textquotesingle
+	\char_set_active_eq:NN & \&
+}
+\cs_new:Nn \_@@_escape_xml_activate: {
+	\char_set_catcode_active:N >
+	\char_set_catcode_active:N <
+	\char_set_catcode_active:N "
+	\char_set_catcode_active:N '
+	\char_set_catcode_active:N &
+}
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \subsection{Rounding Interface}
+% \label{sec:rounding-interface}
+% \changes{v0.9a}{2024-11-07}{Add public interface for the rounding mechanism.}
+% The demo package's implementation is also doing VAT calculations.
+% This rounding mechanism might have side effects if only the final values are rounded as reported in \issue{17} .
+% It is only an issue if fractions of units are used, but was fixed in \version{0.9a}.
+% To avoid this generally there now exists an interface to be used to do the rounding before the summation.
+%
+% \begin{function}{\zugferd_fp_set_rounded:Nn,zugferd_fp_gset_rounded:Nn}
+% This command can be used to access the \pkg{siunitx}'s rounding mechanism within \pkg{zugferd}.
+% The command is based on \cs[no-index]{fp_set:Nn} just is doing the rounding before the assignment.
+%
+% \begin{examplecode}
+%	\zugferd_fp_gset_rounded:Nn \g_tmpa_fp {|\meta{amount}|* (|\meta{VAT rate}|/100) * |\meta{unit price}|}
+%	\end{examplecode}
+% \end{function}
+% \end{documentation}
+% \begin{implementation}
+% \begin{macro}{\zugferd_fp_set_rounded:Nn, \zugferd_fp_gset_rounded:Nn}
+% \changes{v0.11}{2025-12-28}{Bugfix: Group the change of siunitx options to keep it local}
+%    \begin{macrocode}
+\cs_set:Nn \zugferd_fp_set_rounded:Nn {
+	\_@@_gset_formatted_number:nNn {2} \g_@@_tmp_tl {\fp_eval:n {#2}}
+	\fp_set:Nn #1 {\g_@@_tmp_tl}
+}
+\cs_set:Nn \zugferd_fp_gset_rounded:Nn {
+	\_@@_gset_formatted_number:nNn {2} \g_@@_tmp_tl {\fp_eval:n {#2}}
+	\fp_gset:Nn #1 {\g_@@_tmp_tl}
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+% \begin{documentation}
+% \section{Adding data to the XML}
+% All data which does not directly depend on amounts or specific items is provided using a key-value interface.
+% For some fields there is the option to define a global preset but locally overwrite it for a specific item.
+% This only applies to data fields used by the writing interfaces described in \autoref{sec:xml-interfaces}.
+%
+% This package is using the UN/CEFACT Cross Industry Invoice Syntax for the data.
+% Currently it is not planned to implement the UBL syntax as well, but generally this would be possible.
+%
+% Please be aware that the \pkg{zugferd} package does currently not handle any replacements concerning the content.
+% Therefore it might be necessary to escape special characters, like |&| to |&amp;|.
+% This also applies to |<|, |>|, |"| and |'|.
+% It's technically possible to do this either via active characters or string replacements.
+% But since it's adjusting the content this feature would never be enabled by default (Issue \issue{9}).
+%
+% In most cases this functionality will be used to change the tax setting or unit for a single item.
+% \autoref{sec:xml-interfaces} also provided an example for this.
+%
+% This section will now take all data which can be set using \cs{SetZUGFeRDData}.
+%
+% \end{documentation}
+% \begin{implementation}
+% \begin{variable}{\g_@@_notes_seq,\g_@@_id_tl,\g_@@_date_tl,\g_@@_subject_tl,\g_@@_fromaddress_tl,\g_@@_DocumentTypeCode_tl}
+%    \begin{macrocode}
+\seq_new:N \g_@@_notes_seq
+\tl_new:N \g_@@_id_tl
+\tl_new:N \g_@@_date_tl
+\tl_new:N \g_@@_delivery_date_tl
+\tl_new:N \g_@@_subject_tl
+\tl_new:N \g_@@_fromaddress_tl
+\tl_new:N \g_@@_DocumentTypeCode_tl
+\tl_new:N \l_@@_currency_tl
+%    \end{macrocode}
+% \end{variable}
+% \end{implementation}
+% \begin{documentation}
+% \subsection{General Invoicing Data}
+% Some of the general data currently supports only one value, which is already selected by default.
+% The interface already exists and may be extended later.
+%
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\keys_define:nn { zugferd } {
+% TODO define others
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption[BT-3]{document-type=\meta{type}}{commercial-invoice}
+% Select the document type. Since \version{0.9c} \pkg{zugferd} supports the following types:
+% \changes{v0.9c}{2024-12-08}{Add support for other invoice types.}
+% \begin{valuelist}\setlength{\leftskip}{.5\linewidth}
+% \item[commercial-invoice] 380
+% \item[partial-invoice] 326
+% \item[corrected-invoice] 384
+% \item[self-billed-invoice] 389
+% \item[credit-note] 381
+% \item[partial-construction-invoice] 875
+% \item[partial-final-construction-invoice] 876
+% \item[final-construction-invoice] 877
+% \end{valuelist}
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{id, document-type}
+%    \begin{macrocode}
+	document-type .choice:,
+	document-type / commercial-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {380},
+	document-type / partial-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {326},
+	document-type / corrected-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {384},
+	document-type / self-billed-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {389},
+	document-type / credit-note .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {381},
+	document-type / partial-construction-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {875},
+	document-type / partial-final-construction-invoice .code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {876},
+	document-type / final-construction-invoice	.code:n =
+		\tl_gset:Nn \g_@@_DocumentTypeCode_tl {877},
+	document-type .initial:n = commercial-invoice,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Invoice number/document ID}
+% \DescribeKeyOption*[BT-1]{id=komavar/\meta{document ID/invoice number}}{}
+% This has to be set. Leaving it empty will lead to an invalid \XMLfile.
+%
+% The value |komavar| would reference the data provided the KOMA-Script letter variabe |invoice|. In case you don't use \pkg{scrletter} you should not use this setting.
+% More information can be found in the documentation \cite{scrletter}.
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+	id .choice:,
+	id / komavar .code:n = \tl_gset:Nf \g_@@_id_tl {\scr@invoice@var},
+	id / unknown .code:n = \tl_gset:Nn \g_@@_id_tl {#1},
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Currency}
+% \DescribeKeyOption[BT-5]{currency=EUR/USD/CHF/€}{EUR}
+% Currently \pkg{zugferd} only supports one currency for an invoice. This might be extended later.
+% The currency is pre-configured to use Euro.
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+	currency .choices:nn = {EUR, USD, CHF} {
+		\tl_set_eq:NN \l_@@_currency_tl \l_keys_choice_tl
+	},
+	currency / € .meta:n = {currency = EUR},
+	currency / unknown .code:n = {
+		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {unit} {
+			\str_uppercase:f {#1}
+		}
+		{\keys_set:nx { zugferd } {unit= {\str_uppercase:f {#1}}}}
+		{
+			\bool_if:NT \g_@@_unknown_value_warning_bool {
+				\msg_warning:nnn { zugferd } {unknown-value} {currency} {#1}
+			}
+			\tl_set:Ne \l_@@_currency_tl {\str_uppercase:f {#1}}
+		}
+	},
+	currency .initial:n = EUR,
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Dates}
+% \label{sec:dates}
+% \DescribeKeyOption[BT-2]{date=auto/\meta{date formatted as YYYYMMDD}}{auto}
+% \DescribeKeyOption[BT-72]{delivery-date=auto/\meta{date formatted as YYYYMMDD}}{auto}
+% \DescribeKeyOption[BT-9]{due-date=\meta{date formatted as YYYYMMDD}}{}*
+% Currently there are three kinds of dates implemented.
+% The XML-Standard requires them to use the structure \meta{YYYYMMDD}.
+% For the day this document was compiled this would be: \enquote{\InsertZUGFeRDData{date}} (\today).
+%
+% Instead of providing a date value directly it's also possible to use \cs[no-index]{today}.
+% This is done using the value \value{auto} which is the default setting for \option{date} and \option{delivery-date}.
+% Please be aware, that this would change if you rebuild the document later. So you might want to use an actual value here.
+% \end{documentation}
+%
+% \begin{implementation}
+% \begin{optionenv}{date}
+%    \begin{macrocode}
+	date .choice:,
+	date / auto .code:n = \tl_gset:Ne \g_@@_date_tl {
+		\the\year
+		\int_compare:nNnT {\month} < {10} {0} \the\month
+		\int_compare:nNnT {\day} < {10} {0}\the\day
+	},
+	date / unknown .code:n = \tl_gset:Nn \g_@@_date_tl {#1},
+	date .initial:n = auto,
+%    \end{macrocode}
+% \end{optionenv}
+% \begin{optionenv}{delivery-date}
+%    \begin{macrocode}
+	delivery-date .choice:,
+	delivery-date / auto .code:n = \tl_gset:Ne \g_@@_delivery_date_tl {
+		\the\year
+		\int_compare:nNnT {\month} < {10} {0} \the\month
+		\int_compare:nNnT {\day} < {10} {0}\the\day
+	},
+	delivery-date / unknown .code:n = {
+		\tl_gset:Nn \g_@@_delivery_date_tl {#1}
+	},
+	delivery-date .initial:n = auto,
+%    \end{macrocode}
+% \end{optionenv}
+% \begin{optionenv}{due-date}
+%    \begin{macrocode}
+	due-date .tl_gset:N = \g_@@_due_date_tl,
+	due-date .initial:n =,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption*[BT-73]{item/start-date=\meta{date formatted as YYYYMMDD}}{}*
+% \DescribeKeyOption*[BT-74]{item/end-date=\meta{date formatted as YYYYMMDD}}{}*
+% With version \version{0.10} support for a invoice wide |BillingSpecifiedPeriod| was added.
+% This supports setting |start-date| and |end-date| for the whole invoice in contrast to setting it for each item.
+% As this is optional, there is no default.
+% The element will be printed if both dates are set, as setting a single one will enforce the element to be invalid.
+% This element should be set as all the other dates (see \autoref{sec:dates}).
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{start-date,end-date}
+%    \begin{macrocode}
+	start-date .tl_gset:N = \g_@@_start_date_tl,
+	start-date .initial:n =,
+	end-date .tl_gset:N = \g_@@_end_date_tl,
+	end-date .initial:n =,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Payment terms}
+% \DescribeKeyOption[BT-20]{payment-terms=\meta{string}}{}
+% One option to set payment terms is the \option{due-date} mentioned before.
+% If this is not set or the setting is more complex one can use \option{payment-terms} to add more information.
+%
+% This setting is a string. In case there is expansion required this has to be done before.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{payment-terms}
+%    \begin{macrocode}
+	payment-terms .str_gset:N = \g_@@_payment_terms_str,
+	payment-terms .initial:n =,
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Allowances and Charges}
+% \changes{v0.10}{2025-09-08}{add the options add-charge and add-allowance.}
+% \DescribeKeyOption[BT-92,BT-93,BT-94,BT-97,BT-98]{add-allowance=\marg{keyval-list}}{}
+% \DescribeKeyOption[BT-99,BT-100,BT-101,BT-104,BT-105]{add-charge=\marg{keyval-list}}{}
+% Allowances and charges can added using these options.
+% They will be applied to a sequence which is used by \cs[no-index]{zugferd_write_AllowanceCharge:} to write all contained elements.
+% The Values match the actual \XML element names. There might be alias definitions added later to simplify the usage.
+% Please be aware that any calculation has to be imlemented within your own \pkg{zugferd-invoice.sty} variant.
+% \begin{examplecode}
+% \SetZUGFeRDData{
+%	add-allowance={
+%		CalculationPercent=100,
+%		BasisAmount=50,
+%		ActualAmount=50,% could be calculated
+%		Reason=TEXT,
+%		tax/category=S,
+%		tax/rate=19
+%	},
+%	add-charge={
+%		ActualAmount=50,
+%		Reason=TEXT,
+%		tax/category=S,
+%		tax/rate=19
+%	}
+% }
+%\end{examplecode}
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{add-allowance}
+%    \begin{macrocode}
+	add-allowance .code:n = {
+		\seq_gput_right:Nn \g_@@_AllowanceCharge_seq {
+			Indicator=false,
+			#1
+		}
+	},
+	item / add-allowance .code:n = {
+		\seq_put_right:Nn \l_@@_AllowanceCharge_seq {
+			Indicator=false,
+			#1
+		}
+	},
+%    \end{macrocode}
+% \end{optionenv}
+% \begin{optionenv}{add-charge}
+%    \begin{macrocode}
+	add-charge .code:n = {
+		\seq_gput_right:Nn \g_@@_AllowanceCharge_seq {
+			Indicator=true,
+			#1
+		}
+	},
+	item / add-charge .code:n = {
+		\seq_put_right:Nn \l_@@_AllowanceCharge_seq {
+			Indicator=true,
+			#1
+		}
+	},
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Notes: Adding additional information}
+% \DescribeKeyOption{subject=komavar/\meta{Tokenlist}}{}
+% \DescribeKeyOption{fromaddress=komavar/\meta{Tokenlist}}{}
+% \DescribeKeyOption[BT-22]{add-note=\meta{Tokenlist}}{}*
+% The ZUGFeRD example files\cite{zugferd-download} use all visible data to add them to the \XML as a note.
+% \option{subject} and \option{fromaddress} are used to support this.
+% \changes{v0.9d}{2025-01-02}{Add note on subject not being the same as subject-code \issue{35}.}%
+% Please be aware that \option{subject-code} is not the same as \option{subject} even if some viewers might display it like that, \issue{35}.
+% The data should not be too relevant but \pkg{zugferd} want's to support adding additional data to the \XML using the note element.
+% So these fields can be left out but in case they are not empty, they will also be written to the \XML.
+%
+% The value \value{komavar} corresponds to the mechanism provided by \pkg{scrletter}.
+% It accesses the variable expands it to be used directly.
+% If you don't use this package, you can ignore this setting or add content manually.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{subject,fromaddress,add-note}
+%    \begin{macrocode}
+	subject .choice:,
+	subject / komavar .code:n = {
+		\tl_gset:Nf \g_@@_subject_tl {\scr@subject@var}
+	},
+	subject / unknown .code:n = \tl_gset:Nn \g_@@_subject_tl {#1},
+	fromaddress .choice:,
+	fromaddress / komavar .code:n = \tl_gset:Nf \g_@@_fromaddress_tl
+		{\scr@fromaddress@var},
+	fromaddress / unknown .code:n = \tl_gset:Nn \g_@@_fromaddress_tl {#1},
+	add-note .code:n = \seq_gput_right:Nn \g_@@_notes_seq {#1},
+}
+\msg_new:nnnn {zugferd} {unknown-value} {
+	You~selected~a~#1~which~was~not~predefined.\\
+	I~will~directly~use~your~selection~'#1=#2'.
+	Please~ensure~the~selection~is~valid!
+} {
+	For~more~information~see~the~zugferd~documentation.
+}
+%    \end{macrocode}
+% \end{optionenv}
+% Macro to write notes
+%    \begin{macrocode}
+\cs_new:Nn \_@@_note_if_not_empty:N {%
+	\tl_if_empty:NF #1 {%
+		\_@@_write_note:n {#1}%
+	}%
+}%
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \subsection{Trade parties}
+% \label{sec:TradeParties}
+% The \XML scheme knows 6 different Trade Parties:
+% \begin{itemize}
+% \item Seller
+% \item Buyer
+% \item Payee
+% \item ShipTo
+% \item SellerTaxRepresentative
+% \end{itemize}
+%
+% \noindent Currently \pkg{zugferd} supports only Buyer, Seller and ShipTo, but can be easily extended to support the others as well.
+% The data for each party follows the same structure, except the \enquote{BuyerReference} which is described later in this section.
+%
+% Some of the data is optional for specific parties.
+% As this also depends on the selected scheme and version we will not list the details.
+% All fields for a trade party can be set using the \enquote{group} named by the party.
+% For example setting all the seller data is done in the following listing:
+% \changes{v0.9c}{2024-12-08}{Add support for extended Addresses including additionl legal data.}
+% \begin{examplecode}
+% \SetZUGFeRDData{
+%	seller/id = {ID – usually internal ID provided by buyer},
+%	seller/name = {peiTeX (Marei Peischl)},
+%	seller/legal-description = {Additional legal information},
+%	seller/legal-id = {legal registration ID},
+%	seller/trading-name = {trading name},
+%	seller/email = {invoicing@peitex.de},
+%	seller/vatid = {DE123456789},
+%	seller/contact= {Marei\\+4900000000\\marei@peitex.de},
+%	seller/address = {Address Line 1\\Address Line 2\\Address Line 3},
+%	seller/postcode = {20253},
+%	seller/city ={Hamburg},
+%	seller/country = {DE},
+% }
+% \end{examplecode}
+% \noindent All this data is saved within a property list, which is internally called \cs[no-index]{g_@@_\meta{seller/buyer/shipto}_prop}.
+% By default this property list is empty.
+% The users themselves have to ensure to add the required data.
+%
+% The outer braces are not required, if the data does not container an equal sign or a comma.
+% In case the final data is unknown, it's recommended to use them anyway.
+%
+% \DescribeKeyOption*{\meta{party}/name=\meta{name}}{}*
+% \DescribeKeyOption*{\meta{party}/email=\meta{email address}}{}*
+% \DescribeKeyOption*{\meta{party}/vatid=\meta{VAT ID}}{}*
+% \DescribeKeyOption*{\meta{party}/taxid=\meta{VAT ID}}{}*
+% \changes{v0.9c}{2024-12-08}{Add support for taxid.}
+%
+% \DescribeKeyOption*{\meta{party}/address=\meta{address}}{}*
+% \changes{v0.9c}{2024-12-08}{Add support for third address line.}
+% As shown in the example \option{address} can use three lines separted by |\\|.
+% It's possble to set all fields for all trade contacts, but e.\,g. for the |shipto|-party email and vatid will not be used in the \XML.
+%
+% Alternatively it's also possible to use \option{\meta{party}/lineone}, \option{\meta{party}/linetwo} and \option{\meta{party}\slash{}linethree} separately.
+% This may be helpful if you use a custom input format. In any way you should ensure that all macros used within the data either are expandable or disabled using \cs[no-index]{zugferd_disable_macros:}.
+%
+% \DescribeKeyOption*{\meta{party}/postcode=\meta{postal code}}{}*
+% \DescribeKeyOption*{\meta{party}/city=\meta{city}}{}*
+% \DescribeKeyOption*{\meta{party}/subdivision=\meta{subdivision}}{}*
+% \changes{v0.9c}{2024-12-08}{Add support for subdivision.}
+% \DescribeKeyOption*{\meta{party}/country=\meta{country code}}{}*
+% The two letter country codes allowed here can be found in \cite{country-codes}.
+%
+% % \DescribeKeyOption*{\meta{party}/contact=\meta{Combined contact data}}{}*
+% The contact person can either be set using the combined structure similar to \option{\meta{party}/\allowbreak address}.
+% It either consists of 3 or 4 entries, depending on if a department should be used or not.
+%
+% \begin{examplecode}
+% \SetZUGFeRDData{
+%	seller/contact = {
+%		|\meta{contact-name}|\\
+%		|\meta{contact-phone}|\\
+%		|\meta{contact-email}|
+%	},
+%	seller/contact = {
+%		|\meta{contact-name}|\\
+%		|\meta{contact-department}|\\
+%		|\meta{contact-phone}|\\
+%		|\meta{contact-email}|
+%	}
+% }
+% \end{examplecode}
+% \noindent As for \option{seller/address} it's also possible to set the keys directly:
+% \begin{examplecode}
+% \SetZUGFeRDData{
+%	seller/contact-name= {|\meta{contact-name}|},
+%	seller/contact-department = {|\meta{contact-department}|},
+%	seller/cotact-phone ={|\meta{contact-phone}|},
+%	seller/contact-email= {|\meta{contact-email}|}
+% }
+% \end{examplecode}
+% \end{documentation}
+% \begin{implementation}
+% ApplicableHeaderTradeAgreement
+%
+% Contains information on seller and buyer trade party:
+% \begin{itemize}
+% \item BuyerReference
+% \item SellerTradeParty
+% \item BuyerTradeParty
+% \end{itemize}
+%
+% Seller, buyer and shipping address are specified the same way.
+%    \begin{macrocode}
+\clist_map_inline:nn {seller,buyer,shipto} {
+%    \end{macrocode}
+% \begin{variable}{\g_@@_seller_AddressData_prop,\g_@@_buyer_AddressData_prop,\g_@@_shipto_AddressData_prop}
+%    \begin{macrocode}
+	\prop_new:c {g_@@_#1_AddressData_prop}
+%    \end{macrocode}
+% \end{variable}
+%    \begin{macrocode}
+	\keys_define:nn {zugferd / #1} {
+%    \end{macrocode}
+% \begin{optionenv}{\meta{party}/address}
+%    \begin{macrocode}
+		address .code:n = {
+			\seq_set_split:Nnn \l_tmpa_seq {\\} {##1}
+			%TODO error if more than 2 lines or only 1
+			\keys_set:nx {zugferd / #1} {
+				lineone={\seq_item:Nn \l_tmpa_seq {1}},
+				linetwo={\seq_item:Nn \l_tmpa_seq {2}},
+				linethree={\seq_item:Nn \l_tmpa_seq {3}}
+			}
+		},
+%    \end{macrocode}
+% \end{optionenv}
+% \begin{optionenv}{\meta{party}/contact}
+%    \begin{macrocode}
+		contact .code:n = {
+			\seq_set_split:Nnn \l_tmpa_seq {\\} {##1}
+			\int_compare:nNnTF {\seq_count:N \l_tmpa_seq} > {3} {
+				\keys_set:ne {zugferd/#1} {
+					contact-name = {\seq_item:Nn \l_tmpa_seq {1}},
+					contact-department = {\seq_item:Nn \l_tmpa_seq {2}},
+					contact-phone = {\seq_item:Nn \l_tmpa_seq {3}},
+					contact-email= {\seq_item:Nn \l_tmpa_seq {4}},
+				}
+			}{
+				\keys_set:ne {zugferd/#1} {
+					contact-name = {\seq_item:Nn \l_tmpa_seq {1}},
+					contact-phone = {\seq_item:Nn \l_tmpa_seq {2}},
+					contact-email= {\seq_item:Nn \l_tmpa_seq {3}},
+				}
+			}
+		},
+%    \end{macrocode}
+% \end{optionenv}
+% \begin{optionenv}{\meta{party}/\meta{unknown}}
+%    \begin{macrocode}
+		unknown .code:n = \tl_if_blank:nF {##1} {
+			\prop_gput:cVe {g_@@_#1_AddressData_prop}
+				\l_keys_key_tl {\tl_trim_spaces:n {##1}}
+		}
+%    \end{macrocode}
+% \end{optionenv}
+%    \begin{macrocode}
+	}
+}
+%    \end{macrocode}
+% \begin{macro}{\_@@_TradePartyIdentity:N \_@@_PostalTradeAddress:N,\_@@_DefinedTradeContact:N}
+% Wrappers to map the property list items to the writing macro.
+% \changes{v0.9c}{2024-12-08}{Add TradePartyName to support additional legal information.}
+%    \begin{macrocode}
+\cs_new:Nn \_@@_TradePartyIdentity:N {
+	\_@@_TradePartyIdentity:eeeee
+			{\prop_item:Nn #1 {id}}
+			{\prop_item:Nn #1 {name}}
+			{\prop_item:Nn #1 {legal-description}}
+			{\prop_item:Nn #1 {legal-id}}
+			{\prop_item:Nn #1 {trading-name}}
+}
+\cs_new:Nn \_@@_PostalTradeAddress_short:N {
+	\exp_args:Ne \tl_if_blank:nF {\prop_item:Nn #1 {name}}
+	{<ram:Name>\prop_item:Nn #1 {name}</ram:Name>
+		\iow_newline:\_@@_xml_auto_indent:}
+	\_@@_PostalTradeAddress:eeeeeee
+		{\prop_item:Nn #1 {postcode}}
+		{\prop_item:Nn #1 {lineone}}
+		{\prop_item:Nn #1 {linetwo}}
+		{\prop_item:Nn #1 {linethree}}
+		{\prop_item:Nn #1 {city}}
+		{\prop_item:Nn #1 {country}}
+		{\prop_item:Nn #1 {subdivision}}
+}
+\cs_new:Nn \_@@_PostalTradeAddress:N {%
+	\_@@_PostalTradeAddress:eeeeeee
+		{\prop_item:Nn #1 {postcode}}
+		{\prop_item:Nn #1 {lineone}}
+		{\prop_item:Nn #1 {linetwo}}
+		{\prop_item:Nn #1 {linethree}}
+		{\prop_item:Nn #1 {city}}
+		{\prop_item:Nn #1 {country}}
+		{\prop_item:Nn #1 {subdivision}}
+	\_@@_UniversalCommunication:n {\prop_item:Nn #1 {email}}
+	\_@@_TaxRegistration:Nnn #1 {vatid} {taxid}
+}%
+\cs_new:Nn \_@@_DefinedTradeContact:N {%
+	\_@@_DefinedTradeContact:eeee
+		{\prop_item:Nn #1 {contact-name}}
+		{\prop_item:Nn #1 {contact-department}}
+		{\prop_item:Nn #1 {contact-phone}}
+		{\prop_item:Nn #1 {contact-email}}
+}%
+%    \end{macrocode}
+% \end{macro}
+%    \begin{macrocode}
+%    \end{macrocode}
+% \iffalse
+% \_@@_TradePartyIdentity:eeeee ID Name description legal-id trading-name
+% \fi
+% \begin{macro}{\_@@_TradePartyIdentity:nnnnn}
+% \begin{arguments}
+% \item ID
+% \item Name
+% \item Additional legal Information
+% \item Legal registration Identifier
+% \item Trading Name
+% \end{arguments}
+%    \begin{macrocode}
+\_@@_define_xml_content:Nn \_@@_TradePartyIdentity:nnnnn {%
+	%%<!-- seller BT-29 | buyer BT-46 | shipto BT-71 -->
+	\_@@_write_inline:nn {ram:ID} {#1}
+	%%<!-- seller BT-27 | buyer BT-44 | shipto BT-70 -->
+	\_@@_write_inline:nn {ram:Name} {#2}
+	%%<!-- seller BT-33 -->
+	\str_if_eq:VnF \g_@@_conformance_level_str {BASIC} {%
+		\_@@_write_inline:nn {ram:Description} {#3}
+	}%
+	\tl_if_blank:eF {#4#5} {%
+	\_@@_xml_newline_indent:
+		<ram:SpecifiedLegalOrganization>
+	%%%<!-- seller BT-30 | buyer BT-47 -->
+	\_@@_write_inline_i:nnn {ram:ID} {~schemeID="0088"} {#4}
+	%%<!-- seller BT-28 | buyer BT-45 -->
+	\_@@_write_inline_i:nn {ram:TradingBusinessName} {#5}
+	\_@@_xml_newline_indent:
+		</ram:SpecifiedLegalOrganization>
+	}%
+}%
+%    \end{macrocode}
+% \end{macro}
+% \iffalse
+% \_@@_PostalTradeAddress:nnnnnnn Name/Firma PLZ Zeile1 Zeile2 Zeile3 Ort Ländercode Bundesland/Bezirk
+% \fi
+% \begin{macro}{\_@@_PostalTradeAddress:nnnnnnn}
+%    \begin{macrocode}
+\_@@_define_xml_content:Nn \_@@_PostalTradeAddress:nnnnnnn {%
+	\_@@_xml_newline_indent:
+	<ram:PostalTradeAddress>
+	\bool_if:NF \g_@@_minimum_bool {%
+		\_@@_write_inline_i:nn {ram:PostcodeCode} {#1}
+		\_@@_write_inline_i:nn {ram:LineOne} {#2}
+		\_@@_write_inline_i:nn {ram:LineTwo} {#3}
+		\_@@_write_inline_i:nn {ram:LineThree} {#4}
+		\_@@_write_inline_i:nn {ram:CityName} {#5}
+	}%
+	\_@@_write_inline_i:nn {ram:CountryID} {#6}
+	\bool_if:NF \g_@@_minimum_bool {%
+		\_@@_write_inline_i:nn {ram:CountrySubDivisionName} {#7}
+	}%
+	\_@@_xml_newline_indent:
+	</ram:PostalTradeAddress>%
+}%
+\cctab_begin:N \g_@@_xml_cctab%
+\bool_if:NTF \g_@@_minimum_bool {%
+	\cs_set_eq:NN \_@@_UniversalCommunication:n \use_none:n%
+} {%
+	\_@@_define_xml_content:Nn \_@@_UniversalCommunication:n {%
+		\tl_if_blank:eF {#1} {
+			<ram:URIUniversalCommunication>
+			\_@@_indent: <ram:URIID~schemeID="EM">#1</ram:URIID>
+			</ram:URIUniversalCommunication>%
+		}%
+	}%
+}%
+\_@@_define_xml_content:Nn \_@@_TaxRegistration:nn {%
+	%%%<!-- BT-34 -->
+	\tl_if_blank:eF {#1} {
+		<ram:SpecifiedTaxRegistration>
+		\_@@_indent: <ram:ID~schemeID="VA">#1</ram:ID>
+		</ram:SpecifiedTaxRegistration>%
+	}%
+	%%%<!-- BT-32 -->
+	\tl_if_blank:eF {#2} {
+		<ram:SpecifiedTaxRegistration>
+		\_@@_indent: <ram:ID~schemeID="FC">#2</ram:ID>
+		</ram:SpecifiedTaxRegistration>%
+	}%
+}%
+\cctab_end:
+\cs_new:Nn \_@@_TaxRegistration:Nnn {
+	\_@@_TaxRegistration:nn {\prop_item:Nn #1 {#2}} {\prop_item:Nn #1 {#3}}
+}
+%    \end{macrocode}
+% \end{macro}
+% Contact data phone/email to a specific contact person
+%    \begin{macrocode}
+\_@@_define_xml_content:Nn \_@@_DefinedTradeContact:nnnn {%
+	% Do not print if name is empty
+	\tl_if_blank:eT {#1} {\use_none:nnn}
+	\bool_if:NT \g_@@_writeTradeContact_bool {
+		\_@@_xml_newline_indent:
+		<ram:DefinedTradeContact>
+		\_@@_write_inline_i:nn {ram:PersonName} {#1}
+		\_@@_write_inline_i:nn {ram:DepartmentName} {#2}
+		\_@@_write_inline_wrapped_i:nnn
+			{ram:TelephoneUniversalCommunication} {ram:CompleteNumber} {#3}
+		\_@@_write_inline_wrapped_i:nnn
+			{ram:EmailURIUniversalCommunication} {ram:URIID} {#4}
+		\_@@_xml_newline_indent:
+			</ram:DefinedTradeContact>
+	}
+}
+
+\_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeAgreement: {
+	\_@@_write_xml:n {<ram:ApplicableHeaderTradeAgreement>}
+	\int_gincr:N \g_@@_indent_int
+	\bool_lazy_and:nnF
+		{\tl_if_blank_p:V \g_@@_buyer_reference_tl}
+%    \end{macrocode}
+% \changes{v0.11}{2026-05-25}{BASIC does no longer require the buyer-reference}
+%    \begin{macrocode}
+		{ \g_@@_minimum_bool  || \str_if_eq_p:Vn \g_@@_conformance_level_str {BASIC} }
+	{
+		\_@@_write_xml:e {
+			<ram:BuyerReference>\g_@@_buyer_reference_tl</ram:BuyerReference>
+		}
+	}
+	\_@@_write_xml:n {<ram:SellerTradeParty>}
+	\int_gincr:N \g_@@_indent_int
+	\_@@_write_xml:e {
+		\_@@_TradePartyIdentity:N \g_@@_seller_AddressData_prop
+		\_@@_DefinedTradeContact:N \g_@@_seller_AddressData_prop
+		\_@@_PostalTradeAddress:N \g_@@_seller_AddressData_prop
+	}
+	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_xml:e {
+		</ram:SellerTradeParty>
+		\_@@_xml_newline_indent:
+		<ram:BuyerTradeParty>
+	}
+	\int_gincr:N \g_@@_indent_int
+	\_@@_write_xml:e {
+		\_@@_TradePartyIdentity:N \g_@@_buyer_AddressData_prop
+		\bool_if:NF \g_@@_minimum_bool {
+			\_@@_DefinedTradeContact:N \g_@@_buyer_AddressData_prop
+			\_@@_PostalTradeAddress:N \g_@@_buyer_AddressData_prop
+		}%
+	}%
+	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_xml:n {</ram:BuyerTradeParty>}
+	\clist_map_inline:nn {SellerOrder,BuyerOrder,Contract} {
+		\_@@_write_ReferencedDocument:n {##1}
+	}
+	\_@@_write_keyval:Nnn \g_@@_extra_fields_prop
+		{SpecifiedProcuringProject} {BT-11}
+	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_xml:n {</ram:ApplicableHeaderTradeAgreement>}
+	\bool_if:NTF \g_@@_minimum_bool
+		{\_@@_write_xml:n {<ram:ApplicableHeaderTradeDelivery/>}}
+		{\_@@_ApplicableHeaderTradeDelivery:V \g_@@_delivery_date_tl}
+}
+
+\cctab_begin:N \g_@@_xml_cctab%
+%    \end{macrocode}
+% delivery date
+%    \begin{macrocode}
+\_@@_define_xml_content:Nn \_@@_ApplicableHeaderTradeDelivery:n {%
+	\bool_lazy_and:nnF {\prop_if_empty_p:N \g_@@_shipto_AddressData_prop}%
+			{\tl_if_blank_p:n {#1}}%
+	{%
+		\_@@_write_xml:n {<ram:ApplicableHeaderTradeDelivery>}%
+		\prop_if_empty:NF \g_@@_shipto_AddressData_prop {%
+			\int_gincr:N \g_@@_indent_int%
+			\_@@_write_xml:n {<ram:ShipToTradeParty>}%
+			\int_gincr:N \g_@@_indent_int%
+			\_@@_write_xml:e {%
+				\_@@_PostalTradeAddress_short:N \g_@@_shipto_AddressData_prop%
+			}%
+			\int_gdecr:N \g_@@_indent_int%
+			\_@@_write_xml:n {</ram:ShipToTradeParty>}%
+			\int_gdecr:N \g_@@_indent_int%
+		}%
+		\tl_if_blank:nF {#1} {%
+			\_@@_write_xml:n {%
+				\_@@_indent: <ram:ActualDeliverySupplyChainEvent>
+				\_@@_xml_date:nnn {2} {Occurrence} {#1}
+				\_@@_indent: </ram:ActualDeliverySupplyChainEvent>%
+			}%
+		}%
+		\_@@_write_xml:n {</ram:ApplicableHeaderTradeDelivery>}%
+	}%
+}%
+%
+\cctab_end:
+\cs_generate_variant:Nn \_@@_TradePartyIdentity:nnnnn {eeeee}
+\cs_generate_variant:Nn \_@@_DefinedTradeContact:nnnn {eeee}
+\cs_generate_variant:Nn \_@@_PostalTradeAddress:nnnnnnn {eeeeeee}
+\cs_generate_variant:Nn \_@@_ApplicableHeaderTradeDelivery:n {V}
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Buyer Reference}
+% \DescribeKeyOption*[BT-10]{buyer/reference=komavar/\meta{Reference}}{}
+% The reference field only exists for the |buyer| trade party.
+% Depending on the process it's required to use some unique identifier referring to the |buyer|.
+% Within Germany these numbers are called \enquote{Leitweg-ID}\cite{leitweg-id}.
+%
+% In any way the |buyer| may choose what is used here. Also may be some PO number or similar reference.
+%
+% As defined for other variables the \option{reference} can also use the \value{komavar} value to refer to the value of komavar |yourref|\cite{scrletter}.
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{buyer/reference}
+%    \begin{macrocode}
+\tl_new:N \g_@@_buyer_reference_tl
+\keys_define:nn {zugferd/buyer} {
+	reference .choice:,
+	reference / komavar .code:n = {
+		\tl_gset:Nf \g_@@_buyer_reference_tl {\scr@yourref@var}
+	},
+	reference / unknown .code:n = {
+		\tl_gset:Nn \g_@@_buyer_reference_tl {#1}
+	}
+}
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Buyer Accounting Reference}
+% \changes{v0.10}{2025-07-01}{Add support for accounting-reference}
+% \DescribeKeyOption*[BT-19]{buyer/accounting-reference=\meta{Accounting reference}}{}
+% The reference field only exists for the |buyer| trade party.
+% Buyers will explicitly ask for this field.
+% \end{documentation}
+% \begin{implementation}
+% \begin{variable}{\g_@@_extra_fields_prop}
+%    \begin{macrocode}
+\prop_new:N \g_@@_extra_fields_prop
+%    \end{macrocode}
+% \end{variable}
+% \begin{optionenv}{buyer/accounting-reference}% BT-19
+%    \begin{macrocode}
+\keys_define:nn {zugferd/buyer} {
+	accounting-reference .code:n = \prop_gput:Nnn \g_@@_extra_fields_prop {BT-19} {#1}
+}
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Project Reference}
+% \changes{v0.10}{2025-09-22}{Add support for project reference}
+% \DescribeKeyOption*[BT-11]{project=\meta{Project ID}\string\\\meta{name}}{}
+% The project reference consits of two two entries |id| and |name|.
+% As both are required most implementations use \enquote{Project Reference} for the name entry.
+% \pkg{zugferd} also uses this as a default if only one value was provided within \option{project}.
+%
+% Please be aware, that the first |\\| is used to separate ID and name, following ones will be part of the name.
+% In case none is found the text |Project~Reference| will be used as the name may not be empty.
+%
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{project}% BT-11
+%    \begin{macrocode}
+\keys_define:nn {zugferd} {
+	project .code:n = {
+		\seq_set_split:Nnn \l_tmpa_seq {\\} {#1}
+		\seq_pop_left:NN \l_tmpa_seq \l_tmpa_tl
+		\prop_gput:Nne \g_@@_extra_fields_prop {BT-11} {
+			ram:ID={\exp_not:V \l_tmpa_tl},
+			ram:Name={\seq_if_empty:NTF \l_tmpa_seq {Project~Reference} {\seq_use:Nn \l_tmpa_seq {\\}}}
+		}
+	},
+	project-reference .meta:n = {project = {#1}},
+}
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Document references}
+% Additionally to the general buyer reference there may be additional data used by the buyer a reference.
+% These fields are technically optional, but the buyer may enforce them to be used.
+% These were not supported before \version{0.9c}.
+%
+% \DescribeKeyOption*[BT-12]{contract-reference=\meta{Contract reference}}{}
+% \DescribeKeyOption*[BT-13]{purchase-order-reference=\meta{Purchase order reference}}{}
+% \DescribeKeyOption*[BT-14]{sales-order-reference=\meta{Sales order reference}}{}
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\prop_new:N \g_@@_document_references_prop
+\clist_new:N \g_@@_buyer_document_references_clist
+\keys_define:nn {zugferd} {
+	contract-reference .prop_gput:N = \g_@@_document_references_prop,
+	buyerorder-reference .prop_gput:N = \g_@@_document_references_prop,
+	purchase-order-reference .meta:n = {buyerorder-reference=#1},
+	sellerorder-reference .prop_gput:N = \g_@@_document_references_prop,
+	sales-order-reference .meta:n = {sellerorder-reference=#1},
+}
+\cctab_begin:N \g_@@_xml_cctab%
+\_@@_define_xml_writer:Nn \_@@_write_ReferencedDocument:n {%
+	\prop_if_in:NeT \g_@@_document_references_prop {\str_lowercase:n {#1}-reference} {%
+		\_@@_write_xml:e {%
+		<ram:#1ReferencedDocument>
+		\_@@_indent:<ram:IssuerAssignedID>\prop_item:Ne \g_@@_document_references_prop {\str_lowercase:n {#1}-reference}</ram:IssuerAssignedID>
+		</ram:#1ReferencedDocument>%
+		}%
+	}%
+}%
+\cctab_end:
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \paragraph{Referencing a specific item of an Order}
+% \DescribeKeyOption*[BT-132]{purchase-order-reference=\meta{date formatted as YYYYMMDD}}{}*
+% With version \version{0.11} it's possible to add references to positions of the specific order for an item.
+% The keys \option{buyerorder-reference} or \option{purchase-order-reference} are configured as alias for BT-132 and can be used to match the document reference keys.
+%
+% Please be aware that this is a local variable.
+% \end{documentation}
+% \begin{implementation}
+% \changes{v0.11}{2026-05-25}{Add support for BT-132}
+% \begin{optionenv}{BT-132}
+%    \begin{macrocode}
+\keys_define:nn {zugferd/item} {
+	BT-132 .tl_set:c = {l_@@_BT-132_tl},
+	buyerorder-reference .meta:n = {BT-132=#1},
+	purchase-order-reference .meta:n = {BT-132=#1},
+}
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Payment Means}
+% \label{sec:PaymentMeans}
+% The payment means are selected by numeric codes.
+% Currently we support:
+% \begin{itemize}
+% \UseName{exp_args:Nnnc} \UseName{exp_args:co} {clist_map_inline:nn} {zugferd@paymentMeans@english} {\item #1}
+% \end{itemize}
+% Others may be added in the future but it's not planned to include a full list.
+%
+% The codes will automatically add the corresponding string inside the \enquote{Information} field.
+% The initial version only included German strings, but currently they are also included in English.
+% It's possible to overwrite them using the same structure:
+%
+% \begin{examplecode}
+% \setupZUGFeRDStrings{payment-means}{
+%	10 = Bargeld,
+%	58 = Zahlung per SEPA Überweisung.,
+% }
+% \end{examplecode}
+% The language selection is done using at hook executed at |\begin{document}| and will try to use the document's language.
+% If this is not defined English will be used.
+%
+% Internally the commands are predefined as a key-value list like the argument in the example above.
+% They macros are called \cs[no-index]{zugferd@paymentMeans@\meta{languagename}}.
+% Currently \pkg{zugferd} defines these for |english| and |german| (also |ngerman| as an compatibility alias).
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{payment-means}
+%    \begin{macrocode}
+\ExplSyntaxOff
+\providecommand*{\zugferd@paymentMeans@german}{
+	 1 = Keine Zahlungsart definiert,
+	10 = Bargeld,
+	30 = Überweisung,
+	42 = Zahlung an Bankkonto,
+	48 = Kartenzahlung,
+	49 = Lastschriftverfahren,
+	57 = Dauerauftrag,
+	58 = Zahlung per SEPA Überweisung.,
+	59 = SEPA Lastschrift,
+	97 = Ausgleich zwischen Partnern
+}
+\def\zugferd@paymentMeans@ngerman{\zugferd@paymentMeans@german}
+\providecommand*{\zugferd@paymentMeans@english}{
+	 1 = Instrument not defined,
+	10 = In cash,
+	30 = Credit Transfer,
+	31 = Debit Transfer,
+	42 = Payment to bank account,
+	48 = Bank card,
+	49 = Direct Debit,
+	57 = Standing agreement,
+	58 = SEPA credit transfer,
+	59 = SEPA direct debit,
+	97 = Clearing between partners
+}
+\ExplSyntaxOn
+\tl_new:N \g_@@_payment_means_tl
+\keys_define:nn {zugferd} {
+	payment-means / type .choices:nn = {1,10,30,42,48,49,57,58,59,97} {
+		\tl_gset_eq:NN \g_@@_payment_means_tl \l_keys_choice_tl
+	},
+	payment-means / unknown .code:n = {
+		\bool_if:NT \g_@@_unknown_value_warning_bool {
+			\msg_warning:nnn { zugferd } {unknown-value} {payment-means} {#1}
+		}
+		\tl_gset:Nn \g_@@_payment_means_tl {\int_eval:n {#1}}
+	}
+}
+
+\clist_map_inline:nn {iban,account-holder,bic} {
+	\keys_define:nn {zugferd/payment-means} {
+		#1 .tl_gset:c = {g_@@_payment_#1_tl}
+	}
+%    \end{macrocode}
+% \changes{v0.10}{2025-07-28}{Add data access-keys for payment-means}
+%    \begin{macrocode}
+  \keys_define:nn {zugferd/data} {
+    payment-means / #1 .code:n = \_@@_access_data:c {g_@@_payment_#1_tl},
+    payment-means / #1 .value_forbidden:n = true,
+  }
+}
+
+\prop_new:c {g_@@_payment-means_names_prop}
+\newcommand*{\setupZUGFeRDStrings}[2]{
+	\prop_gset_from_keyval:cn {g_@@_#1_names_prop} {
+		#2
+	}
+}
+
+\hook_gput_code:nnn {begindocument/end}{zugferd/payment-means}{
+	\prop_if_empty:cT {g_@@_payment-means_names_prop} {
+		\exp_args:Nne \setupZUGFeRDStrings{payment-means}{
+			\use:c {zugferd@paymentMeans@
+				\cs_if_exist:cTF {zugferd@paymentMeans@\languagename}
+					{\languagename} {english}
+			}
+		}
+	}
+}
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsection{Variables which may be changed per invoice item}
+% Some settings may have the same value for all invoice items.
+% These are defined to take some preset but are set locally.
+% So it's possible to adjust them for a single invoice item if necessary.
+% An example is shown in \autoref{sec:xml-interfaces}.
+% \subsubsection{Units}
+% \DescribeKeyOption*[BT-130]{unit=hour/day/one/piece/\meta{unit code}}{}
+% The Faktur-X standard requires the unit to be selected.
+% These are called \enquote{/UN/CEFACT Common Codes} and can be found withtin \cite{unit-codes}.
+%
+% Currently \pkg{zugferd} supports |hour| (|HUR|), |day| (|DAY|), |one| (C62) and |piece| (H87).
+% For these the corresponding codes have been implemented within the package.
+% Other units can be selected using the codes listed in \cite{unit-codes}.
+%
+% This option is not case sensitive
+% The value is automatically converted to uppercase.
+% If the selected option is different from the predefined ones, there will be a warning, as \pkg{zugferd} does not know if the selection is valid or not.
+% \begin{NOTE}
+% additional source: http://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_Rev9e_2014.xls
+% \end{NOTE}
+% \end{documentation}
+% \begin{implementation}
+% \begin{optionenv}{unit}
+%    \begin{macrocode}
+\keys_define:nn { zugferd } {
+	unit .choices:nn = {HUR,DAY,C62,H87} {
+		\tl_set_eq:NN \l_@@_unit_code_tl \l_keys_choice_tl
+	},
+	unit / hour .meta:n = {unit=HUR},
+	unit / day .meta:n = {unit=DAY},
+	unit / one .meta:n= {unit= C62},
+	unit / piece .meta:n = {unit=H87},
+%    \end{macrocode}
+% If unknown, the value is converted to uppercase and we use the selection directly.
+% There is a warning in that case
+%    \begin{macrocode}
+	unit / unknown .code:n = {
+		\tl_set:Nx \l_tmpa_tl {\str_uppercase:f {#1}}
+		\exp_args:NnnV \keys_if_choice_exist:nnnTF {zugferd} {unit}
+			\l_tmpa_tl
+		{
+			\keys_set:ne { zugferd } {unit= {\l_tmpa_tl}}
+		} {
+			\bool_if:NT \g_@@_unknown_value_warning_bool {
+				\msg_warning:nnn { zugferd } {unknown-unit} {#1}
+			}
+			\tl_set_eq:NN \l_@@_unit_code_tl \l_tmpa_tl
+		}
+	},
+	unit .usage:n = general,
+}
+
+\msg_new:nnnn {zugferd} {unknown-unit} {
+	You~selected~a~unit~which~was~not~predefined.\\
+	I~~will~directly~use~your~selection~'unit=#1'~as~Common~Code.
+	Please~ensure~the~selection~is~valid!
+} {
+	For~more~information~see~the~zugferd~documentation\\
+	and~the~/UN/CEFACT~Common~Code~list.
+}
+%    \end{macrocode}
+% \end{optionenv}
+% \end{implementation}
+% \begin{documentation}
+% \subsubsection{Tax category and rate}
+% \label{sec:tax-category}
+% \DescribeKeyOption[BT-151]{tax/category=\meta{category code/alias}}{standard}*
+% The Tax data requires a category code. For details have a look at the Specification \cite[e.\,g. at][]{spec-xrechnung}.
+% \pkg{zugferd} implements all of those, but the user has to take care to select the correct one for each invoice item.
+% The example file includes 2 different VAT values using the same category.
+%
+% The labels have been chosen to simplify the usage. It's also possible to enter the codes directly.
+% This option is not case sensitive.
+% \begin{valuelist}
+% \item[standard] Standard rate and reduced rate item, |category=S|
+% \item[zero] Zero rated sale, |category=Z|
+% \item[exempt] Exempted from VAT. This requires a reason via \option{exemption-reason},|category=E|
+% \item[reverse-charge] Reverse Charge, |category=AE|
+% \item[intra-community\\\textnormal{or} EEA] Intra-Community Supply, |category=K|
+% \item[export] Free export item, tax not charged, |category=G|
+% \item[O] Services outside scope of tax
+% \item[canary-islands] Canary Islands general indirect tax, |category=L|
+% \item[ceuta\\\textnormal{or} melilla] Ceuta and Melilla, |category=M|
+% \end{valuelist}
+%
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+\msg_new:nnnn {zugferd} {unknown-tax-category} {
+	You~selected~an~unknown~tax~category.\\
+	I~~will~directly~use~your~selection~'category=#1'~as~Code.\\
+	Please~ensure~the~selection~is~valid!
+} {
+	For~more~information~see~the~zugferd~documentation\\
+	and~the~corresponding~code~list.
+}
+\msg_new:nnnn {zugferd} {no-auto-exemption} {
+	You~selected~tax/category=#1~together~with~the~auto-exemption~option.\\
+	I~don't~have~any~pre-configured~exemption~setting~for~category=#1.\\
+	Please~make~sure~you~add~a~valid~setting~yourself.
+} {
+	For~more~information~see~the~zugferd~documentation.
+}
+%    \end{macrocode}
+% \changes{v0.10}{2025-07-01}{Add interface for configuration of auto-exemption-reason}
+%    \begin{macrocode}
+\cs_new:Nn \_@@_configure_auto_exemption:nn {
+	\tl_if_in:nnTF {#2} {=} {
+		\keys_define:nn { zugferd / tax } {
+				exemption-reason-auto / #1 .code:n = {
+						\keys_set:nn {zugferd/tax}{
+							#2
+						}
+				}
+		}
+	} {
+		\keys_define:nn { zugferd / tax } {
+				exemption-reason-auto / #1 .code:n = {
+					\keys_set:nn {zugferd/tax} {
+						exemption-reason={#2}
+					}
+				}
+		}
+	}
+}
+%    \end{macrocode}
+% \optionenv{category, exemption-reason,rate}
+%    \begin{macrocode}
+\keys_define:nn { zugferd / tax } {
+	category .choices:nn = {S,Z,E,AE,K,G,O,L,M} {
+		\tl_set_eq:NN \l_@@_tax_category_code_tl \l_keys_choice_tl
+		\bool_if:NT \g_@@_auto_exemption_bool {
+			\keys_if_choice_exist:nnnTF {zugferd/tax} {exemption-reason-auto} {#1} {
+				\keys_set:nn {zugferd/tax} {exemption-reason-auto=#1}
+			} {
+				\msg_warning:nnn { zugferd } {no-auto-exemption} {#1}
+			}
+		}
+	},
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption*{tax/exemption-reason=\meta{Text}}{}*
+% \DescribeKeyOption*{tax/exemption-reason-code=\meta{exemption reason code}}{}*
+% Add Reasons for a tax exempt, as required by |category=E,K,AE,G,O|.
+% This can either be added using a text (|exemption-reason|) or a predefined code (|exemption-reason-code|).
+% The codes are listed at \cite{VAT-exemption-codes}.
+%
+% In most common cases \pkg{zugferd} tries to automatically match them if the package option \option{auto-exemption} is enabled, which is the default.
+% In that case the following settings would apply:
+%
+% \begin{valuelist}
+% \item[S] \accessTaxExemptionReason{S}
+% \item[Z] Not configured.
+% \item[E] Not configured, as there are too many options.
+% \item[AE] \accessTaxExemptionReason{AE}
+% \item[K] \accessTaxExemptionReason{K}
+% \item[G] \accessTaxExemptionReason{G}
+% \item[O] \accessTaxExemptionReason{O}
+% \end{valuelist}
+%
+% In case there is no pre-configured selection \pkg{zugferd} will create a warning to remind the user to add a selection themselves.
+%
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+	exemption-reason .tl_set:N = \l_@@_tax_exemption_reason_tl,
+	exemption-reason .initial:V = \c_empty_tl,
+	exemption-reason .usage:n = general,
+	exemption-reason-code .tl_set:N = \l_@@_tax_exemption_code_tl,
+	exemption-reason-code .initial:V = \c_empty_tl,
+	exemption-reason .usage:n = general,
+%    \end{macrocode}
+% \changes{v0.7}{2024-09-10}{Added exemption-reason-auto key for pre-configured exemption-reasons.}
+%    \begin{macrocode}
+	exemption-reason-auto .choice:,
+	exemption-reason-auto / S .code:n = {
+		\keys_set:nn {zugferd/tax} {exemption-reason=,exemption-reason-code=}
+	},
+	exemption-reason-auto / K .code:n = {
+		\keys_set:nn {zugferd/tax} {
+			exemption-reason= Intra-Community~Supply,
+			exemption-reason-code={vatex-eu-ic}
+		}
+	},
+	exemption-reason-auto / AE .code:n = {
+		\keys_set:nn {zugferd/tax}{
+			exemption-reason=Reverse~Charge,
+			exemption-reason-code={vatex-eu-ae}
+		}
+	},
+	exemption-reason-auto / G .code:n = {
+		\keys_set:nn {zugferd/tax}{
+			exemption-reason=Export~outside~the~EU,
+			exemption-reason-code={vatex-eu-g}
+		}
+	},
+	exemption-reason-auto / O .code:n = {
+		\keys_set:nn {zugferd/tax}{
+			exemption-reason=No~subject~to~VAT,
+			exemption-reason-code={vatex-eu-o}
+		}
+	},
+%    \end{macrocode}
+% \changes{v0.10}{2025-07-01}{Remove exemption reason for category Z}
+%    \begin{macrocode}
+	exemption-reason-auto / Z .code:n = {
+		\keys_set:nn {zugferd/tax}{
+			exemption-reason=,
+			exemption-reason-code=
+		}
+	},
+	add-exemption-reason-auto .code:n = {
+		%TODO Error if syntax doesn't match?
+		\keyval_parse:nnn {\use_none:n} {\_@@_configure_auto_exemption:nn} {#1}
+	},
+	standard .meta:n = {category=S},
+	zero .meta:n = {category=Z},
+	exempt .meta:n = {category=E},
+	reverse-charge .meta:n = {category=AE},
+	intra-community .meta:n = {category=K},
+	EEA .meta:n = {category=K},
+	export .meta:n = {category=G},
+	canary-islands .meta:n = {category=L},
+	ceuta .meta:n = {category=M},
+	melilla .meta:n = {category=M},
+	category / unknown .code:n = {
+		\exp_args:Nnnx \keys_if_choice_exist:nnnTF {zugferd} {category}
+			{\str_uppercase:f {#1}}
+		{
+			\keys_set:nx { zugferd } {category= {\str_uppercase:f {#1}}}
+		} {
+			\tl_set:Ne \l_@@_tax_category_code_tl {\str_uppercase:f {#1}}
+			\bool_if:NT \g_@@_unknown_value_warning_bool {
+				\msg_warning:nnn { zugferd } {unknown-tax-category} {#1}
+			}
+		}
+	},
+	category .initial:n = S,
+	category .usage:n = general,
+%    \end{macrocode}
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption[BT-152]{tax/rate=\meta{floating point}}{19}*
+% The value given will be used for tax calculation.
+% By default it's configured to |19| to match the German standard VAT rate.
+%
+% \end{documentation}
+% \begin{implementation}
+%    \begin{macrocode}
+	rate .fp_set:N = \l_@@_tax_rate_fp,
+	rate .initial:n = 19,
+	rate .usage:n = general
+}%
+\keys_define:nn {zugferd/item} {
+	tax .choice:,
+	tax / unknown .code:n = {
+		\keys_set:ne {zugferd/tax} {
+			\l_keys_key_str = \exp_not:V \l_keys_value_tl
+		}
+	},
+	unknown .code:n = \keys_set:ne {zugferd}
+		{ \l_keys_key_str = \exp_not:V \l_keys_value_tl}
+}
+%    \end{macrocode}
+% data interface to simplify access on tax data
+%    \begin{macrocode}
+\keys_define:nn { zugferd / data / tax } {
+	rate .code:n = \fp_use:N \l_@@_tax_rate_fp,
+	category .code:n = \l_@@_tax_category_code_tl,
+	exemption-reason .code:n = \l_@@_tax_exemption_reason_tl,
+	exemption-reason-code .code:n = \l_@@_tax_exemption_code_tl,
+}
+%    \end{macrocode}
+% \endoptionenv
+% \end{implementation}
+% \begin{documentation}
+% \DescribeKeyOption*[BT-134]{item/start-date=\meta{date formatted as YYYYMMDD}}{}*
+% \DescribeKeyOption*[BT-135]{item/end-date=\meta{date formatted as YYYYMMDD}}{}*
+% With version \version{0.9} support for |BillingSpecifiedPeriod| was added.
+% This supports setting |start-date| and |end-date| per item.
+% As this is optional, there is no default.
+% The element will be printed if both dates are set, as setting a single one will enforce the element to be invalid.
+% This element should be set as all the other dates (see \autoref{sec:dates}).
+% \end{documentation}
+% \begin{implementation}
+% \changes{v0.10}{2025-09-22}{Bugfix: set start-date only locally}
+% \optionenv{start-date,end-date}
+%    \begin{macrocode}
+\keys_define:nn { zugferd / item } {
+	start-date .tl_set:N = \l_@@_start_date_tl,
+	start-date .initial:n =,
+	end-date .tl_set:N = \l_@@_end_date_tl,
+	end-date .initial:n =,
+}%
+%    \end{macrocode}
+% \endoptionenv
+%    \begin{macrocode}
+\_@@_define_xml_content:Nn \_@@_write_inline:nn {
+	\_@@_write_inline:nnn {#1} {} {#2}
+}
+\cs_generate_variant:Nn \_@@_write_inline:nn {ne}
+\_@@_define_xml_content:Nn \_@@_write_inline:nnnn {
+	\tl_if_blank:nF {#4} {
+		\_@@_xml_newline_indent:n {#1}
+		<#2#3>#4</#2>
+	}
+}
+\_@@_define_xml_content:Nn \_@@_write_inline:nnn {
+	\_@@_write_inline:nnnn {} {#1} {#2} {#3}
+}
+\_@@_define_xml_content:Nn \_@@_xml_wrapped:nnnnn {
+		\_@@_indent:n {#1} <#2>\_@@_xml_newline_indent:
+		\_@@_indent:n {#1+1} <#3#4>#5</#3>\_@@_xml_newline_indent:
+		\_@@_indent:n {#1} </#2>
+}
+\_@@_define_xml_content:Nn \_@@_write_inline_wrapped:nnnn {
+	\tl_if_blank:nF {#4} {
+		\_@@_xml_newline_indent:
+		\_@@_xml_wrapped:nnnnn {#1} {#2} {#3} {} {#4}
+	}
+}
+\cs_generate_variant:Nn \_@@_write_inline_wrapped:nnnn {nnne}
+
+\_@@_define_xml_content:Nn \_@@_xml_date:nnn {%
+	 \_@@_xml_wrapped:nnnnn {#1} {ram:#2DateTime}
+		{udt:DateTimeString}{~format="102"}{#3}%
+}
+
+\_@@_define_xml_writer:Nn \_@@_write_prop:Nnn {
+		\prop_if_in:NeT #1 {#3} {
+				\_@@_write_xml:e {
+					<ram:#2>\prop_item:Ne #1 {#3}</ram:#2>
+				}
+		}
+}
+
+\_@@_define_xml_writer:Nn \_@@_write_prop:Nn {
+	 \_@@_write_prop:Nnn #1 {#2} {#2}
+}
+
+\cctab_begin:N \g_@@_xml_cctab%
+\_@@_define_xml_writer:Nn \_@@_write_prop_wrapped:Nnnn {%
+	\prop_if_in:NeT #1 {#4} {%
+		\_@@_write_xml:e {%
+		<#2>
+		\_@@_indent:<#3>\prop_item:Ne #1 {#4}</#3>
+		</#2>%
+		}%
+	}%
+}%
+\cctab_end:
+\_@@_define_xml_writer:Nn \_@@_write_optional_wrapped:nnn {%
+	\_@@_write_prop_wrapped:Nnnn \g_@@_extra_fields_prop
+		{ram:#1} {ram:#2} {#3}
+}
+
+\_@@_define_xml_content:Nn \_@@_write_inline_wrapped_i:nnn {
+	\_@@_write_inline_wrapped:nnnn {1} {#1} {#2} {#3}
+}
+\cs_generate_variant:Nn \_@@_write_inline_wrapped_i:nnn {nne,nnv}
+
+\_@@_define_xml_content:Nn \_@@_write_wrapped:nnn {
+	\_@@_write_inline_wrapped:nnnn {1} {#1} {#2} {#3}
+}
+\cs_generate_variant:Nn \_@@_write_wrapped:nnn {nne}
+\_@@_define_xml_content:Nn \_@@_write_inline_i:nnn {
+	\_@@_write_inline:nnnn {+1} {#1} {#2} {#3}
+}
+\_@@_define_xml_content:Nn \_@@_write_inline_i:nn {
+	\_@@_write_inline_i:nnn {#1} {} {#2}
+}
+
+\_@@_define_xml_writer:Nn \_@@_write_keyval:Nnn {
+	\prop_if_in:NeT #1 {#3} {
+		\_@@_write_xml:e {
+			<ram:#2>
+			\exp_args:Nnne \keyval_parse:nnn {\use_none:n} {
+				\_@@_write_inline_i:nn
+			} {\prop_item:Ne \g_@@_extra_fields_prop {#3}}
+			\_@@_xml_newline_indent:
+			</ram:#2>
+		}
+	}
+}
+
+\cctab_begin:N \g_@@_xml_cctab%
+%
+\bool_if:NTF \g_@@_minimum_bool {%
+	\cs_set_eq:NN \_@@_write_note:n \use_none:n%
+} {%
+	\_@@_define_xml_writer:Nn \_@@_write_note:n {%
+		\begingroup%
+			\let\\\iow_newline:%
+			\_@@_write_xml:e {%
+				<ram:IncludedNote>
+					\_@@_indent: <ram:Content>
+					#1
+					\_@@_indent: </ram:Content>
+				</ram:IncludedNote>%
+			}%
+		\endgroup%
+	}%
+}%
+%
+\begingroup%
+\char_set_catcode_other:N \#%
+\char_set_catcode:nn {32}{10}%
+\_@@_define_xml_writer:Nn \_@@_insert_Header: {%
+	\_@@_write_xml:e {%
+		<?xml version='1.0' encoding='UTF-8' ?>
+		<rsm:CrossIndustryInvoice %
+		xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" %
+		xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" %
+		xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" %
+		xmlns:xs="http://www.w3.org/2001/XMLSchema" %
+		xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">%
+	}%
+	\int_gincr:N \g_@@_indent_int%
+	\_@@_write_xml:n {<rsm:ExchangedDocumentContext>}%
+	\int_gincr:N \g_@@_indent_int%
+	\_@@_write_xml:e {%
+		\str_if_empty:NF \g_@@_businessProcessId_str {%
+			<ram:BusinessProcessSpecifiedDocumentContextParameter>
+			\_@@_indent: <ram:ID>\g_@@_businessProcessId_str</ram:ID>
+			</ram:BusinessProcessSpecifiedDocumentContextParameter>
+		}%
+		<ram:GuidelineSpecifiedDocumentContextParameter>
+		\_@@_indent: <ram:ID>\g_@@_format_str</ram:ID>
+		</ram:GuidelineSpecifiedDocumentContextParameter>%
+	}%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</rsm:ExchangedDocumentContext>}%
+}%
+\endgroup%
+\_@@_define_xml_writer:Nn \_@@_insert_FrontMatter: {%
+	\_@@_write_xml:n {<rsm:ExchangedDocument>}%
+	\int_gincr:N \g_@@_indent_int%
+	\_@@_write_xml:e {%
+		<ram:ID>\g_@@_id_tl</ram:ID>
+		<ram:TypeCode>\g_@@_DocumentTypeCode_tl</ram:TypeCode>
+		\_@@_xml_date:nnn {0} {Issue} {\g_@@_date_tl}%
+	}%
+	\_@@_note_if_not_empty:N \g_@@_subject_tl%
+	\_@@_note_if_not_empty:N \g_@@_fromaddress_tl%
+	\seq_map_inline:Nn \g_@@_notes_seq {%
+		\_@@_write_note:n {##1}%
+	}%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:e {%
+		</rsm:ExchangedDocument>
+		<rsm:SupplyChainTradeTransaction>%
+	}%
+	\int_gincr:N \g_@@_indent_int%
+}%
+%
+% footer
+\_@@_define_xml_writer:Nn \_@@_insert_Footer: {%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</rsm:SupplyChainTradeTransaction>}%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</rsm:CrossIndustryInvoice>}%
+}%
+\cctab_end:
+%    \end{macrocode}
+%
+% \subsection{Invoice Items}
+% Each item consists of 5 parts:
+% \begin{itemize}
+% \item AssociatedDocumentLineDocument
+% \item SpecifiedTradeProduct
+% \item SpecifiedLineTradeAgreement
+% \item SpecifiedLineTradeDelivery
+% \item SpecifiedLineTradeSettlement
+% \end{itemize}
+% These are implemented as separate commands to be more flexible.
+% The wrapper command is called \cs[no-index]{@@_insert_TradeLineItem:nnnnnn} and is created to be used in your own invoicing package.
+%    \begin{macrocode}
+\cctab_begin:N \g_@@_xml_cctab%
+%    \end{macrocode}
+% \begin{function}{\_@@_AssociatedDocumentLineDocument:n}
+%    \begin{macrocode}
+\_@@_define_xml_writer:Nn \_@@_AssociatedDocumentLineDocument:n {%
+	<ram:AssociatedDocumentLineDocument>
+	\_@@_indent: <ram:LineID>#1</ram:LineID>
+	</ram:AssociatedDocumentLineDocument>%
+}%
+%    \end{macrocode}
+% \end{function}
+% \begin{function}{\_@@_SpecifiedTradeProduct:nn}
+% \changes{v0.9c}{2024-12-08}{Don't use SellerAssignedID if format=basic, \issue{28}}
+%    \begin{macrocode}
+\_@@_define_xml_content:Nn \_@@_SpecifiedTradeProduct:nn {%
+	<ram:SpecifiedTradeProduct>
+	\bool_lazy_or:nnF%
+			{\tl_if_blank_p:n {#1}}%
+			{\str_if_eq_p:Vn \g_@@_conformance_level_str {BASIC}} {%
+		\_@@_indent: <ram:SellerAssignedID>#1</ram:SellerAssignedID>
+	}%
+	\_@@_indent: <ram:Name>#2</ram:Name>
+	</ram:SpecifiedTradeProduct>%
+}%
+%    \end{macrocode}
+% \end{function}
+% \begin{function}{\_@@_ProductTradePrice:nn}
+%    \begin{macrocode}
+\_@@_define_xml_writer:Nn \_@@_ProductTradePrice:nn {%
+	<ram:\str_uppercase:n #1PriceProductTradePrice>
+	\_@@_indent: <ram:ChargeAmount>#2</ram:ChargeAmount>
+	</ram:\str_uppercase:n #1PriceProductTradePrice>%
+}%
+%    \end{macrocode}
+% \end{function}
+% \begin{function}{\_@@_SpecifiedLineTradeAgreement:nn}
+%    \begin{macrocode}
+\_@@_define_xml_writer:Nn \_@@_SpecifiedLineTradeAgreement:nn {%
+	<ram:SpecifiedLineTradeAgreement>
+	\_@@_indent:<ram:GrossPriceProductTradePrice>
+	\_@@_indent:n {2} <ram:ChargeAmount>#1</ram:ChargeAmount>
+	\_@@_indent:</ram:GrossPriceProductTradePrice>
+	\_@@_indent:<ram:NetPriceProductTradePrice>
+	\_@@_indent:n {2} <ram:ChargeAmount>#2</ram:ChargeAmount>
+	\_@@_indent:</ram:NetPriceProductTradePrice>
+	</ram:SpecifiedLineTradeAgreement>
+}%
+%    \end{macrocode}
+% \end{function}%:nn <unit code > <number>
+% \begin{function}{\_@@_SpecifiedLineTradeDelivery:nn}
+%    \begin{macrocode}
+\_@@_define_xml_content:Nn \_@@_SpecifiedLineTradeDelivery:nn {%
+	<ram:SpecifiedLineTradeDelivery>
+	% SPACE!
+	\_@@_indent: <ram:BilledQuantity~unitCode="#1">#2</ram:BilledQuantity>
+	</ram:SpecifiedLineTradeDelivery>%
+}%
+%    \end{macrocode}
+% \end{function}
+% \begin{function}{\_@@_SpecifiedLineTradeSettlement:nnn,\_@@_SpecifiedLineTradeSettlement:Vnn}
+% \changes{v0.9}{2024-10-23}{Split SpecifiedLineTradeSettlement to be more flexible and add support for BillingSpecifiedPeriod}
+%    \begin{macrocode}
+\_@@_define_xml_writer:Nn \_@@_write_SpecifiedLineTradeSettlement:nnn {%
+	\_@@_write_xml:n {<ram:SpecifiedLineTradeSettlement>}%
+	\int_gincr:N \g_@@_indent_int%
+	 \_@@_write_xml:e {\_@@_Line_ApplicableTradeTax:nn {#1} {#2}}%
+	 \_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \l_@@_start_date_tl \l_@@_end_date_tl}%
+%    \end{macrocode}
+% Allowance/Charge per item.
+% In this case the tax information has not to be added and should not be written to the XML.
+%    \begin{macrocode}
+   \seq_map_inline:Nn \l_@@_AllowanceCharge_seq {%
+     \_@@_SpecifiedTradeAllowanceCharge:n {##1}%
+   }%
+	 \_@@_write_xml:e {\_@@_SpecifiedTradeSettlementLineMonetarySummation:n {#3}}%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</ram:SpecifiedLineTradeSettlement>}%
+}%
+\cs_generate_variant:Nn \_@@_write_SpecifiedLineTradeSettlement:nnn {Vnn}%
+\_@@_define_xml_content:Nn \_@@_Line_ApplicableTradeTax:nn {%
+	<ram:ApplicableTradeTax>
+	%BT-151
+	\_@@_indent: <ram:TypeCode>VAT</ram:TypeCode>
+	%BT-151
+	\_@@_indent: <ram:CategoryCode>#1</ram:CategoryCode>
+	%BT-152
+	\_@@_indent: <ram:RateApplicablePercent>#2</ram:RateApplicablePercent>
+	</ram:ApplicableTradeTax>%
+}%
+\_@@_define_xml_content:Nn \_@@_BillingSpecifiedPeriod:nn {%
+	\bool_lazy_or:nnF {\tl_if_blank_p:n {#1}} {\tl_if_blank_p:n {#2}} {%
+	<ram:BillingSpecifiedPeriod>%
+	%<!-- BT-134 -- BT-73 -->
+	\_@@_xml_date:nnn {1} {Start} {#1}%
+	%<!-- BT-135 -- BT-74 -->
+	\_@@_xml_date:nnn {1} {End} {#2}
+	</ram:BillingSpecifiedPeriod>%
+   }%
+}%
+\_@@_define_xml_content:Nn \_@@_SpecifiedTradeSettlementLineMonetarySummation:n {%
+	<ram:SpecifiedTradeSettlementLineMonetarySummation>
+	% BT-131
+	\_@@_indent: <ram:LineTotalAmount>#1</ram:LineTotalAmount>
+	 </ram:SpecifiedTradeSettlementLineMonetarySummation>%
+}
+
+%    \end{macrocode}
+%    \begin{macrocode}
+\cctab_end:
+\cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnn {Vnn}
+\cs_generate_variant:Nn \_@@_BillingSpecifiedPeriod:nn {VV}
+%    \end{macrocode}
+% \end{function}
+% The exemption reason was placed wrong with the pre-CTAN release.
+% This was fixed in August 2024.
+% The old macro will be kept for a bit longer but will be removed soon.
+% Please update your own implementations accordingly.
+% \changes{v0.4}{2024-08-22}{Deprecate old syntax and add public interfaces.}
+%    \begin{macrocode}
+\cs_new:Nn \_@@_SpecifiedLineTradeSettlement:nnnn {
+	\msg_warning:nnnn {zugferd} {macro-deprecated}
+		{ \_@@_SpecifiedLineTradeSettlement:nnnn }
+		{ \_@@_SpecifiedLineTradeSettlement:nnn }
+	\_@@_SpecifiedLineTradeSettlement:nnn {#2} {#3} {#4}
+}
+\cs_generate_variant:Nn \_@@_SpecifiedLineTradeSettlement:nnnn {VVnn}
+%    \end{macrocode}
+% \end{implementation}
+% \begin{implementation}
+% \begin{macro}{ \_@@_insert_TradeLineItem:nnnnnn,\@@_write_TradeLineItem:nnnnnn}
+% Writing an invoice item using the helper commands defined before, to the \XMLfile.
+%    \begin{macrocode}
+\_@@_define_xml_writer:Nn \_@@_insert_TradeLineItem:nnnnnn {
+	\_@@_write_xml:n {<ram:IncludedSupplyChainTradeLineItem>}
+	\int_gincr:N \g_@@_indent_int
+	\_@@_write_xml:e {\_@@_AssociatedDocumentLineDocument:n {#1}}%
+
+	\begingroup
+	\zugferd_disable_macros:
+	\_@@_write_xml:e {\_@@_SpecifiedTradeProduct:nn {#2} {#3}}
+	\endgroup
+	\_@@_write_xml:e {
+		<ram:SpecifiedLineTradeAgreement>
+		\_@@_write_inline_wrapped_i:nnv
+		{ram:BuyerOrderReferencedDocument} {ram:LineID} {l_@@_BT-132_tl}
+	}
+	\int_gincr:N \g_@@_indent_int%
+	\_@@_write_xml:e {\_@@_ProductTradePrice:nn {net} {#4}}
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</ram:SpecifiedLineTradeAgreement>}
+	\_@@_write_xml:e {%
+		\_@@_SpecifiedLineTradeDelivery:nn { \l_@@_unit_code_tl } {#5}%
+	}%
+	\_@@_write_SpecifiedLineTradeSettlement:Vnn \l_@@_tax_category_code_tl %
+			{ \fp_use:N \l_@@_tax_rate_fp} {#6}%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</ram:IncludedSupplyChainTradeLineItem>}
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{implementation}
+% \begin{implementation}
+% ApplicableHeaderTradeSettlement
+% \begin{macro}{\_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn}
+%    \begin{macrocode}
+\_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementHeaderMonetarySummation:nnnnnnnn {%
+	\_@@_write_xml:n {<ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
+	\int_gincr:N \g_@@_indent_int%
+	\bool_if:NF \g_@@_minimum_bool {
+		\_@@_write_rounded:nnn {2} {LineTotalAmount} {#1}
+		\_@@_write_rounded:nnn {2} {ChargeTotalAmount} {#2}
+		\_@@_write_rounded:nnn {2} {AllowanceTotalAmount} {#3}
+	}
+	\_@@_write_rounded:nnn {2} {TaxBasisTotalAmount} {#4}
+	\_@@_write_rounded:nnnn {2} {TaxTotalAmount}
+		{~currencyID="\l_@@_currency_tl "} {#5}
+	\_@@_write_rounded:nnn {2} {GrandTotalAmount} {#6}
+	\bool_if:NF \g_@@_minimum_bool {
+		\_@@_write_rounded:nnn {2} {TotalPrepaidAmount} {#7}
+	}
+	\_@@_write_rounded:nnn {2} {DuePayableAmount} {#8}
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</ram:SpecifiedTradeSettlementHeaderMonetarySummation>}%
+}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\_@@_ApplicableTradeTax:nnnn}
+%    \begin{macrocode}
+% ApplicableTradeTax CategoryCode Rate BaseAmount Result
+\_@@_define_xml_writer:Nn \_@@_ApplicableTradeTax:nnnn {%
+	\_@@_write_xml:n {<ram:ApplicableTradeTax>}
+	\int_gincr:N \g_@@_indent_int%
+	\_@@_write_rounded:nnn {2} {CalculatedAmount} {#4}%BT117
+	\_@@_write_xml:n {<ram:TypeCode>VAT</ram:TypeCode>}%BT118
+%    \end{macrocode}
+% \changes{v0.9c}{2024-12-08}{Call exemption-reason-auto also locally inside ApplicableTradeTaxEntry}
+%    \begin{macrocode}%
+	\begingroup
+	\bool_if:NT \g_@@_auto_exemption_bool {%
+		\keys_set:nn { zugferd / tax } {exemption-reason-auto=#1}
+	}%
+	\tl_if_blank:VF \l_@@_tax_exemption_reason_tl {%BT-120
+		\_@@_write_xml:e {<ram:ExemptionReason>
+			\l_@@_tax_exemption_reason_tl
+			</ram:ExemptionReason>}
+	}
+	{{\_@@_write_rounded:nnn {2} {BasisAmount} {#3}}}%BT-116
+	\_@@_write_xml:e {<ram:CategoryCode>#1</ram:CategoryCode>}%BT-118
+%    \end{macrocode}
+% \changes{v0.9c}{2024-12-08}{Don't use exemption-reason-code if format=BASIC \issue{28}}
+%    \begin{macrocode}
+	\bool_lazy_or:nnF%	BT121
+		{\tl_if_blank_p:V \l_@@_tax_exemption_code_tl}%
+		{\str_if_eq_p:Vn \g_@@_conformance_level_str {BASIC}}%
+	{%
+		\_@@_write_xml:e {%
+			<ram:ExemptionReasonCode>\l_@@_tax_exemption_code_tl</ram:ExemptionReasonCode>%
+		}%
+	}%
+	\endgroup
+	\_@@_write_xml:n {<ram:RateApplicablePercent>#2</ram:RateApplicablePercent>}%BT-119
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</ram:ApplicableTradeTax>}
+}%
+%    \end{macrocode}
+% \end{macro}
+% ApplicableHeaderTradeSettlement needs to be splitted to be used in separate parts of the tabular.
+% \begin{macro}{\_@@_ApplicableHeaderTradeSettlement_start:,\_@@_ApplicableHeaderTradeSettlement_stop:}
+%    \begin{macrocode}
+\_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_start: {
+	\_@@_write_xml:n {<ram:ApplicableHeaderTradeSettlement>}
+	\int_gincr:N \g_@@_indent_int
+	\_@@_write_xml:e {
+		\_@@_write_inline:ne {ram:InvoiceCurrencyCode} {\l_@@_currency_tl}
+	}
+}
+\_@@_define_xml_writer:Nn \_@@_ApplicableHeaderTradeSettlement_stop: {
+	\_@@_write_optional_wrapped:nnn {ReceivableSpecifiedTradeAccountingAccount} {ID} {BT-19}% BT-19
+	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_xml:n {</ram:ApplicableHeaderTradeSettlement>}
+}
+%    \end{macrocode}
+% \end{macro}
+% \changes{v0.10}{2025-09-08}{Add support for document level allowances and charges as requested by \issue{55}.}
+% SpecifiedTradeAllowanceCharge
+%    \begin{macrocode}
+\seq_new:N \g_@@_AllowanceCharge_seq
+\seq_new:N \l_@@_AllowanceCharge_seq
+\clist_map_inline:nn {
+	Indicator,
+	CalculationPercent,
+	BasisAmount,
+	ActualAmount,
+	ReasonCode,
+	Reason,
+	tax/category,
+	tax/rate,
+} {
+	\keys_define:nn {zugferd/allowance-charge} {
+		#1 .code:n 	= \prop_put:Nnn \l_@@_AllowanceCharge_prop {#1} {##1}
+	}
+}
+
+\_@@_define_xml_writer:Nn \_@@_SpecifiedTradeAllowanceCharge: {
+	\seq_map_inline:Nn \g_@@_AllowanceCharge_seq {
+		\_@@_SpecifiedTradeAllowanceCharge:n {##1}
+	}
+}
+
+\_@@_define_xml_writer:Nn \_@@_SpecifiedTradeAllowanceCharge:n {
+	\prop_clear_new:N \l_@@_AllowanceCharge_prop
+	\keys_set:nn {zugferd/allowance-charge} {#1}
+	\_@@_write_xml:n {<ram:SpecifiedTradeAllowanceCharge>}
+	\int_gincr:N \g_@@_indent_int
+		\_@@_write_prop_wrapped:Nnnn \l_@@_AllowanceCharge_prop
+			{ram:ChargeIndicator} {udt:Indicator} {Indicator}
+		\clist_map_inline:nn {
+			CalculationPercent,% BT-101/BT-94
+			BasisAmount,% BT-100/BT-93
+			ActualAmount,% BT-99/BT-92
+			ReasonCode,% BT-105/BT-98
+			Reason% BT-104/BT-97
+		} {
+			\_@@_write_prop:Nn \l_@@_AllowanceCharge_prop {##1}
+		}
+		% TODO: maybe switch to only activate optional part if per-item?
+		\prop_if_in:NnT \l_@@_AllowanceCharge_prop {tax/category} {%
+			\_@@_write_xml:e {<ram:CategoryTradeTax>\iow_newline:%
+				\_@@_xml_auto_indent:n {+1}%
+				%<!-- BT-95/BT-102 -->%
+				<ram:TypeCode>VAT</ram:TypeCode>%
+			}%
+			\int_incr:N \g_@@_indent_int%
+				% TODO fall back to default VAT if unset?%
+				%<!-- BT-95/BT-102 -->%
+				\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop%
+					{CategoryCode} {tax/category}%
+				%<!-- BT-96/BT-103 -->%
+				\_@@_write_prop:Nnn \l_@@_AllowanceCharge_prop%
+					{RateApplicablePercent} {tax/rate}%
+			\int_gdecr:N \g_@@_indent_int%
+			\_@@_write_xml:n {</ram:CategoryTradeTax>}%
+	}%
+	\int_gdecr:N \g_@@_indent_int
+	\_@@_write_xml:n {</ram:SpecifiedTradeAllowanceCharge>}
+}
+%    \end{macrocode}
+% SpecifiedTradePaymentTerms
+%    \begin{macrocode}
+\cctab_begin:N \g_@@_xml_cctab%
+\_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms:nn {%
+	\_@@_write_xml:e {\_@@_BillingSpecifiedPeriod:VV \g_@@_start_date_tl \g_@@_end_date_tl}%
+	\_@@_write_xml:n {<ram:SpecifiedTradePaymentTerms>}%
+	\int_gincr:N \g_@@_indent_int%
+	\_@@_write_xml:e {%
+		\tl_if_blank:nF {#1} {%
+			<ram:Description>#1</ram:Description>%
+		}%
+		\tl_if_blank:nF {#2} {
+			\_@@_xml_date:nnn {0} {DueDate} {#2}%
+		}%
+	}%
+	\int_gdecr:N \g_@@_indent_int%
+	\_@@_write_xml:n {</ram:SpecifiedTradePaymentTerms>}%
+}%
+%    \end{macrocode}
+% sums
+%    \begin{macrocode}
+\_@@_define_xml_writer:Nn%
+	\_@@_SpecifiedTradeSettlementPaymentMeans:nnn%
+	{%
+		\bool_if:NT \g_@@_writePaymentMeans_bool {%
+			\_@@_write_xml:n {<ram:SpecifiedTradeSettlementPaymentMeans>}%
+			\int_gincr:N \g_@@_indent_int%
+			\_@@_write_xml:e {%
+				<ram:TypeCode>\g_@@_payment_means_tl</ram:TypeCode>%
+				\str_if_eq:VnT \g_@@_conformance_level_str {XRECHNUNG} {%
+					\_@@_write_inline:ne {ram:Information} {%
+						\prop_item:cV {g_@@_payment-means_names_prop} \g_@@_payment_means_tl%
+					}%
+				}%
+				\tl_if_blank:nF {#1#2} {
+					<ram:PayeePartyCreditorFinancialAccount>%
+					\_@@_write_inline_i:nn {ram:IBANID} {#2}%
+					\str_if_eq:VnT \g_@@_conformance_level_str {XRECHNUNG} {%
+						\_@@_write_inline_i:nn {ram:AccountName} {#1}
+					}%
+					</ram:PayeePartyCreditorFinancialAccount>%
+				}%
+				\str_if_eq:VnT \g_@@_conformance_level_str {XRECHNUNG} {%
+					\tl_if_blank:nF {#3} {%
+						<ram:PayeeSpecifiedCreditorFinancialInstitution>%
+						\_@@_write_inline_i:nn {ram:BICID} {#3}
+						</ram:PayeeSpecifiedCreditorFinancialInstitution>%
+					}%
+				}%
+			}%
+			\int_gdecr:N \g_@@_indent_int%
+			\_@@_write_xml:n {</ram:SpecifiedTradeSettlementPaymentMeans>}%
+		}%
+	}%
+\cctab_end:
+\cs_generate_variant:Nn \_@@_SpecifiedTradePaymentTerms:nn {VV}
+\_@@_define_xml_writer:Nn \_@@_SpecifiedTradePaymentTerms: {
+	\bool_if:NF \g_@@_minimum_bool {
+		\_@@_SpecifiedTradePaymentTerms:VV
+			\g_@@_payment_terms_str \g_@@_due_date_tl
+	}
+}
+%    \end{macrocode}
+% \begin{function}{\_@@_SpecifiedTradeSettlementPaymentMeans:}
+%    \begin{macrocode}
+\cs_generate_variant:Nn \_@@_SpecifiedTradeSettlementPaymentMeans:nnn {vvv}
+\_@@_define_xml_writer:Nn \_@@_SpecifiedTradeSettlementPaymentMeans: {
+	\tl_if_blank:VF \g_@@_payment_means_tl {
+		\_@@_SpecifiedTradeSettlementPaymentMeans:vvv
+			{g_@@_payment_account-holder_tl}
+			{g_@@_payment_iban_tl} {g_@@_payment_bic_tl}
+	}
+}
+%    \end{macrocode}
+% \end{function}
+% \end{implementation}
+% \begin{implementation}
+%    \begin{macrocode}
+\msg_new:nnn {zugferd} {macro-deprecated} {
+	The~function~#1~is~deprecated.\\
+	It~was~replaced~by~#2.\\
+	Please~adjust~your~mechanism~to~use~the~new~version.
+}
+%    \end{macrocode}
+% \end{implementation}
+% \iffalse
+%    \begin{macrocode}
+%</package>
+%    \end{macrocode}
+% \fi
+% \Finale
+\endinput

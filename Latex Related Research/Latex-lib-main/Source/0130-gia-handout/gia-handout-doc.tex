@@ -1,0 +1,432 @@
+%% gia-handout-doc.tex
+%% Copyright 2026 André Hilbig and Frederick Heyder
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is André Hilbig.
+%
+% This work consists of the files
+%   gia-handout.cls and
+%   gia-handout-doc.tex.
+
+% --- PDF tagging setup (currently disabled; pending listings compatibility) ---
+% \DocumentMetadata{
+    % tagging = on,
+    % tagging-setup = {
+        % activate/all,
+        % tabsorder = structure
+    % },
+    % pdfversion = 2.0,
+    % lang = de,
+    % pdfstandard = a-4f,
+    % pdfstandard = ua-2
+% }
+% --- end of PDF tagging setup ---
+
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[ngerman]{babel}
+
+\usepackage[german=guillemets]{csquotes}
+
+\usepackage[
+    backend=biber,
+    style=authoryear
+]{biblatex}
+\begin{filecontents*}{\jobname.bib}
+@online{fischer2024,
+    author       = {Ulrike Fischer},
+    title        = {How to hide a QR-Code from tagpdf and provide alt-text},
+    date         = {2024-05-19},
+    url          = {https://tex.stackexchange.com/q/718239},
+    urldate      = {2026-03-20},
+    organization = {Stack Exchange}
+}
+@manual{tagpdf2026,
+    author       = {Ulrike Fischer},
+    title        = {The \texttt{tagpdf} package -- package documentation, v0.99y},
+    date         = {2026-01-29},
+    url          = {https://ctan.org/pkg/tagpdf},
+    urldate      = {2026-03-20},
+    organization = {CTAN}
+}
+\end{filecontents*}
+\addbibresource{\jobname.bib}
+
+\usepackage{microtype}
+
+\usepackage{graphicx}
+
+\usepackage{xcolor}
+
+% --- gia-handout.cls extract: GI colors & GI commands ---
+\definecolor{giaBlue}{RGB}{14,32,80}
+\definecolor{giaYellow}{RGB}{255,230,0}
+\definecolor{giaLightYellow}{RGB}{255,242,204}
+\definecolor{giaGray}{RGB}{74,74,74}
+
+\newcommand{\GI}{GI}
+\newcommand{\gi}{Gesellschaft f\"ur Informatik e.\,V.}
+% --- end of gia-handout.cls extract ---
+
+% --- enumitem disabled (pending tagpdf compatibility) ---
+% \usepackage{enumitem}
+% \begin{description}[style=nextline, leftmargin=1em]
+    % \item[]
+% \end{description}
+% --- end of enumitem disabled ---
+
+\usepackage{multicol}
+
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable, skins}
+
+\usepackage{listings}
+\lstset{
+    basicstyle=\ttfamily,
+    columns=fullflexible,
+    language=[LaTeX]TeX,
+    escapechar=*,
+    commentstyle=\color{green!50!black}\bfseries
+}
+
+\usepackage{hyperref}
+
+\hypersetup{
+    % pdftitle={The gia-handout package, v0.99a},
+    % pdfsubject={Documentation of the gia-handout package},
+    pdftitle={Das gia-handout-Paket, v0.99a},
+    pdfsubject={Dokumentation des Pakets gia-handout},
+    pdfkeywords={latex, gi, gia-handout},
+    pdfauthor={Andr\'e Hilbig, Frederick Heyder}
+}
+
+\usepackage{url}
+
+\newcommand{\mypdflatex}{\texttt{pdflatex}}
+\newcommand{\mylualatex}{\texttt{lualatex}}
+\newcommand\pkg[1]{\texttt{#1}}
+\newcommand\myopt[2]{%
+    \textcolor{giaYellow!75!giaGray}{\texttt{#1}}%
+    \if\relax\detokenize{#2}\relax\else
+        \textnormal{ = #2}
+    \fi
+}
+\newcommand\mycmd[3]{%
+    \textcolor{giaYellow!75!giaGray}{\texttt{\textbackslash#1}}%
+    \if\relax\detokenize{#2}\relax\else
+        \textnormal{\texttt{\{}#2\texttt{\}}}%
+    \fi
+    \if\relax\detokenize{#3}\relax\else
+        \textnormal{\texttt{[}#3\texttt{]}}%
+    \fi
+}
+\newcommand\myenv[3]{%
+    \textcolor{giaYellow!75!giaGray}{\texttt{\textbackslash{begin}\{#1\}}}%
+    \if\relax\detokenize{#2}\relax\else
+        \textnormal{\texttt{\{}#2\texttt{\}}}%
+    \fi
+    \if\relax\detokenize{#3}\relax\else
+        \textnormal{\texttt{[}#3\texttt{]}}%
+    \fi
+}
+
+\author{Andr\'e \textsc{Hilbig} \qquad Frederick \textsc{Heyder}}
+\title{\pkg{gia-handout}}
+\date{20.~März~2026}
+
+% --- gia-handout.cls extract: giacolorbox environment ---
+\newlength{\giacolorboxskip}
+\setlength{\giacolorboxskip}{4mm}
+\addtolength{\giacolorboxskip}{3pt}
+\NewDocumentEnvironment{giacolorbox}{o}
+{
+    \begin{tcolorbox}[%
+        colback=white,
+        colframe=giaBlue!0!giaYellow,
+        sharp corners=all,
+        title=#1,
+        fonttitle=\color{black},
+        enhanced jigsaw,
+        grow sidewards by=2mm,
+        borderline={4mm}{-4mm}{giaGray!5!white},
+        borderline={0.5pt}{0pt}{giaYellow},
+        before skip=\giacolorboxskip,
+        after skip=\giacolorboxskip,
+        \IfNoValueT{#1}{notitle}
+    ]
+}{
+    \end{tcolorbox}
+}
+% --- end of gia-handout.cls extract ---
+
+\begin{document}
+
+\begin{centering}
+
+    \vspace*{0.03\textheight}
+
+    {\Large\textsc{Klassendokumentation}}\par
+    \vspace{1.5\baselineskip}
+
+    {\huge\bfseries\makeatletter\@title\makeatother}\par
+    \vspace{1\baselineskip}
+
+    {\Large\LaTeX-Klasse für Veröffentlichungen der \GI}\par
+    \vspace{1.2\baselineskip}
+
+    {\large Version~0.99a -- 4.~Mai~2026}\par
+    \vspace{2\baselineskip}
+
+    {\large\makeatletter\@author\makeatother}\par
+    \vspace{1.5\baselineskip}
+
+    {\normalsize\href{mailto:hilbig@uni-wuppertal.de}{\nolinkurl{hilbig@uni-wuppertal.de}}}\par
+    \vspace{0.67\baselineskip}
+
+    {\normalsize\url{https://git.uni-wuppertal.de/ddi/material/gia-handout}}
+
+\end{centering}
+
+\vfill
+
+\begin{abstract}
+Die Klasse bündelt die Bemühungen des FA~IBS\footnote{Fachausschusses \enquote{Informatische Bildung in Schulen} der \GI}, der FG~DDI\footnote{Fachgruppe \enquote{Didaktik der Informatik} der \GI} und insbesondere von Andr\'e Hilbig, Veröffentlichungen der \GI\ im selben Stil wie die Bildungsstandards zu vereinheitlichen.
+Hierbei werden spezifische Designvorgaben und Layouts berücksichtigt, um den Anforderungen des Corporate Design der \GI\ zu entsprechen.
+\end{abstract}
+
+\vfill
+
+\begin{multicols}{2}
+    \tableofcontents
+\end{multicols}
+
+\clearpage
+
+\section{Lizenz und Anforderungen}
+\subsection{Lizenz}
+Diese Klasse darf nach den Bedingungen der LaTeX Project Public Lizenz, entweder Version 1.3 oder (nach Ihrer Wahl) jede spätere Version, verteilt und/oder verändert werden.
+Die neueste Version dieser Lizenz findet sich unter \url{https://www.latex-project.org/lppl/}.
+\subsection{Anforderungen}
+\subsubsection{Packages}
+Die Klasse \pkg{gia-handout} verwendet die folgenden Pakete, wobei derzeit nicht alle vollständig mit \pkg{tagpdf} kompatibel sind.\footnote{Vgl.~\url{https://latex3.github.io/tagging-project/tagging-status/}}
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{ll}
+        \hline
+        \textbf{Package} & \textbf{Kompatibilität mit \pkg{tagpdf}}\\
+        \hline
+        iftex & kompatibel\\
+        fontenc & kompatibel\\
+        fontspec & kompatibel\\
+        babel & nicht geprüft\\
+        csquotes & teilweise kompatibel\\
+        microtype & kompatibel\\
+        setspace & kompatibel\\
+        geometry & kompatibel\\
+        scrlayer-scrpage & nicht geprüft\\
+        xcolor & kompatibel\\
+        tikz & teilweise kompatibel\\
+        pgfkeys & kompatibel\\
+        pgfopts & kompatibel\\
+        tcolorbox & teilweise kompatibel\\
+        xparse & kompatibel\\
+        hyperref & teilweise kompatibel\\
+        bookmark & kompatibel\\
+        qrcode & derzeit inkompatibel\\
+        FiraSans & kompatibel\\
+        FiraMono & kompatibel\\
+        \hline
+    \end{tabular}
+\end{table}
+\subsubsection{Libraries}
+Zusätzlich werden die nachstehenden Libraries benötigt.
+\begin{multicols}{2}
+    \paragraph{\pkg{tikz}-Libraries}\hfill%
+    \begin{itemize}
+        \item \pkg{calc}
+        \item \pkg{positioning}
+    \end{itemize}
+    \columnbreak
+    \paragraph{\pkg{tcolorbox}-Libraries}\hfill%
+    \begin{itemize}
+        \item \pkg{breakable}
+        \item \pkg{skins}
+    \end{itemize}
+\end{multicols}
+
+\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+
+\section{Minimalbeispiel}
+Das folgende Minimalbeispiel veranschaulicht die grundlegende Verwendung, einschließlich der Definition der Autoren und des koordinierenden Autors.
+\begin{lstlisting}
+\documentclass[autorenListe,koordination]{gia-handout}
+
+\GIAsetzeautorenListe{%
+    \mbox{Max Mustermann (Berlin)}
+    *\dots*
+}
+\GIAsetzekoordination{%
+    Max Mustermann
+}
+
+\begin{document}
+*\dots*
+\end{document}
+\end{lstlisting}
+
+\section{Klassenoptionen}
+Folgende Klassenoptionen stellt die Klasse \pkg{gia-handout} bereit:
+\begin{description}
+    \item[\myopt{autorenListe}{}] \hypertarget{opt:autorenListe}{}\phantom{}\hfill{Default: \enquote{keine Autoren}}\newline
+        Ermöglicht, eine Autorenliste für das Dokument zu setzen. Die Zuweisung erfolgt über \hyperlink{cmd:GIAsetzeautorenListe}{\mycmd{GIAsetzeautorenListe}{}{}}, die Ausgabe über \hyperlink{cmd:GIAautorenListe}{\mycmd{GIAautorenListe}{}{}}.
+    \item[\myopt{koordination}{}] \hypertarget{opt:koordination}{}\phantom{}\hfill{Default: \enquote{keine Angabe}}\newline
+        Ermöglicht, den koordinierenden Autor zu setzen. Die Zuweisung erfolgt über \hyperlink{cmd:GIAsetzekoordination}{\mycmd{GIAsetzekoordination}{}{}}, die Ausgabe über \hyperlink{cmd:GIAkoordination}{\mycmd{GIAkoordination}{}{}}.
+    \item[\myopt{frontcover}{$\langle$filename$\rangle$}] \hypertarget{opt:frontcover}{}\phantom{}\newline optional einzubindende Vorderseite.
+    \item[\myopt{backcover}{$\langle$filename$\rangle$}] \hypertarget{opt:backcover}{}\phantom{}\newline optional einzubindende Rückseite.
+\end{description}
+Werden Vorder- und/oder Rückseite mit den entsprechenden Klassenoptionen nicht explizit eingebunden, werden Standardseiten gesetzt (s.~Abb.~\ref{fig:frontcover}~und~\ref{fig:backcover}, S.~\pageref{fig:frontcover}).
+\begin{figure}[!h]
+    \centering
+    \begin{minipage}{.45\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{gia-default-frontcover.pdf}}
+        \caption{Default \protect\hyperlink{opt:frontcover}{\texttt{frontcover}}}
+        \label{fig:frontcover}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{.45\textwidth}
+        \centering
+        \fbox{\includegraphics[width=\textwidth]{gia-default-backcover.pdf}}
+        \caption{Default \protect\hyperlink{opt:backcover}{\texttt{backcover}}}
+        \label{fig:backcover}
+    \end{minipage}
+\end{figure}
+
+\section{PDF-Tagging}
+Die Klasse unterstützt \pkg{tagpdf} für barrierefreies PDF-Tagging mit \mypdflatex\ und \mylualatex. Weitere Hinweise finden sich in der \pkg{tagpdf}-Dokumentation\footfullcite{tagpdf2026}.
+\begin{minipage}{\linewidth} % prevent page break
+Zur Aktivierung ist \texttt{\textbackslash DocumentMetadata} vor \texttt{\textbackslash documentclass} einzufügen:
+\begin{lstlisting}
+\DocumentMetadata{
+    tagging-setup = {activate/all, tabsorder = structure},
+    pdfversion = 2.0,
+    pdfstandard = a-4f,
+    pdfstandard = ua-2,
+    lang = de
+}
+\end{lstlisting}
+\end{minipage}
+\subsection{Workaround für \pkg{qrcode}}
+Da das Paket \pkg{qrcode} derzeit nicht mit \pkg{tagpdf} kompatibel ist, implementiert die Klasse \pkg{gia-handout} einen Workaround von Ulrike~Fischer\footfullcite{fischer2024}.
+
+\section{Corporate Design}
+Gemäß dem Corporate Design der \GI\ werden Fira~Sans als serifenlose Standard\-schriftart sowie Fira~Mono als Festbreitenschrift geladen.\\
+
+\noindent Zudem werden die folgenden vier Farben definiert:
+\begin{multicols}{2}
+    \begin{itemize}
+        \item[\fcolorbox{black}{giaBlue}{\phantom{\rule{1em}{.67em}}}] \texttt{giaBlue}
+        \item[\fcolorbox{black}{giaYellow}{\phantom{\rule{1em}{.67em}}}] \texttt{giaYellow}
+        \item[\fcolorbox{black}{giaLightYellow}{\phantom{\rule{1em}{.67em}}}] \texttt{giaLightYellow}
+        \item[\fcolorbox{black}{giaGray}{\phantom{\rule{1em}{.67em}}}] \texttt{giaGray}
+    \end{itemize}
+\end{multicols}
+
+\section{Verfügbare Befehle}
+Die Klasse \pkg{gia-handout} definiert die folgenden Befehle:
+\begin{description}
+    \item[\mycmd{hervor}{$\langle$arg$\rangle$}{}]
+        \phantom{}\newline setzt den Text fett und in der Farbe \texttt{giaBlue}.
+    \item[\mycmd{GI}{}{}]
+        \phantom{}\newline ein Wrapper für \verb|GI|
+    \item[\mycmd{gi}{}{}]
+        \phantom{}\newline ein Wrapper für \verb|Gesellschaft f\"ur Informatik e.\,V.|
+    \item[\mycmd{GIAsetzeautorenListe}{$\langle$arg$\rangle$}{}]
+        \hypertarget{cmd:GIAsetzeautorenListe}{}\phantom{}\newline definiert die zu setzenden Autoren.
+    \item[\mycmd{GIAautorenListe}{}{}]
+        \hypertarget{cmd:GIAautorenListe}{}\phantom{}\newline setzt die Autoren, sofern \hyperlink{opt:autorenListe}{\myopt{autorenListe}{}} aktiviert ist.
+    \item[\mycmd{GIAsetzekoordination}{$\langle$arg$\rangle$}{}]
+        \hypertarget{cmd:GIAsetzekoordination}{}\phantom{}\newline definiert die zu setzende Koordination.
+    \item[\mycmd{GIAkoordination}{}{}]
+        \hypertarget{cmd:GIAkoordination}{}\phantom{}\newline setzt die Koordination, sofern \hyperlink{opt:koordination}{\myopt{koordination}{}} aktiviert ist.
+    \item[\mycmd{GIAmitwirkende}{}{}]
+        \phantom{}\newline setzt die Mitwirkenden.
+\end{description}
+
+\section{Verfügbare Umgebungen}
+Die Klasse \pkg{gia-handout} definiert die folgenden Umgebungen:
+\subsection{Mehrspaltiger Text}
+\begin{description}
+    \item[\myenv{zweispaltig}{}{}]
+        \phantom{}\newline setzt den Text zweispaltig.
+\end{description}
+\subsection{\texttt{giacolorbox}}
+\begin{description}
+    \item[\myenv{giacolorbox}{}{$\langle$title$\rangle$}]
+        \phantom{}\newline setzt eine benutzerdefinierte \texttt{tcolorbox}, die als \texttt{Div} getaggt wird.
+\end{description}
+\begin{minipage}{.45\textwidth}
+    \begin{lstlisting}
+\begin{giacolorbox}
+    body
+\end{giacolorbox}
+    \end{lstlisting}
+\end{minipage}
+\hfill
+\begin{minipage}{.45\textwidth}
+    \centering
+    \begin{giacolorbox}
+    body
+    \end{giacolorbox}
+\end{minipage}
+\begin{minipage}{.45\textwidth}
+    \begin{lstlisting}
+\begin{giacolorbox}[title]
+    body
+\end{giacolorbox}
+    \end{lstlisting}
+\end{minipage}
+\hfill
+\begin{minipage}{.45\textwidth}
+    \centering
+    \begin{giacolorbox}[title]
+    body
+    \end{giacolorbox}
+\end{minipage}
+
+\section{Weiterentwicklung}
+\begin{itemize}
+    \item Barrierefreie Dokumentation
+    \item Generalisierte Lizenzvorlagen
+    \item Mehrseitiger Einband mit \pkg{pdfpages}
+    \item Prüfung einer mehrsprachigen Ausrichtung der Klasse
+\end{itemize}
+
+\section{Changelog}
+\begin{description}
+    \item[Version~0.99 -- 20.~März~2026]
+        \phantom{}\newline Pre-Release: Grundlegende Klassendefinition.
+    \item[Version~0.99a -- 4.~Mai~2026]
+        \phantom{}\newline Rename: Umbenennung von \pkg{gi-handout} zu \pkg{gia-handout}.
+    \item[Version~1.00 -- tba]
+        \phantom{}\newline \textit{Initial Release: Barrierefreie Dokumentation.}
+\end{description}
+
+\end{document}
+
+\endinput

@@ -1,0 +1,85 @@
+\documentclass[
+  year = 2018,
+  language = english,
+  eventsCsv = ./data/holidays.csv,
+  markDefaultsCsv = ./data/mark_defaults.csv,
+  paperWidth = 11in - 15mm,
+  paperHeight = 8.5in - 15mm,
+  trimSpace = 15mm,
+  topMargin = 15mm,
+  gridSurround,
+  %showtrims,
+]{wallcalendar}
+
+\makeatletter
+
+\setTestDateTime
+
+\colorlet{mooncolor}{darkgold}
+\colorlet{sunday}{red}
+
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures={TeX}}
+\setmainfont{TeX Gyre Pagella}
+
+% === September ========================================================
+
+\SetPhoto[disabled = true]{September}
+
+\SetCalendar{September}
+
+\SetEvents{September}{%
+\semicolonEndTikzCalendar%
+\parseMonthMarksDayTextInlineUsing{./data/moonphases-2018.csv}%
+\parseMonthInlineNotes%
+}{}
+
+% === October ==========================================================
+
+\SetPhoto[disabled = true]{October}
+
+\SetCalendar{October}
+
+\SetEvents{October}{%
+\semicolonEndTikzCalendar%
+\parseMonthMarksDayTextInlineUsing{./data/moonphases-2018.csv}%
+\parseMonthInlineNotes%
+}{}
+
+% === November =========================================================
+
+\SetPhoto[disabled = true]{November}
+
+\SetCalendar{November}
+
+\SetEvents{November}{%
+\semicolonEndTikzCalendar%
+\parseMonthMarksDayTextInlineUsing{./data/moonphases-2018.csv}%
+\parseMonthInlineNotes%
+}{}
+
+% === December =========================================================
+
+\SetPhoto[disabled = true]{December}
+
+\SetCalendar{December}
+
+\SetEvents{December}{%
+\semicolonEndTikzCalendar%
+\parseMonthMarksDayTextInlineUsing{./data/moonphases-2018.csv}%
+\parseMonthInlineNotes%
+}{}
+
+\makeatother
+
+\begin{document}
+
+\MonthPage[layout=photo and notes]{September}
+
+\MonthPage[layout=photo and notes]{October}
+
+\MonthPage[layout=photo and notes]{November}
+
+\MonthPage[layout=photo and notes]{December}
+
+\end{document}

@@ -1,0 +1,212 @@
+\ProvidesPackage{pf-book}
+
+%
+% Prerequisite Packages
+%
+
+% Set a different geometry with \newgeometry
+\usepackage[
+  % bindingoffset=15pt, % .2in
+  % hmargin=50pt,       % .7in
+  top=40pt,           % .55in
+  bottom=50pt,        % .7in
+  footskip=30pt,      % makes the footer text line up with the graphic
+  % scale=0.90,
+]{geometry}
+
+% stop hyphenation
+\usepackage[none]{hyphenat}
+
+% Loaded before tikz to avoid package option conflict with pgf.
+\RequirePackage[table]{xcolor}
+
+\RequirePackage[cm]{fullpage}     % Small margins
+
+\RequirePackage{array}
+\RequirePackage{calc}
+\RequirePackage{enumitem}
+\RequirePackage{ifluatex}
+\RequirePackage{keycommand}
+%\RequirePackage{ragged2e}
+%\RequirePackage[document]{ragged2e}
+%\RequirePackage{microtype}        % Improve ragged2e hyphenation and overfull boxes
+\RequirePackage{tabularx}
+\RequirePackage[most]{tcolorbox}  % used for some boxes
+\RequirePackage{tikz}
+\RequirePackage{xkeyval}
+\RequirePackage{xparse}
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage[colaction]{multicol}
+\RequirePackage{ifthen}
+
+% \pf@deprecate{<command or environment>}{<version>}[<suggestion>]
+\DeclareDocumentCommand{\pf@deprecate}{m m o}{%
+  \PackageWarning{pf}{#1 is deprecated and will be removed in version #2.\IfNoValueF{#3}{ #3}}
+}
+
+%
+% Generally used things
+%
+
+\usepackage[english]{babel}
+% \usepackage[utf8]{inputenc}
+\usepackage{tabu}
+\usepackage[colaction]{multicol}
+
+% probably going to remove this eventually...
+\usepackage{longtable,booktabs}
+\usepackage{csquotes}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+%
+% Options
+%
+
+\newtoggle{bool-bg}
+\newtoggle{bool-footer-scroll}
+\DeclareOptionX{bg}[full]{%
+  % This macro call looks complicated, but simply sets up a case environment
+  % to process choices. Refer to the xkeyval documentation for details.
+  \XKV@cc*+[\val\index]{#1}{full,none,print}{%
+    \ifcase\index\relax
+    % full
+    \toggletrue{bool-bg}
+    \toggletrue{bool-footer-scroll}
+    \or
+    % none
+    \togglefalse{bool-bg}
+    \togglefalse{bool-footer-scroll}
+    \or
+    % print
+    \togglefalse{bool-bg}
+    \toggletrue{bool-footer-scroll}
+    \fi
+  }{%
+    \PackageWarning{pf}{\val\ is not a valid choice for bg and was ignored}
+  }
+}
+
+% Legacy bg option variants.
+\DeclareOptionX{bg-full}{%
+  \pf@deprecate{bg-full}{0.7}[Use bg=full instead.]
+  \toggletrue{bool-bg}
+  \toggletrue{bool-footer-scroll}
+}
+\DeclareOptionX{bg-none}{%
+  \pf@deprecate{bg-none}{0.7}[Use bg=none instead.]
+  \togglefalse{bool-bg}
+  \togglefalse{bool-footer-scroll}
+}
+\DeclareOptionX{bg-print}{%
+  \pf@deprecate{bg-print}{0.7}[Use bg=print instead.]
+  \togglefalse{bool-bg}
+  \toggletrue{bool-footer-scroll}
+}
+\DeclareOptionX{bg-a4}{\pf@deprecate{bg-a4}{0.7}[Remove call to this package option.]}
+\DeclareOptionX{bg-letter}{\pf@deprecate{bg-letter}{0.7}[Remove call to this package option.]}
+
+% Toggle justification (official books are flush left).
+\newtoggle{justified}
+\DeclareOptionX{justified}{\toggletrue{justified}}
+
+% Toggle multitoc.
+\newtoggle{multitoc}
+\settoggle{multitoc}{true}
+\DeclareOptionX{nomultitoc}{\togglefalse{multitoc}}
+
+% Default Settings
+\ExecuteOptionsX{bg=full}
+\ProcessOptionsX\relax
+
+% Stuff every module should be able to use
+
+\newcommand{\pfdescblock}[2]{%
+\noindent\hangindent=1ex\textbf{#1}~#2
+% keep the newline
+}
+
+%% I have now made this functionality part of my currfile package. It is provided as a sub-package currfile-abspath, which can also be used on its own. It provides \getmainfile, \getabspath{<file>} and \getpwd which set \themainfile, \theabspath and \thepwd to the main file name (which might be different from \jobname.tex), the absolute path of the given file and the parent working directory of the compiler run.
+
+% Load other modules of this package
+\RequirePackage{book/pf-art}
+\RequirePackage{book/pf-box}
+\RequirePackage{book/pf-colors}
+\RequirePackage{book/pf-fonts}     % font definitions
+\RequirePackage{book/pf-pagestyle}    % page style
+\RequirePackage{book/pf-list}
+\RequirePackage{book/pf-creature}
+\RequirePackage{book/pf-sections}
+\RequirePackage{book/pf-spell}
+\RequirePackage{book/pf-strings}   % Load document strings
+\RequirePackage{book/pf-table}
+
+% Things I've added, will soon be mixed in with the above list
+\RequirePackage{book/pf-actions}
+\RequirePackage{book/pf-traits}
+\RequirePackage{book/pf-rarity}
+\RequirePackage{book/pf-character}
+\RequirePackage{book/pf-items}
+\RequirePackage{book/pf-license}
+
+% Set paragraph and line spacing
+%\linespread{1.1}%
+%\setlength{\parindent}{1em}
+\setlength{\parindent}{15pt}
+%\setlength{\RaggedRightRightskip}{0pt plus 1cm}
+%\setlength{\RaggedRightParindent}{\parindent}
+%\hyphenpenalty=1000  % Fewer hyphens
+%
+%% Set left justification if not justified
+%\nottoggle{justified}{\RaggedRight}
+
+%
+% Style Parameters
+%
+
+% Disable space between paragraphs.
+\setlength{\parskip}{0pt}
+
+% Font environment
+\newenvironment{lmss}{%
+  \pf@deprecate{lmss}{0.7}
+  \fontfamily{lmss}\selectfont
+  }{}
+
+% Columns setup
+\setlength{\columnsep}{25pt}  % .35in
+
+% Customize itemize environment.
+\setlist{leftmargin=1em}
+\setitemize{noitemsep,topsep=0.5ex}
+\renewcommand{\labelitemi}{\raisebox{0.25ex}{\tiny{\( \bullet \)}}}
+
+
+% Figure out the best values for the pre & post \vspace
+\newcommand{\pfhline}{
+  \vspace{-7pt}\noindent%
+  \begin{tikzpicture}[]
+    \draw (0, 0) -- (0,0) -- (\linewidth, 0.05);
+  \end{tikzpicture}%
+  \vspace{-5pt}%
+  % \leaders\hbox{\rule[0.5em]{1pt}{3pt}}\hfill%
+  % \par%
+}
+
+
+% Either hilariously, or infuriatingly, the \ifcommandkey
+% implementation is buggy. Here is a re-implementation
+% from tex.stackexchange.
+\begingroup
+\makeatletter
+\catcode`\/=8 %
+\@firstofone
+{
+  \endgroup
+  \renewcommand{\ifcommandkey}[1]{%
+    \csname @\expandafter \expandafter \expandafter
+    \expandafter \expandafter \expandafter  \expandafter
+    \kcmd@nbk \commandkey {#1}//{first}{second}//oftwo\endcsname
+  }
+}

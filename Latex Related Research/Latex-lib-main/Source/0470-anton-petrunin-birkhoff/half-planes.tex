@@ -1,0 +1,509 @@
+\chapter{Half-planes}\label{chap:half-planes}
+
+This chapter contains lengthy proofs of intuitively evident statements.
+It is okay to skip it, but make sure you understand the definitions of positive/negative angles and that your intuition agrees with statements \ref{thm:signs-of-triug}, \ref{prop:half-plane}, \ref{cor:half-plane}, \ref{thm:pasch}, and \ref{thm:abc}.
+
+\section{Sign of an angle}
+
+Positive and negative angles can be visualized as {}\emph{counterclockwise} and {}\emph{clockwise} directions; they are defined the following way:
+\begin{itemize}
+\item The angle $A O B$ is called \index{angle!positive and negative angles}\emph{positive} 
+if $0<\measuredangle A O B<\pi$;
+\item The  angle $A O B$ is called {}\emph{negative} 
+if $\measuredangle A O B<0$.
+\end{itemize}
+
+According to the above definitions the straight angle, as well as the zero angle,
+are neither positive nor negative.
+
+\begin{thm}{Classroom exercise}\label{ex:AOB+<=>BOA-}
+Show that $\angle A O B$ is positive if and only if $\angle B O A$ is negative.
+\end{thm}
+
+\begin{thm}{Lemma}\label{lem:straight-sign}
+Let $\angle AOB$ be straight.
+Then $\angle AOX$ is positive 
+if and only if $\angle BOX$ is negative.
+\end{thm}
+
+\parit{Proof.}
+Set $\alpha=\measuredangle AOX$ 
+and 
+$\beta=\measuredangle BOX$.
+Since $\angle AOB$ is straight,
+$$\alpha-\beta\equiv \pi.\eqlbl{eq:alpha-beta}$$
+
+It follows that $\alpha=\pi$ $\Leftrightarrow$ $\beta=0$
+and $\alpha=0$ $\Leftrightarrow$ $\beta=\pi$.
+In these two cases, the signs of $\angle AOX$ and $\angle BOX$ are undefined.
+
+In the remaining cases we have that $|\alpha|<\pi$ and $|\beta|<\pi$.
+If $\alpha$ and $\beta$ have the same sign, then $|\alpha-\beta|<\pi$;
+the latter contradicts \ref{eq:alpha-beta}.
+Hence the statement follows.
+\qeds
+
+\begin{thm}{Exercise}\label{ex:PP(PN)}
+Assume that angles $ABC$ and $A'B'C'$ have the same sign
+and 
+\[2\cdot \measuredangle ABC\equiv 2\cdot \measuredangle A'B'C'.\]
+Show that $\measuredangle ABC= \measuredangle A'B'C'$.
+\end{thm}
+
+\section{Intermediate value theorem}
+
+\begin{thm}{Intermediate value theorem}\label{thm:intermidiate}
+Let $f\:[a,b]\to \mathbb{R}$ be a continuous function.
+Assume 
+$f(a)$ and $f(b)$ have opposite signs.
+Then $f(t_0)=0$ for some $t_0\in[a,b]$.
+\end{thm}
+
+\begin{wrapfigure}{r}{38mm}
+\vskip-6mm
+\centering
+\includegraphics{mppics/pic-14}
+\end{wrapfigure}
+
+The intermediate value theorem is assumed to be known;
+it should be covered in any calculus course.
+We will use only the following corollary:
+
+\begin{thm}[\abs]{Corollary}\label{cor:intermidiate}
+Assume that for any $t\z\in [0,1]$ we have three points $O_t$, $A_t$, and $B_t$ in the plane such that
+\begin{enumerate}[(a)]
+\item Each function $t\mapsto O_t$, $t\mapsto A_t$, and $t\z\mapsto B_t$ is continuous.
+\end{enumerate}
+
+\begin{enumerate}[(a)]\addtocounter{enumi}{1}
+\item For any $t\in [0,1]$, the points $O_t$, $A_t$, and $B_t$ do not lie on one line.  
+\end{enumerate}
+Then $\angle A_0O_0B_0$ and $\angle A_1O_1B_1$ have the same sign.
+\end{thm}
+
+\parit{Proof.}
+Consider the function 
+$f(t)=\measuredangle A_tO_tB_t$.
+
+Since the points $O_t$, $A_t$, and $B_t$ do not lie on one line, Theorem~\ref{thm:straight-angle} implies that $f(t)=\measuredangle A_tO_tB_t$ is neither $0$ nor $\pi$ for any $t\in[0,1]$.
+
+Therefore, by Axiom~\ref{def:birkhoff-axioms:2c} and Exercise~\ref{ex:comp+cont},
+$f$ is a continuous function.
+By the intermediate value theorem, $f(0)$ and $f(1)$ have the same sign;
+hence the result follows.
+\qeds
+
+
+\section{Same sign lemmas}
+
+
+
+\begin{thm}[\abs]{Lemma}\label{lem:signs}
+Assume $Q'\in [PQ)$ and $Q'\z\ne P$.
+Then for every $X\z\notin (PQ)$ the angles $PQX$ and $PQ'X$ have the same sign.
+\end{thm}
+
+{
+
+\begin{wrapfigure}{o}{33mm}
+\centering
+\vskip-5mm
+\includegraphics{mppics/pic-16}
+\end{wrapfigure}
+
+\parit{Proof.}
+By Exercise~\ref{ex:trig==},
+for any $t\in [0,1]$ there is a unique point $Q_t\in[PQ)$ 
+such that 
+\[PQ_t=  (1-t)\cdot PQ+t\cdot PQ'.\]
+The map $t\mapsto Q_t$ is continuous,
+\begin{align*}
+Q_0&=Q,
+&
+Q_1&=Q'
+\end{align*}
+and for any $t\in [0,1]$, 
+we have that $P\z\ne Q_t$.
+
+}
+
+Applying Corollary~\ref{cor:intermidiate},
+for $P_t=P$, $Q_t$, and $X_t=X$, we get that $\angle PQX$ has the same sign as $\angle PQ'X$.
+\qeds
+
+
+{\sloppy
+
+\begin{thm}[\abs]{Signs of angles of a triangle}\label{thm:signs-of-triug}
+In any nondegenerate triangle $ABC$, the angles $ABC$, $BCA$, and $CAB$ have the same sign.
+\end{thm}
+
+}
+
+{
+
+\begin{wrapfigure}{o}{33mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-18}
+\end{wrapfigure}
+
+\parit{Proof.}
+Choose a point $Z\in (AB)$ so that $A$ lies between $B$ and~$Z$.
+
+
+According to Lemma~\ref{lem:signs},
+the angles $ZBC$ and $ZAC$ have the same sign.
+
+
+Note that $\measuredangle ABC=\measuredangle ZBC$
+and 
+$$\measuredangle ZAC+\measuredangle CAB\equiv \pi.$$
+Therefore, $\angle CAB$ has the same sign as $\angle ZAC$
+which in turn has the same sign as $\measuredangle ABC\z=\measuredangle ZBC$.
+
+}
+
+Repeating the same argument for $\angle BCA$ and $\angle CAB$,
+we get the result.
+\qeds
+
+\begin{wrapfigure}{r}{26mm}
+\vskip-2mm
+\centering
+\includegraphics{mppics/pic-838}
+\end{wrapfigure}
+
+\begin{thm}[!]{Classroom exercise}\label{ex:between}
+Let $A$, $B$, $C$, and $P$ be points such that $B$ lies between $A$ and $C$, and let $P \not\in (AC)$.
+Show that the angles $\angle APB$, $\angle BPC$, and $\angle APC$ have the same sign.
+Conclude that
+\[|\measuredangle APB|+|\measuredangle BPC|=|\measuredangle APC|.\]
+\end{thm}
+
+\begin{thm}[\abs]{Lemma}\label{lem:signsXY}
+Assume $[XY]$ does not intersect $(PQ)$.
+Then the angles $PQX$ and $PQY$ have the same sign.
+\end{thm}
+
+\begin{wrapfigure}{o}{26mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-20}
+\end{wrapfigure}
+
+The proof is nearly identical to the one above.
+
+\parit{Proof.}
+According to Exercise~\ref{ex:trig==},
+for any $t\z\in [0,1]$ there is a point  $X_t\in[XY]$, 
+such that 
+\[XX_t= t\cdot XY.\]
+The map $t\mapsto X_t$ is continuous.
+Moreover, $X_0=X$, $X_1=Y$, and $X_t\notin(QP)$ for any $t\in [0,1]$.
+
+Applying Corollary~\ref{cor:intermidiate},
+for $P_t\z=P$, $Q_t\z=Q$, and $X_t$, we get that
+$\angle PQX$ has the same sign as $\angle PQY$.
+\qeds
+
+\section{Half-planes}
+
+\begin{thm}{Proposition}\label{prop:half-plane}
+Assume $X,Y\notin(PQ)$.
+Then the angles $PQX$ and $PQY$ have the same sign if and only if $[XY]$ does not intersect $(PQ)$.
+\end{thm}
+
+\begin{wrapfigure}{o}{30mm}
+\includegraphics{mppics/pic-22}
+\centering
+\end{wrapfigure}
+
+\parit{Proof.} The if-part follows from Lemma~\ref{lem:signsXY}. 
+
+Assume $[XY]$ intersects $(PQ)$;
+suppose that $Z$ denotes the point of intersection.
+Without loss of generality, we can assume $Z\ne P$.
+
+Note that $Z$ lies between $X$ and $Y$.
+According to Lemma~\ref{lem:straight-sign}, $\angle PZX$ and $\angle PZY$ have opposite signs.
+This proves the statement if $Z=Q$.
+
+If $Z\ne Q$, then $\angle ZQX$ and $\angle QZX$ have opposite signs by \ref{thm:signs-of-triug}.
+In the same way, we get that $\angle ZQY$ and $\angle QZY$ have opposite signs.
+
+If $Q$ lies between $Z$ and $P$, then by Lemma~\ref{lem:straight-sign} two pairs of angles $\angle PQX$, $\angle ZQX$ and $\angle PQY$, $\angle ZQY$ have opposite signs. 
+It follows that $\angle PQX$ and $\angle PQY$ have opposite signs as required.
+
+In the remaining case $[QZ)=[QP)$ and therefore $\angle PQX=\angle ZQX$ and $\angle PQY=\angle ZQY$. 
+Therefore again $\angle PQX$ and $\angle PQY$ have opposite signs as required.
+\qeds
+
+\begin{thm}[\abs]{Corollary}\label{cor:half-plane}
+The complement of a line $(PQ)$ in the plane 
+can be presented in a unique way as a union of two disjoint subsets 
+called \index{half-plane}\emph{half-planes}
+such that 
+\begin{enumerate}[(a)]
+\item\label{cor:half-plane:angle} Two points $X,Y\notin(PQ)$ lie in the same half-plane if and only if the angles $PQX$ and $PQY$ have the same sign.
+\item\label{cor:half-plane:intersect} Two points $X,Y\notin(PQ)$ lie in the same half-plane if and only if $[XY]$ does not intersect~$(PQ)$.
+\end{enumerate}
+
+\end{thm}
+
+{
+
+\begin{wrapfigure}{r}{26mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-24}
+\end{wrapfigure}
+
+We say that $X$ and $Y$ lie on {}\emph{one side of} $(PQ)$ if they lie in one of the half-planes of $(PQ)$ and we say that  $P$ and $Q$ lie on {}\emph{opposite sides of} $\ell$ if they lie in different half-planes of~$\ell$.
+
+
+\begin{thm}{Exercise}\label{ex:vert-intersect}
+Suppose that angles $AOB$ and $A'OB'$ are vertical and $B\notin (OA)$.
+Show that the line $(AB)$ does not intersect the segment~$[A'B']$.
+\end{thm}
+
+}
+
+Consider triangle $ABC$.
+Recall that its vertices are points $A$, $B$ and $C$;
+segments $[AB]$, $[BC]$, and $[CA]$ will be called the \index{side!of triangle}\emph{sides of the triangle}.
+
+{
+
+\begin{wrapfigure}{r}{27mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-26}
+\end{wrapfigure}
+
+\begin{thm}[\abs]{Pasch's theorem}\label{thm:pasch}\index{Pasch's theorem}
+Assume that a line $\ell$ does not pass thru any vertex of a triangle.
+Then it intersects either two or zero sides of the triangle.
+\end{thm}
+
+\parit{Proof.}
+Assume that line $\ell$ intersects side $[AB]$ of the triangle $ABC$ and does not pass thru $A$, $B$, and $C$.
+
+By Corollary~\ref{cor:half-plane}, the vertices $A$ and $B$ lie on opposite sides of~$\ell$.
+
+}
+
+The vertex $C$ may lie on the same side as $A$ and on the opposite side from $B$ or the other way around.
+By Corollary~\ref{cor:half-plane}, in the first case, $\ell$ intersects side $[BC]$ and does not intersect $[AC]$; in the second case, $\ell$ intersects side $[AC]$ and does not intersect $[BC]$.
+Hence the statement follows.
+\qeds
+
+{
+
+\begin{wrapfigure}[5]{r}{29mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-28}
+\bigskip
+\includegraphics{mppics/pic-30}
+\end{wrapfigure}
+
+\begin{thm}[!]{Exercise}\label{ex:signs-PXQ-PYQ}
+Show that two points $X,Y\z\notin(PQ)$ lie on the same side of $(PQ)$
+if and only if angles $PXQ$ and $PYQ$ have the same sign.
+\end{thm}
+
+\begin{thm}[!]{Exercise}\label{ex:chevinas}
+Let $\triangle ABC$ be a nondegenerate triangle,
+$A'\in[BC]$  and 
+$B'\in [AC]$.
+Show that $[AA']$ intersects $[BB']$.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:Z}
+Assume that points $X$ and $Y$ lie on opposite sides of the line~$(PQ)$.
+Show that $[PX)$ does not intersect~$[QY)$. 
+\end{thm}
+
+}
+
+\begin{thm}{Advanced exercise}\label{ex:angle-measures}
+The following quantity 
+$$\tilde\measuredangle ABC=
+\begin{cases}
+\pi&\text{if}\ \measuredangle ABC=\pi
+\\
+-\measuredangle ABC&\text{if}\ \measuredangle ABC<\pi
+\end{cases}
+$$
+can serve as the angle measure; 
+that is, the axioms hold if one replaces $\measuredangle$ by $\tilde\measuredangle$ everywhere.
+
+Show that $\measuredangle$ and $\tilde\measuredangle$ are the only possible angle measures on the plane. 
+
+Show that without Axiom~\ref{def:birkhoff-axioms:2c}, this is no longer true.
+\end{thm}
+
+\section{Triangle with given sides}
+
+Given $\triangle ABC$, set 
+\begin{align*}
+a&=BC,
+&
+b&=CA,
+&
+c&=AB.
+\end{align*}
+Without loss of generality, we may assume that 
+\[a\le b \le c.\]
+Then all three triangle inequalities for $\triangle ABC$
+hold if and only if 
+\[c\le a+b.\]
+The following theorem states that this is the only restriction on $a$, $b$, and~$c$.
+
+\begin{thm}[\abs]{Theorem}\label{thm:abc}
+Assume that $0<a\le b\le c\le a+b$.
+Then there is a triangle with sides $a$, $b$, and $c$;
+that is, there is $\triangle ABC$ 
+such that $a=BC$, $b=CA$, and $c=AB$.
+\end{thm}
+
+A proof of the following proposition is given at the end of the section.
+
+\begin{thm}[\abs]{Proposition}\label{prop:C-cont}
+Fix a real number $r>0$ 
+and two distinct points $A$ and~$B$.
+Then for 
+any real number $\beta\in [0,\pi]$,
+there is a unique point $C_\beta$ such that $BC_\beta=r$
+and $\measuredangle ABC_\beta=\beta$.
+Moreover, $\beta\mapsto C_\beta$ 
+is a continuous map from $[0,\pi]$ to the plane.
+\end{thm}
+
+\parit{Proof of Theorem~\ref{thm:abc} modulo Proposition~\ref{prop:C-cont}.}\label{page:proof:thm:abc}
+Fix the points $A$ and $B$ such that $AB=c$.
+Given $\beta\in [0,\pi]$,
+suppose that $C_\beta$ denotes the point such that $BC_\beta\z=a$ and $\measuredangle ABC_\beta=\beta$.
+
+According to \ref{prop:C-cont},
+the map
+$\beta\mapsto C_\beta$ is continuous.
+Therefore, the function $b\:\beta\mapsto AC_\beta$ is continuous
+(formally, it follows from Exercise~\ref{ex:dist-cont} and Exercise~\ref{ex:comp+cont}).
+
+Note that $b(0)=c-a$ and $b(\pi)=c+a$.
+Since $c-a\le b\le c+a$,
+by the intermediate value theorem (\ref{thm:intermidiate})
+there is $\beta_0\in[0,\pi]$ such that
+$b(\beta_0)=b$,
+hence the result. 
+\qeds
+
+The proof of Proposition~\ref{prop:C-cont} relies on the following lemma.
+
+
+{
+
+\begin{wrapfigure}{o}{22mm}
+\vskip-2mm
+\centering
+\includegraphics{mppics/pic-32}
+\end{wrapfigure}
+
+Assume $r>0$ and $0<\beta<\pi$.
+Consider the triangle $ABC$ such that 
+$AB=BC=r$ and $\measuredangle ABC=\beta$.
+The existence of such a triangle follows from Axiom~\ref{def:birkhoff-axioms:2a} and Exercise~\ref{ex:trig==}.
+By Axiom~\ref{def:birkhoff-axioms:3},
+the values
+$\beta$ and~$r$ determine $\triangle ABC$ up to congruence.
+In particular, the distance $AC$ depends only on $\beta$ and~$r$;
+thus, we can consider the function $s$ defined by
+$$s(r,\beta)\df AC.$$
+
+}
+
+\begin{thm}[\abs]{Lemma}\label{lem:f(r,a)}
+Given $r>0$ and $\epsilon>0$, there is $\delta>0$ such that
+\[0<\beta<\delta\quad\Longrightarrow\quad s(r,\beta)<\epsilon.\]
+
+\end{thm}
+
+
+
+{
+
+\begin{wrapfigure}{l}{36mm}
+\vskip-8mm
+\centering
+\includegraphics{mppics/pic-34}
+\end{wrapfigure}
+
+\parit{Proof.}
+Fix two points $A$ and $B$ such that $AB\z=r$.
+
+Choose a point $X$ such that $\measuredangle ABX$ is positive.
+Let $Y\in [AX)$ be the point such that $AY=\tfrac\epsilon2$;
+it exists by Exercise~\ref{ex:trig==}.
+
+Points $X$ and $Y$ lie on the same side of $(AB)$;
+therefore, $\angle ABY$ is positive. 
+Set $\delta\z=\measuredangle ABY$.
+
+Suppose $0<\beta<\delta$;
+by Axiom~\ref{def:birkhoff-axioms:2a}, we can choose $C$ so that $\measuredangle ABC\z=\beta$ and $BC\z=r$.
+Furthermore, we can choose a half-line $[BZ)$ such that $\measuredangle ABZ\z=\tfrac12\cdot \beta$.
+
+}
+
+Points $A$ and $Y$ lie on opposite sides of~$(BZ)$ and  $\measuredangle ABZ\z\equiv -\measuredangle CBZ$.
+In particular, $(BZ)$ intersects $[AY]$;
+denote by $D$ the point of intersection.
+
+Since $D$ lies between $A$ and $Y$, we have $AD<AY$.
+
+Since $D$ lies on $(BZ)$ we have that $\measuredangle ABD\z\equiv -\measuredangle CBD$.
+By Axiom~\ref{def:birkhoff-axioms:3},
+$\triangle ABD\cong \triangle CBD$.
+It follows that
+\begin{align*}
+s(r,\beta)&=AC\le
+\\
+&\le AD+DC=
+\\
+&=2\cdot AD< 
+\\
+&< 2\cdot AY=
+\\
+&=\epsilon.
+\end{align*}
+\qedsf
+
+
+
+\parit{Proof of Proposition~\ref{prop:C-cont}.}
+The existence and uniqueness of $C_\beta$ follow from Axiom~\ref{def:birkhoff-axioms:2a} and Exercise~\ref{ex:trig==}.
+
+If $\beta_1\ne\beta_2$, then
+$$C_{\beta_1}C_{\beta_2}=s(r,|\beta_1-\beta_2|).$$
+
+By \ref{lem:f(r,a)}, the map $\beta\mapsto C_\beta$ is continuous.
+\qeds
+
+
+
+Given a positive real number $r$ and a point $O$,
+the set $\Gamma$ of all points at distance $r$ from $O$ is called a \index{circle}\emph{circle}
+with \index{radius}\emph{radius} $r$ and \index{center}\emph{center}~$O$.
+
+\begin{wrapfigure}{r}{40mm}
+\centering
+\includegraphics{mppics/pic-35}
+\end{wrapfigure}
+
+\begin{thm}[!]{Exercise}\label{ex:intersecting-circles-3}
+Show that two circles intersect if and only if 
+\[|r_1-r_2|\le d\le r_1+r_2,\]
+where $r_1$ and $r_2$ denote their radiuses, and $d$ is the distance between their centers.
+\end{thm}

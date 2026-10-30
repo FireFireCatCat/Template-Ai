@@ -1,0 +1,69 @@
+% Restaurant menu card -- ctan:menucard, LPPL-1.3 (verified in the shipped
+% menucard.sty header: "This file may be distributed and/or modified under
+% the conditions of the LaTeX Project Public License, either version 1.3 of
+% this license or (at your option) any later version"). Ships with TeX Live
+% (tex/latex/menucard) -- starter does not bundle the class. No fontspec --
+% pdflatex-safe; the class's \zapf numbering command selects the Zapf
+% Chancery PostScript font (fontfamily pzc), part of psnfss and already in
+% this image.
+%
+% Distinct document kind from the other two recipes-category additions in
+% this batch (a MENU is priced dish names for a diner, not a recipe with
+% ingredients/method for a cook) -- filed under recipes as the closest
+% existing category, since the catalogue has no separate menus category.
+% Starter is a real three-course menu for an invented bistro, priced
+% consistently, using the class's numbered \Entrycount rows for the mains
+% course.
+\documentclass[11pt]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{menucard}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+  {\zapf\fontsize{36}{40}\selectfont\ColText{Bistro Lindenhof}}\\[0.3em]
+  {\normalsize\ColSubText{Seasonal menu -- three courses}}
+\end{center}
+
+\vspace{2em}
+
+\begin{Group*}{Starters}
+\Entry{French Onion Soup}{\textsterling 7.50}\\
+\Expl{Slow-caramelised onions, thyme, gruy\`ere crouton}\\[0.8em]
+\Entry{Beetroot and Goat's Cheese Salad}{\textsterling 8.00}\\
+\Expl{Roasted beetroot, whipped goat's cheese, candied walnuts, watercress}\\[0.8em]
+\Entry{Mussels Mariniere}{\textsterling 9.50}\\
+\Expl{White wine, shallot, parsley, crusty bread}
+\end{Group*}
+
+\vspace{2em}
+
+\begin{Group}{Mains}
+\Entrycount{Confit Duck Leg}{\textsterling 19.50}\\
+ & \Expl{Dauphinoise potatoes, red wine jus, seasonal greens} & \\[0.8em]
+\Entrycount{Pan-Roasted Hake}{\textsterling 18.00}\\
+ & \Expl{Crushed new potatoes, salsa verde, samphire} & \\[0.8em]
+\Entrycount{Wild Mushroom Risotto}{\textsterling 15.50}\\
+ & \Expl{Arborio rice, wild mushrooms, parmesan, truffle oil} & \\[0.8em]
+\Entrycount{8oz Sirloin Steak}{\textsterling 24.00}\\
+ & \Expl{Hand-cut chips, roasted tomato, peppercorn sauce} & 
+\end{Group}
+
+\vspace{2em}
+
+\begin{Group*}{Desserts}
+\Entry{Cr\`eme Br\^ul\'ee}{\textsterling 6.50}\\
+\Expl{Vanilla custard, caramelised sugar crust}\\[0.8em]
+\Entry{Dark Chocolate Tart}{\textsterling 7.00}\\
+\Expl{Sea salt, creme fraiche}\\[0.8em]
+\Entry{Cheese Board}{\textsterling 9.50}\\
+\Expl{A selection of three local cheeses, quince paste, oatcakes}
+\end{Group*}
+
+\vspace{2em}
+\begin{center}
+  {\footnotesize\ColSubText{A discretionary 12.5\% service charge will be added to your bill.}}
+\end{center}
+
+\end{document}

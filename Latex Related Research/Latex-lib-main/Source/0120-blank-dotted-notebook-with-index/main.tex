@@ -1,0 +1,75 @@
+\documentclass[10pt,a5paper]{article}
+\usepackage[margin=15mm,includeheadfoot]{geometry}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{multicol}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Field notebook}
+\fancyhead[R]{\small Your project}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{13pt}
+\newcommand{\dotpage}{%
+  \clearpage\thispagestyle{fancy}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \draw[step=5mm,gray!35,very thin,dotted]
+      ([xshift=12mm,yshift=-18mm]current page.north west) grid
+      ([xshift=-12mm,yshift=15mm]current page.south east);
+  \end{tikzpicture}%
+  \vspace*{4mm}\noindent\textbf{Entry date:} \rule{35mm}{.4pt}\hfill
+  \textbf{Page:} \rule{12mm}{.4pt}\par\vspace{8mm}}
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Field Notebook}\par\medskip
+  {\large A dotted working journal}\par\vspace{12mm}
+  \rule{.75\linewidth}{.6pt}\par\vspace{5mm}
+  \begin{tabular}{>{\bfseries}p{32mm}p{72mm}}
+    Project & Coastal sensor calibration \\
+    Owner & Your Name \\
+    Started & 29 August 2026 \\
+    Contact & name@example.org
+  \end{tabular}
+\end{center}
+\vfill
+\noindent\textit{Use one section per experiment, meeting, or observation.}
+\clearpage
+\section*{Index}
+\begin{tabular}{@{}p{13mm}p{75mm}p{18mm}@{}}
+  \textbf{No.} & \textbf{Subject} & \textbf{Page}\\[2pt]\hline
+  1 & Sensor calibration & 3\\
+  2 & Field observations & 5\\
+  3 & Follow-up questions & 7\\
+  4 & & \\
+  5 & & \\
+  6 & & \\
+\end{tabular}
+\section*{Working key}
+\begin{multicols}{2}
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item[\textcolor{blue}{\textbullet}] Observation
+  \item[\textcolor{red}{\textbullet}] Action required
+  \item[\textcolor{green!50!black}{\textbullet}] Verified result
+  \item[\textcolor{orange}{\textbullet}] Question to revisit
+\end{itemize}
+\end{multicols}
+\dotpage
+\section*{1. Sensor calibration}
+\noindent\textbf{Objective:} compare the reference probe with the field unit.\par
+\vspace{3mm}\noindent\textbf{Setup:} 22.0\,°C, still water, three-minute equilibration.\par
+\vspace{5mm}\noindent\textbf{Result summary:} The field unit read 0.18 units above the reference.
+\dotpage
+\section*{2. Field observations}
+\noindent\textbf{Location:} \rule{35mm}{.4pt}\quad
+\textbf{Weather:} \rule{25mm}{.4pt}\par\vspace{5mm}
+\noindent\textit{Use the dotted area for sketches, measurements, and notes.}
+\dotpage
+\section*{3. Follow-up questions}
+\begin{enumerate}[leftmargin=8mm]
+  \item Which calibration point contributes most to the offset?
+  \item Should the next run include a second reference instrument?
+  \item What evidence is needed before the result is archived?
+\end{enumerate}
+\end{document}

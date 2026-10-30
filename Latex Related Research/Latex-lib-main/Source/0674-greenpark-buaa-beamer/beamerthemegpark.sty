@@ -1,0 +1,508 @@
+\ProvidesPackage{beamerthemegpark}[2024/06/11]
+
+% 颜色设置
+\RequirePackage{gparkcolor}
+
+\RequirePackage{etoolbox} % 语言工具包
+\RequirePackage{tikz} % 绘图包
+
+% 代码块颜色
+\RequirePackage{listings} 
+
+% listings 颜色设置
+\definecolor{codegreen}{RGB}{101,218,120}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+  % backgroundcolor=\color{backcolour},
+  commentstyle=\color{airforceblue},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{codepurple},
+  basicstyle=\ttfamily\scriptsize,
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=4,
+  xleftmargin=10pt,
+  xrightmargin=10pt,
+}
+
+\lstset{style=mystyle}
+
+\RequirePackage{verbatim}
+% 另一种代码环境
+\RequirePackage{minted}
+\setminted{
+  tabsize=4,
+  encoding=utf8,
+  % frame=lines,
+  % bgcolor=lightgray, % 背景
+  % style=emacs % 主题
+}
+
+% 增加一些行距
+\BeforeBeginEnvironment{minted}{\smallskip}
+\AfterEndEnvironment{minted}{\smallskip}
+\BeforeBeginEnvironment{itemize}{\smallskip}
+\AfterEndEnvironment{itemize}{\smallskip}
+\BeforeBeginEnvironment{enumerate}{\smallskip}
+\AfterEndEnvironment{enumerate}{\smallskip}
+
+% 强制页面比例为 16:9 
+\RequirePackage{geometry} % 页面布局包
+\geometry{paperwidth=16cm, paperheight=9cm}
+
+% 间距
+\renewcommand{\baselinestretch}{1.2} % 行高
+\setlength{\parskip}{0.2\baselineskip} % 段间距
+\setlength{\parindent}{2em} % 首行缩进 2 字符
+
+% 字体
+% PATCH (latextemplates.com): upstream selects the Latin body font BY
+% FAMILY NAME (\setmainfont{Times New Roman}), which fontspec resolves
+% through fontconfig; this compiler's fontconfig only exposes DejaVu +
+% the URW base-35 clones by family, and Times New Roman itself is a
+% Windows font not present in this TeX Live at all (checked: no
+% Times New Roman file anywhere under texmf-dist). Every CJK font in
+% this file already uses \IfFontExistsTF fallback chains ending in a
+% TeX Live font (Fandol*) -- this is the one spot that lacked one.
+% TeX Gyre Termes is TeX Live's metrically-compatible Times clone,
+% loaded by filename so it resolves regardless of fontconfig.
+\setmainfont{texgyretermes}[
+  Extension = .otf,
+  UprightFont = *-regular,
+  BoldFont = *-bold,
+  ItalicFont = *-italic,
+  BoldItalicFont = *-bolditalic,
+] % 英文字体
+% 正文字体
+% PATCH (latextemplates.com): the FandolFang fallback itself was broken
+% on this compiler -- \setCJKmainfont{FandolFang} resolves through
+% fontconfig even though FandolFang-Regular.otf is present in this TeX
+% Live (checked with kpsewhich); fc-list shows ZERO Fandol entries at
+% all here, so the chain's own safety net failed the same way the thing
+% it was guarding against would have. Loaded by filename instead.
+\IfFontExistsTF{LXGW WenKai}{
+  \setCJKmainfont{LXGW WenKai}
+}{
+  \setCJKmainfont[Extension=.otf, UprightFont=*-Regular]{FandolFang}
+}
+% 标题字体
+\IfFontExistsTF{Source Han Serif CN}{
+  \newCJKfontfamily{\sintefserif}{Source Han Serif CN}
+}{
+  \newCJKfontfamily{\sintefserif}[Extension=.otf, UprightFont=*-Regular]{FandolSong}
+}
+% 为minted指定字体，顺序匹配：JetBrainsMono Nerd Font Mono -> Cascadia Code -> Consolas -> Courier New
+% PATCH (latextemplates.com): this starter does not use \begin{minted}
+% (it needs -shell-escape + pygments, unavailable in this compile
+% pipeline -- see the packaging note), but this fallback chain still
+% runs unconditionally at package-load time regardless of whether
+% minted is ever invoked in the document, and its innermost fallback
+% (Courier New) is a Windows font absent from this TeX Live entirely.
+% DejaVu Sans Mono is one of the few families this compiler's
+% fontconfig actually resolves (verified: DejaVu + URW base-35 only).
+\IfFontExistsTF{JetBrainsMono Nerd Font Mono}{
+  \newfontfamily{\mintedcodefont}{JetBrainsMono Nerd Font Mono}[NFSSFamily=mintedcodefont]
+}{
+\IfFontExistsTF{Cascadia Code}{
+  \newfontfamily{\mintedcodefont}{Cascadia Code}[NFSSFamily=mintedcodefont]
+}{
+\IfFontExistsTF{Consolas}{
+  \newfontfamily{\mintedcodefont}{Consolas}[NFSSFamily=mintedcodefont]
+}{
+  \newfontfamily{\mintedcodefont}{DejaVu Sans Mono}[NFSSFamily=mintedcodefont]
+}}}
+
+\setminted{
+  fontfamily=mintedcodefont,
+}
+\RequirePackage{amsfonts, amsmath, oldgerm, lmodern, bm} % 数学相关的字体
+\let\songti\relax
+\let\heiti\relax
+% PATCH (latextemplates.com): same fontconfig-vs-kpathsea gap as above --
+% FandolHei/FandolKai are both present in this TeX Live but fc-list shows
+% zero Fandol entries, so the bare-name fallback fails; Extension/
+% UprightFont added to force filename resolution.
+\IfFontExistsTF{Source Han Serif CN}{
+  \setCJKfamilyfont{heiti}[AutoFakeBold = {2.17}]{Source Han Serif CN}
+}{
+  \setCJKfamilyfont{heiti}[AutoFakeBold = {2.17}, Extension=.otf, UprightFont=*-Regular]{FandolHei}
+}
+\IfFontExistsTF{STXingkai}{
+  \setCJKfamilyfont{hwxingkai}[AutoFakeBold = {2.17}]{STXingkai}
+}{
+  \setCJKfamilyfont{hwxingkai}[AutoFakeBold = {2.17}, Extension=.otf, UprightFont=*-Regular]{FandolKai}
+}
+\newcommand{\heiti}{\CJKfamily{heiti}}
+\newcommand{\hwxingkai}{\CJKfamily{hwxingkai}}
+
+% 行内格式
+% 粗体
+\let\oldtextbf\textbf
+\def\textbf#1{\oldtextbf{\heiti #1}}
+\newcommand{\ctextbf}[1]{\textcolor{airforceblue}{\textbf{#1}}}
+% 斜体
+\let\oldtextsl\textsl
+\def\textsl#1{\oldtextsl{\hwxingkai #1}}
+\newcommand{\ctextsl}[1]{\textcolor{airforceblue}{\textsl{#1}}}
+% 强调
+\let\oldemph\emph
+\def\emph#1{\oldemph{\textcolor{emphred}{\textbf{#1}}}}
+% 行内代码
+\let\oldtexttt\texttt
+\renewcommand{\texttt}[1]{\tikz[baseline=(MeNode.base)]{\node[rounded corners=1.5pt, fill=lightgray](MeNode){#1};}}
+% 链接
+\newcommand{\chref}[2]{\textcolor{airforceblue}{\href{#1}{#2}}}
+
+\RequirePackage{graphicx} % 图片插入
+\RequirePackage{subfigure} % 子图
+
+\RequirePackage{booktabs} % 三线表
+\RequirePackage{array}
+
+% 没有导航栏
+\setbeamertemplate{navigation symbols}{}
+
+% motto 是格言的意思
+\newcommand{\@footlinepayoff}{\@SINTEFmotto}
+
+% 设置脚注模板，就是绘制了一个 box 
+\setbeamertemplate{footline}{
+  \begin{beamercolorbox}[wd=\textwidth,ht=5mm,dp=3mm,rightskip=1cm]{footline}
+    \usebeamerfont{footline}\hfill\@footlinepayoff
+  \end{beamercolorbox}
+}
+
+% 选择脚注颜色，default 选择透明脚注，即无脚注
+% 如果 SINTEFmotto 不为空，那么就会在脚注处生成格言
+\newcommand{\footlinecolor}[1]{ % if #1 is empty, makes footline transparent
+  \ifstrempty{#1}{%
+    \renewcommand{\@footlinepayoff}{}
+    \setbeamercolor{footline}{bg=}
+    \setbeamercolor{block title}{fg=white,bg=sintefblue}
+    \setbeamercolor{block body}{fg=white,bg=sintefblue}
+  }{
+    \renewcommand{\@footlinepayoff}{\@SINTEFmotto}
+    \setbeamercolor{footline}{fg=white,bg=#1}
+    \setbeamercolor{block title}{fg=white,bg=#1}
+    \setbeamercolor{block body}{fg=white,bg=#1}
+  }%
+}
+\footlinecolor{} % Default: no footline
+
+% 声明了两个 logo 图片
+\pgfdeclareimage[width=0.09\paperwidth]{bluelogo}{images/logo}
+\pgfdeclareimage[width=0.09\paperwidth]{whitelogo}{images/logo_negative}
+\newcommand{\@SINTEFlogo}{bluelogo}
+
+% 设置主题颜色，如果不是蓝色，那么就选择 sintef 指定的颜色
+% NOTE! Beamer colors should be set in the preamble. It often works fine in the
+% document itself, but NOT for normal text foreground.
+% \themecolor should only be called from the preamble.
+\newcommand{\themecolor}[1]{
+  \ifstrequal{#1}{blue}{%
+    \setbeamercolor{normal text}{fg=white,bg=sintefblue}
+    \setbeamercolor{structure}{fg=white}
+    \renewcommand{\@SINTEFlogo}{whitelogo}
+    \setbeamercolor{block title}{fg=sintefblue,bg=sintefgrey}
+    \setbeamercolor{block body}{fg=sintefblue,bg=sintefgrey}
+  }{%
+    \setbeamercolor{normal text}{fg=darkgray,bg=white}
+    \setbeamercolor{structure}{fg=sintefblue}
+    \renewcommand{\@SINTEFlogo}{bluelogo}
+    \setbeamercolor{block title}{fg=airforceblue,bg=morelightgray}
+    \setbeamercolor{block body}{fg=darkgray,bg=morelightgray}
+  }
+}
+\themecolor{white} % Default: white theme
+
+% 设置各种样式的字体
+\setbeamercolor{title}{fg=sintefblue}
+\setbeamercolor{alerted text}{fg=sintefred}
+\setbeamercolor{author}{fg=black}
+\setbeamercolor{date}{fg=black}
+
+\setbeamerfont{author}{size=\scriptsize}
+\setbeamerfont{date}{size=\tiny}
+\setbeamerfont{title}{series=\bfseries, family=\sffamily}
+\setbeamerfont{subtitle}{series=\mdseries,size=\footnotesize}
+\setbeamerfont{frametitle}{series=\bfseries, family=\sffamily}
+\setbeamerfont{framesubtitle}{series=\mdseries}
+\setbeamerfont{footline}{size=\scriptsize}
+\setbeamerfont{block title}{series=\centering, size=\small}
+\setbeamerfont{block body}{size=\scriptsize}
+
+% Code to get prettier boxes
+\setbeamertemplate{blocks}[rounded]
+
+% 设置无序列表样式
+\setbeamertemplate{itemize item}{\textbullet}
+\setbeamertemplate{itemize subitem}{\ensuremath{\circ}}
+\setbeamertemplate{itemize subsubitem}{\textemdash}
+
+\newenvironment{colorblock}[3][white]{
+  \begingroup
+  \setbeamercolor{block title}{fg=#1,bg=#2}
+  \setbeamercolor{block body} {fg=#1,bg=#2}
+  \begin{block}{#3}
+  }{
+  \end{block}
+  \endgroup
+}
+
+% 将 logo 放在左上角
+\setbeamertemplate{headline}{\hspace{0.06\textwidth}\pgfuseimage{\@SINTEFlogo}}
+
+% Define frame title and subtitle layout
+\setbeamertemplate{frametitle}{%
+  \vspace*{-3.5ex}
+  \begin{beamercolorbox}[leftskip=2cm]{frametitle}%
+    \usebeamerfont{frametitle}\insertframetitle\\
+    \usebeamerfont{framesubtitle}\insertframesubtitle
+  \end{beamercolorbox}
+}
+
+% 标题页面
+\setbeamertemplate{title page}{
+  \vskip0pt plus 1filll
+  \hspace{-12mm}% Pull back the box in an inelegant way - but it works!
+  \begin{beamercolorbox}[wd=0.9\textwidth,sep=10pt,leftskip=8mm]{title}
+    {\usebeamerfont{title}\inserttitle}
+
+    {\usebeamerfont{subtitle}\insertsubtitle}
+
+    {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor}
+
+    {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate}
+  \end{beamercolorbox}
+}
+
+\newcommand{\TikzSplitSlide}[1]{%
+  \rule{0.4\paperwidth}{0pt}%
+  \begin{tikzpicture}
+    \clip (-0.1\paperwidth,-0.5\paperheight) --
+    ( 0.5\paperwidth,-0.5\paperheight) --
+    ( 0.5\paperwidth, 0.5\paperheight) --
+    ( 0.1\paperwidth, 0.5\paperheight) -- cycle;
+    \node at (0.2\paperwidth,0) {%
+      \includegraphics[height=\paperheight]{#1}%
+    };
+  \end{tikzpicture}
+}
+
+\newbool{splittitle}
+\newcommand{\@TitleBackground}{}
+\newcommand{\titlebackground}{\@ifstar{\SplitBackground}{\FullBackground}}
+\newcommand{\FullBackground}[1]{\renewcommand{\@TitleBackground}{#1}}
+\newcommand{\SplitBackground}[1]{%
+  \booltrue{splittitle}%
+  \renewcommand{\@TitleBackground}{#1}%
+}
+
+\renewcommand{\maketitle}{
+  \begingroup
+  \setbeamertemplate{footline}{}
+  \ifdefempty{\@TitleBackground}{}{% Skip if \@TitleBackground is empty
+    \setbeamertemplate{background}{%
+      \ifbool{splittitle}{%
+        \TikzSplitSlide{\@TitleBackground}
+      }{% Normal, full-screen background
+        \includegraphics[height=\paperheight]{\@TitleBackground}
+      }
+    }
+  }
+  \begin{frame}%
+    \Large\titlepage%
+  \end{frame}%
+  \endgroup
+}
+
+\newenvironment{chapter}[3][]{% Args: image (optional), color, frame title
+  \begingroup
+  \themecolor{blue}
+  \setbeamertemplate{footline}{}
+  \ifstrequal{#2}{sinteflightgreen}{ % Use blue text on light green, else white
+    \setbeamercolor{frametitle}{fg=sintefblue}
+    \setbeamercolor{normal text}{fg=sintefblue,bg=#2}
+  }{
+    \setbeamercolor{frametitle}{fg=white}
+    \setbeamercolor{normal text}{fg=white,bg=#2}
+  }
+  \ifstrempty{#1}{}{\setbeamertemplate{background}{\TikzSplitSlide{#1}}}
+  \setbeamertemplate{frametitle}{%
+    \vspace*{8ex}
+    \begin{beamercolorbox}[wd=0.45\textwidth]{frametitle}
+      \usebeamerfont{frametitle}\insertframetitle\\
+      \usebeamerfont{framesubtitle}\insertframesubtitle
+    \end{beamercolorbox}
+  }
+  \begin{frame}{#3}
+    \hspace*{0.05\textwidth}%
+    \minipage{0.35\textwidth}%
+    \usebeamercolor[fg]{normal text}%
+  }{%
+    \endminipage
+  \end{frame}
+  \endgroup
+}
+
+\newenvironment{sidepic}[2]{% Args: image, frame title
+  \begingroup
+  \setbeamertemplate{background}{%
+    \hspace*{0.6\paperwidth}%
+    \includegraphics[height=\paperheight]{#1}%
+  }
+  \setbeamertemplate{frametitle}{% Same as normal, but with right skip
+    \vspace*{-3.5ex}
+    \begin{beamercolorbox}[leftskip=2cm,rightskip=0.4\textwidth]{frametitle}%
+      \usebeamerfont{frametitle}\insertframetitle\\
+      \usebeamerfont{framesubtitle}\insertframesubtitle
+    \end{beamercolorbox}
+  }
+  \begin{frame}{#2}
+    \minipage{0.6\textwidth}%
+  }{%
+    \endminipage
+  \end{frame}
+  \endgroup
+}
+
+% 结尾页
+\newcommand{\backmatter}{
+  \begingroup
+  \setbeamertemplate{footline}{}
+  \setbeamertemplate{background}{}
+  \themecolor{blue}
+  \begin{frame}[c]{}
+    \centering
+    \begin{minipage}{\textwidth}
+      \usebeamercolor[fg]{normal text}
+      \centering
+      \Huge $$\mathcal Q \& \mathcal A$$
+      \Large \textsl{Thank you for listening! \\ Your feedback will be highly appreciated!}
+    \end{minipage}
+  \end{frame}
+  \endgroup
+}
+
+% MY CUSTOMIZATION
+
+\newcommand{\strtoc}{Table of Contents}
+\newcommand{\strsubsec}{Section \thesection.\thesubsection}
+% packages, font, color, and new commands
+
+\usepackage{animate}
+
+\usefonttheme{serif}
+
+% TYPESETTING ELEMENTS
+
+% style of section presented in the table of contents
+\setbeamertemplate{section in toc}{$\blacktriangleright$~\inserttocsection}
+
+% style of subsection presented in the table of contents
+\setbeamertemplate{subsection in toc}{}
+% \setbeamertemplate{subsection in toc}{\footnotesize\hspace{1.2 em}\textbullet\space\inserttocsubsection}
+
+% automate subtitle of each frame
+\makeatletter
+% \pretocmd\beamer@checkframetitle{\framesubtitle{\thesection \, \secname}}
+\pretocmd\beamer@checkframetitle{\framesubtitle{
+    \ifx\insertsection\empty
+      \empty
+    \else
+      \insertsection
+      \ifx\insertsubsection\empty
+        \empty
+      \else
+        \space \textbullet \space \insertsubsection
+      \fi
+    \fi
+  }}
+\makeatother
+
+% avoid numbering of frames that are breaked into multiply slides
+\setbeamertemplate{frametitle continuation}{}
+
+\newcommand{\background}[1]{\setbeamertemplate{background}{\includegraphics[height=\paperheight]{#1}}}
+
+
+% section 目录页
+\AtBeginSection[]
+{
+  \begingroup
+  \setbeamertemplate{footline}{}
+  \setbeamertemplate{background}{}
+  \themecolor{blue}
+  \begin{frame}{Table of Contents}
+    
+    \tableofcontents[currentsection]
+  \end{frame}
+  \endgroup
+}
+
+% TODO: subsection 目录
+% subsection 目录页
+\AtBeginSubsection[]
+{
+  \setbeamertemplate{footline}{}
+  % \setbeamertemplate{background}{}
+  \setbeamertemplate{frametitle}{
+    \vspace*{-4.5ex}
+    \begin{beamercolorbox}[leftskip=2cm]{frametitle}
+      \usebeamerfont{frametitle}\insertframetitle
+    \end{beamercolorbox}
+  }
+  \begin{frame}{Section \thesection . \secname}{}
+    \fontfamily{ptm}\selectfont
+    \centering\textsl{\textbf{\textcolor{sintefblue}{
+          \LARGE Section \thesection.\thesubsection
+          \vskip15pt
+          \huge \subsecname
+        }}}
+  \end{frame}
+  % 将 frametitle 恢复
+  \setbeamertemplate{frametitle}{%
+    \vspace*{-3.5ex}
+    \begin{beamercolorbox}[leftskip=2cm]{frametitle}%
+      \usebeamerfont{frametitle}\insertframetitle\\
+      \usebeamerfont{framesubtitle}\insertframesubtitle
+    \end{beamercolorbox}
+  }
+}
+
+% centering paragraph statement
+\newcommand{\centerstate}[1]{
+  \centering
+  \begin{columns}
+    \begin{column}{0.8\textwidth}
+      #1
+    \end{column}
+  \end{columns}
+}
+
+% bibliography page
+\newcommand{\bibliographpage}{
+  \section{References}
+
+  \begingroup
+  \themecolor{blue}
+  \begin{frame}[allowframebreaks]{References}{\,}
+    \tiny
+    \printbibliography[heading=none]
+  \end{frame}
+  \endgroup
+}
+
+% TODO: 似乎 ref 计数器有些问题，会显示成页面号
+\setbeamertemplate{caption}[numbered]

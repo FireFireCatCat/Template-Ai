@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sdapspdf package &#8212; sdaps-class 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/sdapstex.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="sdapsarray package" href="sdapsarray.html" />
+    <link rel="prev" title="sdapslayout package" href="sdapslayout.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="sdapsarray.html" title="sdapsarray package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sdapslayout.html" title="sdapslayout package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sdapspdf package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sdapspdf-package">
+<h1>sdapspdf package<a class="headerlink" href="#sdapspdf-package" title="Permalink to this headline">¶</a></h1>
+<p>You can use this package to make PDF forms using the SDAPS packages. SDAPS
+itself does not give you a way to submit these though.</p>
+<p>To use this feature simply use the sdapspdf package. You need to wrap everything
+containing PDF form elements inside a <code class="xref tex tex-environ docutils literal notranslate"><span class="pre">Form</span></code> environment. After this
+enable form generation by simply setting the <code class="docutils literal notranslate"><span class="pre">pdf_form</span></code> option for checkboxes
+and freeform textboxes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The sdapspdf package imports hyperref internally. So some care might need to
+be taken to import it after hyperref itself.</p>
+</div>
+<p>The following extra options are added to boxes and checkboxes:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>pdf_form</p></td>
+<td><p>Turn on PDF form generation (default: <cite>false</cite>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>default</p></td>
+<td><p>Allows enabling a checkbox by default (default: <cite>false</cite>, set to <cite>true</cite> to use)</p></td>
+</tr>
+<tr class="row-even"><td><p>checkboxsymbol</p></td>
+<td><p>The symbol to use for the checkmark (integer, see PDF specification, default: 8)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The default for pdf_form might still change to be <cite>true</cite>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The SDAPS base package will likely add further macros to make setting these options more convenient.</p>
+</div>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-33" class="tab-code" name="tab-group-33" ><label for="tab-code-33" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-33" class="tab-rendering" name="tab-group-33" checked><label for="tab-rendering-33" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>Form<span class="nb">}</span>
+  <span class="c">% The \my* commands are aliases that are defined in the praemble</span>
+
+  <span class="c">% Set the pdf_form option for all boxes (*)</span>
+  <span class="k">\mycontextappend</span><span class="nb">{</span>*<span class="nb">}{</span>pdf<span class="nb">_</span>form=true<span class="nb">}</span>
+
+  <span class="c">% Or for checkboxes and textboxes separately</span>
+  <span class="c">%\mycontextappend{singlechoice}{pdf_form=true}</span>
+  <span class="c">%\mycontextappend{multichoice}{pdf_form=true}</span>
+  <span class="c">%\mycontextappend{textbox}{pdf_form=true}</span>
+
+  <span class="k">\noindent</span> A checkbox: <span class="k">\mycheckbox</span><span class="nb">{}{}</span> <span class="k">\newline</span>
+  <span class="k">\mycontextappend</span><span class="nb">{</span>multichoice<span class="nb">}{</span>default=true<span class="nb">}</span>
+  A checked checkbox: <span class="k">\mycheckbox</span><span class="nb">{}{}</span> <span class="k">\newline</span>
+  <span class="k">\mycontextappend</span><span class="nb">{</span>multichoice<span class="nb">}{</span>default=true,checkboxsymbol=5<span class="nb">}</span>
+  A checked checkbox with different symbol: <span class="k">\mycheckbox</span><span class="nb">{}{}</span>
+
+  Please note that the above rendering is slightly broken as the poppler
+  PDF renderer maps the checkboxsymbol incorrectly. Acrobat will show the
+  other symbol.
+
+  <span class="k">\noindent</span> A non stretching textbox:
+  <span class="k">\mytextboxvhstretch</span><span class="nb">{</span>text<span class="nb">}{</span>4cm<span class="nb">}{</span>0<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>Form<span class="nb">}</span>
+</pre></div>
+Required code in preamble:<div class="highlight"><pre><span></span><span class="k">\usepackage</span><span class="nb">{</span>sdapspdf<span class="nb">}</span>
+<span class="c">% Define aliases for the commands we need to use, context_append</span>
+<span class="c">% expands settings, context_set sets them (for the current scope),</span>
+<span class="c">% possibly removing old settings.</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\let\mycontextappend\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>append:nn
+<span class="k">\let\mycontextset\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>set:nn
+<span class="k">\let\mycheckbox\sdaps</span><span class="nb">_</span>checkbox:nn
+<span class="k">\let\mytextboxvhstretch\sdaps</span><span class="nb">_</span>textbox<span class="nb">_</span>vhstretch:nnn
+<span class="k">\ExplSyntaxOff</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-df7a1db8108564a499998148db3ba5f658896065.svg" alt="\begin{Form}
+  % The \my* commands are aliases that are defined in the praemble
+
+  % Set the pdf_form option for all boxes (*)
+  \mycontextappend{*}{pdf_form=true}
+
+  % Or for checkboxes and textboxes separately
+  %\mycontextappend{singlechoice}{pdf_form=true}
+  %\mycontextappend{multichoice}{pdf_form=true}
+  %\mycontextappend{textbox}{pdf_form=true}
+
+  \noindent A checkbox: \mycheckbox{}{} \newline
+  \mycontextappend{multichoice}{default=true}
+  A checked checkbox: \mycheckbox{}{} \newline
+  \mycontextappend{multichoice}{default=true,checkboxsymbol=5}
+  A checked checkbox with different symbol: \mycheckbox{}{}
+
+  Please note that the above rendering is slightly broken as the poppler
+  PDF renderer maps the checkboxsymbol incorrectly. Acrobat will show the
+  other symbol.
+
+  \noindent A non stretching textbox:
+  \mytextboxvhstretch{text}{4cm}{0}
+\end{Form}" /></p>
+</div></div><p class="caption">Using PDF forms</p></div></div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sdapslayout.html"
+                        title="previous chapter">sdapslayout package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sdapsarray.html"
+                        title="next chapter">sdapsarray package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/sdapspdf.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="sdapsarray.html" title="sdapsarray package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sdapslayout.html" title="sdapslayout package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sdapspdf package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Benjamin Berg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

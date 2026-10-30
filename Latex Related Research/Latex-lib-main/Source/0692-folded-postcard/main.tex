@@ -1,0 +1,36 @@
+% Multi-Recipient Postcard Mailing — postcards.cls
+%
+% A genuinely different document type from every letter in this batch:
+% a physical 5.5x3.5in postcard (not a folded sheet in an envelope), one
+% per recipient, laid out via the `envlab`/`mailing` packages with a real
+% flush-right to-address block and barcode area. `mailing` reads
+% recipients from a plain-text address file (\addressfile), one postcard
+% page per entry, in the same one-body-many-recipients spirit as this
+% batch's mail-merge-form-letter but for a physically different medium.
+\documentclass{postcards}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+% VERSION-SKEW PATCH: the class's own \RequirePackage[...]{geometry} sets
+% voffset=5in, a 1999-era convention for printing a small postcard onto a
+% larger physical sheet fed through a specific printer driver, where the
+% "page" your content lands on is offset from the sheet's origin. Under a
+% modern PDF pipeline this just shifts the content 5in down within the
+% SAME 3.5in-tall page canvas -- i.e. entirely off it. Every postcard
+% compiled clean (0 errors, 0 warnings beyond routine underfull hboxes)
+% and rendered a completely blank page; caught only by viewing the
+% preview PNG, not the log. Zeroing voffset post-load, everything else
+% unchanged, restores real content to the visible page.
+\geometry{voffset=0in}
+
+\name{Marisol Chen}
+\address{221 Birchgate Lane\\Burlington, VT 05401}
+\signature{Marisol}
+
+\addressfile{addresses.txt}
+\mailingtext{Greetings from the Green Mountains! The foliage is just
+turning --- wish you could see it in person. Hope all is well on your
+end. More news when I'm back next week.}
+
+\begin{document}
+\end{document}

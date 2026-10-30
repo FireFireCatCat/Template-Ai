@@ -1,0 +1,49 @@
+\documentclass[11pt,oneside]{book}
+% 6 x 9 inch paperback geometry: adjust trim and gutter for the selected KDP
+% format before ordering a proof.
+\usepackage[paperwidth=6in,paperheight=9in,top=.82in,bottom=.78in,inner=.9in,outer=.68in,headheight=14pt]{geometry}
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\definecolor{accent}{HTML}{315A72}
+\hypersetup{colorlinks=true,linkcolor=accent,urlcolor=accent}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[LE,RO]{\small\thepage}
+\fancyhead[LO]{\small\itshape Build Notes}
+\fancyhead[RE]{\small\itshape Your Name}
+\renewcommand{\headrulewidth}{0pt}
+\title{Build Notes\\[.4em]\large A Markdown-to-paperback starter}
+\author{Your Name}
+\date{}
+\begin{document}
+\frontmatter
+\maketitle\thispagestyle{empty}
+\cleardoublepage
+\chapter*{How to use this book}
+Write chapters in Markdown, convert them with Pandoc, and keep this file as a known-good LaTeX target. The trim size, inner margin, and running heads here are the values most likely to change between a paperback proof and a final upload.
+\tableofcontents
+\mainmatter
+\chapter{From Markdown to a Page}
+The author starts with a plain text file because plain text is easy to diff, search, and revise. Pandoc can turn headings into chapters, emphasis into typography, and citations into a bibliography while leaving the publishing decisions visible in a small configuration file.
+\section{The source remains portable}
+Use one Markdown file per chapter when collaboration benefits from small changes. A simple build command can join those files in order and pass the result to this geometry. Keep image paths relative to the project, and check their resolution in the final PDF.
+\begin{quote}
+  \raggedright A good conversion preserves the author's attention rather than making the author learn the converter's internals.
+\end{quote}
+\chapter{Proof Before Publication}
+A physical proof reveals trim, gutter, widows, running heads, and image problems that a source diff cannot. Check the opening and closing pages of every chapter, then replace this fictional material with the manuscript and run the same review again.
+\section{A small release checklist}
+\begin{itemize}
+  \item confirm the trim size and binding margin;
+  \item inspect every figure at print resolution;
+  \item verify the table of contents and page count;
+  \item read the PDF metadata and copyright page;
+  \item upload only after a physical proof is acceptable.
+\end{itemize}
+\backmatter
+\chapter*{About the author}
+Replace this placeholder with a short biography and the public links you want readers to use.
+\end{document}

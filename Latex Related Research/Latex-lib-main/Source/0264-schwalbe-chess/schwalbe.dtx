@@ -1,0 +1,2255 @@
+% \iffalse meta-comment
+%%  File 'schwalbe.dtx'
+%%
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version
+%% 1.3c of this license or (at your option) any later version.
+%% The latest version of this license is in:
+%%
+%%    http://www.latex-project.org/lppl.txt
+%%
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 1999/12/01 or later.
+%%
+%%
+% \fi
+% \def\fileversion{v2.13}
+% \def\docdate{2025/01/21}
+% \CheckSum{2273}
+% \changes{v1.1}{03 June 2011}{Reflecting change in command
+% @writename inside diagram.sty}
+% \changes{v1.2}{01 July 2011}{Added parameter for Band to Heft
+% command.}
+% \changes{v1.3}{30 April 2012}{Applied changes due to new
+% commands in diagram.sty 1.6 to suppress display of cities and
+% academic titles.}
+% \changes{v1.4}{04 December 2012}{Split code into a class and a style file.}
+% \changes{v1.5}{11 January 2013}{Added Environment WebSites for reports on chess problem websites.}
+% \changes{v1.5.1}{13 March 2013}{Fixed issue with catcode=active for / in Inhalt.}
+% \changes{v1.5.2}{23 July 2013}{Fixed issue with use of url-package.}
+% \changes{v1.6}{10 January 2015}{Applied changes following diagram style changes for issue '03f/932'.}
+% \changes{v1.6.1}{10 January 2015}{Added RequirePackage for fontenc and inputenc as requested by Thomas Brand.}
+% \changes{v1.6.2}{11 January 2015}{Fixed order of languages to activate german by default.}
+% \changes{v1.6.3}{26 January 2015}{Schwalbe style now forwards pt-size options to diagram.sty. Schwalbe.cls loads schwalbe.sty with 12pt.}
+% \changes{v2.0}{17 February 2015}{issue 03f/61c:om: schwalbe: change usepackage to RequirePackage in class and style definition.\\
+% 03f/072:om: schwalbe: move RequirePackage to class for packages: fontenc, inputenc, babel, picinpar, multicol\\
+% 03f/407:om: schwalbe: Move hyphenation configuration to class\\
+% 03f/5f0:om: schwalbe.cls: add special dia@above handling within InformalEntscheid.\\
+% 03f/4dd:om: Behandlung von / dokumentieren\\
+% 03f/665:om: optionale schwalbe.ext Datei}
+% \changes{v2.1}{22 December 2015}{issue 03f/79e:om: Added redefinition for command x in schwalbe.cls\\
+% Added paralist and afterpage to required packages.}
+% \changes{v2.2}{30 July 2018}{03f/9a9:om: schwalbe.cls: add new command mal for mathmode times.\\
+% 03f/6c8:om: Add *-version of Buch-command.\\
+% Added environment retrolexikon.\\
+% Optional 'schwalbe.ext' file is included directly before picinpar.sty to
+% avoid problems when including further packages inside 'schwalbe.tex'.\\
+% Added Abteilung commands in Urdrucke- und Loesungen-environments.}
+% \changes{v2.3}{18 December 2018}{Added commands Loeser and LoeserListe to collect abbreviations of solvernames in different sections of Loesungen}
+% \changes{v2.4}{21 September 2019}{Changed parameter <monat> in Heft command to be numeric.\\
+% Added command LoesungenBis to calculate the month to send solutions.}
+% \changes{v2.5}{29 September 2019}{Changed Loesungen environment to calculate issue month and year of solutions from
+% values given in Heft command.}
+% \changes{v2.6}{16 October 2019}{Moved do@dia@job redefinition to schwalbe.cls.}
+% \changes{v2.7}{28 December 2019}{Used new begin/end diagram hook command to deactivate/activate solslash before/after diagrams.}
+% \changes{v2.8}{27 December 2020}{Added code to generate file
+% containing Loesung comands while generating diagrams within Urdrucke
+% environment.\\
+% Added Loesung command to generate intro of a single problem within
+% Loesungen environment.}
+% \changes{v2.9}{28 May 2022}{Added code to simplify measuring size of
+% articles.}
+% \changes{v2.10}{02 June 2022}{Added missing dots (.) in commands
+% cpd@Loesung and cpd@Loesung@star.\\
+% Added commands win and loose.\\
+% Volume is provided as arabic number in 'Heft' command now.\\
+% Fixed issue with Ruler as 'AddToHook' command is not available in
+% old \LaTeX{} installations.}
+% \changes{v2.11}{13 June 2022}{Changed to depend on diagram.sty from
+% 13 June 2022.}
+% \changes{v2.12}{19 June 2022}{Moved ruler code to separate style
+% file swruler.sty.\\
+% Added class option 'ruler' to activate displaying the ruler.}
+% \changes{v2.13}{21 January 2025}{Centered author names when diagram
+% number is missing/suppressed.}
+%
+% \DoNotIndex{\@arabic,\def,\@idxitem,\@ifnextchar,\@ifstar,
+% \@ne,\@ptsize,\ ,\advance,\AtEndOfPackage,\begin,\begingroup,
+% \bfseries,\bgroup,\boolean,\box,\char,\chardef,\closeout,
+% \count,\csname,\DeclareOption,\DocInput,\documentclass,
+% \egroup,\else,\end,\endcsname,\endgroup,\endinput,\errmessage,
+% \exhyphenpenalty,\expandafter,\fi,\font,\fonddimen,\gdef,\global,
+% \hangafter,\hangindent,\hbox,\hfill,\hrule,\hsize,\hskip,\hss,\if,
+% \ifcase,\ifdim,\iffalse,\ifmmode,\ifnum,\ifodd,\ifthenelse,
+% \ifvmode,\ifx,\immediate,\index,\input,\itshape,\kern,\label,\let,
+% \llap,\long,\loop,\lower,\mbox,\medskip,\multiply,\newboolean,\newbox,
+% \newcount,\newcounter,\newdimen,\newif,\newindex,\newline,\newtoks,
+% \newwrite,\noexpand,\noindent,\openout,\OptionNotUsed,\or,\p@,\par,
+% \parindent,\parskip,\penalty,\printindex,\ProcessOptions,\ProvidesFile,
+% \ProvidesPackage,\raise,\RecordChanges,\ref,\refstepcounter,\relax,
+% \repeat,\RequirePackage,\rmfamily,\setboolean,\setbox,\setlength,
+% \the,\textwidth,\unhbox,\usepackage,\vbox,\vfil,\vrule,\vskip,
+% \vss,\vtop,\wd,\write,\xdef,\z@,\",\&,\/}
+%
+% \newcommand*{\Schwalbe}{\textbf{\textit{Schwalbe}}}
+% \newcommand*{\DieSchwalbe}{\hbox{\textbf{\textit{Die Schwalbe}}}}
+% 
+% \title{Der \LaTeX-Style für die Problemschach-Zeitschrift
+% \DieSchwalbe{}\\{\large Version~\fileversion}}
+% \author{Stefan Höning\\Neuss}
+% \date{\docdate}
+%
+% \maketitle
+%
+% \begin{abstract}
+% Diese Dokumentation beschreibt die \LaTeX-Class und \LaTeX-Style, die zum
+% Setzen der Zeitschrift \DieSchwalbe{} benutzt wird --- die
+% Mitgliederzeitschrift der deutschen Vereinigung für Problemschach.
+%
+% Die Schwalbe-Class hat die Aufgabe, die Seiteneinstellungen und Umgebungen
+% für die Schwalbe zu definieren.  Der Schwalbe-Style hat die Aufgaben,
+% Layoutanpassungen bzgl.\ des \verb+diagram.sty+ vorzunehmen, mit dem die
+% Problemschach-Diagramme erzeugt werden.
+% \end{abstract}
+%
+%
+% \section{Kommandos und Umgebungen zur Gliederung eines Hefts}
+%
+% \DescribeMacro{\Heft}
+% Jedes Heft wird durch den Befehl
+% \verb+\Heft+ eingeleitet. Der Befehl hat die folgenden vier
+% Parameter in der angegebenen Reihenfolge:
+%
+% \begin{enumerate}
+% \item der Band, zu dem das Heft gehört (als arabische Zahl)\footnote{In den
+% vorherigen Fassungen der schwalbe.cls wurde hier die römische
+% Darstellung der Zahl angegeben.}
+% \item die Nummer des Heftes
+% \item der Monat des Erscheinens als Zahl
+% \item das Jahr des Erscheinens
+% \item die Seitennummer der ersten Seite des Heftes
+% \end{enumerate}
+%
+% Das Dezember Heft 2019, das die fortlaufende Nummer 299 hat und mit
+% der Seitenummmer 361 beginnt wird demzufolge folgendermassen
+% eingeleitet:
+%
+% \verb+\Heft{34}{299}{12}{2019}{361}+
+%
+% \DescribeEnv{Editorial}
+% Die \verb+Editorial+ Umgebung benötigt einen Parameter, der
+% die Überschrift definiert. Als optionaler Parameter kann noch
+% der Eintrag im Inhaltsverzeichnis festgelegt werden. Lässt man
+% diesen weg, erscheint dort der Begriff {\bfseries Editorial}.
+%
+% \DescribeEnv{aktuell}
+% Die \verb+aktuell+ Umgebung für die {\bfseries Aktuellen Meldungen} kommt
+% ohne parameter aus. Neben der Überschrift wird ein Eintrag im
+% Inhaltsverzeichnis erzeugt.
+%
+% \DescribeEnv{InformalEntscheid}
+% Die Preisberichte zu Informalturnieren der
+% \Schwalbe{} werden in die Umgebung \verb+InformalEntscheid+
+% eingebettet. Das einleitende \verb+\begin{InformalEntscheid}+
+% hat dabei 3 Parameter:
+% \begin{enumerate}
+% \item die Abteilung
+% \item das Jahr, auf das sich der Entscheid bezieht
+% \item der Name des Preisrichters
+% \end{enumerate}
+% Die Umgebung setzt automatisch die Überschrift und erzeugt
+% einen Eintrag im Inhaltsverzeichnis.
+%
+% Außerdem wird der Kopf bei Diagrammen anders ausgegeben: In der 1.~Zeile
+% steht die Auszeichnung (linksbündig) und die Aufgabennummer (rechtsbündig) --
+% wenn die Aufgabe aus einem Urdruckteil stammt.  Sonst steht rechtsbündig die
+% Heft-Nr (\verb+\issue+) und die Seitennr. (\verb+\pages+).
+%
+% Angaben wie Quelle, Monat und Jahr werden nicht ausgegeben.
+%
+% \DescribeMacro{normaldiaabove}
+% Bei Vergleichsaufgaben ist dieses geänderte Anzeigeverhalten nicht gewünscht.
+% Auf das normale Verhalten kann mittels \verb+\setboolean{normaldiaabove}{true}+
+% umgeschaltet werden.
+%
+% \DescribeEnv{Aufsatz}
+% \DescribeEnv{Titel}
+% Im Gegensatz zu den meisten anderen Umgebungen erzeugt die
+% \verb+Aufsatz+ Umgebung nur den Eintrag im Inhaltsverzeichnis.
+% Hierzu hat das einleitende \verb+\begin{Aufsatz}+ 2~Parameter:
+% \begin{enumerate}
+% \item den Titel des Aufsatzes
+% \item den Namen des Autors mit Wohnort\newline
+%    dieser wird in der Form \verb+<Name>, <Vorname>/<Wohnort>+
+%    angegeben.
+% \end{enumerate}
+% Um die Überschrift des Aufsatzes zu setzen, gibt es die
+% Umgebung \verb+Titel+. Die wesentliche Aufgabe dieser Umgebung
+% ist es, passende Abstände zum vorherigen sowie zum
+% nachfolgenden Text zu erzeugen.
+%
+% \DescribeEnv{Urdrucke}
+% Die Umgebung \verb+Urdrucke+ benötigt als Parameter die Nummer
+% des ersten Urdrucks.
+%
+% \DescribeMacro{\Abteilung}
+% Innerhalb der Urdrucke gibt es den Befehl \verb+\Abteilung+, mit dem die
+% einzelnen Abteilungen innerhalb der Urdrucke eingeleitet werden.
+% Der Befehl benötigt im 5 Parameter:
+% \begin{enumerate}
+% \item Name der Abteilung
+% \item Name der Referenz der ersten Problem der Abteilung
+% \item Name der Referenz der letzten Problem der Abteilung
+% \item Name und Adresse des Sachbearbeiters --- inklusive notwendiger Zeilenumbrüche
+% \item Emailadresse des Sachbearbeiters
+% \end{enumerate}
+%
+% 
+% \DescribeMacro{\Abteilung*}
+% Sollte in einer Abteilung einma nur ein Urdruck erscheinen, muss man
+% \verb+\Abteilung*+ benutzen und die Referenz auf das letzte Problem
+% weglassen.
+%
+% \DescribeEnv{maerchenlexikon}
+% \DescribeMacro{\maerchenart}
+% Im Vorspann der Märchenschachabteilung der Urdrucke werden die
+% benutzten Märchenschachregeln erläutert. Dies geschieht
+% innerhalb der Umgebung \verb+maechenlexion+. Innerhalb dieser
+% Umgebung werden alle Märchenarten mittels \verb+\maerchenart+
+% eingeführt, die einen Parameter hat, mit dem die Märchenart
+% angegeben wird.
+%
+% \DescribeEnv{retrolexikon}
+% \DescribeMacro{\retroart}
+% Analog zum Märchenlexikon gibt es im Vorspann der Retros im Urdruckteil die
+% Umgebung \verb+retrolexikon+. Einzelne Erklärungen werden mittels
+% \verb+retroart+ erläutert.
+%
+% \DescribeEnv{Loesungen}
+% Von der \verb+Loesungen+ Umgebung, gibt es eine *-Form, die sonst keine weiteren Parameter erwartet.
+% Heftnummer, Monat und Jahr der Lösung werden in diesem Fall automatisch aus
+% den Angaben des aktuellen Hefts ermittelt (3 Hefte bzw. 6 Monate zurück).
+% Ohne * benötigt die Umgebung \verb+Loesungen+ 2  Parameter:
+% \begin{enumerate}
+% \item die Nummer des Hefts mit den Urdrucken
+% \item Monat und Jahr dieses Hefts
+% \end{enumerate}
+%
+% \DescribeMacro{\Abteilung}
+% Innerhalb der Lösungen gibt es auch einen Befehl \verb+\Abteilung+ um die einzelnen Abteilungen einzuleiten.
+% Die Parameter für diesen Befehl lauten:
+% \begin{enumerate}
+% \item{Name der Abteilung}
+% \item{Nummer des ersten Problems der Abteilung}
+% \item{Nummer des letzten Problems der Abteilung}
+% \item{Name des Sachbearbeiters}
+% \end{enumerate}
+%
+% \DescribeMacro{\Abteilung*}
+% Sollte einmal nur eine Aufgabe in der Abteilung vorhanden sein, benutzt man
+% \verb+\Abteilung*+, die die dann nur 3 Parameter erwartet.
+%
+% \DescribeMacro{\Loeser}
+% \DescribeMacro{\Loeser*}
+% Innerhalb der Lösungen werden üblicherweise die Namen der kommentierenden Löser mit Kürzeln angegeben.
+% Am Beginn der Lösungen erscheint ein Liste aller der Name und Kürzel aller kommentierenden Löser.
+% Um die Kürzel und Namen innerhalb der Lösungen aufsammeln zu können, gibt es
+% den Befehl \verb+\Loeser+, der 2 Parameter erwartet:
+% \begin{enumerate}
+% \item{Kürzel des Lösers}
+% \item{Name des Lösers}
+% \end{enumerate}
+% Bei der \verb+\Loeser*+ Form erscheint der Name auch an der Stelle im Text.
+%
+% \DescribeMacro{\ListeLoeserKuerzel}
+% Gibt die aufgesammelten Löserkürzel und -namen aus.
+%
+% \DescribeMacro{\Loesung}
+% \DescribeMacro{\Loesung*}
+% Die Lösungsbesprechung zu einer Aufgabe wird mit dem Befehl
+% \verb+\Loesung+ eingeleitet, der 3 Parameter benötigt:
+% \begin{enumerate}
+% \item{Nummer der Aufgabe}
+% \item{Liste der Autoren}
+% \item{Lösung der Aufgabe}
+% \end{enumerate}
+% Wird die Form ohne * verwendet, wird von der Aufgabe nur
+% die Aufgabennummer und - in runden Klammern - die Liste der Autoren
+% gesetzt. Der Punkt hinter der Klammer entfällt. Der Lösungstext
+% aus dem 3. Parameter kann % dann allerding mittels \verb+\showsol+ 
+% ausgegeben werden.
+% 
+% Bei der *-Form wird ein Punkt hinter die schließende Runde Klammer
+% bei den Autoren gesetzt, und dann die Lösung ausgegeben.
+%
+% Diese \verb+\Loesung+ Kommandos für den Lösungsteil werden beim
+% Kompilieren des Urdruckteils des entsprechenden Hefts automatisch in
+% eine Datei geschrieben. Diese Datei wird den Sachbearbeitern für die
+% Erstellung der Lösungsbesprechungen zur Verfügung gestellt. In der
+% Regel müssen hier dann nur die Lösungen ergänzt werden - wenn diese
+% nicht bereits bei den Urdrucken mit erfasst worden sind.
+% 
+% \DescribeEnv{BuB}
+% Die \verb+BuB+ Umgebung setzt die {\bfseries Bemerkungen und
+% Berichtigungen}
+%
+% \DescribeEnv{turnierberichte}
+% Innerhalb der Umgebung \verb+turnierberichte+ wird über
+% Turniere z.\,B.\ aus anderen Zeitschriften berichtet.
+%
+% \DescribeEnv{Buecher}
+% \DescribeMacro{\Buch}
+% Buchbesprechungen werden innerhalb der Umgebung \verb+Buecher+
+% wiedergegeben. Dabei wird jedes Buch durch den Befehl
+% \verb+\Buch+ begonnen. Im Normalfall sind anschließend 2 Parameter anzugeben,
+% die dann entsprechend in der Text übernommen wird.
+% \begin{enumerate}
+% \item die Autoren des Buches; mehrere Autoren sind durch
+% \verb+;+ voneinander zu trennen. 
+% \item der Titel des Buches
+% \end{enumerate}
+% Wenn man eine besondere Schreibweise für Titel und/oder Autoren verwenden
+% will, muss die \verb+*+-Form des Befehls verwendet werden: \verb+\Buch*+
+% Hier entfallen dann die beider Paramater.
+%
+% \DescribeEnv{WebSites}
+% \DescribeMacro{\WebSite}
+% Besprechungen von Web-Sites werden innerhalb der Umgebung \verb+WebSites+
+% gesetzt. Dabei wird jede einzelne Web-Site durch den Befehl \verb+WebSite+
+% begonnen, bei dem als Parameter die {\bfseries URL} der Web-Site anzugeben
+% ist.
+%
+% \DescribeEnv{Briefkasten}
+% Die Umgebung \verb+Briefkasten+ wird gelegentlich genutzt um
+% Autoren auf Fehler in Ihren eingesandten Aufgaben hinzuweisen.
+%
+% \DescribeEnv{Turnierbericht}
+% Turnierberichte (und -entscheide) zu allgemeinen Turnieren
+% werden in der \verb+Turnierbericht+ Umgebung gesetzt. Das
+% Einleitende \verb+\begin{Turnierbericht}+ besitzt als Parameter
+% den Namen des Turniers und den Namen des Autors in der Form:
+% \verb+<Nachname>, <Vorname>+. Diese beiden Angaben werden
+% automatisch ins Inhaltsverzeichnis übernommen.
+% Der Titel des Turnierberichts ist wie bei Aufsätzen in die
+% Umgebung \verb+Titel+ einzubauen.
+%
+% \DescribeEnv{Entscheid}
+% Die \verb+Entscheid+ Umgebung wird genutzt, um
+% Turnierentscheide zu allgemeinen Turnieren der \Schwalbe{}, oder
+% aber auch Nachträge oder entgültige Entscheide zu setzen.
+% Als Parameter wird an das einleitende \verb+\begin{Entscheid}+
+% der Titel des Entscheids angegeben, der ins Inhaltsverzeichnis
+% übernommen werden soll. Der eigentliche Titel muss --- wie bei
+% verschiedenen anderen Umgebungen auch --- mittels der
+% \verb+Titel+ Umgebung gesetzt werden.
+% 
+%
+% \DescribeEnv{Loeserliste}
+% Nach dem einleitenden \verb+\begin{Loeserliste}+ ist als
+% Parameter das Jahr anzugeben, auf das sich die Löserliste
+% bezieht.
+%
+% \DescribeEnv{Turnierausschreibung}
+%
+% \DescribeEnv{Nachruf}
+%
+% \DescribeEnv{dauerkonto}
+%
+% \DescribeEnv{loesungswettbewerb}
+%
+% \section{Kleine Helferlein}
+%
+% \subsection{Diagrammgrössen}
+% \DescribeMacro{\smalldia}
+% \DescribeMacro{\normaldia}
+% In der \Schwalbe{} werden normalerweise zwei verschiedene
+% Diagrammgrössen verwendet. Mittels \verb+\normaldia+ wird die
+% Normalgrösse eingestellt. Mittels \verb+\smalldia+ kann auf
+% kleinere Diagramme umgeschaltet werden --- von denen dann 4
+% Stück in eine Zeile passen. Da die kleineren Diagramme
+% normalerweise zu mehreren benutzt werden, kann dieser
+% Befehl natürlich auch als Umgebung benutzt werden.
+%
+% \subsection{Häufige Abkürzungen}
+% \DescribeMacro{\dh}
+% \DescribeMacro{\ua}
+% \DescribeMacro{\zB}
+% \DescribeMacro{\su}
+% \DescribeMacro{\ep}
+% \DescribeMacro{\seedia}
+% \LaTeX\ intepretiert einen Punkt nach einem Kleinbuchstaben
+% normalerweise als Satzende. Als Folge davon ist der Abstand
+% hinter diesem Punkt grösser als der normale Wortabstand.
+% Insbesondere bei Abkürzungen ist dies aber nicht
+% gewünscht. Besonders bei mehrgliedrigen Abkürzungen sollte
+% man sogar einen kleineren Abstand als den normalen Wortabstand
+% zwischen den Gliedern der Abkürzung wählen. Daher definiert
+% der Style Befehle für einige Häufig vorkommende Abkürzungen:
+%
+% \DescribeMacro{\win}
+% \DescribeMacro{\loose}
+% Für die Notation von Studienlösungen gibt es die Befehle \verb+\win+
+% und \verb+\loose+.
+%
+% \medskip
+% \begin{tabular}{|l|l|l|}
+% \hline
+% {\bfseries Befehl}&{\bfseries für}&{\bfseries Bemerkungen}\\
+% \hline
+% \verb+\dh+&d.\,h.&enthält ein Leerzeichen am Ende\\
+% \verb+\ua+&u.\,a.&enthält ein Leerzeichen am Ende\\
+% \verb+\zB+&z.\,B.&\\
+% \verb+\su+&s.\,u.&\\
+% \verb+\ep+&e.\,p.&\\
+% \verb+\seedia+&s.\,Diagr.&\\
+% \hline
+% \end{tabular}
+%
+% \subsection{Der Schrägstrich /}
+% Innerhalb von Lösungen werden unterschiedliche mögliche Züge häufig durch /
+% voneinander getrennt.  Ohne Hilfe können diese Zeilen von \LaTeX{} nicht
+% getrennt werden.  Ein Zwischenraum ist an diesen Stellen aber auch nicht
+% gewünscht. Daher wird der / zum Befehl gemacht, der
+% \begin{enumerate}
+% \item einen Umbruch hinter dem / erlaubt und
+% \item einen dehnbaren Abstand vor und hinter dem / einfügt, so dass beim
+% Umbrechen einer zu kurzen Zeile kleine Abstände vor und hinter den
+% Schrägstrichen auf einer Zeile verteilt werden
+% \end{enumerate}
+% \DescribeMacro{\bsol}
+% \DescribeMacro{\esol}
+% Dieses Verhalten wird automatisch am Anfang des Hefts eingeschaltet. Soll
+% dies einmal abgestellt werden, so kann dies mit \verb+\esol+ geschehen. Man
+% sollte das aber anschließend mit \verb+\bsol+ wieder aktivieren.
+%
+% \subsection{Ergänzungen}
+% Die \verb+schwalbe.cls+ erfährt immer wieder kleine Änderungen, meist in Form
+% von Ergänzungen, die dann nach einer Weile in eine neue Version einfließen.
+% Um zu vermeiden, diese Ergänzungen immer in eine Version einzubauen, die nur
+% lokal vorhanden ist, wird innerhalb der \verb+schwalbe.cls+ eine Datei
+% \verb+schwalbe.ext+ eingelesen, falls diese vorhanden ist. In dieser Datei,
+% die nicht mit ausgeliefert wird, werden dann die Ergänzungen bis zur nächsten
+% Veröffentlichung einer neuen Version der \verb+schwalbe.cls+ gesammelt.
+%
+% \subsection{Verschiedenes}
+% \DescribeMacro{\figline}
+% Mittels \verb+\figline+ kann eine Zeile mit Königen ausgegeben
+% werden, die als Trenner zwischen 2 Abschnitten dient.
+% \DescribeMacro{\foto}
+% Um Freiraum für ein Foto zu lassen kann der Befehl\newline
+% \verb+\foto{<Breite>}{<Hoehe>}{<Bildunterschrift>}+\newline
+% benutzt werden.
+%
+% \DescribeMacro{\x}
+% Der \textit{diagram-style} definiert das Makro \verb+\x+, das in der Notation
+% von Lösungen benutzt werden kann um das Symbol $\times$ für Schlagfälle zu
+% erzeugen. In \textit{feenschach} wird dies auch benutzt, in der Schwalbe
+% notieren wir einen Schlagfall mittels eines Doppelpunkt. Daher wird der
+% Befehl für die Schwalbe umdefiniert.
+% \DescribeMacro{\mal}
+% Als Kurzschreibweise für das $\times$ Symbol ist der Befehl \verb+\mal+ definiert.
+%
+% \DescribeMacro{\ShowRuler}
+% Um den Umfang der einzelnen Artikel einfacher Abschätzen zu können,
+% kann man mittels \verb+\ShowRuler+ ein Lineal auf jeder Seite
+% anzeigen lassen.
+% Der Befehl erwartet als Parameter den \textbf{x}- und
+% \textbf{y}-Abstand zum Seitenursprung. Die Angaben müssen als
+% vielfaches von \textbf{1pt} angegeben werden.
+%
+% In der \textbf{schwalbe-class} kann das Lineal durch die Option
+% \textbf{ruler} aktiviert werden:
+%
+% \begin{verbatim}
+% \documentclass[ruler]{schwalbe}
+% \end{verbatim}
+%
+% Mit aktivierter \textbf{ruler}-Option kann das Anzeigen des Lineals
+% durch Anlegen einer Datei \verb+__finalpdf__.tex+ deaktiviert
+% werden. Das habe ich in dem Prozess, der die Schwalbe-Hefte baut,
+% automatisiert.
+%
+% Der Code zur Erzeugung des Lineals ist eine eigene Style-Datei
+% \verb+swruler.sty+ ausgelagert, so dass man das Lineal ohne
+% \textbf{schwalbe-class} verwenden kann.
+%
+% \DescribeEnv{MeasureMode}
+% \DescribeMacro{\MeasureNewpage}
+% Außerdem füge ich vor jedem Artikel den Befehl
+% \verb+\MeasureNewpage+ ein, der ein \verb+\newpage+ durchführt, wenn
+% der Boolean \verb+MeasureMode+ gleich \verb+true+ ist.
+%
+% \StopEventually{\PrintIndex\PrintChanges}
+%
+% \section{Die Treiberdatei für die Dokumentation}
+% Der folgende Code erzeugt die Dokumentation. Da dies der erste
+% nicht auskommentierte Code in der Datei ist, kann die
+% Dokumentation einfach erzeugt werden, indem man diese Datei mit
+% \LaTeXe\ übersetzt.
+%    \begin{macrocode}
+%<*driver>
+\documentclass[a4paper]{article}
+\usepackage{doc}
+% \LoadClass{schwalbe}
+\RequirePackage[utf8]{inputenc}% fsRUS 140121
+\RequirePackage[ngerman]{babel}
+\setlength{\hoffset}{-1in}
+\setlength{\voffset}{-1in}
+\setlength{\textwidth}{10cm}
+\setlength{\oddsidemargin}{65mm}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+\DocInput{schwalbe.dtx}
+\end{document}
+%</driver>
+%    \end{macrocode}
+%
+% \section{Die Implementierung der \Schwalbe{}-Class}
+%
+% Die \verb+schwalbe+-Class beruht auf der \verb+article+-Class und verwendet logischerweise die Einstellungen des
+% \verb+schwalbe.sty+.
+%    \begin{macrocode}
+%<*class>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{schwalbe}[2025/01/21]
+\DeclareOption{ruler}{%
+    \AtBeginDocument{\IfFileExists{__finalpdf__.tex}{}{%
+        \ShowRuler{32mm / 1pt}{-44mm / 1pt}}}
+}%
+\ProcessOptions\relax%
+\LoadClass[11pt,a4paper]{article}
+\RequirePackage[12pt]{schwalbe}[2025/01/21]
+\RequirePackage{swruler}[2022/06/19]
+\RequirePackage{cpdparse}[2020/12/27]
+\RequirePackage[T2A,T1]{fontenc}% fsRUS 140121
+\RequirePackage[koi8-r,utf8]{inputenc}% fsRUS 140121
+\RequirePackage[russian,german,english,ngerman]{babel}
+\RequirePackage{eurosym}
+\RequirePackage{ifthen}
+\RequirePackage{times}
+\RequirePackage{multicol}
+\RequirePackage{url}
+\RequirePackage{paralist}
+\RequirePackage{afterpage}
+\InputIfFileExists{schwalbe.ext}{}{}%
+%    \end{macrocode}
+%
+% Ein paar Trennhilfen und Einstellungen zum Trennverhalten.
+%    \begin{macrocode}
+\hyphenation{Patt-idee Da-men-op-fer nicht-ortho-doxe Grim-shaw Rein-form}
+
+
+\advance\exhyphenpenalty by -10
+\tolerance2000\relax
+\emergencystretch15\p@
+%    \end{macrocode}
+%
+% Für URLs etc. benutzen wir als Font Inconsolata
+%    \begin{macrocode}
+\renewcommand*{\ttdefault}{zi4}%
+\def\zifour@spc{\hyphenchar\font=\m@ne}
+%    \end{macrocode}
+%
+% Innerhalb der \Schwalbe{} haben wir ein spezielles Seitenlayout.
+%    \begin{macrocode}
+\hoffset-1in
+\voffset-1in
+\textheight26cm
+\textwidth157mm
+\oddsidemargin22.5mm
+\topmargin19mm
+\headheight0cm
+\headsep0cm
+% \footheight14pt
+\footskip10mm
+\parindent0mm
+\parskip1ex plus 1ex minus .5ex
+\def\@oddhead{}
+\def\@oddfoot{%
+   \ifodd\c@page%
+      \hbox to \textwidth{\hfill\thepage}%
+   \else%
+      \hbox to \textwidth{\thepage\hfill}%
+   \fi%
+}
+%-----------------------------------------------------------
+% Ein paar Abkürzungen:
+%
+\def\dh{d.\,h.\ \ignorespaces}
+\def\ua{u.\,a.\ \ignorespaces}
+\def\zB{z.\,B.\ignorespaces}
+\def\su{s.\,u.\ignorespaces}
+\def\ep{e.\,p.\ignorespaces}
+\def\win{$\pm$}
+\def\loose{$\mp$}
+\def\seedia{s.\,Diagr.}
+%
+%-----------------------------------------------------------
+%
+% Schmuckzeilen
+%
+\def\figline{%
+\centerline{%
+\wK \wK \wK \wK \wK \wK \wK \wK \wK \wK \wK \wK \wK %
+\wK \wK \wK \wK \wK \wK \wK \wK \wK \wK \wK \wK \wK %
+\wK \wK \wK \wK \wK \wK \wK \wK \wK \wK \wK \wK \wK %
+}}
+%
+%-----------------------------------------------------------
+% Freiraum für Fotos
+\def\foto#1#2#3{%
+  \begin{minipage}[t]{#1}
+  \hbox to #1{\hsize#1%
+    \vtop to #2{%
+      \noindent\hbox{}\vfill\hbox{}%
+    }%
+  }%
+  \par%
+  #3%
+  \end{minipage}
+}%
+%    \end{macrocode}
+%
+% Wir wollen Fussnoten noch lesbar haben. Daher uebernehmen wir
+% die \verb+\footnotesize+ definition wie bei 12pt.
+%    \begin{macrocode}
+\renewcommand\footnotesize{%
+   \@setfontsize\footnotesize\@xpt\@xiipt
+   \abovedisplayskip 10\p@ \@plus2\p@ \@minus5\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 6\p@ \@plus2\p@ \@minus2\p@
+               \parsep 3\p@ \@plus2\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip
+}
+%    \end{macrocode}
+%
+% Im Titel sowie bei den Urdrucken und Lösungen werden die Namen der Monate benötigt.
+%
+%    \begin{macrocode}
+\newcommand{\sw@monat}[1]{%
+\ifcase#1\relax%
+\or Januar\or Februar\or März\or April\or Mai\or Juni\or Juli\or August\or September\or Oktober\or November\or Dezember\fi%
+}%
+%    \end{macrocode}
+%
+% Der Befehl \verb+\Heft+ leitet jedes Heft ein. Damit werden
+% Band, Heftnummer, Monat, Jahr und erste Seitennummer des Heftes 
+% spezifiziert.
+%    \begin{macrocode}
+\newcounter{sw@volume}%
+\newcounter{sw@issue}%
+\newcounter{sw@month}%
+\newcounter{sw@year}%
+\newcommand{\Heft}[5]{%
+   \def\heft@band{#1}%
+   \setcounter{sw@volume}{#1}%
+   \setcounter{sw@issue}{#2}%
+   \setcounter{sw@month}{#3}%
+   \setcounter{sw@year}{#4}%
+   \setcounter{page}{#5}%
+   \hbox to \textwidth{\vbox to 60mm{\vfill}\hfill}%
+   \hbox to \textwidth{%
+      {\large\bfseries%
+      HEFT~#2%
+      \hfill%
+      BAND \Roman{sw@volume}%
+      \hfill%
+      \sw@monat{\value{sw@month}}~#4%
+      }%
+   }%
+   \vskip2mm%
+   \hrule width \textwidth height 1\p@%
+   %\input{intro}%
+   \vskip5mm%
+   \newcommand{\SchwalbeCopyright}%
+   {\textcopyright{} #4 Schwalbe, deutsche Vereinigung für Problemschach e.\,V.}%
+}
+%    \end{macrocode}
+%
+% Eine Umgebung für ein Editorial. Als optionaler Parameter kann die
+% Überschrift im Text angegeben werden. Der andere Parameter wird für den
+% Eintrag im Inhaltsverzeichnis benutzt.
+%    \begin{macrocode}
+\newenvironment{Editorial}[2][Editorial]{%
+   \ttitel@skip%
+   \centerline{\Large\bfseries #1}%
+   \titel@skip%
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   \begingroup%
+      \def\@tempa{#2}%
+      \def\@tempb{\editorial}%
+      \edef\@tempc{%
+         \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+               {\@nearverbatim\@tempa}%
+               {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+            }%
+         }%
+      }%
+   \expandafter\endgroup\@tempc%
+}{}
+%    \end{macrocode}
+%
+% Eine Umgebung für {\itshape AKTUELLE MELDUNGEN}, die die Überschrift und
+% den Eintrags ins Inhaltsverzeichnis erzeugt.
+%    \begin{macrocode}
+\newenvironment{aktuell}{%
+   \ttitel@skip%
+   \centerline{\Large\itshape AKTUELLE MELDUNGEN}
+   \titel@skip%
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   % Eintrag im Inhaltsverzeichnis
+    \bgroup%
+      \def\@tempb{\aktuell}%
+        \edef\@tempa{
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+            {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+        }%
+    \expandafter\egroup\@tempa%
+}{}
+%    \end{macrocode}
+%
+% Für Informalturniere der \Schwalbe{} gibt es eine besondere Umgebung, die die 3
+% Parameter {\itshape Abteilung}, {\itshape Jahr} und {\itshape Preisrichter}
+% benötigt.  Die normale Form der Umgebung erzeugt auch die Überschrift.
+% Falls dies unterdrückt werden mu"s -- um z.\,B. die Überschrift speziell zu
+% formatieren, kann die {\bfseries Stern-Form} der Umgebung genutzt werden.
+% Daher findet die Auswertung der Parameter in den Kommandos
+% \verb+\x@InformalEntscheid+ und \verb+\y@InformalEntscheid+ statt.
+%
+% Außerdem wird innerhalb von der Umgebung ein etwas anderes Diagramm-Layout
+% eingestellt, bei dem in der 1. Zeile die Auszeichnung (\verb+\award+) und die
+% Aufgabennummer (\verb+\sourcenr+) angezeigt werden.
+%
+% Informationen wie die Quelle werden hier unterdrückt.
+%
+%    \begin{macrocode}
+\newcommand{\@dia@award@InformalEntscheid}{%
+    \above@newline%
+    \bgroup%
+    \authorfont\the\award@tk\hfill%
+    \if@sourcenr\relax%
+        \the\sourcenr@tk%
+    \else\if@issue%
+        Heft~\the\issue@tk%
+        \if@pages%
+            , S.~\the\pages@tk%
+        \fi%
+    \else%
+        \ifthenelse{\boolean{@cpd@numbering@local}}{}{%
+           \thediag%
+        }%
+    \fi\fi%
+    \egroup%
+}
+\newcommand{\@dia@authors@InformalEntscheid}{%
+   \ifauth@r%
+      \ifnormal@names%
+         \def\@dianame{\@normalname}%
+      \fi%
+      \@firstfalse%
+      \let\@action=\@dia@writename% Parse the list of authors
+      \@parseTokenlist\aut@tk;%
+   \fi%
+}
+\newboolean{normaldiaabove}
+\setboolean{normaldiaabove}{true}
+\newcommand{\dia@above@InformalEntscheid}{%
+    \ifthenelse{\boolean{normaldiaabove}}{%
+        \orig@dia@above%
+    }{%
+        \setboolean{above@newline}{false}%
+        \@dia@award@InformalEntscheid%
+        \@dia@authors@InformalEntscheid%
+        \@dia@after%
+        \@dia@version%
+        \@dia@correction%
+        \@dia@dedic%
+        \@dia@fidealbum%
+    }%
+}
+\newenvironment{InformalEntscheid}{%
+    \@ifstar{\x@InformalEntscheid}{\y@InformalEntscheid}%
+}{}
+\newcommand{\x@InformalEntscheid}[3]{%
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   % Weitere Einstellungen
+   \let\orig@dia@above=\dia@above%
+   \let\dia@above=\dia@above@InformalEntscheid%
+   \setboolean{normaldiaabove}{false}%
+   % Erzeuge den Eintrag für das Inhaltsverzeichnis
+   \bgroup%
+      \def\@tempb{\InformalEntscheid}%
+      \def\@tempc{#1}%
+      \def\@tempd{#2}%
+      \def\@tempe{#3}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                    {\@nearverbatim\@tempd}%
+                    {\@nearverbatim\@tempe}%
+          {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+}
+\newcommand{\y@InformalEntscheid}[3]{%
+   \ttitel@skip%
+   \vbox{%
+      \centerline{\Large\bfseries Entscheid im Informalturnier #2 der Schwalbe}%
+      \centerline{\bfseries Abteilung: #1\hskip1cm Preisrichter: #3}%
+   }%
+   \titel@skip%
+   \x@InformalEntscheid{#1}{#2}{#3}%
+}
+%    \end{macrocode}
+%
+% Die Umgebung für Aufsätze. Die Parameter ({\itshape Titel} und {\itshape
+% Autoren (mit Wohnorten)}) werden für das Inhaltsverzeichnis verwendet.
+%    \begin{macrocode}
+\newenvironment{Aufsatz}[2]{%
+   \diagnum{1}%
+   \stepcounter{@inhalt}%
+   \let\titel@ext\inhalt@label\relax%
+   \setcounter{footnote}{0}%
+   \begingroup%
+      \def\@tempa{#1}%
+      \def\@tempc{\aufsatz}%
+      \def\@tempb{#2}%
+      \edef\@tempd{%
+         \write\sw@contents{%
+            \@nearverbatim\@tempc{%
+               {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+               {\@nearverbatim\@tempa}%
+               {\@nearverbatim\@tempb}%
+            }%
+         }%
+      }%
+   \expandafter\endgroup\@tempd%
+}{}
+%    \end{macrocode}
+%
+% Das Kommando \verb+\LoesungenBis+ gibt den Monat (und ggfs. das Jahr) aus, bis zu dem Lösungen einzusenden sind.
+%
+%    \begin{macrocode}
+\newcounter{sw@loesungen@bis@monat}
+\newcounter{sw@loesungen@bis@jahr}
+%
+\newcommand{\LoesungenBis}{%
+   \setcounter{sw@loesungen@bis@monat}{\value{sw@month}}%
+   \setcounter{sw@loesungen@bis@jahr}{\value{sw@year}}%
+   \addtocounter{sw@loesungen@bis@monat}{3}%
+   \ifthenelse{\value{sw@loesungen@bis@monat} > 12}%
+      {%
+         \addtocounter{sw@loesungen@bis@monat}{-12}%
+         \addtocounter{sw@loesungen@bis@jahr}{1}%
+         \sw@monat{\value{sw@loesungen@bis@monat}}\ \arabic{sw@loesungen@bis@jahr}%
+      }%
+      {%
+         \sw@monat{\value{sw@loesungen@bis@monat}}%
+      }%
+}%
+%    \end{macrocode}
+%
+% Innerhalb der Umgebung \verb+Urdrucke+ werden
+% die Diagramme immer zu dritt nebeneinander gesetzt -
+% sofern dies passt. Außerdem werden von jedem Diagramm
+% die Autoren sowie Diagramm und Seitennummern in die 
+% Datei \jobname.inhalt geschrieben.
+% Zur Einleitung der einzelnen Abteilungen gibt es einen speziellen Befehl
+% \verb+\Abteilung+.
+%
+%    \begin{macrocode}
+\newwrite\@swfile@lsghead
+\newcommand{\sw@openlsghead}{%
+    \immediate\openout\@swfile@lsghead=\jobname.lsgh\relax%
+}
+\newcommand{\sw@closelsghead}{%
+    \immediate\closeout\@swfile@lsghead%
+}
+
+\AtBeginDocument{\sw@openlsghead}
+\AtEndDocument{\sw@closelsghead}
+
+\newcommand{\sw@write@abteilung}[2]{%
+    \esol%
+    \bgroup%
+    \edef\@tempd{#1}%
+    \edef\@tempe{#2}%
+    \edef\@tempa{%
+        \immediate\write\@swfile@lsghead{%
+            \@nearverbatim\@tempd|%
+            \@nearverbatim\@tempe%
+        }%
+    }%
+    \expandafter\egroup\@tempa%
+    \bsol%
+}
+\newcommand{\sw@urd@abteilung}{%
+    \@ifstar%
+        \@sw@urd@abteilung@one%
+        \@sw@urd@abteilung%
+}
+\newcommand{\@sw@urd@abteilung@one}[4]{%
+    \textbf{#1 (\ref{#2}): %
+    Bearbeiter = #3%
+    \url{#4}}
+    \sw@write@abteilung{*}{#2}%
+}
+\newcommand{\@sw@urd@abteilung}[5]{%
+    \textbf{#1 (\ref{#2}-\ref{#3}): %
+    Bearbeiter = #4%
+    \url{#5}}
+    \sw@write@abteilung{#2}{#3}%
+}
+\newenvironment{Urdrucke}[1]{%
+    \setboolean{showcity}{true}%
+    \nocomputer%
+    \diagnumbering{arabic}%
+    \diagnum{#1}%
+    \@urdrucktrue%
+    \def\do@dia@job{%    
+        % Gebe das Diagramm aus
+        \unhbox\dia@box%
+        % Erzeuge die Einträge für das Inhaltsverzeichnis
+        \sw@problem%
+    }%
+    \ttitel@skip%
+    \centerline{\Large\bfseries Urdrucke}%
+    \titel@skip%
+    \stepcounter{@inhalt}%
+    \inhalt@label\relax%
+    \let\Abteilung=\sw@urd@abteilung%
+    % Eintrag im Inhaltsverzeichnis
+    \bgroup%
+       \def\@tempb{\Urdrucke}%
+     \edef\@tempa{
+       \write\sw@contents{%
+             \@nearverbatim\@tempb{%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+         }%
+       }%
+     }%
+    \expandafter\egroup\@tempa%
+}{}
+%    \end{macrocode}
+%
+% Von der Umbgebung für Lösungen gibt es 2 Varianten:
+% \begin{itemize}
+% \item gefolgt von einem Stern werden Heft, Monat und Jahr automatisch gesetzt.
+% \item ohne Stern werden 2 Parameter benötigt:
+% \end{itemize}
+%
+% \begin{enumerate}
+% \item die Nummer des Heftes mit den Urdrucken
+% \item Monat und Jahr
+% \end{enumerate}
+% Innerhalb der Umgebung gibt es einen speziellen Befehl, um die 
+% Abteilungen einzuleiten.
+%    \begin{macrocode}
+\newcommand{\sw@lsg@abteilung}{%
+    \@ifstar%
+        \@sw@lsg@abteilung@one%
+        \@sw@lsg@abteilung%
+}
+\newcommand{\@sw@lsg@abteilung@one}[3]{%
+    \textbf{#1 Nr. #2} (Bearbeiter = #3)%
+}
+\newcommand{\@sw@lsg@abteilung}[4]{%
+    \textbf{#1 Nr. #2-#3} (Bearbeiter = #4)%
+}
+\newcommand{\sw@loesungen}[2]{%
+   \begingroup%
+   \ttitel@skip%
+   \centerline{\Large\bfseries Lösungen der Urdrucke aus Heft #1, #2}%
+   \titel@skip%
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   \let\Abteilung=\sw@lsg@abteilung%
+   \let\Loeser=\cpd@save@Loeser%
+   % Eintrag im Inhaltsverzeichnis
+    \bgroup%
+      \def\@tempb{\Loesungen}%
+      \def\@tempc{#1}%
+      \def\@tempd{#2}%
+        \edef\@tempa{
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@tempc}%
+                    {\@tempd}%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+        }%
+    \expandafter\egroup\@tempa%
+   \parskip.5ex plus 2ex%
+   \catcode`/=\active%
+}
+\newcounter{sw@loesungen@aus@heft}
+\newcounter{sw@loesungen@aus@monat}
+\newcounter{sw@loesungen@aus@jahr}
+\newcommand{\sw@loesungen@star}{%
+   \setcounter{sw@loesungen@aus@heft}{\value{sw@issue}}%
+   \addtocounter{sw@loesungen@aus@heft}{-3}%
+   \setcounter{sw@loesungen@aus@jahr}{\value{sw@year}}%
+   \setcounter{sw@loesungen@aus@monat}{\value{sw@month}}%
+   \addtocounter{sw@loesungen@aus@monat}{-6}%
+   \ifthenelse{\value{sw@loesungen@aus@monat} < 1}%
+   {%
+      \addtocounter{sw@loesungen@aus@monat}{12}%
+      \addtocounter{sw@loesungen@aus@jahr}{-1}%
+   }{}%
+   \sw@loesungen{\arabic{sw@loesungen@aus@heft}}{\sw@monat{\value{sw@loesungen@aus@monat}} \arabic{sw@loesungen@aus@jahr}}%
+}
+
+\newenvironment{Loesungen}{%
+   \@ifstar{\sw@loesungen@star}{\sw@loesungen}%
+}{%
+   \catcode`/=12%
+    \endgroup%
+}
+%    \end{macrocode}
+%
+% Innerhalb der einzelnen Abteilungen in den Lösungen werden die Namen
+% und Kürzel der Löser aufgesammelt, damit die Liste der Löserkürzel
+% am Beginn der Lösungsbesprechungen angegeben werden kann.
+%
+%    \begin{macrocode}
+\newwrite\@cpdfile@loeserkuerzel
+\AtBeginDocument{\immediate\openout\@cpdfile@loeserkuerzel=\jobname.ll}
+\AtEndDocument{\immediate\closeout\@cpdfile@loeserkuerzel}
+
+\newcommand{\x@cpd@saveloeser}[2]{%
+   \immediate\write\@cpdfile@loeserkuerzel{\unexpanded{#1:#2}}%
+}
+\newcommand{\y@cpd@saveloeser}[2]{%
+   \x@cpd@saveloeser{#1}{#2}%
+   {#2}%
+}
+\newcommand{\cpd@save@Loeser}{%
+   \@ifstar{\y@cpd@saveloeser}{\x@cpd@saveloeser}%
+}
+
+\newboolean{@cpd@first@loeser}
+
+\newcommand{\cpd@display@loeser}[2]{%
+    \ifthenelse{\boolean{@cpd@first@loeser}}{\setboolean{@cpd@first@loeser}{false}}{, }%
+    #2 (#1)%
+}
+
+\newcommand{\ListeLoeserKuerzel}{%
+    \bgroup%
+    \setboolean{@cpd@first@loeser}{true}%
+    \let\Loeser=\cpd@display@loeser%
+    \InputIfFileExists{\jobname.llx}{}{}%
+    \egroup%
+}
+%    \end{macrocode}
+%
+% Einzelne Lösungen innerhalb der Lösungsbesprechung sollen mit dem
+% Befehl \verb+\Loesung+ eingeleitet werden.
+%
+%    \begin{macrocode}
+\newcounter{sw@loesung@author@count}
+\newcounter{sw@loesung@author@index}
+\def\sw@count@authors#1; {%
+    \stepcounter{sw@loesung@author@count}%
+    \cpd@parse@list%
+}
+\def\sw@display@author#1, #2; {%
+    \stepcounter{sw@loesung@author@index}%
+    \ifthenelse{\value{sw@loesung@author@index}=1}{%
+        % No separator before 1st author
+    }{%
+        \ifthenelse{\value{sw@loesung@author@index}=\value{sw@loesung@author@count}}{%
+            \ \& %
+        }{%
+            , %
+        }%
+    }%
+    #2 #1%
+    \cpd@parse@list%
+}
+\newcommand{\sw@loesung@authors}[1]{%
+\setcounter{sw@loesung@author@count}{0}%
+\let\cpd@parse@action=\sw@count@authors%
+\cpd@parse@list#1; \relax%
+\setcounter{sw@loesung@author@index}{0}%
+\let\cpd@parse@action=\sw@display@author%
+(\cpd@parse@list#1; \relax)%
+}
+\newcommand{\showsol}{}
+\newcommand{\cpd@Loesung}[3]{%
+    \textbf{#1}\ \sw@loesung@authors{#2}.\ %
+    \renewcommand{\showsol}{#3}%
+}
+\newcommand{\cpd@Loesung@star}[3]{%
+    \textbf{#1}\ \sw@loesung@authors{#2}.\ #3.%
+    \renewcommand{\showsol}{}%
+}
+\newcommand{\Loesung}{%
+    \@ifstar{\cpd@Loesung@star}{\cpd@Loesung}%
+}
+
+%    \end{macrocode}
+%
+%
+% Eine Umbegung für die Löserliste.
+%    \begin{macrocode}
+\newenvironment{Loeserliste}[1]{%
+   \ttitel@skip%
+   \centerline{\Large\bfseries Löserliste #1}%
+   \titel@skip%
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   % Eintrag im Inhaltsverzeichnis
+   \bgroup%
+       \def\@tempb{\Loeserliste}%
+     \edef\@tempa{
+       \write\sw@contents{%
+             \@nearverbatim\@tempb{%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+         }%
+       }%
+     }%
+   \expandafter\egroup\@tempa%
+}{}
+%    \end{macrocode}
+%
+% Eine Zwischenüberschrift für {\itshape Sonderpunkte \& Dauerkonto}.
+%    \begin{macrocode}
+\newcommand{\dauerkonto}[1]{%
+   \ttitel@skip%
+   \centerline{\large\bfseries Löserliste: Sonderpunkte \& Dauerkonto #1}%
+   \titel@skip%
+}
+%    \end{macrocode}
+%
+% Eine Zwischenüberschrift für den Preisbericht zum Lösungswettbewerb.
+%    \begin{macrocode}
+\newcommand{\loesungswettbewerb}[1]{
+   \ttitel@skip%
+   \centerline{\Large\bfseries Preisbericht zum Lösungswettbewerb #1}%
+   \titel@skip%
+}
+%    \end{macrocode}
+%
+% Die Umgebung für {\bfseries Bemerkungen und Berichtigungen} erzeugt die
+% Überschrift und den Eintrag ins Inhaltsverzeichnis.
+%    \begin{macrocode}
+\newenvironment{BuB}{%
+   \ttitel@skip%
+   \centerline{\Large\bfseries Bemerkungen und Berichtigungen}%
+   \titel@skip%
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   \bsol%
+   % Eintrag im Inhaltsverzeichnis
+    \bgroup%
+      \def\@tempb{\bub}%
+        \edef\@tempa{
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+        }%
+    \expandafter\egroup\@tempa%
+}{\esol}
+%
+\newcommand{\Briefkasten}{%
+   \titel@skip%
+   {\large\bfseries Briefkasten}%
+   \hskip1em%
+}
+%    \end{macrocode}
+%
+% Die folgenden werden benutzt um Titel zu setzen und ggfs\@. entsprechende
+% \verb+\label+ zu registrieren.
+%    \begin{macrocode}
+\let\titel@ext\relax
+\newcounter{@inhalt}
+\setcounter{@inhalt}{0}
+\def\the@inhalt{\@arabic\c@@inhalt}
+\def\inhalt@label{\label{inhalt\@nameuse{the@inhalt}}}
+\def\Titel{\ttitel@skip\centering\addtolength{\baselineskip}{4pt}}
+\def\endTitel{\titel@skip\titel@ext}
+\def\Untertitel{\subtitel@skip\centering}
+\def\endUntertitel{\subtitel@subskip}
+%    \end{macrocode}
+%
+% Eine Umgebung für Berichte ohne automatisch erstellte Überschrift.
+% Der übergebene Wert wird in das Inhaltsverzeichnis übernommen.
+%    \begin{macrocode}
+\newenvironment{Bericht}[1]{%
+   % Erzeuge den Eintrag für das Inhaltsverzeichnis
+   \stepcounter{@inhalt}%
+   \let\titel@ext\inhalt@label\relax%
+   \bgroup%
+      \def\@tempb{\Bericht}%
+      \def\@tempc{#1}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                    {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+}{}
+%    \end{macrocode}
+%
+% Eine Umgebung für Grüsse ohne automatisch erstellte Überschrift.
+% Der übergebene Wert wird in das Inhaltsverzeichnis übernommen.
+%    \begin{macrocode}
+\newenvironment{Gruss}[1]{%
+   % Eintrag im Inhaltsverzeichnis
+   \stepcounter{@inhalt}%
+   \let\titel@ext\inhalt@label\relax%
+    \bgroup%
+      \def\@tempb{\Bericht}%
+      \def\@tempc{#1}%
+        \edef\@tempa{
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                    {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+        }%
+    \expandafter\egroup\@tempa%
+}{}
+%    \end{macrocode}
+%
+% Eine Umgebung für Tagungsberichte ohne automatisch erstellte Überschrift.
+% Der übergebene Wert wird in das Inhaltsverzeichnis übernommen.
+%    \begin{macrocode}
+\newenvironment{Tagung}[1]{%
+   % Eintrag im Inhaltsverzeichnis
+   \stepcounter{@inhalt}%
+   \let\titel@ext\inhalt@label\relax%
+    \bgroup%
+      \def\@tempb{\Bericht}%
+      \def\@tempc{#1}%
+        \edef\@tempa{
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+          {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+        }%
+    \expandafter\egroup\@tempa%
+}{}
+%    \end{macrocode}
+%
+% Bei Turnierberichten wird nur ein Eintrag ins Inhaltsverzeichnis erzeugt.
+% Die Überschrift muss in der Umgebung \verb+Titel+ gesetzt werden.
+%    \begin{macrocode}
+\newenvironment{Turnierbericht}[2]{%
+   \stepcounter{@inhalt}%
+   \let\titel@ext\inhalt@label\relax%
+   % Erzeuge den Eintrag für das Inhaltsverzeichnis
+   \bgroup%
+      \def\@tempb{\Turnierbericht}%
+      \def\@tempc{#1}%
+      \def\@tempd{#2}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                    {\@nearverbatim\@tempd}%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+}{}
+%    \end{macrocode}
+%
+% Die Umbegung für Berichte von Turnieren aus anderen Zeitschriften.
+%    \begin{macrocode}
+% Turnierberichte aus anderen Zeitschriften
+\newenvironment{turnierberichte}{%
+   \ttitel@skip%
+   \vbox{\centering\Large\bfseries Turnierberichte}%
+   \titel@skip%
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   \nodiagnumbering%
+   % Eintrag im Inhaltsverzeichnis
+    \bgroup%
+      \def\@tempb{\Turnierberichte}%
+        \edef\@tempa{
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+        }%
+    \expandafter\egroup\@tempa%
+}{}
+%
+\newcommand{\turnier}[1]{%
+   \vskip\tw@\p@%
+   {\large\bfseries#1}%
+   \par%
+}
+%   \end{macrocode}
+%
+% Das {\itshape kleine Märchenschach-Lexikon} im Urdruckteil kann in mehrere
+% Abschnitte zerlegt werden, damit es besser auf die Seiten passt. Bei der
+% ersten \verb+maerchenlexikon+ Umgebung steht die Einleitung.  Zwei
+% Märchenarten werden mittels \verb+---+ voneinander getrennt.
+%   \begin{macrocode}
+\newcounter{@maerchenlexikon}
+\setcounter{@maerchenlexikon}{0}
+\newboolean{@first@lexikon@entry}
+\newcommand{\maerchenart}[1]{%
+  \ifthenelse{\boolean{@first@lexikon@entry}}{%
+    \setboolean{@first@lexikon@entry}{false}%
+  }{%
+    --- %
+  }%
+  {\itshape #1:} \ignorespaces%
+}
+\newenvironment{maerchenlexikon}%
+{%
+  \ifthenelse{\value{@maerchenlexikon}=0}{%
+    {\itshape Kleines Märchenschach-Lexikon:} %
+  }{}%
+  \setboolean{@first@lexikon@entry}{true}%
+  \stepcounter{@maerchenlexikon}%
+}{}
+%    \end{macrocode}
+%
+% Analog zum Märchenlexikon gibt es das \textit{Retrolexikon}.
+%
+%   \begin{macrocode}
+\newcounter{@retrolexikon}
+\setcounter{@retrolexikon}{0}
+\newboolean{@first@retrolexikon@entry}
+\newcommand{\retroart}[1]{%
+  \ifthenelse{\boolean{@first@retrolexikon@entry}}{%
+    \setboolean{@first@retrolexikon@entry}{false}%
+  }{%
+    --- %
+  }%
+  \emph{#1:} \ignorespaces%
+}
+\newenvironment{retrolexikon}%
+{%
+  \ifthenelse{\value{@retrolexikon}=0}{%
+    {\itshape Kleines Retro-Lexikon:} %
+  }{}%
+  \setboolean{@first@retrolexikon@entry}{true}%
+  \stepcounter{@retrolexikon}%
+}{}
+%   \end{macrocode}
+%
+% Die Umbegung \verb+Entscheid+ erzeugt einen Eintrag ins Inhaltsverzeichnis.
+% Als Parameter ist der Name des Turnier anzugeben.
+% Die Überschrift muss mittels der Umbebung \verb+Titel+ gesetzt werden.
+%    \begin{macrocode}
+\newenvironment{Entscheid}[1]{%
+   % Erzeuge den Eintrag für das Inhaltsverzeichnis
+   \stepcounter{@inhalt}%
+   \let\titel@ext\inhalt@label\relax%
+   % Weitere Einstellungen
+   \let\orig@dia@above=\dia@above%
+   \let\dia@above=\dia@above@InformalEntscheid%
+   \setboolean{normaldiaabove}{false}%
+   \bgroup%
+      \def\@tempb{\Entscheid}%
+      \def\@tempc{#1}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+}{}
+%    \end{macrocode}
+%
+% Buchbesprechungen werden in die entsprechende Umgebung gesetzt.
+%    \begin{macrocode}
+\newboolean{@firstbook}
+\setboolean{@firstbook}{true}
+\newcounter{@buecher}
+\setcounter{@buecher}{0}
+\newenvironment{Buecher}{%
+    \ttitel@skip%
+    \centerline{\Large\bfseries \ifthenelse{\value{@buecher}=1}{Buchbesprechung}{Buchbesprechungen}}%
+    \titel@skip%
+    \setboolean{@firstbook}{true}%
+    \stepcounter{@inhalt}%
+    \inhalt@label\relax%
+    % Eintrag im Inhaltsverzeichnis
+    \bgroup%
+        \ifthenelse{\value{@buecher}=1}{\def\@tempb{\Buch}}{\def\@tempb{\Buecher}}%
+        \edef\@tempa{
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+        }%
+    \expandafter\egroup\@tempa%
+    \setcounter{@buecher}{0}%
+}{%
+   \immediate\write\@auxout{\string\setcounter{@buecher}{\arabic{@buecher}}}%
+}
+%    \end{macrocode}
+%
+% Mit dem Befehl \verb+\Buch+ soll jedes Buch beginnen. Als Parameter
+% sind:
+%     1. Autor(en) und
+%     2. Titel des Buches
+% anzugeben. Beide Angaben erscheinen Fettgedruckt am Beginn der
+% Buchbesprechung und werden für das Register übernommen.
+%
+% Schreiben der Autoren
+%
+%    \begin{macrocode}
+\def\@book@authors#1; {%
+   \if@notfirst%
+      , %
+   \else%
+      \noindent%
+      \@notfirsttrue%
+   \fi%
+   \@fullname#1; %
+   \l@@klist%
+}
+%
+\newcommand{\Buch}{%
+    \@ifstar{\@Buch}{\x@Buch}%
+}
+\newcommand{\@Buch}{%
+    \ifthenelse{\boolean{@firstbook}}{%
+        \titel@skip%
+        \setboolean{@firstbook}{false}%
+    }{%
+        \par%
+    }%
+   \stepcounter{@buecher}%
+}
+\newcommand{\x@Buch}[2]{%
+    \@Buch%
+   \bgroup%
+      \bfseries%
+      \ifx\relax#1\else%
+         \@notfirstfalse
+         \let\@action\@book@authors%
+         \l@@klist#1; \e@list%
+         : %
+      \fi%
+      \itshape #2\ \ignorespaces%
+   \egroup%
+}
+%    \end{macrocode}
+%
+% Besprechungen von Web-Sites.
+%    \begin{macrocode}
+\newboolean{@firstwebsite}
+\setboolean{@firstwebsite}{true}
+\newcounter{@websites}
+\setcounter{@websites}{0}
+\newenvironment{WebSites}{%
+    \ttitel@skip%
+    \centerline{\Large\bfseries \ifthenelse{\value{@websites}=1}{Web-Site Besprechung}{Web-Site Besprechungen}}%
+    \titel@skip%
+    \setboolean{@firstwebsite}{true}%
+    \stepcounter{@inhalt}%
+    \inhalt@label\relax%
+    % Eintrag im Inhaltsverzeichnis
+    \bgroup%
+        \ifthenelse{\value{@websites}=1}{\def\@tempb{\WebSite}}{\def\@tempb{\WebSites}}%
+        \edef\@tempa{
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+        }%
+    \expandafter\egroup\@tempa%
+    \setcounter{@websites}{0}%
+}{%
+   \immediate\write\@auxout{\string\setcounter{@websites}{\arabic{@websites}}}%
+}
+\newcommand{\WebSite}[1]{%
+    \ifthenelse{\boolean{@firstwebsite}}{%
+        \titel@skip%
+        \setboolean{@firstwebsite}{false}%
+    }{%
+        \par%
+    }%
+   \stepcounter{@websites}%
+   {\bfseries#1}%
+}
+%    \end{macrocode}
+%    \begin{macrocode}
+%-----------------------------------------------------------
+% 5) Ausschreibungen von Turnieren
+%    Parameter:
+%        1. Titel des Turniers
+%  oder (mit *)
+%     1. Titel des Turniers
+%     2. Untertitel (z. B. Ort und Datum)
+%
+\def\aTurnier{%
+   \@ifstar{\x@Turnier}{\y@Turnier}%
+}
+\def\TurnierAusschreibung#1{%
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   % Eintrag im Inhaltsverzeichnis
+   \bgroup%
+       \def\@tempb{\TurnierAusschreibung}%
+       \def\@tempc{#1}%
+     \edef\@tempa{
+       \write\sw@contents{%
+             \@nearverbatim\@tempb{%
+                {\@nearverbatim\@tempc}%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+         }%
+       }%
+     }%
+   \expandafter\egroup\@tempa%
+}
+%
+\def\x@Turnier#1#2{%
+   \ttitel@skip%
+   \vbox{%
+      \centering%
+      {\large\bfseries\uppercase{#1}}\\[3mm]
+      {\bfseries#2}%
+   }%
+   \titel@skip%
+}
+%
+\def\y@Turnier#1{%
+   \ttitel@skip%
+   \vbox{%
+      \centering%
+      \large\bfseries\uppercase{#1}%
+   }%
+   \titel@skip%
+}
+%
+\def\bTurnier{%
+   \@ifstar{\by@turnier}{\bx@turnier}%
+}
+%
+\def\sw@turnier{%
+}
+%
+\def\bx@turnier#1#2{%
+   \ttitel@skip%
+   \vbox{%
+      \centering%
+      {\Large\bfseries#1}\\
+      \bgroup%
+      \bfseries%
+      \@firsttrue%
+      \let\@action=\sw@author%
+      \l@@klist#2; \e@list%
+      \egroup%
+   }%
+   \titel@skip%
+   \diagnum{1}%
+}
+%
+\def\by@turnier#1{%
+   \ttitel@skip%
+   \vbox{%
+      \centering
+      {\Large\bfseries#1}
+   }%
+   \titel@skip%
+   \diagnum{1}%
+}
+%
+\def\eEntscheid{%
+   \@ifstar{\i@eEntscheid}{\ii@eEntscheid}%
+}
+%
+\def\i@eEntscheid#1{%
+   \ttitel@skip%
+   \vbox{%
+      \centering
+      \Large\bfseries#1%
+   }%
+   \titel@skip%
+}
+%
+\def\ii@eEntscheid#1#2{%
+   \ttitel@skip%
+   \vbox{%
+      \centering%
+      \Large\bfseries#1\\
+      \large\bfseries#2%
+   }%
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   \bgroup%
+      \def\@tempb{\Bericht}%
+      \def\@tempc{#1}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+   \titel@skip%
+}
+%-----------------------------------------------------------
+% 7) Personalia: Geburtstage und Sterbefälle
+%    Parameter: (Geburt)
+%        1. Name
+%        2. Alter
+%    Parameter: (Verstorben)
+%        1. Name
+%     2. Daten
+%
+\newif\if@title\@titletrue
+\def\Geburtstag{%
+    \@ifnextchar *{\@@Geburtstag}{\@Geburtstag}%
+}
+\def\@@Geburtstag#1{\@titlefalse\@Geburtstag}%
+\def\@Geburtstag{%
+  \@ifnextchar [{\y@Geburtstag}{\x@Geburtstag}%
+}
+\def\x@Geburtstag#1#2{%
+   \if@title%
+   \ttitel@skip%
+   \centerline{\Large\bfseries#1\ \ #2}
+   \titel@skip%
+   \fi%
+   % Erzeuge den Eintrag für das Inhaltsverzeichnis
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   \bgroup%
+      \def\@tempb{\Geburtstag}%
+      \def\@tempc{#1}%
+      \def\@tempd{#2}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                    {\@nearverbatim\@tempd}%
+          {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+}
+\def\y@Geburtstag[#1]#2#3{%
+   \if@title%
+   \ttitel@skip%
+   \centerline{#1}
+   \titel@skip%
+   \fi%
+   % Erzeuge den Eintrag für das Inhaltsverzeichnis
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   \bgroup%
+      \def\@tempb{\Geburtstag}%
+      \def\@tempc{#2}%
+      \def\@tempd{#3}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                    {\@nearverbatim\@tempd}%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+}
+%
+\def\Verstorben{\@ifstar{\y@Verstorben}{\x@Verstorben}}
+\def\x@Verstorben#1#2{%
+   \ttitel@skip%
+   \hbox to \textwidth{\large\bfseries\uppercase{#1}\hfill#2}%
+   \titel@skip%
+   % Erzeuge den Eintrag für das Inhaltsverzeichnis
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   \bgroup%
+      \def\@tempb{\Verstorben}%
+      \def\@tempc{#1}%
+      \def\@tempd{#2}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                    {\@nearverbatim\@tempd}%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+}
+%
+\def\y@Verstorben#1{%
+   % Erzeuge den Eintrag für das Inhaltsverzeichnis
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   \bgroup%
+      \def\@tempb{\Verstorben}%
+      \def\@tempc{#1}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+}
+%
+\def\Nachruf#1{%
+   % Erzeuge den Eintrag für das Inhaltsverzeichnis
+   \stepcounter{@inhalt}%
+   \inhalt@label\relax%
+   \bgroup%
+      \def\@tempb{\Verstorben}%
+      \def\@tempc{#1}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+                {\@nearverbatim\pageref{inhalt\@nameuse{the@inhalt}}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+}
+%
+%-----------------------------------------------------------
+% 9) Einladungen zu Tagungen u. Turnieren
+\def\Einladung{%
+   \@ifnextchar[{\@@Einladung}{\@Einladung}%
+}
+\def\@Einladung#1{%
+   \ttitel@skip%
+   \vbox{%
+      \centering%
+      \Large\bfseries{#1}%
+   }%
+   \titel@skip%
+}
+\def\@@Einladung[#1]#2{%
+   \ttitel@skip%
+   \vbox{%
+      \centering%
+      \Large\bfseries{#2}%
+   }%
+   \titel@skip%
+   \bgroup%
+      \def\@tempb{\Einladung}%
+      \def\@tempc{#1}%
+      \edef\@tempa{%
+            \write\sw@contents{%
+            \@nearverbatim\@tempb{%
+                    {\@nearverbatim\@tempc}%
+               {\@nameuse{thepage}}%
+                }%
+            }%
+      }%
+   \expandafter\egroup\@tempa%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Es folgen ein paar Hilfskommandos und Initialsierungen
+%-----------------------------------------------------------
+% 1. "Offnen der datei, die alle Einträge für das 
+%    Inhaltsverzeichnis enthält.
+%
+\newwrite\sw@contents
+\immediate\openout\sw@contents=\jobname.inhalt\relax
+\newwrite\sw@problems
+\immediate\openout\sw@problems=\jobname.problems\relax
+%-----------------------------------------------------------
+% 2. Abstand zu einer Überschrift und 
+%    von einer Überschrift zum folgenden Text
+%
+% \def\ttitel@skip{\vskip30\p@ plus \f@ur\p@\penalty-100}
+\def\ttitel@skip{\vskip24\p@ plus \f@ur\p@\goodbreak}
+\def\titel@skip{\nopagebreak\vskip\tw@\p@}
+\def\subtitel@skip{\vskip10\p@ plus \f@ur\p@ minus \f@ur\p@ \penalty-100}
+\def\subtitel@subskip{\nopagebreak\vskip\@ne\p@}
+%----------------------------------------------------------- 
+% 3. Setzen von Autoren eines Aufsatzes
+%
+\def\sw@author#1; {%
+    \sw@writeauthor#1;%
+    \l@@klist%
+}
+%
+\def\sw@writeauthor#1, #2/#3;{%
+   \if@first%
+      von~%
+      \@firstfalse%
+   \else%
+      \ \&\ %
+   \fi%
+    #2~#1, #3%
+}
+%-----------------------------------------------------------
+% 4. Schreiben der Autoren von Urdrucken in das 
+%    Inhaltsverzeichnis
+%
+\newif\if@gemeinschaft
+\def\sw@problem{%
+    % Zähle die Autoren
+    \sw@count\z@%
+    \let\@action=\sw@authorCount%
+    \expandafter\l@@klist\the\aut@tk; \e@list%
+    \ifnum\sw@count>\@ne%
+        \@gemeinschafttrue%
+    \else%
+        \@gemeinschaftfalse%
+    \fi%
+    \bgroup%
+        \let\@action=\sw@problemAuthor%
+        \expandafter\l@@klist\the\aut@tk; \e@list%
+    \egroup%
+}
+% Wenn das Diagramm ausgegeben wird, sollen auch die Informationen ausgegeben werden.
+\def\do@dia@job{%
+   \@write@sol\ifvmode\noindent\fi\unhbox\dia@box%
+   \sw@problem%
+}
+% Schreiben eines einzelnen Autors in das Inhaltsverzeichnis
+%
+\def\sw@problemAuthor#1; {%
+    \bgroup%
+    \def\@tempc{\problem}%
+    \def\@tempb{#1}%
+    \edef\@tempa{%
+        \write\sw@problems{%
+            \@nearverbatim\@tempc{%
+                {\@nameuse{thepage}}%
+                \if@special%
+                    {\@nearverbatim\thediag}%
+                \else%
+                    {\thediag}%
+                \fi%
+                {\@nearverbatim\@tempb}%
+                {\if@urdruck\else n\fi\if@gemeinschaft g\fi}%
+            }%
+        }%
+    }%
+    \expandafter\egroup\@tempa%
+    \l@@klist%
+}
+%-----------------------------------------------------------
+% 5. Zählen von Autoren
+%
+\newcount\sw@count
+\def\sw@authorCount#1; {%
+    \advance\sw@count\@ne%
+    \l@@klist%
+}
+%-----------------------------------------------------------
+% 6. Für das Schreiben in die inhaltsdatei ohne 
+%    Kommandos zu expandieren.
+\def\@meaning#1>{}
+\def\@nearverbatim{\expandafter\@meaning\meaning}
+%-----------------------------------------------------------
+\def\i@line#1#2{#1 \hrulefill\ #2\newline}
+%-----------------------------------------------------------
+% Setzen von Autoren im Inhaltsverzeichnis
+%
+\def\iw@author#1; {%
+    \iw@writeauthor#1;%
+    \l@@klist%
+}
+%
+\def\iw@writeauthor#1, #2/#3;{%
+   \if@first%
+      \@firstfalse%
+   \else%
+      , \ %
+   \fi%
+    #2~#1%
+}
+%-----------------------------------------------------------
+\def\ix@Geburtstag#1#2#3{\i@line{#1\ \ #2}{#3}}
+\def\ix@aufsatz#1#2#3{%
+  \i@line{{\itshape %
+  \@firsttrue%
+  \let\@action\iw@author\relax%
+  \aut@tk={#3}%
+  \@parseTokenlist\aut@tk;%
+  :\/} #2}{#1}%
+}
+\def\ix@InformalEntscheid#1#2#3#4{\i@line{Entscheid im Informalturnier #2, Abteilung #1}{#4}}
+\def\ix@Loesungen#1#2#3{\i@line{Lösungen der Urdrucke aus Heft #1, #2}{#3}}
+\def\ix@turnierbericht#1#2#3{%
+  \i@line{Entscheid im #1}{#3}%
+}
+\def\ix@bericht#1#2{\i@line{#1}{#2}}
+\def\ix@einladung#1#2{\i@line{#1}{#2}}
+\def\ix@verstorben#1#2{\i@line{#1}{#2}}
+\def\ix@entscheid#1#2{\i@line{#1}{#2}}
+\def\ix@editorial#1#2{\i@line{#1}{#2}}
+\def\ix@ausschreibung#1#2{\i@line{#1}{#2}}
+%----------------------------------------------------------- 
+\def\i@Geburtstag#1{\ix@Geburtstag#1}
+\def\i@aufsatz#1{\ix@aufsatz#1}
+\def\i@aktuell#1{\i@line{Aktuelle Meldungen}{#1}}
+\def\i@InformalEntscheid#1{\ix@InformalEntscheid#1}
+\def\i@urdrucke#1{\i@line{Urdrucke}{#1}}
+\def\i@Loesungen#1{\ix@Loesungen#1}
+\def\i@Loeserliste#1{\i@line{Löserliste}{#1}}
+\def\i@bub#1{\i@line{Bemerkungen und Berichtigungen}{#1}}
+\def\i@turniere#1{\i@line{Turnierberichte}{#1}}
+\def\i@buecher#1{\i@line{Buchbesprechungen}{#1}}
+\def\i@buch#1{\i@line{Buchbesprechung}{#1}}
+\def\i@websites#1{\i@line{Web-Site Besprechungen}{#1}}
+\def\i@website#1{\i@line{Web-Site Besprechung}{#1}}
+\def\i@turnierbericht#1{\ix@turnierbericht#1}
+\def\i@bericht#1{\ix@bericht#1}
+\def\i@einladung#1{\ix@einladung#1}
+\def\i@verstorben#1{\ix@verstorben#1}
+\def\i@entscheid#1{\ix@entscheid#1}
+\def\i@editorial#1{\ix@editorial#1}
+\def\i@TurnierAusschreibung#1{\ix@ausschreibung#1}
+%-----------------------------------------------------------
+\def\Inhalt{%
+   \centerline{\bfseries INHALT}%
+   \vspace{-.5mm}
+   \begingroup%
+   \esol%
+   \let\Geburtstag=\i@Geburtstag%
+   \let\aufsatz=\i@aufsatz%
+   \let\aktuell=\i@aktuell%
+   \let\InformalEntscheid=\i@InformalEntscheid%
+   \let\Urdrucke=\i@urdrucke%
+   \let\Loesungen=\i@Loesungen%
+   \let\Loeserliste=\i@Loeserliste%
+   \let\bub=\i@bub%
+   \let\Turnierberichte=\i@turniere%
+   \let\Turnierbericht=\i@turnierbericht%
+   \let\Bericht=\i@bericht%
+   \let\Einladung=\i@einladung%
+   \let\Buecher=\i@buecher%
+   \let\Buch=\i@buch%
+   \let\WebSites=\i@websites%
+   \let\WebSite=\i@website%
+   \let\Verstorben=\i@verstorben%
+   \let\Entscheid=\i@entscheid%
+   \let\editorial=\i@editorial%
+   \let\TurnierAusschreibung=\i@TurnierAusschreibung%
+   \immediate\closeout\sw@contents\relax%
+   \input\jobname.inhalt%
+   \noindent\hbox{}\endgroup%
+}
+%-----------------------------------------------------------
+\def\i@author#1, #2; {\if@first\@firstfalse\else, \fi#2~#1\l@@klist}
+
+\def\aufsatz#1#2#3{%
+   \bgroup
+      \itshape 
+      \@firsttrue
+      \let\@action=\i@author
+      \l@@klist#3; \e@list%
+      : %
+   \egroup
+   #2%
+   \hrulefill\ #1\newline
+}
+%    \end{macrocode}
+%
+% Innerhalb von Lösungen werden mehrere Zugmöglichkeiten häufig durch einen /
+% voneinander getrennt. \verb+\sol@slash+ definiert einen Schrägstrich,
+% an dem die Zeile umgebrochen werden kann. Dieser Befehl wird dann für das
+% Zeichen / aktiviert.
+%    \begin{macrocode}
+\def\sol@slash{\nobreak\hskip\z@ plus 2\p@\char`/\hskip\z@ plus 2\p@\discretionary{}{}{}}
+\catcode`/=\active\relax\let/\sol@slash\relax\catcode`/=12%
+\def\bsol{\catcode`/=\active\relax}
+\def\esol{\catcode`/=12\relax}
+\AtBeginDocument{\bsol}
+\renewcommand{\cpd@begindiagram@hook}{\esol}
+\renewcommand{\cpd@enddiagram@hook}{\bsol}
+
+
+\renewcommand{\section}{\@startsection{section}{1}{\z@}{2ex}{.5ex}{\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}{1ex}{.3ex}{\normalfont\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}{.4ex}{.1ex}{\normalfont}}
+
+\renewcommand{\x}{:}
+\newcommand{\mal}{\mbox{\ifmmode\times\else$\times$\fi}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+
+\newboolean{MeasureMode}
+\setboolean{MeasureMode}{false}
+\newcommand{\MeasureNewpage}{%
+   \ifthenelse{\boolean{MeasureMode}}{\newpage}{}%
+}
+
+%
+%
+%</class>
+%    \end{macrocode}
+%
+% \section{Die Implementierung des \Schwalbe{}-Style}
+%    \begin{macrocode}
+%<*style>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{schwalbe}[2025/01/21]
+%    \end{macrocode}
+%
+% Der \textit{Schwalbe-Style} ist eine Erweiterung des
+% \textit{diagram-style}. Daher sollten die Optionen
+% \textit{10pt}, \textit{11pt} und \textit{12pt} an den
+% \textit{diagram-style} durchgereicht werden.
+%    \begin{macrocode}
+\DeclareOption{10pt}{\PassOptionsToPackage{10pt}{diagram}}
+\DeclareOption{11pt}{\PassOptionsToPackage{11pt}{diagram}}
+\DeclareOption{12pt}{\PassOptionsToPackage{12pt}{diagram}}
+\ProcessOptions
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\RequirePackage{diagram}[2022/06/19]
+%
+%
+% Wir definieren das Diagrammlayout ein wenig um.
+%
+\newcommand{\rb}[1]{\raisebox{0.4ex}{#1}}
+\nocomputer
+\setboolean{piececounter}{true}
+\diagcenter
+\setmonthstyle{Roman}
+
+\renewcommand*\authorfont{\bfseries}
+\renewcommand*\cityfont{\itshape}
+\renewcommand*\sourcefont{\slshape}
+\renewcommand*\awardfont{}
+\renewcommand*\dedicfont{\itshape}
+\renewcommand*\stipfont{}
+\renewcommand*\remfont{}
+\renewcommand*\labelfont{\footnotesize}
+\renewcommand*\cpd@boardfont{\footnotesize}
+
+\def\normaldia{%
+   \normalsize%
+   \diagramxii%
+   \setboardwidth%
+}
+\def\smalldia{%
+   \small%
+   \diagramx%
+   \setboardwidth%
+}
+%    \end{macrocode}
+%
+% In der \Schwalbe{} setzen wir keine akademischen Titel.
+%    \begin{macrocode}
+\setboolean{showacademictitle}{false}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\inner@frame\z@%
+\v@frame@dist\z@%
+\h@frame@dist\z@%
+\setboardwidth
+\newif\if@first%
+\newif\if@urdruck\@urdruckfalse
+\def\urdruck{\@urdrucktrue}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Absaetze in window Umgebungen
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\windowpar}{%
+  \newline\hbox{\vbox to \parskip{\vss}}\newline%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Einige deutsche Schreibweisen
+\let\bel=\any
+\let\ferner=\further
+\newcommand\reprint{%
+   \hbox to \textwidth{\bfseries%
+      PLEASE~REPRINT\hfill BITTE~NACHDRUCKEN\hfill PRIERE~DE~REIMPRIMER%
+   }%
+}
+% Definiere ein anderes Layout für den Kopf eines Diagramms
+%
+%
+\def\@dia@number{}% Die Diagrammnummer wird bei den Autoren gesetzt!
+%
+\def\@dia@numberx{%
+   \ifthenelse{\boolean{@cpd@numbering@local}}{%
+      {\authorfont\thediag}%
+   }{}%
+}
+%
+\def\@dia@authors{%
+   \ifauth@r%
+      \ifnormal@names%
+         \def\@dianame{\@normalname}%
+      \fi%
+      \ifthenelse{\boolean{@cpd@numbering@local}}{%
+         \@firsttrue%
+         \let\@action=\sw@dia@writename% Parse the list of authors
+         \@parseTokenlist\aut@tk;%
+      }{%
+         \let\@action=\@dia@writename% Parse the list of authors
+         \@parseTokenlist\aut@tk;%
+      }%
+   \else%
+      \ifthenelse{\boolean{@cpd@numbering@local}}{%
+          \above@newline%
+          \@dia@numberx%
+      }{}%
+   \fi%
+}
+%
+\def\sw@dia@writename#1; {%
+   \above@newline
+   \if@first%
+      \@firstfalse%
+      \setbox\@test@box=\hbox{%
+         \authorfont%
+         \@dia@numberx\ %
+         \@dianame#1; %
+      }%
+      \@test@dimen=\wd\@test@box%
+      \ifdim\@test@dimen>\board@width\relax%
+         \noindent\hbox to\board@width{\authorfont\@dia@numberx\hfill}\above@newline%
+         \setbox\@test@box=\hbox{\authorfont\@dianame#1; }%
+         \@test@dimen=\wd\@test@box%
+         \ifdim\@test@dimen>\board@width\relax%
+            \noindent\hbox to\board@width{\authorfont\@dianame#1; \hss}%
+         \else%
+            {\authorfont\@dianame#1; }%
+         \fi%
+      \else%
+         {\authorfont\@dia@numberx\hfill\@dianame#1; }%
+      \fi%
+   \else%
+      % Changed to get the resulting names centered.
+      \hbox to\board@width{\hss\authorfont\@dianame#1; \hss}%
+   \fi%
+   \l@@klist%
+}
+%
+\def\@figurine@number{{\authorfont\thediag\ }}
+%-----------------------------------------------------------
+%
+% \def\newsl{\char`/\hskip\slskip\discretionary{}{}{}}
+% \catcode`/=\active\let/\newsl\catcode`/=12
+%
+\newlength{\helplength}%
+\newlength{\boardskip}%
+\newlength{\double@boardwidth}%
+
+\def\doublediagram#1{%
+    \def\dia@above{%
+        \ifthenelse{@cpd@numbering@local}{}{%
+            % \if@special\else%
+            \setlength{\helplength}{\textwidth}%
+            \addtolength{\helplength}{-3\board@width}%
+            \setlength{\boardskip}{.5\helplength}%
+            \setlength{\double@boardwidth}{2\board@width}%
+            \addtolength{\double@boardwidth}{\boardskip}%
+            \begin{minipage}[b]{\double@boardwidth}%
+            #1%
+            \end{minipage}%
+            % \fi
+        }%
+    }%
+}
+
+
+%</style>
+%    \end{macrocode}
+%
+% \section{Die Implementierung des \textbf{swruler.sty}}
+%
+%    \begin{macrocode}
+%<*rulerstyle>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{swruler}[2022/06/19]
+\RequirePackage{calc}
+%    \end{macrocode}
+%
+% Das Makro \verb+\Ruler+ erzeugt ein Lineal mit einer $1/20$
+% Einteilung der Seitenhöhe.
+%
+%    \begin{macrocode}
+\newcommand{\Ruler}{%
+\makebox{%
+\setlength{\unitlength}{\textheight / 20}
+\begin{picture}(1,20)
+\put(0.4,-20){\line(0,1){20}}
+\multiput(0.4,-20)(0,2){11}{\line(1,0){0.4}}
+\multiput(0.4,-19)(0,2){10}{\line(1,0){0.2}}
+\put(0,-20){10}
+\put(0,-18){9}
+\put(0,-16){8}
+\put(0,-14){7}
+\put(0,-12){6}
+\put(0,-10){5}
+\put(0,-8){4}
+\put(0,-6){3}
+\put(0,-4){2}
+\put(0,-2){1}
+\end{picture}
+}}% Ruler
+%    \end{macrocode}
+%
+%
+% Das Makro \verb+\ShowRuler+ sorgt dafür, dass das mittels
+% \verb+\Ruler+ erzeugte Lineal auf jeder Seite angezeigt wird.
+% Da in älteren \LaTeX-Versionen das Kommando \verb+\AddToHook+ noch
+% nicht existiert, wird in diesem Fall eine Warnung ausgegeben. Ein
+% Lineal kann dann nicht angezeigt werden.
+%
+%    \begin{macrocode}
+\providecommand{\AddToHook}[2]{%
+\message{^^JWARNING: Your LaTeX is too old to activate a Ruler on each page.^^J}%
+}%
+\newcommand{\ShowRuler}[2]{%
+\AddToHook{shipout/background}{\put(#1,#2){\Ruler}}%
+}%
+%    \end{macrocode}
+%
+% Wenn beim Übersetzen der \LaTeX-Datei in aktuellen Verzeichnis keine
+% \verb+__finalpdf__.tex+ existiert, wird die Anzeige des
+% Lineals mittels \verb+\ShowRuler+ aktiviert. Durch Anlegen der Datei
+% kann das Einblenden des Lineals deaktiviert werden.
+%
+%    \begin{macrocode}
+%</rulerstyle>
+%    \end{macrocode}
+%
+% \Finale

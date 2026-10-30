@@ -1,0 +1,56 @@
+#!/bin/sh
+# getnxtlogos -- Hochschullogo und Skyline herunterladen und installieren
+# Funktioniert auf macOS und Linux.
+#
+# Seit nxtlatex 1.3 stecken die NXT-Logos im NXT Logo Font. Gebraucht
+# werden die Dateien nur noch für Brief und Folien (Logo_HSRT_Grau.pdf,
+# hsrtskyline.pdf); das Archiv enthält für ältere Fassungen weiterhin
+# auch die NXT-Logos als PDF.
+
+URL="https://www.reutlingen-university.de/fileadmin/NXT/Unsere_Fakultaet/Dateien/nxtlatex-logos.zip"
+
+# Zielverzeichnis je nach Betriebssystem
+case "$(uname -s)" in
+  Darwin)
+    TEXMF="$HOME/Library/texmf/tex/latex/nxtlatex"
+    TEXMF_ROOT="$HOME/Library/texmf"
+    ;;
+  Linux)
+    TEXMF="$HOME/texmf/tex/latex/nxtlatex"
+    TEXMF_ROOT="$HOME/texmf"
+    ;;
+  *)
+    echo "Fehler: Unbekanntes Betriebssystem '$(uname -s)'." >&2
+    exit 1
+    ;;
+esac
+
+echo "==> Zielverzeichnis: $TEXMF"
+mkdir -p "$TEXMF"
+
+# Temporäre Datei
+TMPFILE="$(mktemp /tmp/nxtlatex-logos.XXXXXX.zip)"
+trap 'rm -f "$TMPFILE"' EXIT
+
+# Herunterladen
+echo "==> Lade $URL ..."
+if command -v curl >/dev/null 2>&1; then
+  curl -fsSL "$URL" -o "$TMPFILE"
+elif command -v wget >/dev/null 2>&1; then
+  wget -q "$URL" -O "$TMPFILE"
+else
+  echo "Fehler: weder curl noch wget gefunden." >&2
+  exit 1
+fi
+
+# Entpacken
+echo "==> Entpacke nach $TEXMF ..."
+unzip -o "$TMPFILE" -d "$TEXMF"
+
+# TeX-Dateidatenbank aktualisieren
+if command -v mktexlsr >/dev/null 2>&1; then
+  echo "==> Aktualisiere TeX-Dateidatenbank ..."
+  mktexlsr "$TEXMF_ROOT"
+fi
+
+echo "==> Fertig."

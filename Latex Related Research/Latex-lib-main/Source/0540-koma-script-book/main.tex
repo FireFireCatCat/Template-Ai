@@ -1,0 +1,71 @@
+\documentclass[11pt,twoside]{scrbook}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{natbib}
+
+\title{Configuring a Book from First Principles}
+\author{Noor Fatima}
+\date{\today}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+\addchap{Preface}
+This book uses \texttt{scrbook}, the KOMA-Script book class, which favours
+sensible defaults derived from classical page-design ratios over the fixed
+choices of the standard \texttt{book} class.
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{Page Design}
+
+\section{Why the Margins Look Different}
+
+KOMA-Script computes its page geometry from the type area and paper size
+rather than hardcoding margin lengths \citep{knuth1984texbook}. This produces
+a different default layout from \texttt{book}, though every dimension remains
+adjustable via the \texttt{typearea} package that \texttt{scrbook} loads.
+
+\section{Headings and Chapter Marks}
+
+Table~\ref{tab:levels} lists the sectioning commands \texttt{scrbook}
+inherits, unchanged in name from the standard classes.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    Command & Level \\
+    \midrule
+    \verb|\part|    & -1 \\
+    \verb|\chapter| & 0 \\
+    \verb|\section| & 1 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Sectioning commands available in \texttt{scrbook}.}
+  \label{tab:levels}
+\end{table}
+
+\chapter{Fonts and Bibliography}
+
+\section{Font Selection}
+
+\texttt{scrbook} leaves font selection to the document, so \texttt{lmodern}
+is loaded here explicitly rather than assumed.
+
+\section{Closing the Bibliography}
+
+A standard \texttt{natbib} bibliography closes out the back matter, exactly
+as it would under \texttt{book} \citep{knuth1984texbook}.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

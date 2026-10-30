@@ -1,0 +1,36 @@
+%%% TODO: Set the title for the paper.
+\chapter[Another Paper with an Interesting Title]{Another Paper with an Interesting Title}
+
+%%% TODO: Add reference for the paper.
+\paperRemark{\paperTwo}
+%%% TODO: Add a label to the paper.
+\paper{paper:two}
+
+%%% TODO: Set up paths for included graphics and bib files.
+\makeatletter
+  \def\input@path{{papers/two/}}
+  \graphicspath{{papers/two/}}
+\makeatother
+\renewcommand{\bibpath}[1]{papers/two/#1}
+
+%%% Add paper specific macros.
+\input{notationLocal.tex}
+
+%%% Input abstract of paper.
+\input{abstract.tex}
+
+%%% TODO: Files of the paper.
+\input{introduction.tex}
+\input{preliminaries.tex}
+\input{background.tex}
+\input{concludingremarks.tex}
+
+%%% You can also add appendices for the paper.
+\begin{subappendices}
+  \input{appendix.tex}
+\end{subappendices}
+
+
+%%% TODO: Add bib for paper.
+\bibliographystyle{alpha}
+\bibliography{\bibpath{refLocal}}

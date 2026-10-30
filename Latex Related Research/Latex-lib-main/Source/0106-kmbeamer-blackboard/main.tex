@@ -1,0 +1,109 @@
+\documentclass{beamer}
+\usetheme{Blackboard}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+\title{Chalkboard Notes on Sorting}
+\subtitle{A lecture-style Beamer starter}
+\author{Prof. Dana Okafor}
+\institute{Department of Computer Science}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Why Sorting Matters}
+
+\begin{frame}{Motivation}
+  \begin{itemize}
+    \item Sorting is a building block for search, joins, and deduplication
+    \item Comparing algorithms teaches asymptotic analysis directly
+    \item We will trace three algorithms on the same input
+  \end{itemize}
+\end{frame}
+
+\section{Algorithms}
+
+\begin{frame}{Insertion Sort}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \textbf{Idea}
+      \begin{itemize}
+        \item Grow a sorted prefix one element at a time
+        \item Shift larger elements right to make room
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Cost}
+      \begin{itemize}
+        \item Best case: $O(n)$
+        \item Worst case: $O(n^2)$
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Merge Sort}
+  \begin{block}{Divide and conquer}
+    Split the array in half, sort each half recursively, then merge the two
+    sorted halves in linear time.
+  \end{block}
+  \[
+    T(n) = 2T(n/2) + O(n) \implies T(n) = O(n \log n)
+  \]
+\end{frame}
+
+\begin{frame}{Comparing the Three}
+  \begin{table}
+    \centering
+    \begin{tabular}{lccc}
+      \toprule
+      Algorithm & Best & Average & Worst \\
+      \midrule
+      Insertion sort & $O(n)$ & $O(n^2)$ & $O(n^2)$ \\
+      Merge sort & $O(n\log n)$ & $O(n\log n)$ & $O(n\log n)$ \\
+      Quicksort & $O(n\log n)$ & $O(n\log n)$ & $O(n^2)$ \\
+      \bottomrule
+    \end{tabular}
+    \caption{Time complexity by case.}
+  \end{table}
+\end{frame}
+
+\section{Worked Example}
+
+\begin{frame}{Tracing Merge Sort on [5, 2, 8, 1]}
+  \begin{itemize}
+    \item Split: [5, 2] and [8, 1]
+    \item Split again: [5], [2], [8], [1]
+    \item Merge: [2, 5] and [1, 8]
+    \item Merge: [1, 2, 5, 8]
+  \end{itemize}
+\end{frame}
+
+\section{Wrap-up}
+
+\begin{frame}{Summary}
+  \begin{itemize}
+    \item Insertion sort is simple and fast on nearly-sorted input
+    \item Merge sort guarantees $O(n \log n)$ but needs extra memory
+    \item Quicksort is usually fastest in practice despite a worse worst case
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Questions}
+  \centering
+  \Large Questions?\\[1em]
+  \normalsize dana.okafor@example.edu
+\end{frame}
+
+\end{document}

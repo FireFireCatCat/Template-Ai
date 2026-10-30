@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>exam-n class – full release notes</title>
+
+
+<style class="distonly" type="text/css">body {
+  color: #333;
+  background: white;
+  margin-left: +30%;
+  width: 50%;            /* body is 50% of screen width */
+  margin-right: auto;    /* ie, 20% */
+  padding: 0.5em;        /* this will make a difference if I decide to
+     			    have the background a different colour */
+  /* I can't decide on font: Optima's always nice, but Gill looks
+     agreeably intense.  Helvetica's a decent fallback. */
+  font-family: "Helvetica Neue", Helvetica, "Gill Sans", gill, sans-serif;
+  /* font-family: Optima, "Gill Sans", gill, Helvetica, sans-serif; */
+  /* font-family: "Gill Sans", gill, Helvetica, sans-serif; */
+  /* I seem to have used 11pt at some point in the past, but this
+     is far too big -- did I ever have a reason for that, or is it
+     just due to browser changes? */
+  font-size: 10pt;
+  line-height: 150%;
+}
+
+div.topsidebar {
+    float: right;
+    width: 50%;                 /* ...of the body width (ie, 50% x 50% of screen) */
+    font-size: smaller;
+    margin-left: 1em;
+    padding-left: 1em;
+    border-left: solid thin #AAA;
+}
+
+/* On wider screens, move the sidebar out to the right hand side */
+/* This uses CSS3 media queries: http://www.w3.org/TR/css3-mediaqueries/ */
+@media screen and (min-width: 700pt) and (max-width: 850pt) {
+    body {
+        margin-left: 210pt;
+        width: 350pt;           /* 50% of 700pt */
+        margin-right: auto;
+    }
+    div.topsidebar {
+        position: absolute;
+        /* I feel this size should be 595pt (350 + 210 + 0.05*700),
+           but that's clearly not right -- I don't think I understand what the -5%
+           in the h1 spec below is actually 5% of! */
+        left: 570pt;
+        width: auto;
+        margin-left: 0pt;
+        padding-left: 0pt;
+        border: none;
+    }
+}
+/* On still-wider screens, expand the left-margin, keeping the sidebar attached to the right-hand edge.
+   When the screen is 850pt wide (expanding from the @media case above),
+   the left margin will be 210pt, the width 350pt, and the right margin therefore 290pt.*/
+@media screen and (min-width: 850pt) {
+    body {
+        margin-right: 290pt;    /* 290 = 850-(210+350) */
+        width: 350pt;
+        margin-left: auto;      /* ...takes up the slack */
+    }
+    div.topsidebar {
+        position: absolute;
+        width: 290pt;           /* same 290pt as above */
+        left: auto;
+        right: 0%;
+        padding-left: 0pt;
+        border: none;
+    }
+}
+
+
+code, pre {
+  font-family: Monaco, fixed;
+  font-size: 9pt;
+}
+
+a { text-decoration: none; }
+a:link { color: #66C; }
+a:visited { color: #669; }
+a[href]:hover { background: #EEE; }
+
+div.abstract {
+  font-style: oblique;
+  text-align: left;
+}
+div.abstract em { font-style: normal; }
+div.abstract code {
+  font-style: normal;
+  font-size: 80%;
+}
+
+/* a span/div style for attracting attention */
+.attention {
+  color: #822;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #822;
+  font-weight: 100;             /* few fonts have ultra-light weights */
+  line-height: 100%;            /* no need to spread out titles */
+}
+h1 {
+  margin-left: -40%;
+  margin-right: -5%;
+  padding: 0.5em;
+  border: solid thin #666;
+  text-align: right;
+}
+h2 {
+  margin-left: -40%;
+  margin-right: -5%;
+  padding: 0.2em;
+  border-top: solid thin #666;
+  clear: both;
+}
+
+h2.appendices {
+  margin-top: 10ex;
+  border-top: double medium #666;
+}
+h3 {
+  margin-left: -30%;
+  float: left;
+  width: 25%;
+  display: block;
+  text-align: right;
+  vertical-align: bottom;
+  padding-top: 0pt;
+  padding-right: 0.5em;
+  margin-top: 0pt;
+  line-height: 100%;
+}
+
+/*
+h4 {
+  color: #C66;
+}
+*/
+
+pre, table { background: #dde; }
+
+pre {
+  padding: 1em;
+  line-height: 130%;
+}
+
+table {
+  font-size: smaller;
+}
+td {
+  padding: 0.5ex;
+}
+
+Q:before { content: "“"; }
+Q:after  { content: "”"; }
+
+img.smallimage {
+  float: right;
+  margin: 24pt;
+  margin-right: -30%;
+}
+
+div.signature {
+  margin-left: -40%;
+  margin-right: -5%;
+  margin-top: 4ex;
+  text-align: right;
+  border: solid thin #666;
+  padding: 0.3em;
+  clear: both;
+}
+
+/* ============================================================
+ * Some other curiosities of my one-time formatting for web pages
+ */
+.doc-history {
+  font-size: xx-small;
+  background: #eee;
+  line-height: 100%;
+}
+
+div.subtoc, div.subsubtoc { display: none; }
+
+/* ============================================================
+ * Special formatting for ToC
+ */
+
+/*
+  If there's significant amount of text in front of the first subsection,
+  then the following are good to put in the per-document stylesheet:
+  width: 25%;
+  float: right;
+*/
+div#toc {
+  color: #888;
+  padding: 0;
+  font-size: smaller;
+  text-align: right;
+}
+div#toc a:link { color: #888; }
+div#toc &gt; ul {
+  padding: 0pt;
+  margin: 0pt;
+  list-style: none;
+}
+div#toc li {
+  padding: 0pt;
+  display: inline-block;
+}
+div#toc li:before {
+  content: "§ ";
+  margin-left: 1em;
+}
+/* the following elements aren't currently generated by structure.lx */
+div#toc li ul {
+  padding-left: 1em;
+  margin-left: 0;
+  font-style: italic;
+  display: inline;
+}
+div#toc li ul:before {
+  content: "( ";
+}
+div#toc li ul:after {
+  content: " ) ";
+}
+div#toc li li {
+  padding-left: 0pt;
+}
+div#toc li li:after {
+  content: "; ";
+}
+</style>
+<style type="text/css">
+dd ul { padding: 0pt; margin: 0pt; }
+</style>
+</head>
+
+<body>
+<h1>The exam-n class – release notes</h1>
+
+<h:dl xmlns:h="http://www.w3.org/1999/xhtml">
+
+
+
+
+<h:dt><h:span class="attention">1.4.0, 2022 October 10</h:span></h:dt><h:dd>
+    <ul>
+      <li>The [siunitx] option is now on by default, and the
+      <code>\units</code> macro produces a one-time-per-document
+      warning that it will be removed in the next version.</li>
+      <li>Having two <code>\partmarks</code> commands in an
+      environment is now detected as an error (it was documented as an
+      error, but not checked, so the extra <code>\partmarks</code>
+      commands were simply ignored).</li>
+    </ul>
+  </h:dd>
+
+<h:dt>1.4.0-b1, 2022 August 7</h:dt><h:dd>
+    <ul>
+      <li>The class file now depends on a version of LaTeX which is at least
+      the 2020/10/01 release.  This is so that we can use the current LaTeX
+      hooks mechanism.</li>
+      <li>Rework <code>\partmarks</code>: the <code>\partmarks</code>
+      indicator can now go <em>inside</em> most environments, including
+      list, quotes, unnumbered equations, and the various amsmath displays.  In these
+      cases, the indicator will automatically appear at the end of the
+      environment.  The starred variant of the command still exists, but
+      should rarely be necessary.</li>
+    </ul>
+  </h:dd>
+
+<h:dt>1.3.5-b1, 2022 July 11</h:dt><h:dd><ul>
+<li>Fix erroneous broken line before <code>\partmarks</code>, in
+compose mode, when a paragraph fills the last line.</li>
+<li>Fix support for STIX2 fonts in XeLaTeX and LuaLaTeX (it was
+working inaccurately before).</li>
+<li>Add an optional argument for <code>\part</code> to override part numbering.</li>
+<li>Use the <code>xcolor</code> package for colour management, instead
+of the core <code>color</code> package (the <code>xcolor</code>
+package is well-known and stable, and this means that we are
+compatible with TikZ).</li>
+<li><code>\partmarks</code> in solutions no longer gobble trailing space
+(doing so is probably right in questions, and is still the case, but
+<code>\partmarks</code> in solutions tend to be more interspersed with
+text).</li>
+<li><code>\label</code> within a <code>\part</code> now refers to the
+part number (as opposed to the question number).</li>
+<li>Avoid a ‘You can't use `\unskip' in vertical mode’ error,
+in certain circumstances.</li>
+<li>Add the <code>[siunitx]</code> option, indicating that we should
+load the <a href="https://www.ctan.org/pkg/siunitx">siunitx</a> package (default no).
+This is now preferred to the <code>\units</code> macro, and the latter will be
+removed in a forthcoming release.</li>
+<li>Renamed <code>A1.clo</code> to clearer <code>myclass.clo</code></li>
+<li>Repository moved from bitbucket to
+<a href="https://heptapod.host/nxg/exam-n">https://heptapod.host/nxg/exam-n</a>,
+when bitbucket dropped support for Mercurial.
+This means, incidentally, that links to specific issues at bitbucket
+are now broken.</li>
+<li>Bold-italic maths should now work correctly with STIX.</li>
+<li>Long <code>\partmarks</code> comments now appear as footnotes.</li>
+<li>Solutions are now set <code>\normalsize</code>.</li>
+<li>Bugfix: move definition of <code>\defaultpartmarkscategory</code>
+so it can be invoked within a <code>.clo</code> file straightforwardly.</li>
+<li>Define the <code>[uprightpi]</code> option to set <code>\pi</code>
+as an upright character, as appropriate for a constant (this is
+implemented fully only for the <code>[mtpro2]</code> and
+<code>[stix2]</code> options)..</li>
+<li>Note that the <code>\units</code> macro is likely to be deprecated
+in a forthcoming version, and replaced by a recommendation to use the
+standard <code>[siunitx]</code> package.</li>
+</ul></h:dd>
+
+<h:dt>1.3, 2018 November 21</h:dt><h:dd><ul>
+<li>Add a ‘category’ optional argument to <code>\partmarks</code>, and
+add <code>\defaultpartmarkscategory</code>.</li>
+</ul>
+</h:dd>
+
+<h:dt>1.2.1, 2018 July 2</h:dt><h:dd><ul>
+<li>Bugfix: ignore any content which appears after
+<code>\end{document}</code>, in <code>\includequestion</code> (author)
+files (fixes issue 6).</li>
+<li>The environments <code>{figure*}</code> and <code>{table*}</code> now produce an error.</li>
+<li>The macro <code>\vec</code> now produces correct greek bold maths.</li>
+<li>Docmentation: notes on unit formatting.</li>
+</ul>
+</h:dd>
+
+<h:dt>1.2, 2017 December 1</h:dt><h:dd><ul>
+<li>Use serif STIX2 fonts for sans and monospace cases, when using
+Lua- or XeLaTeX (the style doesn't use/encourage any sans-serif text,
+so this shouldn't matter).</li>
+<li>Fix font sizes in solutions.</li>
+<li>Adjustments to font-handling, which appear to have fixed LuaLaTeX differences.</li>
+<li>Add the <code>stix2</code> option, to use the
+<a href="http://www.stixfonts.org/">STIX2 font set</a>.</li>
+<li>Make it possible to use <code>\rubric</code> and <code>\baserubric</code> within a <code>.clo</code> file.
+This was advertised as being possible, but it seems it had never been tested!</li>
+</ul></h:dd>
+
+
+<h:dt><h:span class="attention">1.1.5, 2016 December 22</h:span></h:dt><h:dd><ul>
+<li>Make <code>\schoolcoursecode</code> optional exam metadata.
+Rework how this is checked, and support customising this in a
+<code>.clo</code> file.</li>
+</ul></h:dd>
+
+<h:dt>1.1.4, 2016 December 19</h:dt><h:dd><ul>
+<li>Documentation: add notes about use of pdfpages.</li>
+<li>Added <code>[largefont]</code> option.
+<strong>Note</strong>:
+option <code>[hugefont]</code> has replaced <code>[bigfont]</code>;
+the latter is now deprecated, and may be removed in v1.2.</li>
+<li>Use of the <code>\part</code> macro is now supported within
+solutions (it produced the wrong numbers before), and there is a new
+<code>\StylePartNumber</code> customisation macro.</li>
+</ul></h:dd>
+
+<h:dt>1.1.3, n/d</h:dt><h:dd><ul>
+<li>Version 1.1.3 was never released</li>
+</ul></h:dd>
+
+<h:dt>1.1.2, 2015 November 26</h:dt><h:dd><ul>
+<li>Handled trailing floats at end of document (generated by packages
+such as <code>rotating</code>.</li>
+<li><code>\label</code> within question environment now refers to the
+question number.</li>
+<li>Work around a problem when a paragraph starts with <code>{\bf ...}</code>
+rather than (post-1995) <code>\textbf{...}</code>.</li>
+<li><code>\begin{questiondata}</code> now starts a new paragraph.</li>
+<li>Some documentation adjustments.</li>
+</ul></h:dd>
+
+<h:dt>1.1.1, 2014 November 27</h:dt><h:dd><ul>
+<li>Adjust <code>\partmarks*</code> behaviour; now behaves differently
+within display maths (addresses
+<a href="https://bitbucket.org/nxg/exam-n/issue/1/">issue 1</a>).</li>
+<li>Various documentation and release fixes.</li>
+</ul></h:dd>
+
+<h:dt>1.1, 2014 May 3</h:dt><h:dd><p>Converted to a generic class, <code>exam-n</code>, ready for wider
+distribution.
+Available on <a href="https://bitbucket.org/nxg/exam-n/">bitbucket</a>
+and at CTAN.</p>
+</h:dd>
+
+<h:dt>1.0.16, 2014 February 28</h:dt><h:dd><ul>
+<li>Option mtpro2 now switches to times (this fixes a pre-existing bug
+  exposed by the [sansserif] option).</li>
+<li>The [bigfont] option now works (this fixes a pre-existing bug, to
+  do with <code>\subsections</code>, which was exposed by the addition
+  of the [bigfont] option).</li>
+<li>Added the [bigfont] option</li>
+<li>Fixed 'shouts' warning at start (again)</li>
+<li>Forbid *section commands inside questions (and don't freak out)</li>
+<li>Rename <code>\questiontrailer</code> to <code>\questionpreamble</code> (more logical)</li>
+<li>Fixed mcq warnings, and 'question continued' errors.</li>
+<li>Renamed <code>\multiplechoicequestions</code> to more logical
+  <code>\multiplechoiceanswers</code></li>
+<li>Various (further) spacing changes</li>
+<li>Added <code>\subsection</code></li>
+<li>Release includes
+1.0.16b1 (2014 January 20);
+1.0.16b2 (20 January);
+1.0.16b3 (22 January);
+1.0.16b4 (14 February).
+</li>
+</ul>
+</h:dd>
+
+<h:dt>1.0.15, 2014 January 19</h:dt><h:dd><ul>
+<li>Fixed mcq and showsolutions, to suppress incorrect warning of missing answers.</li>
+</ul></h:dd>
+
+<h:dt>1.0.14, 2014 January 10</h:dt><h:dd><ul>
+<li>pdfpages content now appears in draft mode.</li>
+<li>The <code>[draft]</code> option now implies [showsolutions] (so if
+you want to suppress the solutions in this mode, you must now follow
+<code>[draft]</code> with <code>[noshowsolutions]</code>).</li>
+<li>Showing missing information: shouts and missing exam date/time are
+now highlighted.</li>
+<li>Fixed bug where excess <code>\QuestionNumberChecksOff</code>
+caused question numbers to disappear.</li>
+<li>Remove indent at start of question.</li>
+</ul></h:dd>
+
+<h:dt>1.0.13, 2013 December 4</h:dt><h:dd><ul>
+<li>Added a <code>[sansserif]</code> class option.</li>
+<li>Improved spacing and linebreaking; there are now fewer bad page-breaks.</li>
+<li>Added the <code>{mcq}</code> environment.</li>
+<li>Changed the distribution licence from GPL to LPPL.</li>
+</ul>
+</h:dd>
+
+<h:dt>1.0.12, 2013 November 11</h:dt><h:dd><ul>
+<li>Adjustments to banner text and base rubric (consulting with Morag Casey).</li>
+<li>Added notes about <code>\includepdf</code> in ‘notes for authors’.</li>
+<li>Adjustments to the distributed example files.</li>
+</ul></h:dd>
+
+<h:dt>1.0.11, 2013 July 18</h:dt><h:dd>
+<p>Adjustments to question data: k_B, etc, should have roman
+subscripts.</p>
+</h:dd>
+
+<h:dt>1.0.10, 2013 June 27</h:dt><h:dd>
+  <p>Minor documentation and distribution fixes</p>
+</h:dd>
+
+<h:dt>1.0.9, 2013 March 22</h:dt><h:dd>
+  <p>Remove leftover debugging code (garhhh)</p>
+</h:dd>
+
+<h:dt>1.0.8, 2013 March 14</h:dt><h:dd>
+  <p>Add the <code>mono</code> and <code>colour</code> options.</p>
+</h:dd>
+
+<h:dt>1.0.7, 2013 March 14</h:dt><h:dd><ul>
+<li>pdfpages is now disabled <em>only</em> in solutions</li>
+<li>Minor layout changes (exam title adjusts size for long
+titles)</li>
+</ul></h:dd>
+
+<h:dt>1.0.6, 2013 March 13</h:dt><h:dd><ul>
+<li>Avoid tables and figures in solutions incrementing the float counter.</li>
+<li>Layout changes; adjustment to default base rubric; A345 rubric change</li>
+<li>Some documentation changes</li>
+</ul>
+</h:dd>
+
+<h:dt>1.0.4-1, 2013 March 8</h:dt><h:dd>
+  <p>This is a bugfix release: it's a re-release of now-deprecated
+1.0.5 minus a breaking change.</p>
+<ul>
+<li>Add <code>{table}</code> support, paralleling existing
+<code>{figure}</code> support (ie tables don't float, but captions
+work as expected).</li>
+<li>Blank lines after a <code>\begin{question}</code> no longer
+result in extra space.</li>
+<li>Adjust spacing and layout of front page (again); various other
+cosmetic changes.</li>
+<li>A document identifier appears at the bottom of each page,
+corroborating the exam the page is for (to avoid photocopier collation
+accidents), and giving a numeric identifier which increases with time
+(allowing you to identify which of two printouts is later).</li>
+</ul></h:dd>
+
+<h:dt>1.0.4, 2013 March 6</h:dt><h:dd>
+  <p>Adjust base rubric; assorted distribution and detail fixes.</p>
+</h:dd>
+
+<h:dt>1.0.3, 2013 January 25</h:dt><h:dd>
+  <p>Added <code>[A2]</code> class option.</p>
+</h:dd>
+
+<h:dt>1.0.2, 2013 January 25</h:dt><h:dd><ul>
+<li>The `pdfpages' package wasn't working when the `noshowsolutions'
+option was present.  Fixed, by special-casing, specifically disabling the
+<code>\includepdf</code> command in this case.</li>
+<li>Adjust display of <code>\partmarks</code> (no need for extra
+space, since <code>\partmarks</code> is now fully in the margin).</li>
+<li>Adjusting the front-page layout.  Again.</li>
+</ul></h:dd>
+
+<h:dt>1.0.1, 2013 January 18</h:dt><h:dd><ul>
+<li><code>{figure}</code> now works, because it's explicitly
+supported (<code>{figure}</code> inside solutions could cause problems
+before).  The contents don't float.</li>
+<li>Layout adjustments.</li>
+<li>Graphics now appear in draft mode.</li>
+</ul>
+</h:dd>
+
+<h:dt>1.0, 2012 December 11</h:dt><h:dd>
+  <p>This is the nominal version 1.0 release, and will be used for the
+2012-13 Honours Astronomy exams (it might get further tweaks along the
+  way, but we believe this is a complete distribution set).</p>
+  <ul>
+<li>More adjustments to notes-for-authors, now showing example LaTeX results.</li>
+<li>Addition of template-question.tex</li>
+<li>Adjustments to base rubric.</li>
+  </ul>
+</h:dd>
+
+<h:dt>1.0b5, 2012 December 3</h:dt><h:dd><ul>
+<li>Fine formatting adjustments: occasional <code>\nobreak</code> and
+rationalisation of <code>\maketitle</code>.</li>
+<li>Improvements to notes-for-authors.</li>
+</ul></h:dd>
+
+<h:dt>1.0b4, 2012 November 30</h:dt><h:dd><ul>
+<li>Improve generation of PDF metadata.</li>
+<li>Add macro <code>\shout</code>, for highlighted `FIXME' comments.</li>
+<li>Add showmarktotals option.</li>
+<li>Permit <code>\partmarks</code> in solutions, without it adding to
+the marks added up for the question (at the same time, forbid having a
+solution within a solution).</li>
+<li>Various formatting adjustments.</li>
+</ul>
+</h:dd>
+
+<h:dt>1.0b3, 2012 November 8</h:dt><h:dd><ul>
+<li>Add [A345] option.</li>
+<li>Make compose/draft material appear in red.</li>
+<li>Some packaging changes and bugfixes.</li>
+</ul></h:dd>
+
+<h:dt>1.0b2, 2012 November 6</h:dt><h:dd><p>Mild formatting adjustments.</p></h:dd>
+
+<h:dt>1.0rc1, 2012 November 2</h:dt><h:dd><ul>
+<li>Significant rewrite of formatting, producing a consensus
+AandA/PhysHons style, and renaming some confusingly named
+commands.</li>
+<li>Consequently, the AandA.clo and PhysHons.clo options have
+disappeared.</li>
+<li>The <code>\constantssheet</code> macro has appeared, and setting
+this is now the principal function of per-class <code>.clo</code>
+files.
+See the new <code>A1.clo</code> and modified <code>P2.clo</code> option files.</li>
+</ul>
+</h:dd>
+
+<h:dt>0.17.1, 2012 September 21</h:dt><h:dd><p>Fix packaging infelicity</p></h:dd>
+
+<h:dt>0.17, 2012 September 21</h:dt><h:dd><ul>
+<li>Rework <code>solutions</code> environment to make it a little more robust.</li>
+<li>Add <code>\MSc</code> degree shorthand.</li>
+<li>Bugfix: continuation headers now appear if a question starts on page 1.</li>
+<li>Bugfix: fix wrong syntax in draft+showsolutions mode -- now works again</li>
+</ul>
+</h:dd>
+
+<h:dt>0.16, 2012 July 26</h:dt><h:dd><ul>
+<li>Renamed the [showmarks] option to more rational [perquestionmarks]
+(because the option doesn't control whether per-question marks are
+<em>displayed</em>, but whether they're tracked at all).  Slightly
+improved the documentation of this at the same time.</li>
+<li>Added <code>\lambdabar</code> macro</li>
+<li>Fix long-standing problem with continuation lines -- these should now be robust.</li>
+</ul></h:dd>
+<h:dt>0.15, 2011 November 23</h:dt><h:dd>
+  <p>Avoid conflict with <code>ifpdf</code> package. Now
+  <em>depends</em> on <code>ifpdf</code>.</p>
+</h:dd>
+
+<h:dt>0.14, 2010 August 6</h:dt><h:dd><ul>
+<li>Fixed the problem where the question-continuation marks would be
+messed up by the presence of floats.</li>
+<li>Added P2.clo; adjust 'showing solutions' banner
+to avoid collision with other headers (thanks to Morag Casey for the .clo
+file and the report).</li>
+<li>Changed the name of the class to 'guexam', from potentially confusing 'exam'.
+Support guexam.config for forcing options (for example).</li>
+</ul></h:dd>
+
+<h:dt>0.13-1, 2008 November 21</h:dt><h:dd>
+  <p>Make the gulogo style optional, so that question authors don't
+have to download and install that before they can draft a question.
+  Also adjust the logo size.</p>
+</h:dd>
+
+<h:dt>0.13, 2008 November 11</h:dt><h:dd><p>Add university logo, and slightly rearrange the header.
+Add <code>{questiondata}</code> environment.</p></h:dd>
+
+<h:dt>0.12-2, 2008 April 14</h:dt><h:dd><p>...keep on truckin'.  Further changes to the
+<code>\partmarks*</code> spacing code, still largely unprincipled, but
+looking closer to what's required.</p></h:dd>
+
+<h:dt>0.12-1, 2008 April 3</h:dt><h:dd><p>...and again.  This time, I think I actually see what the problem
+was.  Macro <code>\partmarks</code> now forces a new paragraph (it was
+documented to be usable at the end of a paragraph, so this is again
+forced, and the documentation made more explicit), this makes what I
+thought was the solution actually work.  Which is nice.  Redefined
+<code>enumerate</code> and <code>itemize</code> environments, to
+improve spacing somewhat.</p></h:dd>
+
+<h:dt>0.12, 2008 April 3</h:dt><h:dd><p>Further adjustments to <code>\partmarks</code>: again, it should
+be more consistent without necessarily being more principled, alas.</p></h:dd>
+
+<h:dt>0.11, 2008 March 30</h:dt><h:dd><p>Minor fixes: Adjust display of partmarks -- should now be more
+consistent; option [showsolutions] no longer defaults
+[{no,}pageperquestion]; add macro <code>\e</code> to format roman
+exponential.</p></h:dd>
+
+<h:dt>0.10, 2008 January 17</h:dt><h:dd><p>Fix <code>\vec</code> when it appears in sub- or superscript
+position.  Add <code>\paperident</code> command.</p></h:dd>
+
+<h:dt>0.9, 2007 December 10</h:dt><h:dd><p>Various formatting changes.  Added optional argument to
+<code>\includequestion</code> overriding question number.</p></h:dd>
+
+<h:dt>0.8, 2007 November 25</h:dt><h:dd><p>You can now use <code>\usepackage</code> within
+<code>[compose]</code> mode.</p></h:dd>
+
+<h:dt>0.7, 2007 November 20</h:dt><h:dd><p>Make changes to the display of the 'University of Glasgow' banner
+at the top: resolves some font problems.  Other minor layout tweaks.</p></h:dd>
+
+<h:dt>0.6, 2007 November 18</h:dt><h:dd><p>Fixed bold maths problems: <code>\vec</code> now works with greek
+letters, too.  Support MTpro2 (mathtime maths fonts) with the new
+<code>[mtpro2]</code> class option.  The <code>{solution}</code>
+environment can appear multiple times within a question.  Question
+numbers now appear correctly in 'final' mode.</p></h:dd>
+
+<h:dt>0.5, 2007 October 30</h:dt><h:dd><p>Fix collision with LaTeX internal: a <code>\comment</code> at the
+start of a <code>{question}</code> now works.</p></h:dd>
+
+</h:dl>
+
+
+</body>
+</html>

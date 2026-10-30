@@ -1,0 +1,1729 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2026 Francisco Mariano Neto
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Francisco Mariano Neto.
+%
+% This work consists of the files relatese.dtx and relatese.ins
+% and the derived file relatese.sty.
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[T1]{fontenc}
+\usepackage[full]{relatese}
+
+\newcommand{\opt}[1]{\texttt{#1}}
+\newcommand{\pkg}[1]{\textsf{#1}}
+\newcommand{\prog}[1]{\texttt{#1}}
+\newcommand{\env}[1]{\texttt{#1}}
+
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{relatese.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \ProvidesFile{relatese.dtx}
+% [2026/05/30 v0.3 General report helper package]
+%
+% \GetFileInfo{relatese.dtx}
+%
+%
+% \title{The \textsf{relatese} package}
+% \author{Francisco Mariano Neto}
+% \date{\filedate\quad\fileversion}
+%
+% \maketitle
+%
+% \begin{abstract}
+% \textsf{relatese} is a small helper package for scientific reports.
+% It provides a simplified way of loading commonly used package setups
+% that enhance the standard \LaTeX{} system, with options to load
+% modules for page layout, mathematics, figures, tables, scientific
+% writing, references, and draft tools.
+% \end{abstract}
+%
+% \tableofcontents
+%
+% \section{Introduction}
+%
+% \pkg{relatese} is a small helper package for writing scientific
+% reports and related academic documents in \LaTeX.  It collects a set
+% of defaults, package-loading shortcuts, and notation helpers that are
+% commonly useful in reports containing mathematical expressions,
+% figures, tables, units, chemical formulae, references, and structured
+% page layouts.
+%
+% The package was originally developed as a personal report template,
+% but it was refactored to be more flexible than a fixed document class or
+% a monolithic preamble. Instead of imposing a complete visual identity
+% or a rigid document structure, \pkg{relatese} provides a compact core
+% and a number of options that trigger the loading of predefined sets
+% of modules. These options can be enabled only when needed, allowing
+% the user to choose, for example, whether to load scientific-writing
+% tools, mathematical notation commands, figure and table helpers,
+% bibliography support, or extended layout features.
+%
+% The core package loads a conservative set of broadly useful packages
+% and defines a few default conventions for figures, tables, lists, and
+% page geometry.  Additional functionality is activated through package
+% options such as \opt{math}, \opt{figures}, \opt{tables},
+% \opt{science} (with \opt{sciencecomma} as an alternative),
+% \opt{refs}, and \opt{full}. This makes the package suitable both for
+% short reports with minimal setup and for larger scientific documents
+% requiring more infrastructure.
+%
+% One design goal of \pkg{relatese} is to keep common report-writing
+% choices close at hand while avoiding the need to copy the same long
+% preamble from project to project.  Another goal is to keep these
+% choices explicit: features that can affect compilation requirements or
+% document semantics, such as \pkg{svg}, \pkg{biblatex}, \pkg{mhchem}, or
+% \pkg{cleveref}, are grouped behind options rather than being treated as
+% unavoidable defaults.
+%
+% Although the package includes conveniences that are especially useful
+% in scientific and technical writing, it is not meant to replace
+% specialized document classes, journal templates, or institutional
+% formatting rules.  When a publisher, university, or funding agency
+% provides its own class or template, that template should take
+% precedence.  In such cases, \pkg{relatese} can still be useful as a
+% lightweight collection of helpers, provided that the selected options
+% do not conflict with the required formatting.
+%
+% The package also includes support for documents following Portuguese
+% numerical conventions through the \opt{sciencecomma} option, which
+% configures \pkg{siunitx} to use a decimal comma.  Language-dependent
+% behavior is otherwise kept limited, so that document language can be
+% handled by standard tools such as \pkg{babel} or \pkg{polyglossia}.
+%
+% In short, \pkg{relatese} is intended to be a practical middle ground
+% between a bare \LaTeX{} preamble and a fully custom document class,
+% providing provides reusable defaults and helpers, while leaving the
+% document class, language setup, and final visual identity under the
+% author's control.
+%
+% \section{Installation}
+%
+% Run LaTeX on \texttt{relatese.ins} to generate \texttt{relatese.sty}:
+% \begin{verbatim}
+% latex relatese.ins
+% \end{verbatim}
+% Then place \texttt{relatese.sty} where TeX can find it, or keep it in the
+% same directory as your document.
+%
+% This documentation can be generated by running:
+% \begin{verbatim}
+% latex relatese.dtx
+% \end{verbatim}
+%
+% \section{Basic usage}
+%
+% The package can be loaded without options:
+% \begin{verbatim}
+% \usepackage{relatese}
+% \end{verbatim}
+% A fuller setup for scientific reports might use:
+% \begin{verbatim}
+% \usepackage[layout,math,figures,tables,sciencecomma,refs]{relatese}
+% \end{verbatim}
+%
+% \section{Package options}
+%
+% \pkg{relatese} is organized around a small core and a set of optional
+% modules.  The core is always loaded and provides general-purpose
+% defaults for page geometry, graphics, captions, tables, lists, colors,
+% and basic mathematical support through \pkg{amsmath}.  Additional
+% features are enabled through package options.
+%
+% \begin{center}
+% \begin{tabular}{ll}
+% \toprule
+% Option & Effect \\
+% \midrule
+% \texttt{layout} & Loads document-structure helpers. \\
+% \texttt{math} & Loads extra mathematical packages and notation helpers. \\
+% \texttt{figures} & Loads float, subfigure, landscape, barrier, and SVG support. \\
+% \texttt{tables} & Loads colored-table and cell-formatting helpers. \\
+% \texttt{science} & Loads \texttt{siunitx} and \texttt{mhchem}. \\
+% \texttt{sciencecomma} & Like \texttt{science}, with decimal comma for \texttt{siunitx}. \\
+% \texttt{siunitx} & Loads \texttt{siunitx} only. \\
+% \texttt{chemistry} & Loads \texttt{mhchem} only. \\
+% \texttt{refs} & Loads \texttt{biblatex}, \texttt{hyperref}, and \texttt{cleveref}. \\
+% \texttt{biblatex} & Loads \texttt{csquotes} and \texttt{biblatex}. \\
+% \texttt{cleveref} & Loads \texttt{hyperref} and \texttt{cleveref}. \\
+% \texttt{drafttools} & Loads drafting utilities such as \texttt{lipsum}. \\
+% \texttt{full} & Enables the main optional modules. \\
+% \bottomrule
+% \end{tabular}
+% \end{center}
+%
+% 
+% Options may be combined in the usual \LaTeX{} way:
+%
+% \begin{verbatim}
+% \usepackage[math,sciencecomma,refs]{relatese}
+% \end{verbatim}
+%
+% For convenience, the \opt{full} option enables most modules at once.
+% This is useful for larger reports or for documents following the
+% conventions for which the package was originally designed.  For more
+% portable documents, however, it is usually better to enable only the
+% modules that are actually needed.
+%
+% \subsection{The core package}
+%
+% Loading \pkg{relatese} without options activates the core configuration:
+%
+% \begin{verbatim}
+% \usepackage{relatese}
+% \end{verbatim}
+%
+% The core loads a conservative set of packages that are broadly useful in
+% scientific reports and academic writing: \pkg{xcolor}, \pkg{microtype},
+% \pkg{graphicx}, \pkg{amsmath}, \pkg{bm}, \pkg{booktabs},
+% \pkg{caption}, \pkg{enumitem}, and \pkg{geometry}.
+%
+% The core also defines a small set of colors, sets a default graphics
+% search path, configures captions for figures and tables, applies compact
+% spacing to \env{itemize} lists, and makes page geometry presets
+% available through \cs{setgeometry}.  Since \pkg{geometry} is always
+% loaded, these presets are available even when no package option is
+% specified.
+%
+% \paragraph{Example:}
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage{relatese}
+%
+% \begin{document}
+%
+% \section{Introduction}
+%
+% This document uses the core defaults provided by \pkg{relatese}.
+%
+% \begin{itemize}
+%   \item Compact item spacing is already configured.
+%   \item Figure and table captions use the package defaults.
+%   \item Geometry presets are available through \cs{setgeometry}.
+% \end{itemize}
+%
+% \end{document}
+% \end{verbatim}
+%
+% The default geometry preset is \opt{standard}.  It changes only the
+% margins and does not force a paper size.  The paper size should be
+% selected by the document class, for example:
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage{relatese}
+% \end{verbatim}
+%
+% or:
+%
+% \begin{verbatim}
+% \documentclass[letterpaper]{article}
+% \usepackage{relatese}
+% \end{verbatim}
+%
+% \subsection{The \opt{layout} option}
+%
+% The \opt{layout} option enables additional packages related to document
+% structure and page layout:
+%
+% \begin{verbatim}
+% \usepackage[layout]{relatese}
+% \end{verbatim}
+%
+% It loads \pkg{changepage}, \pkg{multicol}, \pkg{authblk},
+% \pkg{setspace}, \pkg{indentfirst}, \pkg{tocloft}, \pkg{lastpage},
+% \pkg{titlesec}, and \pkg{footmisc}.
+%
+% This option is intended for reports whose overall layout is controlled
+% by the author.  It is useful when the document needs multiple columns,
+% customized author blocks, line spacing commands, first-paragraph
+% indentation, table-of-contents adjustments, page-count references, or
+% section-title formatting.
+%
+% Since \opt{layout} changes document-wide conventions, it should be used
+% with some care when working with publisher templates, institutional
+% classes, or document classes that already customize section headings,
+% footnotes, or the table of contents.
+%
+% In particular, \opt{layout} changes footnote numbering to symbolic
+% marks:
+%
+% \begin{verbatim}
+% *, dagger, double dagger, ...
+% \end{verbatim}
+%
+% This reproduces one of the original conventions of the package, but it
+% may not be appropriate for all document types.
+%
+% \paragraph{Example:}
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage[layout]{relatese}
+%
+% \title{A Scientific Report}
+% \author[1]{First Author}
+% \author[2]{Second Author}
+% \affil[1]{Institute A}
+% \affil[2]{Institute B}
+%
+% \begin{document}
+%
+% \maketitle
+% \onehalfspacing
+%
+% \begin{multicols}{2}
+% This section is typeset in two columns.
+% \end{multicols}
+%
+% \end{document}
+% \end{verbatim}
+%
+% The package includes a few geometry presets, summarized in
+% \cref{tab:geometry-presets}. None of them sets the paper size.
+% Paper size should be selected by the document class, for example
+% with \texttt{a4paper} or \texttt{letterpaper}.
+%
+% \begin{table}[htbp]
+% \centering
+% \caption{Geometry presets provided by \pkg{relatese}.}
+% \label{tab:geometry-presets}
+% \begin{tabular}{p{.18\linewidth}p{.38\linewidth}p{.34\linewidth}}
+% \toprule
+% Preset & Margins & Intended use \\
+% \midrule
+% \texttt{standard}
+%   & \texttt{hmargin=2.5cm, vmargin=3.5cm}
+%   & General reports and default use. \\
+%
+% \texttt{compact}
+%   & \texttt{hmargin=2cm, vmargin=2.5cm}
+%   & Shorter documents or drafts with less white space. \\
+%
+% \texttt{wide}
+%   & \texttt{hmargin=2cm, top=2.5cm, bottom=3cm}
+%   & Documents needing a wider text block, for example when equations,
+%     figures, or tables benefit from additional horizontal space. \\
+%
+% \texttt{binding}
+%   & \texttt{inner=3cm, outer=2cm, top=3cm, bottom=3.5cm}
+%   & Printed documents that require extra inner margin for binding. \\
+%
+% \texttt{draft}
+%   & \texttt{hmargin=3cm, vmargin=3.5cm}
+%   & Drafts with larger margins for handwritten notes, comments, or
+%     corrections. \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+%
+% These presets may be selected in the preamble with \cs{setgeometry}.
+% For temporary geometry changes inside the document body, use
+% \cs{newsetgeometry} and return to the previous layout with
+% \cs{restoregeometry}.
+%
+% \subsection{The \opt{math} option}
+%
+% The \opt{math} option enables additional mathematical packages and a
+% collection of notation helpers:
+%
+% \begin{verbatim}
+% \usepackage[math]{relatese}
+% \end{verbatim}
+%
+% It loads \pkg{amssymb}, \pkg{xfrac}, \pkg{cancel}, and \pkg{xparse}.
+% It also defines commands for common mathematical notation, including
+% derivatives, differentials, inner products, chi-square symbols, Roman
+% numerals, prime marks, and unit vectors.
+%
+% \subsubsection{Mathematical commands}
+%
+% The \opt{math} option defines a small set of commands for common
+% mathematical notation.  The commands are intended as lightweight
+% shortcuts for notation frequently used in scientific reports, lecture
+% notes, and technical documents.
+%
+% \subsubsection*{Basic notation}
+%
+% \begin{center}
+% \begin{tabular}{lll}
+% \toprule
+% Command & Example input & Output \\
+% \midrule
+% \cs{mean} & \verb|\mean{x}| & $\mean{x}$ \\
+% \cs{lapla} & \verb|\lapla f| & $\lapla f$ \\
+% \cs{relprime} & \verb|x\relprime| & $x\relprime$ \\
+% \cs{relprime} with argument & \verb|x\relprime[2]| & $x\relprime[2]$ \\
+% \cs{slparallel} & \verb|E_{\slparallel}| & $E_{\slparallel}$ \\
+% \bottomrule
+% \end{tabular}
+% \end{center}
+%
+% The command \cs{relprime} is provided instead of a more generic name
+% such as \cs{prime}, since \cs{prime} is already a standard mathematical
+% symbol in \LaTeX.  With an optional argument, \cs{relprime} can be used
+% to indicate repeated primes.
+%
+% The command \cs{slparallel} provides a slanted parallel marker.  It does
+% not redefine the standard \cs{parallel} symbol, so both forms remain
+% available.
+%
+% \subsubsection*{Differentials and derivatives}
+%
+% \begin{center}
+% \begin{tabular}{lll}
+% \toprule
+% Command & Example input & Output \\
+% \midrule
+% \cs{ud} & \verb|\ud x| & $\ud x$ \\
+% \cs{ud} with order & \verb|\ud[2]x| & $\ud[2]x$ \\
+% \cs{dd} & \verb|\dd{f}{x}| & $\dd{f}{x}$ \\
+% \cs{dd} with order & \verb|\dd{f}{x}[2]| & $\dd{f}{x}[2]$ \\
+% \cs{dda} & \verb|\dda{f}{x}| & $\dda{f}{x}$ \\
+% \cs{dda} with order & \verb|\dda{f}{x}[2]| & $\dda{f}{x}[2]$ \\
+% \cs{ddp} & \verb|\ddp{f}{x}| & $\ddp{f}{x}$ \\
+% \cs{ddp} with order & \verb|\ddp{f}{x}[2]| & $\ddp{f}{x}[2]$ \\
+% \cs{ddpa} & \verb|\ddpa{f}{x}| & $\ddpa{f}{x}$ \\
+% \cs{ddpa} with order & \verb|\ddpa{f}{x}[2]| & $\ddpa{f}{x}[2]$ \\
+% \bottomrule
+% \end{tabular}
+% \end{center}
+%
+% The commands \cs{dd} and \cs{ddp} typeset total and partial derivatives
+% of a given expression.  The commands \cs{dda} and \cs{ddpa} typeset the
+% corresponding differential operators applied to an expression.  The
+% optional argument specifies the order of the derivative.
+%
+% For example:
+%
+% \begin{verbatim}
+% \[
+%   \dd{f}{x}
+%   \qquad
+%   \dd{f}{x}[2]
+%   \qquad
+%   \ddp{f}{t}
+% \]
+% \end{verbatim}
+%
+% produces:
+%
+% \[
+%   \dd{f}{x}
+%   \qquad
+%   \dd{f}{x}[2]
+%   \qquad
+%   \ddp{f}{t}
+% \]
+%
+% \subsubsection*{Products, statistics, and numerals}
+%
+% \begin{center}
+% \begin{tabular}{lll}
+% \toprule
+% Command & Example input & Output \\
+% \midrule
+% \cs{innp} & \verb|\innp{u}{v}| & $\innp{u}{v}$ \\
+% \cs{chisq} & \verb|\chisq| & $\chisq$ \\
+% \cs{chisqred} & \verb|\chisqred| & $\chisqred$ \\
+% \cs{rmnum} & \verb|\rmnum{4}| & \rmnum{4} \\
+% \cs{Rmnum} & \verb|\Rmnum{4}| & \Rmnum{4} \\
+% \bottomrule
+% \end{tabular}
+% \end{center}
+%
+% The command \cs{innp} typesets a simple inner product using angle
+% brackets.  The commands \cs{chisq} and \cs{chisqred} are shortcuts for
+% chi-square and reduced chi-square notation.  The commands \cs{rmnum} and
+% \cs{Rmnum} produce lower-case and upper-case Roman numerals.
+%
+% \subsubsection*{Unit vectors}
+%
+% The package also defines shortcuts for common Cartesian, cylindrical,
+% spherical, perpendicular, and parallel unit vectors.
+%
+% \begin{center}
+% \begin{tabular}{lll}
+% \toprule
+% Command & Example input & Output \\
+% \midrule
+% \cs{vi} & \verb|\vi| & $\vi$ \\
+% \cs{vj} & \verb|\vj| & $\vj$ \\
+% \cs{vk} & \verb|\vk| & $\vk$ \\
+% \cs{vs} & \verb|\vs| & $\vs$ \\
+% \cs{vp} & \verb|\vp| & $\vp$ \\
+% \cs{vperp} & \verb|\vperp| & $\vperp$ \\
+% \cs{vpar} & \verb|\vpar| & $\vpar$ \\
+% \cs{vphi} & \verb|\vphi| & $\vphi$ \\
+% \cs{vz} & \verb|\vz| & $\vz$ \\
+% \cs{vsl} & \verb|\vsl| & $\vsl$ \\
+% \cs{vphil} & \verb|\vphil| & $\vphil$ \\
+% \cs{vzl} & \verb|\vzl| & $\vzl$ \\
+% \cs{vr} & \verb|\vr| & $\vr$ \\
+% \cs{vtheta} & \verb|\vtheta| & $\vtheta$ \\
+% \bottomrule
+% \end{tabular}
+% \end{center}
+%
+% For example:
+%
+% \begin{verbatim}
+% \[
+%   \vec{A}
+%   =
+%   A_{\perp}\vperp
+%   +
+%   A_{\slparallel}\vpar
+% \]
+% \end{verbatim}
+%
+% produces:
+%
+% \[
+%   \vec{A}
+%   =
+%   A_{\perp}\vperp
+%   +
+%   A_{\slparallel}\vpar
+% \]
+%
+% \subsubsection*{Display-math spacing}
+%
+% The command \cs{seteqskip} adjusts the vertical spacing around displayed
+% equations:
+%
+% \begin{verbatim}
+% \seteqskip
+% \end{verbatim}
+%
+% It sets \cs{abovedisplayskip}, \cs{belowdisplayskip},
+% \cs{abovedisplayshortskip}, and \cs{belowdisplayshortskip}.  It is
+% intended to be used after choosing the document line spacing, for
+% example after \cs{onehalfspacing} or \cs{doublespacing}.
+% 
+%
+% \subsection{The \opt{figures} option}
+%
+% The \opt{figures} option enables additional support for figures,
+% subfigures, float placement, landscape pages, and SVG graphics:
+%
+% \begin{verbatim}
+% \usepackage[figures]{relatese}
+% \end{verbatim}
+%
+% This option loads \pkg{float}, \pkg{subcaption}, \pkg{placeins},
+% \pkg{pdflscape}, and \pkg{svg}.  It is intended for documents that make
+% substantial use of figures or that need more control over figure
+% placement than the \LaTeX{} defaults provide.
+%
+% The core package already loads \pkg{graphicx} and \pkg{caption}, so
+% basic figure inclusion is available even without this option.  The
+% \opt{figures} option adds tools for subfigures, float barriers,
+% landscape pages, and SVG inclusion. 
+%
+% \paragraph{Basic figure inclusion.}
+%
+% Since \pkg{graphicx} is part of the core package, ordinary figures may
+% be included without enabling \opt{figures}:
+%
+% \begin{verbatim}
+% \begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=.65\linewidth]{example-image}
+%   \caption{A simple figure.}
+%   \label{fig:simple}
+% \end{figure}
+% \end{verbatim}
+%
+% This produces a standard floating figure with the caption style
+% configured by \pkg{relatese}.  The package also adds \texttt{img/} to
+% the graphics search path, so image files placed in that directory can
+% be included without writing the full path.
+%
+% \paragraph{Subfigures.}
+%
+% With \opt{figures}, the \pkg{subcaption} package is available.  This
+% allows several related panels to be grouped inside a single figure:
+%
+% \begin{verbatim}
+% \begin{figure}[htbp]
+%   \centering
+%
+%   \begin{subfigure}{.45\linewidth}
+%     \centering
+%     \includegraphics[width=\linewidth]{example-image-a}
+%     \caption{First panel.}
+%     \label{fig:panel-a}
+%   \end{subfigure}
+%   \hfill
+%   \begin{subfigure}{.45\linewidth}
+%     \centering
+%     \includegraphics[width=\linewidth]{example-image-b}
+%     \caption{Second panel.}
+%     \label{fig:panel-b}
+%   \end{subfigure}
+%
+%   \caption{A figure composed of two panels.}
+%   \label{fig:two-panels}
+% \end{figure}
+% \end{verbatim}
+%
+% Subfigure captions are configured to use the same general caption style
+% as ordinary figures.
+%
+% \paragraph{Float barriers.}
+%
+% The \pkg{placeins} package provides the command \cs{FloatBarrier}.  It
+% prevents floats from moving past a given point in the document:
+%
+% \begin{verbatim}
+% \section{Results}
+%
+% Text discussing the first group of figures.
+%
+% \begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=.7\linewidth]{result}
+%   \caption{A result figure.}
+% \end{figure}
+%
+% \FloatBarrier
+%
+% \section{Discussion}
+% \end{verbatim}
+%
+% This is useful in reports where figures should remain close to the
+% section in which they are discussed.
+%
+% \paragraph{Forced float placement.}
+%
+% The \pkg{float} package provides the \texttt{H} placement specifier:
+%
+% \begin{verbatim}
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=.7\linewidth]{setup}
+%   \caption{A figure placed exactly here.}
+% \end{figure}
+% \end{verbatim}
+%
+% This can be useful in drafts, laboratory reports, or teaching material.
+% However, forced placement should be used sparingly, since it can make
+% page breaking more difficult and may produce poor page layouts.
+%
+% \paragraph{Landscape pages.}
+%
+% The \pkg{pdflscape} package is useful for wide figures, diagrams, or
+% tables that do not fit comfortably in portrait orientation:
+%
+% \begin{verbatim}
+% \begin{landscape}
+% \begin{figure}[htbp]
+%   \centering
+%   \includegraphics[width=.9\linewidth]{wide-diagram}
+%   \caption{A wide diagram on a landscape page.}
+% \end{figure}
+% \end{landscape}
+% \end{verbatim}
+%
+% Pages inside the \env{landscape} environment are rotated in the output
+% PDF, which is convenient for on-screen reading.
+%
+% \paragraph{SVG graphics.}
+%
+% The \opt{figures} option also loads \pkg{svg}, allowing SVG files to be
+% included with \cs{includesvg}:
+%
+% \begin{verbatim}
+% \begin{figure}[htbp]
+%   \centering
+%   \includesvg[width=.65\linewidth]{diagram}
+%   \caption{A figure included from an SVG file.}
+% \end{figure}
+% \end{verbatim}
+%
+% In many workflows, SVG inclusion requires external conversion tools such
+% as Inkscape, and may require shell escape depending on the compilation
+% setup.  This should be checked when building documents in restricted or
+% automated environments.
+%
+% \paragraph{Example.}
+%
+% The following minimal example uses subfigures and a float barrier:
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage[figures]{relatese}
+%
+% \begin{document}
+%
+% \section{Experimental setup}
+%
+% \begin{figure}[htbp]
+%   \centering
+%
+%   \begin{subfigure}{.45\linewidth}
+%     \centering
+%     \includegraphics[width=\linewidth]{example-image-a}
+%     \caption{First view.}
+%   \end{subfigure}
+%   \hfill
+%   \begin{subfigure}{.45\linewidth}
+%     \centering
+%     \includegraphics[width=\linewidth]{example-image-b}
+%     \caption{Second view.}
+%   \end{subfigure}
+%
+%   \caption{Two views of the experimental setup.}
+% \end{figure}
+%
+% \FloatBarrier
+%
+% \section{Results}
+%
+% The figures from the previous section will not float into this section.
+%
+% \end{document}
+% \end{verbatim}
+% 
+% \subsection{The \opt{tables} option}
+%
+% The \opt{tables} option enables additional tools for more elaborate
+% tables:
+%
+% \begin{verbatim}
+% \usepackage[tables]{relatese}
+% \end{verbatim}
+%
+% This option loads \pkg{colortbl} and \pkg{makecell}.  The core package
+% already loads \pkg{booktabs}, so high-quality horizontal rules are
+% available even without \opt{tables}.  The \opt{tables} option is intended
+% for documents that need colored rows or cells, multi-line table cells,
+% or more flexible table headings.
+%
+% \paragraph{Basic tables.}
+%
+% Since \pkg{booktabs} is part of the core package, simple tables can be
+% written without enabling \opt{tables}:
+%
+% \begin{verbatim}
+% \begin{table}[htbp]
+% \centering
+% \caption{A simple table using \pkg{booktabs}.}
+% \begin{tabular}{ll}
+% \toprule
+% Quantity & Value \\
+% \midrule
+% A & 1.0 \\
+% B & 2.0 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+% \end{verbatim}
+%
+% The \opt{tables} option adds tools for cases where this basic structure
+% is not enough.
+%
+% \paragraph{Multi-line cells.}
+%
+% The \pkg{makecell} package provides the command \cs{makecell}, which is
+% useful for table headings or cells that need explicit line breaks:
+%
+% \begin{verbatim}
+% \begin{table}[htbp]
+% \centering
+% \caption{A table using multi-line cells.}
+% \begin{tabular}{ll}
+% \toprule
+% Quantity & \makecell{Measured\\value} \\
+% \midrule
+% A & 1.0 \\
+% B & 2.0 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+% \end{verbatim}
+%
+% \paragraph{Colored rows and cells.}
+%
+% The \pkg{colortbl} package allows rows and cells to be colored.  The
+% package colors defined by \pkg{relatese}, such as \texttt{superlightgray},
+% may be used for subtle table backgrounds:
+%
+% \begin{verbatim}
+% \begin{table}[htbp]
+% \centering
+% \caption{A table with a highlighted row.}
+% \begin{tabular}{ll}
+% \toprule
+% Quantity & Value \\
+% \midrule
+% \rowcolor{superlightgray}
+% A & 1.0 \\
+% B & 2.0 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+% \end{verbatim}
+%
+% Table coloring should be used with care.  In particular, colors should
+% not be the only way to communicate information, since the document may
+% be printed in grayscale or read with accessibility tools.
+%
+% \paragraph{Example.}
+%
+% The following example combines \pkg{booktabs}, \pkg{makecell}, and
+% \pkg{colortbl}:
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage[tables]{relatese}
+%
+% \begin{document}
+%
+% \begin{table}[htbp]
+% \centering
+% \caption{Example table using the \opt{tables} option.}
+% \begin{tabular}{lll}
+% \toprule
+% Sample & \makecell{Measured\\quantity} & Value \\
+% \midrule
+% \rowcolor{superlightgray}
+% A & Thickness & 10.0 \\
+% B & Thickness & 12.5 \\
+% C & Thickness & 11.8 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+%
+% \end{document}
+% \end{verbatim}
+% 
+% \subsection{The \opt{science} option}
+%
+% The \opt{science} option enables tools commonly used in scientific and
+% technical writing:
+%
+% \begin{verbatim}
+% \usepackage[science]{relatese}
+% \end{verbatim}
+%
+% This option loads \pkg{siunitx} and \pkg{mhchem}.  It is intended for
+% documents that contain physical quantities, units, chemical formulae, or
+% chemical reactions.
+%
+% \paragraph{Units and quantities.}
+%
+% The \pkg{siunitx} package provides consistent formatting for numbers,
+% units, ranges, and quantities:
+%
+% \begin{verbatim}
+% The sample thickness was \SI{10}{\micro\meter}.
+% The beam energy was \SI{2.4}{\mega\electronvolt}.
+% The speed was \SI{3.0e8}{\meter\per\second}.
+% \end{verbatim}
+%
+% The \opt{science} option applies a small set of defaults:
+%
+% \begin{verbatim}
+% group-digits=none,
+% range-phrase=--,
+% per-mode=symbol
+% \end{verbatim}
+%
+% This means that ranges and units can be written as:
+%
+% \begin{verbatim}
+% \SIrange{1}{5}{\mega\electronvolt}
+% \si{\meter\per\second}
+% \end{verbatim}
+%
+% \paragraph{Chemical notation.}
+%
+% The \pkg{mhchem} package is loaded with version 4 syntax.  It provides
+% the command \cs{ce} for chemical formulae, ions, isotopes, and reactions:
+%
+% \begin{verbatim}
+% \ce{H2O}
+% \ce{Fe^{2+}}
+% \ce{^{60}Co}
+% \ce{A + B -> C}
+% \end{verbatim}
+%
+% For example:
+%
+% \begin{verbatim}
+% Water radiolysis may be represented schematically as
+% \[
+%   \ce{H2O -> H^. + OH^.}
+% \]
+% \end{verbatim}
+%
+% \paragraph{Example.}
+%
+% The following example uses both \pkg{siunitx} and \pkg{mhchem}:
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage[science]{relatese}
+%
+% \begin{document}
+%
+% The target thickness was \SI{10}{\micro\meter}, and the proton
+% beam energy was \SI{2.4}{\mega\electronvolt}.
+%
+% A simple reaction may be written as
+% \[
+%   \ce{H2O -> H^. + OH^.}
+% \]
+%
+% \end{document}
+% \end{verbatim}
+%
+% The \opt{science} option is useful for reports in physics, chemistry,
+% engineering, medical physics, and related fields.  Documents that follow
+% decimal-comma conventions should use \opt{sciencecomma} instead.
+%
+% \subsection{The \opt{sciencecomma} option}
+%
+% The \opt{sciencecomma} option is a variant of \opt{science} for documents
+% that use a decimal comma:
+%
+% \begin{verbatim}
+% \usepackage[sciencecomma]{relatese}
+% \end{verbatim}
+%
+% It loads the same scientific-writing tools as \opt{science}, but also
+% configures \pkg{siunitx} to use a comma as the decimal marker:
+%
+% \begin{verbatim}
+% \sisetup{output-decimal-marker={,}}
+% \end{verbatim}
+%
+% This is useful for documents written according to Portuguese or other
+% decimal-comma conventions:
+%
+% \begin{verbatim}
+% \SI{3.14}{\meter}
+% \end{verbatim}
+%
+% will be printed using a decimal comma according to the \pkg{siunitx}
+% configuration.
+%
+% Language selection itself is not handled by \pkg{relatese}.  Users
+% should continue to use \pkg{babel} or \pkg{polyglossia} for hyphenation,
+% translated strings, and other language-dependent behavior.
+%
+%% \subsection{The \opt{refs} option}
+%
+% The \opt{refs} option enables the complete reference-management setup
+% provided by \pkg{relatese}:
+%
+% \begin{verbatim}
+% \usepackage[refs]{relatese}
+% \end{verbatim}
+%
+% This option loads \pkg{csquotes}, \pkg{biblatex}, \pkg{hyperref}, and
+% \pkg{cleveref}.  It is intended for documents whose bibliography,
+% hyperlinks, and cross-reference style are controlled by the author.
+%
+% \paragraph{Bibliography setup.}
+%
+% The bibliography is handled by \pkg{biblatex} with \prog{biber} as the
+% backend.  The default options are:
+%
+% \begin{verbatim}
+% backend=biber,
+% style=numeric-comp,
+% sorting=none,
+% backref=true,
+% autocite=superscript
+% \end{verbatim}
+%
+% This gives numeric compressed citations, bibliography entries sorted by
+% order of appearance, back-references, and superscript autocitations.
+%
+% A typical document uses:
+%
+% \begin{verbatim}
+% \addbibresource{references.bib}
+% ...
+% \autocite{key}
+% ...
+% \printbibliography
+% \end{verbatim}
+%
+% Documents using this option should be compiled with \prog{biber}, not
+% Bib\TeX.
+%
+% \paragraph{Hyperlinks.}
+%
+% The option also loads \pkg{hyperref} with Unicode bookmarks, breakable
+% links, and colored links:
+%
+% \begin{verbatim}
+% colorlinks=true,
+% linkcolor=darkblue,
+% urlcolor=darkblue,
+% citecolor=darkblue
+% \end{verbatim}
+%
+% The color \texttt{darkblue} is defined by the core package.
+%
+% \paragraph{Clever references.}
+%
+% The \pkg{cleveref} package is loaded after \pkg{hyperref}.  This allows
+% references such as:
+%
+% \begin{verbatim}
+% \cref{sec:method}
+% \Cref{fig:setup}
+% \end{verbatim}
+%
+% No explicit language option is passed to \pkg{cleveref}.  The document
+% language should be configured with \pkg{babel} or \pkg{polyglossia}.
+%
+% \paragraph{Example.}
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage[refs]{relatese}
+%
+% \addbibresource{references.bib}
+%
+% \begin{document}
+%
+% \section{Introduction}
+%
+% As discussed in \autocite{einstein1905}, references are handled by
+% \pkg{biblatex}.
+%
+% The method is described in \cref{sec:method}.
+%
+% \section{Method}
+% \label{sec:method}
+%
+% \printbibliography
+%
+% \end{document}
+% \end{verbatim}
+%
+% Since reference and bibliography styles are often specified by journals,
+% publishers, or universities, the \opt{refs} option should be used only
+% when these choices are under the author's control.
+% 
+% \subsection{The \opt{biblatex} option}
+%
+% The \opt{biblatex} option enables only the bibliography part of the
+% reference setup:
+%
+% \begin{verbatim}
+% \usepackage[biblatex]{relatese}
+% \end{verbatim}
+%
+% This option loads \pkg{csquotes} and \pkg{biblatex}, using the same
+% bibliography configuration as the \opt{refs} option:
+%
+% \begin{verbatim}
+% backend=biber,
+% style=numeric-comp,
+% sorting=none,
+% backref=true,
+% autocite=superscript
+% \end{verbatim}
+%
+% It does not load \pkg{hyperref} or \pkg{cleveref}.  This is useful when
+% the document should use the \pkg{relatese} bibliography defaults, but
+% hyperlinks or clever references need to be configured separately.
+%
+% \paragraph{Example.}
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage[biblatex]{relatese}
+%
+% \addbibresource{references.bib}
+%
+% \begin{document}
+%
+% A citation appears here \autocite{key}.
+%
+% \printbibliography
+%
+% \end{document}
+% \end{verbatim}
+%
+% Documents using this option should be compiled with \prog{biber}.  If
+% hyperlinks and intelligent cross-references are also desired, use
+% \opt{refs} instead.
+%
+% \subsection{The \opt{cleveref} option}
+%
+% The \opt{cleveref} option enables intelligent cross-references:
+%
+% \begin{verbatim}
+% \usepackage[cleveref]{relatese}
+% \end{verbatim}
+%
+% It loads \pkg{cleveref}.  If \pkg{hyperref} has not already been loaded
+% through \opt{refs}, \pkg{relatese} loads \pkg{hyperref} first.  This
+% preserves the usual loading order:
+%
+% \begin{verbatim}
+% hyperref
+% cleveref
+% \end{verbatim}
+%
+% The option is useful for documents with many labeled sections, figures,
+% tables, or equations.
+%
+% \paragraph{Basic usage.}
+%
+% With \pkg{cleveref}, references can be written without manually typing
+% words such as ``section'', ``figure'', or ``table'':
+%
+% \begin{verbatim}
+% See \cref{sec:method}.
+% See \Cref{fig:setup}.
+% \end{verbatim}
+%
+% The package automatically determines the type of the referenced object.
+%
+% \paragraph{Language.}
+%
+% No explicit language option is passed to \pkg{cleveref}.  Language
+% selection should be handled by \pkg{babel} or \pkg{polyglossia}.  This
+% keeps \pkg{relatese} from forcing a specific document language.
+%
+% \paragraph{Example.}
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage[cleveref]{relatese}
+%
+% \begin{document}
+%
+% \section{Experimental setup}
+% \label{sec:setup}
+%
+% The experimental setup is described in \cref{sec:setup}.
+%
+% \begin{figure}[htbp]
+%   \centering
+%   \rule{.5\linewidth}{2cm}
+%   \caption{A placeholder figure.}
+%   \label{fig:placeholder}
+% \end{figure}
+%
+% See also \Cref{fig:placeholder}.
+%
+% \end{document}
+% \end{verbatim}
+%
+% If bibliography management is also desired, use \opt{refs} instead of
+% enabling \opt{cleveref} alone.
+% 
+% \subsection{The \opt{drafttools} option}
+%
+% The \opt{drafttools} option loads utilities that are useful while
+% drafting or testing a document layout:
+%
+% \begin{verbatim}
+% \usepackage[drafttools]{relatese}
+% \end{verbatim}
+%
+% Currently, this option loads \pkg{lipsum}, which provides dummy text.
+% Dummy text is useful when testing page layout, headings, figures,
+% tables, and section structure before the final content is available.
+%
+% \paragraph{Example.}
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage[drafttools]{relatese}
+%
+% \begin{document}
+%
+% \section{Draft section}
+%
+% \lipsum[1-3]
+%
+% \end{document}
+% \end{verbatim}
+%
+% Since dummy-text tools are not needed in final documents, they are kept
+% behind an explicit option rather than being loaded by default.
+%
+% \subsection{The \opt{full} option}
+%
+% The \opt{full} option enables the main working set of modules provided
+% by \pkg{relatese}:
+%
+% \begin{verbatim}
+% \usepackage[full]{relatese}
+% \end{verbatim}
+%
+% It is intended for documents that use most of the package conventions:
+% layout helpers, mathematical notation, figure and SVG support, extended
+% tables, scientific-writing tools, bibliography support, hyperlinks, and
+% clever references.
+%
+% In practice, \opt{full} is equivalent to enabling the main options:
+%
+% \begin{verbatim}
+% layout,
+% math,
+% figures,
+% tables,
+% sciencecomma,
+% refs
+% \end{verbatim}
+%
+% The option is convenient for personal reports, teaching material, or
+% scientific documents whose formatting is controlled by the author.  For
+% documents subject to journal, publisher, or institutional requirements,
+% it is usually better to enable only the specific options needed.
+%
+% \paragraph{Example.}
+%
+% \begin{verbatim}
+% \documentclass[a4paper]{article}
+% \usepackage[full]{relatese}
+%
+% \addbibresource{references.bib}
+%
+% \begin{document}
+%
+% \section{Introduction}
+%
+% A quantity with units may be written as
+% \SI{10}{\micro\meter}.
+%
+% A derivative may be written as
+% \[
+%   \dd{f}{x}
+% \]
+%
+% The method is described in \cref{sec:method}.
+%
+% \section{Method}
+% \label{sec:method}
+%
+% A chemical expression may be written as
+% \[
+%   \ce{H2O -> H^. + OH^.}
+% \]
+%
+% \printbibliography
+%
+% \end{document}
+% \end{verbatim}
+%
+% Documents using \opt{full} and bibliography commands should be compiled
+% with \prog{biber}.
+%
+% \section{Implementation}
+%
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+%% relatese.sty -- General-purpose report helper package
+%% Reorganized version with option-based package loading.
+%%
+%% Suggested usage:
+%%   \usepackage{relatese}
+%%   \usepackage[layout,sciencecomma,refs]{relatese}
+%%   \usepackage[full]{relatese}
+%%
+%% Geometry presets:
+%%   \setgeometry{standard}
+%%   \setgeometry{compact}
+%%   \setgeometry{wide}
+%%   \setgeometry{binding}
+%%   \setgeometry{draft}
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{relatese}[2026/05/30 v0.3 General report helper package]
+
+\makeatletter
+
+% -----------------------------------------------------------------------------
+% Option switches
+% -----------------------------------------------------------------------------
+
+\newif\ifrelatese@layout
+\newif\ifrelatese@math
+\newif\ifrelatese@figures
+\newif\ifrelatese@tables
+\newif\ifrelatese@siunitx
+\newif\ifrelatese@sciencecomma
+\newif\ifrelatese@chemistry
+\newif\ifrelatese@refs
+\newif\ifrelatese@biblatex
+\newif\ifrelatese@cleveref
+\newif\ifrelatese@drafttools
+
+% Core packages are always loaded. They are small, broadly useful, and unlikely
+% to impose a document structure.
+
+% Layout and document-structure options.
+\DeclareOption{layout}{%
+  \relatese@layouttrue
+}
+
+% Mathematics options.
+\DeclareOption{math}{\relatese@mathtrue}
+
+% Figure and table options.
+\DeclareOption{figures}{%
+  \relatese@figurestrue
+}
+\DeclareOption{tables}{\relatese@tablestrue}
+
+% Scientific-writing options. The science option loads siunitx and mhchem;
+% sciencecomma also enables decimal comma in siunitx.
+\DeclareOption{science}{%
+  \relatese@siunitxtrue
+  \relatese@chemistrytrue
+}
+\DeclareOption{sciencecomma}{%
+  \relatese@siunitxtrue
+  \relatese@chemistrytrue
+  \relatese@sciencecommatrue
+}
+\DeclareOption{siunitx}{\relatese@siunitxtrue}
+\DeclareOption{chemistry}{\relatese@chemistrytrue}
+
+% Reference-management options.
+\DeclareOption{refs}{%
+  \relatese@refstrue
+  \relatese@biblatextrue
+  \relatese@clevereftrue
+}
+\DeclareOption{biblatex}{\relatese@biblatextrue}
+\DeclareOption{cleveref}{\relatese@clevereftrue}
+
+% Development option.
+\DeclareOption{drafttools}{\relatese@drafttoolstrue}
+
+% Convenience option: approximates the older monolithic behavior.
+\DeclareOption{full}{%
+  \relatese@layouttrue
+  \relatese@mathtrue
+  \relatese@figurestrue
+  \relatese@tablestrue
+  \relatese@siunitxtrue
+  \relatese@chemistrytrue
+  \relatese@refstrue
+  \relatese@biblatextrue
+  \relatese@clevereftrue
+}
+
+\DeclareOption*{%
+  \PackageWarning{relatese}{Unknown option `\CurrentOption'}%
+}
+
+\ProcessOptions\relax
+
+% -----------------------------------------------------------------------------
+% Core package set
+% -----------------------------------------------------------------------------
+
+\RequirePackage{xcolor}
+\RequirePackage{microtype}
+\RequirePackage{graphicx}
+\RequirePackage{amsmath}
+\RequirePackage{bm}
+\RequirePackage{booktabs}
+\RequirePackage[hang,footnotesize,bf,tableposition=top]{caption}
+\RequirePackage{enumitem}
+
+% Additional colors to what is defined in xcolor
+\definecolor{darkblue}{RGB}{0,0,192}
+\definecolor{lightblue}{RGB}{48,224,255}
+\definecolor{darkgreen}{RGB}{0,128,0}
+\definecolor{darkred}{RGB}{192,0,0}
+\definecolor{lightred}{RGB}{224,92,92}
+\definecolor{orange}{RGB}{254,80,0}
+\definecolor{wine}{RGB}{142,54,70}
+\definecolor{superlightgray}{RGB}{240,240,240}
+\definecolor{darkergray}{RGB}{80,80,80}
+
+% Default graphic search path. This is convenient, but still mild enough to keep
+% in the core because it only adds a lookup path.
+\graphicspath{{img/}}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg,.jpeg,.eps}
+
+% Caption defaults.
+\captionsetup[figure]{font=footnotesize,format=hang}
+\captionsetup[table]{font=footnotesize,format=hang,position=above}
+
+% Compact itemize lists.
+\setlist[itemize]{%
+  itemsep=2pt,
+  topsep=10pt,
+  parsep=0pt,
+  partopsep=0pt
+}
+
+% -----------------------------------------------------------------------------
+% Layout and page geometry
+% -----------------------------------------------------------------------------
+
+\RequirePackage{geometry}
+
+
+% Select a named geometry preset. This command is intended for the preamble.
+\newcommand{\setgeometry}[1]{%
+  \@ifundefined{relatese@geometry@#1}{%
+    \PackageError{relatese}
+    {Unknown geometry preset: #1}
+    {Available presets: standard, compact, wide, binding, draft.}%
+  }{%
+    \csname relatese@geometry@#1\endcsname
+  }%
+}
+
+% Apply a named geometry preset in the document body, using geometry's
+% \newgeometry. Return to the previous layout with \restoregeometry.
+\newcommand{\newsetgeometry}[1]{%
+  \@ifundefined{relatese@newgeometry@#1}{%
+    \PackageError{relatese}
+    {Unknown geometry preset: #1}
+    {Available presets: standard, compact, wide, binding, draft.}%
+  }{%
+    \csname relatese@newgeometry@#1\endcsname
+  }%
+}
+
+\newcommand{\relatese@geometry@standard}{%
+  \geometry{hmargin=2.5cm,vmargin=3.5cm}%
+}
+\newcommand{\relatese@geometry@compact}{%
+  \geometry{hmargin=2cm,vmargin=2.5cm}%
+}
+\newcommand{\relatese@geometry@wide}{%
+  \geometry{hmargin=2cm,top=2.5cm,bottom=3cm}%
+}
+\newcommand{\relatese@geometry@binding}{%
+  \geometry{inner=3cm,outer=2cm,top=3cm,bottom=3.5cm}%
+}
+\newcommand{\relatese@geometry@draft}{%
+  \geometry{hmargin=3cm,vmargin=3.5cm}%
+}
+
+\newcommand{\relatese@newgeometry@standard}{%
+  \newgeometry{hmargin=2.5cm,vmargin=3.5cm}%
+}
+\newcommand{\relatese@newgeometry@compact}{%
+  \newgeometry{hmargin=2cm,vmargin=2.5cm}%
+}
+\newcommand{\relatese@newgeometry@wide}{%
+  \newgeometry{hmargin=2cm,top=2.5cm,bottom=3cm}%
+}
+\newcommand{\relatese@newgeometry@binding}{%
+  \newgeometry{inner=3cm,outer=2cm,top=3cm,bottom=3.5cm}%
+}
+\newcommand{\relatese@newgeometry@draft}{%
+  \newgeometry{hmargin=3cm,vmargin=3.5cm}%
+}
+
+% Apply the default geometry preset.
+\setgeometry{standard}
+
+\ifrelatese@layout
+  \RequirePackage{changepage}
+  \RequirePackage{multicol}
+  \RequirePackage{authblk}
+  \RequirePackage{setspace}
+  \RequirePackage{indentfirst}
+  \RequirePackage{tocloft}
+  \RequirePackage{lastpage}
+  \RequirePackage{titlesec}
+  \RequirePackage{footmisc}
+
+  % Run-in unnumbered paragraphs.
+  \titleformat{name=\paragraph,numberless}[runin]%
+    {\normalfont\normalsize\bfseries}{}{5pt}{}
+
+  % Symbol footnotes reproduce the original package behavior. This is kept under
+  % the layout option because it changes document-wide numbering.
+  \renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\fi
+
+% -----------------------------------------------------------------------------
+% Mathematics
+% -----------------------------------------------------------------------------
+
+\ifrelatese@math
+  \RequirePackage{amssymb}
+  \RequirePackage{xfrac}
+  \RequirePackage{cancel}
+  \renewcommand{\CancelColor}{\color{red}}
+
+  \RequirePackage{xparse}
+
+  % Display math spacing helper. Use after setting line spacing.
+  \newcommand{\seteqskip}{%
+    \setlength{\abovedisplayskip}{15pt}%
+    \setlength{\belowdisplayskip}{25pt}%
+    \setlength{\abovedisplayshortskip}{10pt}%
+    \setlength{\belowdisplayshortskip}{20pt}%
+  }
+
+  % Common notation helpers.
+  \newcommand{\mean}[1]{\ensuremath{\left<#1\right>}}
+  \newcommand{\lapla}{\nabla^{2}}
+
+  \NewDocumentCommand{\relprime}{o}{%
+    \IfNoValueTF{#1}{%
+      \ensuremath{^{\prime}}%
+    }{%
+      \ensuremath{^{\prime{#1}}}%
+    }%
+  }
+
+  \NewDocumentCommand{\ud}{o}{%
+    \IfNoValueTF{#1}{%
+      \ensuremath{\mathrm{d}}%
+    }{%
+      \ensuremath{\mathrm{d}^{#1}}%
+    }%
+  }
+
+  % Total derivatives.
+  \NewDocumentCommand{\dd}{m m o}{%
+    \IfNoValueTF{#3}{%
+      \frac{\ud #1}{\ud #2}%
+    }{%
+      \frac{\ud^{#3}#1}{\ud {#2}^{#3}}%
+    }%
+  }
+
+  % Open total derivative operator.
+  \NewDocumentCommand{\dda}{m m o}{%
+    \IfNoValueTF{#3}{%
+      \frac{\ud}{\ud #2}{#1}%
+    }{%
+      \frac{\ud^{#3}}{\ud {#2}^{#3}}{#1}%
+    }%
+  }
+
+  % Partial derivatives.
+  \NewDocumentCommand{\ddp}{m m o}{%
+    \IfNoValueTF{#3}{%
+      \frac{\partial #1}{\partial #2}%
+    }{%
+      \frac{\partial^{#3}#1}{\partial {#2}^{#3}}%
+    }%
+  }
+
+  % Open partial derivative operator.
+  \NewDocumentCommand{\ddpa}{m m o}{%
+    \IfNoValueTF{#3}{%
+      \frac{\partial}{\partial #2}{#1}%
+    }{%
+      \frac{\partial^{#3}}{\partial {#2}^{#3}}{#1}%
+    }%
+  }
+
+  % Inner product.
+  \NewDocumentCommand{\innp}{m m}{\left<{#1},{#2}\right>}
+
+  % Chi-square helpers.
+  \newcommand{\chisq}{\ensuremath{\chi^{2}}}
+  \newcommand{\chisqred}{\ensuremath{\chi^{2}_{\text{red}}}}
+
+
+  % Roman numerals.
+  \newcommand{\rmnum}[1]{\romannumeral #1}
+  \newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
+
+  % Slanted parallel marker
+  \newcommand{\slparallel}{\mathchoice
+    {\mathrel{/\mkern-5mu/}}% display
+    {\mathrel{/\mkern-5mu/}}% text
+    {\mathrel{/\mkern-4mu/}}% script
+    {\mathrel{/\mkern-3mu/}}% scriptscript
+  }
+  
+  % Cartesian, cylindrical, and spherical unit vectors.
+  \newcommand{\vi}{\ensuremath{\hat{e}_{1}}}
+  \newcommand{\vj}{\ensuremath{\hat{e}_{2}}}
+  \newcommand{\vk}{\ensuremath{\hat{e}_{3}}}
+  \newcommand{\vs}{\ensuremath{\hat{e}_{s}}}
+  \newcommand{\vp}{\ensuremath{\hat{e}_{p}}}
+  \newcommand{\vperp}{\ensuremath{\hat{e}_{\perp}}}
+  \newcommand{\vpar}{\ensuremath{\hat{e}_{\slparallel}}}
+  \newcommand{\vphi}{\ensuremath{\hat{e}_{\phi}}}
+  \newcommand{\vz}{\ensuremath{\hat{e}_{z}}}
+  \newcommand{\vsl}{\ensuremath{\hat{e}_{s\relprime}}}
+  \newcommand{\vphil}{\ensuremath{\hat{e}_{\phi\relprime}}}
+  \newcommand{\vzl}{\ensuremath{\hat{e}_{z\relprime}}}
+  \newcommand{\vr}{\ensuremath{\hat{e}_{r}}}
+  \newcommand{\vtheta}{\ensuremath{\hat{e}_{\theta}}}
+
+\fi
+
+% Number equations, tables, and figures within sections.
+\numberwithin{equation}{section}
+\numberwithin{table}{section}
+\numberwithin{figure}{section}
+\renewcommand{\arraystretch}{1.5}
+
+% -----------------------------------------------------------------------------
+% Figures and floats
+% -----------------------------------------------------------------------------
+
+\ifrelatese@figures
+  \RequirePackage{float}
+  \RequirePackage{subcaption}
+  \RequirePackage{placeins}
+  \RequirePackage{pdflscape}
+  \RequirePackage{svg}
+
+  \captionsetup[subfigure]{font=footnotesize,format=hang}
+  \captionsetup[subtable]{font=footnotesize,format=hang,position=above,singlelinecheck=false}
+
+  % Table captions above tables. This reproduces the original float setup.
+  \floatstyle{plaintop}
+  \restylefloat{table}
+\fi
+
+% -----------------------------------------------------------------------------
+% Tables
+% -----------------------------------------------------------------------------
+
+\ifrelatese@tables
+  \RequirePackage{colortbl}
+  \RequirePackage{makecell}
+\fi
+
+% -----------------------------------------------------------------------------
+% Scientific writing: units and chemistry
+% -----------------------------------------------------------------------------
+
+\ifrelatese@siunitx
+  \RequirePackage[detect-all]{siunitx}
+
+  % Language-neutral defaults.
+  \sisetup{%
+    group-digits=none,
+    range-phrase=--,
+    per-mode=symbol
+  }
+
+  % Decimal comma convention.
+  \ifrelatese@sciencecomma
+    \sisetup{output-decimal-marker={,}}
+  \fi
+\fi
+
+\ifrelatese@chemistry
+  \RequirePackage[version=4]{mhchem}
+\fi
+
+% -----------------------------------------------------------------------------
+% Hyperlinks, bibliography, and clever references
+% -----------------------------------------------------------------------------
+
+\ifrelatese@biblatex
+  \RequirePackage{csquotes}
+  \RequirePackage[
+    backend=biber,
+    style=numeric-comp,
+    sorting=none,
+    backref=true,
+    autocite=superscript
+  ]{biblatex}
+\fi
+
+% hyperref should be loaded late. cleveref should be loaded after hyperref.
+\ifrelatese@refs
+  \RequirePackage[
+    unicode,
+    bookmarks=true,
+    breaklinks
+  ]{hyperref}
+
+  \hypersetup{%
+    colorlinks=true,
+    linkcolor=darkblue,
+    urlcolor=darkblue,
+    citecolor=darkblue
+  }
+\fi
+
+\ifrelatese@cleveref
+  \ifrelatese@refs\else
+    \RequirePackage[
+      unicode,
+      bookmarks=true,
+      breaklinks
+    ]{hyperref}
+
+    \hypersetup{%
+      colorlinks=true,
+      linkcolor=darkblue,
+      urlcolor=darkblue,
+      citecolor=darkblue
+    }
+  \fi
+
+  \RequirePackage{cleveref}
+\fi
+
+% -----------------------------------------------------------------------------
+% Draft tools and small utilities
+% -----------------------------------------------------------------------------
+
+\ifrelatese@drafttools
+  \RequirePackage{lipsum}
+\fi
+
+% Quotation helper.
+\newcommand{\quoteblock}[2]{%
+  \begin{samepage}%
+    \begin{quotation}%
+      \emph{``#1''}%
+      \begin{flushright}%
+        -- #2%
+      \end{flushright}%
+    \end{quotation}%
+  \end{samepage}%
+}
+
+% Easy-to-find revision marker preserved from the original package.
+\newcommand{\coxa}{%
+  {\Huge C\kern-.1667em\lower.5ex\hbox{O}\-X\kern-.1667em\lower.5ex\hbox{A}\@}%
+  \@ifundefined{index}{}{\index{CoXa}}%
+}
+
+\makeatother
+\endinput
+%    \end{macrocode}
+% \iffalse
+%</package>
+% \fi
+% \Finale
+\endinput

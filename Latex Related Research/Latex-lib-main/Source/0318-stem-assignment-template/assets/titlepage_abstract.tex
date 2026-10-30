@@ -1,0 +1,53 @@
+% !TeX root = ../main.tex
+% Copyright (c) 2026 Tyler Bignell
+% Licensed under the MIT License - see LICENSE file for details
+
+\pagenumbering{roman} % Titlepage is numbered in roman
+\begin{titlepage}
+    \Centering
+    % SCHOOL ---------------------------------------------
+    \large \seriftext{\metaUniversity}\par\vspace{0.1cm}
+    \normalsize \seriftext{\metaFaculty}\par\vspace{0.1cm}
+    \ifthenelse{\equal{\metaDepartment}{}}{}{\small \seriftext{\metaDepartment}\par\vspace{0.1cm}}
+    % TITLE -----------------------------------------------
+    \textcolor{themecolour}{\rule{\linewidth}{0.5mm}}
+    \vspace{0.2cm}
+    \par{\Large \seriftext{\textbf{\metaAssignmentTitle}}}\par
+    \vspace{0.2cm}
+    \textcolor{themecolour}{\rule{\linewidth}{0.5mm}}\par\vspace{0.2cm}
+    % COURSE CODE -----------------------------------------
+    \small \metaCourseCode : \metaCourseName\par\vspace{0.2cm}
+    % STUDENT / INSTRUCTOR BLOCK --------------------------
+    \begin{minipage}[t]{0.4\textwidth}
+        \begin{FlushLeft}\small
+            \ifthenelse{\equal{\metaPartners}{}}{%
+                \emph{Student:}\\
+                \metaStudentName\\
+                \metaStudentNumber\\
+                \metaStudentEmail
+            }{%
+                \emph{Students:}\\\vspace{0.2cm}
+                \begin{tabular}{@{}l@{\quad}l@{}}
+                    \metaStudentName & \metaStudentNumber\\
+                    \metaPartners
+                \end{tabular}
+            }
+        \end{FlushLeft}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.4\textwidth}
+        \begin{FlushRight}\small
+            \emph{Instructor:}\\
+            \metaInstructor\\\vspace{0.2cm}
+            \emph{Date:}\\
+            \metaDate
+        \end{FlushRight}
+    \end{minipage}
+    \vspace{1cm}
+    % ABSTRACT --------------------------------------------
+	{\justifying
+		\begin{abstract}\small
+			\metaAbstract
+		\end{abstract}
+	}
+\end{titlepage}

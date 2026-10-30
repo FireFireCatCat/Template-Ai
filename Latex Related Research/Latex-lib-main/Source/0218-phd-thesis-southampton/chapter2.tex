@@ -1,0 +1,26 @@
+\chapter{Method}
+
+This chapter describes the one-dimensional model formulation and the
+numerical scheme used to solve it.
+
+\begin{figure}
+  \begin{algorithm}[caption={One time step of the explicit finite-volume update.}, label=alg:1]
+    for segment in vessel_network:
+        flux_left = compute_flux(segment.left_state)
+        flux_right = compute_flux(segment.right_state)
+        segment.state -= dt / segment.dx * (flux_right - flux_left)
+  \end{algorithm}
+\end{figure}
+
+It references \aref{alg:1}.
+
+The core update step can also be prototyped directly in Python:
+
+\begin{python}
+def update_segment(state, flux_left, flux_right, dt, dx):
+    return state - dt / dx * (flux_right - flux_left)
+\end{python}
+
+We validate the numerical scheme against an analytical solution for
+pulse wave propagation in a single straight vessel before applying it to
+the full patient-specific network \citep{Diem2017a,Diem2017b}.

@@ -1,0 +1,11 @@
+% enslyonreview.dbx — biblatex data model extension for enslyonreview.cls
+%
+% Declares the custom fields the class's article driver relies on: PubMed /
+% PubMed Central identifiers, and the optional "of special/outstanding
+% interest" annotation (interest = special|outstanding, interestnote = the
+% annotation text). Must live in its own .dbx and be loaded via biblatex's
+% datamodel=enslyonreview package option — biblatex only accepts
+% \DeclareDatamodelFields / \DeclareDatamodelEntryfields while it is still
+% loading itself, so this can't just be inline code in the .cls.
+\DeclareDatamodelFields[type=field, datatype=literal]{pmid,pmcid,interest,interestnote}
+\DeclareDatamodelEntryfields{pmid,pmcid,interest,interestnote}

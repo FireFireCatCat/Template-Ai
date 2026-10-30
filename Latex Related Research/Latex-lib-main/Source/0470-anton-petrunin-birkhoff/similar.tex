@@ -1,0 +1,343 @@
+\chapter[Similar triangles]{Similar triangles}\label{chap:parallel}
+
+Two triangles $A' B' C'$ and $A B C$ are called
+\index{triangle!similar triangles}\index{similar triangles}\emph{similar} (briefly \index{30@$\sim$}$\triangle A' B' C'\z\sim\triangle A B C$) if (1) their sides are proportional; 
+that is, 
+$$A' B'
+=
+k\cdot A B,
+\quad
+B' C'=k\cdot B C
+\quad
+\text{and}
+\quad
+C' A'
+=
+k\cdot C A
+\eqlbl{dist}
+$$
+for some coefficient $k>0$ (which is called the \index{similarity coefficient}\emph{similarity coefficient}), and (2) the corresponding angles are equal up to sign:
+$$
+\begin{aligned}
+\measuredangle A' B' C'&=\pm\measuredangle A B C,
+\\
+\measuredangle B' C' A'&=\pm\measuredangle B C A,
+\\
+\measuredangle C' A' B'&=\pm\measuredangle CAB.
+\end{aligned}
+\eqlbl{angles}
+$$
+
+\parbf{Remarks.}
+\begin{itemize}
+\item According to \ref{thm:signs-of-triug}, in the above three equalities, the signs can be assumed to be the same.
+
+\item The equations in \ref{dist} can be rewritten as
+\[\frac{A'B'}{AB}=\frac{B'C'}{BC}=\frac{C'A'}{CA}.\]
+
+\item If $\triangle A' B' C'\sim\triangle A B C$ with the coefficient $k=1$, 
+ then $\triangle A' B' C'\z\cong\triangle A B C$.
+
+\item Notice that ``$\sim$'' is an
+\index{equivalence relation}\emph{equivalence relation}.
+That is, 
+\begin{enumerate}[(i)]
+\item $\triangle A B C\sim\triangle A B C$
+for every $\triangle A B C$.
+\item If $\triangle A' B' C'\sim\triangle A B C$, then
+$$\triangle A B C\sim\triangle A' B' C'.$$
+\item If $\triangle A'' B'' C''\sim\triangle A' B' C'$ and $\triangle A' B' C'\z\sim\triangle A B C$, then 
+$$\triangle A'' B'' C''\sim\triangle A B C.$$
+\end{enumerate}
+\end{itemize}
+
+\section{Similarity conditions}
+
+Using the new notation ``$\sim$'', we can reformulate Axiom~\ref{def:birkhoff-axioms:4}:
+
+\begin{thm}{Reformulation of Axiom~\ref{def:birkhoff-axioms:4}}
+If for  
+$\triangle ABC$, 
+$\triangle AB'C'$,
+and $k>0$ we have
+$B'\in [AB)$,
+$C'\in [AC)$,
+$AB'=k\cdot AB$ and
+$AC'=k\cdot AC$,
+then $\triangle ABC\sim\triangle AB'C'$.
+\end{thm}
+
+In other words, Axiom~\ref{def:birkhoff-axioms:4} provides 
+a condition which guarantees that two triangles are similar.
+Let us formulate three more such {}\emph{similarity conditions}.
+
+\begin{thm}{Similarity conditions}\label{prop:sim}
+Two triangles 
+$\triangle ABC$ and $\triangle A'B'C'$
+are similar if one of the following conditions holds:
+
+(SAS)\index{SAS similarity condition}
+For some constant $k>0$ we have
+\[A B=k\cdot A' B',
+\quad 
+A C=k\cdot A' C',
+\quad
+\text{and}
+\quad 
+\measuredangle B A C=\pm\measuredangle B' A' C'.\]
+
+(AA)\index{AA similarity condition} The triangle $A' B' C'$ is nondegenerate
+and 
+$$\measuredangle A B C
+=
+\pm\measuredangle A' B' C',
+\quad 
+\measuredangle B A C
+=
+\pm\measuredangle B' A' C'.$$
+
+(SSS)\index{SSS similarity condition} For some constant $k>0$ we have
+$$A B=k\cdot A' B',
+\quad
+A C=k\cdot A' C',
+\quad
+CB=k\cdot C'B'.$$
+
+\end{thm}
+
+Each of these conditions is proved by applying Axiom~\ref{def:birkhoff-axioms:4} with the SAS, ASA, and SSS congruence conditions respectively
+(see Axiom~\ref{def:birkhoff-axioms:3} and the conditions \ref{thm:ASA} and \ref{thm:SSS}).
+
+
+\parit{Proof.}
+Let $k=\tfrac{AB}{A'B'}$.
+Choose points $B''\in [A'B')$ and $C''\in [A'C')$,
+so that $A'B''=k\cdot A'B'$ and $A'C''=k\cdot A'C'$.
+By Axiom~\ref{def:birkhoff-axioms:4},
+$\triangle A'B'C'\z\sim \triangle A'B''C''$.
+
+Applying the SAS, ASA, or SSS congruence condition, depending on the case, 
+we get that $\triangle A'B''C''\cong \triangle ABC$.
+Hence the result.
+\qeds
+
+\begin{thm}{Exercise}\label{ex:mid-triangle}
+Let $A'$, $B'$, and $C'$ be the midpoints of sides $[BC]$, $[CA]$, and $[AB]$ of $\triangle ABC$.
+Show that $\triangle A'B'C'\sim\triangle ABC$ and find the similarity coefficient.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:k*triangle}
+Let $O$, $A$, $B$, $C$, $A'$, $B'$, and $C'$ be distinct points.
+Suppose that $A'\in [OA)$, $B'\in[OB)$, $C'\in [OC)$, $OA'=k\cdot OA$, $OB'=k\cdot OB$, and $OC'=k\cdot OC$ for some $k>0$.
+Show that $\triangle A'B'C'\sim\triangle ABC$.
+\end{thm}
+
+A bijection $X\leftrightarrow X'$ from a plane to itself is called an \index{angle-preserving transformation}\emph{angle-preserving transformation} if 
+\[\measuredangle ABC= \measuredangle A'B'C'\]
+for every $\triangle ABC$ and its image $\triangle A'B'C'$.
+
+(The term \index{transformation}\emph{transformation} is used for a bijection of the plane to itself that preserves a specified geometric structure.
+For example, {}\emph{motions} are \textit{distance-preserving transformations}.)
+
+
+\begin{thm}{Exercise}\label{ex:angle-preserving-euclid}
+Show that every angle-preserving transformation of the plane multiplies all distances by a fixed constant.
+\end{thm}
+
+\section{The Pythagorean theorem}\index{Pythagorean theorem}
+
+Recall that a triangle is called \index{right!triangle}\index{triangle!right triangle}\emph{right} if one of its angles is right.
+The side opposite the right angle is called the \index{hypotenuse}\emph{hypotenuse}. 
+The sides adjacent to the right angle are called \index{leg}\emph{legs}. 
+
+
+\begin{thm}{Theorem}\label{thm:pyth}
+Assume $\triangle ABC$ has a right angle at~$C$.
+Then
+$$AC^2+BC^2=AB^2.$$ 
+
+\end{thm}
+
+\parit{Proof.}
+Let $D$ be the footpoint of $C$ on~$(AB)$.
+
+\begin{wrapfigure}[4]{r}{40mm}
+\vskip-2mm
+\centering
+\includegraphics{mppics/pic-66}
+\end{wrapfigure}
+
+According to Lemma~\ref{lem:perp<oblique},
+\begin{align*}
+AD&<AC<AB,
+\shortintertext{and}
+BD&<BC<AB.
+\end{align*}
+Therefore, $D$ lies between $A$ and $B$;
+in particular, 
+$$AD+BD=AB.\eqlbl{AD+BD=AB}$$
+
+By the AA similarity condition, we have
+$$\triangle ADC\sim\triangle ACB\sim \triangle CDB.$$
+In particular,
+$$
+\frac{A D}{A C}=\frac{A C}{A B}
+\quad
+\text{and}
+\quad
+\frac{B D}{B C}=\frac{B C}{B A}.
+\eqlbl{BCD}$$
+
+Let us rewrite the two identities in \ref{BCD}:
+\begin{align*}
+AC^2=AB\cdot AD
+\quad
+\text{and}
+\quad
+BC^2=AB\cdot B D.
+\end{align*}
+Summing up these two identities and applying \ref{AD+BD=AB}, we get that
+$$AC^2 +BC^2=AB\cdot (AD+ B D)=AB^2.$$
+\qedsf
+
+The idea in this proof appears in the Elements \cite[X.33]{euclid},
+but the proof given there \cite[I.47]{euclid} is different; 
+it uses the area method discussed in Chapter~\ref{chap:area}.
+
+
+\begin{thm}{Exercise}\label{ex:pyth}
+Assume $A$, $B$, $C$, and $D$ are as in the proof above.
+Show that 
+$CD^2=AD\cdot BD$.
+
+\end{thm}
+
+The following exercise is the converse to the Pythagorean theorem.
+
+\begin{thm}{Exercise}\label{ex:pyth-conv}
+Let $ABC$ be a triangle such that
+$AC^2+BC^2=AB^2$.
+Show that the angle at $C$ is right.
+\end{thm}
+
+\section{The method of similar triangles}
+
+The proof of the Pythagorean theorem given above uses the {}\emph{method of similar triangles}.
+To apply this method, one has to search for pairs of similar triangles and then use the proportionality of corresponding sides and/or equalities of corresponding angles.
+Finding such pairs might be tricky at first. 
+
+{
+
+\begin{wrapfigure}{r}{25mm}
+\vskip-6mm
+\centering
+\includegraphics{mppics/pic-68}
+\end{wrapfigure}
+
+
+\begin{thm}{Classroom exercise}\label{ex:two-pairs-sim}
+Let $ABC$ be a nondegenerate triangle, and let the points $X$, $Y$, and $Z$ be as shown in the picture.
+Assume $\measuredangle CAY\z\equiv\measuredangle XBC$.
+Find four pairs of similar triangles with these six points as the vertices
+and prove their similarity.
+\end{thm}
+
+}
+
+\begin{thm}{Exercise}\label{ex:ABC+D}
+Suppose $\triangle ABC$ is nondegenerate.
+Assume $D\in [AB]$ and $\measuredangle CAB=\measuredangle BCD$.
+Show that $CD=\tfrac{b\cdot a}c$, where $a=BC$, $b=CA$, and $c=AB$. 
+\end{thm}
+
+{
+
+\begin{wrapfigure}{r}{25mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-69}
+\end{wrapfigure}
+
+\begin{thm}{Exercise}\label{ex:right-perp-bi}
+Assume that $\triangle ABC$ has a right angle at~$C$.
+Let $M$ be the midpoint of $[AB]$.
+Denote by $P$ and $Q$ the intersections of the perpendicular bisector of $[AB]$ with the half-lines
+$[BC)$ and $[AC)$, respectively.
+Show that
+\[
+4\cdot MP\cdot MQ = AB^2.
+\]
+
+\end{thm}
+
+
+}
+
+%\begin{thm}{Exercise}\label{ex:footpoints}
+%Suppose that $\triange ABC$ and $\triange A'B'C'$ are nondegenerate,
+%Assume $C'$ is a footpoint of $C$ on $(AB)$, $A'$ is a footpoint of $A$ on $(XC)$, $B'$ is a footpoint of $B$ on $(XC)$ for some point $X\in (AB)$
+%Show that $\triangle ABC\sim \triange A'B'C'$.
+%\end{thm}
+
+
+\section{Ptolemy's inequality}
+
+A \index{quadrangle}\emph{quadrangle} is defined as an ordered quadruple of distinct points in the plane.
+These four points are called \index{vertex!of quadrangle}\emph{vertices}.
+The quadrangle $ABCD$ will also be denoted by \index{25@$\square$}$\square ABCD$.
+
+Given a quadrangle $ABCD$,
+the four segments $[AB]$, $[BC]$, $[CD]$, and $[DA]$ are called \index{side!of quadrangle}\emph{sides of $\square ABCD$};
+the remaining two segments $[AC]$ and $[BD]$ are called \index{diagonal!of quadrangle}\emph{diagonals of $\square ABCD$}.
+
+\begin{thm}{Ptolemy's inequality}\label{ptolemy-inq}
+In every quadrangle, the product of diagonals cannot exceed the sum of the products of its opposite sides;
+that~is, 
+\[AC\cdot BD\le AB\cdot CD+ BC\cdot DA\]
+for every $\square ABCD$.
+\end{thm}
+
+We will present a classical proof of this inequality using the method of similar triangles with additional construction.
+This proof is given as an illustration --- it will not be used further in the sequel.
+
+{
+
+\begin{wrapfigure}{o}{33mm}
+\vskip-3mm
+\centering
+\includegraphics{mppics/pic-70}
+\end{wrapfigure}
+
+\parit{Proof.}
+Consider the half-line $[AX)$ such that $\measuredangle BAX=\measuredangle CAD$.
+In this case, $\measuredangle XAD\z=\measuredangle BAC$ since adding $\measuredangle BAX$ or $\measuredangle CAD$ to the corresponding sides produces $\measuredangle BAD$.
+We can assume that
+\[AX=\frac{AB}{AC}\cdot AD.\]
+
+}
+
+In this case, we have
+\begin{align*}\frac{AX}{AD}&=\frac{AB}{AC},
+&
+\frac{AX}{AB}&=\frac{AD}{AC}.\\
+\shortintertext{Hence}
+\triangle BAX&\sim \triangle CAD,
+&
+\triangle XAD&\sim\triangle BAC.\\
+\shortintertext{Therefore}
+\frac{BX}{CD}&=\frac{AB}{AC},
+&
+\frac{XD}{BC}&=\frac{AD}{AC},
+\shortintertext{or}
+AC\cdot BX&=AB\cdot CD,
+&
+AC\cdot XD&=BC\cdot AD.
+\end{align*}
+Adding these two equalities we get 
+\[AC\cdot(BX+XD)=AB\cdot CD+BC\cdot AD.\]
+It remains to apply the triangle inequality, $BD\le BX+XD$.
+\qeds
+
+Using this proof together with \ref{prop:inscribed-quadrangle}, one can show that the equality holds only if the vertices $A$, $B$, $C$, and $D$ appear on a line or a circle in the same cyclic order;
+see also \ref{ptolemy-id} for another proof of the equality case.
+Exercise~\ref{ex:ptolemy} suggests another proof of Ptolemy's inequality using complex coordinates.

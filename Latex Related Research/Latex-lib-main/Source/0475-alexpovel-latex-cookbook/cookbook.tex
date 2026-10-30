@@ -1,0 +1,75 @@
+% Magic Comment: this template requires LuaLaTeX. The following 'magic comment' is
+% recognized by editors and will ensure lualatex engine use:
+
+%!TEX TS-program = lualatex
+
+% Note that package `svg` also requires elevation, aka the `--shell-escape` option to
+% read/write SVG/PDF files.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[%
+    % Global language, passed down to packages and base class.
+    language=english,
+    titlestyle=thesis,% Style of titlepage: thesis, book or uncomment for vanilla
+    BCOR=5mm,% Binding Correction. Cannot be known a priori, only guesstimated
+    a4,% Options: a4/a5 for a4 paper with 11pt or a5 paper with 10pt, respectively
+    % Toggle all \censor{} etc. commands, e.g. to generate a public version:
+    censoring=true,
+]{acp}% Load custom class file (*.cls)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% This is still the preamble. You can insert '\newcommand's and all other stuff here. If
+% it is a more long-term change, write it to the class (*.cls) file. You also find all
+% settings to existing packages there.
+
+%\usepackage{showframe}% Uncomment for debugging (show frames)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The following occurs here so VSCode's 'LaTeX Workshop' extension can find all bib
+% resources (it doesn't seem to look into class files):
+\addbibresource{bib/bibliography.bib}% *.bib file goes here
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Titlepage and document metadata content:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\author{Alex Povel}%
+
+\date{\DTMtoday{}}% Print today's date w/ syntax of newer package datetime2
+
+\title{A modern \LaTeX{} cookbook}
+
+\subtitle{% Examiners or other, rather arbitrary content
+    \begin{tabular}[t]{% [t] sets tabular anchor to the top
+        @{}% Remove horizontal space left of tabular
+        l% If no really good reason to do otherwise, always left-align cell
+        @{\ }% '\ ' (backslash-space) is a small space, here a column separator
+        l
+        l
+        @{}% Remove horizontal space right of tabular
+    }
+        \nth{1} & Examiner & Prof.\ Jane Doe\\
+        \nth{2} & Examiner & Prof.\ Foo Bar\\
+        \multicolumn{2}{@{}l}{Supervisor} & John Doe, M.Sc.%
+    \end{tabular}
+}%
+
+\documenttype{Example Document}% Document type, like Master Thesis, PhD Thesis, ...
+
+\idnumber{666}% Enrolment/student ID number if applicable
+
+\publishers{%
+    University of Greatness\\%
+    Institute of Big Bang%
+}% Institutions, university, etc. Can also use graphics here
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+    \import{chapters/}{frontmatter}
+    \import{chapters/}{mainmatter}
+    \import{chapters/}{backmatter}
+\end{document}

@@ -1,0 +1,209 @@
+% Kopiert aus dem Paket cnltx (https://www.ctan.org/pkg/cnltx) von
+% Clemens Niederberger, bei der die folgenden Möglichkeiten nur in
+% einer Klasse liegen, die sich nicht einfach mit dem DLRG-Format
+% für Publikationen vertragen
+
+% Listensetup
+% ****************************************************************
+\newcommand*\cmltx@list@setup{%
+  \leftmargin=0pt
+  \labelwidth=2em
+  \labelsep=0pt
+  \itemindent=-1em
+}
+
+\newenvironment{cnltxlist}
+  {\list{}{\cmltx@list@setup}}
+  {\endlist}
+
+% Anzeige von Befehlen
+% ****************************************************************
+\newcommand*\cnltx@command{%
+  \@ifstar
+    {\cnltx@command@star}
+    {\cnltx@command@nostar}%
+}
+
+\newrobustcmd*\cnltx@command@star[1]{%
+  \@ifnextchar[
+    {\cnltx@command@star@opt{#1}}
+    {\cnltx@command@star@opt{#1}[]}%
+}
+
+\newrobustcmd*\cnltx@command@nostar[1]{%
+  \@ifnextchar[
+    {\cnltx@command@nostar@opt{#1}}
+    {\cnltx@command@nostar@opt{#1}[]}%
+}
+
+\def\cnltx@command@star@opt#1[#2]{%
+  \ifblank{#2}
+    {\item\cs*{#1}}
+    {\item\cs*{#1}#2}%
+  \cnltx@checkdefault{\hfill\newline}%
+}
+\def\cnltx@command@nostar@opt#1[#2]{%
+  \ifblank{#2}
+    {\item\cs{#1}}
+    {\item\cs{#1}#2}%
+  \cnltx@checkdefault{\hfill\newline}%
+}
+
+\newcommand\cnltx@checkdefault[1]{%
+  \@ifnextchar\Module
+    {}
+    {%
+      \@ifnextchar\Default
+        {}
+        {%
+          \@ifnextchar\default
+            {}
+            {#1}%
+        }%
+    }%
+}
+
+\newenvironment{commands}
+  {%
+    \let\command\cnltx@command
+    \cnltxlist
+  }
+  {\endcnltxlist}
+
+% Anzeige von Optionen
+% ****************************************************************
+\newcommand*\@cnltx@option@item[1]{%
+  \@ifstar
+    {\@cnltx@option@item@aux@star{#1}}
+    {\@cnltx@option@item@aux@nostar{#1}}%
+}
+
+\newcommand*\@cnltx@option@item@aux@star[1]{%
+  \cnltx@ifdash
+    {\@cnltx@option@item@aux{#1}*-}
+    {\@cnltx@option@item@aux{#1}*{}}%
+}
+\newcommand*\@cnltx@option@item@aux@nostar[1]{%
+  \cnltx@ifdash
+    {\@cnltx@option@item@aux{#1}{}-}
+    {\@cnltx@option@item@aux{#1}{}{}}%
+}
+
+\newrobustcmd*\@cnltx@option@item@aux[4]{%
+  \@ifnextchar\bgroup
+    {\@cnltx@option@two{#1#2#3}{#4}}
+    {\@cnltx@option@one{#1#2#3}{#4}}%
+}
+
+\newcommand*\@cnltx@option@one[2]{%
+  \item#1{#2}%
+  \cnltx@checkdefault{\hfill\newline}%
+}
+
+\newcommand*\@cnltx@option@two[3]{%
+  \item#1{#2}{#3}%
+  \cnltx@checkdefault{\hfill\newline}%
+}
+
+\newenvironment{options}
+  {%
+    \def\opt{\@cnltx@option@item\option}%
+    \def\keyval{\@cnltx@option@item\key}%
+    \def\keylit{\@cnltx@option@item\keyis}%
+    \def\keychoice{\@cnltx@option@item\choicekey}%
+    \def\keybool{\@cnltx@option@item\boolkey}%
+    \cnltxlist
+  }
+  {\endcnltxlist}
+
+% Default-Werte
+% ****************************************************************
+\newrobustcmd*\cnltx@Default[1]{%
+  \null\hfill
+  \@ifnextchar\bgroup
+    {\cnltx@Default@initial{#1}}
+    {%
+      \cnltx@ifbang
+        {\cnltx@Default@required{#1}}
+        {\cnltx@Default@empty{#1}}%
+    }%
+}
+
+\newcommand*\cnltx@Default@initial[2]{%
+  \llap{\GetTranslation{cnltx-default}: \code{#2}}%
+  \ifblank{#1}{\newline}{}%
+}
+
+\newcommand*\cnltx@Default@required[1]{%
+  \llap{(\GetTranslation{cnltx-required})}%
+  \ifblank{#1}{\newline}{}%
+}
+
+\newcommand*\cnltx@Default@empty[1]{%
+  \llap{(\GetTranslation{cnltx-empty})}%
+  \ifblank{#1}{\newline}{}%
+}
+
+\newrobustcmd*\Default{%
+  \@ifstar
+    {\cnltx@Default{*}}
+    {\cnltx@Default{}}%
+}
+
+
+% Umgebungen
+% ****************************************************************
+
+\newcommand*\cnltx@environment{%
+  \@ifstar
+    {\cnltx@environment@star}
+    {\cnltx@environment@nostar}%
+}
+
+\newcommand*\cnltx@environment@star[1]{%
+  \@ifnextchar[
+    {\cnltx@environment@star@opt{#1}}
+    {\cnltx@environment@star@opt{#1}[]}%
+}
+
+\newcommand*\cnltx@environment@nostar[1]{%
+  \@ifnextchar[
+    {\cnltx@environment@nostar@opt{#1}}
+    {\cnltx@environment@nostar@opt{#1}[]}%
+}
+
+\def\cnltx@environment@star@opt#1[#2]{%
+  \ifblank{#2}
+    {\item\beginenv*\code{\{}\env*{#1}\code{\}}}
+    {\item\beginenv*\code{\{}\env*{#1}\code{\}}#2}%
+  \cnltx@checkdefault{\hfill\newline}%
+}
+\def\cnltx@environment@nostar@opt#1[#2]{%
+  \ifblank{#2}
+    {\item\beginenv*\code{\{}\env{#1}\code{\}}}
+    {\item\beginenv*\code{\{}\env{#1}\code{\}}#2}%
+  \cnltx@checkdefault{\hfill\newline}%
+}
+
+\newenvironment{environments}
+  {%
+    \let\environment\cnltx@environment
+    \cnltxlist
+  }
+  {\endcnltxlist}
+
+% Eingene weitere Befehle
+% ****************************************************************
+
+\newcommand*\earg[2]{%
+    \code{\textcolor{argument}{%
+        #1\{\textnormal{\ifblank{#2}{}{\meta{#2}}}%
+            \}%
+        }%
+    }%
+}
+\newcommand*\eargChoices[2]{%
+    \code{%
+        \textcolor{argument}{#1\{\choices{#2}\}}%
+    }%
+}

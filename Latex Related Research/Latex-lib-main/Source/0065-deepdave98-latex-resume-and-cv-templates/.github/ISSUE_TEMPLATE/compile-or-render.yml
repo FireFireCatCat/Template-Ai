@@ -1,0 +1,48 @@
+name: Build or rendering problem
+description: Report a build failure or unexpected PDF output.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: dropdown
+    id: template
+    attributes:
+      label: Template
+      options:
+        - No Internship
+        - New Grad
+        - Experienced
+        - AI Engineer
+        - ML Engineer
+        - Graduate Admissions
+        - PDF reviewer
+        - Multiple templates
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Include your operating system, TeX distribution, and build method (command line, editor, or Overleaf).
+      placeholder: macOS 15, MacTeX 2026, command line
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include the command you ran, the relevant error, and what you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Share the smallest source change that reproduces the problem. Remove personal details first.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed personal and private information from logs, screenshots, and source snippets.
+          required: true

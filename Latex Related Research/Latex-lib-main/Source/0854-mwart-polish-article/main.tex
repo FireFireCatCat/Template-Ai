@@ -1,0 +1,55 @@
+%% mwart Polish article starter — mwart class (part of the MW bundle).
+%%
+%% The mwart class itself is NOT included in this download: it ships with
+%% every modern TeX distribution (and with latextemplates.com's compiler),
+%% so bundling a copy would only risk pinning you to an older version than
+%% your own system already has.
+%%
+%% Class documentation: https://ctan.org/pkg/mwcls
+%% Licence: LPPL-1.2 (or later), (c) 2000-2025 Marcin Woli\'nski, verified
+%% directly in the shipped mwart.cls header.
+%%
+%% mwart is a Polish-oriented alternative to the standard article class
+%% (part of the MW bundle, alongside mwbk/mwrep), with typesetting
+%% conventions tuned for Polish typography. It is language-agnostic on its
+%% own -- \usepackage[polish]{babel} + \usepackage{polski} below are what
+%% actually localise section names, hyphenation and quotation marks.
+\documentclass[a4paper,11pt]{mwart}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
+\usepackage{polski}
+
+\title{Tytuł artykułu}
+\author{Ada Lovelace}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Zastąp ten tekst streszczeniem. Dobre streszczenie opisuje problem, co
+zostało zrobione i jakie są wyniki --- w tej kolejności, bez odwołań do
+bibliografii.
+\end{abstract}
+
+\section{Wprowadzenie}
+Zacznij tutaj. Cytuj wcześniejsze prace w ten sposób~\cite{knuth1984texbook}.
+
+\section{Metoda}
+\label{sec:metoda}
+Opisz, co zostało zrobione.
+
+\section{Wyniki}
+\label{sec:wyniki}
+Przedstaw wyniki.
+
+\section{Podsumowanie}
+Podsumuj, co to oznacza.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

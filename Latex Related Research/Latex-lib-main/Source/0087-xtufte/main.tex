@@ -1,0 +1,92 @@
+% xtufte-book — a Unicode-engine (lualatex/xelatex) fork of the classic
+% Tufte-LaTeX book class, extending the already-shipped tufte-style-book
+% to OpenType/TrueType fonts. Ships with TeX Live; not bundled.
+%
+% backend=bibtex forced explicitly: the class defaults to biblatex's
+% biber backend, which this catalogue's compile loop does not run
+% (classic bibtex only).
+%
+% Simplified heavily from the class's own doc/sample-book.tex, which
+% relies on features this pipeline cannot use: a filecontents block
+% generating a helper file, `minted-code` (needs -shell-escape), and a
+% remote bibliography fetched over the network at compile time
+% (\addbibresource[location=remote]{https://...}) — none of which work
+% in a sandboxed, offline compile.
+%
+% Class documentation: texdoc xtufte | https://ctan.org/pkg/xtufte
+% Licence: base tufte-latex is Apache-2.0 (Kevin Godby, Bil Kleb, Bill
+% Wood); the xtufte extension is LPPL-1.3, (c) 2025 Herbert Voß.
+\PassOptionsToPackage{backend=bibtex}{biblatex}
+\documentclass[justified,notoc]{xtufte-book}
+
+\usepackage{booktabs}
+
+\title[Notes on Attention]{Notes on Attention}
+\author[Owen Marsh]{Owen Marsh}
+\publisher{}
+
+\addbibresource{references.bib}
+
+\begin{document}
+
+\maketitlepage
+
+\tableofcontents
+
+\chapter{What Attention Actually Costs}
+
+Herbert Simon observed in 1971 that ``a wealth of information creates
+a poverty of attention''\sidenote{Simon was writing about information
+overload decades before the internet made the problem
+visceral.}\cite{simon1971designing}. The claim sounds obvious now, but
+its consequence is not: if attention is the scarce resource, then
+every design decision that competes for it has a real cost, whether or
+not that cost shows up on any balance sheet.
+
+\newthought{Notification design} is the clearest modern instance of
+this. A single badge on an app icon is a standing claim on your future
+attention — it will be resolved eventually, and until it is, some
+small fraction of your working memory is reserved for it, whether or
+not you are consciously thinking about it.
+
+\begin{marginfigure}
+\caption{A schematic: each open notification is a small, ongoing tax
+on working memory, not a one-time cost.}
+\end{marginfigure}
+
+\section{The Interruption Tax}
+
+Gloria Mark's research on workplace interruption found that it takes
+an average of 23 minutes to fully return to a task after an
+interruption\sidenote{The commonly cited figure is 23 minutes and 15
+seconds, from continuous logging of office workers'
+activity.}\cite{mark2008cost}. This is not because the interrupted task
+was hard — it is because switching contexts has its own fixed cost,
+paid again on the way back.
+
+\begin{table}
+\centering
+\caption{Rough interruption costs by type, illustrative only.}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Interruption type & Typical recovery time \\
+\midrule
+Email notification & 1--2 minutes \\
+Chat message & 2--5 minutes \\
+Phone call & 10--15 minutes \\
+Full context switch (meeting) & 20+ minutes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{Designing for Attention}
+
+If attention is scarce, the natural design response is to spend it
+deliberately rather than by default. This does not mean removing all
+notifications — some genuinely warrant an interruption — but it means
+treating every claim on attention as a decision with a cost, not a
+free action.
+
+\printbibliography
+
+\end{document}

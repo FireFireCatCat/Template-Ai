@@ -1,0 +1,68 @@
+\documentclass[lang=en]{sjtureport}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\title{A Measurement Report on Queueing Delay}
+\author{Jordan Blake}
+\subject{Systems Engineering Laboratory}
+\keywords{queueing, latency, reproducibility}
+
+\begin{document}
+\maketitle
+
+\chapter{Introduction}
+This report studies how burst size changes the waiting time in a single-server
+queue. The purpose is not to claim a universal performance law, but to show a
+complete path from a question to a reproducible measurement and a bounded
+conclusion.
+
+\chapter{Experimental design}
+Requests arrive in batches at a fixed interval. The service time is sampled
+from a documented distribution, and the queue is reset before each run. For a
+stable system with arrival rate $\lambda$ and service rate $\mu$, the traffic
+intensity is
+\begin{equation}
+  \rho=\frac{\lambda}{\mu},\qquad 0\leq\rho<1.
+\end{equation}
+Runs with $\rho\geq1$ are reported as saturated rather than treated as normal
+steady-state observations.
+
+\chapter{Results}
+\begin{table}[ht]
+\centering
+\caption{Illustrative queue measurements.}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Batch size & Requests & Median wait (ms) & 95th percentile (ms)\\
+\midrule
+1 & 600 & 4.2 & 8.7\\
+4 & 600 & 9.5 & 18.3\\
+8 & 600 & 19.1 & 41.6\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The tail grows faster than the median as the workload becomes burstier. Before
+comparing implementations, repeat each row with the same seed, warm-up rule,
+hardware, and clock source.
+
+\chapter{Discussion}
+The measurements support a workload-specific association between burst size
+and queueing delay. They do not isolate scheduler overhead, garbage
+collection, or network variance. Record those factors explicitly in a future
+run and include confidence intervals around both central and tail estimates.
+
+\chapter{Conclusion}
+For the tested service rate, smaller batches keep the tail shorter. The result
+is useful as a diagnostic baseline; capacity planning should use production
+traces and a saturation test.
+
+\appendix
+\chapter{Run checklist}
+\begin{enumerate}
+  \item Record the software revision and machine configuration.
+  \item Declare warm-up, sampling, and outlier handling before looking at results.
+  \item Archive raw observations with the generated report.
+\end{enumerate}
+\end{document}

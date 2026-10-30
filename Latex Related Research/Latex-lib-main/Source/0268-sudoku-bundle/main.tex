@@ -1,0 +1,36 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=20mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{printsudoku}
+\usepackage{solvesudoku}
+
+\definecolor{puzzleblue}{HTML}{1E4E79}
+\title{Sudoku Puzzle and Solution}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\noindent\textcolor{puzzleblue}{\bfseries Puzzle file:} `puzzle.sud'\par
+\medskip
+
+\begin{center}
+  {\large\bfseries Solve it yourself}\par\medskip
+  \cluefont{\Large}\cellsize{2.2\baselineskip}
+  \sudoku{puzzle.sud}
+\end{center}
+
+\newpage
+\section*{Solver output}
+\cluefont{\small}\cellsize{1.2\baselineskip}
+\sudokusolve{puzzle.sud}
+
+\section*{Workflow}
+Keep one puzzle per `.sud` file.  The first nine lines contain clues, with a
+dot for each blank cell; comments after those lines are ignored by
+`printsudoku`.  Use the solver view as a checking aid while preparing a
+worksheet or a puzzle collection.
+\end{document}

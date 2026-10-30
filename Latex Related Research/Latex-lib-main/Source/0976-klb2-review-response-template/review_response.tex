@@ -1,0 +1,168 @@
+\documentclass[12pt,english,DIV=13,revnumtocomment,revnumtoheader]{reviewresponse}
+
+%% Language
+\usepackage{babel}
+\usepackage[babel]{microtype}
+\usepackage[babel]{csquotes}
+
+%% Fonts
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+%\usepackage{newcent} % different font
+%\usepackage[scaled]{beramono} % different monospace font
+
+
+%% Bibliography
+\usepackage[backend=biber,style=ieee,dashed=false,url=false,isbn=false,defernumbers=true,refsection=section]{biblatex}
+\bibliography{literature.bib}
+
+\usepackage{hyperref}
+
+
+\title{My Awesome but Very Long Paper Title\\That Spans Multiple Lines}
+\author{Donald Duck\affil{1,*} and Mickey Mouse\affil{2}}
+\affiliation{
+	\affil{1} Department of Quacking, Duck University, Duckburg, USA\\
+	\affil{2} Department of Mousing, Mouse University, Mouseton, USA
+}
+\journal{IEEE Transactions on Wireless Communications}
+\manuscript{TWC-2020-X}
+\editorname{Dr. Doom}
+
+\begin{document}
+\maketitle
+
+% Cover Letter
+\input{cover_letter.tex}
+
+% Response to Editor
+\editor
+\begin{generalcomment}
+	The reviewer(s) have suggested some minor revisions to your manuscript. Therefore, I invite you to respond to the reviewer(s)' comments and revise your manuscript.
+\end{generalcomment}
+\begin{revresponse}[We appreciate your handling of the review process.]
+	According to the reviewers' comments, we have checked our manuscript and addressed them in the following way:
+	\begin{enumerate}
+		\item We added content.
+		\item We removed our wrong statements in Section~I.
+	\end{enumerate}
+\end{revresponse}
+
+\begin{revcomment}
+	The editor might also have some individual comments that need to be numbered.
+\end{revcomment}
+
+\begin{concludingresponse}[to the Editor]
+	Thank you for your valuable comments on our manuscript.
+	We have done our best to incorporate changes to reflect the suggestions, which allowed us to improve the quality of our work.
+\end{concludingresponse}
+
+
+% Reviewer 1
+\reviewer
+\begin{generalcomment}
+	General comment about the work.
+\end{generalcomment}
+\begin{revresponse}[Thank you for your feedback.]
+	We have carefully addressed all the issues item by item as follows.
+\end{revresponse}
+
+\begin{revcomment}
+	Your work is really good. However, you should change the title.
+\end{revcomment}
+\begin{revresponse}
+	We agree that the title is somewhat misleading.
+	We therefore changed it in the current version of the manuscript.
+\end{revresponse}
+
+\begin{revcomment}
+	Everything else is really good.
+\end{revcomment}
+\begin{revresponse}
+	We totally agree. We also added the following to the new version of the manuscript
+	\begin{changes}
+		This really important sentence was added to the paper.
+	\end{changes}
+\end{revresponse}
+
+\begin{revcomment}[breakable]
+	If we have a\\
+	very long comment\\
+	that spans\\
+	many lines\\
+	we can pass arguments\\
+	to the underlying tcolorbox,\\
+	such as \texttt{breakable}\\
+	to allow breaking up\\
+	the comment box.
+\end{revcomment}
+\begin{revresponse}
+	That is a great feature. Thank you.
+\end{revresponse}
+
+\begin{concludingresponse}[]
+	Thank you for your valuable comments on our manuscript.
+\end{concludingresponse}
+
+
+% Reviewer 2
+\reviewer
+\label{rev:2}
+\begin{generalcomment}
+	In general, the work is well-written. However, I have the following concerns.
+\end{generalcomment}
+\begin{revresponse}[Thank you for your feedback.]
+	We have carefully addressed all the issues item by item as follows.
+\end{revresponse}
+
+\begin{revcomment}[label={comment:work-not-good}]
+	The work is not really good.
+\end{revcomment}
+\begin{revresponse}
+	:(
+\end{revresponse}
+
+\begin{revcomment}
+	You forgot to cite a very important reference (where I am an author)!
+\end{revcomment}
+\begin{revresponse}
+	We are aware that citations on Google Scholar are very important to you.
+	Therefore, we added reference \cite{ReviewerReference}.
+
+	Also check out our article \cite{Besser2020}.
+
+	\printpartbibliography{ReviewerReference,Besser2020}
+\end{revresponse}
+
+\begin{revcomment}
+	The template you are using for responding to my comments is excellent.
+\end{revcomment}
+\begin{revresponse}
+	We agree.
+
+	One cool feature is that comments are automatically labeled with the following pattern: \verb|comment:<rev_num>.<comment_num>|, which can then be used in a \verb|\ref|~command.
+	So this comment has number~\ref{comment:2.3}.
+	(Note that the printed number automatically changes if the \texttt{revnumtocomment} class option is enabled.)
+	When referring to specific comments made by the editor, the reviewer number \verb|<rev_num>| is zero, e.g., \autoref{comment:0.1}.
+
+	To automatically add the label in front of the number, we can use \verb|\autoref|: \autoref{comment:2.3}.
+
+	It is also possible to set an additional custom label by passing the \texttt{label} option to the comment environment, e.g., \autoref{comment:work-not-good} was mean.
+\end{revresponse}
+
+
+\reviewer
+\begin{revcomment}
+	Did you know, that the references can be separated for the individual reviewers?
+\end{revcomment}
+\begin{revresponse}
+	Yes. When using \href{https://www.ctan.org/pkg/biblatex}{biblatex}, you can use the \texttt{refsection=section} option to achieve that.
+	If we cite a new reference like \cite{Besser2021} here, it will again be number [1].
+
+	Note that you might have to run \texttt{pdflatex} and \texttt{biber} multiple times.
+
+	And reference [1] for \autoref{rev:2}~\cite{ReviewerReference} is now number [2].
+
+	\printpartbibliography{Besser2021,ReviewerReference}
+\end{revresponse}
+\end{document}

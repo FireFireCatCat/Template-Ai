@@ -1,0 +1,2002 @@
+% \iffalse meta-comment
+% SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
+% SPDX-License-Identifier: MIT
+% \fi
+
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+
+% \GetFileInfo{eolang.dtx}
+% \DoNotIndex{\endgroup,\begingroup,\let,\else,\s,\n,\r,\\,\1,\fi}
+
+% \iffalse
+%<*driver>
+\ProvidesFile{eolang.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{eolang}
+%<*package>
+[0000-00-00 0.0.0 Formulas and Graphs for EO Programming Language]
+%</package>
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{fail-fast}
+\usepackage[maxnames=1,minnames=1,maxbibnames=1,natbib=true,citestyle=authoryear,bibstyle=authoryear,doi=false,url=false,isbn=false]{biblatex}
+\addbibresource{eolang.bib}
+\usepackage{microtype}
+\AddToHook{env/verbatim/begin}{\microtypesetup{protrusion=false}}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[runs=2,dtx]{docshots}
+\usepackage[nocomments]{eolang}
+\PassOptionsToPackage{hyperindex=false}{hyperref}
+\usepackage{href-ul}
+\usepackage{bookmark}
+\renewcommand{\RerunFileCheck}[3]{\AddToHook{enddocument/info}{#2}}
+\PageIndex
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{eolang.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+
+% \title{\includegraphics[height=1in]{cactus.pdf} \\ |eolang|: \LaTeX{} Package \\ for Formulas and Graphs \\ of EO Programming Language \\ and \(\varphi\)-Calculus\thanks{The sources are in GitHub at \href{https://github.com/objectionary/eolang.sty}{objectionary/eolang.sty}}}
+% \author{Yegor Bugayenko \\ \texttt{yegor256@gmail.com}}
+% \date{\filedate, \fileversion}
+%
+% \maketitle
+%
+% \textbf{\color{red}NB!}
+% The \TeX{} processor must be invoked with the |-shell-escape| option,
+% and \href{https://www.perl.org}{Perl} must be installed on the host system.
+% Should the |-shell-escape| option be omitted, the package falls back to
+% cached files, if any are present; in their absence, compilation fails.
+% When a document is to be prepared for compilation without the
+% |-shell-escape| option, it should be compiled locally with the option enabled,
+% whereupon all files (including those within the |_eolang-*| directories)
+% must be bundled into a single ZIP archive. The use of the |tmpdir| package
+% option is advised in such cases, so that the directory name is not made
+% dependent upon the \LaTeX{} engine.
+%
+% The package operates on Windows as well as on Unix, provided |perl|
+% is on the |PATH|.
+
+% \section{Introduction}
+%
+% This package typesets formulas of \phic{},
+% the formal foundation of the \href{https://www.eolang.org}{EO}
+% programming language. The calculus was introduced by \citet{bugayenko2021eolang}
+% and subsequently formalised by \citet{kudasov2021}. A simple expression is
+% rendered as follows:
+% \begin{docshot}
+% \documentclass{minimal}
+% \usepackage{eolang}
+% \begin{document}
+% \begin{phiquation*}
+% app -> [[ % it's abstract!
+%   ^ -> $.b.^{^2}, 0/t~> TRUE,
+%   b -> [[ *-> Q.fn(56),
+%     @ -> Q.string.trim($),
+%     D> 01-FE-C3 ]]]],\\
+% x -> [[ \lambda ..> ? ]].
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% \DescribeEnv{phiquation}
+% The |phiquation| environment permits the writing of \phic{} expressions
+% in a simple plain-text notation, in which:
+% \begin{itemize}\setlength\itemsep{0em}
+%   \item ``|@|'' maps to ``$@$''
+%     (|\upvarphi|),
+%   \item ``|^|'' maps to ``$^$''
+%     (|\uprho|),
+%   \item ``|$|'' maps to ``\(\phiTerminal{\upxi}\)''
+%     (|\upxi|),
+%   \item ``|?|'' maps to ``$?$''
+%     (|\varnothing|),
+%   \item ``|T|'' maps to ``$T$''
+%     (|\bot|),
+%   \item ``|Q|'' maps to ``$Q$''
+%     (|\Phi|),
+%   \item ``|->|'' maps to ``$->$''
+%     (|\mapsto|),
+%   \item ``|..>|'' maps to ``$..>$''
+%     (|\phiDotted|),
+%   \item ``|~>|'' maps to ``$~>$''
+%     (|\phiWave|),
+%   \item ``|D|'' maps to ``$D$''
+%     (|\Delta|),
+%   \item ``|L|'' maps to ``$L$''
+%     (|\uplambda|),
+%   \item ``|D>|'' maps to ``$D>$''
+%     (|\Delta ..>|),
+%   \item ``|L>|'' maps to ``$L>$''
+%     (|\uplambda ..>|),
+%   \item ``|[[|'' maps to ``$[[$''
+%     (|\llbracket|),
+%   \item ``|]]|'' maps to ``$]]$''
+%     (|\rrbracket|),
+%   \item ``|==|'' maps to ``$==$''
+%     (|\equiv|),
+%   \item ``|:|'' maps to ``$:$''
+%     (|\phiTerminal{:}|),
+%   \item ``\texttt{\textbar{abc}\textbar}'' maps to ``\texttt{abc}''
+%     (|\texttt{abc}|).
+% \end{itemize}
+% Furthermore, several symbols are supported for the $\varphi$PU architecture:
+% \begin{itemize}\setlength\itemsep{0em}
+%   \item ``|<<|'' maps to ``$\langle$''
+%     (|\langle|),
+%   \item ``|>>|'' maps to ``$\rangle$''
+%     (|\rangle|),
+%   \item ``|-abc>|'' maps to ``$\phiSlot{abc}$''
+%     (|\phiSlot{abc}|),
+%   \item ``|:=|'' maps to ``$\vDash$''
+%     (|\vDash|).
+% \end{itemize}
+
+% A number may precede any arrow, in which case it is rendered as |\upalpha| bearing an index; for instance,
+% |\phiq{~0 -> x}| produces ``\phiq{~0 -> x}''.
+% The form |~0| likewise yields \(\upalpha_0\).
+
+% The Greek letters |\rho|, |\xi|, |\lambda|, |\alpha|, and |\varphi|, when typed
+% inside |\phiq| or |phiquation|, are rendered upright too, as |\uprho|, |\upxi|, |\uplambda|,
+% |\upalpha|, and |\upvarphi| from \href{https://ctan.org/pkg/upgreek}{upgreek}, since
+% they are terminals of \phic{}, not variables:
+% |\phiq{\rho -> \xi}| produces ``\phiq{\rho -> \xi}''.
+% An asterisk may be employed in place of a number.
+
+% A slash followed by a title may be appended to the number of an attribute, as in |0/g->x|.
+% This is rendered as \phiq{0/g->x}. Fixed-width words are likewise admissible, for instance
+% \verb=\phiq{0/|f|->x}= renders as ``\phiq{0/|f|->x}''. An asterisk may replace
+% the number, whereby |\phiq{*/g->x}| renders as ``\phiq{*/g->x}''.
+
+% Numbers are automatically rendered in fixed-width font; vertical bars need not always be supplied.
+
+% Object names of more than one letter are likewise rendered in fixed-width font.
+
+% Texts within double quotes are likewise rendered in fixed-width font.
+
+% \DescribeMacro{\phiq}
+% The |\phiq| command permits the inlining of \phic{} expressions
+% in the same simple plain-text notation. The dollar sign may be employed directly:
+% \begin{docshot}[options={firstline=4,lastline=10}]
+% \documentclass{article}
+% \pagestyle{empty}
+% \usepackage{eolang}
+% \begin{document}
+% A simple object
+% \phiq{x -> [[@ -> y]]} \\
+% is a decorator of
+% the data object \\
+% $y -> [[\Delta ..> 42]]$.
+% \end{document}
+% \end{docshot}
+
+% \DescribeEnv{sodg}
+% The |sodg| environment permits the drawing of a \href{https://github.com/objectionary/sodg}{SODG} graph:
+% \begin{docshot}
+% \documentclass{standalone}
+% \usepackage{eolang}
+% \begin{document}
+% \begin{sodg}
+% v0 \\ v0===> \\ v0!!A
+% v1 xy:v0,-.8,2.8 data:42 tag:d_1
+% v0->v1 a:x rho \\ =>v1
+% v2 xy:v0,+1,+1 atom:\xi.x+1
+% v1->v2 a:|hi| bend:-15
+% v2->v0 pi bend:10 % a comment
+% \end{sodg}
+% \end{document}
+% \end{docshot}
+% The content of the environment is parsed line by line. Markers within each line are
+% separated by a single space. The first marker is either the unique name of a
+% vertex, such as ``|v1|'' in the example above, or an edge, such as ``|v0->v1|''. All other markers are either
+% unary, such as ``|rho|'', or binary, such as ``|atom:$\xi.x+1$|''. Binary markers consist of two
+% parts separated by a colon.
+
+% The following markers are supported for a vertex:
+% \begin{itemize}\setlength\itemsep{0em}
+%   \item ``|tag:<math>|'' puts a custom label |<math>| into the circle;
+%   \item ``|data:[<box>]|'' makes it a data vertex with an optional attached ``|<box>|''
+%     (the content of the box may only be numeric data);
+%   \item ``|atom:[<box>]|'' makes it an atom with an optional attached ``|<box>|''
+%     (the content of the box is a math formula);
+%   \item ``|box:<txt>|'' attaches a ``|<box>|'' to it;
+%   \item ``|xy:<v>,<r>,<d>|'' places this vertex in a position relative to the vertex ``|<v>|,''
+%     shifting it right by ``|<r>|'' and down by ``|<d>|'' centimetres;
+%   \item ``|+:<v>|'' makes a copy of an existing vertex and all its kids;
+%   \item ``|edgeless|'' removes the border from the vertex;
+%   \item ``|style:{...}|'' adds this TikZ style to the vertex |\node|.
+% \end{itemize}
+
+% The following markers are supported for an edge:
+% \begin{itemize}\setlength\itemsep{0em}
+%   \item ``|rho|'' places a backward snake arrow on the edge;
+%   \item ``|bend:<angle>|'' bends it right by the amount of ``|<angle>|'';
+%   \item ``|a:<txt>|'' attaches label ``|<txt>|'' to it;
+%   \item ``|pi|'' makes it dotted, with $\pi$ label;
+%   \item ``|style:{...}|'' adds this TikZ style to the edge |\path|.
+% \end{itemize}
+
+% Transformation arrows may also be placed within the graph by means of the ``|v0=>v1|'' syntax. The arrow
+% is positioned precisely between the two vertices. An arrow may likewise extend from a vertex
+% to the right, as in ``|v3=>|'', or from the left towards the vertex, as in ``|=>v5|''. Whenever
+% the arrow is to remain further from the vertex than usual, additional ``|=|'' symbols may be used,
+% as in ``|===>v0|''.
+
+% A marker may also be placed to the left of a vertex by means of the ``|v5!A|'' syntax, where ``|v5|'' denotes the vertex
+% and ``|A|'' the text within the marker. Such markers prove useful whenever several graphs are juxtaposed within a single figure
+% to illustrate the transformation of one graph into another. The distance between the vertex
+% and its marker may be increased by additional exclamation marks;
+% for instance, ``|v5!!!A|'' produces a distance three times the original.
+
+% A clone of an existing vertex together with all of its dependants may be created by means of the ``|v0+a|'' syntax:
+% a copy of ``|v0|'' is thereby produced and named ``|v0a|''. See the example below.
+
+% Note that unrecognised markers are silently ignored, without any error reporting.
+
+% \DescribeMacro{\eolang}
+% \DescribeMacro{\phic}
+% \DescribeMacro{\xmir}
+% A no-argument command |\eolang| is also provided for printing the name of the
+% \eolang{} language. It is sensitive to the |anonymous| package option, rendering itself
+% differently to support double-blind submissions. The |\phic| command similarly prints
+% the name of \phic{} and is likewise sensitive to |anonymous| mode. The |\xmir| macro prints ``XMIR''.
+% \begin{docshot}[options={firstline=3,lastline=10}]
+% \documentclass{acmart}
+% \thispagestyle{empty}
+% \usepackage[anonymous]{eolang}
+% \begin{document}
+% In our research we use \eolang{}, \\
+% an experimental object-oriented \\
+% dataflow language, \phic{}, as its \\
+% formal foundation, and \xmir{} --- \\
+% its XML-based representation.
+% \end{document}
+% \end{docshot}
+% Without the |anonymous| option, no orange colour is applied:
+% \begin{docshot}[options={firstline=3,lastline=10}]
+% \documentclass[anonymous]{acmart}
+% \thispagestyle{empty}
+% \usepackage{eolang}
+% \begin{document}
+% In our research we use \eolang{}, \\
+% an experimental object-oriented \\
+% dataflow language, \phic{}, as its \\
+% formal foundation, and \xmir{} --- \\
+% its XML-based representation.
+% \end{document}
+% \end{docshot}
+
+% \DescribeMacro{\phiWave}
+% \DescribeMacro{\phiDotted}
+% Several simple commands are defined for the rendering of arrows.
+% \begin{docshot}[options={firstline=6,lastline=12}]
+% \documentclass{article}
+% \pagestyle{empty}
+% \usepackage[paperwidth=3in]{geometry}
+% \usepackage{eolang}
+% \begin{document}\noindent
+% If $x$ is an identifier and $y$ is
+% an object, then $x \phiWave y$
+% makes it a decoratee
+% of an arbitrary number of objects,
+% while $x \phiDotted y$ makes it
+% a special attribute.
+% \end{document}
+% \end{docshot}
+
+% \DescribeMacro{\phiNormalize}
+% \DescribeMacro{\phiEvaluate}
+% \DescribeMacro{\phiDataize}
+% \DescribeMacro{\phiMorph}
+% \DescribeMacro{\phiContextualize}
+% Five further commands render the arrows of the operational semantics of \phic{}, each painted
+% red rather than the orange of |\phiTerminal|, so that a step of computation is never mistaken
+% for a terminal symbol. They are meant to stand between two expressions, exactly as |\phiWave|
+% and |\phiDotted| do above. All save |\phiEvaluate| accept an optional subscript, printed in the
+% ordinary text colour, for instance to name a step count or a substitution:
+% \begin{docshot}[options={firstline=6,lastline=12}]
+% \documentclass{article}
+% \pagestyle{empty}
+% \usepackage[paperwidth=3in]{geometry}
+% \usepackage{eolang}
+% \begin{document}\noindent
+% Normalization, $x \phiNormalize y$;
+% evaluation, $x \phiEvaluate y$;
+% dataization, $x \phiDataize[n] y$;
+% morphing, $x \phiMorph[\sigma] y$;
+% contextualization, $x \phiContextualize y$.
+% \end{document}
+% \end{docshot}
+
+% \DescribeMacro{\phiOset}
+% \DescribeMacro{\phiUset}
+% Should text be placed above or beneath an arrow, |\phiOset| and |\phiUset| are employed, respectively:
+% \begin{docshot}[options={firstline=6,lastline=11}]
+% \documentclass{article}
+% \pagestyle{empty}
+% \usepackage[paperwidth=3in]{geometry}
+% \usepackage{eolang}
+% \begin{document}\noindent
+% When the names of attributes and their
+% values are immaterial, an arrow
+% with a star is employed, for example:
+% \begin{phiquation*}
+% [[ \phiOset{*}{->} ]].
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% \DescribeMacro{\phiMany}
+% On occasion, it is convenient to simplify the description of an object (the typesetting is somewhat imperfect, owing not to the package itself but rather to \href{https://tex.stackexchange.com/questions/664772}{this}):
+% \begin{docshot}[options={firstline=6,lastline=14}]
+% \documentclass{article}
+% \pagestyle{empty}
+% \usepackage[paperwidth=3in]{geometry}
+% \usepackage{eolang}
+% \begin{document}\noindent
+% The expression
+% \phiq{[[ 1-> x_1,
+%   2-> x_2, \dots,
+%   \alpha_n -> x_n ]]}
+% and expression
+% \phiq{[[ \alpha_i
+%   \phiMany{->}{i=1}{n} x_i ]]}
+% are syntactically different but
+% semantically equivalent.
+% \end{document}
+% \end{docshot}
+
+% \DescribeMacro{\phiSaveTo}
+% \DescribeMacro{\sodgSaveTo}
+% The |phiquation| and |sodg| environments cannot be used directly within |tabular| or any other environment or command, since they are ``verbatim'' environments. The |\phiSaveTo| and |\sodgSaveTo| commands address this difficulty. They are placed immediately before |\begin{phiquation}| or |\begin{sodg}|, respectively---the content of the equation or graph is then not rendered but saved to a file. Subsequently, within |tabular|, it may be retrieved by means of the |\input| macro (the |\parbox| should not be omitted):
+% \begin{docshot}[options={firstline=5,lastline=12}]
+% \documentclass{article}
+% \usepackage{eolang}
+% \pagestyle{empty}
+% \begin{document}
+% \phiSaveTo{a}
+% \begin{phiquation*}
+% [[ x -> [[D>42]] ]]
+% \end{phiquation*}
+% \begin{tabular}{p{.5in}l}
+% Free: & $[[x -> ?]]$ \\
+% Bound: & \parbox{1in}{\input{a}} \\
+% \end{tabular}
+% \end{document}
+% \end{docshot}
+
+% \DescribeMacro{\eoAnon}
+% Certain content may need to be concealed by means of the |anonymous| package option. The |\eoAnon| command serves this purpose. It accepts two parameters: one mandatory and one optional. The mandatory parameter denotes the content to be displayed; the optional parameter, the substitution rendered whenever the |anonymous| package option is set.
+
+% \section{Package Options}
+
+% \DescribeMacro{tmpdir}
+% The default location for temporary files is |_eolang|. This may be altered by means of the |tmpdir| package option:
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\usepackage[tmpdir=/tmp/foo]{eolang}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+
+% \DescribeMacro{nodollar}
+% The special treatment of the dollar sign may be disabled by means of the |nodollar| package option:
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\usepackage[nodollar]{eolang}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+
+% The dollar sign is turned into an active character only at the beginning
+% of the document, so that packages loaded after |eolang| still read |$| at
+% its normal math-shift catcode throughout the preamble. As a consequence,
+% |$...$| written inside the body of a preamble-defined macro (for example, a
+% |\newcommand|) is \emph{not} converted to |\phiq| automatically. In that
+% situation, use the |\phiq{...}| command directly, since it is
+% catcode-independent and self-wraps its argument.
+
+% \DescribeMacro{anonymous}
+% The |\eolang|, |\xmir|, and |\phic| commands may be anonymised by means of the |anonymous| package option (each invokes the |\eoAnon| command mentioned earlier):
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\usepackage[anonymous]{eolang}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+
+% \DescribeMacro{nocolor}
+% The package paints anonymised content and \phic{} terminals orange. The |nocolor| option
+% suppresses this, so that nothing is ever coloured --- useful for greyscale printing and for
+% venues that forbid colour:
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\usepackage[nocolor]{eolang}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+
+% \DescribeMacro{noshell}
+% Any interaction with the shell may be prohibited by means of the |noshell| option. This proves useful whenever the document is dispatched
+% for external processing, and assurance is required that compilation will not fail on account of shell errors:
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\usepackage[noshell]{eolang}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+
+% \section{More Examples}
+
+% The |phiquation| environment treats line endings as signals to begin
+% new lines within the formula. Should this behaviour be undesirable, and the
+% subsequent line be parsed instead as a continuation of the current line, a single
+% backslash may be employed as illustrated below:
+% \begin{docshot}[options={firstline=6,lastline=11}]
+% \documentclass{article}
+% \usepackage{amsmath}
+% \usepackage{eolang}
+% \pagestyle{empty}
+% \begin{document}
+% \begin{phiquation*}
+% \dfrac \
+%  {x->[[@->y]] \quad y->[[z->42]]} \
+%  {x.z -> T} \
+%  \text{\sffamily R1}
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% The following illustrates the use of |\dfrac| from \href{https://ctan.org/pkg/amsmath}{amsmath} for large inference rules,
+% by means of |\begin{split}| and |\end{split}|:
+% \begin{docshot}[options={firstline=6,lastline=15}]
+% \documentclass{article}
+% \usepackage{amsmath}
+% \usepackage{eolang}
+% \pagestyle{empty}
+% \begin{document}
+% \begin{phiquation*}
+% \dfrac{\begin{split}
+% x->[[@->y, z->42,
+%   0/g->?, 1/foo->42]]
+% \end{split}}{\begin{split}
+% x->[[@->y, z->?, f ~> |pi|(
+%   ~0 ->[[ \psi -> |hello|(12) ]],
+%     ~1 -> 42)]]
+% \end{split}}\text{R2}.
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% The |matrix| environment may likewise be employed to group several lines:
+% \begin{docshot}[options={firstline=5,lastline=11}]
+% \documentclass{article}
+% \usepackage{eolang}
+% \pagestyle{empty}
+% \begin{document}
+% \begin{phiquation*}
+% foo -> \left\{\begin{matrix} \
+% ? \\
+% [[ L> ^ \times $.\alpha_0 ]] \\
+% [[ D> 42 ]] \
+% \end{matrix}\right\}
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% The |cases| environment is likewise supported:
+% \begin{docshot}[options={firstline=5,lastline=11}]
+% \documentclass{article}
+% \usepackage{eolang}
+% \pagestyle{empty}
+% \begin{document}
+% \begin{phiquation*}
+% \beta := \begin{cases} \
+% [ v_2, @ -dtzd> 42 ] \\
+% [ v_{33} ] \
+% \end{cases}
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% The |phiquation| environment may likewise be employed in conjunction with the \href{https://ctan.org/pkg/acmart}{acmart} package:
+% \begin{docshot}
+% \documentclass{acmart}
+% \usepackage{eolang}
+% \thispagestyle{empty}
+% \begin{document}
+% \begin{phiquation*}
+% x -> [[
+%   y -> [[
+%     z -> $, f ..> ? ]]]],\\
+% \beta_1 := [ \psi -wait> ? ].
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% The |\label| command may be used within the |phiquation| environment (note how the bespoke parsing of math formulas may be suppressed by enclosing the ``|4|'' number in curly brackets):
+% \begin{docshot}[options={firstline=6,lastline=13}]
+% \documentclass{article}
+% \usepackage[paperwidth=3in]{geometry}
+% \usepackage{eolang}
+% \pagestyle{empty}
+% \begin{document}\noindent
+% The discriminant may be computed by
+% means of the following simple formula:
+% \begin{phiquation}
+% D = b{^2} - {4}ac.
+% \label{d}
+% \end{phiquation}
+% Eq.~\ref{d} finds wide application in
+% number theory and polynomial factoring.
+% \end{document}
+% \end{docshot}
+
+% Comments may be appended to equations by means of the |&&| command (note that the text within |\text{}| is not processed but treated as plain text):
+% \begin{docshot}[options={firstline=6,lastline=10}]
+% \documentclass{article}
+% \usepackage[paperwidth=4in]{geometry}
+% \usepackage{eolang}
+% \pagestyle{empty}
+% \begin{document}
+% \begin{phiquation*}
+% [[ ~0 -> x ]] && \text{This is formation}
+% [[ ~0 -> ? ]] && \text{Abstraction}
+% x(D>42) && \text{Application}
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% Even without the |nodollar| package option, the ordinary parsing of the dollar sign remains accessible by means of the |\(...\)| syntax:
+% \begin{docshot}[options={firstline=6,lastline=8}]
+% \documentclass{article}
+% \usepackage[paperwidth=3in]{geometry}
+% \usepackage{eolang}
+% \pagestyle{empty}
+% \begin{document}\noindent
+% The object formation $[[~0->x]]$
+% may be replaced by the formula
+% \( Q \times a^2 \).
+% \end{document}
+% \end{docshot}
+
+% The |phiquation| environment automatically aligns formulas at the first
+% arrow whenever only left-aligned formulas are present:
+% \begin{docshot}[options={firstline=5,lastline=11}]
+% \documentclass{acmart}
+% \usepackage{eolang}
+% \thispagestyle{empty}
+% \begin{document}
+% \begin{phiquation*}
+% x(\pi) -> [[\lambda ..> f_1]], \\
+% x(a,b,c) -> [[ ~0 -> ?, L> Foo, \
+%   @ -> Q.hello($), x -> false ]], \\
+% \Delta = |43-09|,
+% x(y) == x(~0 -> y).
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% Should no line in |phiquation| be indented, all formulas are centred:
+% \begin{docshot}[options={firstline=5,lastline=9}]
+% \documentclass{acmart}
+% \usepackage{eolang}
+% \thispagestyle{empty}
+% \begin{document}
+% \begin{phiquation*}
+% [[ b -> ? ]],
+% [[ @ -> TRUE, \Delta ..> 42 ]], \\
+% \psi = << \pi, 42 >>.
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% A ``manual splitting'' mode may be employed in the |phiquation| environment by commencing the body with |\begin{split}|:
+% \begin{docshot}[options={firstline=5,lastline=10}]
+% \documentclass{article}
+% \usepackage{eolang}
+% \thispagestyle{empty}
+% \begin{document}
+% \begin{phiquation*}
+% \begin{split}
+% x(\pi) & -> 4 \\
+% x(a,b,c) & -> [[ \alpha_0 -> ? ]] \\
+% \end{split}
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% Whenever a percentage sign is required, it must be prefixed with a backslash:
+% \begin{docshot}[options={firstline=5,lastline=10}]
+% \documentclass{article}
+% \usepackage{eolang}
+% \thispagestyle{empty}
+% \begin{document}
+% \begin{phiquation*}
+% x -> sprintf("Hello, \%s!", name)
+% \end{phiquation*}
+% \end{document}
+% \end{docshot}
+
+% A copy of a vertex may be made together with its descendants:
+% \begin{docshot}[options={firstline=5,lastline=15}]
+% \documentclass{article}
+% \pagestyle{empty}
+% \usepackage{eolang}
+% \begin{document}
+% \begin{sodg}
+% v0 \\ v0!!A
+% v1 xy:v0,.7,1
+% v0->v1 a:x bend:-10
+% v2 xy:v1,-1.3,.8
+% v1->v2 a:|foo| bend:-20
+% v0+a xy:v0,3,0
+% v3a xy:v0a,-.7,1
+% v0a->v3a a:e bend:-15
+% v0=>v0a \\ v0a!B
+% \end{sodg}
+% \end{document}
+% \end{docshot}
+
+% A copy may itself be copied in turn:
+% \begin{docshot}[options={firstline=5,lastline=15}]
+% \documentclass{article}
+% \pagestyle{empty}
+% \usepackage{eolang}
+% \begin{document}
+% \begin{sodg}
+% v0
+% v1 xy:v0,.7,1
+% v0->v1 a:x bend:-10 rho
+% v0+a xy:v0,3,0 \\ v0=>v0a
+% v2a xy:v1a,-.8,1.3
+% v1a->v2a a:e
+% v0a+b xy:v0a,3,0 \\ v0a=>v0b
+% v3b xy:v2b,-1,-1
+% v2b->v3b a:\psi{} rho
+% \end{sodg}
+% \end{document}
+% \end{docshot}
+
+% ``Broken'' edges are supported by means of the ``|break|'' attribute of an edge.
+% The attribute requires a value denoting the percentage of the path
+% between vertices that the arrow is to traverse (the value cannot exceed 80 nor fall below 20).
+% This proves convenient whenever not all edges can be accommodated within the graph,
+% for example:
+% \begin{docshot}[options={firstline=5,lastline=14}]
+% \documentclass{article}
+% \pagestyle{empty}
+% \usepackage{eolang}
+% \begin{document}
+% \begin{sodg}
+% v0
+% v1 xy:v0,-1,1
+% v0->v1 a:x
+% v2 xy:v0,0,1
+% v0->v2 a:y
+% v3 xy:v0,1,1
+% v0->v3 a:\psi{}
+% v3->v1 a:f bend:-75 break:30
+% \end{sodg}
+% \end{document}
+% \end{docshot}
+
+% \href{https://en.wikipedia.org/wiki/PGF/TikZ}{TikZ} commands may be added to a |sodg| graph, for example:
+% \begin{docshot}[options={firstline=6,lastline=13}]
+% \documentclass{article}
+% \pagestyle{empty}
+% \usepackage{eolang}
+% \usetikzlibrary{fit}
+% \begin{document}
+% \begin{sodg}
+% v0 edgeless
+% v11 xy:v0,-1,1 \\ v0->v11
+% v12 xy:v0,0,1 \\ v0->v12
+% v13 xy:v0,1,1 \\ v0->v13
+% \node[draw=red,rounded corners,\
+%  dotted,fit=(v11) (v12)] {};
+% \end{sodg}
+% \end{document}
+% \end{docshot}
+
+% The TikZ style may be modified directly (note that |style:| must remain at the end of the line), for example:
+% \begin{docshot}[options={firstline=6,lastline=12}]
+% \documentclass{article}
+% \pagestyle{empty}
+% \usepackage{eolang}
+% \usetikzlibrary{fit}
+% \begin{document}
+% \begin{sodg}
+% v0
+% v1 xy:v0,-2,1 style:font=\color{red}
+% v2 xy:v0,2,1
+% v0->v1 style:line width=2pt
+% v0->v2 style:draw=orange
+% \end{sodg}
+% \end{document}
+% \end{docshot}
+
+% \StopEventually{}
+
+% \section{Implementation}
+% \changes{0.0.1}{2022/10/15}{First draft.}
+
+% First, we include a few packages.
+% We need \href{https://ctan.org/pkg/stmaryrd}{stmaryrd} for |\llbracket| and |\rrbracket| commands:
+%    \begin{macrocode}
+\RequirePackage{stmaryrd}
+%    \end{macrocode}
+% We need \href{https://ctan.org/pkg/amsmath}{amsmath} for |equation*| environment:
+%    \begin{macrocode}
+\RequirePackage{amsmath}
+%    \end{macrocode}
+% We need \href{https://ctan.org/pkg/amssymb}{amssymb} for |\varnothing| command. We disable |\Bbbk|
+% because it may conflict with some packages from \href{https://ctan.org/pkg/acmart}{acmart}:
+%    \begin{macrocode}
+\let\Bbbk\relax\RequirePackage{amssymb}
+%    \end{macrocode}
+% We need \href{https://ctan.org/pkg/upgreek}{upgreek} for upright Greek letters, such as |\uprho|:
+%    \begin{macrocode}
+\RequirePackage{upgreek}
+%    \end{macrocode}
+% We need \href{https://ctan.org/pkg/fancyvrb}{fancyvrb} for |\VerbatimEnvironment| command:
+%    \begin{macrocode}
+\RequirePackage{fancyvrb}
+%    \end{macrocode}
+% We need \href{https://ctan.org/pkg/iexec}{iexec} for executing Perl scripts:
+%    \begin{macrocode}
+\ifdefined\eolang@noshell\else\RequirePackage{iexec}\fi
+%    \end{macrocode}
+
+% Then, we process package options:
+% \changes{0.1.0}{2022/10/26}{Parsing of package options introduced.}
+% \changes{0.6.0}{2022/11/14}{Package option \texttt{nocomments} added in order to enable comments suppression in temporary \texttt{.tex} files (may be pretty important for \texttt{.dtx} documents).}
+% \changes{0.8.0}{2022/11/29}{The \texttt{anonymous} package option added.}
+% \changes{0.24.0}{2026/08/11}{The \texttt{nocolor} package option added, in order to suppress the orange colour.}
+%    \begin{macrocode}
+\RequirePackage{pgfopts}
+\RequirePackage{ifluatex}
+\RequirePackage{ifxetex}
+\pgfkeys{
+  /eolang/.cd,
+  tmpdir/.store in=\eolang@tmpdir,
+  tmpdir/.default=_eolang\ifxetex-xe\else\ifluatex-lua\fi\fi,
+  nocomments/.store in=\eolang@nocomments,
+  nodollar/.store in=\eolang@nodollar,
+  nocolor/.store in=\eolang@nocolor,
+  anonymous/.store in=\eolang@anonymous,
+  noshell/.store in=\eolang@noshell,
+  tmpdir
+}
+\ProcessPgfPackageOptions{/eolang}
+%    \end{macrocode}
+
+% \begin{macro}{\eolang@ink}
+% \changes{0.24.0}{2026/08/11}{New internal command \texttt{\char`\\eolang@ink} paints its argument, honouring the \texttt{nocolor} package option.}
+% Then, we define an internal command that paints its argument orange, leaving
+% it untouched when the |nocolor| package option is set:
+%    \begin{macrocode}
+\RequirePackage{xcolor}
+\makeatletter
+\ifdefined\eolang@nocolor
+  \newcommand\eolang@ink[1]{#1}
+\else
+  \newcommand\eolang@ink[1]{{\color{orange}#1}}
+\fi
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% Then, we make a directory where all temporary files will be kept. We use
+% Perl instead of |mkdir|, so that the code works on Windows too:
+% \changes{0.27.0}{2026/10/16}{Windows compatibility: file operations go through Perl, shell arguments are double-quoted, and \texttt{\char`\\phiq} writes its temporary file without the shell.}
+%    \begin{macrocode}
+\makeatletter
+\ifdefined\eolang@noshell\else\RequirePackage{shellesc}\fi
+\IfFileExists
+  {\eolang@tmpdir/\jobname}
+  {\message{eolang: Temporary directory "\eolang@tmpdir/\jobname"
+    already exists^^J}}
+  {
+    \ifdefined\eolang@noshell
+      \message{eolang: Temporary directory "\eolang@tmpdir/\jobname"
+        is not created, because of the "noshell" package option,
+        most probably the compilation will fail later^^J}
+    \else
+      \ifnum\ShellEscapeStatus=1
+        \iexec[null]{perl -MFile::Path=make_path -e "make_path(shift)"
+          "\eolang@tmpdir/\jobname"}
+      \else
+        \message{eolang: Temporary directory "\eolang@tmpdir/\jobname"
+          is not created, because -shell-escape is not set, and
+          it doesn't exist, most probably the compilation
+          will fail later^^J}
+      \fi
+    \fi
+  }
+\makeatother
+%    \end{macrocode}
+
+% \begin{macro}{\eolang@lineno}
+% \changes{0.3.0}{2022/10/30}{New counter for protecting lineno.}
+% Then, we define an internal counter to protect line number from changing:
+%    \begin{macrocode}
+\makeatletter\newcounter{eolang@lineno}\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\eolang@mdfive}
+% \changes{0.1.0}{2022/10/26}{New supplementary command added to calculate MD5 sum of a file.}
+% Then, we define a command for MD5 hash calculating of a file:
+%    \begin{macrocode}
+\RequirePackage{pdftexcmds}
+\makeatletter
+\newcommand\eolang@mdfive[1]{\pdf@filemdfivesum{#1}}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{-phi.pl}
+% \changes{0.0.2}{2022/10/21}{The symbols ``\texttt{[}'' and ``\texttt{]}'' replaced with ``\texttt{[[}'' and ``\texttt{]]}'' for abstract object brackets, because they conflicted with normal square brackets}
+% \changes{0.0.2}{2022/10/21}{New symbol added for basket slots}
+% \changes{0.0.2}{2022/10/21}{Parsing of the symbols ``\texttt{@},'' ``\texttt{\^{}},'' and ``\texttt{\&}'' enabled (\texttt{\char`\\varphi}, \texttt{\char`\\rho}, and \texttt{\char`\\sigma})}
+% \changes{0.1.0}{2022/10/26}{A new Perl script "\texttt{eolang-phi.pl}" added for parsing of phi expressions.}
+% \changes{0.2.0}{2022/10/29}{Numbers automatically render as \texttt{\char`\\texttt}. No need to use vertical bars around them anymore.}
+% \changes{0.3.0}{2022/10/30}{New arrow added, that looks like \texttt{\char`\\leadsto}.}
+% \changes{0.5.0}{2022/11/11}{Automated formatting of \texttt{TRUE} and \texttt{FALSE} added.}
+% \changes{0.5.0}{2022/11/13}{A new syntax introduced for the \texttt{\char`\\alpha} attributes: \texttt{0->}.}
+% \changes{0.5.0}{2022/11/14}{It's possible to use double names for attributes, such as \texttt{0/g->}.}
+% \changes{0.7.0}{2022/11/17}{Object names are automatically converted to \texttt{\char`\\texttt}, provided their names include two or more symbols.}
+% \changes{0.7.0}{2022/11/17}{Text in quotes is automatically converted to \texttt{\char`\\texttt}.}
+% \changes{0.7.0}{2022/11/17}{New syntax sugar constructs added: \texttt{D>} and \texttt{L>} for \texttt{\char`\\Delta} and \texttt{\char`\\lambda} with a dotted arrow respectively.}
+% \changes{0.7.0}{2022/11/18}{New syntax sugar for $\Phi$, just using capital ``\texttt{Q}'' is enough.}
+% \changes{0.8.0}{2022/11/21}{Inside \texttt{phiquation} any text inside the \texttt{\char`\\text} macro is not processed.}
+% \changes{0.9.0}{2022/12/15}{Proper handling of the \texttt{matrix} environment.}
+% \changes{0.9.0}{2022/12/15}{Parsing of \texttt{<<} and \texttt{>>} implemented.}
+% \changes{0.10.0}{2023/01/22}{Parsing of \texttt{==} into \texttt{\char`\\equiv} implemented.}
+% \changes{0.13.0}{2023/06/28}{Parsing of \texttt{QQ} into \texttt{\char`\\dot\{\char`\\Phi\}} implemented.}
+% \changes{0.19.0}{2025/09/29}{Parsing of \texttt{T} into \texttt{\char`\\bot} implemented.}
+% \changes{0.20.0}{2025/11/05}{Parsing of \texttt{~0} into \texttt{\char`\\alpha\_0} implemented.}
+% \changes{0.20.2}{2025/11/24}{Formatting of numbers fixed, now it works in any place inside an expression.}
+% \changes{0.21.0}{2025/12/15}{Automated formatting of \texttt{TRUE} and \texttt{FALSE} removed.}
+% \changes{0.22.0}{2025/12/17}{Automated formatting of \texttt{D} and \texttt{L} added.}
+% \changes{0.23.0}{2023/12/25}{Parsing of \texttt{QQ} into \texttt{\char`\\dot\{\char`\\Phi\}} removed.}
+% \changes{0.25.0}{2026/09/29}{Parsing of \texttt{:} into an orange colon (\texttt{\char`\\phiTerminal\{:\}}) implemented.}
+% \changes{0.26.0}{2026/09/29}{The Greek letters \texttt{\char`\\rho}, \texttt{\char`\\xi}, \texttt{\char`\\lambda}, \texttt{\char`\\alpha}, and \texttt{\char`\\varphi} are rendered upright, with the help of the \texttt{upgreek} package.}
+% \changes{0.26.1}{2026/09/30}{The arguments of \texttt{\char`\\label}, \texttt{\char`\\ref}, \texttt{\char`\\eqref}, \texttt{\char`\\nameref}, and \texttt{\char`\\pageref} are not processed inside \texttt{phiquation}, so label names may contain colons.}
+% \changes{0.26.2}{2026/10/06}{The first arguments of \texttt{\char`\\phinoMeet} and \texttt{\char`\\phinoAgain} are not processed inside \texttt{phiquation}, so their label keys may contain colons.}
+% \changes{0.26.3}{2026/10/06}{The dollar sign keeps its math-shift catcode inside TikZ pictures.}
+% \changes{0.26.4}{2026/10/08}{The colon is rendered inside \texttt{phiquation} without spaces around it, like a dot.}
+% Then, we create a Perl script for |phiquation| processing using |VerbatimOut| environment from
+% \href{https://ctan.org/pkg/fancyvrb}{fancyvrb}:
+%    \begin{macrocode}
+\makeatletter
+\ifdefined\eolang@noshell
+  \message{eolang: Perl script is not going to be created,
+  at "\eolang@tmpdir/\jobname-phi.pl" because of the "noshell"
+  package option^^J}
+\else
+\openin 15=\eolang@tmpdir/\jobname-phi.pl
+\ifeof 15
+\message{eolang: Perl script is going to be created,
+  because it is absent at "\eolang@tmpdir/\jobname-phi.pl",
+  but if -shell-escape is not set, the compilation will
+  most likely fail now^^J}
+\begin{VerbatimOut}{\eolang@tmpdir/\jobname-phi.pl}
+$macro = $ARGV[0];
+open(my $fh, '<', $ARGV[1]);
+my $tex; { local $/; $tex = <$fh>; }
+print "% This file is auto-generated by eolang.sty 0.0.0\n";
+print '% There are ', length($tex),
+  ' chars in the input: ', $ARGV[1], "\n";
+print '% ---', "\n";
+if (index($tex, "\t") >= 0) {
+  print "TABS are prohibited!";
+  exit 1;
+}
+my @lines = split (/\n/g, $tex);
+foreach my $t (@lines) {
+  print '% ', $t, "\n";
+}
+print '% ---', "\n";
+$tex =~ s/(?<!\\)%.*\n/\n/g;
+$tex =~ s/^\s+|\s+$//g;
+my $splitting = $tex =~ /^\\begin\{split\}/;
+if ($splitting) {
+  print '% The manual splitting mode is ON since \begin{split} started the text' . "\n";
+}
+my $indents = $tex =~ /\n +/g;
+my $gathered = (0 == $indents);
+if ($gathered) {
+  if ($splitting) {
+    print '% The "gathered" is NOT used because of manual splitting' . "\n";
+    $gathered = 0;
+  } else {
+    print '% The "gathered" is used since all lines are left-aligned' . "\n";
+  }
+} else {
+  print '% The "gathered" is NOT used because ' .
+    $indents . " lines are indented\n";
+}
+my $align = 0;
+print '% The "align" is NOT used by default' . "\n";
+if (index($tex, '&&') >= 0) {
+  $macro =~ s/equation/align/g;
+  $align = 1;
+  print '% The "align" is used because of && seen in the text' . "\n";
+}
+if ($macro ne 'phiq') {
+  if (not $splitting) {
+    $tex =~ s/\\\\\n/\n\n/g;
+    $tex =~ s/\\\n\s*//g;
+  }
+  $tex =~ s/\n*(\\label\{[^\}]+\})\n*/\1/g;
+  $tex =~ s/\n{3,}/\n\n/g;
+}
+my @texts = ();
+sub trep {
+  my ($m, $s) = @_;
+  my $open = 0;
+  my $p = 0;
+  for (; $p < length($s); $p++) {
+    $c = substr($s, $p, 1);
+    if ($c eq '}') {
+      if ($open == 0) {
+        last;
+      }
+      $open--;
+    }
+    if ($c eq '{') {
+      $open++;
+    }
+  }
+  push(@texts, '\\' . $m . '{' . substr($s, 0, $p) . '}');
+  return '{TEXT' . (0+@texts - 1) . '}' . substr($s, $p + 1);
+}
+$tex =~ s/\\(text)\{(.+)/trep($1, "$2")/ge;
+1 while $tex =~ s/\\(label|ref|eqref|nameref|pageref|phinoMeet|phinoAgain)\{(.+)/trep($1, "$2")/e;
+$tex =~ s/(?<=[\s,>(])([0-9A-F]{2}(?:-[0-9A-F]{2})++)(?!\{)/|\1|/g;
+$tex =~ s/(?<=[\s,>(])([0-9]++(?:\.[0-9]+)?)(?!\{)/|\1|/g;
+$tex =~ s/([^\\{a-zA-Z0-9\\\{]|^)Q(?![a-zA-Z0-9])/\1 \\phiTerminal{\\Phi{}}/g;
+$tex =~ s/([^\\{a-zA-Z0-9\\\{]|^)T(?![a-zA-Z0-9])/\1 \\phiTerminal{\\bot{}}/g;
+$tex =~ s/([^\\{a-zA-Z0-9\\\{]|^)D>/\1\\phiTerminal{\\Delta{}} ..>/g;
+$tex =~ s/([^\\{a-zA-Z0-9\\\{]|^)L>/\1\\phiTerminal{\\lambda{}} ..>/g;
+$tex =~ s/([^\\{a-zA-Z0-9\\\{]|^)D(?![a-zA-Z0-9\\])/\1\\phiTerminal{\\Delta{}}/g;
+$tex =~ s/([^\\{a-zA-Z0-9\\\{]|^)L(?![a-zA-Z0-9\\])/\1\\phiTerminal{\\lambda{}}/g;
+$tex =~ s/"([^"]+)"/|"\1"|/g;
+$tex =~ s/(?:^|(?<=[\s)(\]\[,.>\/]))([a-zA-Z][a-zA-Z0-9]+)(?=[\s)(\]\[,.-]|$)/|\1|/g;
+$tex =~ s/([^_^]|^)([0-9]+|\*)\/(\\?[a-z]+|\|[a-z]+\|)
+  (->|\.\.>|~>|:=)/\1\\alpha_{\2}\\vert{}\3\\space{}\4/xg;
+if ($macro ne 'phiq') {
+  if (not $splitting) {
+    $tex =~ s/\\begin\{split\}\n/\\begin{split}&/g;
+    $tex =~ s/\n\s*\\end\{split\}/\\end{split}/g;
+    $tex =~ s/\n\n/\\\\&/g;
+    $tex =~ s/\n/\\phiEOL{}\n&/g;
+    $tex =~ s/\\\\$//g;
+    $tex =~ s/\\\\/\\\\\n/g;
+    $tex =~ s/([^&\s])\s{2}([^\s])/\1 \2/g;
+    $tex =~ s/\s{2}/ \\quad{}/g;
+    $tex = '&' . $tex;
+  }
+  my $lead = '[^\s]+\s(?:->|:=|=|==)\s';
+  my @leads = $tex =~ /&${lead}/g;
+  my @eols = $tex =~ /&/g;
+  if (0+@leads == 0+@eols && 0+@eols > 1) {
+    $tex =~ s/&(${lead})/\1&~/g;
+    $gathered = 0;
+    print '% The "gathered" is NOT used because all ' .
+      (0+@eols) . ' lines are ' . (0+@leads) . " leads\n";
+  }
+}
+if ($macro ne 'phiq') {
+  sub strip_tabs {
+    my ($env, $tex) = @_;
+    $tex =~ s/&//g;
+    return "\\begin{$env}" . $tex . "\\end{$env}";
+  }
+  foreach my $e (('matrix', 'cases')) {
+    $tex =~ s/\\begin\{(\Q$e\E\*?)\}(.+)\\end\{\Q$e\E\*?\}/strip_tabs($1, $2)/sge;
+  }
+}
+my @pipes = ();
+$tex =~ s/\|{2,}/|/g;
+$tex =~ s/\|([^\|]+)\|/push(@pipes, '\\textnormal{\\texttt{' . ($1 =~ s{-(?=-)}{-{}}gr) . '}}{}'), '{PIPE' . (0+@pipes - 1) . '}'/ge;
+$tex =~ s/\$/\\phiTerminal{\\xi{}}/g;
+$tex =~ s/(?<!\{)\^(?!\{)/\\phiTerminal{\\rho{}}/g;
+$tex =~ s/\[\[/\\phiTerminal{\\llbracket}/g;
+$tex =~ s/\]\]/\\phiTerminal{\\rrbracket{}}/g;
+$tex =~ s/\?/\\phiTerminal{\\varnothing{}}/g;
+$tex =~ s/@/\\phiTerminal{\\varphi{}}/g;
+$tex =~ s/-([a-z]+)>/\\mathrel{\\phiSlot{\1}}/g;
+$tex =~ s/->/\\mathbin{\\phiTerminal{\\mapsto}}/g;
+$tex =~ s/~>/\\mathbin{\\phiWave}/g;
+$tex =~ s/:=/\\mathrel{\\vDash}/g;
+$tex =~ s/(?<![\\\{]):/\\mathord{\\phiTerminal{:}}/g;
+$tex =~ s/==/\\mathrel{\\equiv}/g;
+$tex =~ s/\.\.>/\\mathbin{\\phiTerminal{\\phiDotted}}/g;
+$tex =~ s/~([0-9]+)/\\phiTerminal{\\alpha_{\1}}/g;
+$tex =~ s/\\(rho|xi|lambda|alpha|varphi)(?![a-zA-Z])/\\up\1/g;
+$tex =~ s/<</\\langle/g;
+$tex =~ s/>>/\\rangle/g;
+$tex =~ s/(?<![\\\{])([)(.])/\\phiTerminal{\1}/g;
+$tex =~ s/(?<![\\\{]),/\\phiTerminal{,}\\;/g;
+$tex =~ s/\{PIPE(\d+)\}/$pipes[$1]/g;
+$tex =~ s/\{TEXT(\d+)\}/$texts[$1]/g;
+if ($macro eq 'phiq') {
+  print '\(' if ($tex ne '');
+} else {
+  print '\begin{', $macro, "}\n";
+  if (not($align)) {
+    if ($gathered) {
+      print '\begin{gathered}' . "\n";
+    } elsif (not $splitting) {
+      print '\begin{split}' . "\n";
+    }
+  }
+}
+if ($gathered and not($align)) {
+  $tex =~ s/^&//g;
+  $tex =~ s/\n&/\n/g;
+}
+print $tex;
+if ($macro eq 'phiq') {
+  print '\)' if ($tex ne '');
+} else {
+  if (not($align)) {
+    if ($gathered) {
+      print "\n" . '\end{gathered}';
+    } elsif (not $splitting) {
+      print "\n" . '\end{split}';
+    }
+  }
+  print "\n" . '\end{' . $macro . '}';
+}
+print '\endinput';
+\end{VerbatimOut}
+\message{eolang: File with Perl script
+  '\eolang@tmpdir/\jobname-phi.pl' saved^^J}
+\else
+  \message{eolang: Perl script already exists at
+    "\eolang@tmpdir/\jobname-phi.pl"^^J}
+\fi
+\closein 15
+\fi
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiSaveTo}
+% \changes{0.8.0}{2022/11/20}{The output of the \texttt{phiquation} environment can be redirected to a file.}
+% Then, we define the |\phiSaveTo| command to instruct the |phiquation| environment that the output should not be sent to the document but saved to the file instead:
+%    \begin{macrocode}
+\makeatletter
+\newcommand\phiSaveTo[1]{\def\eolang@phiSaveTo{#1}}
+\let\eolang@phiSaveTo\relax
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\eolang@tmp}
+% \changes{0.18.3}{2025/03/26}{A new supplementary \texttt{eolang@tmp} command added, to generate temporary file names.}
+% Then, we define the |\eolang@tmp| command, which generates temporary file names:
+%    \begin{macrocode}
+\makeatletter
+\newcommand\eolang@tmp[1]{#1\ifxetex-xe\else\ifluatex-lua\fi\fi.tex}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\eolang@ifabsent}
+% \changes{0.17.0}{2023/12/28}{A new supplementary \texttt{eolang@ifabsent} command added}
+% \changes{0.18.0}{2024/01/09}{The \texttt{noshell} package option added in order to enable complete prohibition of shell interactions.}
+% Then, we define the |\eolang@ifabsent| command, which if a given file is absent, runs a processing command, otherwise just inputs it:
+%    \begin{macrocode}
+\makeatletter
+\newcommand\eolang@ifabsent[2]{%
+  \eolang@ifabsentwith{#1}{\input{#1}}{#2}%
+}
+\newcommand\eolang@ifabsentwith[3]{%
+  \IfFileExists
+    {#1}
+    {%
+      \message{eolang: File "#1" already exists ^^J}%
+      #2}
+    {%
+      \ifdefined\eolang@noshell%
+        \message{eolang: Shell processing is disabled^^J}%
+      \else%
+        \ifnum\ShellEscapeStatus=1\else%
+          \message{eolang: The -shell-escape command line
+          option is not provided, most probably compilation
+          will fail now:^^J}%
+        \fi%
+        #3%
+      \fi%
+    }%
+}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{phiquation}
+% \changes{0.16.0}{2023/12/27}{The processing of \texttt{phiquation} data is done only if it's the first time processing, otherwise cache is used, thus making processing faster.}
+% Then, we define the |phiquation| and the |phiquation*| environments through a supplementary
+% |\eolang@process| command:
+%    \begin{macrocode}
+\makeatletter\newcommand\eolang@process[1]{
+  \def\hash{\eolang@mdfive
+    {\eolang@tmpdir/\jobname/\eolang@tmp{phiquation}}-\the\inputlineno}%
+  \eolang@ifabsentwith
+    {\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiquation-post}}
+    {\ifx\eolang@phiSaveTo\relax
+      \input{\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiquation-post}}%
+    \fi}
+    {%
+      \iexec[null]{perl -MFile::Copy -e "copy(shift,shift) or die q(cannot copy)"
+        "\eolang@tmpdir/\jobname/\eolang@tmp{phiquation}"
+        "\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiquation}"}%
+      \message{Start parsing 'phi' at line no. \the\inputlineno^^J}
+      \ifx\eolang@phiSaveTo\relax
+        \iexec[trace,stdout=\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiquation-post}]{
+          perl "\eolang@tmpdir/\jobname-phi.pl"
+          "#1"
+          "\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiquation}"
+          \ifdefined\eolang@nocomments | perl -pe "s/\%.*\\n?//g"\fi}%
+      \else
+        \iexec[trace,quiet,stdout=\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiquation-post}]{
+          perl "\eolang@tmpdir/\jobname-phi.pl"
+          "#1"
+          "\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiquation}"
+          \ifdefined\eolang@nocomments | perl -pe "s/\%.*\\n?//g"\fi}%
+      \fi
+    }%
+  \ifx\eolang@phiSaveTo\relax
+  \else
+    \ifdefined\eolang@noshell\else
+      \IfFileExists
+        {\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiquation-post}}
+        {\iexec[null]{perl -MFile::Copy -e "copy(shift,shift) or die q(cannot copy)" "\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiquation-post}" "\eolang@phiSaveTo"}}{}%
+    \fi
+    \aftergroup\eolang@clearPhiSaveTo
+  \fi
+  \setcounter{FancyVerbLine}{\value{eolang@lineno}}%
+}
+\def\eolang@clearPhiSaveTo{\let\eolang@phiSaveTo\relax}
+%
+\newenvironment{phiquation*}%
+{\catcode`\|=12 \VerbatimEnvironment%
+\setcounter{eolang@lineno}{\value{FancyVerbLine}}%
+\begin{VerbatimOut}
+  {\eolang@tmpdir/\jobname/\eolang@tmp{phiquation}}}
+{\end{VerbatimOut}\eolang@process{equation*}}
+%
+\newenvironment{phiquation}%
+{\catcode`\|=12 \VerbatimEnvironment%
+\setcounter{eolang@lineno}{\value{FancyVerbLine}}%
+\begin{VerbatimOut}
+  {\eolang@tmpdir/\jobname/\eolang@tmp{phiquation}}}
+{\end{VerbatimOut}\eolang@process{equation}}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiq}
+% \changes{0.0.2}{2022/10/21}{Parsing of additional symbols enabled.}
+% Then, we define |\phiq| command. Its content is written to a temporary
+% file by \TeX{} itself, not by the shell, so that no quoting is necessary
+% on any platform:
+%    \begin{macrocode}
+\RequirePackage{xstring}
+\makeatletter\newwrite\eolang@phiqout
+\newcommand\phiq[1]{%
+  \edef\clean{\detokenize{#1}}%
+  \def\hash{\pdf@mdfivesum{\clean}-\the\inputlineno}%
+  \ifdefined\eolang@nodollar\else\catcode`\$=3 \fi%
+  \eolang@ifabsent
+    {\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiq-post}}
+    {%
+      \immediate\openout\eolang@phiqout=\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiq}\relax
+      \immediate\write\eolang@phiqout{\clean}%
+      \immediate\closeout\eolang@phiqout
+      \iexec[trace,stdout=\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiq-post}]{
+        perl \eolang@tmpdir/\jobname-phi.pl "phiq"
+        "\eolang@tmpdir/\jobname/\eolang@tmp{\hash-phiq}"
+        \ifdefined\eolang@nocomments | perl -pe "s/\%.*\\n?//g" \fi}%
+      \message{eolang: Parsed `phiq' at line no. \the\inputlineno^^J}%
+    }%
+  \ifdefined\eolang@nodollar\else\catcode`\$\active\fi%
+}\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{nodollar}
+% \changes{0.7.0}{2022/11/18}{Now it is possible to use dollar sign instead of the \texttt{\char`\\phiq} command.}
+% \changes{0.23.1}{2026/07/01}{The dollar sign is made active at the end of the package (\texttt{\char`\\AtEndOfPackage}), so that \texttt{\$...\$} captured inside preamble-defined macros is also converted to \texttt{\char`\\phiq}.}
+% \changes{0.23.2}{2026/07/01}{The \texttt{\char`\\AtEndOfPackage} activation is removed, because it left \texttt{\$} active for the rest of the preamble and broke packages loaded after \texttt{eolang}. The dollar sign is now activated only at the beginning of the document; for \texttt{\$...\$} inside preamble-defined macros, use \texttt{\char`\\phiq\char`\{...\char`\}} instead, which is catcode-independent.}
+% Then, we redefine dollar sign:
+%    \begin{macrocode}
+\ifdefined\eolang@nodollar\else
+  \begingroup
+  \catcode`\$=\active
+  \protected\gdef$#1${\phiq{#1}}
+  \endgroup
+  \AtBeginDocument{\catcode`\$=\active}
+\fi
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{-sodg.pl}
+% \changes{0.0.2}{2022/10/24}{The Perl file now has a fixed name, which doesn't depend on the name of the TeX job. This file may be shared among jobs, no need to make it uniquely named.}
+% \changes{0.1.0}{2022/10/26}{There are two Perl scripts now: one for \texttt{phiquation}, another one for \texttt{sodg}.}
+% \changes{0.2.0}{2022/10/28}{The content of the \texttt{atom} and the \texttt{data} boxes is parsed automatically as formulas and numbers, respectively.}
+% \changes{0.4.0}{2022/10/31}{Labels on the edges are automatically printed as math formulas. Also, boxes are prefixed with the \texttt{\char`\\Delta} and the \texttt{\char`\\lambda} commands.}
+% \changes{0.4.0}{2022/10/31}{Relative positioning of vertices fixed.}
+% \changes{0.4.0}{2022/10/31}{Transforming arrows added with the \texttt{=>} syntax, also markers with exclamation mark syntax.}
+% \changes{0.5.0}{2022/11/09}{New syntax introduced that allows to make clones of vertices and all their dependants.}
+% \changes{0.5.0}{2022/11/09}{Now edges may have the \texttt{break} attribute, to make them shorter.}
+% \changes{0.5.0}{2022/11/10}{It is possible to use multiple ``equation sign'' symbols for transition arrows \texttt{=>}.}
+% \changes{0.5.0}{2022/11/12}{It is possible to use TikZ commands inside the \texttt{sodg} environment.}
+% \changes{0.6.0}{2022/11/13}{The \texttt{rrho} attribute is retired, now \texttt{rho} works just fine in all situations.}
+% \changes{0.8.0}{2022/11/20}{The \texttt{tag} attribute is introduced for changing labels inside a vertex circle.}
+% \changes{0.12.1}{2023/03/01}{The bug is fixed related to the formatting of indexes of vertices.}
+% \changes{0.14.0}{2023/07/26}{The \texttt{edgeless} tag of a vertex removes the border of it.}
+% \changes{0.15.0}{2023/08/21}{The \texttt{style} tag of vertices and edges.}
+% Then, we create a Perl script for |sodg| graphs processing using |VerbatimOut| from
+% \href{https://ctan.org/pkg/fancyvrb}{fancyvrb}:
+%    \begin{macrocode}
+\makeatletter
+\ifdefined\eolang@noshell
+\message{eolang: Perl script is not going to be created
+  at "\eolang@tmpdir/\jobname-sodg.pl", because of the
+  "noshell" package option^^J}
+\else
+\openin 15=\eolang@tmpdir/\jobname-sodg.pl
+\ifeof 15
+\message{eolang: Perl script is going to be created,
+  because it is absent at "\eolang@tmpdir/\jobname-sodg.pl",
+  but if -shell-escape is not set, the compilation will
+  most likely fail now^^J}
+\begin{VerbatimOut}{\eolang@tmpdir/\jobname-sodg.pl}
+sub num {
+  my ($i) = @_;
+  $i =~ s/(\+|-)\./\10./g;
+  return $i;
+}
+sub fmt {
+  my ($tex) = @_;
+  $tex =~ s/\|([^\|]+)\|/'\\textnormal{\\texttt{' . ($1 =~ s{-(?=-)}{-{}}gr) . '}}'/ge;
+  return $tex;
+}
+sub toem {
+  my ($cm) = @_;
+  return $cm * 2.8;
+}
+sub vertex {
+  my ($v) = @_;
+  if (index($v, 'v0') == 0) {
+    return '\Phi';
+  } else {
+    $v =~ s/^v/v_{/g;
+    $v =~ s/[^0-9]$//g;
+    return $v . '}';
+  }
+}
+sub tailor {
+  my ($t, $m) = @_;
+  $t =~ s/<([A-Z]?${m}[A-Z]?):([^>]+)>/\2/g;
+  $t =~ s/<[A-Z]+:[^>]+>//g;
+  return $t;
+}
+open(my $fh, '<', $ARGV[0]);
+my $tex; { local $/; $tex = <$fh>; }
+if (index($tex, "\t") >= 0) {
+  print "TABS are prohibited!";
+  exit 1;
+}
+print '% This file is auto-generated', "\n%\n";
+print '% --- there are ', length($tex),
+  ' chars in the input (', $ARGV[0], "):\n";
+foreach my $t (split (/\n/g, $tex)) {
+  print '% ', $t, "\n";
+}
+print "% ---\n";
+$tex =~ s/\\\\/\n/g;
+$tex =~ s/\\\n//g;
+$tex =~ s/(\\[a-zA-Z]+)\s+/\1/g;
+$tex =~ s/\n{2,}/\n/g;
+my @cmds = split(/\n/g, $tex);
+print '% --- before processing:' . "\n";
+foreach my $t (split (/\n/g, $tex)) {
+  print '% ', $t, "\n";
+}
+print '% ---';
+print ' (' . (0+@cmds) . " lines)\n";
+print '\begin{phicture}', "\n";
+for (my $c = 0; $c < 0+@cmds; $c++) {
+  my $cmd = $cmds[$c];
+  $cmd =~ s/^\s+//g;
+  $cmd =~ s/(?<!\\)%.*//g;
+  my ($head, $tail) = split(/ /, $cmd, 2);
+  my %opts = ();
+  my ($body, $style) = split(/style:/, $tail, 2);
+  $opts{'style'} = $style;
+  $tail = $body;
+  foreach my $p (split(/ /, $tail)) {
+    my ($q, $t) = split(/:/, $p);
+    $opts{$q} = $t;
+  }
+  if (index($head, '\\') == 0) {
+    print $cmd;
+  } elsif (index($head, '->') >= 0) {
+    my $draw = '\draw[';
+    if (exists $opts{'pi'}) {
+      $draw = $draw . '<MB:phi-pi><F:draw=none>';
+      if (not exists $opts{'a'}) {
+        $opts{'a'} = '\pi';
+      }
+    }
+    if (exists $opts{'rho'} and not(exists $opts{'bend'})) {
+      $draw = $draw . '<MB:,phi-rho>';
+    }
+    $draw = $draw . ',' . $opts{'style'} . ']';
+    my ($from, $to) = split (/->/, $head);
+    $draw = $draw . " (${from}) ";
+    if (exists $opts{'bend'}) {
+      $draw = $draw . 'edge [<F:draw=none><MF:,bend right=' .
+        num($opts{'bend'}) . '>';
+      if (exists $opts{'rho'}) {
+        $draw = $draw . '<MB:,phi-rho>';
+      }
+      $draw = $draw . ']';
+    } else {
+      $draw = $draw . '--';
+    }
+    if (exists $opts{'a'}) {
+      my $a = $opts{'a'};
+      if (index($a, '$') == -1) {
+        $a = '$' . fmt($a) . '$';
+      } else {
+        $a = fmt($a);
+      }
+      $draw = $draw . '<MB: node [phi-attr] {' . $a . '}>';
+    }
+    if (exists $opts{'break'}) {
+      $draw = $draw . '<F: coordinate [pos=' .
+        ($opts{'break'} / 100) . '] (break)>';
+    }
+    $draw = $draw . " (<MF:${to}><B:break-v>)";
+    if (exists $opts{'break'}) {
+      print tailor($draw, 'F') . ";\n";
+      print '  \node[outer sep=' . toem(0.1) . 'em,inner sep=0em] ' .
+        'at (break) (break-v) {$' . vertex($to) .
+        '$};' . "\n";
+      print '  ' . tailor($draw, 'B');
+    } else {
+      print tailor($draw, 'M');
+    }
+  } elsif (index($head, '=>') >= 0) {
+    my ($from, $to) = split (/=+>/, $head);
+    my $size = () = $head =~ /=/g;
+    if ($from eq '') {
+      print '\node [phi-arrow, left=' . toem($size * 0.6) . 'em of ' .
+        $to . '.center]';
+    } elsif ($to eq '') {
+      print '\node [phi-arrow, right=' . toem($size * 0.6) . 'em of ' .
+        $from . '.center]';
+    } else {
+      print '\node [phi-arrow] at ($(' .
+        $from . ')!0.5!(' . $to . ')$)';
+    }
+    print '{}';
+  } elsif (index($head, '!') >= 0) {
+    my ($v, $marker) = split (/!+/, $head);
+    my $size = () = $head =~ /!/g;
+    print '\node [phi-marker, left=' .
+      toem($size * 0.6) . 'em of ' .
+      $v . '.center]{' . fmt($marker) . '}';
+  } elsif (index($head, '+') >= 0) {
+    my ($v, $suffix) = split (/\+/, $head);
+    my @friends = ($v);
+    foreach my $c (@cmds) {
+      $e = $c;
+      $e =~ s/^\s+//g;
+      my $h = $e;
+      $h = substr($e, 0, index($e, ' ')) if index($e, ' ') >= 0;
+      foreach my $f (@friends) {
+        my $add = '';
+        if (index($h, $f . '->') >= 0) {
+          $add = substr($h, index($h, '->') + 2);
+        }
+        if ($h =~ /->\Q${f}\E$/) {
+          $add = substr($h, 0, index($h, '->'));
+        }
+        if (index($e, ' xy:' . $f . ',') >= 0) {
+          $add = $h;
+        }
+        if (index($add, '+') == -1
+          and $add ne ''
+          and not(grep(/^\Q${add}\E$/, @friends))) {
+          push(@friends, $add);
+        }
+      }
+    }
+    my @extra = ();
+    foreach my $e (@cmds) {
+      $m = $e;
+      if ($m =~ /^\s*\Q${v}\E\s/) {
+        next;
+      }
+      if ($m =~ /^\s*[^\s]+\+/ and not($m =~ /^\s*\Q${head}\E\s/)) {
+        next;
+      }
+      foreach my $f (@friends) {
+        my $h = $f;
+        $h =~ s/[a-z]$//g;
+        if ($m =~ s/^(\s*)\Q${f}\E\+\Q${suffix}\E\s?/\1${h}${suffix} /g) {
+          last;
+        }
+        $m =~ s/^(\s*)\Q${f}\E\s/\1${h}${suffix} /g;
+        $m =~ s/^(\s*)\Q${f}\E->/\1${h}${suffix}->/g;
+        $m =~ s/\sxy:\Q${f}\E,/ xy:${h}${suffix},/g;
+        $m =~ s/->\Q${f}\E\s/->${h}${suffix} /g;
+      }
+      if ($m ne $e) {
+        push(@extra, ' ' . $m);
+      }
+    }
+    splice(@extra, 0, 0, $extra[-1]);
+    splice(@extra, -1, 1);
+    splice(@extra, 0, 0, '% clone of ' . $v . ' (' . $head .
+      '), friends: [' . join(', ', @friends) . '] in ' .
+      (0+@cmds) . ' lines');
+    splice(@cmds, $c, 1, @extra);
+    print '% cloned ' . $v . ' at line no.' . $c .
+      ' (+' . (0+@extra) . ' lines -> ' .
+      (0+@cmds) . ' lines total)';
+  } elsif ($head =~ /^v[0-9]+[a-z]?$/) {
+    print '\node[';
+    if (exists $opts{'xy'}) {
+      my ($v, $right, $down) = split(/,/, $opts{'xy'});
+      my $loc = '';
+      if ($down > 0) {
+        $loc = 'below ';
+      } elsif ($down < 0) {
+        $loc = 'above ';
+      }
+      if ($right > 0) {
+        $loc = $loc . 'right';
+      } elsif ($right < 0) {
+        $loc = $loc . 'left';
+      }
+      print ',' . $loc . '=';
+      print toem(abs(num($down))) . 'em and ' .
+        toem(abs(num($right))) . 'em of ' . $v . '.center';
+    }
+    if (exists $opts{'data'}) {
+      print ',phi-data';
+      if ($opts{'data'} ne '') {
+        my $d = $opts{'data'};
+        if (index($d, '|') == -1) {
+          $d = '$\Delta\phiDotted\text{' .
+            '\textnormal{\texttt{' . fmt($d) . '}}}$';
+        } else {
+          $d = fmt($d);
+        }
+        $opts{'box'} = $d;
+      }
+    } elsif (exists $opts{'atom'}) {
+      print ',phi-atom';
+      if ($opts{'atom'} ne '') {
+        my $a = $opts{'atom'};
+        if (index($a, '$') == -1) {
+          $a = '$\lambda\phiDotted{}' . fmt($a) . '$';
+        } else {
+          $a = fmt($a);
+        }
+        $opts{'box'} = $a;
+      }
+    } else {
+      print ',phi-object';
+    }
+    if (exists $opts{'edgeless'}) {
+      print ',draw=none';
+    }
+    print ',' . $opts{'style'} . ']';
+    print ' (' . $head . ')';
+    print ' {';
+    if (exists $opts{'tag'}) {
+      my $t = $opts{'tag'};
+      if (index($t, '$') == -1) {
+        $t = '$' . $t . '$';
+      } else {
+        $t = fmt($t);
+      }
+      print $t;
+    } else {
+      print '$' . vertex($head) . '$';
+    }
+    print '}';
+    if (exists $opts{'box'}) {
+      print ' node[phi-box] at (';
+      print $head, '.south east) {';
+      print $opts{'box'}, '}';
+    }
+  }
+  print ";\n";
+}
+print '\end{phicture}%', "\n";
+print "% --- after processing:\n%";
+foreach my $c (@cmds) {
+  print '% ', $c, "\n";
+}
+print '% --- (' . (0+@cmds) . " lines)\n";
+print '\endinput';
+\end{VerbatimOut}
+\message{eolang: File with Perl script
+  '\eolang@tmpdir/\jobname-sodg.pl' saved^^J}
+\else
+  \message{eolang: Perl script already exists at
+    "\eolang@tmpdir/\jobname-sodg.pl"^^J}
+\fi
+\closein 15
+\fi
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{FancyVerbLine}
+% Then, we reset the counter for \href{https://ctan.org/pkg/fancyvrb}{fancyvrb}, so that
+% it starts counting lines from zero when the document starts rendering:
+%    \begin{macrocode}
+\setcounter{FancyVerbLine}{0}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{tikz}
+% Then, we include \href{https://ctan.org/pkg/tikz}{tikz} package and its libraries:
+%    \begin{macrocode}
+\RequirePackage{tikz}
+% Keep TikZ's inline math syntax available while the document uses active dollars.
+\tikzset{every picture/.append style={execute at begin picture={\catcode`\$=3\relax}}}
+  \usetikzlibrary{arrows}
+  \usetikzlibrary{shapes}
+  \usetikzlibrary{decorations}
+  \usetikzlibrary{decorations.pathmorphing}
+  \usetikzlibrary{decorations.pathreplacing}
+  \usetikzlibrary{positioning}
+  \usetikzlibrary{calc}
+  \usetikzlibrary{math}
+  \usetikzlibrary{arrows.meta}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{phicture}
+% Then, we define internal environment |phicture|:
+%    \begin{macrocode}
+\newenvironment{phicture}%
+  {\noindent\begin{tikzpicture}[
+    ->,>=stealth',node distance=0,line width=.08em,
+    pics/parallel arrow/.style={
+      code={\draw[-latex,phi-rho] (##1) -- (-##1);}}]}%
+  {\end{tikzpicture}}
+\tikzstyle{phi-arrow} = [fill=white!80!black, single arrow,
+  minimum height=0.05em, minimum width=0.05em,
+  single arrow head extend=2mm]
+\tikzstyle{phi-marker} = [inner sep=0pt, minimum height=1.4em,
+  minimum width=1.4em, font={\small\color{white}\ttfamily},
+  fill=gray]
+\tikzstyle{phi-thing} = [inner sep=0pt,minimum height=2.4em,
+  draw,font={\small}]
+\tikzstyle{phi-object} = [phi-thing,circle]
+\tikzstyle{phi-data} = [phi-thing,regular polygon,
+  regular polygon sides=8]
+\tikzstyle{phi-empty} = [phi-object]
+\tikzset{%
+  phi-rho/.style={
+    postaction={%
+      decoration={
+        show path construction,
+        curveto code={
+          \tikzmath{
+            coordinate \I, \F, \v;
+            \I = (\tikzinputsegmentfirst);
+            \F = (\tikzinputsegmentlast);
+            \v = ($(\I) -(\F)$);
+            real \d, \a, \r, \t;
+            \d = 0.8;
+            \t = atan2(\vy, \vx);
+            if \vx<0 then { \a = 90; } else { \a = -90; };
+            {
+              \draw[arrows={-latex}, decorate,
+              decoration={%
+                snake, amplitude=.4mm,
+                segment length=2mm,
+                post length=1mm
+              }]
+              ($(\F)!.5!(\I) +(\t: -\d em) +(\t +\a: 1ex)$)
+              -- ++(\t: 2*\d em);
+            };
+          }
+        },
+        lineto code={
+          \tikzmath{
+            coordinate \I, \F, \v;
+            \I = (\tikzinputsegmentfirst);
+            \F = (\tikzinputsegmentlast);
+            \v = ($(\I) -(\F)$);
+            real \d, \a, \r, \t;
+            \d = 0.8;
+            \t = atan2(\vy, \vx);
+            if \vx<0 then { \a = 90; } else { \a = -90; };
+            {
+              \draw[arrows={-latex}, decorate,
+              decoration={%
+                snake, amplitude=.4mm,
+                segment length=2mm,
+                post length=1mm}]
+              ($(\F)!.5!(\I) +(\t: -\d em) +(\t +\a: 1ex)$)
+              -- ++(\t: 2*\d em);
+            };
+          }
+        }
+      },
+      decorate
+    }
+  }
+}
+\tikzstyle{phi-pi} = [draw,dotted]
+\tikzstyle{phi-atom} = [phi-object,double]
+\tikzstyle{phi-box} = [xshift=-5pt,yshift=3pt,draw,fill=white,
+  rectangle,line width=.04em,minimum width=1.2em,anchor=north west,
+  font={\scriptsize}]
+\tikzstyle{phi-attr} = [midway,sloped,inner sep=0pt,
+  above=2pt,sloped/.append style={transform shape},
+  font={\scriptsize},color=black]
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\sodgSaveTo}
+% \changes{0.8.0}{2022/11/20}{The output of the \texttt{sodg} environment can be redirected to a file.}
+% Then, we define the |\sodgSaveTo| command to instruct the |sodg| environment that the output should not be sent to the document but saved to the file instead:
+%    \begin{macrocode}
+\makeatletter
+\newcommand\sodgSaveTo[1]{\def\eolang@sodgSaveTo{#1}}
+\let\eolang@sodgSaveTo\relax
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{sodg}
+% \changes{0.0.2}{2022/10/20}{The environment \texttt{phigure} renamed to \texttt{sodg} for the sake of better semantics. The graph in the picture is solely a SODG graph, that's why the name \texttt{sodg} is better.}
+% \changes{0.16.0}{2023/12/27}{The processing of \texttt{sodg} data is done only if it's the first time processing, otherwise cache is used, thus making processing faster.}
+% Then, we create a new environment |sodg|, as suggested
+% \href{https://tex.stackexchange.com/questions/661056}{here}:
+%    \begin{macrocode}
+\makeatletter\newenvironment{sodg}%
+{\catcode`\|=12 \VerbatimEnvironment%
+\setcounter{eolang@lineno}{\value{FancyVerbLine}}%
+\begin{VerbatimOut}
+  {\eolang@tmpdir/\jobname/\eolang@tmp{sodg}}}
+{\end{VerbatimOut}%
+  \def\hash{\eolang@mdfive
+    {\eolang@tmpdir/\jobname/\eolang@tmp{sodg}}-\the\inputlineno}%
+  \catcode`\$=3 %
+  \eolang@ifabsentwith
+    {\eolang@tmpdir/\jobname/\eolang@tmp{\hash-sodg-post}}
+    {\ifx\eolang@sodgSaveTo\relax
+      \input{\eolang@tmpdir/\jobname/\eolang@tmp{\hash-sodg-post}}%
+    \fi}
+    {%
+      \iexec[null]{perl -MFile::Copy -e "copy(shift,shift) or die q(cannot copy)"
+        "\eolang@tmpdir/\jobname/\eolang@tmp{sodg}"
+        "\eolang@tmpdir/\jobname/\eolang@tmp{\hash-sodg}"}%
+      \message{eolang: Start parsing `sodg' at line no. \the\inputlineno^^J}
+      \ifx\eolang@sodgSaveTo\relax
+        \iexec[trace,stdout=\eolang@tmpdir/\jobname/\eolang@tmp{\hash-sodg-post}]{
+          perl "\eolang@tmpdir/\jobname-sodg.pl"
+          "\eolang@tmpdir/\jobname/\eolang@tmp{\hash-sodg}"
+          \ifdefined\eolang@nocomments | perl -pe "s/\%.*\\n?//g"\fi}%
+      \else
+        \iexec[trace,quiet,stdout=\eolang@tmpdir/\jobname/\eolang@tmp{\hash-sodg-post}]{
+          perl "\eolang@tmpdir/\jobname-sodg.pl"
+          "\eolang@tmpdir/\jobname/\eolang@tmp{\hash-sodg}"
+          \ifdefined\eolang@nocomments | perl -pe "s/\%.*\\n?//g"\fi}%
+      \fi
+    }
+  \ifx\eolang@sodgSaveTo\relax
+  \else
+    \ifdefined\eolang@noshell\else
+      \IfFileExists
+        {\eolang@tmpdir/\jobname/\eolang@tmp{\hash-sodg-post}}
+        {\iexec[null]{perl -MFile::Copy -e "copy(shift,shift) or die q(cannot copy)" "\eolang@tmpdir/\jobname/\eolang@tmp{\hash-sodg-post}" "\eolang@sodgSaveTo"}}{}%
+    \fi
+    \aftergroup\eolang@clearSodgSaveTo
+  \fi
+  \catcode`\$\active%
+  \setcounter{FancyVerbLine}{\value{eolang@lineno}}%
+}\def\eolang@clearSodgSaveTo{\let\eolang@sodgSaveTo\relax}\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\eoAnon}
+% Then, we define a supplementary command to help us anonymize some content.
+% \changes{0.9.0}{2022/11/29}{New command \texttt{\char`\\eoAnon} added.}
+%    \begin{macrocode}
+\RequirePackage{hyperref}
+\pdfstringdefDisableCommands{
+  \def\({}%
+  \def\){}%
+  \def\alpha{alpha}%
+  \def\varphi{phi}%
+  \def\upalpha{alpha}%
+  \def\upvarphi{phi}%
+}
+\makeatletter
+\NewExpandableDocumentCommand{\eoAnon}{O{ANONYMIZED}m}{%
+  \ifdefined\eolang@anonymous%
+    \eolang@ink{#1}%
+  \else%
+    #2%
+  \fi%
+}\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\eolang}
+% Then, we define a simple supplementary command for printing \eolang{}, the name of the language.
+% \changes{0.1.0}{2022/10/25}{New command \texttt{\char`\\eolang} added to print the name of the language in both
+% normal and the anonymous mode of \texttt{acmart}.}
+%    \begin{macrocode}
+\newcommand\eolang{%
+  \eoAnon[XYZ]{{\sffamily EO}}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phic}
+% Then, we define a simple supplementary command for printing \phic{}, the name of the formal apparatus.
+% \changes{0.1.0}{2022/10/25}{New command \texttt{\char`\\phic} prints the name of \phic{} in both
+% normal and the anonymous mode of \texttt{acmart}.}
+%    \begin{macrocode}
+\newcommand\phic{%
+  \eoAnon[\(\upalpha\)-cal\-cu\-lus]{\(\upvarphi\)-cal\-cu\-lus}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\xmir}
+% Then, we define a simple supplementary command for printing \xmir{}, the name of the XML-based format of program representation.
+% \changes{0.2.0}{2022/10/28}{New command \texttt{\char`\\xmir} prints XMIR in both normal and the anonymous mode of \texttt{acmart}.}
+%    \begin{macrocode}
+\newcommand\xmir{%
+  \eoAnon[XML\(^+\)]{XMIR}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiWave}
+% \changes{0.3.0}{2022/10/30}{New command \texttt{\char`\\phiWave} added to denote a link to a multi-layer attribute.}
+% Then, we define a command to render an arrow for a multi-layer attribute,
+% as suggested \href{https://tex.stackexchange.com/questions/198755}{here}:
+%    \begin{macrocode}
+\newcommand\phiWave{%
+  \phiTerminal{\mapstochar\mathrel{\mspace{0.45mu}}\leadsto}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiSlot}
+% \changes{0.5.0}{2022/11/10}{New command \texttt{\char`\\phiSlot} added to denote a link to a slot in a basket.}
+% Then, we define a command to render an arrow for a slot in a basket:
+%    \begin{macrocode}
+\newcommand\phiSlot[1]{%
+  \xrightarrow{\text{\sffamily\scshape #1}}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiOset}
+% \changes{0.8.0}{2022/11/20}{New commands \texttt{\char`\\phiOset} and \texttt{\char`\\phiUset} help position text over and under an arrow.}
+% Then, we define two commands to position a text over and under an arrow, as suggested \href{https://tex.stackexchange.com/a/194805/1449}{here}:
+%    \begin{macrocode}
+\makeatletter
+\newcommand{\phiOset}[2]{%
+  \mathrel{\mathop{#2}\limits^{
+    \vbox to 0ex{\kern-2\ex@
+    \hbox{$\scriptscriptstyle#1$}\vss}}}}
+\newcommand{\phiUset}[2]{%
+  \mathrel{\mathop{#2}\limits_{
+    \vbox to 0ex{\kern-6.3\ex@
+    \hbox{$\scriptscriptstyle#1$}\vss}}}}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiMany}
+% \changes{0.5.0}{2022/11/10}{New command \texttt{\char`\\phiMany} enables iterating over an arrow.}
+% Then, we define a command for an arrow with iterating indices:
+%    \begin{macrocode}
+\newcommand\phiMany[3]{%
+  \phiOset{#3}{\phiUset{#2}{#1}}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiEOL}
+% \changes{0.9.0}{2022/11/24}{New command \texttt{\char`\\phiEOL} added, instead of \texttt{\char`\\\char`\\[-4pt]}.}
+% Then, we define a command for line breaks in formulas:
+%    \begin{macrocode}
+\newcommand\phiEOL{\\[-4pt]}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiTerminal}
+% \changes{0.21.0}{2025/12/15}{New command \texttt{\char`\\phiTerminal} added, to highlight all terminals in phi expressions.}
+% \changes{0.24.0}{2026/08/11}{The \texttt{\char`\\phiTerminal} command respects the \texttt{nocolor} package option.}
+% Then, we define a command to wrap all terminals in all expressions:
+%    \begin{macrocode}
+\makeatletter
+\newcommand\phiTerminal[1]{\eolang@ink{#1}}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiDotted}
+% \changes{0.1.0}{2022/10/27}{New command \texttt{\char`\\phiDotted} added to denote a link to a special attribute.}
+% Then, we define a command to render an arrow for a special attribute,
+% as suggested \href{https://tex.stackexchange.com/questions/663176}{here}:
+%    \begin{macrocode}
+\RequirePackage{trimclip}
+\RequirePackage{amsfonts}
+\makeatletter
+\newcommand{\phiDotted}{%
+  \phiTerminal{\mapstochar\mathrel{\mathpalette\phiDotted@\relax}}}
+\newcommand{\phiDotted@}[2]{%
+  \begingroup%
+  \settowidth{\dimen\z@}{$\m@th#1\rightarrow$}%
+  \settoheight{\dimen\tw@}{$\m@th#1\rightarrow$}%
+  \sbox\z@{%
+    \makebox[\dimen\z@][s]{%
+      \clipbox{0 0 {0.4\width} 0}%
+        {\resizebox{\dimen\z@}{\height}%
+          {$\m@th#1\dashrightarrow$}}%
+      \hss%
+      \clipbox{{0.69\width} {-0.1\height} 0
+        {-\height}}{$\m@th#1\rightarrow$}%
+    }%
+  }%
+  \ht\z@=\dimen\tw@ \dp\z@=\z@%
+  \box\z@%
+  \endgroup%
+}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\eolang@arrow}
+% \changes{0.26.0}{2026/09/29}{New internal command \texttt{\char`\\eolang@arrow} paints a relational arrow red, honouring the \texttt{nocolor} package option.}
+% Then, we define an internal command that paints a relational arrow red, leaving
+% it untouched when the |nocolor| package option is set, mirroring |\eolang@ink|
+% above, save for the colour, which is kept apart from that of |\phiTerminal| so
+% that arrows of operational semantics are never mistaken for terminals. The
+% |\makeatletter| below stays in effect until the matching |\makeatother|, well
+% past the end of this macro, since every command that follows refers to
+% |\eolang@arrow| by name:
+%    \begin{macrocode}
+\makeatletter
+\ifdefined\eolang@nocolor
+  \newcommand\eolang@arrow[1]{\mathrel{#1}}
+\else
+  \newcommand\eolang@arrow[1]{\mathrel{\color{red}#1}}
+\fi
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\eolang@sub}
+% \changes{0.26.0}{2026/09/29}{New internal command \texttt{\char`\\eolang@sub} attaches an optional subscript, in the ordinary text colour, to an arrow.}
+% Then, we define an internal command that attaches an optional subscript to
+% an arrow, in the ordinary text colour, since a subscript is not itself a step
+% of computation:
+%    \begin{macrocode}
+\newcommand\eolang@sub[1]{\IfStrEq{#1}{}{}{_{#1}}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiNormalize}
+% \changes{0.26.0}{2026/09/29}{New command \texttt{\char`\\phiNormalize} added, to render the normalization arrow of \phic{}, with an optional subscript.}
+% Then, we define a command for the normalization arrow of \phic{}, taking an
+% optional subscript, for instance a step count:
+%    \begin{macrocode}
+\newcommand\phiNormalize[1][]{\eolang@arrow\leadsto\eolang@sub{#1}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiEvaluate}
+% \changes{0.26.0}{2026/09/29}{New command \texttt{\char`\\phiEvaluate} added, to render the evaluation arrow of \phic{}.}
+% Then, we define a command for the evaluation arrow of \phic{}:
+%    \begin{macrocode}
+\newcommand\phiEvaluate{\eolang@arrow{%
+  \vcenter{\hbox{\begin{tikzpicture}
+    \draw[-{Triangle[length=1.8mm,width=1.8mm]},line width=0.6pt]
+      (0,0)--(1.3em,0);
+  \end{tikzpicture}}}}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiDataize}
+% \changes{0.26.0}{2026/09/29}{New command \texttt{\char`\\phiDataize} added, to render the dataization arrow of \phic{}, with an optional subscript.}
+% Then, we define a command for the dataization arrow of \phic{}, taking an
+% optional subscript:
+%    \begin{macrocode}
+\newcommand\phiDataize[1][]{\eolang@arrow\Downarrow\eolang@sub{#1}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiMorph}
+% \changes{0.26.0}{2026/09/29}{New command \texttt{\char`\\phiMorph} added, to render the morphing arrow of \phic{}, with an optional subscript.}
+% Then, we define a command for the morphing arrow of \phic{}, taking an
+% optional subscript:
+%    \begin{macrocode}
+\newcommand\phiMorph[1][]{\eolang@arrow\Rrightarrow\eolang@sub{#1}}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\phiContextualize}
+% \changes{0.26.0}{2026/09/29}{New command \texttt{\char`\\phiContextualize} added, to render the contextualization arrow of \phic{}, with an optional subscript.}
+% Then, we define a command for the contextualization arrow of \phic{}, taking
+% an optional subscript:
+%    \begin{macrocode}
+\newcommand\phiContextualize[1][]{\eolang@arrow\Rightarrow\eolang@sub{#1}}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+%    \begin{macrocode}
+\endinput
+%    \end{macrocode}
+
+% \Finale
+
+% \clearpage
+% \printbibliography
+% \clearpage
+
+%\PrintChanges
+%\clearpage
+%\PrintIndex

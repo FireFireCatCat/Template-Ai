@@ -1,0 +1,1249 @@
+% \LaTeX-Main\
+% !TeX encoding=UTF-8
+% !TeX spellcheck=en_US
+%%
+%% The LaTeX package didec - version 1.2.1 (2026/06/01)
+%% didec.tex: Manual
+%%
+%% -------------------------------------------------------------------------------------------
+%% Copyright (c) 2024-2026 by Prof. Dr. Dr. Thomas F. Sturm <thomas dot sturm at unibw dot de>
+%% -------------------------------------------------------------------------------------------
+%%
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3 or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%%
+%% This work has the LPPL maintenance status `author-maintained'.
+%%
+%% This work consists of all files listed in README
+%%
+\documentclass[a4paper,11pt]{ltxdoc}
+\usepackage{didec.doc}
+
+\hypersetup{
+  pdftitle={Manual for the didec package},
+  pdfauthor={Thomas F. Sturm},
+  pdfsubject={Calculations with two decimal places},
+  pdfkeywords={fixed-point arithmetic, two decimal places, calculations, cash book, bookkeeping, accountancy}
+}
+
+\makeindex
+
+\pdfsuppresswarningpagegroup=1
+
+\didecnew{A}
+\didecnew{B}
+\didecnew{C}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{center}
+\begin{tcolorbox}[enhanced,hbox,tikznode,left=8mm,right=8mm,boxrule=0.4pt,
+  colback=white,colframe=Blue_Gray,
+  drop lifted shadow=Blue_Gray!50,arc is angular,
+  before=\par\vspace*{5mm},after=\par\bigskip]
+{\bfseries\LARGE The didec package}\\[3mm]
+{\large Manual for version \version\ (\datum)}
+\end{tcolorbox}
+{\large Thomas F.~Sturm%
+  \footnote{Prof.~Dr.~Dr.~Thomas F.~Sturm, Institut f\"{u}r Mathematik und Informatik,
+    University of the Bundeswehr Munich, D-85577 Neubiberg, Germany;
+     email: \href{mailto:thomas.sturm@unibw.de}{thomas.sturm@unibw.de}}\par\medskip
+\normalsize%
+\url{https://www.ctan.org/pkg/didec}\par
+\url{https://github.com/T-F-S/didec}
+}
+\end{center}
+\bigskip
+\begin{absquote}
+  \begin{center}\bfseries Abstract\end{center}
+  The \texttt{didec} package provides fixed-point arithmetic with two decimal places
+  \mbox{(\enquote{\itshape di-decimal})}, as typically used in financial transactions for many currencies.
+  Its primary intended use is (personal) bookkeeping.
+\end{absquote}
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{Quick start}%
+For readers who prefer a brief summary: this package provides fixed-point
+arithmetic with two decimal places. It can be used in any context where exactly
+two decimal places are required or sufficient; its primary application, however,
+is (personal) bookkeeping.
+
+Suppose John wants to keep track of his money. With
+\begin{dispListing}
+\didecnew{John}
+\end{dispListing}
+\didecnew{John}
+a so-called \emph{didec variable} is created to store currency values.
+
+Now, lets fill in some money:
+\begin{dispListing}
+\didecset{John}{1000}
+\end{dispListing}
+\didecset{John}{1000}
+
+How much money does John have now?
+\begin{dispExample}
+\didecuse{John}
+\end{dispExample}
+
+The amount is given in euros and formatted according to German conventions.
+Of course, this can be adapted to your liking, see \refCom{didecsetup}.
+But now, let us spend some money.
+\begin{dispExample}
+\didecsub{John}{19.75}
+\didecuse{John}
+\end{dispExample}
+
+Preferably, the package functions are used inside convenient user commands.
+You can choose between \LaTeX2e and L3 programming layer functions.
+
+For this quick start, we make some convenience commands for John.
+|\transaction| shall be one purchase made in cash and |\transaction*| one made
+by credit card.
+\begin{dispExample*}{breakable}
+%\usepackage{booktabs}
+\didecsetup{english,
+  currency          = {\pounds}{},
+  currency-negative = {-\pounds}{},
+}
+
+%\didecnew{John}
+\didecnew{cash}
+\didecnew{credit}
+\didecnew{transaction}
+
+% Let's keep record in a table
+\NewDocumentEnvironment{householdbook}{}{%
+    \begin{center}
+    \begin{tabular}{lp{9cm}rr}\toprule%
+    & Transaction & Expenses & Budget\\\midrule
+  }{%
+    \midrule%
+    \multicolumn{3}{r}{Cash} & \dideccoluse{cash}\\%
+    \multicolumn{3}{r}{Credit card} & \dideccoluse{credit}\\\bottomrule%
+    \end{tabular}%
+    \end{center}
+  }
+
+% One transaction
+\NewDocumentCommand \transaction{ s m m }
+  {
+    \didecset{transaction}{#3}%
+    \didecsub{John}{transaction}%
+    \IfBooleanTF {#1}%
+      {\didecsub{credit}{transaction}CC}%
+      {\didecsub{cash}{transaction}}%
+    & #2
+    & \dideccolinvuse{transaction}
+    & \dideccoluse{John}\\%
+  }
+
+% Ready to start our tiny accountancy
+
+\didecset{John}{1000}        % John's money
+\didecsetequal{cash}{John}   % in cash
+\didecset{credit}{0}         % blank credit card
+
+\begin{householdbook}
+  \transaction{Coffee break with snack}{19.75}
+  \transaction*{Refuel}{62.87}
+  \transaction{Gift from Aunt Mary for helping her}{-30}
+  \transaction{Parking meter}{4.50}
+  \transaction*{Shopping for weekend}{147.23}
+  \transaction*{Fancy thing on the Internet}{270}
+  \transaction*{Cinema}{17.70}
+\end{householdbook}
+
+\end{dispExample*}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{Didec kernels and didec expressions}%
+
+All calculations are done on cent basis as integer operations, but all
+displayed figures have two decimal places which give the name for the package
+(\emph{di}-\emph{dec}imal).
+
+The package provides two numerical kernels which can be selected mutually
+by package options \refKey{didec/int} or \refKey{didec/fp}.
+The \refKey{didec/int} kernel is faster, but provides a smaller number range,
+while the \refKey{didec/int} kernel is slower with a larger number range.
+For ordinary people like you and me, the \refKey{didec/int} kernel will suffice
+to do all personal financial calculations.
+Upgrading later from \refKey{didec/int} to \refKey{didec/fp} is a matter of
+just switching the package option setting.
+
+%-------------------------------------------------------------------------------
+\begin{docPackageOptions}{{
+    doc name = int,
+    doc description = {no value, initially set},
+  }}
+Selects the \meta{int} (integer) based numerical kernel with up to
+9.33\footnote{joke for the mathematicians} significant figures and fast computation.
+The number range for valid figures $n$ is:
+\begin{center}
+$ -21\;474\;836.47 \le n \le 21\;474\;836.47 $
+\end{center}
+\begin{dispListing}
+\usepackage[int]{didec}
+\end{dispListing}
+Using figures outside the valid range will result in \LaTeX\ errors complaining
+about too large numbers.
+\end{docPackageOptions}
+%-------------------------------------------------------------------------------
+
+
+%-------------------------------------------------------------------------------
+\begin{docPackageOptions}{{
+    doc name = fp,
+    doc description = {no value, initially unset},
+  }}
+Selects the \meta{fp} (floating-point) based numerical kernel with up to
+16 significant figures and somewhat slower computation.
+The number range for valid figures $n$ is:
+\begin{center}
+$ -99\;999\;999\;999\;999.99 \le n \le 99\;999\;999\;999\;999.99 $
+\end{center}
+\begin{dispListing}
+\usepackage[fp]{didec}
+\end{dispListing}
+Using figures outside the valid range will result in \emph{silent calculation errors},
+because \LaTeX3 \meta{fp} can use much larger numbers but is restricted to 16
+significant figures.
+\end{docPackageOptions}
+%-------------------------------------------------------------------------------
+
+\medskip
+
+In the following, a \meta{didec expr} (didec expression) denotes one of
+the following:
+\begin{itemize}
+\item a number in floating-point notation, e.g. |123.45|
+\item a number in floating-comma notation, e.g. |123,45|
+\item a \meta{didec var} (didec variable), e.g. |expenses|.
+\end{itemize}
+Note that the notation \meta{didec expr} is inspired by \meta{int expr} and \meta{fp expr}
+from \LaTeX3 but is in comparison very restricted and allows only the three choices above.
+A \meta{didec expr} is always expanded and spaces are trimmed.
+
+\medskip
+
+Many provided commands or functions of the package come in three flavors, for
+example:
+\begin{itemize}
+\item \refCom{didecadd}: This is a user command where arguments are space trimmed
+  and some check on variable existence is done.
+  Not existing variables are reported by speaking error messages (not in all cases!).
+\item \refCom{didec_gadd_check:nn}: This a programming layer function
+  with no space trimming for arguments, but some check on variable existence is done.
+  Not existing variables are reported by speaking error messages (not in all cases!).
+\item \refCom{didec_gadd:nn}: This a programming layer function
+  with no space trimming for arguments and no check on variable existence.
+  Not existing variables give strange errors.
+  This is the fasted function and base of the others above.
+\end{itemize}
+
+
+\clearpage
+The following tables compare the computation time for selected functions of
+the package for the two numerical kernels. Time values will differ on other
+computers and also depend on selected values for the examples calculations.
+Nevertheless, you get an impression of the differences.
+
+
+%-------------------------------------------------------------------------------
+\begin{tcbverbatimwrite}{\jobname.temp}
+\begin{tcblisting}{
+  blankest,
+  pdf comment,
+  comment style={raster columns=1,blankest,enhanced/.style=},
+  comment only,
+  freeze pdf,
+  compilable listing,
+  run pdflatex
+}
+\IfFileExists{didec.doc.cfg}{\input{didec.doc.cfg}}{\def\didecpackageprefix{}}
+\documentclass[a4paper,11pt]{ltxdoc}
+\usepackage[a4paper,textwidth=8cm]{geometry}
+\usepackage{lmodern,array,booktabs,incgraph}
+\usepackage[skins,documentation]{tcolorbox}
+\input{didec.tempinc}
+\usepackage{siunitx}
+\begin{document}
+\begin{inctext}
+\begin{tcolorbox}[blankest]
+\makeatletter
+\ExplSyntaxOn
+\cs_new_protected:Npn \didec_benchmark:n #1
+{
+  \benchmark:n { #1 }
+  \tablenum[table-format=4.0]{ \fp_to_decimal:n { round( \g_benchmark_time_fp * 1 000 000 ) } }\,\unit{\micro\second}
+}
+\didecnew{A}\didecnew{B}
+\fp_set:Nn \g_benchmark_duration_target_fp { 1 }
+\begin{center}
+\begin{tabular}{lr}\toprule
+\multicolumn{2}{c}{
+  kernel:~\texttt{\c_didec_kernel_str},~engine:~\texttt{\c_sys_engine_str}
+}\\\midrule
+\docAuxCommand*{didec_gset:nn} & \didec_benchmark:n{ \didec_gset:nn{A}{-9876,324} }
+\\\docAuxCommand*{didec_gset_check:nn} & \didec_benchmark:n{ \didec_gset_check:nn{A}{-9876,324} }
+\\\docAuxCommand*{didecset} & \didec_benchmark:n{ \didecset{A}{-9876,324} }
+\\\midrule
+\docAuxCommand*{didec_gset_eq:nn} & \didecset{B}{1234.56} \didec_benchmark:n{ \didec_gset_eq:nn{A}{B} }
+\\\docAuxCommand*{didec_gset_eq_check:nn} & \didecset{B}{1234.56} \didec_benchmark:n{ \didec_gset_eq_check:nn{A}{B} }
+\\\docAuxCommand*{didecsetequal} & \didecset{B}{1234.56} \didec_benchmark:n{ \didecsetequal{A}{B} }
+\\\midrule
+\docAuxCommand*{didec_gset_fp:nn} & \didec_benchmark:n{ \didec_gset_fp:nn{A}{51234.56} }
+\\\docAuxCommand*{didec_gset_fp_check:nn} & \didec_benchmark:n{ \didec_gset_fp_check:nn{A}{51234.56} }
+\\\docAuxCommand*{didecsetfp} & \didec_benchmark:n{ \didecsetfp{A}{51234.56} }
+\\\midrule
+\docAuxCommand*{didec_gadd:nn} & \didecset{A}{-987.34} \didec_benchmark:n{ \didec_gadd:nn{A}{12345} }
+\\\docAuxCommand*{didec_gadd_check:nn} &  \didecset{A}{-987.34}\didec_benchmark:n{ \didec_gadd_check:nn{A}{12345} }
+\\\docAuxCommand*{didecadd} &  \didecset{A}{-987.34} \didec_benchmark:n{ \didecadd{A}{12345} }
+\\\midrule
+\docAuxCommand*{didec_gadd_to:nnn} & \didec_benchmark:n{ \didec_gadd_to:nnn{A}{-4564}{12345} }
+\\\docAuxCommand*{didec_gadd_to_check:nnn} & \didec_benchmark:n{ \didec_gadd_to_check:nnn{A}{-4564}{12345} }
+\\\docAuxCommand*{didecadd} & \didec_benchmark:n{ \didecadd[A]{-4564}{12345} }
+\\\midrule
+\docAuxCommand*{didec_gmul_fp:nn} & \didecset{A}{-987.34} \didec_benchmark:n{ \didec_gmul_fp:nn{A}{0.99} }
+\\\docAuxCommand*{didec_gmul_fp_check:nn} &  \didecset{A}{-987.34}\didec_benchmark:n{ \didec_gmul_fp_check:nn{A}{0.99} }
+\\\docAuxCommand*{didecmulfp} &  \didecset{A}{-987.34} \didec_benchmark:n{ \didecmulfp{A}{0.99} }
+\\\midrule
+%
+\docAuxCommand*{didec_if_positive:nTF} & \didecset{A}{-987.34} \didec_benchmark:n{ \didec_if_positive:nTF{A}{}{} }
+\\\docAuxCommand*{didecifpositive} & \didecset{A}{-987.34} \didec_benchmark:n{ \didecifpositive{A}{}{} }
+\\\docAuxCommand*{didec_compare:nNnTF} & \didecset{A}{-987.34} \didec_benchmark:n{ \didec_compare:nNnTF{A}>{12345}{}{} }
+\\\docAuxCommand*{didecifgreaterthan} & \didecset{A}{-987.34} \didec_benchmark:n{ \didecifgreaterthan{A}{12345}{}{} }
+\\\midrule
+\docAuxCommand*{didec_to_fp:n} & \didecset{A}{-1234987.34} \didec_benchmark:n{ \setbox\z@\hbox{\didec_to_fp:n{A}} }
+\\\docAuxCommand*{didec_to_fp_check:n} & \didecset{A}{-1234987.34} \didec_benchmark:n{ \setbox\z@\hbox{\didec_to_fp_check:n{A}} }
+\\\docAuxCommand*{didectofp} & \didecset{A}{-1234987.34} \didec_benchmark:n{ \setbox\z@\hbox{\didectofp{A}} }
+\\\midrule
+\docAuxCommand*{didec_use:n} & \didecset{A}{-1234987.34} \didec_benchmark:n{ \setbox\z@\hbox{\didec_use:n{A}} }
+\\\docAuxCommand*{didec_use_check:n} & \didecset{A}{-1234987.34} \didec_benchmark:n{ \setbox\z@\hbox{\didec_use_check:n{A}} }
+\\\docAuxCommand*{didecuse} & \didecset{A}{-1234987.34} \didec_benchmark:n{ \setbox\z@\hbox{\didecuse{A}} }
+\\\docAuxCommand*{didecformat} & \didec_benchmark:n{ \setbox\z@\hbox{\didecformat{-1234987.34}} }
+\\\docAuxCommand*{didec_color_use:n} & \didecset{A}{-1234987.34} \didec_benchmark:n{ \setbox\z@\hbox{\didec_color_use:n{A}} }
+\\\docAuxCommand*{didec_color_use_check:n} & \didecset{A}{-1234987.34} \didec_benchmark:n{ \setbox\z@\hbox{\didec_color_use_check:n{A}} }
+\\\docAuxCommand*{dideccoluse} & \didecset{A}{-1234987.34} \didec_benchmark:n{ \setbox\z@\hbox{\dideccoluse{A}} }
+\\\docAuxCommand*{dideccolformat} & \didec_benchmark:n{ \setbox\z@\hbox{\dideccolformat{-1234987.34}} }
+\\\bottomrule
+\end{tabular}
+\end{center}
+\ExplSyntaxOff
+\makeatother
+\end{tcolorbox}
+\end{inctext}
+\end{document}
+\end{tcblisting}
+\end{tcbverbatimwrite}
+%
+\begin{tcbraster}[raster column skip=0pt]
+\begin{tcbverbatimwrite}{\jobname.tempinc}
+\usepackage[int]{\didecpackageprefix didec}
+\end{tcbverbatimwrite}
+\input{\jobname.temp}
+%
+\begin{tcbverbatimwrite}{\jobname.tempinc}
+\usepackage[fp]{\didecpackageprefix didec}
+\end{tcbverbatimwrite}
+\input{\jobname.temp}
+\end{tcbraster}
+%-------------------------------------------------------------------------------
+
+
+\clearpage
+If needed, the selected kernel can be questioned by the following:
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    % doc parameter = \marg{didec var},
+  ]
+{
+   { doc name = c_didec_kernel_str },
+}
+The current kernel is given as a lower case string: one of
+\docValue*{int} or \docValue*{fp}.
+\begin{dispExample}
+\ExplSyntaxOn
+\c_didec_kernel_str
+\ExplSyntaxOff
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    % doc parameter = \marg{didec var},
+  ]
+{
+   { doc name = didec_if_kernel_int_p: },
+   { doc name = didec_if_kernel_int:T, doc parameter = ~\marg{true code} },
+   { doc name = didec_if_kernel_int:TF, doc parameter = ~\marg{true code}\marg{false code} },
+   { doc name = didec_if_kernel_fp_p: },
+   { doc name = didec_if_kernel_fp:T, doc parameter = ~\marg{true code} },
+   { doc name = didec_if_kernel_fp:TF, doc parameter = ~\marg{true code}\marg{false code} },
+}
+Conditionals which allow kernel-specific code to be used. The names follow
+naturally from those of the kernels.
+\begin{dispExample}
+\ExplSyntaxOn
+\didec_if_kernel_int:T { Integer~kernel~used. }\par
+Floating~point~kernel
+\didec_if_kernel_fp:TF { ~used. }{ ~not~used. }
+\ExplSyntaxOff
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{Creating didec variables}%
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    doc parameter = \marg{didec var},
+  ]
+{
+  { doc name = didecnew },
+  { doc name = didec_new:n },
+ }
+Creates a new \meta{didec var} or raises an error if the name is already taken.
+\refCom{didecnew} trims spaces while \refCom{didec_new:n} does not.
+\begin{dispExample}
+\didecnew{konto}
+\didecset{konto}{99.75}
+\didecuse{konto}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+%\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Setting didec variables}%
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    doc parameter = \marg{didec var}\marg{didec expr},
+  ]
+{
+  { doc name = didecset },
+  { doc name = didec_gset:nn },
+  { doc name = didec_gset_check:nn },
+ }
+Sets \meta{didec var} to the value of \meta{didec expr} which can be
+\begin{itemize}
+\item a number in floating-point notation,
+\item a number in floating-comma notation,
+\item another \meta{didec var}.
+\end{itemize}
+\refCom{didecset} trims spaces and performs an existence check for \meta{didec var}.
+\refCom{didec_gset_check:nn} performs an existence check for \meta{didec var}.
+Decimals places 3 and beyond are cut not rounded.
+If rounding is an issue, use \refCom{didecsetfp} instead.
+\begin{dispExample}
+\didecset{A}{1234.56}
+\didecuse{A}
+
+\didecset{A}{2345,6789}
+\didecuse{A}
+
+\didecset{B}{-3500}
+\didecset{A}{B}
+\didecuse{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    doc parameter = \marg{didec var\textsubscript{1}}\marg{didec var\textsubscript{2}},
+  ]
+{
+  { doc name = didecsetequal },
+  { doc name = didec_gset_eq:nn },
+  { doc name = didec_gset_eq_check:nn },
+ }
+Sets the \meta{didec var\textsubscript{1}} to the current value of \meta{didec var\textsubscript{2}}
+\begin{dispExample}
+\didecset{A}{1234.56}
+\didecsetequal{B}{A}
+\didecuse{A}
+\didecuse{B}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    doc parameter = \marg{didec var}\marg{didec expr},
+  ]
+{
+  { doc name = didecsetnegative },
+  { doc name = didec_gset_negative:nn },
+  { doc name = didec_gset_negative_check:nn },
+ }
+Sets \meta{didec var} to the negated (opposite) value of \meta{didec expr}.
+\refCom{didecsetnegative} trims spaces and performs an existence check for \meta{didec var}.
+\begin{dispExample}
+\didecsetnegative{A}{1234.56}
+\didecuse{A}
+
+\didecsetnegative{A}{-42.55}
+\didecuse{A}
+
+\didecset{B}{-3500}
+\didecsetnegative{A}{B}
+\didecuse{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    doc parameter = \marg{didec var}\marg{fp expr},
+  ]
+{
+  { doc name = didecsetfp },
+  { doc name = didec_gset_fp:nn },
+  { doc name = didec_gset_fp_check:nn },
+ }
+Sets \meta{didec var} to the value of \meta{fp expr} which can
+by any \LaTeX3 floating-point expression.
+\refCom{didecsetfp} trims spaces and performs an existence check for \meta{didec var}.
+Other didec variables can be used inside \meta{fp expr} if guarded with \refCom{didectofp}.
+The result is rounded to 2 decimal places according to the rounding rule set by \refKey{didec/rounding}.
+\refCom{didec_gset_fp_check:nn} performs an existence check for \meta{didec var}.
+\begin{dispExample}
+\didecsetfp{A}{2345.6789}
+\didecuse{A}
+
+\didecsetfp{A}{ ln( 12345678 ) }
+\didecuse{A}
+
+\didecset{A}{123456,78}
+\didecsetfp{B}{ \didectofp{A} * 2.35 / 100 }
+2.35\% of \didecuse{A} are \didecuse{B}.
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didecadd,                doc parameter = \oarg{didec var}\marg{didec expr\textsubscript{1}}\marg{didec expr\textsubscript{2}} },
+  { doc name = didec_gadd:nn,     doc parameter = \marg{didec var}\marg{didec expr} },
+  { doc name = didec_gadd_check:nn,     doc parameter = \marg{didec var}\marg{didec expr} },
+  { doc name = didec_gadd_to:nnn, doc parameter = \marg{didec var}\marg{didec expr\textsubscript{1}}\marg{didec expr\textsubscript{2}} },
+  { doc name = didec_gadd_to_check:nnn, doc parameter = \marg{didec var}\marg{didec expr\textsubscript{1}}\marg{didec expr\textsubscript{2}} },
+ }
+\begin{itemize}
+\item Adds the result of computing the \meta{didec expr} to the \meta{didec var}
+\item or sets \meta{didec var} to the sum of \meta{didec expr\textsubscript{1}} and \meta{didec expr\textsubscript{2}}.
+\item For \refCom{didecadd}, if the optional \meta{didec var} is not available,
+  the sum is stored into \meta{didec expr\textsubscript{1}} which has to be a \meta{didec var}
+  in this case.
+\end{itemize}
+\begin{dispExample}
+\didecset{A}{123}
+\didecset{B}{5,88}
+\didecadd{A}{B}
+\didecuse{A}
+
+\didecadd[A]{B}{1000}
+\didecuse{A}
+
+\didecadd{A}{-2750}
+\didecuse{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+%\clearpage
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didecsub,                doc parameter = \oarg{didec var}\marg{didec expr\textsubscript{1}}\marg{didec expr\textsubscript{2}} },
+  { doc name = didec_gsub:nn,     doc parameter = \marg{didec var}\marg{didec expr} },
+  { doc name = didec_gsub_check:nn,     doc parameter = \marg{didec var}\marg{didec expr} },
+  { doc name = didec_gsub_to:nnn, doc parameter = \marg{didec var}\marg{didec expr\textsubscript{1}}\marg{didec expr\textsubscript{2}} },
+  { doc name = didec_gsub_to_check:nnn, doc parameter = \marg{didec var}\marg{didec expr\textsubscript{1}}\marg{didec expr\textsubscript{2}} },
+ }
+\begin{itemize}
+\item Subtracts the result of computing the \meta{didec expr} to the \meta{didec var}
+\item or sets \meta{didec var} to the difference of \meta{didec expr\textsubscript{1}} and \meta{didec expr\textsubscript{2}}.
+\item For \refCom{didecsub}, if the optional \meta{didec var} is not available,
+  the difference is stored into \meta{didec expr\textsubscript{1}} which has to be a \meta{didec var}
+  in this case.
+\end{itemize}
+\begin{dispExample}
+\didecset{A}{123}
+\didecset{B}{5,88}
+\didecsub{A}{B}
+\didecuse{A}
+
+\didecsub[A]{B}{1000}
+\didecuse{A}
+
+\didecsub{A}{-2750}
+\didecuse{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didecmulfp,                doc parameter = \oarg{didec var\textsubscript{2}}\marg{didec var}\marg{fp expr} },
+  { doc name = didec_gmul_fp:nn,     doc parameter = \marg{didec var}\marg{fp expr} },
+  { doc name = didec_gmul_fp_check:nn,     doc parameter = \marg{didec var}\marg{fp expr} },
+  { doc name = didec_gmul_fp_to:nnn, doc parameter = \marg{didec var\textsubscript{2}}\marg{didec var}\marg{fp expr} },
+  { doc name = didec_gmul_fp_to_check:nnn, doc parameter = \marg{didec var\textsubscript{2}}\marg{didec var}\marg{fp expr} },
+ }
+\begin{itemize}
+\item Multiplies \meta{didec var} with the result of computing the \meta{fp expr}
+\item and sets \meta{didec var} or respectively \meta{didec var\textsubscript{2}} to the result.
+\item The result is rounded to 2 decimal places according to the rounding rule set by \refKey{didec/rounding}.
+\end{itemize}
+\begin{dispExample}
+\didecset{A}{123}
+\didecmulfp{A}{0.9675}
+\didecuse{A}
+
+\didecmulfp[B]{A}{ln(42)}
+\didecuse{B}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didecdivfp,                doc parameter = \oarg{didec var\textsubscript{2}}\marg{didec var}\marg{fp expr} },
+  { doc name = didec_gdiv_fp:nn,     doc parameter = \marg{didec var}\marg{fp expr} },
+  { doc name = didec_gdiv_fp_check:nn,     doc parameter = \marg{didec var}\marg{fp expr} },
+  { doc name = didec_gdiv_fp_to:nnn, doc parameter = \marg{didec var\textsubscript{2}}\marg{didec var}\marg{fp expr} },
+  { doc name = didec_gdiv_fp_to_check:nnn, doc parameter = \marg{didec var\textsubscript{2}}\marg{didec var}\marg{fp expr} },
+ }
+\begin{itemize}
+\item Divides \meta{didec var} by the result of computing the \meta{fp expr}
+\item and sets \meta{didec var} or respectively \meta{didec var\textsubscript{2}} to the result.
+\item The result is rounded to 2 decimal places according to the rounding rule set by \refKey{didec/rounding}.
+\end{itemize}
+\begin{dispExample}
+\didecset{A}{123}
+\didecdivfp{A}{0.9675}
+\didecuse{A}
+
+\didecdivfp[B]{A}{ln(42)}
+\didecuse{B}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didecsetsum, doc parameter = \oarg{didec var}\marg{sum of didec exp} },
+}
+Sets \meta{didec var} to the result of computing the given \meta{sum of didec exp}.\par
+Here, \meta{sum of didec exp} =  \meta{didec exp\textsubscript{1}}
++ \meta{didec exp\textsubscript{2}} + \ldots + \meta{didec exp\textsubscript{n}}
+\begin{dispExample}
+\didecset{A}{123}
+\didecset{B}{-32.15}
+\didecsetsum{A}{ A + B + -22.5 }
+\didecuse{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Using didecs}%
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didectoint, doc parameter = \marg{didec var} },
+  { doc name = didec_to_int:n, doc parameter = \marg{didec var} },
+  { doc name = didec_to_int_check:n, doc parameter = \marg{didec var} },
+}
+Expresses the \meta{didec var} as Cent integer value, i.e. 100 times the
+value.
+All functions are expandable.
+\begin{dispExample}
+\didecset{A}{27123.45}
+\didectoint{A}
+
+\didecset{A}{-17}
+\didectoint{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didectofp, doc parameter = \marg{didec var} },
+  { doc name = didec_to_fp:n, doc parameter = \marg{didec var} },
+  { doc name = didec_to_fp_check:n, doc parameter = \marg{didec var} },
+}
+Expresses the \meta{didec var} as floating-point value.
+All functions are expandable.
+\begin{dispExample}
+\didecset{A}{27123.45}
+\didectofp{A}
+
+\didecset{A}{-17}
+\didectofp{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didectofc, doc parameter = \marg{didec var} },
+  { doc name = didec_to_fc:n, doc parameter = \marg{didec var} },
+  { doc name = didec_to_fc_check:n, doc parameter = \marg{didec var} },
+}
+Expresses the \meta{didec var} as floating-comma value.
+All functions are expandable.
+\begin{dispExample}
+\didecset{A}{27123.45}
+\didectofc{A}
+
+\didecset{A}{-17}
+\didectofc{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didecuse, doc parameter = \oarg{key list}\marg{didec var} },
+  { doc name = didec_use:n, doc parameter = \marg{didec var} },
+  { doc name = didec_use_check:n, doc parameter = \marg{didec var} },
+}
+Expresses the \meta{didec var} as formatted value.
+With \refCom{didecsetup}, the standard format can be set.
+This standard format can be overwritten by \meta{key list}.
+\begin{dispExample}
+\didecset{A}{123456.78}
+\didecuse{A}
+
+\didecuse[ english, currency={\pounds}{} ]{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = dideccoluse, doc parameter = \oarg{key list}\marg{didec var} },
+  { doc name = didec_color_use:n, doc parameter = \marg{didec var} },
+  { doc name = didec_color_use_check:n, doc parameter = \marg{didec var} },
+}
+Expresses the \meta{didec var} as colorized formatted value.
+With \refCom{didecsetup}, the standard format can be set.
+This standard format can be overwritten by \meta{key list}.
+\begin{dispExample}
+\didecset{A}{123456.78}
+\dideccoluse{A}
+
+\didecset{A}{-125}
+\dideccoluse{A}
+
+\dideccoluse[color-negative=didec-blue]{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = dideccolinvuse, doc parameter = \oarg{key list}\marg{didec var} },
+  { doc name = didec_color_inverse_use:n, doc parameter = \marg{didec var} },
+  { doc name = didec_color_inverse_use_check:n, doc parameter = \marg{didec var} },
+}
+Expresses the \meta{didec var} as colorized formatted value.
+The coloring is switched between positive and negative.
+The standard
+coloring and format can be overwritten by \meta{key list}.
+\begin{dispExample}
+\didecset{A}{123456.78}
+\dideccolinvuse{A}
+
+\didecset{A}{-125}
+\dideccolinvuse{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didecformat, doc parameter = \oarg{key list}\marg{didec expr} },
+  { doc name = dideccolformat, doc parameter = \oarg{key list}\marg{didec expr} },
+  { doc name = dideccolinvformat, doc parameter = \oarg{key list}\marg{didec expr} },
+}
+Like \refCom{didecuse}, \refCom{dideccoluse}, \refCom{dideccolinvuse},
+but accepts a \meta{didec expr} instead of a \meta{didec var}.
+If the \meta{didec expr} is a \meta{didec var},
+\refCom{didecuse}, \refCom{dideccoluse}, \refCom{dideccolinvuse} are more efficient.
+\begin{dispExample}
+\didecformat{123456.78}\\
+\didecformat{A}\\
+\didecformat[english]{123456.78}\\
+\dideccolformat{123456.78}\\
+\dideccolinvformat{123456.78}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didecwrite, doc parameter = \marg{didec var}\marg{stream} },
+  { doc name = didec_write:nn, doc parameter = \marg{didec var}\marg{stream} },
+  { doc name = didec_write_check:nn, doc parameter = \marg{didec var}\marg{stream} },
+}
+Writes \refCom{didecset}\marg{didec var}\marg{current value} to the given
+already opened output \meta{stream}.
+\begin{dispListing}
+\didecwrite{A}{output}
+% writes to output:
+% \didecset{A}{VALUE}
+\end{dispListing}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Option settings}%
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didecsetup, doc parameter = \marg{key list} },
+}
+Sets all keys of the given \meta{key list}. See the following
+for available settings.
+\begin{dispExample}
+\didecsetup{
+    currency           = {\pounds}{},
+    decimal-separator  = {.},
+    grouping-separator = {,},
+}
+\didecset{A}{123456.78}
+\didecuse{A}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+%-------------------------------------------------------------------------------
+\begin{docDidecKeys}
+{
+  {
+    doc name = currency,
+    doc parameter = {=\marg{prefix}\marg{postfix}},
+    doc description = {initially \texttt{\textbraceleft\textbraceright\textbraceleft\textbackslash ;€\textbraceright}},
+    doc updated = {2026-02-20},
+  },
+}
+Sets some \meta{prefix} and \meta{postfix} to denote the currency of the
+didec variable.
+This also sets\\
+\refKey{didec/currency-negative}\brackets{\meta{prefix}-}\marg{postfix}
+\begin{dispExample}
+\didecset{A}{123456.78}
+\didecuse[ currency = {\pounds}{} ]{A} \par
+\didecuse[ currency = {}{\:Gulden} ]{A}
+\end{dispExample}
+\end{docDidecKeys}
+%-------------------------------------------------------------------------------
+
+
+
+%-------------------------------------------------------------------------------
+\begin{docDidecKeys}
+{
+  {
+    doc name = currency-negative,
+    doc parameter = {=\marg{prefix}\marg{postfix}},
+    doc description = {initially \texttt{\textbraceleft -\textbraceright\textbraceleft\textbackslash ;€\textbraceright}},
+    doc updated = {2026-02-20},
+  },
+}
+Sets some \meta{prefix} and \meta{postfix} to denote the currency of the
+didec variable, if the resulting value is negative. Otherwise, the settings of
+\refKey{didec/currency} are used.
+Note that you need to set a minus sign |-| explicitly, if you want to see it.
+Also note that setting \refKey{didec/currency} overwrites values given
+by \refKey{didec/currency-negative}.
+\begin{dispExample}
+\didecset{A}{-123456.78}
+\didecuse{A}\par
+\didecuse[ currency-negative = {$-$}{\;€} ]{A} \par
+\didecuse[ currency-negative = {(}{\;€)} ]{A} \par
+\didecuse[ currency-negative = {(}{)\;€} ]{A} \par
+\didecuse[ currency-negative = {-€}{} ]{A} \par
+\end{dispExample}
+\end{docDidecKeys}
+%-------------------------------------------------------------------------------
+
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\begin{docDidecKeys}
+{
+  {
+    doc name = decimal-separator,
+    doc parameter = {=\marg{separator}},
+    doc description = {initially |,|},
+  },
+}
+Sets some \meta{separator} as decimal separator.
+\begin{dispExample}
+\didecset{A}{123456.78}
+\didecuse[ decimal-separator={\#} ]{A} \par
+\end{dispExample}
+\end{docDidecKeys}
+%-------------------------------------------------------------------------------
+
+
+%-------------------------------------------------------------------------------
+\begin{docDidecKeys}
+{
+  {
+    doc name = grouping-separator,
+    doc parameter = {=\marg{separator}},
+    doc description = {initially |.|},
+  },
+}
+Sets some \meta{separator} as grouping separator.
+\begin{dispExample}
+\didecset{A}{123456.78}
+\didecuse[ grouping-separator={'} ]{A}
+\end{dispExample}
+\end{docDidecKeys}
+%-------------------------------------------------------------------------------
+
+
+%-------------------------------------------------------------------------------
+\begin{docDidecKeys}[
+    doc parameter   = ,
+    doc description = style,
+    doc updated = {2026-02-20},
+]
+{
+  { doc name = german },
+  { doc name = english },
+  { doc name = french },
+  { doc name = float },
+}
+Styles to set some format preferences combined.
+Note that \refCom{didectofp} is more efficient than \refCom{didecuse} with
+style \refKey{didec/float}.
+\begin{center}
+\begin{tabular}{>{\ttfamily}l>{\ttfamily}c>{\ttfamily}c>{\ttfamily}c>{\ttfamily}c}\toprule
+                   & german & english & french & float\\\midrule
+decimal-separator  &   ,    &    .    &    ,   &   .  \\ 
+grouping-separator &   .    &    ,    &   |\;|   &      \\\bottomrule
+\end{tabular}
+\end{center}
+\begin{dispExample}
+\didecset{A}{12345678.90}
+\didecuse[german]{A}  \par
+\didecuse[english]{A} \par
+\didecuse[french]{A}  \par
+\didecuse[float]{A}   \par
+\end{dispExample}
+\end{docDidecKeys}
+%-------------------------------------------------------------------------------
+
+
+%-------------------------------------------------------------------------------
+\begin{docDidecKeys}
+{
+  {
+    doc name = color-positive,
+    doc parameter = {=\meta{positive color}},
+    doc description = {initially |didec-green|},
+  },
+  {
+    doc name = color-negative,
+    doc parameter = {=\meta{negative color}},
+    doc description = {initially |didec-red|},
+  },
+}
+Sets \meta{positive color} to denote positive (and zero) values
+and \meta{negative color} to denote negative values.
+Any valid |l3color| \meta{color expression} can be used.
+The package defines additional colors
+\begin{itemize}
+\item\docColorExample{didec-green}
+\item\docColorExample{didec-red}
+\item\docColorExample{didec-blue}
+\end{itemize}
+\begin{dispExample}
+\didecset{A}{123456.78}
+\dideccoluse[ color-positive = magenta ]{A}
+\end{dispExample}
+\end{docDidecKeys}
+%-------------------------------------------------------------------------------
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\begin{docDidecKeys}[
+    doc parameter   = {=\marg{rule}},
+    doc description = {initially |half-away-from-zero|},
+    doc new = {2026-03-02},
+]
+{
+  { doc name = rounding },
+}
+Sets the rounding \meta{rule} for floating-point expressions used inside
+\refCom{didecsetfp}, \refCom{didecmulfp}, \refCom{didecdivfp}, and friends.
+There are two two choices (each providing several synonyms):
+\begin{itemize}
+\item \docValue{half-away-from-zero}, \docValue{commercial}, \docValue{DIN-1333}:\\
+Round to the nearest value; ties are rounded away from zero.\\
+Common: \enquote{commercial rounding}, \enquote{Kaufmännisches Runden}
+\begin{dispExample}
+\didecsetup{rounding=half-away-from-zero}
+\didecsetfp{A}{-2.015}  \didecuse{A}\par
+\didecsetfp{A}{-2.005}  \didecuse{A}\par
+\didecsetfp{A}{2.005}   \didecuse{A}\par
+\didecsetfp{A}{2.015}   \didecuse{A}\par
+\end{dispExample}
+\item \docValue{half-to-even}, \docValue{mathematical}, \docValue{IEEE-754}:\\
+Round to the nearest value; ties are rounded to the nearest even integer.\\
+Common: \enquote{Banker's rounding}, \enquote{Mathematisches Runden}
+\begin{dispExample}
+\didecsetup{rounding=half-to-even}
+\didecsetfp{A}{-2.015}  \didecuse{A}\par
+\didecsetfp{A}{-2.005}  \didecuse{A}\par
+\didecsetfp{A}{2.005}   \didecuse{A}\par
+\didecsetfp{A}{2.015}   \didecuse{A}\par
+\end{dispExample}
+\end{itemize}
+
+Note that \docValue{half-to-even} was the default (and only) setting before
+version 1.2.0. The default changed to \docValue{half-away-from-zero}
+with version 1.2.0.
+\end{docDidecKeys}
+%-------------------------------------------------------------------------------
+
+
+
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Didec conditionals}%
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    doc parameter = \marg{didec var}\marg{true code}\marg{false code},
+  ]
+{
+  { doc name = didecifpositive },
+  { doc name = didec_if_positive_p:n, doc parameter = \marg{didec var} },
+  { doc name = didec_if_positive:nTF, },
+  { doc name = didec_if_positive:nT, doc parameter = \marg{didec var}\marg{true code} },
+  { doc name = didec_if_positive:nF, doc parameter = \marg{didec var}\marg{false code} },
+ }
+Evaluates the \meta{didec var}
+and returns |true| or executes the \meta{true code} if the value is positive,
+otherwise returns |false| or executes the \meta{false code}.
+\begin{dispExample}
+\didecset{A}{2799.50}
+\didecuse{A} is \didecifpositive{A}{positive}{not positive}.
+
+\didecset{B}{-584}
+\didecuse{B} is \didecifpositive{B}{positive}{not positive}.
+
+\didecset{A}{0}
+\didecuse{A} is \didecifpositive{A}{positive}{not positive}.
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    doc parameter = \marg{didec var}\marg{true code}\marg{false code},
+  ]
+{
+  { doc name = didecifnegative },
+  { doc name = didec_if_negative_p:n, doc parameter = \marg{didec var} },
+  { doc name = didec_if_negative:nTF, },
+  { doc name = didec_if_negative:nT, doc parameter = \marg{didec var}\marg{true code} },
+  { doc name = didec_if_negative:nF, doc parameter = \marg{didec var}\marg{false code} },
+ }
+Evaluates the \meta{didec var}
+and returns |true| or executes the \meta{true code} if the value is negative,
+otherwise returns |false| or executes the \meta{false code}.
+\begin{dispExample}
+\didecset{A}{2799.50}
+\didecuse{A} is \didecifnegative{A}{negative}{not negative}.
+
+\didecset{B}{-584}
+\didecuse{B} is \didecifnegative{B}{negative}{not negative}.
+
+\didecset{A}{0}
+\didecuse{A} is \didecifnegative{A}{negative}{not negative}.
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+\clearpage
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    doc parameter = \marg{didec var}\marg{true code}\marg{false code},
+  ]
+{
+  { doc name = didecifzero  },
+  { doc name = didec_if_zero_p:n, doc parameter = \marg{didec var} },
+  { doc name = didec_if_zero:nTF, },
+  { doc name = didec_if_zero:nT, doc parameter = \marg{didec var}\marg{true code} },
+  { doc name = didec_if_zero:nF, doc parameter = \marg{didec var}\marg{false code} },
+ }
+Evaluates the \meta{didec var}
+and returns |true| or executes the \meta{true code} if the value is zero,
+otherwise returns |false| or executes the \meta{false code}.
+\begin{dispExample}
+\didecset{A}{2799.50}
+\didecuse{A} is \didecifzero{A}{zero}{not zero}.
+
+\didecset{B}{-584}
+\didecuse{B} is \didecifzero{B}{zero}{not zero}.
+
+\didecset{A}{0}
+\didecuse{A} is \didecifzero{A}{zero}{not zero}.
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+
+
+
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}[
+    doc parameter = \marg{didec expr\textsubscript{1}}\marg{didec expr\textsubscript{2}}\marg{true code}\marg{false code},
+  ]
+{
+  { doc name = dideciflowerthan },
+  { doc name = didecifequal  },
+  { doc name = didecifgreaterthan },
+  { doc name = didec_compare_p:nNn, doc parameter = \marg{didec expr\textsubscript{1}}\meta{relation}\marg{didec expr\textsubscript{2}} },
+  { doc name = didec_compare:nNnTF, doc parameter = \marg{didec expr\textsubscript{1}}\meta{relation}\marg{didec expr\textsubscript{2}}\marg{true code}\marg{false code}  },
+  { doc name = didec_compare:nNnT, doc parameter = \marg{didec expr\textsubscript{1}}\meta{relation}\marg{didec expr\textsubscript{2}}\marg{true code} },
+  { doc name = didec_compare:nNnF, doc parameter = \marg{didec expr\textsubscript{1}}\meta{relation}\marg{didec expr\textsubscript{2}}\marg{false code} },
+ }
+Compares the \meta{didec expr\textsubscript{1}} and the \meta{didec expr\textsubscript{2}},
+and returns |true| or executes the \meta{true code} if the \meta{relation} (given by function respectively)
+is obeyed, otherwise returns |false| or executes the \meta{false code}.
+\begin{dispExample}
+\didecset{A}{2799.50}
+\didecset{B}{-584}
+\didecuse{A} is \dideciflowerthan{A}{B}{lower}{not lower} than \didecuse{B}
+
+\didecuse{A} is \didecifequal{A}{B}{equal}{not equal} to \didecuse{B}
+
+\didecuse{A} is \didecifequal{A}{A}{equal}{not equal} to \didecuse{A}
+
+\didecuse{A} is \didecifgreaterthan{A}{B}{greater}{not greater} than \didecuse{B}
+\end{dispExample}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Viewing didecs}%
+
+%-------------------------------------------------------------------------------
+\begin{docCommands}
+{
+  { doc name = didec_show:n, doc parameter = \marg{didec var} },
+ }
+Displays the content of \meta{didec var} in the terminal.
+\begin{dispListing}
+\didecset{A}{2799.50}
+\ExplSyntaxOn
+\didec_show:n{A}
+\ExplSyntaxOff
+\end{dispListing}
+\end{docCommands}
+%-------------------------------------------------------------------------------
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\phantomsection
+\printindex
+
+\end{document}

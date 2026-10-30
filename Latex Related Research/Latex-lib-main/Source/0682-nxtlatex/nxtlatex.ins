@@ -1,0 +1,75 @@
+%%
+%% Copyright (C) 2025 Volker Reichenberger
+%%
+%% This file is part of the nxtlatex package.
+%%
+%% This file may be distributed and/or modified under the conditions
+%% of the LaTeX Project Public License, either version 1.3c of this
+%% license or (at your option) any later version.
+%% The latest version of this license is in
+%%    https://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2008 or later.
+%%
+
+% Nur mit latex (oder pdftex, lualatex) entpacken, nicht mit tex: Knuths
+% TeX schreibt Umlaute als ^^-Folgen, und \eigenständigkeitserklärung
+% bricht dann in der Klasse ab. tex erkennt man am fehlenden e-TeX.
+\ifx\eTeXversion\undefined
+  \immediate\write16{}
+  \immediate\write16{! nxtlatex.ins bitte mit latex ausfuehren, nicht mit tex:}
+  \immediate\write16{!   latex nxtlatex.ins}
+  \immediate\write16{}
+  \expandafter\end
+\fi
+
+\input docstrip.tex
+
+\preamble
+
+This is a generated file.
+
+Copyright (C) 2025 Volker Reichenberger.
+
+This file is part of the nxtlatex package.
+
+This file may be distributed and/or modified under the conditions
+of the LaTeX Project Public License, either version 1.3c of this
+license or (at your option) any later version.
+The latest version of this license is in
+   https://www.latex-project.org/lppl.txt
+and version 1.3c or later is part of all distributions of LaTeX
+version 2008 or later.
+
+\endpreamble
+
+\askforoverwritefalse
+
+\generate{
+  \file{nxtlatexcolors.sty}{\from{nxtlatex.dtx}{nxtlatexcolors}}
+  \file{nxtlatexlogos.sty}{\from{nxtlatex.dtx}{nxtlatexlogos}}
+  \file{nxtthesis.cls}{\from{nxtlatex.dtx}{nxtthesis}}
+  \file{nxtbrief.lco}{\from{nxtlatex.dtx}{nxtbrief}}
+  \file{beamerthemeNXT.sty}{\from{nxtlatex.dtx}{beamerthemenxt}}
+}
+
+\obeyspaces
+\Msg{*************************************************************}
+\Msg{*}
+\Msg{* Um die Dokumentation zu erzeugen:}
+\Msg{*   pdflatex nxtlatex.dtx}
+\Msg{*   makeindex -s gind.ist nxtlatex.idx}
+\Msg{*   makeindex -s gglo.ist -o nxtlatex.gls nxtlatex.glo}
+\Msg{*   pdflatex nxtlatex.dtx}
+\Msg{*}
+\Msg{* Erzeugte Dateien:}
+\Msg{*   nxtlatexcolors.sty -- Farb-Palette}
+\Msg{*   nxtlatexlogos.sty  -- Logo-Makros}
+\Msg{*   nxtthesis.cls    -- Thesis-Klasse}
+\Msg{*   nxtbrief.lco     -- Brief-Layout (scrlttr2)}
+\Msg{*   beamerthemeNXT.sty -- Beamer-Thema}
+\Msg{*}
+\Msg{* Zusaetzlich benoetigt: NXT_Logo.otf}
+\Msg{*************************************************************}
+
+\endbatchfile

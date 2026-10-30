@@ -1,0 +1,121 @@
+% Generated file : DO NOT EDIT
+\@ifundefined{@psfontsfalse}{\newif\if@psfonts \@psfontsfalse}{}
+\@ifundefined{examn@uprightpifalse}{\newif\ifexamn@uprightpi \examn@uprightpifalse}{}
+\@ifundefined{examn@mtselect}{\newcount\examn@mtselect \examn@mtselect=0}{}
+\if@psfonts
+  \ifcase\examn@mtselect
+    % mathptm fonts
+    % This is a very clumsy version, but it appears to be our only option
+    \def\vec#1{\mathchoice{\mbox{\boldmath $\displaystyle #1$}}
+      {\mbox{\boldmath $ #1$}}
+      {\mbox{\boldmath $\scriptstyle #1$}}
+      {\mbox{\boldmath $\scriptscriptstyle #1$}}}
+    \ifexamn@uprightpi
+      \ClassWarning{exam-n}{Can't do uprightpi in [mathptm] -- sorry}
+      \let\italicpi\pi
+      \examn@uprightpifalse
+    \fi
+  \or % mathtime (should this be the same for mathtime as for mtpro2?
+    \let\vec\mathbf
+    \ifexamn@uprightpi
+      \ClassWarning{exam-n}{Can't do uprightpi in [mathtime] -- sorry}
+      \let\italicpi\pi
+      \examn@uprightpifalse
+    \fi
+  \or % mtpro2
+    \let\vec\mathbold
+    % \uppi is predefined in mtpro2
+    \ifexamn@uprightpi
+      \let\italicpi\pi
+      \let\pi\uppi
+    \fi
+  \else
+    % STIX2: the unicode-math package provides a \symbf for bold math symbols,
+    \ifnum\examn@engine<2       % pdflatex
+      \let\vec\mathbf
+      % pdftex (or original tex)
+      % The following should, I think, create an upright pi, but doesn't
+      \def\uppi{\mathrm{\pi}}
+      \let\italicpi\pi          %for consistency
+      \let\symup\mathrm         %not fully the right thing, but avoid errors below
+    \else                       % xelatex or lualatex
+      % This is where the dependence on a recent LaTeX enters.
+      \let\vec\symbf
+      \typeout{stix2: upright=\ifexamn@uprightpi true\else false\fi}
+      \AddToHook{begindocument/end}{\gdef\uppi{\symup{𝜋}}}
+      \ifexamn@uprightpi
+        \AddToHook{begindocument/end}{\gdef\italicpi{\symit{𝜋}}\global\let\pi\uppi}
+      \fi
+    \fi
+  \fi
+\else
+  % CM fonts: \mathbf doesn't work with greek in CM
+  \let\vec\mathbf
+  \ifexamn@uprightpi
+    % upright greek is hard to do portably, so give up
+    % See eg https://tex.stackexchange.com/questions/145926/ for discussion
+    \ClassWarning{exam-n}{Can't do uprightpi in [cmfonts] -- sorry}
+    \let\italicpi\pi
+    \let\uppi\pi                %but avoid errors
+    \examn@uprightpifalse
+  \fi
+\fi
+\newcommand\BSc{B.Sc.{}}
+\newcommand\MSci{M.Sci.{}}
+\newcommand\MSc{M.Sc.{}}
+\newcommand\MA{M.A.{}}
+\newcommand\MEng{M.Eng.{}}
+\newcommand\BEng{B.Eng.{}}
+\ifnum\examn@mtselect>2
+  % ie, STIX2, and thus using the unicode-math package (see above)
+  \def\e{\symup{e}}
+  \newcommand{\dd}{\symup{d}}
+  \newcommand{\ddd}{\,\symup{d}}
+\else
+  \def\e{\mathrm{e}}
+  \newcommand{\dd}{\mathrm{d}}
+  \newcommand{\ddd}{\,\mathrm{d}}
+\fi
+
+\def\Diffl{\@ifstar\@Difflflat\@Diffl}
+\def\Partial{\@ifstar\@Partialflat\@Partial}
+\def\@Partial{\@ifnextchar[{\@@Diffl\partial}{\@@Diffl\partial[]}}
+\def\@Partialflat{\@ifnextchar[{\@@Difflflat\partial}{\@@Difflflat\partial[]}}
+\def\@Diffl{\@ifnextchar[{\@@Diffl\dd}{\@@Diffl\dd[]}}
+\def\@Difflflat{\@ifnextchar[{\@@Difflflat\dd}{\@@Difflflat\dd[]}}
+\def\@@Diffl#1[#2]#3#4{%
+  \def\@tempa{#2}%
+  \ifx\@tempa\empty
+    \frac{#1#3}{#1#4}%
+  \else
+    \frac{{#1}^{#2}#3}{#1{#4}^{#2}}%
+  \fi}
+\def\@@Difflflat#1[#2]#3#4{%
+  \def\@tempa{#2}%
+  \ifx\@tempa\empty
+    #1#3\mskip-0.8mu/\mskip-1.2mu #1#4%
+  \else
+    {#1}^{#2}#3\mskip-0.8mu /\mskip-1.2mu #1{#4}^{#2}%
+  \fi}
+\def\units{\examn@unitswarning
+  \begingroup
+  \catcode`\.=\active
+  \@ifstar{\let\un@tsspace\relax    \un@ts}%
+          {\let\un@tsspace\thinspace\un@ts}}
+\begingroup
+  \catcode`\.=\active
+  \gdef\un@ts#1{\let~\thinspace\let.\thinspace
+    \ifmmode
+      \un@tsspace\mathrm{#1}%
+    \else
+      \nobreak$\un@tsspace\mathrm{#1}$%
+    \fi
+    \endgroup}
+\endgroup
+\newif\ifexamn@warnunits \examn@warnunitstrue
+\def\examn@unitswarning{\ifexamn@warnunits
+  \ClassWarning{exam-n}{The units macro will be removed in the next
+    version; the [siunitx] option is now on by default, so you can use
+    the macros in the siunits package}%
+  \global\examn@warnunitsfalse
+\fi}

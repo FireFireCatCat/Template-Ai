@@ -1,0 +1,80 @@
+\documentclass[review,article]{planetary}
+\addbibresource{references.bib}
+
+\title{Mapping uncertainty in a small planetary-surface survey}
+\shorttitle{Uncertainty in a planetary survey}
+\author[1]{Maya Rivera}
+\author[2]{Ifeoma Okafor}
+\affil[1]{Example Planetary Science Centre, Example University}
+\affil[2]{Remote Sensing Methods Lab, Example Institute}
+\setcorrespauth{Maya Rivera}
+\setcorrespmail{maya.rivera@example.edu}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{firstpage}
+\correspondingauthor
+\submissiondate{29 August 2026}
+\mstype{Research article}
+\abstractwordcount{142}
+
+\begin{abstract}
+We demonstrate a transparent workflow for mapping uncertainty in a small
+orbital-imaging survey. Three processing choices are varied independently, and
+the resulting spread is reported beside the central estimate. The example is
+intended as a practical starting point for a planetary-science manuscript.
+\end{abstract}
+
+\section{Introduction}
+Planetary maps often combine measurements with processing choices that are
+hard to compare after the fact. A useful manuscript therefore states which
+inputs are fixed, which are varied, and how the final uncertainty is computed.
+Here we use a synthetic crater-detection survey to make those choices explicit.
+
+\section{Methods}
+The survey contains 120 image tiles with a nominal ground sample distance of
+12~m. A detection is retained when its confidence exceeds 0.80 and its fitted
+diameter is between 0.5 and 4.0~km. We report the retained fraction $p$ and its
+binomial standard error
+\begin{equation}
+  \sigma_p = \sqrt{\frac{p(1-p)}{n}},
+  \label{eq:error}
+\end{equation}
+where $n$ is the number of inspected tiles. This makes the denominator visible
+and avoids presenting a rounded percentage without its sample size.
+
+\section{Results}
+\begin{table}[ht]
+\mytablestyle
+\caption{Illustrative sensitivity analysis.}
+\begin{tabular}{lrr}
+\toprule
+Processing choice & Retained tiles & Fraction \\
+\midrule
+Nominal threshold & 84 & 0.700 \\
+Conservative threshold & 77 & 0.642 \\
+Relaxed threshold & 91 & 0.758 \\
+\bottomrule
+\end{tabular}
+\label{tab:sensitivity}
+\end{table}
+
+The nominal estimate is $p=0.700$, giving $\sigma_p\approx0.042$ from
+Eq.~\eqref{eq:error}. The spread across processing choices is larger than the
+sampling error, so it should be reported as a methodological sensitivity rather
+than hidden inside a single confidence interval.
+
+\section{Discussion}
+The values in Table~\ref{tab:sensitivity} are a worked example, not a claim
+about a real planetary body. Replace them with measurements, provide one file
+per figure, and document the provenance of any external basemap or calibration
+product. Persistent identifiers should be supplied for code and data whenever
+available~\parencite{wilkinson2016}.
+
+\section{Conclusion}
+This starter covers the review layout, manuscript metadata, a methods equation,
+a compact table, and an author-facing open-science reminder.
+
+\printbibliography
+\end{document}

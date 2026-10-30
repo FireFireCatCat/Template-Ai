@@ -1,0 +1,1322 @@
+%%%==============================================================================
+%% Copyright 2022-present by Alceu Frigeri
+%%
+%% This work may be distributed and/or modified under the conditions of
+%%
+%% * The [LaTeX Project Public License](http://www.latex-project.org/lppl.txt),
+%%   version 1.3c (or later), and/or
+%% * The [GNU Affero General Public License](https://www.gnu.org/licenses/agpl-3.0.html),
+%%   version 3 (or later)
+%%
+%% This work has the LPPL maintenance status *maintained*.
+%%
+%% The Current Maintainer of this work is Alceu Frigeri
+%%
+%% This is version {2.13a} {2026/07/04}
+%%
+%% The list of files that compose this work can be found in the README.md file at
+%% https://ctan.org/pkg/ufrgscca
+%%
+%%%==============================================================================
+%% UFRGS stands for "Federal University of Rio Grande do Sul" in south Brazil
+%% EE    stands for "Engineering School"
+%% CCA   stands for "Control and Automation Engineering Course" (Portuguese acronym)
+%%%==============================================================================
+
+\ExplSyntaxOn
+  \tl_new:N \tmpTabA
+  \tl_new:N \tmpTabB
+  \tl_new:N \tmpTabC
+  \tl_new:N \tmpTabD
+  \tl_new:N \tmpTabE
+  \tl_new:N \tmpTabEx
+  \tl_new:N \tmpTabF
+  \tl_new:N \tmpTabG
+  \tl_new:N \tmpTabMult
+  \tl_new:N \tmpTabAll
+  \tl_new:N \tmpBookMark
+\ExplSyntaxOff
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% Internship
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  req form - Internship
+%%%%%%%%%%%%%%%
+\SetForm{internshiprequest}{heading}{\UseTerm{title.internship}}
+\SetForm{internshiprequest}{bookmark}{\pdfTermBookMark{book.internrequestform}}
+\SetForm{internshiprequest}{title}{\UseTerm{title.requestform}}
+
+%%%
+\SetForm{internshiprequest}{opening}{
+
+  \UseTerm{opening.requestform}}
+
+%%%
+\SetForm{internshiprequest}{body}{
+  \UseTerm{desc.requestform} \Activity[internship]{name}.
+    \vfill%
+   \UseLabel{student.email}: {\bf \DataFields{student}{email}} %
+\vspace{2mm}
+
+\UseLabel{tutor}: \textbf{\DataFields{student.tutor}{name}}%
+
+\UseLabel{tutor.email}: {\bf \DataFields{student.tutor}{email}}%
+\hfill \UseLabel{phone}: {\bf \DataFields{student.tutor}{phone}}%
+\vspace{2mm}
+
+
+Empresa: {\bf \DataFields{student.internship}{company}}%
+
+Área de Atividade: {\bf \DataFields{student.internship}{field}}%
+\vspace{2mm}
+
+\UseTerm{desc.supervisor}
+
+Cargo: {\bf \DataFields{student.supervisor}{office}}\hfill Email: {\bf \DataFields{student.supervisor}{email}} \hfill Fone: {\bf \DataFields{student.supervisor}{phone}}   %
+\vspace{2mm}
+
+Data de Início: {\bf \DataFields{student.internship}{start}}\hfill Previsão de Término: {\bf \DataFields{student.internship}{end}}\hfill Duração: {\bf \DataFields{student.internship}{length}}
+
+}
+
+%%%
+\SetForm{internshiprequest}{closing}{
+  \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.supervisor}}}\hfill%
+  \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.tutor}}}%
+
+    \hfill%
+    \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.student}}}
+}
+
+
+%%%%%%%%%%%%%%%
+%%  supervisor`s form - Internship
+%%%%%%%%%%%%%%%
+\SetForm{internshipsupervisorform}{heading}{\UseTerm{title.internship}}
+\SetForm{internshipsupervisorform}{bookmark}{\pdfTermBookMark{book.internsupervisorform}}
+\SetForm{internshipsupervisorform}{title}{\UseTerm{title.internsupervisorform}}
+\SetForm{internshipsupervisorform}{footnote}{\UseTerm{footnote.supervisorsform}}
+
+%%%
+\SetForm{internshipsupervisorform}{opening}{
+    \UseTerm{desc.student}\\%
+    \noindent\UseTerm{desc.supervisor}\\%
+    \UseTerm{desc.internshipperiod}
+}
+
+%%%
+\SetForm{internshipsupervisorform}{body}{
+\begin{itemize}[tcc,nosep]
+ \item Grupo I - Aspectos Profissionais
+   \begin{enumerate}[tcc,nosep]
+     \item \textbf{Qualidade do Trabalho}:\emptybox\\ {\footnotesize considerar a qualidade do trabalho tendo em vista o que seria desejável.}
+     \item \textbf{Engenhosidade}:\emptybox\\ {\footnotesize capacidade de sugerir, projetar ou executar modificações ou inovações.}
+     \item \textbf{Conhecimentos}:\emptybox\\ {\footnotesize conhecimento demonstrado no desenvolvimento das atividades programadas.}
+     \item \textbf{Cumprimentos das Tarefas}:\emptybox\\ {\footnotesize     considerar o volume de atividades cumpridas dentro de um padrão razoável.}
+     \item \textbf{Iniciativa}:\emptybox\\ {\footnotesize iniciativa para desenvolver suas atividades sem dependências de outros.}
+   \end{enumerate}
+ \item Grupo II - Aspectos Humanos
+    \begin{enumerate}[tcc,nosep]
+     \item \textbf{Assiduidade}:\emptybox\\ {\footnotesize cumprimento do horário do estágio e ausência de falhas.}
+\item \textbf{Disciplina}:\emptybox\\ {\footnotesize observância das normas e regulamentos internos da empresa.}
+\item \textbf{Sociabilidade}:\emptybox\\ {\footnotesize facilidade de se integrar com colegas e ambiente de trabalho.}
+\item \textbf{Cooperação}:\emptybox\\ {\footnotesize     disposição para cooperar com colegas e para atender a atividades.}
+\item \textbf{Senso de Responsabilidade}:\emptybox\\ {\footnotesize zelo pelo material, equipamentos e bens da empresa.}
+    \end{enumerate}
+\end{itemize}
+
+    \vfill%
+
+    Considerações Complementares: \BlankLines{5}
+}
+
+%%%
+\SetForm{internshipsupervisorform}{closing}{
+\hfill\parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.supervisor}}}
+}
+
+%%%%%%%%%%%%%%%
+%%  tutor`s form - Internship
+%%%%%%%%%%%%%%%
+\SetForm{internshiptutorform}{heading}{\UseTerm{title.internship}}
+\SetForm{internshiptutorform}{bookmark}{\pdfTermBookMark{book.interntutorform}}
+\SetForm{internshiptutorform}{title}{\UseTerm{title.interntutorform}}
+
+%%%
+\SetForm{internshiptutorform}{opening}{
+    \UseTerm{desc.student}\\%
+    \UseLabel{tutor}: \textbf{\DataFields{student.tutor}{name}}\\%
+    \UseTerm{desc.internshipperiod}
+}
+
+%%%
+\SetForm{internshiptutorform}{body}{
+    Avaliação d\DataFields{student.tutor}{article} Prof\DataFields{student.tutor}{narticle}. Tutor\DataFields{student.tutor}{narticle}:\emptybox
+
+    \vfill%
+
+    Considerações d\DataFields{student.tutor}{article} Prof\DataFields{student.tutor}{narticle}. Tutor\DataFields{student.tutor}{narticle} sobre o Estágio: 
+    \BlankLines{6}%
+
+    \vfill%
+
+    \hfill\parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.tutor}}}
+
+ %   \hline
+    \vfill%
+
+    Avaliação d\ActivityCoord[internship]{article} Prof\ActivityCoord[internship]{narticle}. Coordenador\ActivityCoord[internship]{narticle}:\emptybox%
+    \vfill
+
+    Considerações d\ActivityCoord[internship]{article} Prof\ActivityCoord[internship]{narticle}. Coordenador\ActivityCoord[internship]{narticle} sobre o Estágio:
+     \BlankLines{6}%
+    \vfill%
+
+    \hfill\parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.internshipcoord}}}
+}
+
+%%%
+\SetForm{internshiptutorform}{closing}{}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% TCCs - attendancelist
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SetForm{attendancelist}{heading}{\UseTerm{title.tcc}}
+\SetForm{attendancelist}{bookmark}{\pdfTermBookMark{book.attendancelist}}
+\SetForm{attendancelist}{title}{\UseTerm{title.attendancelist}}
+\SetForm{attendancelist}{opening}{}
+
+%%%
+
+\SetForm{attendancelist}{body}{%
+Nome do(a) Aluno(a) --- Email\\
+\BlankLines[-1.8ex]{30}
+}
+
+%%%
+\SetForm{attendancelist}{closing}{\vfill}%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% TCCs - Calendar
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SetForm{calendar-I}{heading}{\UseTerm{title.tccI}}
+\SetForm{calendar-I}{bookmark}{\pdfTermBookMark{book.calendar-I}}
+
+%\SetForm{calendar-I}{heading}{\UseTerm{title.tccI}}
+\SetForm{calendar-I}{title}{\UseTerm{title.calendar}}
+\SetForm{calendar-I}{opening}{}
+
+%%%
+
+\SetForm{calendar-I}{body}{%
+  \ActivitySelect{tccI}
+  { \footnotesize%
+    \begin{center}
+%
+      \resizebox{\textwidth}{!}{%%
+        \begin{tabular}{ccp{11.5cm}}%
+        Data/Período & Semana~ Letiva & Evento\\\hline
+        \ActivityCalendarIterate
+          {
+            \textbf{\DataFields{activity.calendar}{date}} & \DataFields{activity.calendar}{week} & \DataFields{activity.calendar}{event}\\\hline
+          }
+        \end{tabular}}%
+%
+    \end{center}%
+    \scriptsize \UseTerm{notes.calendarI}
+  }%
+}
+
+%%%
+\SetForm{calendar-I}{closing}{\vfill}%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+\SetForm{calendar-II}{heading}{\UseTerm{title.tccII}}
+\SetForm{calendar-II}{bookmark}{\pdfTermBookMark{book.calendar-II}}
+
+\SetForm{calendar-II}{title}{\UseTerm{title.calendar}}
+\SetForm{calendar-II}{opening}{}
+
+%%%
+\SetForm{calendar-II}{body}{%
+  \ActivitySelect{tccII}
+  { \footnotesize%
+    \begin{center}
+%
+      \resizebox{\textwidth}{!}{%%
+        \begin{tabular}{ccp{11.5cm}}%
+          Data/Período & Semana~ Letiva & Evento\\\hline
+          \ActivityCalendarIterate
+            {
+              \textbf{\DataFields{activity.calendar}{date}} & \DataFields{activity.calendar}{week} & \DataFields{activity.calendar}{event}\\\hline
+            }
+        \end{tabular}}%
+%
+    \end{center}%
+    \scriptsize \UseTerm{notes.calendarII}
+  }%
+}
+
+%%%
+\SetForm{calendar-II}{closing}{\vfill}%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% TCC - I
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  req form - I
+%%%%%%%%%%%%%%%
+\SetForm{request-I}{heading}{\UseTerm{title.tccI}}
+\SetForm{request-I}{bookmark}{\pdfTermBookMark{book.requestform-I}}
+\SetForm{request-I}{title}{\UseTerm{title.requestform}}
+\SetForm{request-I}{opening}{
+
+\UseTerm{opening.requestform}}
+
+%%%
+\SetForm{request-I}{body}{%
+  \UseTerm{desc.requestform} \Activity[tccI]{name}.
+  \vfill%
+
+  \UseLabel{worktitle.temp}: \DataFields{student}{worktitle}%\@title %
+
+  \UseLabel{student.email}: {\bf \DataFields{student}{email}} %
+
+  \UseLabel{advisor}: \DataFields{student.advisor}{name}%
+
+  \UseLabel{advisor.email}: {\bf \DataFields{student.advisor}{email}}%
+  \hfill \UseLabel{phone}: {\bf \DataFields{student.advisor}{phone}}%
+
+  {\bf Resumo}:\footnote[1]{\UseTerm{footnote.requestform}}%
+
+  \vfill%
+
+  \DataFields{student}{brief}
+}
+
+%%%
+\SetForm{request-I}{closing}{%
+  \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.student}}}\hfill%
+  \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.advisor}}}%
+}%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  coadvisor - I
+%%%%%%%%%%%%%%%
+\SetForm{coadvisor-I}{heading}{\UseTerm{title.tccI}}
+\SetForm{coadvisor-I}{bookmark}{\pdfTermBookMark{book.coadvisorform-I}}
+\SetForm{coadvisor-I}{title}{\UseTerm{title.coadvisorform}}
+\SetForm{coadvisor-I}{opening}{
+
+\UseTerm{opening.requestform}
+  \emptytermifnone{student.coadvisor}
+}
+
+%%%
+\SetForm{coadvisor-I}{body}{%
+  \UseTerm{desc.coadvisorform}
+  \vfill%
+
+  \UseLabel{worktitle.temp}: \DataFields{student}{worktitle}%\@title %
+
+  \UseLabel{advisor}: \DataFields{student.advisor}{name}
+
+  \UseLabel{coadvisor}: \DataFields{student.coadvisor}{name}%
+
+  \UseLabel{coadvisor.email}: {\bf \DataFields{student.coadvisor}{email}}%
+  \hfill \UseLabel{phone}: {\bf \DataFields{student.coadvisor}{phone}}\\%
+
+  {\bf Justificativa}:%
+  \vfill
+
+ \DataFields{student.coadvisor}{reason}
+ 
+}
+
+%%%
+\SetForm{coadvisor-I}{closing}{%
+
+  \SignatureDate{\UseLabel{signature.student}}
+
+  \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.advisor}}}\hfill%
+  \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.coadvisor}}}%
+}%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  board approval - I
+%%%%%%%%%%%%%%%
+\SetForm{boardapproval-I}{heading}{\UseTerm{title.tccI}}
+\SetForm{boardapproval-I}{bookmark}{\pdfTermBookMark{book.boardapproval-I}}
+\SetForm{boardapproval-I}{title}{\UseTerm{title.boardapproval}}
+\SetForm{boardapproval-I}{opening}{\UseTerm{desc.studentwork.full}}
+
+%%%
+\SetForm{boardapproval-I}{body}{  \begin{center}
+    \UseLabel{board}
+  \end{center}%
+
+ 
+  \BoardDescSignature{Avaliador\DataFields{student.reviewer[2]}{narticle}}{student.reviewer[2]}
+
+  \BoardDescSignature{Avaliador\DataFields{student.reviewer[3]}{narticle}}{student.reviewer[3]}
+
+  \vfill%
+
+  Indicamos a nominata da Banca Examinadora acima relacionada.%
+}
+
+%%%
+\SetForm{boardapproval-I}{closing}{\hfill\parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.advisor}}}}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  advisor's approval - I
+%%%%%%%%%%%%%%%
+\SetForm{advisorsapproval-I}{heading}{\UseTerm{title.tccI}}
+\SetForm{advisorsapproval-I}{bookmark}{\pdfTermBookMark{book.advisorapproval-I}}
+\SetForm{advisorsapproval-I}{title}{\UseTerm{title.advisorsapproval-I}}
+\SetForm{advisorsapproval-I}{opening}{\UseTerm{desc.studentwork.full}}
+
+%%%
+\SetForm{advisorsapproval-I}{body}{%
+  {\bf Parecer d\DataFields{student.advisor}{article} Orientador\DataFields{student.advisor}{narticle}}\footnote{Preenchimento Obrigatório}
+
+  \vfill%
+
+
+  \DataFields{student.advisor}{assessment}
+}
+
+%%%
+\SetForm{advisorsapproval-I}{closing}{
+  \SignatureDate{\UseLabel{signature.advisor}}\vfill%
+  \SignatureDate{\UseLabel{signature.student}}%
+
+}%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  examiner's form - I
+%%%%%%%%%%%%%%%
+\SetForm{examinersform-I}{heading}{\UseTerm{title.tccI}}
+\SetForm{examinersform-I}{bookmark}{\pdfTermBookMark{book.reviewersform-I}}
+\SetForm{examinersform-I}{title}{\UseTerm{title.reviewersform}}
+\SetForm{examinersform-I}{footnote}{\UseTerm{footnote.reviewersform}}
+\SetForm{examinersform-I}{opening}{%
+  \UseTerm{desc.studentwork}\\[2mm]
+  
+  \UseLabel{reviewer}: \textbf{\DataFields{student.reviewer}{name}}\\[-4mm]%
+  
+  {\scriptsize {\textsl{(favor retornar este diretamente à coordenação de TCC.)}}}
+  }
+
+%%%
+\SetForm{examinersform-I}{body}{%  
+   O trabalho submetido\footnotemark[2]:
+
+     \begin{enumerate}[tcc,nosep]
+     \item \emptybox\  \textbf{Enquadramento do Tema}. {\footnotesize(peso:2)}\\ {\footnotesize Quão bem o mesmo se enquadra no perfil de um formando em Eng. de Controle e Automação.}
+     \item \emptybox\ \textbf{Revisão Bibliográfica}. {\footnotesize(peso:2)}\\ {\footnotesize A revisão apresentada é adequada, suficiente, para o tema do trabalho?}
+     \item \emptybox\ \textbf{Abordagem/Plano de Trabalho Proposto}. {\footnotesize(peso:2)}\\ {\footnotesize Considerar se a abordagem, plano de trabalho proposto, é adequada e factível.}
+     \item \emptybox\ \textbf{Redação}. {\footnotesize(peso:1)}\\ {\footnotesize     Considerar a qualidade do trabalho escrito apresentado.}
+     \item { O Trabalho Submetido}
+     \begin{enumerate}[tcc,nosep]
+       \item[$\Box$ a)] Está adequado, 
+       \begin{enumerate}
+         \item[$\Box$ a.1)]  dispensando correções do texto.
+         \item[$\Box$ a.2)]  sendo necessário correções, conforme anotações anexas.
+       \end{enumerate}
+       \item[$\Box$ b)]  Necessita ser revisto/re-escrito, estando em exame\footnotemark[3]\hspace{-0.1em}, e: 
+       \begin{enumerate}
+         \item[$\Box$ b.1)] basta a revisão final do texto pelo orientador.
+         \item[$\Box$ b.2)] revisarei o trabalho depois de corrigido.
+       \end{enumerate}
+     \end{enumerate} 
+   \end{enumerate}
+   
+Outras considerações, parecer (se necessário): \BlankLines{5}
+
+  \footnotetext[2]{Use a escala: \begin{enumerate*}\item[0.]Péssimo  \item[3.]Deficitário \item[6.]Bom \item[8.]Muito Bom \item[10.]Excelente \end{enumerate*}}%
+  \footnotetext[3]{Neste caso \DataFields{student}{article} alun\DataFields{student}{article} receberá conceito final C ou D, conforme revisão final do texto.}%
+}
+
+%%%
+\SetForm{examinersform-I}{closing}{%signature.reviewer
+  \SignatureDate{\UseLabel{signature.reviewer}}%
+}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  rectify approval - I
+%%%%%%%%%%%%%%%
+\SetForm{rectifyapproval-I}{heading}{\UseTerm{title.tccI}}
+\SetForm{rectifyapproval-I}{bookmark}{\pdfTermBookMark{book.rectifyapproval-I}}
+\SetForm{rectifyapproval-I}{title}{\UseTerm{title.rectifyapproval}}
+\SetForm{rectifyapproval-I}{opening}{\UseTerm{desc.studentwork.full}}
+
+%%%
+\SetForm{rectifyapproval-I}{body}{  %
+  \SetTerms{temp.formrefname = {Formulário de Avaliação}}
+  \UseTerm{desc.rectifyapproval}
+
+  \vfill%
+
+  \ApprovalSignature[\UseLabel{advisor}]{\DataFields{student.advisor}{name}}
+
+}
+
+%%%
+\SetForm{rectifyapproval-I}{closing}{ 
+
+  \studentReviewerSelect{2}
+  \ApprovalSignature{\DataFields{student.reviewer}{name}}\vfill
+
+  \studentReviewerSelect{3}
+  \ApprovalSignature{\DataFields{student.reviewer}{name}}\vfill
+
+ }
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% TCC - II
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  req form - II
+%%%%%%%%%%%%%%%
+\SetForm{request-II}{heading}{\UseTerm{title.tccII}}
+\SetForm{request-II}{bookmark}{\pdfTermBookMark{book.requestform-II}}
+\SetForm{request-II}{title}{\UseTerm{title.requestform}}
+
+\SetForm{request-II}{opening}{
+
+\UseTerm{opening.requestform}}
+
+%%%
+\SetForm{request-II}{body}{
+  \UseTerm{desc.requestform} \Activity[tccII]{name}.
+  \vfill%
+
+  \UseLabel{worktitle.temp}: \DataFields{student}{worktitle}%\@title %
+
+  \UseLabel{student.email}: {\bf \DataFields{student}{email}} %
+
+  \UseLabel{advisor}: \DataFields{student.advisor}{name}%
+
+  \UseLabel{advisor.email}: {\bf \DataFields{student.advisor}{email}}%
+  \hfill \UseLabel{phone}: {\bf \DataFields{student.advisor}{phone}}%
+
+  \studentCoadvCase{
+    \UseLabel{coadvisor}: \DataFields{student.coadvisor}{name}%
+    
+    \UseLabel{coadvisor.email}: {\bf \DataFields{student.coadvisor}{email}}%
+    \hfill \UseLabel{phone}: {\bf \DataFields{student.coadvisor}{phone}}%
+  }{}
+
+
+  \vfill%
+ Os Objetivos do Trabalho e Orientador\DataFields{student.advisor}{narticle}\studentCoadvCase{/Coorientador\DataFields{student.coadvisor}{narticle}}{} seguem sendo os mesmos de TCC I ?
+\begin{itemize}[tcc,nosep]
+ \item[$\Box$] SIM
+ \item[$\Box$] NÃO, neste caso \textbf{justifique} a mudança no espaço a seguir:\\[1ex]
+ \end{itemize}
+  
+  \DataFields{student}{reason}
+
+}
+
+%%%
+\SetForm{request-II}{closing}{
+  \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.student}}}\hfill%
+  \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.advisor}}}%
+}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%
+%%  coadvisor - II
+%%%%%%%%%%%%%%%
+\SetForm{coadvisor-II}{heading}{\UseTerm{title.tccII}}
+\SetForm{coadvisor-II}{bookmark}{\pdfTermBookMark{book.coadvisorform-II}}
+\SetForm{coadvisor-II}{title}{\UseTerm{title.coadvisorform}}
+\SetForm{coadvisor-II}{opening}{
+
+  \UseTerm{opening.requestform}
+  \emptytermifnone{student.coadvisor}
+}
+
+%%%
+\SetForm{coadvisor-II}{body}{
+  \UseTerm{desc.coadvisorform}
+  \vfill%
+
+  \UseLabel{worktitle.temp}: \DataFields{student}{worktitle}
+
+  \UseLabel{advisor}: \DataFields{student.advisor}{name}
+
+  \UseLabel{coadvisor}: \DataFields{student.coadvisor}{name}
+
+  \UseLabel{coadvisor.email}: {\bf \DataFields{student.coadvisor}{email}}
+  \hfill \UseLabel{phone}: {\bf \DataFields{student.coadvisor}{phone}}\\
+
+  {\bf Justificativa}:
+  \vfill
+
+  \DataFields{student.coadvisor}{reason}
+}
+
+%%%
+\SetForm{coadvisor-II}{closing}{
+
+  \SignatureDate{\UseLabel{signature.student}}
+
+  \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.advisor}}}\hfill
+  \parbox[t]{.45\textwidth}{\SignatureDate{\UseLabel{signature.coadvisor}}}
+}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%
+%%  board approval - II
+%%%%%%%%%%%%%%%
+\SetForm{boardapproval-II}{heading}{\UseTerm{title.tccII}}
+\SetForm{boardapproval-II}{bookmark}{\pdfTermBookMark{book.boardapproval-II}}
+\SetForm{boardapproval-II}{title}{\UseTerm{title.boardapproval}}
+\SetForm{boardapproval-II}{opening}{\UseTerm{desc.studentwork.full}}
+
+%%%
+\SetForm{boardapproval-II}{body}{
+  \begin{center}
+    \UseLabel{board}
+  \end{center}%
+
+  \BoardDescSignature{Avaliador\DataFields{student.reviewer[1]}{narticle}}{student.reviewer[1]}
+  
+  \BoardDescSignature{Avaliador\DataFields{student.reviewer[2]}{narticle}}{student.reviewer[2]}
+  
+  \BoardDescSignature{Avaliador\DataFields{student.reviewer[3]}{narticle}}{student.reviewer[3]}
+
+  \BoardDescSignature{Suplente}{student.altreviewer[1]}
+
+  \vfill
+
+    Indicamos a nominata da Banca Examinadora acima relacionada.
+}
+
+%%%
+\SetForm{boardapproval-II}{closing}{  \SignatureDate{\UseLabel{signature.advisor}}}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%
+%%  advisor's approval - II
+%%%%%%%%%%%%%%%
+\SetForm{advisorsapproval-II}{heading}{\UseTerm{title.tccII}}
+\SetForm{advisorsapproval-II}{bookmark}{\pdfTermBookMark{book.advisorapproval-II}}
+\SetForm{advisorsapproval-II}{title}{\UseTerm{title.advisorsapproval-II}}
+\SetForm{advisorsapproval-II}{opening}{\UseTerm{desc.studentwork.full}}
+
+%%%
+\SetForm{advisorsapproval-II}{body}{%
+  {\bf Parecer d\DataFields{student.advisor}{article} Orientador\DataFields{student.advisor}{narticle}}\footnote{Preenchimento Obrigatório}
+
+  \vfill%
+
+   \DataFields{student.advisor}{assessment}
+}
+
+%%%
+\SetForm{advisorsapproval-II}{closing}{%
+  \SignatureDate{\UseLabel{signature.advisor}}
+  \vfill%
+
+  \SignatureDate{\UseLabel{signature.student}}
+ }
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  receipts - II
+%%%%%%%%%%%%%%%
+\SetForm{receipts-II}{heading}{\UseTerm{title.tccII}}
+\SetForm{receipts-II}{bookmark}{\pdfTermBookMark{book.receipts-II}}
+\SetForm{receipts-II}{title}{\UseTerm{title.receipts}}
+\SetForm{receipts-II}{footnote}{\UseTerm{footnote.receipts}}
+
+%%%
+\SetForm{receipts-II}{opening}{
+  \UseTerm{desc.studentwork.full}\\
+
+  \noindent Membro da Banca : {\bf \DataFields{student.reviewer}{name} }
+}
+
+%%%
+\SetForm{receipts-II}{body}{ 
+  Declaro que encontra-se em minha posse cópia da versão final do \Activity[tccII]{name} em \Activity[course]{name}  d\DataFields{student}{article} alun\DataFields{student}{article} 
+  \textbf{\DataFields{student}{name}}.
+
+  \vfill%
+
+ \SignatureDate{\UseLabel{signature.board}}
+ 
+}
+
+%%%
+\SetForm{receipts-II}{closing}{}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  examiner's form - II
+%%%%%%%%%%%%%%%
+\SetForm{examinersform-II}{heading}{\UseTerm{title.tccII}}
+\SetForm{examinersform-II}{bookmark}{\pdfTermBookMark{book.reviewersform-II}}
+\SetForm{examinersform-II}{title}{\UseTerm{title.reviewersform}}
+\SetForm{examinersform-II}{footnote}{\UseTerm{footnote.reviewersform}}
+
+%%%
+\SetForm{examinersform-II}{opening}{\UseTerm{desc.studentwork}
+  
+  \noindent\UseLabel{reviewer}: \textbf{\DataFields{student.reviewer}{name}}
+}
+
+%%%
+\SetForm{examinersform-II}{body}{ 
+A nota (variando de zero a dez) atribuída por cada membro da banca examinadora será dada considerando o desempenho d\DataFields{student}{article} alun\DataFields{student}{article} nos 3 pontos apresentados na tabela abaixo.
+
+  \vfill%
+
+  \begin{center}
+    \begin{tabular}{|c|c|c|}
+      \hline%
+      \UseLabel{TCC-II.pointA} & \UseLabel{TCC-II.pointB} & \UseLabel{TCC-II.pointC} \\\hline%
+      & & \\\hline
+    \end{tabular}
+  \end{center}
+}
+
+%%%
+\SetForm{examinersform-II}{closing}{ 
+  
+ \SignatureDate{\UseLabel{signature.reviewer}}
+  \vfill%
+  \begin{description}
+    \item[Observações:] \ \\A nota final, de cada membro da banca examinadora, será calculada conforme:\\[2mm] {\bf Nota Final = \UseConst{TCC-II.weightA}\ x \UseLabel{TCC-II.pointA}\  + \UseConst{TCC-II.weightB}\ x \UseLabel{TCC-II.pointB}\  + \UseConst{TCC-II.weightC}\ x \UseLabel{TCC-II.pointC}\ }\\[2mm] A média final da atividade será dada pela média das notas finais atribuidas por cada um dos membros da banca examinadora.
+  \end{description}
+}
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%
+%%  examiner's form - II
+%%%%%%%%%%%%%%%
+\SetForm{correctionsform-II}{heading}{\UseTerm{title.tccII}}
+\SetForm{correctionsform-II}{bookmark}{\pdfTermBookMark{book.correctionsform-II}}
+\SetForm{correctionsform-II}{title}{\UseTerm{title.correctionsform}}
+\SetForm{correctionsform-II}{footnote}{\UseTerm{footnote.correctionsform}}
+
+%%%
+\SetForm{correctionsform-II}{opening}{\UseTerm{desc.studentwork}
+  
+    \noindent\UseLabel{reviewer}: \textbf{\DataFields{student.reviewer}{name}}
+
+}
+
+%%%
+\SetForm{correctionsform-II}{body}{  \resizebox{0.9\textwidth}{!}{
+ \parbox[t]{.9\textwidth}{
+ O texto submetido:
+ 
+    \begin{enumerate}[tcc,nosep]
+      \item[$\Box$ a)] Está adequado, 
+        \begin{enumerate}
+          \item[$\Box$ a.1)] dispensando correções do texto.
+          \item[$\Box$ a.2)] sendo necessário correções, conforme a seguir (e anotações anexas):   
+            \begin{tabular}{llp{2em}ll}
+              $\Box$ & Ortográfica & & $\Box$ & Regras de Escrita \\
+              $\Box$ & Resumo      & & $\Box$ & Abstract \\
+              $\Box$ & Introdução  & & $\Box$ & Conclusões \\
+              $\Box$ & Resultados  & & $\Box$ & Corpo do Trabalho \\
+              $\Box$ & Mais exemplos  & & $\Box$ & Equações \\
+              $\Box$ & Figuras     & & $\Box$ & Tabelas \\
+              $\Box$ & Índice      & &  &  \\
+            \end{tabular}
+        \end{enumerate}
+      \item[$\Box$ b)] Necessita ser revisto/re-escrito, estando em exame\footnotemark[2]\hspace{-0.1em}, e: 
+        \begin{itemize}
+          \item[$\Box$ b.1)] basta a revisão final do texto pelo orientador.
+          \item[$\Box$ b.2)] revisarei o trabalho depois de corrigido.
+        \end{itemize}
+      \item[]
+	    \item[$\Box$] Outras considerações (se necessário): \BlankLines[-1ex]{6}
+	\end{enumerate}
+}  
+}
+  \footnotetext[2]{Neste caso \DataFields{student}{article} alun\DataFields{student}{article} receberá conceito final C ou D, conforme revisão final do texto.}
+}
+
+%%%
+\SetForm{correctionsform-II}{closing}{  \SignatureDate{\UseLabel{signature.reviewer}}
+ }
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%
+%%  rectify approval - II
+%%%%%%%%%%%%%%%
+\SetForm{rectifyapproval-II}{heading}{\UseTerm{title.tccII}}
+\SetForm{rectifyapproval-II}{bookmark}{\pdfTermBookMark{book.rectifyapproval-II}}
+\SetForm{rectifyapproval-II}{title}{\UseTerm{title.rectifyapproval}}
+\SetForm{rectifyapproval-II}{opening}{\UseTerm{desc.studentwork.full}}
+
+%%%
+\SetForm{rectifyapproval-II}{body}{ 
+  \SetTerms{temp.formrefname = {Formulário de Correções}}
+  \UseTerm{desc.rectifyapproval}
+
+  \vfill
+
+  \ApprovalSignature[\UseLabel{advisor}]{\DataFields{student.advisor}{name}}
+}
+
+%%%
+\SetForm{rectifyapproval-II}{closing}{
+  \studentDistinctBoardCase
+    {
+      \studentReviewerSelect{1}
+      \ApprovalSignature{\DataFields{student.reviewer}{name}}\vfill
+    }
+    {}
+
+  \studentReviewerSelect{2}
+  \ApprovalSignature{\DataFields{student.reviewer}{name}}\vfill
+
+  \studentReviewerSelect{3}
+  \ApprovalSignature{\DataFields{student.reviewer}{name}}\vfill
+
+
+  \ApprovalSignature[\UseLabel{altreviewer.sig}]{\DataFields{student.altreviewer}{name}}
+}
+
+
+
+\NewDocumentCommand{\studentCoadvLabelCase}{}{
+  \studentCoadvCase{\UseLabel{advisors}: \color{darkerblue}\DataFields{student.advisor}{name} / \DataFields{student.coadvisor}{name}}{\UseLabel{advisor}: \color{darkerblue}\DataFields{student.advisor}{name}}
+}
+
+
+\NewDocumentCommand{\studentBoard}{s}{
+  {%%
+    \footnotesize%
+    \begin{center}%
+      \GetConst{report.tabA*}{\tmpTabA}
+      \GetConst{report.tabB*}{\tmpTabB}
+      \begin{tabular}{p{\tmpTabA}@{\ }p{\tmpTabB}@{\ }c}%\hline%
+        & \UseLabel{board} \\\hline%
+        \IfBooleanTF{#1}
+          {
+            \multirow{3}={\DataFields{student}{name}} %
+            &\DataFields{student.reviewer[1]}{name}\\%
+          }%
+          {%
+            \multirow{2}={\DataFields{student}{name}}%
+          }
+        &\DataFields{student.reviewer[2]}{name}\\%
+        &\DataFields{student.reviewer[3]}{name}\\[0.25ex]%
+%        & ~\\[-2.5ex]
+        \multicolumn{2}{l}{\studentCoadvLabelCase} \\\hline%
+      \end{tabular}%
+    \end{center}%
+  }%
+}
+
+
+\NewDocumentCommand{\studentBoardGraded}{s}
+  {
+    {\footnotesize%
+      \begin{center}%
+        \resizebox{\textwidth}{!}{%
+          \GetConst{report.tabA}{\tmpTabA}
+          \GetConst{report.tabB}{\tmpTabB}
+          \IfBooleanTF{#1}
+            {%
+              \begin{tabular}{p{\tmpTabA}@{\ }p{\tmpTabB}@{\ }c@{\ }c@{\ }c@{\ }p{0pt}@{}c@{\ }c}
+              \HeaderLine{II}
+              \studentLine*
+            }
+            {%
+              \begin{tabular}{p{\tmpTabA}@{\ }p{\tmpTabB}@{\ }c@{\ }c@{\ }c@{\ }c@{\ }c@{\ }c}
+              \HeaderLine{I}
+              \studentLine
+            }%
+            \\*\hline
+          \end{tabular}%
+        }%
+      \end{center}%
+    }%  
+  }
+
+
+
+\NewDocumentCommand{\HeaderLine}{m}{%
+     & \UseLabel{board} & \UseLabel{TCC-#1.pointA} & \UseLabel{TCC-#1.pointB} 
+     & \UseLabel{TCC-#1.pointC} & \UseLabel{TCC-#1.pointD} & \UseLabel{Ngrade} & \UseLabel{grade} \\\hline%
+}
+
+\NewDocumentCommand{\ReviewerLine}{m}{%
+  \studentReviewerCase{#1}
+    {& \hspace{-0.4em}\textcolor{red}{\DataFields{student.reviewer[#1]}{name}}}
+    {& \hspace{-0.4em}\DataFields{student.reviewer[#1]}{name}}
+  & \DataFields{student.reviewer[#1]}{pointA} & \DataFields{student.reviewer[#1]}{pointB} & \DataFields{student.reviewer[#1]}{pointC}  
+  & \DataFields{student.reviewer[#1]}{pointD} & \DataFields{student.reviewer[#1]}{grade} & %
+}
+
+\NewDocumentCommand{\studentLine}{s}{%
+  \IfBooleanTF{#1}%
+    {%
+      \multirow[c]{3}={\textbf{\DataFields{student}{name}}}%
+      \ReviewerLine{1}\\*
+    }%
+    {%
+      \multirow[c]{2}={\textbf{\DataFields{student}{name}}}%    
+    }%
+    \ReviewerLine{2}\\*%
+    \ReviewerLine{3}\\*%[0.75ex]%
+    \multicolumn{6}{l}{\studentCoadvLabelCase} & \textbf{\DataFields{student}{gradeavrg}} & \textbf{\DataFields{student}{grade}}%\\ \hline%   
+}
+
+\NewDocumentCommand{\studentExtLine}{mm}{%
+   \kill\nopagebreak\\[-2ex]%
+   \multicolumn{#1}{p{#2}}{\ \ \ \UseLabel{worktitle}: \DataFields{student}{worktitle}}\\*       
+   \multicolumn{#1}{l}{\ \ \ (\UseLabel{Nproc}: \DataFields{student}{Nproc}) \UseLabel{student.ID}: \DataFields{student}{ID} / \DataFields{student}{email}}\\*  
+%%%   \multicolumn{#1}{l}{\ \ \ \color{darkerblue}\UseLabel{advisor.email}: \DataFields{student.advisor}{email} \UseLabel{phone}: \DataFields{student.advisor}{phone}}\\*          
+%%%   \multicolumn{#1}{p{#2}}{\ \ \ \color{darkerred}\UseLabel{board}: \DataFields{student.reviewer[1]}{email} (\DataFields{student.reviewer[1]}{phone}) / \DataFields{student.reviewer[2]}{email} (\DataFields{student.reviewer[2]}{phone}) / \DataFields{student.reviewer[3]}{email} (\DataFields{student.reviewer[3]}{phone})}\\*          
+
+   \multicolumn{#1}{p{#2}}{{\ \ \ \color{darkerblue}\bf \DataFields{student.advisor}{email} (\DataFields{student.advisor}{phone})} ~~ - ~~
+   {\color{darkerred} \studentReviewerSetCase{2}{\DataFields{student.reviewer[2]}{email} (\DataFields{student.reviewer[2]}{phone})}{} / \studentReviewerSetCase{3}{\DataFields{student.reviewer[3]}{email} (\DataFields{student.reviewer[3]}{phone})}{}}}\\*          
+
+   \multicolumn{#1}{p{#2}}{\ \ \ \UseLabel{remarks}: {\color{red}\textbf{\DataFields{student}{remarks}}}}%\\ \hline
+}
+
+
+
+%%%%%%%%%%%%%%%
+%%  referall letter- I
+%%%%%%%%%%%%%%%
+\SetForm{referral-I}{heading}{\UseTerm{title.tccI}}
+\SetForm{referral-I}{bookmark}{\pdfTermBookMark{book.referral-I}}
+
+\SetForm{referral-I}{title}{\UseTerm{semester}}
+\SetForm{referral-I}{opening}{\UseTerm{desc.sacad}}
+
+%%%
+\SetForm{referral-I}{body}{  
+
+\SetConsts{%
+  report.tabspec = {p{\UseConst{report.tabA}}@{\ }p{\UseConst{report.tabB}}@{\ }c@{\ }c@{\ }c@{\ }c@{\ }c@{\ }c}
+}
+
+\studentCase%
+  {
+    \DataFields{student}{Article} alun\DataFields{student}{article} \emph{\DataFields{student}{name}}\ submeteu o trabalho intitulado \emph{\DataFields{student}{worktitle}}, tendo sido \textbf{APROVAD\DataFields{student}{Article}} com conceito final \textbf{\DataFields{student}{grade}}, conforme quadro de notas abaixo.\\[2em]
+    \studentBoardGraded
+  }
+  {
+    \DataFields{student}{Article} alun\DataFields{student}{article} \emph{\DataFields{student}{name}}\ submeteu o trabalho intitulado \emph{\DataFields{student}{worktitle}}, tendo sido \textbf{REPROVAD\DataFields{student}{Article}} com conceito final \textbf{\DataFields{student}{grade}}, conforme quadro de notas abaixo.\\[2em]
+     \studentBoardGraded
+ }
+  {
+    \DataFields{student}{Article} alun\DataFields{student}{article} \emph{\DataFields{student}{name}}\ submeteu o trabalho intitulado \emph{\DataFields{student}{worktitle}}, não tendo sido considerad\DataFields{student}{article} apt\DataFields{student}{article} pela banca listada abaixo. Posto em exame, \DataFields{student}{article} mesm\DataFields{student}{article} foi \textbf{APROVAD\DataFields{student}{Article}} com conceito final \textbf{\DataFields{student}{grade}}.\\[2em]
+    \studentBoard
+  }
+  {
+    \DataFields{student}{Article} alun\DataFields{student}{article} \emph{\DataFields{student}{name}}\ submeteu o trabalho intitulado \emph{\DataFields{student}{worktitle}}, não tendo sido considerad\DataFields{student}{article} apt\DataFields{student}{article} pela banca listada abaixo. Posto em exame, \DataFields{student}{article} mesm\DataFields{student}{article} foi \textbf{REPROVAD\DataFields{student}{Article}} com conceito final \textbf{\DataFields{student}{grade}}.\\[2em]
+    \studentBoard
+  }
+  {
+    \DataFields{student}{Article} alun\DataFields{student}{article} \emph{\DataFields{student}{name}}\ não concluiu o trabalho de conclusão de Curso tendo sido \textbf{REPROVAD\DataFields{student}{Article}}  com conceito final \textbf{FF}.
+  }
+}
+
+%%%
+\SetForm{referral-I}{closing}{
+    \begin{flushright}
+    Porto Alegre, \UseConst{publ.day} de \UseConst{publ.month} de \UseConst{publ.year}.\\[2em]
+
+    \ActivitySelect{tccI}
+    \DataFields{activity.coord}{name}
+    
+    \DataFields{activity.coord}{title}
+    \end{flushright}
+  \vfill
+}
+
+%%%%%%%%%%%%%%%
+%%  referall letter- II
+%%%%%%%%%%%%%%%
+\SetForm{referral-II}{heading}{\UseTerm{title.tccII}}
+\SetForm{referral-II}{bookmark}{\pdfTermBookMark{book.referral-II}}
+
+\SetForm{referral-II}{title}{\UseTerm{semester}}
+\SetForm{referral-II}{opening}{\UseTerm{desc.sacad}}
+
+%%%
+\SetForm{referral-II}{body}{  %
+
+\studentCase%
+  {
+    \DataFields{student}{Article} alun\DataFields{student}{article} \emph{\DataFields{student}{name}}\ apresentou o trabalho intitulado \emph{\DataFields{student}{worktitle}}\  no dia \DataFields{student}{board-date}, tendo sido \textbf{APROVAD\DataFields{student}{Article}} com conceito final \textbf{\DataFields{student}{grade}}, conforme quadro de notas abaixo.\\[2em]
+    \studentBoardGraded*
+  }%
+  {
+    \DataFields{student}{Article} alun\DataFields{student}{article} \emph{\DataFields{student}{name}}\ apresentou o trabalho intitulado \emph{\DataFields{student}{worktitle}}\  no dia \DataFields{student}{board-date}, tendo sido \textbf{REPROVAD\DataFields{student}{Article}} com conceito final \textbf{\DataFields{student}{grade}}, conforme quadro de notas abaixo.\\[2em]
+    \studentBoardGraded*
+  }%
+  {
+    \DataFields{student}{Article} alun\DataFields{student}{article} \emph{\DataFields{student}{name}}\ apresentou o trabalho intitulado \emph{\DataFields{student}{worktitle}}\  no dia  \DataFields{student}{board-date}, não tendo sido considerad\DataFields{student}{article} apt\DataFields{student}{article} pela banca listada abaixo. Posto em exame, \DataFields{student}{article} mesm\DataFields{student}{article} foi \textbf{APROVAD\DataFields{student}{Article}} com conceito final \textbf{\DataFields{student}{grade}}.\\[2em]
+    \studentBoard*
+  }%
+  {
+    \DataFields{student}{Article} alun\DataFields{student}{article} \emph{\DataFields{student}{name}}\ apresentou o trabalho intitulado \emph{\DataFields{student}{worktitle}}\  no dia  \DataFields{student}{board-date}, não tendo sido considerad\DataFields{student}{article} apt\DataFields{student}{article} pela banca listada abaixo. Posto em exame, \DataFields{student}{article} mesm\DataFields{student}{article} foi \textbf{REPROVAD\DataFields{student}{Article}} com conceito final \textbf{\DataFields{student}{grade}}.\\[2em]
+    \studentBoard*
+  }%
+  {
+    \DataFields{student}{Article} alun\DataFields{student}{article} \emph{\DataFields{student}{name}}\ não concluiu o trabalho de conclusão de Curso tendo sido \textbf{REPROVAD\DataFields{student}{Article}}  com conceito final \textbf{FF}.
+  }
+}
+
+%%%
+\SetForm{referral-II}{closing}{%
+    \begin{flushright}
+    Porto Alegre, \UseConst{publ.day} de \UseConst{publ.month} de \UseConst{publ.year}.\\[2em]
+
+    \ActivitySelect{tccII}
+    \DataFields{activity.coord}{name}
+    
+    \DataFields{activity.coord}{title}
+    \end{flushright}
+  \vfill
+}
+
+
+\ExplSyntaxOn
+
+\cs_new:Npn \__ufrgscca_hline:nnn #1#2#3 {\noalign{\vskip #1\vskip 0pt\hrule height #2\arrayrulewidth\vskip #3\vskip 0pt\penalty 10000}}
+\cs_new:Npn \__ufrgscca_hline:n #1       {\__ufrgscca_hline:nnn {-0.5ex}{#1}{0.25ex}}
+\cs_new:Npn \__ufrgscca_hline:           {\__ufrgscca_hline:nnn {-0.5ex}{0.5}{0.25ex}}
+
+\cs_new_protected:Npn \reportBody #1#2
+  {
+    \GetConst{report.tabA}{\tmpTabA}
+    \GetConst{report.tabB}{\tmpTabB}
+    \GetConst{report.tabC}{\tmpTabC}
+    \GetConst{report.tabD}{\tmpTabD}
+    \GetConst{report.tabE}{\tmpTabE}
+    \GetConst{report.tabEx}{\tmpTabEx}
+    \GetConst{report.tabF}{\tmpTabF}
+    \GetConst{report.tabG}{\tmpTabG}
+    \str_case:nn {#1}
+      {
+        {I} 
+          {
+            \ActivitySelect{tccI}
+            \begin{longtable}
+              {
+                p{\tmpTabA}@{\ }
+                p{\tmpTabB}@{\ }
+                p{\tmpTabC}@{\ }
+                p{\tmpTabD}@{\ }
+                p{\tmpTabE}@{\ }
+                p{\tmpTabEx}@{\ }
+                p{\tmpTabF}@{\ }
+                p{\tmpTabG}
+              }
+          }
+        {II}
+          {
+            \ActivitySelect{tccII}
+            \begin{longtable}
+              {
+                p{\tmpTabA}@{\ }
+                p{\tmpTabB}@{\ }
+                p{\tmpTabC}@{\ }
+                p{\tmpTabD}@{\ }
+                p{\tmpTabE}@{\ }
+                p{0pt}@{}
+                p{\tmpTabF}@{\ }
+                p{\tmpTabG}
+              }
+          }
+      }
+    \HeaderLine{#1}
+    \GetConst{report.tabMult.#1}{\tmpTabMult}
+    \seq_map_inline:Nn \l__ufrgscca_baselist_graded_seq
+      {
+        \studentselect{##1}
+%        \__ufrgscca_student_emptyfields_if_none:
+        \__ufrgscca_emptyterm_if_none:nnn {3}{student.reviewer}{}
+        #2\\\hline
+        \studentExtLine{7}{\tmpTabMult}\\\hline
+        \bool_if:nT {\l__ufrgscca_checklist_bool}
+        {
+          \multicolumn{7}{l}
+            {
+              \begin{tabular}{llllll}
+                \__ufrgscca_checktable_lines:nn {L1,L2,L3}{C1,C2,C3,C4,C5,C6}
+              \end{tabular}
+            }\\\hline     
+        }
+      }
+    \__ufrgscca_miss_case:nnnnn 
+      {7} {\tmpTabMult}
+      {\l__ufrgscca_baselist_ff_seq}
+      {Desistentes~ com~ conceito~FF~ (2o ~ semestre)}
+      {red}
+    \__ufrgscca_miss_case:nnnnn 
+      {7} {\tmpTabMult}
+      {\l__ufrgscca_baselist_dismiss_seq}
+      {Desistentes~ sem~ conceito~ (1o ~ semestre)}
+      {magenta}
+    \__ufrgscca_miss_case:nnnnn 
+      {7} {\tmpTabMult}
+      {\l__ufrgscca_baselist_other_seq}
+      {Outros~ (não~ matriculados)}
+      {teal}
+    \end{longtable}  
+  }
+
+\cs_new_protected:Npn \__ufrgscca_miss_case:nnnnn #1#2#3#4#5
+  {
+    \seq_if_empty:NF #3
+      {
+        &\\\pagebreak
+        \multicolumn{#1}{l}{\textbf{\color{#5}#4}}\\\hline
+        \seq_map_inline:Nn #3 
+          {
+            \studentselect{##1}
+            \__ufrgscca_emptyterm_if_none:nnn {3}{student.reviewer}{}
+            &\\*
+            \multicolumn{#1}{l}{\textbf{\color{#5}\DataFields{student}{name}}}\\*
+            \studentExtLine{#1}{#2}\\*
+            \multicolumn{#1}{l}{\studentCoadvLabelCase}\\ \hline
+          }     
+      }
+  }
+
+\ExplSyntaxOff
+
+%%%%%%%%%%%%%%%
+%%  report TCC - I
+%%%%%%%%%%%%%%%
+\SetForm{report-I}{top}{}
+\SetForm{report-I}{heading}{\vspace*{-5ex}\UseTerm{title.tccI}~ - ~\textbf{\UseTerm{semester}}}
+\SetForm{report-I}{bookmark}{\pdfTermBookMark{book.report-I}}
+
+\SetForm{report-I}{preopening}{}
+
+%%%
+\SetForm{report-I}{opening}{  %
+  { \vspace*{-5ex}\tiny
+    \reportBody {I}{\studentLine}
+  }
+}
+
+%%%
+%\SetForm{report-I}{closing}{}
+
+
+%%%%%%%%%%%%%%%
+%%  report TCC - II
+%%%%%%%%%%%%%%%
+\SetForm{report-II}{top}{}
+\SetForm{report-II}{heading}{\vspace*{-5ex}\UseTerm{title.tccII}~ - ~\textbf{\UseTerm{semester}}}
+\SetForm{report-II}{bookmark}{\pdfTermBookMark{book.report-II}}
+
+\SetForm{report-II}{preopening}{}  %
+%%%
+\SetForm{report-II}{opening}{  %
+  { \vspace{-2ex}\tiny
+    \reportBody {II}{\studentLine*}
+  }
+}
+
+
+%%%
+%\SetForm{report-II}{closing}{}
+
+
+%%%%%%%%%%%%%%%
+%%  Boards TCC - II
+%%%%%%%%%%%%%%%
+\SetForm{boards}{heading}{\UseTerm{title.tccII}}
+\SetForm{boards}{bookmark}{\pdfTermBookMark{book.boards}}
+
+\SetForm{boards}{title}{\UseTerm{board.title}}
+\SetForm{boards}{opening}{}
+
+\ExplSyntaxOn
+%%%
+\SetForm{boards}{opening}{  %
+  {\footnotesize
+    \GetConst{board.tabA}{\tmpTabA}
+    \GetConst{board.tabB}{\tmpTabB}
+    \GetConst{board.tabC}{\tmpTabC}
+    \GetConst{board.tabD}{\tmpTabD}
+    \GetConst{board.tabAll}{\tmpTabAll}
+    \begin{longtable}{p{\tmpTabA}p{\tmpTabB}p{\tmpTabC}p{\tmpTabD}}%
+    %\multicolumn{4}{c}{\UseTerm{board.title}}\\\hline
+    \hline
+    \tl_gclear:N \l__ufrgscca_daytmpa_tl
+    \tl_gclear:N \l__ufrgscca_daytmpb_tl
+    \seq_map_inline:cn {l__ufrgscca_baselist_graded_seq} 
+      {
+        \starray_set_iter_from_hash:nn {student} {#1}
+        \starray_term_parser:n {student}
+        \tl_gset:Ne \l__ufrgscca_daytmpb_tl {\starray_parsed_get_prop:n{board-date}}
+        \tl_gset:Ne \l__ufrgscca_daytmpc_tl {\UseConst{date:\l__ufrgscca_daytmpb_tl}}
+        \studentNewPageCase
+          {\kill\pagebreak\tl_gset:Nn \l__ufrgscca_daytmpa_tl {}}
+          {}
+        \tl_if_eq:NNF \l__ufrgscca_daytmpa_tl \l__ufrgscca_daytmpb_tl
+          {
+            &\multicolumn{3}{r}{\textbf{\l__ufrgscca_daytmpc_tl\  ~- ~ \l__ufrgscca_daytmpb_tl}}\\*
+            \textsc{\UseLabel{student.gen}} & \textsc{\UseLabel{advisor.gen}} & \textsc{\UseLabel{board}} & \textsc{\UseLabel{boardtime.gen}}\\*\hline
+            \tl_gset:Ne \l__ufrgscca_daytmpa_tl \l__ufrgscca_daytmpb_tl
+          }
+        \multirow{4}={\textbf{\DataFields{student}{name}}} 
+        & \multirow{4}={
+           \studentCoadvCase
+             {\hspace{-0.6em}\DataFields{student.advisor}{name}\\[1mm]\hspace{-0.6em}\DataFields{student.coadvisor}{name}}
+             {\hspace{-0.6em}\DataFields{student.advisor}{name}} } 
+        & \DataFields{student.reviewer[1]}{name} 
+        & \multirow{4}={ \DataFields{student}{board-time}\\[1mm]\DataFields{student}{board-local} }\\*
+        && \DataFields{student.reviewer[2]}{name} \\*
+        && \DataFields{student.reviewer[3]}{name} \\*
+        && ({\DataFields{student.altreviewer[1]}{name}}) \\*
+        \multicolumn{4}{p{\tmpTabAll}}
+           {\textsc{Título:}\ \emph{\DataFields{student}{worktitle}}}\\\hline      
+      }
+    \end{longtable} 
+    
+    {\scriptsize\UseTerm{board.obs}}
+  }
+}
+
+\ExplSyntaxOff
+
+%%%
+\SetForm{boards}{body}{~}
+\SetForm{boards}{closing}{~}
+
+
+%%%%%%%%%%%%%%%
+%%  cocertificate
+%%%%%%%%%%%%%%%
+\SetForm{cocertificate}{heading}{\UseTerm{title.tcc}}
+\SetForm{cocertificate}{bookmark}{\pdfTermBookMark{book.cocertificate}}
+
+\SetForm{cocertificate}{title}{\UseTerm{semester}}
+\SetForm{cocertificate}{opening}{À quem interessar possa,\\ certificamos que}
+\SetForm{cocertificate}{body}{%
+  \begin{center}
+    \textsc{\DataFields{student.coadvisor}{name}}
+  \end{center}
+  \vfill
+  atuou como coorientador\DataFields{student.coadvisor}{narticle} voluntári\DataFields{student.coadvisor}{article} d\DataFields{student}{article} alun\DataFields{student}{article}\ \emph{\DataFields{student}{name}}\ no Trabalho de Conclusão de Curso intitulado \emph{\DataFields{student}{worktitle}}\ no semestre \UseTerm{semester}.
+}
+
+\SetForm{cocertificate}{closing}{%
+    \begin{flushright}
+    Porto Alegre, \UseConst{publ.day} de \UseConst{publ.month} de \UseConst{publ.year}.\\[2em]
+
+    \ActivitySelect{tccII}
+    \DataFields{activity.coord}{name}
+    
+    \DataFields{activity.coord}{title}
+    \end{flushright}
+  \vfill
+}
+
+
+
+
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+%%
+%%%%%%%%%%%%%%%
+% examiners approval (or not) signature (for rectify approval form)%
+%%%%%%%%%%%%%%%
+\ExplSyntaxOn
+\NewDocumentCommand{\ApprovalSignature}{O{\UseLabel{reviewer}}m}{%%
+  \UseTerm{corrections.ok}  \hfill Data:\rule{\l__ufrgscca_date_rule_dim}{.1pt}\\[3mm]%
+  #1: #2 \hfill  \UseLabel{signature.gen}:\rule{\l__ufrgscca_name_rule_dim}{.1pt}%
+}%
+\ExplSyntaxOff
+
+
+

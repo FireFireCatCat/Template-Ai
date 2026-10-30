@@ -1,0 +1,72 @@
+% ecv — CTAN class for a European-format CV. Decorative section apparatus
+% (hyperlinked section targets, structured entry rows) unlike anything else
+% catalogued.
+%
+% THE `english` OPTION IS REQUIRED: the class defaults to German section
+% labels (Name, Anschrift, Ausbildung, ...) unless [english] is passed — its
+% own \ProvidesClass comment ("only CVs in the german language are
+% supported") is stale; an english localisation exists (ecvNLS) and is used
+% here, verified against the compiled PDF that every section heading is
+% English.
+\documentclass[english]{ecv}
+
+\ecvName{Halvard, Kristensen}
+
+\begin{document}
+
+\begin{ecv}
+
+\ecvSec{\ecvPerson}
+\ecvEPR{Name}{\textsc{Kristensen}, Halvard}
+\ecvEPR{Addresse}{22 Nybrogata\ecvNewLine
+                 Oslo, 0250, Norway}
+\ecvEPR{Telephone}{+47--22 55 01 88}
+\ecvEPR{E-Mail}{\ecvHyperEMail{halvard.kristensen@example.com}}
+\ecvEPR{Nationality}{Norwegian}
+\ecvEPR{Date of birth}{14 June 1987}
+
+\ecvBSec{\ecvProfession}
+\ecvEFR{Period}{2019--Present}
+\ecvENR{Employer}
+       {\ecvBold{Nordvind Shipping AS}\\
+        14 Skippergata, Oslo, 0154, Norway}
+\ecvEFR{Project 2019 until Present}
+       {Fleet fuel-efficiency programme}
+\ecvENR{Position}{Senior Naval Architect}
+\ecvENR{Main responsibilities}
+       {Hull-form optimisation for four new bulk-carrier designs;
+        retrofit ballast-tank redesign that cut fuel consumption
+        across the existing fleet by 6\%.}
+
+\ecvEFR{Period}{2014--2019}
+\ecvENR{Employer}
+       {\ecvBold{Aker Solutions}\\
+        Fornebu, 1366, Norway}
+\ecvENR{Position}{Naval Architect}
+\ecvENR{Main responsibilities}
+       {Structural analysis for offshore support-vessel hulls under
+        class-society review.}
+
+\ecvBSec{\ecvEducation}
+\ecvEFR{Period}{2008--2013}
+\ecvENR{Accquired qualifications}{\ecvBold{MSc Marine Technology}}
+\ecvENR{Institute}{Norwegian University of Science and Technology}
+\ecvENR{Principal subjects}{Ship hydrodynamics, structural design}
+\ecvENR{Grade}{Avarage grade A}
+
+\ecvBSec{\ecvLanguages}
+\ecvERSub{First language}{\ecvBold{Norwegian}}
+\ecvEBSub{Other languages}
+         {English -- Read: Fluent, Write: Fluent, Talk: Fluent}
+
+\ecvBSec{\ecvAbilities}
+\ecvEBSub{Technical Skills}
+         {NAPA, ANSYS, MATLAB, hull-form CFD workflows}
+\ecvEBSub{Hobbies}
+         {Sailing, woodworking}
+
+\end{ecv}
+
+\ecvSig{Kristensen, Halvard}{Oslo}
+
+\end{document}

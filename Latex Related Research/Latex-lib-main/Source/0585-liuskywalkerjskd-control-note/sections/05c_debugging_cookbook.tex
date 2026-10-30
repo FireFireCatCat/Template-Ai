@@ -1,0 +1,296 @@
+%=============================================================================
+\section{Practical Debugging and Tuning Cookbook}
+%=============================================================================
+
+Every other chapter teaches you how to design controllers; this one teaches you what to do when they do not work. During the preparation phase, you will come back to this chapter repeatedly: what to check when the motor oscillates, which parameter to adjust when overshoot is too large, how to handle a runaway integral term. Master these patterns during practice, and you will react quickly when it matters.
+
+Debugging skill is not talent---it is practice. The difference between an experienced engineer and a frustrated beginner is not that their robots have no bugs---every real system has bugs---but the speed at which they go from ``something is wrong'' to ``I found the root cause and fixed it.'' This chapter gives you that methodology.
+
+%-----------------------------------------------------------------------------
+\subsection{The Debugging Mindset}
+%-----------------------------------------------------------------------------
+
+Before we get to specific symptoms and fixes, internalize three rules. Violating any of these will cost you hours.
+
+\textbf{Rule 1: The robot is never wrong.} If it oscillates, there is a reason. If it drifts, there is a reason. The physics is not lying to you; your model of the physics is wrong. Do not say ``the motor is acting weird.'' Say ``the motor is doing X because of Y, and I need to change Z.'' The robot executes exactly what you told it to---the question is whether what you told it matches what you intended.
+
+\textbf{Rule 2: Change ONE thing at a time.} If you change gains AND hardware simultaneously, you will never know which fixed the problem. If you change $K_p$ and $K_d$ at the same time, and the oscillation goes away, was $K_p$ too high or $K_d$ too low? You have no idea. Disciplined debugging means: change one parameter, test, observe, record. It feels slow, but it is faster than the alternative---randomly flailing through parameter space.
+
+\textbf{Rule 3: Log everything.} ``I think the motor was vibrating'' is useless. ``The velocity oscillated at 42~Hz with $\pm 200$~RPM amplitude'' is actionable. Good logs let you diagnose problems after the fact, compare before-and-after behavior, and communicate precisely with teammates. If your MCU has UART or USB logging, use it. If you have a logic analyzer, use it. If nothing else, toggle a GPIO pin in your ISR and measure the timing on a scope.
+
+%-----------------------------------------------------------------------------
+\subsection{The Diagnostic Flowchart}
+%-----------------------------------------------------------------------------
+
+When something goes wrong, your first job is to identify the \textit{symptom}. Here are the most common symptoms and their diagnostic procedures.
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Symptom: Oscillation}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Your robot is shaking, vibrating, or buzzing. This is the single most common competition-day problem.
+
+\begin{enumerate}
+    \item \textbf{Is it mechanical?} Disconnect the controller entirely. Command a constant open-loop duty cycle. Spin the motor by hand. Does the mechanism vibrate on its own? If yes, the problem is not your controller---tighten bolts, check bearings, fix backlash.
+
+    \item \textbf{Is it sensor noise?} Log the raw sensor data with the motor stationary. Is it noisy? If the encoder signal is jittering by several counts, or the IMU reading is bouncing around, that noise is being amplified by your derivative term. Add a low-pass filter (Ch2) to the sensor signal.
+
+    \item \textbf{Is $K_p$ too high?} Halve $K_p$. Does the oscillation stop or decrease significantly? If yes, you were operating past the stability margin. Reduce $K_p$ until stable, then carefully increase $K_d$ to recover performance.
+
+    \item \textbf{Is the sample rate too low?} Toggle a GPIO pin at the start and end of your control ISR. Measure the pulse width on an oscilloscope. Is the actual loop time close to the intended $T_s$? If the loop is running slower than you think, your effective gains are different from what you designed.
+
+    \item \textbf{Is there a structural resonance?} FFT the oscillation signal (or at least estimate the frequency by counting cycles on a scope). Is it at a single, sharp frequency unrelated to your PID bandwidth? If yes, you are exciting a mechanical resonance. Add a notch filter at that frequency (Ch2), or reduce $K_d$ which typically excites resonances.
+\end{enumerate}
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Symptom: Overshoot}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+The output goes past the setpoint before settling. Moderate overshoot (5--10\%) is normal and often acceptable. Excessive overshoot (>20\%) means something needs fixing.
+
+\begin{enumerate}
+    \item \textbf{Is $K_d$ too low?} The derivative term is your damping. Increase $K_d$---does overshoot decrease? If you have no derivative term at all, you are running a PI controller, which inherently overshoots on step inputs.
+
+    \item \textbf{Is $K_i$ too high?} The integral term accumulates during the transient, and the accumulated value pushes the output past the setpoint. Reduce $K_i$, or add integral separation (Ch4)---disable the integral term when the error is large, enable it only near the setpoint.
+
+    \item \textbf{Is the actuator saturating?} Log the raw controller output \textit{before} clamping. If it regularly hits the maximum, the controller is asking for more than the actuator can deliver. While saturated, the system is effectively open-loop, and the integral keeps winding up. Add anti-windup (Ch4).
+
+    \item \textbf{Is the setpoint step too aggressive?} A step change from 0 to 5000~RPM is asking for infinite acceleration at $t=0$. No physical system can do that. Add a setpoint filter or soft-start ramp (Ch2) to limit the rate of change of the reference signal.
+\end{enumerate}
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Symptom: Steady-State Error / Drift}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+The output settles, but not at the setpoint. There is a persistent offset.
+
+\begin{enumerate}
+    \item \textbf{Is there an integral term?} If $K_i = 0$, a purely PD controller will have steady-state error whenever there is a constant disturbance (gravity, friction, load). Add an integral term.
+
+    \item \textbf{Is the sensor biased?} Check your sensor calibration (Ch2b). An IMU with a 0.5\textdegree{} bias will cause a 0.5\textdegree{} steady-state error no matter how good your controller is.
+
+    \item \textbf{Is there a mechanical offset?} Gravity, belt tension, spring preload---any constant force that your controller model does not account for will appear as steady-state error. Either add feedforward compensation or let the integral term absorb it (but this is slower).
+
+    \item \textbf{Is integral windup preventing the integrator from doing its job?} Paradoxically, if your anti-windup is too aggressive, it may clamp the integral before it accumulates enough to eliminate the error. Check that your anti-windup limits (Ch4) are large enough to handle the expected steady-state load.
+\end{enumerate}
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Symptom: No Response}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+You command the motor to move. Nothing happens. This is either the easiest or the hardest problem to debug.
+
+\begin{enumerate}
+    \item \textbf{Is the motor powered?} Measure the voltage at the motor terminals with a multimeter. This sounds obvious, but blown fuses, loose connectors, and dead batteries account for a shocking number of ``my controller doesn't work'' complaints.
+
+    \item \textbf{Is the communication link alive?} For CAN-based ESCs (C610/C620), check: is the CAN bus initialized? Are you sending to the correct CAN ID? Is the ESC's status LED blinking normally? Use a logic analyzer or CAN debugger to verify frames are actually on the bus. For PWM-based drivers, check the enable pin and verify the PWM signal with an oscilloscope.
+
+    \item \textbf{Is the command polarity correct?} A positive current command should produce positive torque in the direction you expect. If the motor runs away instantly, your sign convention is inverted. For C610/C620, the 16-bit current command is signed: positive and negative correspond to opposite torque directions.
+
+    \item \textbf{Is the control loop actually running?} Toggle a GPIO pin inside your control loop ISR. Check on a scope whether it toggles at the expected rate. If it does not toggle at all, your timer interrupt is not configured correctly.
+
+    \item \textbf{Is the sign convention correct?} This is the most dangerous software bug. If positive error produces \textit{negative} output, your system is a positive feedback loop. It will not oscillate gently---it will slam to a rail instantly. Check: does a positive setpoint change produce a positive change in your control output?
+\end{enumerate}
+
+%-----------------------------------------------------------------------------
+\subsection{Common Software and Control Bugs}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+\begin{itemize}
+    \item \textbf{Sign convention error.} If positive voltage produces rotation in the direction that \textit{increases} the error instead of decreasing it, you have positive feedback. The system does not oscillate---it runs away instantly. This is the most common and most dangerous software bug. Always verify: positive error $\to$ positive output $\to$ error decreases.
+
+    \item \textbf{Variable overflow.} A 16-bit encoder counter wraps from 65535 to 0. If you compute velocity as \texttt{count\_now - count\_prev} without handling the wraparound, you get a massive spike. Similarly, the integral term can overflow if accumulated in a 16-bit integer. Use 32-bit (or floating-point) arithmetic for all PID computations.
+
+    \item \textbf{Timing errors.} Your control loop runs at the wrong frequency because the timer prescaler is misconfigured. You designed your gains for 1~kHz, but the loop actually runs at 500~Hz. Your effective $K_d$ is twice what you intended (since $K_d$ scales with sample rate), making the system much more aggressive.
+
+    \item \textbf{Data race.} The ISR updates a shared variable (encoder count, sensor reading) while the main loop is reading it. Without the \texttt{volatile} keyword (C/C++) or a proper mutex, the compiler may optimize away the read, or you may read a partially-updated value. Always declare shared variables as \texttt{volatile}, and disable interrupts briefly when reading multi-byte shared values. Example of a safe read:
+
+\begin{verbatim}
+volatile int32_t encoder_count;  // written in ISR
+
+int32_t read_encoder(void) {
+    __disable_irq();
+    int32_t val = encoder_count;
+    __enable_irq();
+    return val;
+}
+\end{verbatim}
+
+    \item \textbf{Uninitialized variables.} If you forget to initialize the integral accumulator to zero, it starts with whatever garbage value was in memory. This can cause a large transient at startup---the motor jerks violently for one cycle, then settles. Always zero all PID state variables in your initialization function.
+
+    \item \textbf{Wrong units or scaling.} Your sensor returns counts but your controller expects radians. Your PWM register takes 0--999 but your PID outputs 0--100. Unit mismatches cause gains to be off by orders of magnitude. Always document the units at each interface boundary with a comment.
+\end{itemize}
+
+\subsection{Logging PID Internals}
+
+When you are stuck, log \textit{all} internal PID variables, not just the output. A useful logging line prints the timestamp, setpoint, measurement, error, P-term, I-term, D-term, raw output, and clamped output:
+
+\begin{verbatim}
+// Call once per control cycle (or every N cycles to reduce bandwidth)
+void log_pid(uint32_t tick, float sp, float meas,
+             float p, float i, float d, float out_raw, float out) {
+    printf("%lu,%.1f,%.1f,%.2f,%.2f,%.2f,%.1f,%.1f\r\n",
+           tick, sp, meas, p, i, d, out_raw, out);
+}
+\end{verbatim}
+
+Plot these in Python (or even Excel) after the test. The P/I/D breakdown immediately reveals which term is misbehaving. If the I-term is huge while the P-term is small, you have windup. If the D-term is noisy, you need filtering. This one technique will save you more time than any other.
+
+%-----------------------------------------------------------------------------
+\subsection{PID Tuning on Real Hardware: A Complete Worked Example}
+%-----------------------------------------------------------------------------
+
+Theory is nice, but you need a concrete procedure you can follow step by step on the bench.
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{System: DJI 3508 Motor Velocity Control}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+The DJI 3508 motor with C620 ESC (brushless motor speed controller) is ubiquitous in RoboMaster competitions. The C620 is a CAN-bus device: your MCU sends a 16-bit signed current (torque) command over CAN, and the C620 handles the internal current loop, FOC commutation, and encoder reading. It reports back the rotor angle, velocity, and actual current --- also over CAN. The relevant parameters:
+\begin{itemize}
+    \item Rotor inertia (after 19:1 gearbox): approximately $J = 0.0005$~kg$\cdot$m$^2$
+    \item Torque constant: $K_t \approx 0.3$~N$\cdot$m/A
+    \item CAN protocol: one TX frame carries current commands for 4 motors; one RX frame per motor carries angle, velocity, and current feedback
+    \item Current loop: handled internally by the C620 at $\sim$10~kHz. We treat it as a fast inner loop and design only the outer velocity loop on our MCU.
+    \item Goal: velocity tracking with $<5\%$ overshoot, $<200$~ms settling time.
+\end{itemize}
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Step-by-Step Tuning Procedure}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+\textbf{Step 1: Find the oscillation gain.} Set $K_i = 0$, $K_d = 0$. Send a 500~RPM step command. Slowly increase $K_p$ from 0. At some point, the velocity will exhibit sustained, constant-amplitude oscillation. This is the \textit{critical gain}. Record $K_{p,\text{osc}} \approx 15$. Now set $K_p = 0.5 \times K_{p,\text{osc}} = 7.5$. The system should be stable but sluggish.
+
+\textbf{Step 2: Add derivative action.} Start with $K_d = 0.01$. Increase gradually. The derivative term adds damping, reducing overshoot and improving settling time. Continue increasing until overshoot is below 5\%. Typical result: $K_d \approx 0.05$. If increasing $K_d$ causes high-frequency vibration, you are amplifying sensor noise---add a low-pass filter on the derivative path.
+
+\textbf{Step 3: Add integral action slowly.} Start with $K_i = 0.5$. Send the same 500~RPM step. Check: does the steady-state error disappear? Increase $K_i$ until the steady-state error is negligible. Typical result: $K_i \approx 2.0$. If increasing $K_i$ causes overshoot to return, you have gone too far---back off and accept a slight steady-state error, or add integral separation.
+
+\textbf{Step 4: Disturbance test.} With the motor running at 500~RPM, briefly load the shaft by hand (or press a rubber block against the output). The velocity should dip and recover within 200--300~ms. If it recovers slowly, increase $K_i$ slightly. If it oscillates during recovery, decrease $K_p$ or increase $K_d$.
+
+\textbf{Step 5: Test across the operating range.} Repeat the step response at 100, 500, 2000, and 5000~RPM. The motor's behavior changes with speed (back-EMF, friction). If the controller works at 500~RPM but oscillates at 5000~RPM, you may need gain scheduling or a more conservative set of gains that work across the full range.
+
+At the end of this procedure, you should have a velocity response that rises quickly to the setpoint, overshoots by less than 5\%, and settles within 200~ms. The step response should look like a smooth rise with minimal ringing---not a sluggish crawl (under-tuned) or a violent oscillation (over-tuned).
+
+\textbf{What the response curves look like at each step:}
+\begin{itemize}
+    \item After Step~1 ($K_p$ only): slow rise with about 30\% overshoot and visible ringing (2--3 oscillations before settling). Steady-state error of maybe 5--10\%.
+    \item After Step~2 ($K_p + K_d$): faster rise, overshoot reduced to $<5\%$, settling in $\sim$150~ms. But still a persistent steady-state error.
+    \item After Step~3 ($K_p + K_i + K_d$): same fast rise and low overshoot, but now the error converges to zero within 200~ms. The integral smoothly fills in the last few percent.
+    \item Disturbance test: a brief dip of maybe 50~RPM when the load is applied, full recovery within 200--300~ms.
+\end{itemize}
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{When Ziegler-Nichols Fails}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+The Ziegler-Nichols ultimate gain method (which Step~1 above is based on) is a useful starting point, but it fails in several important cases:
+
+\begin{itemize}
+    \item \textbf{Systems with large time delay.} If the transport delay is comparable to the system time constant, Z-N gives gains that are far too aggressive. The resulting controller has almost zero phase margin.
+
+    \item \textbf{Systems with nonlinear friction.} If static friction (stiction) is significant, the oscillation test gives inconsistent results at different amplitudes. At low amplitudes the motor sticks, at high amplitudes it moves smoothly. The ``critical gain'' depends on the test amplitude, which defeats the purpose.
+
+    \item \textbf{Systems where oscillation is dangerous.} For a balance robot or a heavy manipulator arm, inducing sustained oscillation at the critical gain risks mechanical damage or injury.
+\end{itemize}
+
+In all these cases, use the manual step-by-step procedure above. Start with very low gains, increase gradually, and rely on step response measurements rather than the oscillation boundary. It is more tedious but much more forgiving.
+
+%-----------------------------------------------------------------------------
+\subsection{Common Failure Modes and Their Signatures}
+%-----------------------------------------------------------------------------
+
+Learn to recognize these patterns in your data logs. Each has a distinctive ``fingerprint'' that, once you have seen it, you will immediately identify.
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Integral Windup in Practice}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+\textbf{Signature:} After the actuator saturates, the response is sluggish in one direction, followed by violent overshoot when the error reverses.
+
+\textbf{What the time series looks like:} The output command hits the maximum limit and stays there for an extended period. During this time, the integral term keeps accumulating. When the error finally changes sign, the integral term is so large that it takes a long time to ``unwind,'' keeping the output at maximum long after it should have reversed. The result is a massive overshoot in the opposite direction.
+
+\textbf{Fix:} Implement clamping or back-calculation anti-windup (Ch4). With clamping, stop accumulating the integral when the output is saturated. With back-calculation, feed back the difference between the saturated and unsaturated output to discharge the integrator.
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Actuator Saturation}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+\textbf{Signature:} The actual response matches your simulation at low amplitudes, but diverges at high amplitudes. Performance degrades as the setpoint increases.
+
+\textbf{Diagnosis:} Log the raw controller output before clamping. If it regularly exceeds the actuator limits (e.g., the PID output is $\pm 20000$ but the motor driver accepts $\pm 16384$), your controller is asking for more than the actuator can deliver. During saturation, the system is effectively open-loop.
+
+\textbf{Fix:} Reduce gains to keep the output within the linear range, add output limiting with anti-windup, or simply accept that the system will perform slower at extreme operating points. Sometimes the answer is ``your actuator is too small for the task''---no amount of tuning can fix physics.
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Sensor Aliasing}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+\textbf{Signature:} A phantom oscillation appears at an unexpected frequency, unrelated to any PID bandwidth or mechanical resonance.
+
+\textbf{Cause:} The sensor sample rate is too low relative to the signal bandwidth. A high-frequency signal (say, 800~Hz motor vibration) sampled at 1~kHz aliases to 200~Hz (Nyquist, Ch2). The controller sees a 200~Hz disturbance that does not physically exist and tries to fight it.
+
+\textbf{Fix:} Increase the sensor sample rate to at least $2\times$ the highest signal frequency. Or, add an analog anti-aliasing filter (a simple RC low-pass) before the ADC to remove high-frequency content before sampling.
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Quantization Limit Cycling}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+\textbf{Signature:} A small, persistent oscillation around the setpoint that never dies out. The amplitude is typically 1--2 encoder counts.
+
+\textbf{Cause:} The encoder resolution is too coarse relative to the positioning accuracy you are asking for. The controller sees ``I am 1 count above the setpoint'' and commands a correction. The motor moves 1 count below. Now it is 1 count below, so it corrects back. This alternation is a \textit{limit cycle} caused by quantization.
+
+\textbf{Fix:} Add a small deadband near the setpoint (ignore errors below the quantization threshold), or use a higher-resolution encoder. The deadband should be approximately 1--2 encoder counts wide.
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+\subsubsection{Communication Latency}
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+\textbf{Signature:} Instability that worsens as CAN bus load increases, or as more devices share the communication bus.
+
+\textbf{Cause:} Variable delay in sensor readings means the controller is acting on stale data. If the delay is comparable to the loop period, it adds significant phase lag. The phase margin decreases, and the system approaches instability. Under heavy bus load, messages queue up, delays increase, and the system goes unstable.
+
+\textbf{Fix:} Reduce the controller bandwidth (lower $K_p$ and $K_d$) so the loop is robust to the delay. Alternatively, add explicit delay compensation using a Smith predictor (Ch4), which models the known delay and compensates for it in the control law.
+
+%- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Case Study: The Balance Robot That Worked Yesterday}
+
+\vspace{0.3em}
+\textbf{Scenario:} Your balance robot works perfectly on the smooth lab floor. At the competition venue, it falls over within 3 seconds on the carpet surface.
+
+\textbf{Root cause:} The carpet has much higher friction than the smooth floor. The wheels grip differently, the effective damping changes, and---most importantly---the integral term accumulates differently because the friction creates a larger constant disturbance that the integrator must fight. On smooth floor, the integrator barely activates. On carpet, it saturates.
+
+\textbf{Diagnosis:} You log the integral term on both surfaces. On smooth floor, it stays near zero. On carpet, it ramps to the saturation limit within 2 seconds and stays there. The anti-windup kicks in, but by then the robot has already tilted past the recoverable angle.
+
+\textbf{Fix (2-minute version):} Increase $K_d$ by 50\% (the physical damping from carpet partially replaces the need for derivative action, but the higher friction also creates lag that $K_d$ helps with). Reduce $K_i$ by 40\% to avoid premature saturation. Raise the anti-windup limit slightly.
+
+\textbf{Fix (proper version):} Add a friction feedforward term that estimates the friction force from the wheel velocity sign and adds a compensating torque. This removes the burden from the integral term entirely.
+
+\textbf{Lesson:} Always test on the actual competition surface before the match. And always have a ``high friction'' parameter set ready to switch to.
+\end{mdframed}
+
+\vspace{1em}
+
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Case Study: The Gimbal That Resonates at 23~Hz}
+
+\vspace{0.3em}
+\textbf{Scenario:} Your gimbal vibrates at 23~Hz. You are confused because your PID bandwidth is only 10~Hz. No PID parameter is anywhere near 23~Hz.
+
+\textbf{Root cause:} The gimbal frame has a structural resonance at 23~Hz. The derivative term in your PID has gain that extends well beyond the PID bandwidth (remember, differentiation amplifies high frequencies). At 23~Hz, the derivative term has enough gain to excite the resonance, and the resonance feeds back through the IMU, creating a self-sustaining oscillation.
+
+\textbf{Diagnosis:} FFT the motor current command. A sharp peak appears at 23~Hz. Reduce $K_d$ by 50\%---the vibration amplitude drops proportionally. This confirms the derivative term is the excitation source.
+
+\textbf{Fix (quick):} Reduce $K_d$ and accept slightly slower transient response. This is the competition-day fix.
+
+\textbf{Fix (proper):} Add a 23~Hz notch filter (Ch2) in the feedback path. The notch removes the resonance frequency from the signal that the PID sees, so the derivative term cannot excite it. The rest of the spectrum is unaffected, so transient performance is preserved. Design the notch with a Q-factor of 5--10 (narrow enough to not affect nearby frequencies, wide enough to catch the resonance even if it shifts slightly with temperature or load).
+
+\textbf{Lesson:} The PID bandwidth is not the only frequency that matters. The derivative term has gain at \textit{all} frequencies above the bandwidth. Any mechanical resonance within the derivative's effective range is a potential victim. When you design a gimbal, always characterize the structural resonances \textit{before} tuning the controller.
+\end{mdframed}
+
+\vspace{1em}
+
+\vspace{0.5em}
+
+\textbf{Final thought.} Debugging is not a sign that you did something wrong. Every real control system needs debugging. The difference between a good engineer and a frustrated student is not the absence of bugs---it is the speed at which bugs are found and fixed. The techniques in this chapter will not eliminate problems, but they will dramatically reduce the time from ``something is wrong'' to ``I know what is wrong and how to fix it.''

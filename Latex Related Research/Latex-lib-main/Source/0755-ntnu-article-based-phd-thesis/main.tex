@@ -1,0 +1,108 @@
+\documentclass[b5paper,10pt,twoside,openright]{memoir}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Load preamble from separate file %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{./style/MyPhDThesis}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Author and document details %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Ductile Fracture of Aluminium Sheet Under Combined \\ Tension-Compression Loading}
+\author{Astrid Solheim}
+\city{Trondheim}
+\country{Norway}
+\date{\today}
+\faculty{Engineering}
+\department{Structural Engineering}
+\ISBNprinted{978-82-000-0000-0}
+\ISBNelectronic{978-82-000-0000-1}
+\serialNumber{\the\year :12}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Begin PhD Thesis here %
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%
+%%%  Title page  %%%
+%%%%%%%%%%%%%%%%%%%%
+\frontmatter
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Preface, abstract, and acknowledgement %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{plain}
+\pagenumbering{roman}
+%%%%%%%%%%%
+% Preface %
+%%%%%%%%%%%
+\input{./tex/preface}
+\addcontentsline{toc}{chapter}{Preface}
+\cleardoublepage
+%%%%%%%%%%%%
+% Abstract %
+%%%%%%%%%%%%
+\input{./tex/abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\cleardoublepage
+%%%%%%%%%%%%%%%%%%%%
+% Acknowledgements %
+%%%%%%%%%%%%%%%%%%%%
+\input{./tex/acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\cleardoublepage
+%%%%%%%%%%%%%%%%%%%%%
+% Table of contents %
+%%%%%%%%%%%%%%%%%%%%%
+\tableofcontents*
+\cleardoublepage
+%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Main document %%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+\mainmatter
+%%%%%%%%%%%%%%%%%%%
+%%%% Synopsis %%%%%
+%%%%%%%%%%%%%%%%%%%
+\begingroup % Remove new page after new chapter after Synopsis
+\renewcommand{\cleardoublepage}{}
+\renewcommand{\clearpage}{}
+\titlespacing*{\chapter}{0pt}{0pt}{0pt} % Sets spacing to zero between Synopsis and Introduction
+\chapter*{{\Huge Synopsis}}
+\label{Ch:synopsis}
+\addcontentsline{toc}{part}{Synopsis}
+%%%%%%%%%%%%%
+%% Content %%
+%%%%%%%%%%%%%
+\titlespacing*{\chapter}{0pt}{0pt}{25pt}
+\input{./tex/Introduction}
+\endgroup
+\input{./tex/Objectives}
+\input{./tex/Method}
+\input{./tex/Summary}
+\input{./tex/ConclusionFurtherWork}
+\cleardoublepage
+%%%%%%%%%%%%%%%%
+%% References %%
+%%%%%%%%%%%%%%%%
+\printbibliography[title=References, heading=bibliography]
+\cleardoublepage
+%%%%%%%%%%%%%%%%%%%
+%%%% Articles %%%%%
+%%%%%%%%%%%%%%%%%%%
+\addcontentsline{toc}{part}{Articles}
+\input{./articles/Part1}
+\addcontentsline{toc}{section}{Rate-dependent necking onset in cold-rolled AA6082 sheet}
+\cleardoublepage
+\includepdf[pages=-]{./articles/Paper1.pdf}
+\cleardoublepage
+\input{./articles/Part2}
+\addcontentsline{toc}{section}{A local damage-coupled model for ductile fracture under combined tension-compression loading}
+\cleardoublepage
+\includepdf[pages=-]{./articles/Paper2.pdf}
+\cleardoublepage
+%%%%%%%%%%%%%%%%%%%
+%%%% Appendix %%%%%
+%%%%%%%%%%%%%%%%%%%
+\appendix
+\appendixpage
+\input{./Appendix/Appendix1}
+\cleardoublepage
+%%%%%%%%%%%%%%%%
+\end{document}

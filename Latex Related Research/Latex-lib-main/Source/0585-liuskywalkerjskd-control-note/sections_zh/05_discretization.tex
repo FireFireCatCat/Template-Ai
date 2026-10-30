@@ -1,0 +1,415 @@
+%=============================================================================
+\section{离散化与实现}
+%=============================================================================
+
+纸上（或 MATLAB 里）的连续时间控制器已经设计好了。接下来要把它塞进 STM32 的 1 kHz 定时器中断里跑起来。如果你把连续域设计的 $K_p = 100$ 的 PID 直接塞进 1 ms 定时器，会发生什么？答案取决于你怎么离散化——选错了方法，稳定的控制器可能变成不稳定的。
+
+\subsection{从连续到离散}
+
+连续时间传递函数 $C(s)$ 得先转成离散时间的 $C(z)$，才能写进代码。方法有好几种，各有各的取舍。
+
+\subsubsection{零阶保持（Zero-Order Hold，ZOH）}
+
+零阶保持（ZOH）假设输入在两次采样之间保持不变——DAC（数模转换器，Digital-to-Analog Converter，把单片机里的数字量转换成电压的芯片）就是这么工作的。物理上最精确的离散化方法。
+
+\textbf{核心思想：}在采样时刻之间，控制信号保持不变。我们精确计算连续系统在这种分段常数输入下的响应。
+
+对于一阶系统 $G(s) = \frac{a}{s + a}$，采样周期为 $T_s$：
+\begin{equation}
+G(z) = \frac{1 - e^{-aT_s}}{z - e^{-aT_s}}
+\end{equation}
+
+推导思路：ZOH 离散化公式为 $G(z) = (1-z^{-1})\mathcal{Z}\{G(s)/s\}$。对于 $G(s) = a/(s+a)$，连续阶跃响应为 $y(t) = 1 - e^{-at}$；采样得 $y[n] = 1 - e^{-anT_s}$；取 Z 变换再乘以 $(1-z^{-1})$ 即得结果。
+
+\textbf{适用场景：}当你希望离散系统在采样时刻与连续系统完全吻合时。MATLAB 的 \texttt{c2d(sys, Ts, 'zoh')} 使用的就是这种方法。
+
+\textbf{缺点：}对高阶系统，转换公式可能相当复杂，通常借助软件工具完成，不适合手算。
+
+\subsubsection{双线性变换（Tustin Transform，也称 Bilinear Transform）}
+
+我们能不能找到一种更聪明的映射，让连续系统的频率特性尽量保留下来？答案是用梯形积分近似——这就是双线性变换的由来。
+
+双线性变换（Tustin 变换）将 $s$ 替换为：
+\begin{equation}
+s \leftarrow \frac{2}{T_s} \cdot \frac{z - 1}{z + 1}
+\end{equation}
+
+纯粹的代数代换：把连续传递函数里的 $s$ 全换成上面的表达式，化简就完了。
+
+\textbf{示例：}一阶低通滤波器 $H(s) = \frac{\omega_c}{s + \omega_c}$ 变换后为：
+\begin{equation}
+H(z) = \frac{\omega_c T_s (z + 1)}{(2 + \omega_c T_s) z + (\omega_c T_s - 2)}
+\end{equation}
+
+\textbf{双线性变换流行的原因：}
+\begin{itemize}
+    \item 对低阶系统可以手算，计算简单。
+    \item 保持稳定性：稳定的连续系统映射到稳定的离散系统。
+    \item 低频段的频域匹配效果好。
+\end{itemize}
+
+\textbf{注意事项：}在高频处（接近奈奎斯特频率），双线性变换会引入\textbf{频率翘曲（frequency warping）}——离散滤波器的截止频率相对于连续设计发生偏移。使用\textbf{预翘曲（pre-warping）}来修正这一问题：
+\begin{equation}
+\omega_{\text{pre-warped}} = \frac{2}{T_s} \tan\left(\frac{\omega_c T_s}{2}\right)
+\end{equation}
+
+双线性变换将整个连续频率轴 $\omega \in [0, \infty)$ 压缩到有限弧段 $\omega_d \in [0, \pi/T_s)$ 上，高频被严重压缩。映射关系为 $\omega = \frac{2}{T_s}\tan\frac{\omega_d T_s}{2}$。预翘曲就是反过来：给双线性变换喂一个"拉伸"后的频率，使目标频率 $\omega_c$ 在压缩后精确落到正确位置。
+
+在连续设计中用 $\omega_{\text{pre-warped}}$ 替换 $\omega_c$，再应用双线性变换。
+
+\subsubsection{极零点匹配法（Matched Pole-Zero Method）}
+
+该方法使用 $z = e^{sT_s}$ 将连续系统的极点和零点映射到 $z$ 域。它能较好地保留时域响应特性。
+
+\textbf{适用场景：}当匹配瞬态响应比匹配频率响应更重要时。在实践中不如 ZOH 或双线性变换常用。
+
+\textbf{小结：}对于大多数竞赛应用，\textbf{双线性变换是首选方法}。简单、稳定、精度足够。需要精确的采样时刻匹配时用 ZOH。如果你使用 MATLAB，直接用 \texttt{c2d()} 让它处理数学细节即可。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{discretization_comparison.pdf}
+\caption{ZOH 与双线性变换对欠阻尼二阶系统的离散化对比（$\omega_n = 10$~rad/s，$\zeta = 0.3$，$T_s = 50$~ms）。左图：阶跃响应——ZOH 在采样时刻与连续系统完全吻合。中图：Bode 幅频图——双线性变换在奈奎斯特频率附近出现频率翘曲；预翘曲（绿色）修正了这一问题。右图：极零点图，展示了各方法如何将连续极点映射到 $z$ 平面。}
+\end{figure}
+
+\subsection{数字滤波器结构：FIR 与 IIR}
+
+学会了如何将连续时间设计转换为离散时间传递函数之后，自然而然的下一个问题是：得到的数字滤波器在代码中到底长什么样？有两种基本结构：\textbf{FIR} 和 \textbf{IIR}。理解二者的区别，对于在单片机上选择正确的实现方式至关重要。
+
+\subsubsection{FIR（有限冲激响应，Finite Impulse Response）}
+
+FIR 滤波器的输出仅由当前和过去的输入采样的加权和决定——没有反馈：
+
+\begin{equation}
+y[n] = \sum_{k=0}^{M} b_k \, x[n-k]
+\end{equation}
+
+$z$ 域表示：
+\begin{equation}
+H(z) = \sum_{k=0}^{M} b_k \, z^{-k}
+\end{equation}
+
+FIR 滤波器\textbf{只有零点}（除了 $z = 0$ 处的平凡极点外没有极点），这带来两个重要性质：
+\begin{itemize}
+    \item \textbf{永远稳定}——没有反馈就不存在失控振荡的风险。
+    \item \textbf{可以实现线性相位}——只要系数对称（$b_k = b_{M-k}$），每个频率分量的延迟相同，信号波形被完美保持。
+\end{itemize}
+
+代价是\textbf{滤波器阶数}：要实现陡峭的截止，可能需要 $M = 50$--$200$ 个抽头（tap），这意味着要存储那么多过去的采样值，每个输出采样要做那么多次乘法。
+
+\textbf{常用 FIR 设计方法：}
+\begin{itemize}
+    \item \textbf{窗函数法（Window Method）}——截断理想冲激响应，乘以窗函数（汉明窗 Hamming、布莱克曼窗 Blackman、凯泽窗 Kaiser）以减少频谱泄漏（由于冲激响应被突然截断，能量从一个频率格"洒"到相邻频率格的现象）。
+    \item \textbf{频率采样法（Frequency Sampling）}——在 DFT 采样点上指定期望的幅度响应，再做逆变换。
+    \item \textbf{Parks--McClellan（Remez）算法}——一种最优算法，最小化最大逼近误差（等纹波设计）。
+\end{itemize}
+
+\subsubsection{IIR（无限冲激响应，Infinite Impulse Response）}
+
+IIR 滤波器\textit{同时}使用过去的输入和过去的输出——存在反馈通路：
+
+\begin{equation}
+y[n] = \sum_{k=0}^{M} b_k \, x[n-k] \;-\; \sum_{k=1}^{N} a_k \, y[n-k]
+\end{equation}
+
+$z$ 域表示：
+\begin{equation}
+H(z) = \frac{\displaystyle\sum_{k=0}^{M} b_k \, z^{-k}}
+            {1 + \displaystyle\sum_{k=1}^{N} a_k \, z^{-k}}
+     = \frac{B(z)}{A(z)}
+\end{equation}
+
+IIR 滤波器\textbf{既有极点又有零点}。极点使得用很低的阶数就能实现很尖锐的频率选择性（一个 4 阶 IIR 可以超过一个 50 阶 FIR），但也带来风险：
+\begin{itemize}
+    \item \textbf{可能不稳定}——如果任何极点位于单位圆外（$|z| > 1$），输出将无界增长。
+    \item \textbf{非线性相位}——不同频率的延迟不同，信号波形会失真。
+    \item \textbf{系数敏感}——在定点单片机上，系数的舍入可能将极点推出单位圆，导致不稳定。
+\end{itemize}
+
+\textbf{经典 IIR 设计}从模拟原型出发，使用我们刚讲过的方法（双线性变换、ZOH 等）映射到离散时间：
+\begin{itemize}
+    \item \textbf{巴特沃斯（Butterworth）}——通带最大平坦，单调滚降。"香草味"选项；听起来平淡无奇，但 80\% 的情况下它就是正确的默认选择。
+    \item \textbf{切比雪夫 I 型（Chebyshev Type~I）}——通带等纹波，阻带单调。同阶数下比巴特沃斯过渡更陡，代价是通带有纹波。
+    \item \textbf{切比雪夫 II 型（Chebyshev Type~II）}——通带单调，阻带等纹波。不太常见，但在通带平坦度更重要时很有用。
+    \item \textbf{椭圆滤波器（Elliptic / Cauer）}——通带和阻带\textit{都是}等纹波。在给定阶数下过渡带最窄，但到处都有纹波。
+\end{itemize}
+
+注意：上一小节介绍的双线性变换和冲激不变法（在离散时刻对模拟滤波器的冲激响应进行采样，保留了时域波形但在高频处可能出现混叠），正是将这些模拟原型转换为离散 IIR 滤波器的工具。
+
+\subsubsection{FIR vs.\ IIR：正面对比}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{特性} & \textbf{FIR} & \textbf{IIR} \\
+\midrule
+稳定性 & 永远稳定 & 需验证（极点在单位圆内） \\
+相位 & 可实现线性相位 & 非线性相位 \\
+实现陡峭截止的阶数 & 高（50--200+） & 低（典型 4--10） \\
+每个采样的计算量 & $M+1$ 次乘法 & $M+N+1$ 次，但 $M,N$ 很小 \\
+延迟 & 较高（滤波器更长） & 较低 \\
+能否从模拟原型设计 & 否 & 能（巴特沃斯、切比雪夫、椭圆） \\
+系数量化敏感度 & 低 & 高 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{实用选择指南与 Biquad 实现}
+
+\begin{itemize}
+    \item 需要\textbf{线性相位}（音频、对称脉冲整形、通信）？用 \textbf{FIR}。
+    \item 需要\textbf{陡峭截止且计算量小}（实时控制回路、资源受限的 MCU）？用 \textbf{IIR}。
+    \item 需要\textbf{保证稳定}且不想仔细分析？用 \textbf{FIR}。
+    \item 对于高阶 IIR 滤波器，\textbf{一定}要用级联二阶段（biquad）实现，以降低系数敏感度：
+\end{itemize}
+\begin{equation}
+H(z) = \prod_{i=1}^{L}
+       \frac{b_{0i} + b_{1i}\,z^{-1} + b_{2i}\,z^{-2}}
+            {1   + a_{1i}\,z^{-1} + a_{2i}\,z^{-2}}
+\end{equation}
+
+每一段是一个"biquad"——一个二阶 IIR 滤波器，实现简单、数值稳定。$L$ 个 biquad 级联得到 $2L$ 阶滤波器，同时将系数量化效应限制在每一段内部。
+
+\textbf{示例：C 语言中的 biquad（转置直接 II 型）}
+\begin{verbatim}
+    // 一个 biquad 段——两个状态变量，数值稳定
+    float biquad(float x, float *state,
+                 float b0, float b1, float b2,
+                 float a1, float a2) {
+        float y = b0*x + state[0];
+        state[0] = b1*x - a1*y + state[1];
+        state[1] = b2*x - a2*y;
+        return y;
+    }
+\end{verbatim}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{快速决策流程}
+
+\vspace{0.3em}
+\begin{enumerate}[nosep]
+    \item 应用对相位敏感吗（例如波形对称性很重要）？$\rightarrow$ \textbf{FIR}，使用对称系数。
+    \item 实时计算很紧张吗（MCU 运行快速控制回路）？$\rightarrow$ \textbf{IIR}（巴特沃斯或切比雪夫），用级联 biquad 实现。
+    \item 滤波器阶数适中且平台内存充足？$\rightarrow$ 两者皆可；默认选 \textbf{FIR}，更简单更鲁棒。
+    \item 需要在给定阶数下实现最陡的过渡带？$\rightarrow$ \textbf{IIR}，使用椭圆原型。
+\end{enumerate}
+
+\textbf{机器人领域的经验法则：}嵌入式系统上大多数传感器平滑滤波器都是低阶 IIR（通常只是 1 阶或 2 阶巴特沃斯）。FIR 滤波器在音频处理、通信以及任何线性相位不可妥协的应用中大放异彩。
+\end{mdframed}
+
+\subsection{定点与浮点运算}
+
+竞赛中常用的微控制器（STM32F1、STM32F4）通常配有硬件浮点单元（FPU）。如果你的芯片有 FPU，\textbf{就用浮点}。更简单、更不容易出错，对大多数控制循环来说也足够快。
+
+如果你不得不使用没有 FPU 的微控制器，或者需要追求极致速度，就需要用到\textbf{定点运算（fixed-point arithmetic）}。其思路是用缩放整数来表示小数：
+\begin{equation}
+\text{fixed\_value} = \text{float\_value} \times 2^Q
+\end{equation}
+
+其中 $Q$ 是小数位数。例如，在 Q16 格式中，数值 3.14 存储为 $3.14 \times 65536 = 205{,}888$。
+
+\textbf{常见陷阱：}
+\begin{itemize}
+    \item 溢出：两个 Q16 数相乘会产生 Q32 结果，必须右移回位。
+    \item 范围与精度的取舍：小数位越多，精度越高，但表示范围越小。
+    \item 积分累积：PID 中的积分项在定点运算中很容易溢出。
+\end{itemize}
+
+\textbf{建议：}除非有充分理由，否则使用 32 位浮点。STM32F4 及以上可以在一个时钟周期内完成单精度浮点运算。
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{计算速度为何直接决定控制性能}
+
+\vspace{0.3em}
+许多初学者认为，只要算法``正确''，控制就能正常工作。这忽略了一个关键事实：\textit{所有控制算法都必须在采样周期 $T_s$ 内完成执行。}如果计算时间超过 $T_s$，控制器将错过截止时间，下一周期被延迟，等效控制频率降低。最坏情况下，系统可能变得不稳定。
+
+\textbf{具体示例。}假设速度环以 1~kHz 运行（$T_s = 1$~ms），主控为 168~MHz 的 STM32F407。不同算法的计算耗时如下：
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+\textbf{算法} & \textbf{复杂度} & \textbf{大致耗时} & \textbf{能否在 1~ms 内完成？} \\
+\midrule
+PID（3 次乘加） & $O(1)$ & $\sim$1~$\mu$s & 可以（余量 1000 倍） \\
+二阶 IIR 滤波器 & $O(1)$ & $\sim$1~$\mu$s & 可以 \\
+卡尔曼滤波器（$4 \times 4$） & $O(n^3)$，$n=4$ & $\sim$20~$\mu$s & 可以（余量 50 倍） \\
+LQR（增益矩阵乘法，$4 \times 1$） & $O(n \cdot m)$ & $\sim$2~$\mu$s & 可以 \\
+MPC（$N=10$，$n=4$，$m=2$） & $O(N \cdot n^3)$ & $\sim$200--500~$\mu$s & 勉强 \\
+EKF（含三角函数） & $O(n^3) + \text{trig}$ & $\sim$50--100~$\mu$s & 可以，但需注意 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{计算超时的后果：}
+\begin{itemize}[nosep]
+    \item \textbf{丢失更新：}执行器保持上一周期的指令多运行一个周期。系统将此视为增加的时间延迟。回忆淋浴水温的案例（第~4.1 节）：延迟越大，相位裕度越小，系统越接近失稳。
+    \item \textbf{$dt$ 不一致：}如果超时是间歇性的（有时快，有时慢），等效 $dt$ 会波动。假定 $dt$ 恒定的积分项和微分项将累积误差。这就是\textit{抖动（jitter）}，其危害往往大于恒定延迟，因为它不可预测。
+    \item \textbf{级联失效：}在串级架构中，如果内环超时，外环收到的是过期的速度数据。外环的响应品质下降，抗扰动能力——采用串级控制的核心动机——将大打折扣。
+\end{itemize}
+
+\textbf{实际诊断方法。}在 ISR（中断服务例程，Interrupt Service Routine——硬件在每个定时器周期自动调用的函数）的开始和结束处翻转一个 GPIO 引脚（通用输入输出引脚，General-Purpose I/O——可以用代码控制高低电平的数字引脚），用示波器观察脉宽。若脉宽接近 $T_s$，说明已处于危险区域。若脉宽曾超过 $T_s$，则存在必须在调参之前解决的截止时间违规。
+
+\textbf{计算过慢时的应对措施：}
+\begin{enumerate}[nosep]
+    \item \textbf{降低算法复杂度。}在约束不活跃时用 LQR 替代 MPC；在非线性不严重时用互补滤波器替代 EKF。
+    \item \textbf{离线预计算。}LQR 增益、三角函数查找表、MPC 增益序列均可在 MATLAB/Python 中计算后存为常量。
+    \item \textbf{降低控制频率。}如果系统带宽允许，将频率从 1~kHz 降至 500~Hz 可使计算预算翻倍。需检查系统时间常数是否允许（回顾：$T_s \leq \tau / 10$）。
+    \item \textbf{分层分频。}将耗时的外环以较低频率运行（如 MPC 以 100~Hz），同时保持简单的内环（PID 以 1~kHz）。内环在 MPC 更新间隔内维持控制。
+\end{enumerate}
+
+\textbf{核心认识：}最好的算法不是最复杂的算法，而是能在 $T_s$ 内可靠完成且满足性能要求的算法。一个精心调好的 PID 以 1~kHz 运行，永远优于一个在 200~Hz 下超时的 MPC。
+\end{mdframed}
+
+\subsection{采样率选择}
+
+控制循环应该跑多快？太慢则无法响应快速扰动；太快则浪费 CPU 时间（且微分项会放大量化噪声）。
+
+\textbf{经验法则：}采样率应为闭环系统带宽的 10--30 倍。
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{应用场景} & \textbf{带宽} & \textbf{采样率} \\
+\midrule
+底盘速度 & $\sim$5 Hz & 50--200 Hz \\
+云台位置 & $\sim$20 Hz & 200--1000 Hz \\
+电机电流环 & $\sim$500 Hz & 5--20 kHz \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{实际约束：}你的采样率受以下因素限制：
+\begin{itemize}
+    \item 传感器更新率（采样速度超过编码器/IMU 的更新速率毫无意义）。
+    \item 计算时间（所有控制运算必须在一个采样周期内完成）。
+    \item 通信延迟（CAN 总线、SPI、I2C 可能成为瓶颈）。
+\end{itemize}
+
+\textbf{重点：}级联控制环（位置 $\to$ 速度 $\to$ 电流）里，内环要比外环快 5--10 倍。电流环 10 kHz、速度环 1 kHz、位置环 200 Hz，是一种典型配置。
+
+\subsection{嵌入式系统实现}
+
+\subsubsection{定时器与中断配置}
+
+在大多数微控制器（STM32 等）上，控制循环运行在\textbf{定时器中断}中。定时器以固定周期 $T_s$ 触发，中断服务例程（ISR）执行控制算法。
+
+\textbf{最佳实践：}
+\begin{itemize}
+    \item 为每个控制环使用专用硬件定时器。
+    \item 通过预分频器和自动重装寄存器设置所需的定时器周期 $T_s$。
+    \item ISR \textbf{越短越好}：读传感器、计算输出、设置执行器。不要打印、不要 UART、不要动态内存分配。
+    \item ISR 与主循环共享的变量使用 \texttt{volatile} 修饰。
+    \item 正确设置中断优先级：电流环 $>$ 速度环 $>$ 位置环。
+\end{itemize}
+
+\textbf{示例（STM32 HAL）：}
+\begin{verbatim}
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM6) {  // 1 kHz control loop
+        float measurement = read_encoder();
+        float error = setpoint - measurement;
+        float output = pid_compute(&pid, error);
+        set_motor_pwm(output);
+    }
+}
+\end{verbatim}
+
+\subsubsection{计算延迟与抖动}
+
+\textbf{延迟（Latency）}是从读取传感器到施加输出之间的时间。越小越好。超过 $T_s / 2$ 时，性能会显著下降。
+
+\textbf{抖动（Jitter）}是延迟在每个周期间的变化量。如果你的控制循环通常耗时 10 $\mu$s，但偶尔因被其他中断抢占而耗时 500 $\mu$s，行为就会不一致。抖动往往比固定延迟危害更大。
+
+\textbf{如何减小抖动：}
+\begin{itemize}
+    \item 给控制定时器分配最高中断优先级。
+    \item 避免长时间全局关闭中断。
+    \item 在任何 ISR 中不要使用阻塞等待（delay、轮询）。
+    \item 对 ISR 执行时间进行剖析（profiling），确保其远小于 $T_s$。
+\end{itemize}
+
+\subsubsection{实践中的积分抗饱和}
+
+我们在 PID 章节中讨论过抗饱和（Anti-Windup），但在这里值得特别强调，因为它是真实硬件上 PID ``莫名其妙''异常的头号根源。
+
+\textbf{实践中何时会发生积分饱和？}
+\begin{itemize}
+    \item 电机电流达到限制（你在命令 20A，但 ESC 上限为 10A）。
+    \item PWM 饱和（占空比已到 100\%，无法再增加）。
+    \item 机械硬限位（云台碰到限位，轮子被堵转）。
+    \item 通信失败（命令发出但未被接收——输出实际上为零）。
+\end{itemize}
+
+\textbf{实现检查清单：}
+\begin{enumerate}
+    \item 将积分项限幅到合理范围。
+    \item 将总输出限幅到执行器的实际限制。
+    \item 输出饱和时停止积分累积（条件积分）。
+    \item 切换控制器或模式时，重置或平滑过渡积分项。
+    \item 明确测试积分饱和恢复：命令一个大阶跃，让其饱和，然后反向。
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{anti_windup.pdf}
+\caption{无抗饱和时（红色），积分项在饱和期间急剧增大，导致设定值切换后出现巨大超调。加入限幅（蓝色）后，积分项保持有界，响应干净利落。}
+\end{figure}
+
+\textbf{一个调试故事：}你的机器人轮毂电机在从堵转中恢复后剧烈振荡。你检查了 $K_p$、$K_d$——看起来没问题。你尝试降低增益——有所改善，但系统变得迟钝。真正的原因呢？积分项在堵转期间累积到了一个巨大的值，现在正在朝相反方向猛烈驱动电机。加入积分限幅后立竿见影。这种事情每个人都会遇到，你也会遇到。现在你知道该看哪里了。
+
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{从连续 PID 到 STM32 代码：完整流程}
+
+\vspace{0.3em}
+本例演示完整流程：从连续时间 PID 出发，离散化，最终在 STM32 定时器中断中实现。
+
+\textbf{第一步：连续 PID。}教科书上的 PID 传递函数：
+\[
+C(s) = K_p + \frac{K_i}{s} + K_d s
+\]
+取 $K_p = 6$，$K_i = 0.3$，$K_d = 3$，$T_s = 1\,\text{ms}$（1\,kHz 控制频率）。
+
+\textbf{第二步：Tustin 离散化。}对每一项施加双线性变换 $s \leftarrow \frac{2}{T_s}\frac{z-1}{z+1}$：
+\begin{itemize}[nosep]
+    \item \textbf{积分项：}$\frac{K_i}{s} \;\to\; \texttt{integral += Ki * Ts * 0.5 * (e + e\_prev)}$（梯形法则）
+    \item \textbf{微分项：}$K_d s \;\to\; \texttt{deriv = Kd * (e - e\_prev) / Ts}$（后向差分，更好的做法是作用于测量值）
+\end{itemize}
+
+\textbf{第三步：STM32 实现。}
+\begin{verbatim}
+// In TIM6 interrupt handler, every 1ms:
+void TIM6_DAC_IRQHandler(void) {
+    HAL_TIM_IRQHandler(&htim6);
+
+    float y = read_encoder();        // measured output
+    float r = get_setpoint();        // reference
+    float e = r - y;
+
+    // Tustin integral (trapezoidal)
+    integral += Ki * Ts * 0.5f * (e + e_prev);
+    integral = clamp(integral, -IMAX, IMAX);  // anti-windup
+
+    // Derivative on measurement (avoids derivative kick)
+    float dy = (y - y_prev) / Ts;
+
+    // PID output
+    float u = Kp * e + integral - Kd * dy;
+    u = clamp(u, -UMAX, UMAX);
+
+    set_pwm(u);  // actuator output
+
+    e_prev = e;
+    y_prev = y;
+}
+\end{verbatim}
+
+\textbf{关键实现细节：}
+\begin{enumerate}[nosep]
+    \item \textbf{微分作用于测量值}（$-K_d \dot{y}$），而非误差（$K_d \dot{e}$）。设定值 $r$ 的阶跃变化会使 $\dot{e}$ 产生无穷大尖峰，猛击执行器。使用 $\dot{y}$ 可避免``微分冲击''。
+    \item \textbf{积分限幅}防止执行器饱和时的积分饱和。
+    \item \textbf{输出限幅}确保 PWM 在硬件极限范围内。
+    \item 在\textbf{无 FPU 的 MCU} 上避免浮点运算——改用定点 Q16 或 Q24 算术。
+    \item \textbf{所有状态变量}（\texttt{integral}、\texttt{e\_prev}、\texttt{y\_prev}）为 \texttt{static} 或文件作用域全局变量，在 ISR 调用间持久保存。
+\end{enumerate}
+\end{mdframed}

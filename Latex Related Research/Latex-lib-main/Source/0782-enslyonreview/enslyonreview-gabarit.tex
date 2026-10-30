@@ -1,0 +1,252 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  enslyonreview-gabarit.tex — blank template for the M2 Biosciences
+%  bibliographic review (UE "Analyse bibliographique", Current Opinion style)
+%
+%  New to LaTeX? Everything between \begin{document} and \end{document} is
+%  what actually gets printed; everything above \begin{document} (the
+%  "preamble") only configures the document and never appears in the PDF.
+%  A command looks like \commandname{argument} — curly braces {} wrap the
+%  text you give it; a "%" starts a comment (like this line) and is ignored
+%  by LaTeX, so feel free to leave these notes in place while you write.
+%
+%  → Fill in the fields below, then write your sections.
+%  → For a fully worked example, open enslyonreview-exemple.tex (same
+%    structure, real content: figures, a table, 50 cited references).
+%  → Full guide, with the rendered result of every command: enslyonreview.pdf
+%
+%  On Overleaf: this file is detected automatically as the root document,
+%  and biber (the bibliography processor) runs automatically on every
+%  compile.
+%  Locally: pdflatex enslyonreview-gabarit → biber enslyonreview-gabarit
+%           → pdflatex enslyonreview-gabarit → pdflatex enslyonreview-gabarit
+%  (Yes, four steps — that repetition is normal for a document with a
+%  bibliography; see enslyonreview.pdf, section "Compilation", for why.)
+%
+%  Project files:
+%    enslyonreview-gabarit.tex ← this file (fill in and compile)
+%    enslyonreview-exemple.tex ← fully worked example (for reference)
+%    enslyonreview.cls         ← the class (same folder, or on TEXMFHOME)
+%    enslyonreview.dbx         ← extra bibliography fields (pmid/pmcid/
+%                                 interest) — keep next to the .cls,
+%                                 never edit it
+%    references.bib            ← your reference database (a Zotero export)
+%    figures/                  ← your images (pdf, png, jpg...)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  THE "CURRENT OPINION" STYLE — what this class reproduces
+% ═══════════════════════════════════════════════════════════════════════════
+%  Conventions observed in the review_M2.ott template and in an already
+%  finished, approved review (not rules LaTeX forces on you, but the format
+%  this UE expects):
+%    ✓ Section headings with NO number ("Introduction", not "1. Introduction")
+%    ✓ Full-width title block: title, author, affiliation/date, keywords,
+%      abstract — printed before the text switches to two columns
+%    ✓ Abstract as a single paragraph, with NO bibliographic reference
+%    ✓ Citations as bracketed numbers [1], compressed into ranges like
+%      [8-10] for consecutive references
+%    ✓ References flagged "of special interest" (•) / "of outstanding
+%      interest" (••), each with a one-sentence note on why it matters
+%    ✓ Figures/tables spanning the full width (figure*/table*) or a single
+%      column (figure/table), plus "Box N." call-out panels for a side point
+%  Every command below, with what it actually looks like once compiled, is
+%  explained in enslyonreview.pdf.
+% ═══════════════════════════════════════════════════════════════════════════
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  UE "ANALYSE BIBLIOGRAPHIQUE" — OFFICIAL GUIDELINES  (keep these comments
+%  during writing; source: F. Roudier's "Guidelines for the bibliographic
+%  analysis course", 2025–2026 cohort — confirm with him that the numbers
+%  below still hold for your own year before submitting)
+% ═══════════════════════════════════════════════════════════════════════════
+%  SUBJECT
+%    ✓ Connected to your internship's research topic, but with a LARGER
+%      scope (not redundant with your internship report's introduction)
+%    ✓ A field broad enough for a significant bibliographic analysis
+%    ✓ Recent scientific advances; not covered by a recently published review
+%    ✓ Compatible with the publication standards of review articles such as
+%      Current Opinion (which is exactly what this class reproduces)
+%    ✓ Proposed with your internship supervisor, then validated by F. Roudier
+%
+%  LENGTH & DISPLAY ITEMS
+%    30-50 references · ~25 000 characters · 3-5 figures/tables
+%    → "Specific guidelines to format the review, the artwork and the
+%      references" are announced as being communicated separately/later
+%      each year — review_M2.ott and this class follow the format of an
+%      already-approved review (see enslyonreview-exemple.tex) in the
+%      absence of a more detailed written spec
+%
+%  SUBMISSION
+%    PDF, submitted on the Portal — check the CURRENT year's exact deadline
+%    with F. Roudier
+% ═══════════════════════════════════════════════════════════════════════════
+
+% ── COLOUR THEME ─────────────────────────────────────────────────────────
+% This is the very first command a LaTeX document needs: \documentclass
+% tells LaTeX which class (i.e. which set of formatting rules) to use — here,
+% enslyonreview. The optional [name] in square brackets is a "class option";
+% for this class it picks a colour theme.
+%
+% 23 themes are available; "orange" (the default — used when you pass no
+% option at all, as below) is the official rust/peach colour scheme of the
+% .ott template — keep it for your final version. "orangeens" is the
+% official ENS de Lyon institutional orange instead (different from the
+% .ott's own orange — same colour as enslyonstage's default theme). The
+% other 21 are just for your own experiments:
+%   orangeens · violet · blue · red · green · teal · gray · navy · azure ·
+%   indigo · midnight · slate · purple · pink · crimson · wine · amber ·
+%   gold · brown · lime · forest · cyan
+\documentclass{enslyonreview}
+% \documentclass[blue]{enslyonreview}       % ← uncomment to try another theme
+% \documentclass[palatino]{enslyonreview}   % ← Palatino instead of Times (newtx)
+% \documentclass[xcharter]{enslyonreview}   % ← Charter instead of Times (newtx)
+% \documentclass[stix]{enslyonreview}       % ← STIX Two instead of Times (newtx)
+% A theme and a font option can be combined: \documentclass[blue, stix]{enslyonreview}
+
+% ── BIBLIOGRAPHY ────────────────────────────────────────────────────────────
+% This tells LaTeX which file holds your references. It uses biblatex with
+% the biber backend — compile with biber (see the compile sequence at the
+% top of this file), NOT with the older "bibtex" command.
+\addbibresource{references.bib}
+
+% ── "OF SPECIAL / OUTSTANDING INTEREST" REFERENCES (optional) ──────────────
+% Declared HERE, in this .tex file — NOT inside the .bib: a normal Zotero
+% export/re-export does not carry this annotation along, and re-exporting
+% later would silently wipe out anything you had added by hand to the .bib.
+%   \refspecialinterest{citationKey}{Why this reference matters.}
+%   \refoutstandinginterest{anotherKey}{Why this one matters even more.}
+% The key must match EXACTLY (including capitalisation) the key of that
+% entry in your .bib file. These two commands can go anywhere before
+% \printbibliography — right here, under \addbibresource, is the easiest
+% place to keep track of them.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  METADATA — fill in every field below before compiling
+%  These feed the full-width title block (page 1), the running header on
+%  every page, and the footer.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ── TITLE ───────────────────────────────────────────────────────────────
+% The full title, printed at the top of page 1.
+\reviewtitle{Your full title here}
+
+% The short title, printed in the running header on EVERY page — a few
+% words are enough; the full title above wouldn't fit on one line there.
+\reviewshorttitle{Short title}
+
+% ── AUTHOR ──────────────────────────────────────────────────────────────
+% \textsc{} renders text in SMALL CAPITALS — used here on the surname
+% (same convention as enslyonstage). It works identically with the default
+% font and with any of the [palatino]/[xcharter]/[stix] options above.
+\reviewauthor{First name \textsc{Surname}}
+% Short form (usually just the surname), shown in the running header next
+% to the short title.
+\reviewauthorshort{Surname}
+
+% ── AFFILIATION AND DATE ────────────────────────────────────────────────
+% These two are printed together, in the peach band under the title; the
+% date alone is repeated in the footer of every page.
+\reviewaffiliation{Master Biosciences, D\'epartement de Biologie, \'Ecole Normale Sup\'erieure de Lyon.}
+\reviewdate{YYYY-MM-DD}
+
+% ── KEYWORDS ────────────────────────────────────────────────────────────
+% A handful of keywords, separated by commas — 4 to 6 is a typical length
+% in the supplied example, but the class doesn't enforce any count.
+\reviewkeywords{keyword1, keyword2, keyword3, keyword4}
+
+% ── ABSTRACT ────────────────────────────────────────────────────────────
+% A single paragraph, with NO bibliographic reference — a Current Opinion
+% convention: none of the reference reviews cite a source in their abstract.
+\reviewabstract{Your abstract here, as a single paragraph, with no
+  bibliographic reference.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Everything from here down is what actually appears in the PDF.
+
+% ── TITLE BLOCK — builds the full-width title/author/affiliation/abstract
+% block above, THEN automatically switches to two columns for everything
+% that follows. This must stay the very first command after \begin{document}.
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% You don't strictly need a \label for the Introduction (it's rarely
+% referenced from elsewhere in the document) — but do add one to any
+% section you might want to point back to later, e.g. \label{sec:mechanisms},
+% then refer to it with \cref{sec:mechanisms} (or \crefcolor{} for a bold,
+% theme-coloured version) instead of typing "see section 2" by hand — that
+% way the number stays correct even if you reorder your sections later.
+%
+% Cite a reference with \verb|\cite{citationKey}| — the numbers are
+% assigned, and compressed into ranges ([8-10]), automatically, in the
+% order each reference is first cited in the text. The key is the one used
+% for that entry in your .bib file (e.g. a Zotero export).
+
+Your introduction text, with citations to your sources\ldots
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Your first part}
+\label{sec:part1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Each major section typically covers one distinct mechanism or theme (see
+% enslyonreview-exemple.tex: "Nucleotide or nucleic acid degradation",
+% "Transcription inhibition"...). \subsection{} works exactly like
+% \section{} inside it, still with no number shown.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Your second part}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% ── FULL-WIDTH FIGURE (spans both columns) ────────────────────────────────
+% figure* spans both columns, plain figure stays within one — standard
+% LaTeX behaviour in two-column mode, no special macro to learn. A table
+% follows exactly the same logic with table/table*. See enslyonreview.pdf
+% (section "Figures and tables") for the other variants and a real
+% rendered example.
+%\begin{figure*}[!t]
+%  \centering
+%  \includegraphics[width=0.9\textwidth]{figures/myimage}
+%  \caption{\textbf{Short title in bold.} The rest of the caption, in
+%    normal text — self-sufficient: a reader should understand it without
+%    having to re-read the body text.}
+%  \label{fig:myimage}
+%\end{figure*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Concluding remarks}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The usual closing section in the Current Opinion format — restates the
+% key takeaways and opens onto future perspectives, without introducing any
+% new citation-backed claim.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgements}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The star in \section*{} means: an unnumbered section that also stays out
+% of any \tableofcontents you might add later — appropriate for an
+% "outside the outline" section like this one.
+
+
+%--- Bibliography ----------------------------------------------------------
+% \balance evens out the height of the two columns on the very last page
+% (so one column doesn't end noticeably higher than the other) — call it
+% right after \printbibliography, as in enslyonreview-exemple.tex, never
+% earlier (doing so could disturb the layout of earlier pages).
+\printbibliography[title=References]
+% Or \printbibliography[title=References and recommended reading] to keep
+% the heading suggested by the .ott — that's the default title anyway if
+% you omit the title= option entirely.
+
+%\balance
+
+\end{document}

@@ -1,0 +1,126 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{open-curve}[Minimal style for OpenCurVe Resume]
+
+% OpenCurVe Resume requires a Unicode-aware engine.
+\RequirePackage{iftex}
+\ifXeTeX\else
+  \ifLuaTeX\else
+    \PackageError{open-curve}{Please compile with XeLaTeX or LuaLaTeX}{}
+  \fi
+\fi
+
+% CurVe does not define a bibliography title, while ctex checks for one.
+\providecommand{\refname}{References}
+\RequirePackage[fontset=none,scheme=plain]{ctex}
+\RequirePackage{fontspec}
+\RequirePackage[a4paper,left=1.2cm,right=1.2cm,top=1cm,bottom=1cm]{geometry}
+\RequirePackage[dvipsnames,svgnames]{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage[fixed]{fontawesome5}
+\RequirePackage[colorlinks=true,allcolors=black,breaklinks=true]{hyperref}
+
+% Portable font defaults: use the original fonts when available, otherwise
+% fall back to fonts bundled with a typical TeX Live installation.
+%
+% PATCHED: upstream's \IfFontExistsTF{Times New Roman} correctly detects
+% Times New Roman is absent on this compiler and takes the "fall back to
+% TeX Live" branch — but that branch ALSO fails, because it selects the
+% fallback fonts BY FAMILY NAME too ("TeX Gyre Termes", "FandolHei-Regular"
+% with no extension). fontspec/xeCJK resolve bare family names through
+% fontconfig, and this image's fontconfig only registers 14 base families
+% (fc-list: DejaVu/URW/Nimbus/etc) — it does not scan TeX Live's own font
+% tree. \IfFontExistsTF itself uses the same fontconfig lookup, so it is
+% not a false positive here; the fonts genuinely are not visible BY NAME.
+% Reproduced independently before touching this template: even
+% "FandolHei-Regular" (no extension) fails via fontspec/xeCJK, while
+% "FandolHei-Regular.otf" (exact filename+extension, kpathsea-resolved)
+% renders real CJK glyphs. Skipped straight to the exact-filename form for
+% both branches below — Times New Roman and Microsoft YaHei are also
+% commercial fonts absent from any FOSS TeX Live regardless of fontconfig,
+% so the \IfFontExistsTF branches upstream wrote for them were dead code
+% on this compiler, and are the same shape of bug this whole batch's
+% font-trap findings kept recurring on (see prometheusCV, Pseudomanifold
+% CV in this same batch).
+\setmainfont{texgyretermes-regular.otf}[
+  BoldFont=texgyretermes-bold.otf,
+  ItalicFont=texgyretermes-italic.otf,
+  BoldItalicFont=texgyretermes-bolditalic.otf
+]
+\setsansfont{texgyretermes-regular.otf}[
+  BoldFont=texgyretermes-bold.otf,
+  ItalicFont=texgyretermes-italic.otf,
+  BoldItalicFont=texgyretermes-bolditalic.otf
+]
+\setCJKmainfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]
+\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]
+\setCJKmonofont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]
+\setmonofont{texgyrecursor-regular.otf}[
+  BoldFont=texgyrecursor-bold.otf,
+  ItalicFont=texgyrecursor-italic.otf,
+  BoldItalicFont=texgyrecursor-bolditalic.otf
+]
+
+% Global line spacing.
+\linespread{1.3}\selectfont
+
+\definecolor{OpenCurvePrimary}{HTML}{2F6F9F}
+\definecolor{OpenCurveAccent}{HTML}{4F94C4}
+\definecolor{OpenCurveHeading}{HTML}{173A86}
+\definecolor{OpenCurveMuted}{HTML}{4B5563}
+
+\raggedright
+\urlstyle{same}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\headerspace}{0pt}
+\headerscale{0.74}
+
+% Header helpers.
+\newcommand{\headeritem}[2]{%
+  \makebox[1.35em][c]{\color{black}#1}\,#2}
+\newcommand{\headerdivider}{%
+  \hspace{0.8em}\textcolor{gray}{\textbar}\hspace{0.8em}}
+\newcommand{\headerlinebreak}{\par\vspace{0.2\baselineskip}}
+
+% Shared section and entry primitives.
+\newcommand{\cvsection}[2][1]{%
+  \par\vspace{#1\baselineskip}%
+  \noindent
+  \vbox{%
+    \hbox to \linewidth{%
+      \hskip1pt%
+      \raisebox{0pt}[1.5ex][.5ex]{%
+        \fontsize{15}{16.8}\selectfont\sffamily\bfseries
+        \textcolor{OpenCurvePrimary}{#2}}%
+      \hfil
+    }%
+    \vskip3.5pt
+    {\color{OpenCurveAccent}%
+      \hrule height 1.5pt width \linewidth}%
+  }%
+  \par\vspace{2pt}%
+}
+
+\newcommand{\cvheading}[3][0.4em]{%
+  \par\nointerlineskip
+  \vspace{#1}%
+  \noindent
+  \hbox to \linewidth{%
+    {\fontsize{10.5}{12.6}\selectfont\sffamily\bfseries
+      \textcolor{OpenCurveHeading}{#2}}%
+    \hfil
+    {\color{OpenCurveMuted}#3}%
+  }\par
+}
+
+\newcommand{\cvitem}[2][black]{%
+  \par
+  \settowidth{\hangindent}{\textbullet\ }%
+  \hangafter=1\noindent
+  \textcolor{#1}{\textbullet}\ #2\par
+}
+
+\newcommand{\cvtagline}[1]{%
+  {\normalsize\bfseries\textcolor{OpenCurveHeading}{#1}}\par
+  \vspace{0.1em}%
+}

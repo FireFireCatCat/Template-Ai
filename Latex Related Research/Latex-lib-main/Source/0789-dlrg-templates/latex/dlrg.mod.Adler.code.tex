@@ -1,0 +1,24 @@
+\NewDocumentCommand{\freigestellterAdlerZeichnen}{O{} r() O{dlrgSchwarz}}{
+    \IfFileExists{dlrg_angeschnittener_adler.tex}{
+        \input{dlrg_angeschnittener_adler.tex}
+        \adlerZeichnen{#1}{#2}{#3}
+    }{
+        \adlerPlatzhalterZeichnen{#1}{#2}{#3}
+    }
+}
+
+\NewDocumentCommand{\adlerPlatzhalterZeichnen}{m m m}{
+    \begin{scope}[shift={(#2)},y=1pt, x=1pt,yscale=-1,cm={{1,0.0,0.0,-1,(-920,440)}},#1]
+        \draw[#3,line width=10pt](500,0) -- (1100,100) -- (1130,140)  -- (900,180) -- (910,240) -- (1230,200) -- (1350,300)-- (1100,800) -- (680,870) -- (790,700) -- (650,800) --(490,750) -- (800,230) -- cycle;
+    \end{scope}
+}
+
+\NewDocumentCommand{\freigestellterAdlerWasserzeichen}{O{}D(){0cm,8cm}}{
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[shift={(#2)}] at (current page.south east){
+            \begin{tikzpicture}
+                \freigestellterAdlerZeichnen[opacity=.25,scale=0.7,#1](0,0)
+            \end{tikzpicture}
+        };
+    \end{tikzpicture}
+}

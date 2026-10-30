@@ -1,0 +1,125 @@
+% !TeX program = xelatex
+\documentclass[aspectratio=169]{beamer}
+
+\usetheme[
+  background=saarland,
+  logo=uds
+]{Saarland}
+
+\graphicspath{{images/}}
+
+\usepackage{booktabs}
+
+\author{Elena Voss}
+\title{Federated Learning Under Non-IID Data}
+\subtitle{Progress report}
+\institute{Department of Computer Science}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Background}
+
+\begin{frame}{Why Non-IID Data Is Hard}
+  \begin{itemize}
+    \item Federated averaging assumes roughly similar data across clients
+    \item Real deployments show heavy label and feature skew per client
+    \item Naive FedAvg diverges or converges slowly under strong skew
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Related Approaches}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \textbf{Regularization-based}
+      \begin{itemize}
+        \item FedProx
+        \item SCAFFOLD
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Clustering-based}
+      \begin{itemize}
+        \item Client clustering
+        \item Personalized layers
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Method}
+
+\begin{frame}{Our Approach}
+  \begin{itemize}
+    \item Adaptive client weighting based on local gradient variance
+    \item Periodic re-clustering as client distributions drift over time
+    \item No extra communication round beyond standard FedAvg
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Weighting Rule}
+  Client $i$'s contribution weight at round $t$:
+  \[
+    w_i^{(t)} = \frac{1 / \sigma_i^{(t)}}{\sum_{j} 1 / \sigma_j^{(t)}}
+  \]
+  where $\sigma_i^{(t)}$ is the local gradient variance estimated from the
+  last three local epochs.
+\end{frame}
+
+\section{Results}
+
+\begin{frame}{Benchmark Setup}
+  \begin{table}
+    \centering
+    \begin{tabular}{lrr}
+      \toprule
+      Dataset & Clients & Skew (Dirichlet $\alpha$) \\
+      \midrule
+      CIFAR-10 & 100 & 0.1 \\
+      FEMNIST & 200 & 0.3 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Accuracy Comparison}
+  \begin{table}
+    \centering
+    \begin{tabular}{lrr}
+      \toprule
+      Method & CIFAR-10 & FEMNIST \\
+      \midrule
+      FedAvg & 61.2\% & 78.4\% \\
+      FedProx & 65.8\% & 80.1\% \\
+      Ours & \textbf{71.3\%} & \textbf{83.6\%} \\
+      \bottomrule
+    \end{tabular}
+    \caption{Top-1 accuracy after 100 communication rounds.}
+  \end{table}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Summary}
+  \begin{itemize}
+    \item Variance-based weighting outperforms uniform and loss-based baselines
+    \item Gains grow with skew severity
+    \item No additional communication cost over standard FedAvg
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Thank You}
+  \centering
+  \Large Questions?\\[1em]
+  \normalsize elena.voss@example.edu
+\end{frame}
+
+\end{document}

@@ -1,0 +1,45 @@
+% Sheet of numbered admission tickets -- ctan:ticket, LPPL-1.3 (verified in
+% the shipped ticket.sty header: "This package may be distributed and/or
+% modified under the conditions of the LaTeX Project Public License, either
+% version 1.3 of this license or (at your option) any later version"). Ships
+% with TeX Live (tex/latex/ticket) -- starter does not bundle the class. No
+% fontspec -- pdflatex-safe.
+%
+% Starter is a full imposed sheet (2x4 = 8 per page) of sequentially numbered
+% admission tickets for an invented conference, with a tear-off stub on each
+% -- the class's stated purpose -- rather than a single ticket alone.
+\documentclass[a4paper]{article}
+\usepackage[boxed,cutmark]{ticket}
+
+\ticketNumbers{2}{4}
+\ticketSize{85}{60}
+\ticketDistance{6}{6}
+
+\newcounter{ticketnum}
+\setcounter{ticketnum}{101}
+
+% \ticketdefault is the hook the class calls INSIDE every \ticket{...}
+% picture, before the ticket's own argument -- redefining it here, rather than
+% passing the same content as \ticket's argument each time, is what lets each
+% of the 8 tickets below stay a one-line \ticket{} call while still getting a
+% real, differently-numbered ticket.
+\renewcommand{\ticketdefault}{%
+  \put(4,47){\makebox(0,0)[lt]{\parbox{77mm}{\bfseries\large Riverside Data Summit 2026}}}%
+  \put(4,37){\makebox(0,0)[lt]{\parbox{77mm}{\small 12--13 September 2026 \\ Riverside Conference Centre, Leeds}}}%
+  \put(4,22){\makebox(0,0)[lt]{\normalsize General Admission}}%
+  \put(4,14){\makebox(0,0)[lt]{\small Ticket no.\ \#\theticketnum}}%
+  \put(60,6){\makebox(0,0)[lt]{\tiny Non-transferable}}%
+  \stepcounter{ticketnum}%
+}
+
+\begin{document}
+\noindent
+\ticket{}
+\ticket{}
+\ticket{}
+\ticket{}
+\ticket{}
+\ticket{}
+\ticket{}
+\ticket{}
+\end{document}

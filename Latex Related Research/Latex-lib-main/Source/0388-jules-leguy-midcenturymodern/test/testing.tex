@@ -1,0 +1,1020 @@
+% =============================================================================
+% testing.tex
+% Internal QA deck for the Mid-Century Modern Beamer template: exercises a
+% wide variety of slide structures/layouts — many combinations of blocks
+% (standard/alert/example) of very different content sizes across different
+% column splits, TikZ diagrams (flow, matrix, nested scope, hierarchy,
+% timeline, scale, bar chart), tables, overlays, custom local macros, quotes
+% and footnotes — with generic placeholder content, to catch theme
+% regressions across usages that demo.tex does not cover.
+% Compile from this directory, with the theme on the input path:
+%   TEXINPUTS=..: lualatex testing.tex ; biber testing ; lualatex ; lualatex
+% =============================================================================
+\documentclass[aspectratio=169]{beamer}
+\usepackage{beamerthememidcenturymodern}
+\graphicspath{{../logos/}}
+\usepackage{booktabs}
+\usetikzlibrary{positioning, arrows.meta}
+\usepackage[backend=biber, style=authoryear, sorting=nyt]{biblatex}
+\addbibresource{../demo.bib}
+
+\mcmTheme{Kraft}
+
+\title{Template Usage Showcase}
+\subtitle{A testing deck exercising varied slide structures}
+\author{Testing Deck}
+\institute{Not for publication}
+\date{\today}
+
+\titlegraphic{\includegraphics[height=0.8cm]{your-logo-kraft.pdf}}
+
+\AtBeginSection[]{%
+  \begin{frame}[plain]
+    \sectionpage
+  \end{frame}
+}
+\AtBeginSubsection[]{%
+  \begin{frame}[plain]
+    \subsectionpage
+  \end{frame}
+}
+
+\AtEveryCite{\color{mcmPrimary}}
+
+% ---------------------------------------------------------------------------
+% Local helper macros (scoped to this file — not part of the theme itself)
+% ---------------------------------------------------------------------------
+
+% Generic colour-box placeholder (no TikZ): \placeholderbox{width}{height}{label}
+\newcommand{\placeholderbox}[3]{%
+  \fcolorbox{mcmPrimary}{mcmPrimaryMuted}{%
+    \parbox[c][#2][c]{#1}{\centering\textbf{\color{mcmPrimary}#3}}%
+  }%
+}
+
+% Generic TikZ image placeholder: \imgplaceholder{width}{height}{label}
+\newcommand{\imgplaceholder}[3]{%
+  \begin{tikzpicture}
+    \draw[mcmPrimary, line width=0.8pt, fill=mcmPrimaryMuted]
+      (0,0) rectangle (#1,#2);
+    \draw[mcmPrimary!50, line width=0.6pt] (0,0) -- (#1,#2);
+    \draw[mcmPrimary!50, line width=0.6pt] (0,#2) -- (#1,0);
+    \node[fill=mcmBg, text=mcmPrimary, font=\small\bfseries, inner sep=4pt]
+      at (0.5*#1,0.5*#2) {#3};
+  \end{tikzpicture}%
+}
+
+% Stat badge: \statbadge{number}{label}
+\newcommand{\statbadge}[2]{%
+  \begin{tikzpicture}
+    \node[fill=mcmPrimary, text=mcmPrimaryFg, circle, minimum size=1.7cm,
+          font=\large\bfseries] (n) at (0,0) {#1};
+    \node[below=0.15cm of n, text width=2.4cm, align=center,
+          font=\small, text=mcmBlack] {#2};
+  \end{tikzpicture}%
+}
+
+% Numbered showcase card: \showcard{number}{title}{text}
+\newcommand{\showcard}[3]{%
+  \begin{tikzpicture}
+    \node[draw=mcmPrimary, line width=0.8pt, rounded corners=3pt,
+          fill=mcmBg, text width=3.4cm, inner sep=8pt, align=left]
+      (card) {%
+        \tikz[baseline=-0.6ex]{%
+          \node[fill=mcmPip, text=mcmPrimaryFg, circle,
+                minimum size=0.55cm, font=\scriptsize\bfseries] {#1};%
+        }%
+        \hspace{0.3em}\textbf{#2}\\[0.3em]
+        {\small #3}%
+      };
+  \end{tikzpicture}%
+}
+
+% Progressive three-step flow diagram: \flowdiagram{index of highlighted box}
+\newcommand{\flowdiagram}[1]{%
+  \begin{tikzpicture}[
+      box/.style={draw=mcmPrimary!50, line width=0.8pt, rounded corners=3pt,
+                   fill=mcmPrimary!8, minimum width=3.1cm,
+                   minimum height=1.6cm, align=center, font=\small,
+                   text=mcmPrimary!50},
+      boxon/.style={draw=mcmPrimary, line width=2pt, rounded corners=3pt,
+                     fill=mcmPrimaryMuted, minimum width=3.1cm,
+                     minimum height=1.6cm, align=center, font=\small\bfseries,
+                     text=mcmBlack},
+      arr/.style={-{Stealth[length=2.2mm]}, mcmPrimary, line width=1pt}
+    ]
+    \ifnum#1=1 \tikzset{sa/.style=boxon}\else\tikzset{sa/.style=box}\fi
+    \ifnum#1=2 \tikzset{sb/.style=boxon}\else\tikzset{sb/.style=box}\fi
+    \ifnum#1=3 \tikzset{sc/.style=boxon}\else\tikzset{sc/.style=box}\fi
+    \node[sa] (a) at (0,0) {Step 1\\{\scriptsize Input}};
+    \node[sb] (b) at (4.2,0) {Step 2\\{\scriptsize Process}};
+    \node[sc] (c) at (8.4,0) {Step 3\\{\scriptsize Output}};
+    \draw[arr] (a.east) -- (b.west);
+    \draw[arr] (b.east) -- (c.west);
+  \end{tikzpicture}%
+}
+
+\begin{document}
+
+% =====================================================================
+% TITLE PAGE
+% =====================================================================
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Table of Contents}
+  \tableofcontents
+\end{frame}
+
+% =====================================================================
+\section{Layouts}
+% =====================================================================
+
+\subsection{Column Splits}
+
+\begin{frame}{Two Equal Columns}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Current Approach}
+        \begin{itemize}
+          \item Manual review of every submission, one at a time
+          \item Feedback collected in a shared spreadsheet
+          \item Turnaround time varies widely between reviewers
+          \item No automated check before the manual pass
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Proposed Approach}
+        \begin{itemize}
+          \item Automated pre-checks catch obvious issues first
+          \item Reviewers focus only on borderline cases
+          \item Feedback logged directly against each submission
+          \item Turnaround time bounded by a fixed review window
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Asymmetric Columns (30/70)}
+  \begin{columns}[T]
+    \begin{column}{0.30\textwidth}
+      \begin{block}{Summary}
+        {\small A narrow column can introduce or label the wider column
+        beside it, without competing for attention with the longer
+        list of details next to it.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.66\textwidth}
+      \begin{itemize}
+        \item Rollout starts with a small pilot group before the
+          wider release
+        \item Existing accounts are migrated automatically overnight
+        \item Support documentation is updated ahead of the change
+        \item A rollback plan is kept ready for the first two weeks
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Three Equal Columns}
+  \begin{columns}[T]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Before}
+        {\small Onboarding took three separate emails and a phone
+        call.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Change}
+        {\small A single guided setup screen replaces the emails and
+        the call, walking the user through account creation, plan
+        selection, and first login in one sitting.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{After}
+        {\small Onboarding now takes under five minutes end to end.}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Four Equal Columns}
+  \begin{columns}[T]
+    \begin{column}{0.23\textwidth}
+      \begin{block}{A}
+        {\scriptsize One line.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.23\textwidth}
+      \begin{block}{B}
+        {\scriptsize One line.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.23\textwidth}
+      \begin{block}{C}
+        {\scriptsize One line.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.23\textwidth}
+      \begin{block}{D}
+        {\scriptsize One line.}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Five Narrow Columns}
+  \begin{columns}[T]
+    \begin{column}{0.18\textwidth}
+      \begin{block}{1}
+        {\tiny Tiny}
+      \end{block}
+    \end{column}
+    \begin{column}{0.18\textwidth}
+      \begin{block}{2}
+        {\tiny Tiny}
+      \end{block}
+    \end{column}
+    \begin{column}{0.18\textwidth}
+      \begin{block}{3}
+        {\tiny Tiny}
+      \end{block}
+    \end{column}
+    \begin{column}{0.18\textwidth}
+      \begin{block}{4}
+        {\tiny Tiny}
+      \end{block}
+    \end{column}
+    \begin{column}{0.18\textwidth}
+      \begin{block}{5}
+        {\tiny Tiny}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Single Full-Width Block}
+  \begin{block}{One Block, Full Width}
+    {\small A single block can also span the entire text width on its
+    own, holding a realistic amount of content rather than a single
+    short line: an introductory paragraph explaining the context,
+    followed by the supporting points a reader would expect to see
+    spelled out underneath it.}
+    \begin{itemize}
+      \item The current process depends on a handful of manual steps
+      \item Each step introduces a small chance of human error
+      \item Automating the three riskiest steps removes most of it
+      \item The remaining steps stay manual by design, for now
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\subsection{Vertical Stacks}
+
+\begin{frame}{Two Stacked Full-Width Blocks}
+  \begin{block}{Short Block}
+    {\small A single short line.}
+  \end{block}
+  \begin{block}{Long Block}
+    {\small A much longer block, stacked directly below the short one,
+    to show that vertically stacked blocks are not forced to share
+    the same height. In a real deck this is typically where a short
+    heading block is followed by the fuller explanation underneath
+    it: the reasoning behind a decision, the constraints that shaped
+    it, and what changes as a result.}
+    \begin{itemize}
+      \item Applies to every account created after the cut-off date
+      \item Existing accounts can opt in manually until the deadline
+      \item No action is required for accounts already opted in
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Four Stacked Blocks of Increasing Size}
+  \begin{block}{Size 1}
+    {\scriptsize A single short line.}
+  \end{block}
+  \begin{block}{Size 2}
+    {\scriptsize
+      \begin{itemize}
+        \item First point
+        \item Second point
+      \end{itemize}
+    }
+  \end{block}
+  \begin{block}{Size 3}
+    {\scriptsize A short paragraph, a little longer than the previous
+    two blocks.}
+  \end{block}
+  \begin{block}{Size 4}
+    {\scriptsize
+      \begin{itemize}
+        \item Draft circulated for feedback
+        \item Proposal presented at the sync
+        \item Sign-off recorded
+      \end{itemize}
+    }
+  \end{block}
+\end{frame}
+
+% =====================================================================
+\section{Block Grids}
+% =====================================================================
+
+\begin{frame}{2$\times$2 Block Grid}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Low Cost, Low Risk}
+        {\small The default choice for most teams: cheap to run,
+        rarely fails, but also rarely stands out from what everyone
+        else is already doing.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Low Cost, High Risk}
+        {\small Worth a small, time-boxed experiment: if it fails,
+        little is lost; if it works, it changes the roadmap.}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{0.3cm}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{High Cost, Low Risk}
+        {\small Usually only justified when it also buys long-term
+        maintenance savings elsewhere in the system.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{High Cost, High Risk}
+        {\small Reserved for the rare case where the upside clearly
+        outweighs both the spend and the chance of failure.}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Full-Width Block + Asymmetric Row}
+  \begin{block}{Overview}
+    {\small Sets the context for the migration plan detailed in the
+    wider column below, with a short caution called out alongside.}
+  \end{block}
+  \begin{columns}[T]
+    \begin{column}{0.62\textwidth}
+      \begin{block}{Main Point}
+        \begin{itemize}
+          \item Old and new systems run in parallel for one cycle
+          \item Traffic is shifted gradually, in fixed steps
+          \item Each step is monitored before the next one starts
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \begin{alertblock}{Note}
+        {\small The rollback procedure must be tested before the
+        first traffic shift, not after.}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Large Block + Stacked Small Blocks}
+  \begin{columns}[T]
+    \begin{column}{0.58\textwidth}
+      \begin{block}{Large Block}
+        \begin{itemize}
+          \item A block that spans more vertical space
+          \item because it holds more content
+          \item across several bullet points
+          \item in a single wide column
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.38\textwidth}
+      \begin{block}{Small Block A}
+        {\small Owner: platform team.}
+      \end{block}
+      \begin{block}{Small Block B}
+        {\small Due: end of quarter.}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Mixed Block Types, Mixed Sizes}
+  \begin{exampleblock}{Worked Example}
+    {\small A user submits a request at 9:00, the automated check
+    completes at 9:01, and a reviewer confirms it by 9:15 — the whole
+    path from submission to approval taking under twenty minutes end
+    to end, spanning the full width to walk through the sequence.}
+  \end{exampleblock}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Typical Case}
+        \begin{itemize}
+          \item Most requests match this pattern
+          \item No manual intervention required
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{alertblock}{Edge Case}
+        {\small Requests missing required fields are rejected
+        immediately, before reaching a human reviewer at all.}
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Wall of Six Small Blocks}
+  \begin{columns}[T]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{One}
+        {\tiny Short.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Two}
+        {\tiny Short.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Three}
+        {\tiny Short.}
+      \end{block}
+    \end{column}
+  \end{columns}
+  \vspace{0.2cm}
+  \begin{columns}[T]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Four}
+        {\tiny Short.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Five}
+        {\tiny Short.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Six}
+        {\tiny Short.}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Extreme Size Contrast}
+  \begin{columns}[T]
+    \begin{column}{0.30\textwidth}
+      \begin{block}{Minimal}
+      \end{block}
+    \end{column}
+    \begin{column}{0.66\textwidth}
+      \begin{block}{Packed}
+        {\small A block with a great deal more content than its
+        neighbour: several sentences of placeholder text, describing
+        the layout at length, immediately followed by a list.}
+        \begin{itemize}
+          \item Extra point one
+          \item Extra point two
+          \item Extra point three
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Growing Blocks in a Row}
+  \begin{columns}[T]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Week 1}
+        \begin{itemize}
+          \item Kickoff meeting
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Week 2}
+        \begin{itemize}
+          \item Requirements drafted
+          \item Stakeholders review draft
+          \item Scope finalised
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Week 3}
+        \begin{itemize}
+          \item Design reviewed
+          \item Implementation starts
+          \item First tests written
+          \item Staging deploy
+          \item Bug fixes triaged
+          \item Sign-off scheduled
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Block Containing a Nested List}
+  \begin{block}{Release Checklist}
+    \begin{itemize}
+      \item Code review completed
+      \begin{itemize}
+        \item At least one approval from another team
+        \begin{itemize}
+          \item Security-sensitive changes need two approvals
+        \end{itemize}
+      \end{itemize}
+      \item Test suite passing on the release branch
+      \item Changelog entry written
+    \end{itemize}
+    \begin{enumerate}
+      \item Tag the release
+      \item Deploy to staging, then production
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Block Containing a Table}
+  \begin{block}{Small Table Inside a Block}
+    \centering
+    \begin{tabular}{lc}
+      \toprule
+      \textbf{Category} & \textbf{Value} \\
+      \midrule
+      Group 1 & 12.4 \\
+      Group 2 & 9.7  \\
+      Group 3 & 15.2 \\
+      \bottomrule
+    \end{tabular}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Tall Single Block With Long Paragraph}
+  \begin{block}{Long-Form Text}
+    {\small A block does not have to be short: it can hold a long,
+    fully justified paragraph of placeholder text spanning many
+    lines, to check that the block background and left accent bar
+    extend correctly for tall content. Lorem ipsum dolor sit amet,
+    consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+    labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+    nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+    commodo consequat. Duis aute irure dolor in reprehenderit in
+    voluptate velit esse cillum dolore eu fugiat nulla pariatur.}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Block Wrapping a Placeholder}
+  \begin{block}{Figure}
+    \centering
+    \placeholderbox{6cm}{3cm}{Image placeholder}
+  \end{block}
+\end{frame}
+
+% =====================================================================
+\section{Diagrams}
+% =====================================================================
+
+\subsection{Flow and Matrix}
+
+\begin{frame}{Three-Step Flow Diagram}
+  \centering
+  \begin{tikzpicture}[
+      box/.style={draw=mcmPrimary, line width=0.8pt, rounded corners=3pt,
+                   fill=mcmPrimaryMuted, minimum width=3.1cm,
+                   minimum height=1.6cm, align=center, font=\small},
+      arr/.style={-{Stealth[length=2.2mm]}, mcmPrimary, line width=1pt}
+    ]
+    \node[box] (a) at (0,0) {Step 1\\{\scriptsize Input}};
+    \node[box] (b) at (4.2,0) {Step 2\\{\scriptsize Process}};
+    \node[box] (c) at (8.4,0) {Step 3\\{\scriptsize Output}};
+    \draw[arr] (a.east) -- (b.west);
+    \draw[arr] (b.east) -- (c.west);
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Three-Step Flow — Progressive Highlight}
+  \centering
+  \only<1>{\flowdiagram{1}}%
+  \only<2>{\flowdiagram{2}}%
+  \only<3>{\flowdiagram{3}}%
+\end{frame}
+
+\begin{frame}{2$\times$2 Condition Matrix — TikZ Version}
+  \centering
+  \begin{tikzpicture}[
+      cell/.style={draw=mcmPrimary, line width=0.8pt, minimum width=3.2cm,
+                   minimum height=1.9cm, align=center, font=\small}
+    ]
+    \node[cell, fill=mcmPrimary!12] (c1) at (0,0)    {Condition 1};
+    \node[cell, fill=mcmPrimary!22] (c2) at (3.2,0)  {Condition 2};
+    \node[cell, fill=mcmPrimary!32] (c3) at (0,-1.9) {Condition 3};
+    \node[cell, fill=mcmPrimary!42] (c4) at (3.2,-1.9){Condition 4};
+    \node[above=0.2cm of c1, xshift=1.6cm, font=\small\bfseries]
+      {Factor B};
+    \node[left=0.2cm of c1, rotate=90, anchor=south, font=\small\bfseries]
+      {Factor A};
+  \end{tikzpicture}
+\end{frame}
+
+\subsection{Scope and Hierarchy}
+
+\begin{frame}{Nested Scope Diagram}
+  \centering
+  \begin{tikzpicture}
+    \draw[mcmPrimary!30, line width=0.8pt, fill=mcmPrimary!8]
+      (0,0) rectangle (9,4.6);
+    \node[anchor=north west, font=\small\bfseries, text=mcmPrimary]
+      at (0.2,4.4) {Context};
+    \draw[mcmPrimary!55, line width=0.8pt, fill=mcmPrimary!16]
+      (0.7,0.5) rectangle (8.3,3.6);
+    \node[anchor=north west, font=\small\bfseries, text=mcmPrimary]
+      at (0.9,3.4) {Scope};
+    \draw[mcmPrimary, line width=1pt, fill=mcmPrimaryMuted]
+      (1.6,1) rectangle (7.4,2.6);
+    \node[font=\small\bfseries] at (4.5,1.8) {Focus};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Hierarchy / Tree Diagram}
+  \centering
+  \begin{tikzpicture}[
+      nd/.style={draw=mcmPrimary, line width=0.8pt, rounded corners=2pt,
+                 fill=mcmPrimaryMuted, minimum width=2.6cm,
+                 minimum height=1cm, align=center, font=\small},
+      lvl/.style={-{Stealth[length=2mm]}, mcmPrimary, line width=0.8pt}
+    ]
+    \node[nd] (root) at (0,2) {Root};
+    \node[nd] (c1) at (-3.2,0) {Child A};
+    \node[nd] (c2) at (0,0)    {Child B};
+    \node[nd] (c3) at (3.2,0)  {Child C};
+    \node[nd] (g1) at (-1.6,-2) {Grandchild B1};
+    \node[nd] (g2) at (1.6,-2)  {Grandchild B2};
+    \draw[lvl] (root.south) -- (c1.north);
+    \draw[lvl] (root.south) -- (c2.north);
+    \draw[lvl] (root.south) -- (c3.north);
+    \draw[lvl] (c2.south) -- (g1.north);
+    \draw[lvl] (c2.south) -- (g2.north);
+  \end{tikzpicture}
+\end{frame}
+
+\subsection{Timelines and Scales}
+
+\begin{frame}{Horizontal Timeline}
+  \centering
+  \begin{tikzpicture}[x=2.3cm, y=1cm]
+    \draw[mcmPrimary, line width=1pt] (0,0) -- (4.4,0);
+    \foreach \x/\lbl/\txt in {0/Step A/First milestone,
+                               1.5/Step B/Second milestone,
+                               3/Step C/Third milestone,
+                               4.4/Step D/Fourth milestone}{
+      \fill[mcmPrimary] (\x,0) circle (0.07);
+      \node[anchor=south, yshift=0.2cm, font=\small\bfseries, text=mcmPrimary]
+        at (\x,0) {\lbl};
+      \node[anchor=north, yshift=-0.2cm, font=\scriptsize, text width=2.2cm,
+            align=center] at (\x,0) {\txt};
+    }
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Vertical Rating Scale}
+  \centering
+  \begin{tikzpicture}[x=1cm,y=1cm]
+    \foreach \i/\lbl in {0/Level 1, 1/Level 2, 2/Level 3, 3/Level 4, 4/Level 5}{
+      \pgfmathtruncatemacro{\shade}{20 + 15*\i}
+      \fill[mcmPrimary!\shade] (0,\i*0.8) rectangle (5,\i*0.8+0.7);
+      \node[anchor=west, font=\small] at (5.3,\i*0.8+0.35) {\lbl};
+    }
+    \node[anchor=north, font=\scriptsize, text=mcmPrimary!60] at (2.5,-0.3) {Low};
+    \node[anchor=south, font=\scriptsize, text=mcmPrimary!60] at (2.5,4.3) {High};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Simple Bar Chart}
+  \centering
+  \begin{tikzpicture}[x=1.7cm, y=0.5cm]
+    \draw[mcmPrimary, line width=0.8pt] (-0.4,0) -- (3.8,0);
+    \foreach \x/\h/\lbl in {0/3/A, 1/5/B, 2/2/C, 3/4.5/D}{
+      \fill[mcmPrimary!70] (\x,0) rectangle (\x+0.7,\h);
+      \node[anchor=north, yshift=-0.1cm, font=\small] at (\x+0.35,0) {\lbl};
+      \node[anchor=south, yshift=0.1cm, font=\scriptsize] at (\x+0.35,\h) {\h};
+    }
+  \end{tikzpicture}
+\end{frame}
+
+% =====================================================================
+\section{Data and Numbers}
+% =====================================================================
+
+\begin{frame}{Table}
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Category} & \textbf{Metric A} & \textbf{Metric B} \\
+    \midrule
+    Group 1 & 12.4 & 0.83 \\
+    Group 2 & 9.7  & 0.61 \\
+    Group 3 & 15.2 & 0.94 \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\begin{frame}{Wider Table}
+  \centering
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Category} & \textbf{Metric A} & \textbf{Metric B}
+      & \textbf{Metric C} & \textbf{Metric D} \\
+    \midrule
+    Group 1 & 12.4 & 0.83 & 3.1 & 0.42 \\
+    Group 2 & 9.7  & 0.61 & 2.8 & 0.55 \\
+    Group 3 & 15.2 & 0.94 & 3.6 & 0.38 \\
+    Group 4 & 11.0 & 0.72 & 2.9 & 0.47 \\
+    Group 5 & 13.6 & 0.88 & 3.3 & 0.41 \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+\begin{frame}{Key Figures as Blocks}
+  \begin{columns}[T]
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Adoption}
+        \centering {\Huge\textbf{\color{mcmPrimary}42\%}}\\[0.3em]
+        {\small of active users opted in during the pilot}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Throughput}
+        \centering {\Huge\textbf{\color{mcmPrimary}128}}\\[0.3em]
+        {\small requests processed per minute, on average}
+      \end{block}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Speed-up}
+        \centering {\Huge\textbf{\color{mcmPrimary}3.2x}}\\[0.3em]
+        {\small faster than the previous implementation}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Key Figures as TikZ Badges}
+  \centering
+  \begin{columns}[T]
+    \begin{column}{0.31\textwidth}
+      \centering \statbadge{42\%}{Adoption during the pilot}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \centering \statbadge{128}{Requests per minute}
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \centering \statbadge{3.2x}{Faster than before}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Placeholders}
+% =====================================================================
+
+\begin{frame}{Single Placeholder with Caption}
+  \centering
+  \placeholderbox{8cm}{4cm}{Image placeholder}
+
+  \vspace{0.4em}
+  {\small\itshape Figure 1 --- a caption describing the placeholder image.}
+\end{frame}
+
+\begin{frame}{Side-by-Side Placeholder Comparison}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \centering
+      \placeholderbox{5.2cm}{3.4cm}{Image A}
+
+      {\small\itshape Before}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \centering
+      \placeholderbox{5.2cm}{3.4cm}{Image B}
+
+      {\small\itshape After}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{TikZ Placeholder Variant}
+  \centering
+  \imgplaceholder{8}{4}{Image placeholder}
+\end{frame}
+
+% =====================================================================
+\section{Custom Local Macros}
+% =====================================================================
+
+\begin{frame}{Numbered Showcase Cards}
+  \centering
+  \begin{columns}[T]
+    \begin{column}{0.33\textwidth}
+      \centering
+      \showcard{1}{Plan}{Agree on scope with stakeholders before
+        writing any code.}
+    \end{column}
+    \begin{column}{0.33\textwidth}
+      \centering
+      \showcard{2}{Build}{Ship small, reviewable changes, each
+        covered by tests.}
+    \end{column}
+    \begin{column}{0.33\textwidth}
+      \centering
+      \showcard{3}{Ship}{Deploy behind a flag, watch closely, then
+        roll out fully.}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Progressive Reveals}
+% =====================================================================
+
+\begin{frame}{Build with \texttt{\textbackslash pause}}
+  \begin{itemize}
+    \item First point appears immediately \pause
+    \item Second point appears on the next click \pause
+    \item Third point appears last
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Revealing a Column with \texttt{\textbackslash onslide}}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Always Visible}
+        {\small This column is shown from the first click.}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \onslide<2->{%
+        \begin{alertblock}{Revealed on Click 2}
+          {\small This column only appears on the second overlay step.}
+        \end{alertblock}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Progressive Emphasis Across Blocks}
+  \begin{columns}[T]
+    \begin{column}{0.31\textwidth}
+      \only<1>{\begin{alertblock}{Step 1}{\small Currently active}\end{alertblock}}%
+      \only<2->{\begin{block}{Step 1}{\small Completed}\end{block}}%
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \only<1>{\begin{block}{Step 2}{\small Not yet started}\end{block}}%
+      \only<2>{\begin{alertblock}{Step 2}{\small Currently active}\end{alertblock}}%
+      \only<3->{\begin{block}{Step 2}{\small Completed}\end{block}}%
+    \end{column}
+    \begin{column}{0.31\textwidth}
+      \only<1-2>{\begin{block}{Step 3}{\small Not yet started}\end{block}}%
+      \only<3>{\begin{alertblock}{Step 3}{\small Currently active}\end{alertblock}}%
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% =====================================================================
+\section{Text Elements}
+% =====================================================================
+
+\begin{frame}{Quote Slide}
+  \vfill
+  \begin{center}
+    {\Large\itshape\color{mcmPrimary}
+     ``A placeholder quotation illustrating the quote-slide layout.''}
+
+    \vspace{0.8em}
+    {\small --- Placeholder Attribution}
+  \end{center}
+  \vfill
+\end{frame}
+
+\begin{frame}{Definition List}
+  \begin{description}
+    \item[Throughput] The number of requests the system processes per
+      unit of time, regardless of how long any single one takes.
+    \item[Latency] The time a single request takes from submission to
+      response, independent of how many others run alongside it.
+    \item[Availability] The fraction of time the system is able to
+      serve requests at all, usually tracked over a rolling window.
+    \item[Error rate] The fraction of requests that fail, expressed as
+      a percentage of total traffic.
+  \end{description}
+\end{frame}
+
+\begin{frame}{Full-Width Footnotes Under Columns}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      The design movement referenced here spans roughly a quarter
+      century\footnotemark[1] and still shapes how products are
+      styled today.
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      Its name was coined decades after the movement itself
+      began\footnotemark[2], once it was already being revived.
+    \end{column}
+  \end{columns}
+  \footnotetext[1]{\fullcite{wikipedia2024}}
+  \footnotetext[2]{\fullcite{greenberg1984}}
+\end{frame}
+
+% =====================================================================
+% FRAME TITLES AND SUBTITLES
+% =====================================================================
+
+\section{Frame Titles and Subtitles}
+
+\begin{frame}{Short Title, Short Subtitle}
+  \framesubtitle{Axis 1 — combinatorial search}
+  \begin{itemize}
+    \item The band grows by exactly one subtitle line
+    \item Compare its height with the next slide, which has none
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Short Title, No Subtitle}
+  \begin{itemize}
+    \item A one-line band, the reference height
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Short Title, Long Subtitle}
+  \framesubtitle{A subtitle long enough to wrap onto a second line inside the
+    band, which the band has to absorb without running over the accent rule or
+    the body below it}
+  \begin{itemize}
+    \item Two subtitle lines, so two subtitle line heights
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{A Frame Title Long Enough To Wrap Onto A Second Line All By Itself}
+  \framesubtitle{And a subtitle under it, on the Quernhaven pilot}
+  \begin{itemize}
+    \item Both fields wrap; nothing overlaps
+  \end{itemize}
+\end{frame}
+
+{\mcmTheme{DeepBlue}
+\begin{frame}{Résumé, Parentheses And Commas (Cont.)}
+  \framesubtitle{Descenders and accents: project, page, judgement}
+  \begin{itemize}
+    \item Accents and descenders must not change the band's height
+    \item Compare with the next slide, whose title has neither
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{No Accent And No Descender}
+  \framesubtitle{A second line with no letter beneath the baseline}
+  \begin{itemize}
+    \item Same number of lines, so the same band exactly
+  \end{itemize}
+\end{frame}
+}
+
+% =====================================================================
+% CLOSING SLIDE
+% =====================================================================
+
+{\setbeamercolor{normal text}{fg=mcmPrimaryFg,bg=mcmAlert!70}
+\begin{frame}[plain,noframenumbering]
+  \begin{center}
+    \Large
+    End of testing deck
+  \end{center}
+\end{frame}
+}
+
+% =====================================================================
+% BACKUP SLIDES
+% =====================================================================
+
+\appendix
+
+\begin{frame}[plain,noframenumbering]{Appendix: Backup Block}
+  \begin{block}{Backup Content}
+    \begin{itemize}
+      \item Your backup material goes here
+      \item Blocks work the same way in the appendix
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[plain,noframenumbering]{Appendix: Backup Diagram}
+  \centering
+  \imgplaceholder{9}{4.6}{Backup image placeholder}
+\end{frame}
+
+\end{document}

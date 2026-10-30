@@ -1,0 +1,52 @@
+\documentclass[british,oneside,11pt]{amsart}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\usepackage{lmodern}
+\usepackage[pdfusetitle,colorlinks]{hyperref}
+\usepackage{bookml/bookml}
+\bmlAltFormat{main.pdf}{PDF (serif)}
+\hypersetup{pdfsubject={A compact BookML technical-book starter.}}
+
+\title{A Data-Driven Technical Book}
+\author{A. Researcher}
+\date{2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{Purpose}
+BookML connects a LaTeX source tree to PDF and accessible web-oriented output
+through LaTeXML. This starter keeps the document ordinary enough to compile as
+a PDF while showing the small hooks that BookML adds for alternative formats.
+
+\section{A source-first workflow}
+Keep chapters and supporting data in separate files as the manuscript grows.
+The BookML make rules can discover document sources, generate PDF variants,
+and build HTML, EPUB, or SCORM outputs from the same source tree.
+
+\subsection{A useful invariant}
+Every generated format should preserve the same heading order, equations, and
+cross-references. Treat the PDF as one checked projection of the source, not
+as a separate manuscript.
+
+\section{A worked example}
+The accessible-book workflow can carry mathematical content as well:
+\[
+  f(x) = \int_{0}^{x} g(t)\,\mathrm{d}t,
+  \qquad f'(x)=g(x).
+\]
+Add semantic descriptions to images with `\bmlDescription` and use the
+BookML manual's HTML environments when a web-only enhancement is needed.
+
+\section{Next steps}
+Replace this text with chapters in the same directory and add a GNUmakefile
+with `include bookml/bookml.mk` when you want BookML's multi-format build.
+
+\iflatexml\else
+  \bigskip
+  \begin{center}
+    {\small Copyright \copyright{} 2026 A. Researcher. Compiled with BookML.}
+  \end{center}
+\fi
+\end{document}

@@ -1,0 +1,254 @@
+name: Check
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: "5 6 * * 1"
+  workflow_dispatch:
+concurrency:
+  group: "${{ github.workflow }}-${{ github.head_ref || github.ref }}"
+  cancel-in-progress: true
+jobs:
+  pdf:
+    name: pdf (latexmk paper)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install TeX Live
+        uses: zauguin/install-texlive@6671d0c62046c7e349fe154d5208fe746b07e037 # v4.4.0
+        with:
+          package_file: '${{ github.workspace }}/Texlivefile'
+          texlive_version: 2026
+      - name: Prepare latexmk
+        run: |
+          updmap -sys
+          texhash
+          tlmgr generate language --rebuild-sys
+      - run: latexmk paper
+
+      # Highlight misspelled words in the PDF
+      - uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9 # v1.6.3
+        with:
+          packages: aspell aspell-en aspell-de
+          version: 1.0
+          execute_install_scripts: true
+      - name: post-setup aspell
+        # refs https://github.com/awalsh128/cache-apt-pkgs-action/issues/157
+        run: |
+          sudo apt-get install -y aspell-en aspell-de
+      - name: aspell
+        run: |
+          for tex in *.tex chapters-*/*.tex content-markdown*.md chapters-*/*.md; do
+            [ -e "$tex" ] || continue
+            if [[ "en" == "de" && ( "$tex" == thesis-example* || "$tex" == chapters-de/* ) ]]; then
+              continue
+            fi
+
+            # The lualatex package "spelling" requires the content to be in a file ending with ".spell.bad"
+            # Markdown files may contain LaTeX commands and references (<#id>, {#id}), which are no words.
+            if [[ "$tex" == *.md ]]; then
+              sed -E 's/\\[A-Za-z]+//g; s/<#[^>]*>//g; s/\{#[^}]*\}//g' "$tex" | aspell --mode=markdown\
+                -l en_US\
+                --encoding=utf-8\
+                --conf=./.aspell.conf\
+                -p ./.aspell.en.pws list\
+                | sort | uniq >> paper.spell.bad
+            else
+              aspell --mode=tex\
+                -l en_US\
+                --encoding=utf-8\
+                --conf=./.aspell.conf\
+                -p ./.aspell.en.pws list\
+                < "$tex" | sort | uniq >> paper.spell.bad
+            fi
+          done
+      - run: latexmk paper
+
+      - name: Job summary using texlogsieve
+        run: |
+          texlogsieve --version | head -n 1
+
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          texlogsieve paper.log | tee -a "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-result
+          path: |
+            paper.pdf
+            paper.log
+            paper.fls
+  word-count:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install TeX Live
+        uses: zauguin/install-texlive@6671d0c62046c7e349fe154d5208fe746b07e037 # v4.4.0
+        with:
+          package_file: '${{ github.workspace }}/Texlivefile'
+          texlive_version: 2026
+      - name: Count words
+        run: |
+          texcount -utf8 -inc paper.tex > texcount.txt
+          echo "## TeXcount word count" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat "texcount.txt" >> $GITHUB_STEP_SUMMARY
+
+          texcount -utf8 -inc -v -html paper.tex > texcount.html
+
+          # output for summary
+          # too verbose - therefore disabled
+          #
+          # texcount -utf8 -inc -v -htmlcore paper.tex > texcount.html-body
+          # echo "" >> $GITHUB_STEP_SUMMARY
+          # echo "## TeXcount LaTeX interpretation" >> $GITHUB_STEP_SUMMARY
+          # echo "" >> $GITHUB_STEP_SUMMARY
+          # cat "texcount.html-body" >> $GITHUB_STEP_SUMMARY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: word-count
+          path: |
+            texcount.txt
+            texcount.html
+  spell-check:
+    # This is based on https://github.com/mh61503891/action-paper-aspell/tree/master
+    #
+    runs-on: ubuntu-latest
+    # The DANTE e.V. image contains aspell with English and German dictionaries
+    container: danteev/texlive:2026-C
+    # In a container, steps run with sh by default
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: aspell
+        run: |
+          echo "| file | status |" >> $GITHUB_STEP_SUMMARY
+          echo "| -- | -- |" >> $GITHUB_STEP_SUMMARY
+          failure=0
+          for tex in *.tex chapters-*/*.tex content-markdown*.md chapters-*/*.md; do
+            [ -e "$tex" ] || continue
+            if [[ "en" == "de" && ( "$tex" == thesis-example* || "$tex" == chapters-de/* ) ]]; then
+              echo "$tex skipped"
+              continue
+            fi
+            echo "Checking $tex..."
+
+            # Pick the dictionary that matches the file's language: the "-de"
+            # variants are German, everything else uses the document's language.
+            case "$tex" in
+              *-de.tex|*-de-*.tex|*.de.md|chapters-de/*) aspell_lang="-l de_DE --run-together"; aspell_pws=de ;;
+              chapters-en/*) aspell_lang="-l en_US"; aspell_pws=en ;;
+              *) aspell_lang="-l en_US"; aspell_pws=en ;;
+            esac
+
+            # Words are output in the order they appear in the document.
+            # Markdown files may contain LaTeX commands and references (<#id>, {#id}), which are no words.
+            if [[ "$tex" == *.md ]]; then
+              words=$(sed -E 's/\\[A-Za-z]+//g; s/<#[^>]*>//g; s/\{#[^}]*\}//g' "$tex" | aspell --mode=markdown $aspell_lang --encoding=utf-8 --conf=./.aspell.conf -p ./.aspell.$aspell_pws.pws list | tr '\n' ' ')
+            else
+              words=$(aspell --mode=tex $aspell_lang --encoding=utf-8 --conf=./.aspell.conf -p ./.aspell.$aspell_pws.pws list < "$tex" | tr '\n' ' ')
+            fi
+            if [ -z "$words" ]; then
+              echo "| $tex | ✅ |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| $tex | ❌ $words |" >> $GITHUB_STEP_SUMMARY
+              if [[ "$tex" == "paper.tex" || "$tex" == chapters-en/* || "$tex" == content-markdown.md ]]; then
+                failure=1
+              fi
+            fi
+          done
+          if [[ "$failure" -eq 1 ]]; then
+             echo "" >> $GITHUB_STEP_SUMMARY
+             echo 'If you want to ignore words, add them to `.aspell.en.pws` (your personal aspell dictionary)' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+  textlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - name: Lint English prose with textlint
+        run: |
+          # Report-only: findings show up as annotations, the job does not fail.
+          # Rules come from .textlintrc.json. Only English documents (marked by
+          # "% !TeX spellcheck = en-US") are linted: write-good targets English.
+          # The English Markdown files (content-markdown.md, chapters-en/*.md) belong to them.
+          files=()
+          for tex in *.tex content-markdown.md; do
+            [ -e "$tex" ] || continue
+            if [[ "$tex" == chapters-en/* || "$tex" == *.md ]] || grep -q '^% !TeX spellcheck = en' "$tex"; then
+              files+=("$tex")
+            fi
+          done
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No English files to lint." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          npx --yes \
+            --package textlint \
+            --package textlint-plugin-latex2e \
+            --package textlint-filter-rule-allowlist \
+            --package textlint-rule-terminology \
+            --package textlint-rule-write-good \
+            textlint --format github "${files[@]}" \
+            | sed "s|${GITHUB_WORKSPACE}/||g" | tee annotations.txt || true
+          count=$(grep -c '^::\(error\|warning\)' annotations.txt || true)
+          echo "textlint reported ${count} finding(s) in: $(IFS=,; echo "${files[*]}")" >> "$GITHUB_STEP_SUMMARY"
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Finds common misspellings (configured in .typos.toml)
+      - uses: crate-ci/typos@7f9d0819ca1c008ade73f4b41fa9d258d48f605b # v1.51.1
+  textidote:
+    runs-on: ubuntu-latest
+    # The DANTE e.V. image contains TeXtidote
+    container: danteev/texlive:2026-C
+    # In a container, steps run with sh by default
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check spelling, grammar, and style with TeXtidote
+        run: |
+          # Report-only: findings show up as annotations, the job does not fail.
+          # TeXtidote (https://github.com/sylvainhalle/textidote) reads its options from .textidote.
+          textidote --output singleline --no-color paper.tex > textidote.txt || true
+          # \markdownInput is removed by .textidote, so the Markdown file is checked on its own
+          if [ -e content-markdown.md ]; then
+            textidote --output singleline --no-color content-markdown.md >> textidote.txt || true
+          fi
+          # A finding looks like: file.tex(L25C1-L25C25): message "excerpt"
+          perl -ne 'if (/^(.+?)\(L(\d+)C(\d+)-L(\d+)C(\d+)\): (.*)$/) { my ($f, $l, $c, $el, $ec, $m) = ($1, $2, $3, $4, $5, $6); $m =~ s/%/%25/g; print "::warning file=$f,line=$l,col=$c,endLine=$el,endColumn=$ec,title=TeXtidote::$m\n" }' textidote.txt
+          echo "TeXtidote reported $(grep -c . textidote.txt) finding(s) in paper.tex and content-markdown.md" >> "$GITHUB_STEP_SUMMARY"
+  indent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9 # v1.6.3
+        with:
+          packages: libyaml-tiny-perl libfile-homedir-perl
+          version: 1.0
+          execute_install_scripts: true
+      - name: Install latexindent
+        uses: zauguin/install-texlive@6671d0c62046c7e349fe154d5208fe746b07e037 # v4.4.0
+        with:
+          packages: latexindent
+          texlive_version: 2026
+      - run: make format LOCAL=1
+      - name: No changes made by latexindent
+        run: git diff --exit-code

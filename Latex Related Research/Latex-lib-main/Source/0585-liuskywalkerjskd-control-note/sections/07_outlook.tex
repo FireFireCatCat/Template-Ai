@@ -1,0 +1,286 @@
+%=============================================================================
+\section{Outlook: Data-Driven and Learning-Based Control}
+%=============================================================================
+
+All the methods covered so far---PID, state-space, LQR, Kalman filtering, MPC---assume a known \emph{model} of the plant. In practice, however, obtaining an accurate model is often the hardest part. A new generation of techniques attempts to bypass or augment the modeling step by learning control policies directly from data. This chapter surveys these frontiers and discusses their relationship with classical control theory.
+
+\subsection{Data-Driven Control}
+
+\subsubsection{Motivation: From ``Model First, Control Second'' to ``Control Directly from Data''}
+
+The traditional pipeline is: collect data $\to$ system identification $\to$ build model $\to$ design controller. Each step introduces errors, and those errors compound. A natural question arises: \emph{can we skip the modeling step and design controllers directly from data?}
+
+\subsubsection{Willems' Fundamental Lemma}
+
+The theoretical foundation is \textbf{Willems' Fundamental Lemma} (\href{https://arxiv.org/abs/2206.00397}{Willems et al., 2005; see Markovsky \& Dörfler, 2021 for a modern treatment}): for a linear time-invariant system, if an input--output trajectory of length $T$ satisfies a \emph{persistent excitation} condition of sufficient order, then \emph{all} possible trajectories of the system can be expressed as linear combinations of the columns of the data Hankel matrix:
+\[
+\begin{bmatrix} U_- \\ X_- \\ U_+ \\ X_+ \end{bmatrix} g = \begin{bmatrix} u_{\mathrm{ini}} \\ x_{\mathrm{ini}} \\ u \\ x \end{bmatrix},
+\]
+where $U_-, X_-$ are Hankel matrices constructed from historical data and $g$ is the coefficient vector to be determined.
+
+\textbf{Intuition:} A single sufficiently rich trajectory ``encodes'' the complete dynamics of the system---equivalent to knowing the $(A, B)$ matrices.
+
+\subsubsection{Data-Driven LQR}
+
+Using Willems' Lemma, the LQR problem
+\[
+\min_{K}\; \sum_{k=0}^{\infty} \bigl(x_k^\top Q\, x_k + u_k^\top R\, u_k\bigr)
+\]
+can be solved directly via data-consistency constraints constructed from the Hankel matrix, \emph{without identifying} $A$ or $B$.
+
+\textbf{Limitations:}
+\begin{itemize}[nosep]
+    \item The data must satisfy the persistent excitation condition---random noise is not enough; the input signal must be sufficiently rich.
+    \item Sensitive to measurement noise.
+    \item Currently limited to linear systems (nonlinear extensions are an active research area).
+\end{itemize}
+
+\subsubsection{Data-Enabled Predictive Control (DeePC)}
+
+DeePC (\href{https://arxiv.org/abs/1811.05890}{Coulson et al., 2019}) combines Willems' Lemma with MPC: the data Hankel matrix replaces the prediction model, and the predictive control problem is solved directly in data space. This preserves MPC's constraint-handling capability while eliminating the need for explicit system identification.
+
+\subsubsection{Koopman Operator Theory}
+
+The methods above apply to linear systems. For nonlinear systems, there is an elegant idea: \textbf{lift} the nonlinear dynamics into a higher-dimensional space where they become linear, then apply the entire classical linear toolbox.
+
+The \textbf{Koopman operator} is an infinite-dimensional linear operator that acts on \emph{observable functions} of the state rather than the state itself. Given a nonlinear system $x_{k+1} = f(x_k)$, the Koopman operator $\mathcal{K}$ satisfies $\mathcal{K} g = g \circ f$ for any observable function $g$. The dynamics of $g(x)$ are \emph{linear} even though the dynamics of $x$ are not.
+
+In practice, we approximate the Koopman operator by choosing a finite dictionary of observable functions $\psi(x) = [\psi_1(x), \ldots, \psi_N(x)]^\top$ and fitting a matrix $K$ such that $\psi(x_{k+1}) \approx K \psi(x_k)$. The most common algorithm for this is \textbf{Extended Dynamic Mode Decomposition (EDMD)} (\href{https://arxiv.org/abs/1408.4408}{Williams et al., 2015}), which solves a least-squares problem on trajectory data.
+
+\textbf{Why this matters:} Once you have a linear model in the lifted space, you can apply LQR, Kalman filtering, and convex MPC \emph{to genuinely nonlinear systems}---no Jacobian linearization, no operating-point restriction.
+
+Recent hardware and algorithmic results (2024--2025) have moved Koopman methods from theoretical curiosities to deployed systems. Invertible Koopman Networks use invertible neural networks to learn both the lifting map and its inverse, solving the long-standing problem of reconstructing the true state from the lifted coordinates. Koopman-based MPC combined with Control Barrier Functions has been shown to formulate safety-critical nonlinear control as a simple QP in the lifted space. On the hardware side, SE(3) Koopman-MPC has been demonstrated on quadrotor UAVs, and real-time tire-dynamics modeling for autonomous vehicles shows the approach scales to fast, safety-critical loops.
+
+\textbf{Connection to what you already know:} Think of the Koopman approach as a principled, data-driven generalization of the Jacobian linearization you learned in the state-space chapter. Jacobian linearization is accurate only near one operating point; Koopman lifting is accurate everywhere the data covers.
+
+\subsection{Adaptive Control}
+
+All the controllers we have studied so far use \emph{fixed} parameters. What if the plant changes during operation---a drone picks up a payload, a robot arm lifts an unknown object, or a motor's friction changes with temperature? \textbf{Adaptive control} adjusts controller parameters online as conditions change.
+
+\subsubsection{Model Reference Adaptive Control (MRAC)}
+
+The idea is simple: define a \textbf{reference model} $\dot{x}_m = A_m x_m + B_m r$ that represents your desired closed-loop behavior, and design an adaptation law that updates the controller gains so that the plant's output tracks the reference model's output.
+
+The adaptation law is typically derived from a \textbf{Lyapunov stability argument}---the same tool used in the Modern Control chapter. A candidate Lyapunov function $V(e, \tilde{\theta})$ is constructed from the tracking error $e = x - x_m$ and the parameter error $\tilde{\theta} = \theta - \theta^*$, and the gain update law is chosen to make $\dot{V} \leq 0$.
+
+\subsubsection{L1 Adaptive Control}
+
+Classical MRAC has a fundamental tension: fast adaptation improves tracking but can cause high-frequency oscillations. \textbf{L1 adaptive control} resolves this by inserting a \emph{low-pass filter} between the adaptive estimate and the control signal. This decouples the adaptation rate from the control bandwidth, providing \emph{guaranteed transient performance bounds}---something classical MRAC cannot offer.
+
+The architecture has three components, all of which you have seen before:
+\begin{enumerate}[nosep]
+    \item A \textbf{state predictor} (essentially a Luenberger observer),
+    \item A fast \textbf{adaptation law} that estimates uncertainties,
+    \item A \textbf{low-pass filter} that smooths the adaptive signal before it reaches the plant.
+\end{enumerate}
+
+\subsubsection{When to Use What}
+
+\begin{center}
+\small
+\begin{tabular}{l l}
+\toprule
+\textbf{Scenario} & \textbf{Recommended approach} \\
+\midrule
+Uncertainty bounded and known in advance & Robust control ($H_\infty$, $\mu$-synthesis) \\
+Parameters drift slowly, structure known & MRAC \\
+Fast adaptation needed, bandwidth must be bounded & L1 adaptive control \\
+No model at all, abundant simulation data & Reinforcement learning \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Reinforcement Learning and Control}
+
+Adaptive control adjusts fixed-structure controllers online; reinforcement learning (RL) goes further by learning the \emph{structure} of the control policy itself. It generalizes optimal control to nonlinear systems with arbitrary cost functions and constraints.
+
+\subsubsection{Core Concepts}
+
+RL rests on three pillars. A \textbf{policy} $\pi(s) \to a$ is a mapping from states to actions---in control terms, it \emph{is} the controller. In the linear-quadratic case, $\pi(x) = -Kx$ reduces to the LQR gain we derived earlier. The \textbf{value function} $V^\pi(s) = \mathbb{E}\bigl[\sum_{t=0}^{\infty} \gamma^t r_t \mid s_0 = s\bigr]$ measures the expected cumulative reward from a given state, playing exactly the role of the cost-to-go in dynamic programming. Finally, the \textbf{policy gradient} $\nabla_\theta J(\theta)$ provides the direction in which to update the policy parameters to maximize expected reward---gradient ascent on the controller's performance.
+
+\subsubsection{Two Paradigms}
+
+These building blocks support two broad implementation strategies. \textbf{Model-free RL} (\href{https://arxiv.org/abs/1707.06347}{PPO}, \href{https://arxiv.org/abs/1801.01290}{SAC}, etc.) learns policies through trial and error without a dynamics model. It is highly general, but \emph{sample efficiency} is extremely low---typically requiring millions of interactions, feasible only in simulation, with sim-to-real transfer needed for deployment. \textbf{Model-based RL} (\href{https://arxiv.org/abs/1906.08253}{MBPO}, \href{https://arxiv.org/abs/1912.01603}{Dreamer}, etc.) first learns a dynamics model from data, then uses it for planning or policy optimization. It is more sample-efficient and closer in spirit to classical control---essentially system identification followed by model-based optimal control, but with a learned model.
+
+\subsubsection{Sim-to-Real Transfer}
+
+RL policies are usually trained in simulation, but a gap exists between simulation and the real system. Three strategies are commonly used to bridge this gap. \textbf{Domain randomization} randomizes physical parameters (mass, friction, latency, etc.) during training, forcing the policy to learn behaviors robust to parameter variations. \textbf{System identification and high-fidelity simulation} carefully calibrate the simulation parameters to narrow the gap at its source. \textbf{Fine-tuning} pre-trains in simulation, then adjusts on the real system with a small amount of data---getting most of the way in simulation and polishing the last mile on hardware.
+
+\subsubsection{Success Stories and Current Status}
+
+RL has achieved remarkable results in research. Quadrupedal robots---MIT Mini Cheetah (\href{https://arxiv.org/abs/2208.07855}{Margolis et al., 2022}), ANYmal (\href{https://arxiv.org/abs/2109.11978}{Miki et al., 2022})---have learned to walk and run on rough terrain via RL alone. OpenAI demonstrated Rubik's cube solving with a dexterous robotic hand, and Google has deployed RL-based grasping in warehouse settings. ETH Z\"urich's Swift system beat human champions in drone racing (\href{https://arxiv.org/abs/2310.08984}{Kaufmann et al., 2023}), closing the control loop from raw camera images to motor commands at superhuman speed.
+
+Despite these successes, RL remains rare in engineering competitions and industrial settings. Training requires high-fidelity simulation environments that are expensive to develop. Learned policies are ``black boxes,'' making debugging extremely difficult when something goes wrong on the field. Competition timelines are usually too short for the full RL development cycle. And safety guarantees remain insufficient---you cannot formally prove that a neural-network policy will never command a dangerous action.
+
+\subsection{Trajectory Optimization and Optimal Control}
+
+The goal of optimal control is to find $u(t)$ that minimizes a cost functional:
+\[
+J = \int_0^T L\bigl(x(t), u(t)\bigr)\,\mathrm{d}t + \Phi\bigl(x(T)\bigr),
+\]
+subject to the dynamics $\dot{x} = f(x, u)$.
+
+\subsubsection{Two Solution Strategies}
+
+There are two fundamentally different ways to attack this problem. \textbf{Indirect methods}, rooted in Pontryagin's Maximum Principle, derive adjoint (costate) equations to obtain necessary conditions for optimality, then solve the resulting two-point boundary value problem. They are mathematically elegant but become unwieldy when the system has complex inequality constraints. \textbf{Direct methods} (collocation, multiple shooting) take a more engineering-oriented approach: discretize the trajectory into a finite set of decision variables and convert the entire problem into a large-scale nonlinear program (NLP) that off-the-shelf solvers can handle. Modern trajectory optimization tools universally adopt direct methods.
+
+\subsubsection{iLQR and DDP}
+
+\textbf{Iterative LQR (iLQR)} and \textbf{Differential Dynamic Programming (DDP)} are the workhorse algorithms of modern robotic trajectory optimization: linearize the nonlinear dynamics around a nominal trajectory, solve the resulting LQR sub-problem to obtain a correction, update the trajectory, and repeat.
+
+\textbf{Connection to MPC:} Model predictive control is essentially trajectory optimization solved repeatedly in a receding-horizon fashion at each time step. When the dynamics are nonlinear, MPC internally uses iLQR or NLP solvers.
+
+\textbf{Common tools:} \href{https://web.casadi.org/}{CasADi}, \href{https://drake.mit.edu/}{Drake}, \href{https://arxiv.org/abs/2007.01850}{ALTRO}, \href{https://github.com/loco-3d/crocoddyl}{Crocoddyl}, MATLAB \texttt{fmincon}.
+
+\subsection{Neural Networks Meet Control}
+
+Trajectory optimization gives us optimal solutions \emph{given} a model. But what if parts of the model are too complex to derive from physics? Neural networks can fill in the gaps.
+
+\subsubsection{Neural Networks as Controller Components}
+
+Neural networks need not replace the entire controller. A more practical approach is to embed them within specific modules of a classical control framework. The most common pattern is \textbf{learning the dynamics model}: fit $\dot{x} = f_\theta(x, u)$ with a neural network, then plug the learned model into MPC or iLQR as a drop-in replacement for the physics-based model. When a first-principles model already exists but is not accurate enough, a neural network can \textbf{learn the residual}: $\dot{x} = f_{\mathrm{phys}}(x, u) + f_\theta(x, u)$, letting the network capture only what the physics model misses---friction, cable elasticity, aerodynamic effects. A third pattern is \textbf{learning the cost function} from human demonstrations (inverse reinforcement learning), which is useful when the task objective is hard to specify mathematically but easy to demonstrate.
+
+\subsubsection{Neural ODEs and Physics-Informed Neural Networks}
+
+\textbf{Neural ODEs} (\href{https://arxiv.org/abs/1806.07366}{Chen et al., 2018}) parameterize the state derivative directly as a neural network: $\dot{x} = f_\theta(x, t, u)$, and solve forward using standard ODE solvers (e.g., Runge-Kutta). This gives a continuous-time, state-space model learned from data whose structure is \emph{guaranteed} to satisfy the ODE formulation---exactly the $\dot{x} = f(x, u)$ framework from our state-space chapter, but with $f$ learned rather than derived from physics.
+
+\textbf{Physics-Informed Neural Networks (PINNs)} go one step further: they embed known physics (differential equations, conservation laws, symmetries) as soft constraints in the loss function. The training objective becomes:
+\[
+\mathcal{L} = \underbrace{\mathcal{L}_{\mathrm{data}}}_{\text{fit measured data}} + \lambda \underbrace{\mathcal{L}_{\mathrm{physics}}}_{\text{ODE/PDE residual} \to 0}.
+\]
+This produces models that generalize beyond training data in physically consistent ways---they cannot violate energy conservation or predict negative masses.
+
+\textbf{Practical impact:} Neural ODEs and PINNs can serve as the internal model for MPC, replacing both first-principles derivation \emph{and} traditional system identification. Recent work (2024--2025) has demonstrated PINN-based MPC for chemical processes, oil well control, and Van der Pol oscillators, with inference faster than numerical ODE solvers since it is a single forward pass.
+
+\subsubsection{Diffusion Policies for Robot Learning}
+
+A breakthrough in robot imitation learning came from an unexpected direction: \textbf{diffusion models}, the same generative models behind image generators like Stable Diffusion.
+
+\textbf{Diffusion Policy} (\href{https://arxiv.org/abs/2303.04137}{Chi et al., 2023}) treats action generation as a denoising process: starting from pure Gaussian noise in action space, the model iteratively denoises conditioned on visual observations until a clean action trajectory emerges. The key advantage over standard behavioral cloning is that diffusion models can represent \textbf{multimodal} action distributions---when there are multiple valid ways to perform a task (go around the obstacle left or right?), the model preserves all modes rather than averaging them into a single (often invalid) action.
+
+\textbf{Results:} Across 12 manipulation benchmarks, Diffusion Policy outperformed prior state-of-the-art by an average of 46.9\% success rate. Real-world demonstrations include bimanual assembly and cloth folding. One-Step Diffusion Policy (2025) distills the iterative process into a single forward pass, enabling 50+ Hz real-time control.
+
+\textbf{Connection to classical control:} The denoising process is analogous to iterative trajectory refinement in MPC/iLQR: you start with a rough plan (noise) and refine it step by step, except here the ``model'' is learned from demonstrations rather than derived from physics.
+
+\subsubsection{Foundation Models for Robotics (VLAs)}
+
+The latest wave in robot learning leverages \textbf{Vision-Language-Action (VLA)} models: large neural networks pre-trained on internet-scale image-text data, then fine-tuned to output robot actions. Given a camera image and a natural-language instruction (``pick up the red cup''), the VLA outputs joint commands directly.
+
+\textbf{Key milestones:}
+\begin{itemize}[nosep]
+    \item \textbf{RT-2} (\href{https://arxiv.org/abs/2307.15818}{Brohan et al., 2023}): First demonstration that a VLM can be fine-tuned for robot control. Showed emergent reasoning---e.g., inferring which object to grasp from abstract instructions never seen during training.
+    \item \textbf{Octo} (\href{https://arxiv.org/abs/2405.12213}{Ghosh et al., 2024}): Open-source generalist policy trained on 1M+ episodes across 22 different robot embodiments.
+    \item \textbf{$\pi_0$} (\href{https://arxiv.org/abs/2410.24164}{Black et al., 2024}): 3B-parameter VLA using flow matching (a continuous-time generalization of diffusion) for 50 Hz real-time control. Demonstrated dexterous bimanual tasks including laundry folding and box assembly. Weights released open-source.
+    \item \textbf{$\pi_{0.5}$} (Physical Intelligence, 2025): Demonstrated generalization to entirely new environments unseen during training.
+\end{itemize}
+
+\textbf{The practical hierarchy:} VLAs serve as high-level task planners; classical controllers (PID, impedance control) still execute the low-level joint commands. This mirrors the cascade control architecture from Section 4: VLA = outer loop (task-level semantics), classical controller = inner loop (joint-level dynamics).
+
+\subsubsection{Safety Constraints and Verifiability}
+
+Combining learning methods with safety guarantees is a hot research direction:
+\begin{itemize}[nosep]
+    \item \textbf{Control Barrier Functions (CBF)}: add a safety constraint layer to learned policies, ensuring the system state never leaves a safe set. Mathematically, a CBF $h(x)$ defines a safe set $\{x : h(x) \geq 0\}$ and imposes the constraint $\dot{h}(x) + \alpha h(x) \geq 0$ on the control input---a single linear inequality that can be appended to any QP-based controller.
+    \item \textbf{Lyapunov neural networks}: train a neural network to simultaneously learn a controller and a Lyapunov function, thereby providing a stability proof.
+    \item \textbf{Reachability analysis}: compute the reachable set of the system under a learned policy and verify whether it satisfies safety requirements.
+\end{itemize}
+
+\subsection{Event-Triggered Control}
+
+Every controller in this book runs at a \emph{fixed} sampling rate $T_s$. But does it really need to? If the system is near equilibrium and nothing is changing, computing a new control output every millisecond wastes CPU cycles, bus bandwidth, and battery.
+
+\textbf{Event-triggered control (ETC)} replaces the fixed clock with a \textbf{triggering condition}: a new control computation fires only when the state deviation since the last update exceeds a threshold:
+\[
+\|x(t) - x(t_k)\| \geq \sigma \|x(t)\| + \varepsilon,
+\]
+where $t_k$ is the last trigger time, $\sigma > 0$ is a relative threshold, and $\varepsilon > 0$ prevents Zeno behavior (infinitely frequent triggers). Between triggers, the control input is held constant---exactly like a ZOH.
+
+\textbf{Self-triggered control} is a proactive variant: instead of continuously monitoring the state, the controller \emph{predicts} when the next trigger will be needed and schedules it in advance, allowing the processor to sleep in between.
+
+\textbf{Why this matters for robotics.}\;On a CAN bus shared among 8+ motor controllers, reducing unnecessary messages directly improves worst-case latency for high-priority loops. On battery-powered systems (drones, mobile robots), fewer computations mean longer runtime. And in multi-agent systems---UAV swarms, multi-robot warehouses---event-triggered communication drastically reduces network congestion.
+
+\textbf{Connection to classical control:} ETC is a generalization of sampled-data control theory. Stability analysis uses the same Lyapunov tools from the Modern Control chapter, with an additional step to prove that inter-event intervals are bounded away from zero (ruling out Zeno behavior). The proof typically relies on input-to-state stability (ISS) arguments.
+
+\subsection{Method Comparison at a Glance}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{Method} & \textbf{Model needed?} & \textbf{Handles nonlinearity?} & \textbf{Real-time?} & \textbf{Maturity} \\
+\midrule
+PID & No (empirical tuning) & Local & Yes & Industry standard \\
+LQR & Yes (linear) & No & Yes & Mature \\
+MPC (linear) & Yes (linear) & No & Yes & Mature \\
+NMPC & Yes (nonlinear) & Yes & Depends & Early industrial \\
+MRAC / L1 adaptive & Partial (structure) & Limited & Yes & Mature (aerospace) \\
+Data-driven LQR & No (data only) & No & Yes & Research frontier \\
+DeePC & No (data only) & Limited & Depends & Research frontier \\
+Koopman + MPC & No (data-lifted) & Yes (via lifting) & Yes & Research validated \\
+Model-based RL & Learned & Yes & Offline training & Research validated \\
+Model-free RL & No & Yes & Offline training & Research validated \\
+iLQR / DDP & Yes (nonlinear) & Yes & Near real-time & Research / early industrial \\
+Neural ODE / PINN & Hybrid & Yes & Near real-time & Research frontier \\
+Diffusion Policy & No (demos) & Yes & Near real-time & Research validated \\
+VLA ($\pi_0$ etc.) & No (demos + VLM) & Yes & Yes (50 Hz) & Research frontier \\
+Event-triggered & Same as base ctrl. & Same as base ctrl. & Reduces load & Mature (theory) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Advice for the Reader}
+
+\begin{mdframed}
+\textbf{The big picture.}\;The boundary between control theory and machine learning is dissolving. Data-driven methods bring adaptability; learning-based methods bring the ability to handle complexity. But the foundations covered in this document---state-space modeling, stability analysis, observer design, optimal control---remain the \emph{bedrock} on which all of this is built.
+
+\textbf{A practical roadmap:}
+\begin{enumerate}[nosep]
+    \item \textbf{Master the classics first.} PID, LQR, MPC, Kalman filtering---these tools are sufficient for the vast majority of robotics applications, and they are reliable, debuggable, and theoretically grounded.
+    \item \textbf{Introduce data-driven techniques when classical methods hit a wall.} System hard to model? Try data-driven LQR/MPC. Environment varies widely? Consider adaptive control.
+    \item \textbf{Use RL for ``things classical methods cannot do.''} Extreme agility, high-dimensional dexterous manipulation, complex contact interactions---these are the scenarios where RL's advantages truly shine.
+    \item \textbf{Always keep a safety layer.} No matter how ``intelligent'' the controller, add control barrier functions or hardware safety limits to ensure the system never takes dangerous actions.
+\end{enumerate}
+
+A deep understanding of the classical foundations will make you a better user of advanced methods, not someone replaced by them.
+
+\textbf{A word of caution.}\;Do not chase new algorithms for the sake of novelty. In engineering, the best controller is the one that \textit{works}. Complexity is a cost, not a virtue.
+\end{mdframed}
+
+\subsection{Further Reading}
+
+Clickable links to key papers and resources mentioned in this chapter.
+
+\subsubsection*{Data-Driven Control}
+\begin{itemize}[nosep]
+    \item \href{https://arxiv.org/abs/2206.00397}{Markovsky \& Dörfler (2021)} --- Behavioral systems theory and Willems' Fundamental Lemma: a tutorial
+    \item \href{https://arxiv.org/abs/1811.05890}{Coulson et al.\ (2019)} --- Data-Enabled Predictive Control (DeePC)
+    \item \href{https://arxiv.org/abs/1408.4408}{Williams et al.\ (2015)} --- Extended Dynamic Mode Decomposition (EDMD) for Koopman approximation
+\end{itemize}
+
+\subsubsection*{Reinforcement Learning}
+\begin{itemize}[nosep]
+    \item \href{https://arxiv.org/abs/1707.06347}{Schulman et al.\ (2017)} --- Proximal Policy Optimization (PPO)
+    \item \href{https://arxiv.org/abs/1801.01290}{Haarnoja et al.\ (2018)} --- Soft Actor-Critic (SAC)
+    \item \href{https://arxiv.org/abs/1906.08253}{Janner et al.\ (2019)} --- Model-Based Policy Optimization (MBPO)
+    \item \href{https://arxiv.org/abs/1912.01603}{Hafner et al.\ (2020)} --- Dream to Control: Dreamer
+    \item \href{https://arxiv.org/abs/2208.07855}{Margolis et al.\ (2022)} --- Rapid locomotion via RL (MIT Mini Cheetah)
+    \item \href{https://arxiv.org/abs/2109.11978}{Miki et al.\ (2022)} --- Learning robust perceptive locomotion (ANYmal)
+    \item \href{https://arxiv.org/abs/2310.08984}{Kaufmann et al.\ (2023)} --- Champion-level drone racing via deep RL (Swift)
+\end{itemize}
+
+\subsubsection*{Trajectory Optimization}
+\begin{itemize}[nosep]
+    \item \href{https://arxiv.org/abs/2007.01850}{Howell et al.\ (2020)} --- ALTRO: fast solver for constrained trajectory optimization
+    \item \href{https://github.com/loco-3d/crocoddyl}{Crocoddyl} --- Efficient multi-contact optimal control (open-source)
+    \item \href{https://web.casadi.org/}{CasADi} --- Symbolic framework for nonlinear optimization and optimal control
+\end{itemize}
+
+\subsubsection*{Neural Networks and Learning for Control}
+\begin{itemize}[nosep]
+    \item \href{https://arxiv.org/abs/1806.07366}{Chen et al.\ (2018)} --- Neural Ordinary Differential Equations
+    \item \href{https://arxiv.org/abs/2303.04137}{Chi et al.\ (2023)} --- Diffusion Policy: visuomotor policy learning via action diffusion
+    \item \href{https://arxiv.org/abs/2307.15818}{Brohan et al.\ (2023)} --- RT-2: Vision-Language-Action Models
+    \item \href{https://arxiv.org/abs/2405.12213}{Ghosh et al.\ (2024)} --- Octo: An Open-Source Generalist Robot Policy
+    \item \href{https://arxiv.org/abs/2410.24164}{Black et al.\ (2024)} --- $\pi_0$: A Vision-Language-Action Flow Model for General Robot Control
+\end{itemize}
+

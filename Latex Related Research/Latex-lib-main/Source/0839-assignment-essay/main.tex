@@ -1,0 +1,70 @@
+% Original assignment starter using CTAN's assignment class (LPPL).
+% This document uses only the class interface and contains catalogue-written
+% placeholder content, not copied upstream example prose.
+\documentclass[11pt,a4paper]{assignment}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\coursetitle{Systems Performance and Capacity}
+\courselabel{SYS 204}
+\exercisesheet{Assignment 01: Measuring a Queueing System}{Queueing fundamentals}
+\title{Assignment 01: Measuring a Queueing System}
+\student{Student Name \\ Student ID}
+\semester{Autumn 2026}
+\date{August 29, 2026}
+
+\begin{document}
+
+\begin{problemlist}
+\pbitem Instructions
+\begin{problem}
+Show enough working for another student to reproduce your result. State any
+assumption that changes the model. Submit this source together with the PDF.
+\end{problem}
+
+\pbitem Warm-up: a stable queue
+\begin{problem}
+A service desk receives requests at rate $\lambda=18$ per hour and serves them
+at rate $\mu=24$ per hour. For an $M/M/1$ model, calculate the utilisation
+$\rho$, the expected number in the system $L$, and the expected waiting time
+$W$.
+
+\begin{answer}
+For a stable queue $\lambda<\mu$, so
+\[
+  \rho=\frac{\lambda}{\mu}=0.75, \qquad
+  L=\frac{\rho}{1-\rho}=3, \qquad
+  W=\frac{L}{\lambda}=\frac{1}{6}\text{ hour}=10\text{ minutes}.
+\]
+Explain in your own words what the utilisation value says about spare
+capacity during the busiest part of the day.
+\end{answer}
+\end{problem}
+
+\pbitem Model critique
+\begin{problem}
+The $M/M/1$ model assumes independent arrivals, exponentially distributed
+service times, one server and an unlimited waiting room. Pick two assumptions
+that are unlikely to hold for a real software service. For each, describe one
+measurement that would test the assumption and one design response if it fails.
+
+\begin{enumerate}
+  \item Assumption: \rule{0.62\linewidth}{0.4pt}\\
+        Measurement: \rule{0.59\linewidth}{0.4pt}\\
+        Response: \rule{0.64\linewidth}{0.4pt}
+  \item Assumption: \rule{0.62\linewidth}{0.4pt}\\
+        Measurement: \rule{0.59\linewidth}{0.4pt}\\
+        Response: \rule{0.64\linewidth}{0.4pt}
+\end{enumerate}
+\end{problem}
+
+\pbitem Reflection
+\begin{problem}
+What evidence would convince you that this queueing model is useful enough
+for capacity planning, even if it is not literally true?
+\end{problem}
+\end{problemlist}
+\end{document}

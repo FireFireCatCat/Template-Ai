@@ -1,0 +1,26 @@
+% Itemized Invoice with Per-Row VAT Override — invoice2.sty
+%
+% A different author and a different CTAN package from both `invoice`
+% (Oliver Corff, elsewhere in this batch) and the already-shipped
+% us-csv-invoice (invoice-class) despite the similar name. Built with
+% LaTeX3 (expl3): running subtotal, VAT and grand total are computed by
+% the package's own fp arithmetic, and any individual row can override
+% the invoice's default VAT rate -- useful for a mixed-rate order.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{invoice2}
+\pagestyle{empty}
+
+\begin{document}
+
+\noindent{\Large\textbf{Invoice \#4471}}\hfill Marlow Bindery\\
+\noindent 27 August 2026\hfill Bill to: Chapterhouse Books Ltd.\\[1.5em]
+
+\begin{invoice}[vat=0.20, currency-symbol=\pounds, currency-in-header]
+	\invoiceitem{4}{Hand-sewn hardback binding, A5}{38.50}
+	\invoiceitem{12}{Paperback perfect binding, A5}{6.20}
+	\invoiceitem[0]{1}{Postage (zero-rated)}{14.00}
+\end{invoice}
+
+\end{document}

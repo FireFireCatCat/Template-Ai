@@ -1,0 +1,109 @@
+\chapter{Zusammenfassung und Ausblick}
+\label{kap:zusammenfassung}
+
+\section{Zusammenfassung}
+
+Diese Arbeit hat die Verteilung von Arbeitsgängen auf Mitarbeitende bei
+Erpolino als Optimierungsproblem formuliert und zwei Wege verglichen,
+es zu lösen.
+
+Das Problem ließ sich als ganzzahliges lineares Programm formulieren, in
+der Notation des Scheduling als $R\,|\,M_j\,|\,C_{\max}$. Für das
+betrachtete Fertigungslos aus \ZahlAufgaben{} Arbeitsgängen und
+\ZahlMitarbeiter{} Mitarbeitenden liefert \ac{glpk} in \MilpSekunden{}
+Sekunden eine beweisbar optimale Gesamtdauer von \Optimum{} Minuten.
+Gegenüber der bisherigen Praxis, die ungefähr einer Greedy-Regel
+entspricht und \MakespanGreedy{} Minuten benötigt, ist das eine
+Ersparnis von rund einer halben Stunde je Los.
+
+Die Forschungsfrage lässt sich damit beantworten: Ja, die Verteilung
+lässt sich sinnvoll optimieren, und der Ertrag ist messbar. Der
+überraschende Teil der Antwort betrifft das Wie.
+
+\section{Stärken und Schwächen der Verfahren}
+
+\subsection{Das exakte Verfahren}
+
+Seine Stärke ist die \Index{Gütegarantie}. Der Löser liefert nicht nur
+eine Lösung, sondern den Beweis, dass es keine bessere gibt. Diese
+Aussage kann keine Heuristik machen, und sie ist in der Diskussion mit
+der Arbeitsvorbereitung viel wert: Sie beendet die Frage, ob nicht doch
+noch etwas herauszuholen wäre.
+
+Hinzu kommt die Beschreibbarkeit. Das Modell in
+Anhang~\ref{anh:mathprog} umfasst rund 20 Zeilen und ist ohne
+Programmierkenntnisse lesbar. Ändert sich eine Anforderung, ändert sich
+eine Nebenbedingung -- nicht ein Algorithmus.
+
+Seine Schwäche ist das Laufzeitverhalten. Es ist im schlechtesten Fall
+exponentiell, und Abschnitt~\ref{sec:skalierung} zeigt, dass der
+schlechteste Fall nicht theoretisch bleibt: Ab 60~Arbeitsgängen erreicht
+\ac{glpk} die Zeitschranke, ohne die Optimalität zu belegen. Zudem ist
+die Rechenzeit nicht vorhersagbar -- die Instanz mit 40~Arbeitsgängen
+war leichter als die mit 24.
+
+\subsection{Simulated Annealing}
+
+Seine Stärke ist die planbare Rechenzeit. Sie hängt an der Zahl der
+Iterationen, nicht an der Instanz, und wächst über den untersuchten
+Bereich nur schwach. Wo der Löser aufgibt, liefert das Verfahren
+weiterhin brauchbare Lösungen, bei 80~Arbeitsgängen sogar bessere als
+der Löser in 30~Sekunden.
+
+Seine Schwächen sind gravierender, als es die Zahlen nahelegen. Es gibt
+keine Gütegarantie: Ohne Vergleichswert bleibt unbekannt, wie weit eine
+Lösung vom Optimum entfernt ist. Genau dieser Vergleichswert fehlt aber
+in dem Bereich, in dem das Verfahren gebraucht wird -- dort, wo der
+Löser versagt. Das ist kein Detail, sondern die eigentliche Schwäche der
+Methode.
+
+Hinzu kommt die Empfindlichkeit gegenüber Entscheidungen, die nicht aus
+dem Problem folgen. Abschnitt~\ref{sec:energiewirkung} hat gezeigt, dass
+die Wahl der Energie über Erfolg und Misserfolg entscheidet: Mit der
+naheliegenden rohen Zielgröße erreicht kein einziger Lauf das Optimum,
+mit dem Glättungsterm gelingt es. Abkühlplan, Nachbarschaft und
+Iterationszahl wirken ähnlich. Nichts davon steht im Modell; alles davon
+muss erprobt werden.
+
+\subsection{Empfehlung}
+
+Für Erpolino in der heutigen Größenordnung lautet die Empfehlung
+eindeutig: das exakte Verfahren. Es ist schneller, besser und liefert
+eine Garantie. Die Heuristik ist die aufwendigere Lösung des leichteren
+Problems.
+
+Das ist ein negatives Ergebnis für den Hauptteil dieser Arbeit, und es
+ist keines, das sich verstecken lässt. Es ist zugleich das nützlichste
+Ergebnis: Ein Unternehmen, das die Zuordnung verbessern will, sollte
+nicht mit einer Metaheuristik beginnen. Es sollte mit einem Modell
+beginnen.
+
+Die Heuristik wird interessant, sobald die Instanz wächst -- durch mehr
+Arbeitsgänge, weitere Standorte oder einen längeren Planungshorizont.
+Der gemessene Umschlag bei etwa 60~Arbeitsgängen gilt für \ac{glpk}; mit
+einem kommerziellen Löser dürfte er deutlich später liegen.
+
+\section{Ausblick}
+
+Drei Richtungen bieten sich an.
+
+\emph{Das Modell erweitern.} Die Annahmen aus
+Abschnitt~\ref{sec:annahmen} sind spürbare Vereinfachungen.
+\Index{Rüstzeiten}, Reihenfolgeabhängigkeiten und Fälligkeitstermine
+fehlen. Termine ließen sich als Nebenbedingung ergänzen, ohne die
+Struktur zu ändern; Reihenfolgeabhängigkeiten führen dagegen auf ein
+anderes Problem -- ein Job-Shop --, das erheblich schwerer ist
+\parencite{pinedo2016scheduling}.
+
+\emph{Die Zielgröße hinterfragen.} Der Makespan behandelt alle Aufgaben
+gleich. In der Praxis sind manche Aufträge dringender als andere. Eine
+gewichtete Zielgröße oder die Summe der Verspätungen wäre näher an dem,
+was die Arbeitsvorbereitung tatsächlich abwägt.
+
+\emph{Die Datengrundlage verbreitern.} Die Effizienzwerte der
+Qualifikationsmatrix stammen aus Erfahrungswerten. Ob sie stimmen, ist
+offen, und das Ergebnis hängt unmittelbar an ihnen. Aus dem
+\ac{erp}-System ließen sich Ist-Zeiten gewinnen und die Matrix
+empirisch schätzen. Ohne diesen Schritt optimiert das Verfahren
+zuverlässig auf Zahlen, deren Herkunft niemand belegen kann -- und das
+ist am Ende das größere Risiko als die Wahl des Verfahrens.

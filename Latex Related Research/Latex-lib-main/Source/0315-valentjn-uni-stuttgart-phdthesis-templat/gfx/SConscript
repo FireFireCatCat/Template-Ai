@@ -1,0 +1,92 @@
+import os
+import sys
+
+Import("env")
+Import("Helper")
+env = env.Clone()
+
+# install pre-made graphics
+pre = (env.Glob(os.path.join("pre", "*.pdf")) +
+       env.Glob(os.path.join("pre", "*.png")))
+pre = env.Install(env["BUILD_DIR"], pre)
+
+# search for Python scripts
+pys = env.Glob(os.path.join("py", "*.py"))
+pdfs = []
+pgfs = []
+helperPys = []
+
+# search for helper Python scripts
+pyDir = env.Dir(os.path.join("..", "py")).abspath
+for root, dirs, files in os.walk(os.path.join(pyDir, "helper")):
+  helperPys.extend([os.path.join(root, x) for x in files
+                    if x.endswith(".py")])
+
+# set environment variables
+env["ENV"]["BUILD_DIR"] = env["BUILD_DIR"].abspath
+env["ENV"]["PYTHONPATH"] = ":".join(
+  [env["ENV"].get("PYTHONPATH", ""), pyDir])
+
+# check for dependencies
+Helper.checkProgramInstalled(env, "pdfcrop", fail=True)
+Helper.checkProgramInstalled(env, "python3", fail=True)
+
+for py in pys:
+  # determine number of generated images for this *.py file
+  # for this, we need a special comment of the form
+  # "# number of output figures: 3" in the Python file
+  # (SCons needs the number for its dependency graph;
+  # however, this is impossible to determine with SCons alone...)
+  name = os.path.splitext(py.name)[0]
+  if name.startswith("helper"): continue
+  with open(py.abspath, "r") as f: pyCode = f.readlines()
+  pdfCount = 1
+  
+  # graphics scripts depend on notation
+  dependencies = [os.path.join("..", "tex", "preamble", "notation.tex")]
+  
+  for line in pyCode:
+    if line.startswith("# number of output figures = "):
+      number = line.split("=")[-1].strip()
+      if len(number.strip("0123456789")) == 0: pdfCount = int(number)
+    elif line.startswith("# dependencies = "):
+      dependencyNames = line.split("=")[-1].strip().split(",")
+      
+      for dependencyName in dependencyNames:
+        dependencyName = dependencyName.strip()
+        
+        if dependencyName == "SG++":
+          dependencies.extend(env["SGPP_FILES"])
+        else:
+          raise ValueError("Unknown dependency \"{}\".".format(
+              dependencyName))
+    elif not line.startswith("#"):
+      break
+  
+  # generate list of *.pdf files
+  curPDFs = [os.path.join(env["BUILD_DIR"].abspath, "{}_{}.pdf".format(name, i))
+             for i in range(1, pdfCount + 1)]
+  
+  # generate *.pdf files
+  env.Command(curPDFs, py, "python3 $SOURCE")
+  pdfs.extend(curPDFs)
+  env.Depends(curPDFs, dependencies)
+  
+  # save list of *.pgf files
+  pgfs.extend([x[:-4] + ".pgf" for x in curPDFs])
+
+# *.pdf files depend on helper scripts (local helper *.py files and global tools)
+env.Depends(pdfs, helperPys)
+
+# don't delete PDFs before calling Python scripts
+env.Precious(pdfs)
+
+# LuaLaTeX depends on pre-made graphics as well
+pdfs.extend(pre)
+
+# compile *.tex PDFs
+texPDFs = env.SConscript("tex/SConscript", exports="env")
+env.Depends(texPDFs, pdfs)
+pdfs.extend(texPDFs)
+
+Return("pdfs")

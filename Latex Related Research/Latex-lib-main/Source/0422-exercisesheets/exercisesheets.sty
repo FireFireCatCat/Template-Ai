@@ -1,0 +1,1961 @@
+%% exercisesheets.sty
+%% Copyright 2008-2023 Sebastian Kuhnert, Frank Fuhlbrück
+%
+% This work may be distributed and/or modified under the conditions
+% of the LaTeX Project Public License, either version 1.3c of this
+% license or (at your option) any later version. The latest version
+% of this license is in https://www.latex-project.org/lppl.txt and
+% version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Frank Fuhlbrück.
+%
+% This work consists of the files listed in README.
+
+
+%\NeedsTeXFormat{LaTeX2e}[1994/12/01]
+
+% don't forget to update the version and date in exercisesheets.tex
+\def\exsh@version{0.17}
+\def\exsh@date{2024/04/23}
+
+\ProvidesPackage{exercisesheets}[\exsh@date\space\exsh@version\space Typesetting of exercise sheets]
+\message{`Typesetting of exercise sheets' \exsh@version\space <\exsh@date>}
+
+% TODO: fix "above hint skip"
+
+
+\RequirePackage{etoolbox}%[2008/06/28]
+\RequirePackage{scrlfile}
+\RequirePackage{environ}
+
+\RequirePackage{pgfkeys}
+\RequirePackage{keyval}
+\RequirePackage{kvoptions}
+
+\RequirePackage{ifthen}
+\RequirePackage{ifluatex}
+
+\RequirePackage{amsmath}
+
+\RequirePackage{currfile}
+\RequirePackage{catchfile}
+
+%we need getrefnumber
+\RequirePackage{refcount}
+
+% configuration keys
+
+\newif\ifexsh@beamer
+\@ifclassloaded{beamer}{\exsh@beamertrue}{}
+\newif\ifexsh@html
+\@ifclassloaded{tex4ht}{\exsh@htmltrue}{}
+\ifdefined\HCode
+  \exsh@htmltrue
+\fi
+\ifexsh@html
+  \def\exsh@inshtml#1{\HCode{#1}}
+\else
+  \def\exsh@inshtml#1{}
+\fi
+
+\newif\ifexsh@patchenumerate\exsh@patchenumeratetrue
+\newif\ifexsh@settitle\exsh@settitletrue
+\newif\ifexsh@patchpagenumbers\exsh@patchpagenumberstrue
+\newif\ifexsh@patchheadandfoot\exsh@patchheadandfoottrue
+\newif\ifexsh@usestartsection\exsh@usestartsectiontrue
+\newif\ifexsh@firstexonsheet
+\def\exsh@firstexonsheettrue{\global\let\ifexsh@firstexonsheet\iftrue}
+\def\exsh@firstexonsheetfalse{\global\let\ifexsh@firstexonsheet\iffalse}
+\newif\ifexsh@savetasks
+\newif\ifexsh@solutions
+\newif\ifexsh@oralsolutions
+\newif\ifexsh@nonoralsolutions
+\newif\ifexsh@samplesolutions
+\newif\ifexsh@exnumsheet
+\newif\ifexsh@forcesample %force printing sample sol. of wrong type
+%For beamer only
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifexsh@beamer
+\newif\ifexsh@beamerwithheadline
+\newif\ifexsh@beamerwithfootline
+\newif\ifexsh@beameruseblocks
+\newif\ifexsh@defersolutiontitle
+\newif\ifexsh@headerrestate
+\newif\ifexsh@framed
+\newif\ifexsh@fragile
+\fi
+%Also only true for beamer, but we want to use it elsewhere
+\newif\ifexsh@beamersolution
+%%
+\newif\ifexsh@gradingguides
+\newif\ifexsh@inplace
+\newif\ifexsh@sample
+\newif\ifexsh@hide%currently only set via sample in exercise env.
+\newif\ifexsh@pointsfloatright
+\newif\ifexsh@bonus
+\newif\ifexsh@abbrev
+\newif\ifexsh@sumuppoints
+\newif\ifexsh@filenameasexercisename
+\newif\ifexsh@showtodos
+\newif\ifexsh@beamercompatdone
+
+\def\exsh@beamercompatibility{
+\ifexsh@beamercompatdone
+  \PackageError{exercisesheets}{
+    beamercompatibility used twice}{}%
+\else
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+  %currently we do nothing if beamer is loaded,
+  %but this might change
+\else%--------- NON-BEAMER: ---------------------------------------
+  \let\pause\relax
+  \def\frame{}
+  \renewcommand{\frame}[1][]{}
+  \let\endframe\relax
+  \def\onslide<##1>{}
+  \def\only<##1>##2{##2}
+  \def\uncover<##1>##2{##2}
+  \def\visible<##1>##2{##2}
+  \def\invisible<##1>##2{##2}
+  \long\def\alt<##1>##2##3{##2}
+  \long\def\temporal<##1>##2##3##4{##3}
+  \let\exsh@origitem\item
+  \def\exsh@ovrlitem<##1>{\exsh@origitem}
+  \def\item{\@ifnextchar<\exsh@ovrlitem\exsh@origitem}
+  \let\exsh@origitemize\itemize
+  \def\exsh@ovrlitemize[##1]{\exsh@origitemize}
+  \def\itemize{\@ifnextchar[\exsh@ovrlitemize\exsh@origitemize}
+  \let\exsh@origenumerate\enumerate
+  \def\exsh@ovrlenumerate[##1]{\exsh@origenumerate}
+  \def\enumerate{\@ifnextchar[\exsh@ovrlenumerate\exsh@origenumerate}
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \exsh@beamercompatdonetrue
+\fi
+}
+
+\pgfkeys{/exsh/.is family,/exsh,
+  patchenumerate/.is if=exsh@patchenumerate,
+  patchenumerate/.default=true,
+  settitle/.is if=exsh@settitle,
+  settitle/.default=true,
+  patchpagenumbers/.is if=exsh@patchpagenumbers,
+  patchpagenumbers/.default=true,
+  usestartsection/.is if=exsh@usestartsection,
+  usestartsection/.default=true,
+  embedded/.code={%
+    \exsh@patchenumeratefalse
+    \exsh@settitlefalse
+    \exsh@patchpagenumbersfalse
+    \exsh@patchheadandfootfalse
+    \exsh@usestartsectionfalse
+    \pgfkeysalso{secnumdepth=keep}%
+    \def\exhs@sheetnoheader[##1]##2{}%
+    \newcounter{exshsheet}
+    \newcounter{exshexercise}
+    \pgfkeysalso{
+      sheet sectioning cmd=\exhs@sheetnoheader,
+      sheet counter=exshsheet,
+      exercise counter=exshexercise,
+      sheet start page action=\relax,
+      sheet end page action=\relax,
+    }%
+  },
+  minskips/.code={%
+    \pgfkeysalso{
+      above sheet title skip=0pt,
+      below sheet header skip=0pt,
+      above first exercise skip=0pt,
+      below exercise title skip=0pt,
+    }%
+  },
+  savetasks/.is if=exsh@savetasks,
+  savetasks/.default=true,
+  solutions/.is choice,
+  solutions/true/.code=\exsh@solutionstrue\exsh@oralsolutionstrue\exsh@nonoralsolutionstrue,
+  solutions/oral/.code=\exsh@solutionstrue\exsh@oralsolutionstrue\exsh@nonoralsolutionsfalse,
+  solutions/nonoral/.code=\exsh@solutionstrue\exsh@oralsolutionsfalse\exsh@nonoralsolutionstrue,
+  solutions/sample nonoral/.code=\exsh@solutionstrue\exsh@oralsolutionsfalse\exsh@nonoralsolutionstrue\exsh@samplesolutionstrue,
+  solutions/sample oral/.code=\exsh@solutionstrue\exsh@oralsolutionstrue\exsh@nonoralsolutionsfalse\exsh@samplesolutionstrue,
+  solutions/sample all/.code=\exsh@solutionstrue\exsh@oralsolutionstrue\exsh@nonoralsolutionstrue\exsh@samplesolutionstrue,
+  solutions/false/.code=\exsh@solutionsfalse\exsh@oralsolutionsfalse\exsh@nonoralsolutionsfalse,
+  solutions/.default=true,
+  number within sheet/.is if=exsh@exnumsheet,
+  number within sheet/.default=true,
+  forcesample/.is if=exsh@forcesample,
+  forcesample/.default=true,
+  gradingguides/.is if=exsh@gradingguides,
+  gradingguides/.default=true,
+  only/.initial={-},
+  all/.style={/exsh/only={-}},all/.value forbidden,
+  solutionsby/.code={\def\exsh@solutionsby{#1}},
+  solutionsby/.value required,
+  exercisespath/.code={\def\exsh@exercisespath{#1}},
+  exercisespath/.value required,
+  bonus/.is if=exsh@bonus,
+  bonus/.default=true,
+  inplace/.is if=exsh@inplace,
+  inplace/.default=true,
+  sample/.is if=exsh@sample,
+  sample/.default=true,
+  showtodos/.is if=exsh@showtodos,
+  showtodos/.default=true,
+  filenameasexercisename/.is if=exsh@filenameasexercisename,
+  filenameasexercisename/.default=true,
+  pointsfloatright/.is if=exsh@pointsfloatright,
+  pointsfloatright/.default=true,
+  abbrev/.is if=exsh@abbrev,
+  abbrev/.default=true,
+  beamercompatibility/.default={ignore},
+  beamercompatibility/.initial={ignore},
+  beamercompatibility/.code={\exsh@beamercompatibility}
+}
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+\pgfkeys{exsh,
+  beamerwithheadline/.is if=exsh@beamerwithheadline,
+  beamerwithheadline/.default=true,
+  beamerwithfootline/.is if=exsh@beamerwithfootline,
+  beamerwithfootline/.default=true,
+  beameruseblocks/.is if=exsh@beameruseblocks,
+  beameruseblocks/.default=true,
+  beamersolution/.is if=exsh@beamersolution,
+  beamersolution/.default=true,
+  defersolutiontitle/.is if=exsh@defersolutiontitle,
+  defersolutiontitle/.default=true,
+  headerrestate/.is if=exsh@headerrestate,
+  headerrestate/.default=true,
+  framed/.is if=exsh@framed,
+  framed/.default=true,
+  fragile/.is if=exsh@fragile,
+  fragile/.default=true,
+  beamersolution/.initial={false},
+  beamerwithheadline/.initial={false},
+  beamerwithfootline/.initial={false},
+  beameruseblocks/.initial={false},
+  defersolutiontitle/.initial={false},
+  headerrestate/.initial={false},
+  framed/.initial={false},
+}
+\else%--------- NON-BEAMER: ---------------------------------------
+\pgfkeys{exsh,
+  beamerwithheadline/.default={ignore},
+  beamerwithheadline/.initial={ignore},
+  beamerwithfootline/.default={ignore},
+  beamerwithfootline/.initial={ignore},
+  beamersolution/.default={ignore},
+  beamersolution/.initial={ignore},
+  defersolutiontitle/.default={ignore},
+  defersolutiontitle/.initial={ignore},
+  headerrestate/.default={ignore},
+  headerrestate/.initial={ignore},
+  framed/.default={ignore},
+  framed/.initial={ignore},
+  framed/.code={\let\newframe\relax},
+  fragile/.default={ignore},
+  fragile/.initial={ignore},
+}
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% store title data for sheet headers
+\ifundef\subject{% \subject is only provided by KOMA classes
+  \newcommand{\subject}[1]{}%
+  \def\@subject{}%
+}{}
+% beamer has subject, but not \@subject:
+\providecommand{\@subject}{}
+\apptocmd{\subject}{\pgfkeys{/exsh/subject={#1}}}{}{}%
+\ifdefempty{\@subject}{
+  \pgfkeys{exsh,subject/.initial={\PackageWarning{exercisesheets}{No \string\subject\space given}}}
+}{
+  \pgfkeys{/exsh/subject/.initial/.expand once=\@subject}
+}
+\ifdefstring{\@date}{\today}{
+  \pgfkeys{/exsh/semester/.initial={\PackageWarning{exercisesheets}{No semester given in \string\date}}}
+}{
+  \pgfkeys{/exsh/semester/.initial/.expand once=\@date}
+}
+\let\@exsh@origdate\date
+\renewcommand{\date}[1]{\@exsh@origdate{#1}\pgfkeys{/exsh/semester={#1}}}
+% this breaks (likely because of detokenization):
+% -> missing \begin{document}
+% \apptocmd{\date}{\pgfkeys{/exsh/semester={#1}}}{}{}
+\pgfkeys{/exsh/author/.code={%
+    \def\exsh@author{#1}%
+    \def\exsh@repeat{1}%
+    \loop\ifnum\exsh@repeat>0
+      \def\exsh@repeat{0}%
+      \patchcmd{\exsh@author}{\and}{, }{\def\exsh@repeat{1}}{}%
+    \repeat
+  },
+  /exsh/author/.expand once=\@author}
+\let\exsh@oldauthor\author
+\def\author#1{\exsh@oldauthor{#1}\pgfkeys{/exsh/author={#1}}}
+
+% helper macro for automatic language selection
+\newif\ifexsh@provideonly
+\def\exsh@deforprovide#1#2{%
+  \ifthenelse{\(\NOT\boolean{exsh@provideonly}\)
+    \OR \equal{}{\pgfkeysvalueof{#1}}}{%
+    \pgfkeys{#1=#2}%
+  }{}%
+}
+
+\pgfkeys{exsh,
+  %general package options
+  patchenumerate/.initial=true,
+  settitle/.initial=true,
+  patchpagenumbers/.initial=true,
+  custom skip macro/.initial=\exsh@skipcustomstuff,
+  showtodos/.initial={false},
+  hidetodos/.style={/exsh/showtodos=false},
+  hidetodos/.value forbidden,
+  % additional sheet info
+  title/.initial={},
+  date/.initial={},
+  note/.initial={},
+  exauthor/.initial={\exsh@author},
+  number within sheet/.initial={false},
+  %
+  % additional exercise info
+  name/.initial={},
+  forcesample/.initial={false},
+  firstline/.initial={},
+  points/.initial={},
+  oral/.style={/exsh/points=oral},oral/.value forbidden,
+  inplace/.initial={false},
+  sample/.initial={false},
+  filenameasexercisename/.initial={false},
+  pointsfloatright/.initial={false},
+  bonus/.initial={false},
+  nobonus/.style={/exsh/bonus=false},nobonus/.value forbidden,
+  abbrev/.initial={false},
+  noabbrev/.style={/exsh/abbrev=false},noabbrev/.value forbidden,
+  pointsinfo/.initial={},
+  optional/.style={/exsh/pointsinfo=\ifexsh@abbrev%
+       \pgfkeysvalueof{/exsh/strings/optional abbrev}%
+    \else%
+       \pgfkeysvalueof{/exsh/strings/optional}%
+    \fi},
+  optional/.value forbidden,
+  exercisemark/.initial={},
+  difficult/.style={/exsh/exercisemark=*},difficult/.value forbidden,
+  savetasks/.initial=false,
+}
+\pgfkeys{exsh,
+  %
+  % translatable strings
+  strings/sheet/.initial={},
+  strings/sheets/.initial={},
+  strings/solutions/.initial={},
+  strings/solutionsby/.initial={},
+  strings/gradingguide/.initial={},
+  strings/exercise/.initial={},
+  strings/solution/.initial={},
+  strings/idea/.initial={},
+  strings/hint/.initial={},
+  strings/remark/.initial={},
+  strings/oral/.initial={},
+  strings/oral abbrev/.initial={},
+  strings/point/.initial={},
+  strings/points/.initial={},
+  strings/points abbrev/.initial={},
+  strings/bonus point/.initial={},
+  strings/bonus points/.initial={},
+  strings/bonus points abbrev/.initial={},
+  strings/optional/.initial={},
+  strings/optional abbrev/.initial={},
+  %
+  % languages: predifined string sets
+  language/.is choice,
+  language/german/.code={%
+    \exsh@deforprovide{/exsh/strings/sheet}       {\"Ubungsblatt}%
+    \exsh@deforprovide{/exsh/strings/sheets}      {\"Ubungsbl\"atter}%
+    \exsh@deforprovide{/exsh/strings/solutions}   {L\"osungsvorschl\"age}%
+    \exsh@deforprovide{/exsh/strings/solutionsby} {L\"osungen von}%
+    \exsh@deforprovide{/exsh/strings/gradingguide}{Bepunktung}%
+    \exsh@deforprovide{/exsh/strings/exercise}    {Aufgabe}%
+    \exsh@deforprovide{/exsh/strings/solution}    {L\"osung}%
+    \exsh@deforprovide{/exsh/strings/idea}        {L\"osungsidee}%
+    \exsh@deforprovide{/exsh/strings/hint}        {Hinweis}%
+    \exsh@deforprovide{/exsh/strings/remark}      {Bemerkung}%
+    \exsh@deforprovide{/exsh/strings/oral}        {m\"undlich}%
+    \exsh@deforprovide{/exsh/strings/oral abbrev} {mdl.}%
+    \exsh@deforprovide{/exsh/strings/point}       {Punkt}%
+    \exsh@deforprovide{/exsh/strings/points}      {Punkte}%
+    \exsh@deforprovide{/exsh/strings/points abbrev}{P.}%
+    \exsh@deforprovide{/exsh/strings/bonus point} {Zusatzpunkt}%
+    \exsh@deforprovide{/exsh/strings/bonus points}{Zusatzpunkte}%
+    \exsh@deforprovide{/exsh/strings/bonus points abbrev}{ZP.}%
+    \exsh@deforprovide{/exsh/strings/optional}    {optional}%
+    \exsh@deforprovide{/exsh/strings/optional abbrev} {opt.}%
+  },language/german/.value forbidden,
+  language/ngerman/.style={/exsh/language/german=#1},
+  language/english/.code={%
+    \exsh@deforprovide{/exsh/strings/sheet}       {Exercise Sheet}%
+    \exsh@deforprovide{/exsh/strings/sheets}      {Exercise Sheets}%
+    \exsh@deforprovide{/exsh/strings/solutions}   {Suggested Solutions}%
+    \exsh@deforprovide{/exsh/strings/solutionsby} {Solutions by}%
+    \exsh@deforprovide{/exsh/strings/gradingguide}{Grading guideline}%
+    \exsh@deforprovide{/exsh/strings/exercise}    {Exercise}%
+    \exsh@deforprovide{/exsh/strings/solution}    {Solution}%
+    \exsh@deforprovide{/exsh/strings/idea}        {Idea for solution}%
+    \exsh@deforprovide{/exsh/strings/hint}        {Hint}%
+    \exsh@deforprovide{/exsh/strings/remark}      {Remark}%
+    \exsh@deforprovide{/exsh/strings/oral}        {oral}%
+    \exsh@deforprovide{/exsh/strings/oral abbrev} {oral}%
+    \exsh@deforprovide{/exsh/strings/point}       {point}%
+    \exsh@deforprovide{/exsh/strings/points}      {points}%
+    \exsh@deforprovide{/exsh/strings/points abbrev}{p.}%
+    \exsh@deforprovide{/exsh/strings/bonus point} {bonus point}%
+    \exsh@deforprovide{/exsh/strings/bonus points}{bonus points}%
+    \exsh@deforprovide{/exsh/strings/bonus points abbrev}{b.p.}%
+    \exsh@deforprovide{/exsh/strings/optional}    {optional}%
+    \exsh@deforprovide{/exsh/strings/optional abbrev} {opt.}%
+  },language/english/.value forbidden,
+  language/.unknown/.code={%
+    \PackageWarning{exercisesheets}{Unknown language \pgfkeyscurrentname.
+      Defaulting to English.}{}%
+    \pgfkeys{/exsh/language=english}%
+  },
+  %
+  % alternate strings
+  idea/.style={/exsh/strings/solution=\pgfkeysvalueof{/exsh/strings/idea}},
+  remark/.style={/exsh/strings/hint=\pgfkeysvalueof{/exsh/strings/remark}},
+  %
+  % hooks
+  every sheet/.code={},
+  every exercise/.code={},
+  every solution/.code={},
+  every hint/.code={},
+  %
+  % sectioning cmds and counters for sheet and exercise
+  % sheet sectioning cmd must take an optional
+  % and a mandatory argument
+  sheet sectioning cmd/.initial={\part},
+  sheet counter/.initial={part},
+  secnumdepth/.initial={-1},
+  exercise counter/.initial={section},
+  %
+  % font specifications
+  sheet header font/.initial=\normalfont\normalsize,
+  subject font/.initial=\scshape,
+  author font/.initial=\scshape,
+  semester font/.initial={},
+  date font/.initial={},
+  solutionsby font/.initial=\itshape,
+  sheet note font/.initial=\itshape\bfseries,
+  sheet title font/.initial=\Large\bfseries,
+  exercise title font/.initial=\bfseries,
+  points font/.initial=\itshape,
+  main task font/.initial={},
+  subtask font/.initial={},
+  task restate font/.initial=\itshape,
+  hint font/.initial={},
+  hint title font/.initial=\itshape,
+  solution font/.initial={},
+  solution title font/.initial=\bfseries,
+  solution title separator/.initial={:\par},
+  grading guide font/.initial=\itshape,
+  todo marker font/.initial=\ifdef{\color}{\color{red}}{}\bfseries,
+  %
+  % skip values
+  below slide headline skip/.initial={0mm},
+  above sheet title skip/.initial={4ex},
+  above sheet note skip/.initial={.7ex},
+  above solutionsby skip/.initial={1ex},
+  below sheet header skip/.initial={4ex plus 1ex minus .5ex},
+  above exercise skip/.initial={3ex plus 1ex minus .5em},
+  above first exercise skip/.initial={3ex plus 1ex minus .5em},
+  below exercise title skip/.initial={\parskip},
+  above solution skip/.initial={1ex},
+  above hint skip/.initial={1ex},
+  %
+  % page handling
+  sheet start page action/.initial={\clearpage},
+  sheet end page action/.initial={\clearpage},
+  %
+  % conditionals
+  ifsolutions/.code 2 args={\ifsolutions{\pgfkeysalso{#1}}{\pgfkeysalso{#2}}},
+  iforalsolutions/.code 2 args={\iforalsolutions{\pgfkeysalso{#1}}{\pgfkeysalso{#2}}},
+  ifnonoralsolutions/.code 2 args={\ifnonoralsolutions{\pgfkeysalso{#1}}{\pgfkeysalso{#2}}},
+}
+
+% default values
+\pgfkeys{exsh,solutions=false,all}
+
+% process package options
+\@expandtwoargs\pgfqkeys{/exsh}{\csname opt@exercisesheets.sty\endcsname}
+
+% mark options as processed
+\expandafter\undef\csname opt@exercisesheets.sty\endcsname
+
+% allow further keys to be set
+\def\exshset#1{\pgfkeys{exsh,#1}}
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-ONLY: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+\define@key{beamerframe}{t}[true]{% top
+  \beamer@frametopskip=-2pt\relax%
+  \beamer@framebottomskip=0pt plus 1fill\relax%
+  \beamer@frametopskipautobreak=\beamer@frametopskip\relax%
+  \beamer@framebottomskipautobreak=\beamer@framebottomskip\relax%
+}
+\fi
+%%%%%%%%%%%%%%% END BEAMER-ONLY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% automatic language selection
+\AfterEndPreamble{%
+  \exsh@provideonlytrue
+  \ifdef{\bbl@main@language}{%
+    \pgfkeys{/exsh/language=\bbl@main@language}%
+  }{%
+    \pgfkeys{/exsh/language=english}%
+  }%
+  \exsh@provideonlyfalse
+}%
+
+% range checks
+\newif\ifexsh@isinrange
+\newif\ifexsh@singularrange
+\def\exsh@checkrange#1{%
+  \edef\exsh@range@entry{#1}%
+  \def\exsh@range@curstart{}%
+  \exsh@isinrangefalse
+  \exsh@singularrangetrue
+  \pgfkeysgetvalue{/exsh/only}{\exsh@temp}%
+  \ifthenelse{\equal{-}{\exsh@temp}}{%
+    \exsh@isinrangetrue
+    \ifnumequal{\exsh@lastsheet}{1}{%
+      \exsh@singularrangetrue
+    }{%
+      \exsh@singularrangefalse
+    }%
+  }{%
+    \expandafter\exsh@range@parsestart\exsh@temp\exsh@range@end
+  }%
+}
+\def\exsh@range@parsestart#1{%
+  \ifstrequal{#1}{,}{%
+    \exsh@singularrangefalse
+    \ifdefstring{\exsh@range@curstart}{last}{%
+      \let\exsh@range@curstart\exsh@lastsheet
+    }{}%
+    \ifdefequal{\exsh@range@entry}{\exsh@range@curstart}{%
+      \exsh@isinrangetrue
+    }{}%
+    \def\exsh@range@curstart{}%
+    \exsh@range@parsestart
+  }{%
+    \ifstrequal{#1}{\exsh@range@end}{%
+      \ifdefstring{\exsh@range@curstart}{last}{%
+        \let\exsh@range@curstart\exsh@lastsheet
+      }{}%
+      \ifdefequal{\exsh@range@entry}{\exsh@range@curstart}{%
+        \exsh@isinrangetrue
+      }{}%
+    }{%
+      \ifdefequal{#1}{-}{%
+        \exsh@singularrangefalse
+        \ifdefstring{\exsh@range@curstart}{}{%
+          \def\exsh@range@curstart{0}%
+        }{}%
+        \ifdefstring{\exsh@range@curstart}{last}{%
+          \let\exsh@range@curstart\exsh@lastsheet
+        }{}%
+        \def\exsh@range@curend{}%
+        \exsh@range@parseend
+      }{%
+        \appto{\exsh@range@curstart}{#1}%
+        \exsh@range@parsestart
+      }%
+    }%
+  }%
+}
+\def\exsh@range@parseend#1{%
+  \ifstrequal{#1}{,}{%
+    \ifdefstring{\exsh@range@curend}{last}{%
+      \def\exsh@range@curend{10000}%
+    }{}%
+    \ifdefstring{\exsh@range@curend}{}{
+      \def\exsh@range@curend{10000}%
+    }{}%
+    \ifthenelse{\NOT \(\exsh@range@curstart > \exsh@range@entry
+      \OR \exsh@range@entry > \exsh@range@curend\)}{%
+      \exsh@isinrangetrue
+    }{}%
+    \def\exsh@range@curstart{}%
+    \exsh@range@parsestart
+  }{%
+    \ifstrequal{#1}{\exsh@range@end}{%
+      \ifdefstring{\exsh@range@curend}{last}{%
+        \def\exsh@range@curend{10000}%
+      }{}%
+      \ifdefstring{\exsh@range@curend}{}{
+        \def\exsh@range@curend{10000}%
+      }{}%
+      \ifthenelse{\NOT \(\exsh@range@curstart > \exsh@range@entry
+        \OR \exsh@range@entry > \exsh@range@curend\)}{%
+        \exsh@isinrangetrue
+      }{%
+      }%
+    }{%
+      \appto{\exsh@range@curend}{#1}%
+      \exsh@range@parseend
+    }%
+  }%
+}
+
+% remember last sheet (for range checks)
+\def\exsh@lastsheet{0}% to be overridden in aux file
+\AtEndDocument{%
+  \immediate\write\@auxout{\string\gdef\string\exsh@lastsheet{\arabic{\pgfkeysvalueof{/exsh/sheet counter}}}}%
+}
+
+\ifexsh@patchpagenumbers
+  \numberwithin{page}{\pgfkeysvalueof{/exsh/sheet counter}}
+  \renewcommand{\thepage}{\arabic{page}}%changed for every sheet
+\fi
+\ifthenelse{\equal{\pgfkeysvalueof{/exsh/secnumdepth}}{keep}}{}{
+  \setcounter{secnumdepth}{\pgfkeysvalueof{/exsh/secnumdepth}}
+}
+
+\AfterPackage*{hyperref}{%
+  % make PDF destinations unique:
+  \def\theHsection{\arabic{sheetid}.\arabic{\pgfkeysvalueof{/exsh/exercise counter}}}%
+  \ifexsh@patchpagenumbers
+    \def\theHpage{\arabic{sheetid}-\arabic{page}}%
+  \fi
+  %
+  % open bookmarks when typesetting a single sheet
+  \AtEndPreamble{%
+    \exsh@checkrange{0}%
+    \ifexsh@singularrange\hypersetup{bookmarksopen}\fi
+  }%
+}
+
+
+\ifexsh@settitle
+% automatic title selection
+\let\exsh@title\relax
+\let\exsh@title@new\relax
+\def\exsh@write@title#1{%
+  \xdef\exsh@title@new{\expandonce #1}%
+  \protected@write\@auxout{}{\string\gdef\string\exsh@title{\expandonce\exsh@title@new}}%
+}
+\AfterEndDocument{%
+  \ifthenelse{\equal{\exsh@title}{\exsh@title@new}}{}{%
+    \@latex@warning@no@line{Label(s) may have changed.
+      Rerun to get cross-references right}%
+  }%
+}
+\AfterEndPreamble{%
+  \exsh@checkrange{0}%
+  \ifexsh@singularrange\else
+    \pgfkeysgetvalue{/exsh/strings/sheets}{\exsh@tmp}%
+    \exsh@write@title{\exsh@tmp}%
+  \fi
+}
+
+
+\AtBeginDocument{%
+  \ifexsh@solutions
+    \title{\exsh@title: \pgfkeysvalueof{/exsh/strings/solutions}}%
+  \else
+    \title{\exsh@title}
+  \fi
+}
+\else
+  \def\exsh@write@title#1{}
+\fi
+
+\newcounter{sheetid}% only used to disambiguate hyperref labels
+\newenvironment{sheet}[1][]{%
+  \pgfkeys{exsh,every sheet,#1}%
+%   \pgfkeysvalueof{/exsh/sheet start page action}%
+  \stepcounter{sheetid}%
+  \ifthenelse{\equal{}{\pgfkeysvalueof{/exsh/title}}}{%
+    \numdef\exsh@tmp{\value{\pgfkeysvalueof{/exsh/sheet counter}}+1}%
+    \edef\exsh@temp{\expandonce{\pgfkeysvalueof{/exsh/strings/sheet}}\noexpand~\exsh@tmp}%
+    \pgfkeys{/exsh/title/.expand once={\exsh@temp}}%
+    \ifexsh@patchpagenumbers
+      \def\thepage{\arabic{\pgfkeysvalueof{/exsh/sheet counter}}-\arabic{page}}%
+    \fi
+  }{%
+    \ifexsh@patchpagenumbers
+      \def\thepage{\arabic{page}}%
+    \fi
+  }%
+  \ifexsh@exnumsheet
+    \edef\exsh@exnumstore{\arabic{\pgfkeysvalueof{/exsh/exercise counter}}}
+    \setcounter{\pgfkeysvalueof{/exsh/exercise counter}}{0}%
+  \fi
+  \numdef\exsh@tmp{\value{\pgfkeysvalueof{/exsh/sheet counter}}+1}%
+  \exsh@checkrange{\exsh@tmp}%
+  \ifexsh@isinrange
+    \ifexsh@singularrange
+      \pgfkeysgetvalue{/exsh/title}{\exsh@temp}%
+      \exsh@write@title{\exsh@temp}%
+    \fi
+    \exsh@sheethead
+  \else
+    \refstepcounter{\pgfkeysvalueof{/exsh/sheet counter}}%
+    \def\exsh@skipwhat{sheet}\expandafter\exsh@skipstuff
+  \fi
+}{%
+  \par
+  \begingroup
+  \ifnum\value{page}=1\thispagestyle{empty}\fi
+  \ifexsh@isinrange
+    \pgfkeysvalueof{/exsh/sheet end page action}%
+  \fi
+  \endgroup
+  \ifexsh@exnumsheet
+    \setcounter{\pgfkeysvalueof{/exsh/exercise counter}}{\exsh@exnumstore}%
+  \fi
+}
+\listadd{\exsh@enums}{enumerate}
+\listadd{\exsh@enums}{compactenum}
+\listadd{\exsh@enums}{asparaenum}
+\listadd{\exsh@enums}{inparaenum}
+\listadd{\exsh@enums}{subtasks}
+\listadd{\exsh@nonenums}{itemize}
+\listadd{\exsh@nonenums}{compactitem}
+\listadd{\exsh@nonenums}{asparaitem}
+\listadd{\exsh@nonenums}{inparaitem}
+\listadd{\exsh@nonenums}{description}
+\listadd{\exsh@nonenums}{compactdesc}
+\listadd{\exsh@nonenums}{asparadesc}
+\listadd{\exsh@nonenums}{inparadesc}
+\listadd{\exsh@nonenums}{asparablank}
+\listadd{\exsh@nonenums}{inparablank}
+\listadd{\exsh@nonenums}{list}
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+  \let\exsh@hyper@itemtrue\relax
+\else%--------- NON-BEAMER: ---------------------------------------
+  \ifexsh@html
+    \let\exsh@hyper@itemtrue\relax%
+  \else
+    \def\exsh@hyper@itemtrue{\@hyper@itemtrue}%
+  \fi
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%TODO: We need some proper switch-case here
+%evaluate csname/csdef+detokenize
+\ExplSyntaxOn
+\cs_new_eq:NN \exsh@ifsingletoken \tl_if_single_token:nTF
+\ExplSyntaxOff
+\long\def\exsh@skipstuff#1{%
+   \exsh@ifsingletoken{#1}{%
+    \ifstrequal{#1}{\begin}{\exsh@skipstuff@begin}{%
+     \ifstrequal{#1}{\end}{\exsh@skipstuff@end}{%
+      \ifstrequal{#1}{\includeexercise}{\exsh@skipstuff@incex}{%
+       \ifstrequal{#1}{\includeLexercise}{\exsh@skipstuff@incLex}{%
+        \ifstrequal{#1}{\label}{\exsh@skipstuff@label}{%
+        \ifstrequal{#1}{\subtask}{\exsh@skipstuff@subtask}{%
+          \ifstrequal{#1}{\input}{\exsh@skipstuff@input}{%
+            \ifstrequal{#1}{\exsh@skipstuff@endfile}{\currfile@pop\exsh@skipstuff}{%
+              \ifstrequal{#1}{\setcounter}{\expandafter\exsh@skipstuff\setcounter}{%
+                \ifstrequal{#1}{\item}{\ifdef{\@enumctr}{\exsh@hyper@itemtrue\refstepcounter{\@enumctr}}{}}{}%
+                \pgfkeysvalueof{/exsh/custom skip macro}{#1}}}}}}}}}}%
+  }{%
+    \exsh@skipstuff#1%
+  }%
+}%
+\let\exshskipcontinue\exsh@skipstuff
+\long\def\exsh@skipcustomstuff#1{\exshskipcontinue}
+\def\exsh@skipstuff@end#1{%
+  \expandafter\ifstrequal\expandafter{\exsh@skipwhat}{#1}{%
+    \expandafter\end\expandafter{\exsh@skipwhat}%
+    \let\exsh@skipwhat\relax%
+  }{
+    \endgroup\exsh@skipstuff%
+  }%
+}
+\def\exsh@skipstuff@begin#1{%
+  \begingroup
+  \ifstrequal{#1}{Lexercise}{\exsh@skipstuff@Lexercise}{%
+    \ifstrequal{#1}{exercise}{\refstepcounter{\pgfkeysvalueof{/exsh/exercise counter}}%
+      % automatic label for the first exercise in every included file
+      \ifthenelse{\equal{\jobname}{\currfilebase}}{}{%
+        \ifcsdef{exsh@autolabel@\currfilebase}{}{%
+          \csdef{exsh@autolabel@\currfilebase}{}%
+          \exsh@autolabel{ex:\currfilebase}}}%
+    }{}%
+    \ifinlist{#1}{\exsh@enums}{%
+      \exsh@skipstuff@beginenum
+    }{%
+      \ifinlist{#1}{\exsh@nonenums}{%
+        \undef\@enumctr
+      }{}%
+      \exsh@skipstuff
+    }%
+  }%
+}
+\def\exsh@skipstuff@beginenum{%
+  \ifnum\@enumdepth>\thr@@
+    \@toodeep
+  \else
+    \advance\@enumdepth\@ne
+    \edef\@enumctr{enum\romannumeral\the\@enumdepth}%
+    \setcounter{\@enumctr}{0}%
+  \fi
+  \@ifundefined{@enumlabel@}{%
+    \exsh@skipstuff
+  }{%
+    \@ifnextchar[{\@enumlabel@{\exsh@skipstuff}[}{\exsh@skipstuff}%
+  }%
+}
+\def\exsh@skipstuff@label#1{%
+  % Locally modify \protected@write to use \immediate\write instead.
+  % This is needed to include labels after the last shipout in the aux file.
+  \begingroup
+  \def\protected@write##1##2##3{%
+    \begingroup
+    \let\protect\@unexpandable@protect
+    \immediate\write##1{##3}%
+    \endgroup
+  }%
+  \label{#1}%
+  \endgroup
+  \exsh@skipstuff
+}
+\def\exsh@skipstuff@subtask#1{%
+  \exsh@skipstuff \item #1
+}
+\def\exsh@skipstuff@input#1{%
+  \CatchFileDef{\exsh@inputfilecontent}{#1}{}%
+  \currfile@push
+  \currfile@set{#1}%
+  \expandafter\exsh@skipstuff\exsh@inputfilecontent\exsh@skipstuff@endfile
+}
+
+\def\exsh@skipstuff@incex{%
+  \@ifstar\exsh@skipstuff@incex@@\exsh@skipstuff@incex@%
+}
+
+\newcommand{\exsh@skipstuff@incex@}[2][]{%
+  \exsh@skipstuff\input{%
+    \ifdefvoid{\exsh@exercisespath}{}{\exsh@exercisespath/}#2}%
+}
+
+\newcommand{\exsh@skipstuff@incex@@}[2][]{%
+  \refstepcounter{\pgfkeysvalueof{/exsh/exercise counter}}
+  \exsh@autolabel{ex:#2}
+  \exsh@skipstuff
+}
+
+\def\exsh@skipstuff@incLex{%
+  \@ifstar\exsh@skipstuff@incLex@@\exsh@skipstuff@incLex@%
+}
+
+\newcommand{\exsh@skipstuff@incLex@}[2][]{%
+  \exsh@dlua{
+    local prefix =
+      "\ifdefvoid{\exsh@exercisespath}{}{\exsh@exercisespath/}"
+    exsh_cur_exercise=dofile(prefix .. "#2.lua")
+  }%
+  \expandafter\exsh@skipstuff%
+    \exsh@dlua{exsh_texprintlines(exsh_cur_exercise)}%
+}
+
+\let\exsh@skipstuff@incLex@@\exsh@skipstuff@incex@@
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+\def\exsh@sheethead{%
+  \pgfkeysvalueof{/exsh/sheet start page action}%
+  \pgfkeysgetvalue{/exsh/title}{\exsh@tmp}%
+  \ifexsh@solutions
+    \expandafter\edef\expandafter\exsh@tmp{\expandonce\exsh@tmp:\noexpand~\pgfkeysvalueof{/exsh/strings/solutions}}%
+  \fi
+  \refstepcounter{\pgfkeysvalueof{/exsh/sheet counter}}%
+  \begin{frame}
+  \begin{block}{}
+    \centering\Large\exsh@tmp
+  \end{block}
+    \begingroup
+      \pgfkeysvalueof{/exsh/sheet header font}%
+      \ifexsh@solutions%
+        \ifdefvoid{\exsh@solutionsby}{}{%
+          \begingroup
+            \begin{block}{}
+              \pgfkeysvalueof{/exsh/solutionsby font}%
+              \vskip\pgfkeysvalueof{/exsh/above solutionsby skip}%
+              \relax%
+              \pgfkeysvalueof{/exsh/strings/solutionsby}%
+              ~\exsh@solutionsby\\\unskip%
+            \end{block}%
+          \endgroup
+        }%
+      \else
+      \fi
+      \ifthenelse{\equal{}{\pgfkeysvalueof{/exsh/note}}}{%
+      }{%
+        \ifbool{exsh@samplesolutions}{}{%
+          \begingroup
+            \begin{block}{}
+              \pgfkeysvalueof{/exsh/sheet note font}%
+              \vskip\pgfkeysvalueof{/exsh/above sheet note skip}\relax
+              \pgfkeysvalueof{/exsh/note}\\\unskip%
+            \end{block}%
+          \endgroup
+        }%
+      }%
+    \endgroup
+%   \stepcounter{page}%
+  \end{frame}
+}
+\global\def\exsh@alignright#1{\hfill #1}%
+\else%--------- NON-BEAMER: ---------------------------------------
+\ifexsh@html
+%   \global\def\exsh@part[#1]#2{#2}
+%   \exshset{sheet sectioning cmd/.initial={\exsh@part}}
+  \global\def\exsh@alignright#1{%
+    \exsh@inshtml{<span style="float:right">}#1%
+    \exsh@inshtml{</span>}
+  }
+  \global\def\exsh@centering#1{%
+    \exsh@inshtml{<span style="display: block;text-align:center">}#1%
+    \exsh@inshtml{</span>}
+  }
+\else
+  \global\def\exsh@alignright#1{\hfill #1}%
+  \global\def\exsh@centering#1{\centering #1}
+\fi
+\def\exsh@sheethead{%
+  \pgfkeysvalueof{/exsh/sheet start page action}%
+  \pgfkeysgetvalue{/exsh/title}{\exsh@tmp}%
+  \ifexsh@solutions
+    \expandafter\edef\expandafter\exsh@tmp{\expandonce\exsh@tmp:\noexpand~\pgfkeysvalueof{/exsh/strings/solutions}}%
+  \fi
+  \refstepcounter{\pgfkeysvalueof{/exsh/sheet counter}}%
+  \pgfkeysvalueof{/exsh/sheet sectioning cmd}[\pgfkeysvalueof{/exsh/title}]{\normalsize
+    \pgfkeysvalueof{/exsh/sheet header font}%
+    \begingroup\raggedright%
+      {\pgfkeysvalueof{/exsh/subject font}\pgfkeysvalueof{/exsh/subject}}%
+      \exsh@alignright{\pgfkeysvalueof{/exsh/semester font}%
+        \pgfkeysvalueof{/exsh/semester}%
+      }\\
+      {\pgfkeysvalueof{/exsh/author font}\exsh@author}%
+      \exsh@alignright{
+        \pgfkeysvalueof{/exsh/date font}\pgfkeysvalueof{/exsh/date}%
+      }\\
+      \vskip\pgfkeysvalueof{/exsh/above sheet title skip}\relax%
+    \endgroup
+    \begingroup
+      \exsh@centering{\pgfkeysvalueof{/exsh/sheet title font}\exsh@tmp\\}\unskip
+    \endgroup
+    \begingroup
+      \pgfkeysvalueof{/exsh/sheet header font}%
+      \ifexsh@solutions%
+        \ifdefvoid{\exsh@solutionsby}{}{%
+          \begingroup
+            \pgfkeysvalueof{/exsh/solutionsby font}%
+            \vskip\pgfkeysvalueof{/exsh/above solutionsby skip}\relax
+            \exsh@centering{\pgfkeysvalueof{/exsh/strings/solutionsby}~\exsh@solutionsby\\}\unskip%
+          \endgroup
+        }%
+      \else
+      \fi
+      \ifthenelse{\equal{}{\pgfkeysvalueof{/exsh/note}}}{%
+      }{%
+        \ifbool{exsh@samplesolutions}{}{%
+          \begingroup
+            \pgfkeysvalueof{/exsh/sheet note font}%
+            \vskip\pgfkeysvalueof{/exsh/above sheet note skip}\relax
+            \exsh@centering{\pgfkeysvalueof{/exsh/note}\\}\unskip%
+          \endgroup
+        }%
+      }%
+    \endgroup
+  }%
+  \ifdim\z@=\pgfkeysvalueof{/exsh/below sheet header skip}\relax
+    \vskip-\parskip
+  \else
+    \unskip\vskip\pgfkeysvalueof{/exsh/below sheet header skip}\relax
+  \fi
+%   \unskip
+%   \vskip\pgfkeysvalueof{/exsh/below sheet header skip}\relax
+  \exsh@firstexonsheettrue
+  \ifexsh@patchpagenumbers%
+    \stepcounter{page}%
+  \fi
+}%
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifdef{\othersectionslevelsformat}{%
+  \renewcommand{\othersectionlevelsformat}[1]{%
+    \ifstrequal{#1}{section}%
+    {}%
+    {\csname the#1\endcsname\autodot\enskip}}%
+}{}
+
+%Do not use \let here as \label may change before its use
+\def\exsh@autolabel{\label}
+\def\inexlabel{\label}
+
+\newcounter{exsh@pts@cur}
+\newcounter{exsh@ptsbonus@cur}
+\newenvironment*{exercise}[1][]{%
+  % TODO: \edef is not safe with luatex and umlauts, only fixed for "oral" for now
+  % TODO: check whether the TODO above is still relevant
+  %\edef seams to work fine with lualatex from TeXLive 2020
+  \pgfkeys{exsh,every exercise,#1,includeoverride}%
+  \ifthenelse{\equal{sum}{\pgfkeysvalueof{/exsh/points}}}{%
+    \ifcsname exsh@sumpts@\the\numexpr\arabic{\pgfkeysvalueof{/exsh/exercise counter}}+1\endcsname
+      \edef\exsh@sumpts{%
+        \csname exsh@sumpts@\the\numexpr\arabic{\pgfkeysvalueof{/exsh/exercise counter}}+1%
+        \endcsname%
+      }%
+      \edef\exsh@sumptsbonus{%
+        \csname exsh@sumptsbonus@\the\numexpr\arabic{\pgfkeysvalueof{/exsh/exercise counter}}+1%
+        \endcsname%
+      }%
+      \ifnumequal{\exsh@sumpts}{0}{%
+        \ifnumequal{\exsh@sumptsbonus}{0}{}{%
+          \edef\exsh@sumpts{\exsh@sumptsbonus}%
+          \exshset{bonus}%
+        }%
+      }{%
+        \ifnumequal{\exsh@sumptsbonus}{0}{}{%
+          \edef\exsh@sumpts{\exsh@sumpts+\exsh@sumptsbonus}%
+        }%
+      }%
+    \else%
+      \def\exsh@sumpts{??}%
+    \fi%
+    \exshset{points/.expanded={\exsh@sumpts}}
+    \setcounter{exsh@pts@cur}{0}
+    \setcounter{exsh@ptsbonus@cur}{0}
+    \exsh@sumuppointstrue%
+  }{%
+    \exsh@sumuppointsfalse%
+  }%
+  \ifthenelse{\equal{off}{\pgfkeysvalueof{/exsh/points}}}{%
+    \def\exsh@points{}%
+    \def\exsh@shortpoints{}%
+  }{%
+    \ifthenelse{\equal{}{\pgfkeysvalueof{/exsh/points}}}{%
+      \edef\exsh@points{\pgfkeysvalueof{/exsh/pointsinfo}}%
+    }{%
+      \ifthenelse{\equal{oral}{\pgfkeysvalueof{/exsh/points}}}{%
+        \ifexsh@abbrev%
+          \pgfkeysgetvalue{/exsh/strings/oral abbrev}{\exsh@points}%
+        \else%
+          \pgfkeysgetvalue{/exsh/strings/oral}{\exsh@points}%
+        \fi%
+      }{%
+         \ifexsh@abbrev%
+            \ifexsh@bonus%
+              \edef\exsh@points{\pgfkeysvalueof{/exsh/points} \pgfkeysvalueof{/exsh/strings/bonus points abbrev}}%
+            \else%
+              \edef\exsh@points{\pgfkeysvalueof{/exsh/points} \pgfkeysvalueof{/exsh/strings/points abbrev}}%
+            \fi%
+         \else%
+          \ifthenelse{\equal{1}{\pgfkeysvalueof{/exsh/points}}}{%
+            \ifexsh@bonus%
+              \edef\exsh@points{1 \pgfkeysvalueof{/exsh/strings/bonus point}}%
+            \else%
+              \edef\exsh@points{1 \pgfkeysvalueof{/exsh/strings/point}}%
+            \fi%
+          }{%
+            \ifexsh@bonus%
+              \edef\exsh@points{\pgfkeysvalueof{/exsh/points} \pgfkeysvalueof{/exsh/strings/bonus points}}%
+            \else%
+              \edef\exsh@points{\pgfkeysvalueof{/exsh/points} \pgfkeysvalueof{/exsh/strings/points}}%
+            \fi%
+           }%
+         \fi%
+       }%
+      \ifthenelse{\equal{}{\pgfkeysvalueof{/exsh/pointsinfo}}}{}{%
+        \edef\exsh@points{\expandonce\exsh@points, \pgfkeysvalueof{/exsh/pointsinfo}}%
+      }%
+    }%
+    \ifthenelse{\equal{}{\exsh@points}}{%
+      \def\exsh@shortpoints{}%
+    }{%
+      \edef\exsh@shortpoints{ (\expandonce\exsh@points)}%
+    }%
+%     \preto\exsh@points{
+%       \exsh@inshtml{<span style="float:right">}\hfill
+%       \enskip\exsh@alignright\bgroup%
+%       \pgfkeysvalueof{/exsh/points font}}%
+%     \appto\exsh@points{\egroup\exsh@inshtml{</span>}}%
+    \edef\exsh@points{\exsh@alignright{%
+      \pgfkeysvalueof{/exsh/points font}\expandonce\exsh@points
+    }}
+  }%
+  \ifthenelse{\equal{}{\pgfkeysvalueof{/exsh/firstline}}}{%
+    \def\exsh@firstline{}%
+  }{%
+    \def\exsh@firstline{\pgfkeysvalueof{/exsh/firstline}}%
+    \preto\exsh@firstline{\quad\bgroup\normalfont\normalsize}%
+    \appto\exsh@firstline{\egroup}%
+  }%
+  \ifthenelse{\equal{}{\pgfkeysvalueof{/exsh/name}}}{%
+    \def\exsh@exname{}%
+    \def\exsh@shortexname{}%
+  }{%
+    \edef\exsh@exname{\space(\pgfkeysvalueof{/exsh/name})}%
+    \edef\exsh@shortexname{:\space\pgfkeysvalueof{/exsh/name}}%
+  }%
+  \refstepcounter{\pgfkeysvalueof{/exsh/exercise counter}}%
+  \edef\exsh@tmp{[\pgfkeysvalueof{/exsh/strings/exercise} \arabic{\pgfkeysvalueof{/exsh/exercise counter}}\exsh@shortexname\expandonce\exsh@shortpoints]}%
+  \ifbool{exsh@samplesolutions}{\ifbool{exsh@sample}{\exsh@hidefalse}{\exsh@hidetrue}}{\exsh@hidefalse}%
+  \ifbool{exsh@hide}{%
+    \def\exsh@skipwhat{exercise}\exsh@skipstuff%
+  }{%
+    \expandafter\exsh@startheader\exsh@tmp{\noindent%
+      \hbox to 0pt{\hss\pgfkeysvalueof{/exsh/exercisemark}}%
+      \pgfkeysvalueof{/exsh/strings/exercise}~\arabic{\pgfkeysvalueof{/exsh/exercise counter}}\exsh@exname\exsh@firstline\expandonce\exsh@points}%
+    \ifdim\z@=\pgfkeysvalueof{/exsh/below exercise title skip}\relax
+      \vskip-\parskip
+    \else
+      \unskip\vskip\pgfkeysvalueof{/exsh/below exercise title skip}\relax
+    \fi
+    \@afterindentfalse
+    % automatic label for the first exercise in every included file
+    \ifthenelse{\equal{\jobname}{\currfilebase}}{}{%
+      \ifcsdef{exsh@autolabel@\currfilebase}{}{%
+        \csdef{exsh@autolabel@\currfilebase}{}%
+        \exsh@autolabel{ex:\currfilebase}}}%
+    % Use \leavevmode to ensure proper distances above environments that start
+    % with a new \par. Make sure that a \label does not mess up the layout.
+    \@ifnextchar\label{\exsh@label}{\leavevmode\ignorespaces}%
+  }%
+}{%
+  %before writing point sums check that we actually computed them
+  \ifexsh@sumuppoints%
+    \immediate\write\@auxout{
+      \string\expandafter\gdef%
+      \detokenize{\csname} exsh@sumpts@\arabic{\pgfkeysvalueof{/exsh/exercise counter}}\endcsname{%
+        \arabic{exsh@pts@cur}%
+      }%
+      \string\expandafter\gdef%
+      \detokenize{\csname} exsh@sumptsbonus@\arabic{\pgfkeysvalueof{/exsh/exercise counter}}\endcsname{%
+        \arabic{exsh@ptsbonus@cur}%
+      }%
+    }%
+  \fi
+  \ifexsh@beamer\clearpage\fi%%%% <<<<<BEAMER ONLY%%%%%%%%%%%%%%%%%
+}
+\newcommand{\exsh@label}[2]{#1{#2}\leavevmode\ignorespaces}
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+\newcommand{\exsh@startheader}[2][]{%
+   \newpage
+   \stepcounter{framenumber}
+%   \begin{block}{}
+%   \pgfkeysvalueof{/exsh/exercise title font}{#2}%
+%   \end{block}
+  \ifbool{exsh@beameruseblocks}{%
+    \begingroup
+    \usebeamercolor{block title}
+    \setbeamercolor{block body}{bg=bg,fg=fg}
+    \block{}{\pgfkeysvalueof{/exsh/exercise title font}{#2}}%
+      \endblock
+    \endgroup
+  }{
+    \begin{beamercolorbox}[rounded=true,wd={\textwidth}]%
+      {block title}
+      \pgfkeysvalueof{/exsh/exercise title font}{#2}
+    \end{beamercolorbox}
+  }
+  \ifexsh@patchenumerate
+    \setbeamertemplate{enumerate items}{\insertenumlabel}
+    \renewcommand{\insertenumlabel}{
+      \ifnum\@enumdepth=1
+        \alph{enumi})
+      \else\ifnum\@enumdepth=2
+        \arabic{enumii}.
+      \else
+        \roman{enumiii}
+      \fi\fi
+    }
+  \fi
+}%
+\else%--------- NON-BEAMER: ---------------------------------------
+\ifexsh@usestartsection
+  \newcommand{\exsh@startheader}[2][]{%
+    \@startsection{section}{1}{\z@}{%
+      \ifexsh@firstexonsheet
+        \pgfkeysvalueof{/exsh/above first exercise skip}%
+      \else
+        \pgfkeysvalueof{/exsh/above exercise skip}
+      \fi
+    }{1em}% afterskip corrected below
+    {\pgfkeysvalueof{/exsh/exercise title font}}%
+    [#1]{#2}%
+    \exsh@firstexonsheetfalse
+  }%
+\else
+  \newcommand{\exsh@startheader}[2][]{%
+    \ifexsh@firstexonsheet
+      \ifdim\z@=\pgfkeysvalueof{/exsh/above first exercise skip}\relax
+        \vskip-\parskip
+      \else
+        \unskip%
+        \vskip\pgfkeysvalueof{/exsh/above first exercise skip}\relax
+      \fi
+    \else
+      \ifdim\z@=\pgfkeysvalueof{/exsh/above exercise skip}\relax
+        \vskip-\parskip
+      \else
+        \unskip%
+        \vskip\pgfkeysvalueof{/exsh/above exercise skip}\relax
+      \fi
+    \fi
+    {\pgfkeysvalueof{/exsh/exercise title font} #2}%
+    \exsh@firstexonsheetfalse
+  }
+\fi
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%includeoverride is not part of the public interface
+\exshset{includeoverride/.style={}}
+\def\includeexercise{%
+  \@ifstar\exsh@includeexercise@\exsh@includeexercise%
+}
+
+\newcommand{\exsh@includeexercise}[2][]{%
+  \ifbool{exsh@filenameasexercisename}{%
+    \exshset{includeoverride/.style={name={\detokenize{#2}},#1}}%
+  }{%
+    \exshset{includeoverride/.style={#1}}%
+  }%
+  \input{\ifdefvoid{\exsh@exercisespath}{}{\exsh@exercisespath/}#2}
+  \exshset{includeoverride/.style={}}
+}
+
+\newcommand{\exsh@includeexercise@}[2][]{%
+  \ifbool{exsh@filenameasexercisename}{%
+    \exshset{includeoverride/.style={name={\detokenize{#2}},#1}}%
+  }{%
+    \exshset{includeoverride/.style={#1}}%
+  }%
+  \begingroup
+  %auto labelling is still allowed, but other labels are forbidden
+  %here we may use \let as the definition is close to its use
+  \let\exsh@autolabel\label
+  \let\inexlabel\label
+  \def\label##1{%
+    \PackageError{exercisesheets}{\string\label{##1}\space
+    inside \string\includeexercise*}{}%
+  }
+  \input{\ifdefvoid{\exsh@exercisespath}{}{\exsh@exercisespath/}#2}
+  \endgroup
+  \exshset{includeoverride/.style={}}
+}
+
+
+\def\includeLexercise{%
+  \@ifstar\exsh@includeLexercise@\exsh@includeLexercise%
+}
+
+\ifluatex
+\newcommand{\exsh@includeLexercise}[2][]{%
+  \ifbool{exsh@filenameasexercisename}{%
+    \exshset{includeoverride/.style={name={#2},#1}}%
+  }{%
+    \exshset{includeoverride/.style={#1}}%
+  }%
+  \directlua{
+    local prefix =
+      "\ifdefvoid{\exsh@exercisespath}{}{\exsh@exercisespath/}"
+    exsh_cur_exercise=dofile(prefix .. "#2.lua")
+    exsh_texprintlines(exsh_cur_exercise)
+  }%
+  \exshset{includeoverride/.style={}}%
+}
+
+\newcommand{\exsh@includeLexercise@}[2][]{%
+  \ifbool{exsh@filenameasexercisename}{%
+    \exshset{includeoverride/.style={name={#2},#1}}%
+  }{%
+    \exshset{includeoverride/.style={#1}}%
+  }%
+  \begingroup
+  %auto labelling is still allowed, but other labels are forbidden
+  %here we may use \let as the definition is close to its use
+  \let\exsh@autolabel\label
+  \def\label##1{%
+    \PackageError{exercisesheets}{\string\label{##1}\space
+    inside \string\includeLexercise*}{}%
+  }
+  \directlua{
+    local prefix =
+      "\ifdefvoid{\exsh@exercisespath}{}{\exsh@exercisespath/}"
+    exsh_cur_exercise=dofile(prefix .. "#2.lua")
+    exsh_texprintlines(exsh_cur_exercise)
+  }%
+  \endgroup
+  \exshset{includeoverride/.style={}}
+}
+\else
+  \newcommand{\exsh@includeLexercise}[2][]{
+    \refstepcounter{\pgfkeysvalueof{/exsh/exercise counter}}
+    Lexercise needs Lua\LaTeX!
+  }
+  \let\exsh@includeLexercise@\exsh@includeLexercise
+\fi
+
+\AfterPackage*{varioref}{
+  \labelformat{section}{\pgfkeysvalueof{/exsh/strings/exercise}~\arabic{section}}
+}
+
+
+\let\exsh@subexn\getrefnumber
+
+\ifexsh@patchenumerate
+  \AfterPackage*{varioref}{
+    \labelformat{enumi}{\arabic{\pgfkeysvalueof{/exsh/exercise counter}}.\alph{enumi}}
+    \def\exsh@afterdot#1.#2{#2}%x.y -> y
+    \def\exsh@subexn#1{%
+      \if\getrefnumber{#1}0%
+        0%
+      \else%x.y->y, then inverse \@alph
+        \the\numexpr(\expandafter\expandafter\expandafter%
+        \expandafter\expandafter\expandafter%
+        \expandafter`\expandafter\expandafter\expandafter%
+        \exsh@afterdot\getrefnumber{#1}-`a+1)\relax%
+      \fi%
+    }
+  }
+  \AfterPackage*{paralist}{
+    \setdefaultenum{(a)}{(1)}{i.}{A.}
+  }
+  \AfterPackage*{enumitem}{
+    \setenumerate[1]{label=(\alph*)}
+    \setenumerate[2]{label=(\arabic*)}
+    \setenumerate[3]{label=\roman*.}
+    \setenumerate[4]{label=\Alph.}
+  }
+  \def\theHenumi{enumi.\arabic{\pgfkeysvalueof{/exsh/sheet counter}}.\arabic{\pgfkeysvalueof{/exsh/exercise counter}}.\arabic{enumi}}
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+  % code below breaks [] argument after \begin{enumerate}
+  % when beamer is used
+  % in beamer we set item labels separately
+  % see beamer specific def. of \exsh@startheader
+\else%--------- NON-BEAMER: ---------------------------------------
+  \AtEndPreamble{%
+    \@ifpackageloaded{paralist}{}{%
+      \@ifpackageloaded{enumitem}{}{%
+        \apptocmd{\enumerate}{
+          \ifnum\@enumdepth=1%
+            \def\labelenumi{(\alph{enumi})}
+            \def\labelenumii{\arabic{enumii}.}
+            \def\labelenumiii{\roman{enumiii}.}
+          \fi
+        }{}{}%
+      }%
+    }%
+  }%
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fi
+
+\newcommand{\subexnref}[1]{\exsh@subexn{#1}}
+\newcommand{\subexlref}[1]{(\@alph{\exsh@subexn{#1}})}
+
+%for now this is not part of the public interface
+\exshset{subtask counter/.initial={enumi}}
+\exshset{subtask environment/.initial={enumerate}}
+\exshset{subtask item/.initial={item}}
+\edef\exsh@subtaskctr{\pgfkeysvalueof{/exsh/subtask counter}}
+\def\exsh@subtaskenv{\pgfkeysvalueof{/exsh/subtask environment}}
+\def\exsh@subtaskitm{\pgfkeysvalueof{/exsh/subtask item}}
+
+%define subex as an alias for enumi
+\expandafter\let\expandafter\c@subex%
+  \csname c@\exsh@subtaskctr\endcsname
+\expandafter\let\expandafter\p@subex%
+  \csname p@\exsh@subtaskctr\endcsname
+\expandafter\let\expandafter\thesubex%
+  \csname the\exsh@subtaskctr\endcsname
+\expandafter\let\expandafter\theHsubex%
+  \csname theH\exsh@subtaskctr\endcsname
+\expandafter\let\expandafter\cl@subex%
+  \csname cl@\exsh@subtaskctr\endcsname
+
+% reset equation numbering for each exercise
+\@addtoreset{equation}{\pgfkeysvalueof{/exsh/exercise counter}}
+
+\long\def\exsh@savemaintask#1{%
+  \global\def\exsh@restatetaskmain{#1}%
+  #1%
+}
+
+\newenvironment{maintask}[1][]{%
+  \pgfkeys{exsh,#1}%
+  \pgfkeysvalueof{/exsh/main task font}%
+  \ifbool{exsh@savetasks}{\Collect@Body\exsh@savemaintask}{}%
+  \ignorespaces
+}{}
+
+\newenvironment{subtasks}[1][]{%
+  \pgfkeys{exsh,#1}%
+  \begin{\exsh@subtaskenv}
+  \def\exsh@ifwithinsubt##1##2{##1}
+  \ignorespaces\begingroup
+}{
+  \endgroup
+  \end{\exsh@subtaskenv}%
+}
+
+\def\exsh@ifwithinsubt#1#2{#2}
+
+\def\exsh@ensuressubtasks{%
+  \exsh@ifwithinsubt{
+    \endgroup\begingroup
+  }{%
+    \PackageWarning{exercisesheets}{%
+      Using \subtask\space without a subtasks environment
+      is unsupported
+    }{}%
+  }%
+}
+
+\newcommand{\subtask}[2][]{%
+  \exsh@ensuressubtasks
+  \pgfkeys{exsh,#1}%
+  \csname\exsh@subtaskitm\endcsname%
+    {\pgfkeysvalueof{/exsh/subtask font} #2}%
+  \ifbool{exsh@savetasks}{%
+    \csgdef{exsh@restatetask\arabic{\exsh@subtaskctr}}{#2}%
+    \csdef{exsh@restatetaskcur}{#2}%
+  }{}%
+}
+
+\def\exsh@ensuresavetasks{%
+  \ifbool{exsh@savetasks}{}{%
+    \PackageError{exercisesheets}{%
+      If you want to restate something, you have to %
+      use the option savetasks.%
+    }{}%
+  }%
+}
+
+\def\restatetask{%
+  \exsh@ensuresavetasks%
+  \@ifstar\exsh@restatetask@\exsh@restatetask%
+}
+
+\newcommand{\exsh@restatetask}[1][main]{%
+  {\pgfkeysvalueof{/exsh/task restate font}%
+  \csname exsh@restatetask#1\endcsname}%
+}
+
+\newcommand{\exsh@restatetask@}[1][main]{%
+  {\pgfkeysvalueof{/exsh/task restate font}%
+  \csname exsh@restatetask#1\endcsname}\\%
+}
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+  \let\restatetaskbeamer\restatetask
+\else%--------- NON-BEAMER: ---------------------------------------
+  \def\restatetaskbeamer{%
+    \@ifstar\exsh@restatetaskbeamer\exsh@restatetaskbeamer%
+  }
+  \newcommand{\exsh@restatetaskbeamer}[1][main]{}
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{hint}[1][]{%
+  \par
+  \pgfkeys{exsh,every hint,#1,hint font}%
+  \vskip\pgfkeysvalueof{/exsh/above hint skip}\relax\noindent
+  {\pgfkeysvalueof{/exsh/hint title font}\pgfkeysvalueof{/exsh/strings/hint}:}~\ignorespaces
+}{%
+  \par
+}
+\newenvironment{hint*}[1][]{%
+  \pgfkeys{exsh,every hint,#1,hint font}%
+  ({\pgfkeysvalueof{/exsh/hint title font}\pgfkeysvalueof{/exsh/strings/hint}:}\space%
+}{%
+  \unskip)%
+}
+
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+  \let\exsh@postsolutionclear\clearpage
+\else%--------- NON-BEAMER: ---------------------------------------
+  \let\exsh@postsolutionclear\par
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\providecommand{\solution}{}
+\renewenvironment{solution}[1][]{%
+  \pgfkeys{exsh,every solution,#1,solution font}%
+  \ifthenelse{\equal{oral}{\pgfkeysvalueof{/exsh/points}}}{%
+    \ifbool{exsh@oralsolutions}{%
+      \let\next\exsh@startsolution
+    }{%
+      \let\next\exsh@skipsolution
+    }%
+  }{%
+    \ifbool{exsh@nonoralsolutions}{%
+      \let\next\exsh@startsolution
+    }{%
+      \let\next\exsh@skipsolution
+    }%
+  }%
+  \ifbool{exsh@forcesample}{%
+    \ifbool{exsh@samplesolutions}{%
+      \let\next\exsh@startsolution
+    }{}%
+  }{}%
+  \ifbool{exsh@beamersolution}{%
+    \let\next\exsh@skipsolution
+  }{}%
+  \next
+}{%
+  \ifbool{exsh@beamersolution}{}{%
+    \ifthenelse{\equal{oral}{\pgfkeysvalueof{/exsh/points}}}{%
+      \ifbool{exsh@oralsolutions}{\exsh@postsolutionclear}{}%
+    }{%
+      \ifbool{exsh@nonoralsolutions}{\exsh@postsolutionclear}{}%
+    }%
+  }%
+}
+
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+\def\exsh@solutiontitle#1{
+  \ifbool{exsh@beameruseblocks}{%
+    \begin{alertblock}{}%
+    {\pgfkeysvalueof{/exsh/solution title font}%
+      \pgfkeysvalueof{/exsh/strings/solution} %
+      (\pgfkeysvalueof{/exsh/strings/exercise} \arabic{\pgfkeysvalueof{/exsh/exercise counter}}%
+        \ifnum\@enumdepth>0\alph{subex}\fi)} %
+        \ifbool{exsh@headerrestate}{
+          \exsh@ensuresavetasks
+          \csname exsh@restatetask%
+          \ifnum\@enumdepth>0cur\else main\fi%
+          \endcsname%
+        }{}%
+    \end{alertblock}
+  }{
+    \begin{beamercolorbox}[rounded=true,wd={#1}]%
+        {block title alerted}
+      {\pgfkeysvalueof{/exsh/solution title font}%
+      \pgfkeysvalueof{/exsh/strings/solution} %
+      (\pgfkeysvalueof{/exsh/strings/exercise} \arabic{\pgfkeysvalueof{/exsh/exercise counter}}%
+        \ifnum\@enumdepth>0\alph{subex}\fi)} %
+      \ifbool{exsh@headerrestate}{
+        \exsh@ensuresavetasks
+        \csname exsh@restatetask%
+        \ifnum\@enumdepth>0cur\else main\fi%
+        \endcsname%
+      }{}%
+    \end{beamercolorbox}
+  }
+}
+\newcommand{\solutiontitle}[1][\linewidth]{
+  \ifhmode \linebreak\fi\exsh@solutiontitle{#1}
+}
+
+\newcommand{\deferredsolutiontitle}[1][\linewidth]{
+  \ifbool{exsh@defersolutiontitle}{%
+    \ifhmode \linebreak\fi\exsh@solutiontitle{#1}
+  }{}%
+}
+
+
+\long\def\exsh@processframes#1\newframe{%
+\ifstrequal{#1}{}{}{%
+\clearpage
+\begin{frame}[t]{}
+` \unskip\vskip1pt\vskip-\parskip
+  \solutiontitle[\textwidth]
+  #1
+\end{frame}%
+\exsh@processframes%
+}%no whitespace here is crucial for end detecttion
+}
+
+
+\long\def\exsh@collectedframe#1{
+\exsh@processframes#1\newframe\newframe
+}
+
+\else%--------- NON-BEAMER: ---------------------------------------
+%this command is only usefule for exercisesheets-beamer to place
+%the deferred title within a new frame
+\newcommand{\solutiontitle}[1][]{}
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+\def\exsh@startsolution{%
+  \ifnum\@enumdepth=0
+    \ifbool{exsh@framed}{}{\clearpage\stepcounter{framenumber}}
+  \fi
+%   \usebeamercolor{block title alerted}
+%   \setbeamercolor{block body}{bg=bg,fg=fg}
+%   \block{}
+%     \pgfkeysvalueof{/exsh/solution title font}%
+%     \pgfkeysvalueof{/exsh/strings/solution} %
+%     (\pgfkeysvalueof{/exsh/strings/exercise} \arabic{\pgfkeysvalueof{/exsh/exercise counter}}%
+%     \alph{subex})%
+%   \endblock
+  \ifbool{exsh@framed}{\exsh@defersolutiontitletrue}{}
+  \ifbool{exsh@defersolutiontitle}{}{%
+    \ifhmode \linebreak\fi
+    \exsh@solutiontitle{\linewidth}
+  }%
+  \let\next\relax
+  \ifbool{exsh@framed}{%
+    \def\next{\Collect@Body\exsh@collectedframe}%
+    \ifbool{exsh@fragile}{%
+      \ifluatex%
+        \def\next{\exsh@start@lframed@}
+      \else
+        \PackageError{exercisesheets}{Fragile frames require
+          LuaLaTeX!}{}
+      \fi%
+    }{}%
+  }{}%
+  \next%
+}%
+\else%--------- NON-BEAMER: ---------------------------------------
+\def\exsh@startsolution{\@afterindentfalse
+  \vskip\pgfkeysvalueof{/exsh/above solution skip}\relax%
+  {\parindent \z@
+    \pgfkeysvalueof{/exsh/solution title font}%
+    \pgfkeysvalueof{/exsh/strings/solution}%
+    \pgfkeysvalueof{/exsh/solution title separator}%
+  }\nobreak%
+  \@afterheading
+}%
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\long\def\exsh@skipsolution#1{%
+  \ifstrequal{#1}{\end}{\exsh@endsolution}{\exsh@skipsolution}%
+}
+\def\exsh@endsolution#1{%
+  \ifstrequal{#1}{solution}{
+    \end{solution}
+  }{%
+    \ifstrequal{#1}{beamersolution}{
+      \end{beamersolution}
+    }{%
+      \exsh@skipsolution}%
+  }%
+}
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-SPECIFIC: %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+\newenvironment<>{beamersolution}[1][]{%
+  \pgfkeys{exsh,every solution,#1,solution font}%
+  \ifthenelse{\equal{oral}{\pgfkeysvalueof{/exsh/points}}}{%
+    \ifbool{exsh@oralsolutions}{%
+      \let\next\exsh@startsolution
+    }{%
+      \let\next\exsh@skipsolution
+    }%
+  }{%
+    \ifbool{exsh@nonoralsolutions}{%
+      \let\next\exsh@startsolution
+    }{%
+      \let\next\exsh@skipsolution
+    }%
+  }%
+  \ifbool{exsh@forcesample}{%
+    \ifbool{exsh@samplesolutions}{%
+      \let\next\exsh@startsolution
+    }{}%
+  }{}%
+  \next
+}{%
+%   \ifbool{exsh@framed}{\end{frame}}{}
+  \ifthenelse{\equal{oral}{\pgfkeysvalueof{/exsh/points}}}{%
+    \ifbool{exsh@oralsolutions}{\clearpage}{}%
+  }{%
+    \ifbool{exsh@nonoralsolutions}{\clearpage}{}%
+  }%
+}
+\else%--------- NON-BEAMER: ---------------------------------------
+%the regular version of exercisesheets.sty skips all beamer solutions
+\newenvironment{beamersolution}[1][]{\exsh@skipsolution}{}%
+\fi
+%%%%%%%%%%%%%%% END BEAMER-SPECIFIC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\points}[2][]{%
+  \ifthenelse{\equal{}{#2}}{}{\exshset{points=#2}}%
+  \bgroup%
+  \exshset{#1}%
+  \ifthenelse{\equal{}{\pgfkeysvalueof{/exsh/pointsinfo}}}{%
+    \def\exsh@tmp{}%
+  }{%
+    \def\exsh@tmp{, \pgfkeysvalueof{/exsh/pointsinfo}}%
+  }%
+  \ifthenelse{\equal{#2}{oral}}{%
+    \ifexsh@abbrev%
+      \exsh@subexpoints{\pgfkeysvalueof{/exsh/strings/oral abbrev}\exsh@tmp}%
+    \else%
+      \exsh@subexpoints{\pgfkeysvalueof{/exsh/strings/oral}\exsh@tmp}%
+    \fi%
+  }{%
+    \ifthenelse{\equal{#2}{}}{%
+      \exsh@subexpoints{\pgfkeysvalueof{/exsh/pointsinfo}}%
+    }{%
+      \ifexsh@abbrev%
+          \ifexsh@bonus%
+            \exsh@subexpoints{#2~\pgfkeysvalueof{/exsh/strings/bonus points abbrev}\exsh@tmp}%
+          \else%
+            \exsh@subexpoints{#2~\pgfkeysvalueof{/exsh/strings/points abbrev}\exsh@tmp}%
+          \fi%
+      \else%
+        \ifthenelse{\equal{#2}{1}}{%
+          \ifexsh@bonus%
+            \exsh@subexpoints{1~\pgfkeysvalueof{/exsh/strings/bonus point}\exsh@tmp}%
+          \else%
+            \exsh@subexpoints{1~\pgfkeysvalueof{/exsh/strings/point}\exsh@tmp}%
+          \fi%
+        }{%
+          \ifexsh@bonus%
+            \exsh@subexpoints{#2~\pgfkeysvalueof{/exsh/strings/bonus points}\exsh@tmp}%
+          \else%
+            \exsh@subexpoints{#2~\pgfkeysvalueof{/exsh/strings/points}\exsh@tmp}%
+          \fi%
+        }%
+      \fi%
+      \ifexsh@sumuppoints%
+        \ifexsh@bonus%
+          \addtocounter{exsh@ptsbonus@cur}{#2}
+        \else%
+          \addtocounter{exsh@pts@cur}{#2}
+        \fi%
+      \fi%
+    }%
+  }%
+  \egroup
+  \ignorespaces
+}
+
+\newenvironment{gradingguide}[1][]{%
+  \pgfkeys{exsh,#1,grading guide font}%
+  \ifbool{exsh@gradingguides}{%
+    \let\next\exsh@startguide
+  }{%
+    \let\next\exsh@skipguide
+  }%
+  \next
+}{}
+
+\def\exsh@startguide{\@afterindentfalse%
+  \par
+  {\parindent \z@
+    \pgfkeysvalueof{/exsh/strings/gradingguide}: }\nobreak%
+  \@afterheading
+}%
+
+\long\def\exsh@skipguide#1{%
+  \ifstrequal{#1}{\end}{\exsh@endguide}{\exsh@skipguide}%
+}
+\def\exsh@endguide#1{%
+  \ifstrequal{#1}{gradingguide}{\end{gradingguide}}{\exsh@skipguide}%
+}
+
+
+\ifluatex%
+  \ifdefined\luatextextdir
+    \def\exsh@putatend#1{%
+      \leavevmode\luatextextdir TRT\unskip{\luatextextdir TLT{\hfill~~#1}}\luatextextdir TLT}%
+  \else
+    \def\exsh@putatend#1{%
+      \leavevmode\textdir TRT\unskip{\textdir TLT{\hfill~~#1}}\textdir TLT}%
+  \fi
+\else%
+  \def\exsh@putatend#1{%
+    \TeXXeTstate=1%
+    \beginR\unskip{\beginL~~#1\endL}\hfill\beginL\TeXXeTstate=0}%
+\fi
+
+\def\exsh@leaveinplace#1{\unskip~{#1} }
+\def\exsh@insertFill#1{\unskip\nobreak\space\nobreak\hspace*{\fill}\allowbreak\hspace*{\fill}{#1}\unskip}
+
+\newcommand{\exsh@subexpoints}[1]{%
+   \ifexsh@inplace%
+     \exsh@leaveinplace{\pgfkeysvalueof{/exsh/points font}\mbox{(#1)}}%
+   \else%
+     \ifexsh@pointsfloatright% can be used directly after \item etc.
+       \exsh@putatend{\pgfkeysvalueof{/exsh/points font}\mbox{(#1)}}%
+     \else% original points macro with fill
+       \exsh@insertFill{\pgfkeysvalueof{/exsh/points font}\mbox{(#1)}}%
+     \fi%
+   \fi%
+}
+
+\newcommand{\TODO}[1][]{%
+  \ifexsh@showtodos
+    \ifmmode
+      \text{\pgfkeysvalueof{/exsh/todo marker font}TODO #1}%
+    \else
+      {\pgfkeysvalueof{/exsh/todo marker font}TODO #1}%
+    \fi
+  \fi
+  \PackageWarning{exercisesheets}{TODO marker found}%
+}
+
+\newcommand{\ifsolutions}[2]{%
+  \ifbool{exsh@solutions}{#1}{#2}%
+}
+
+\newcommand{\iforalsolutions}[2]{%
+  \ifbool{exsh@oralsolutions}{#1}{#2}%
+}
+\newcommand{\ifnonoralsolutions}[2]{%
+  \ifbool{exsh@nonoralsolutions}{#1}{#2}%
+}
+\newcommand{\ifsamplesolutions}[2]{%
+  \ifbool{exsh@samplesolutions}{#1}{#2}%
+}
+\newcommand{\samplehide}[1]{%
+  \ifbool{exsh@samplesolutions}{}{#1}%
+}
+
+
+%%%%%%%%%%%%%%% BEGIN BEAMER-ONLY: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifexsh@beamer
+\ifexsh@patchheadandfoot
+  \setbeamertemplate{headline}{}%
+  \setbeamertemplate{footline}{}%
+\fi
+\ifbool{exsh@beamerwithheadline}{%
+  \setbeamertemplate{headline}{%
+%     \leavevmode%
+    \begin{beamercolorbox}[wd=\paperwidth,vmode]{frametitle}
+      \vspace{0.4em}
+      \leavevmode
+      \begingroup
+        \footnotesize%
+        \hspace*{2ex}{\pgfkeysvalueof{/exsh/subject font}%
+        \pgfkeysvalueof{/exsh/subject}} \hfill%
+        {\pgfkeysvalueof{/exsh/semester font}%
+        \pgfkeysvalueof{/exsh/semester}}\hspace{2ex}\hfil%
+        \vspace{1mm}\linebreak%
+        \hspace*{2ex}{\pgfkeysvalueof{/exsh/author font}\exsh@author}%
+        \hfill{\pgfkeysvalueof{/exsh/date font}%
+        \pgfkeysvalueof{/exsh/date}}%
+        \hspace{2ex}\hfil%\vspace{-1em}
+      \endgroup
+      \vspace{0.4em}
+    \end{beamercolorbox}%
+    \vspace*{3mm}
+    \vskip\pgfkeysvalueof{/exsh/below slide headline skip}\relax%
+  }
+  \addtobeamertemplate{frametitle}{\vspace{-3mm}}{}
+}{}%
+
+
+\ifbool{exsh@beamerwithfootline}{%
+  \setbeamertemplate{footline}{%
+    \leavevmode%
+    \hbox{\begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm]{frametitle}%
+    {\pgfkeysvalueof{/exsh/author font}\pgfkeysvalueof{/exsh/exauthor}}
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm plus1fil]{author in head/foot}%
+      \usebeamerfont{author in head/foot}
+      \inserttitle
+      \hfill\insertpagenumber
+    \end{beamercolorbox}}%
+    \vskip0pt%
+  }
+}{}%
+\fi
+%%%%%%%%%%%%%%% END BEAMER-ONLY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifluatex
+  \let\exsh@dlua\directlua
+\else
+  \def\exsh@dlua#1{}
+\fi
+
+%change only some catcodes to
+\begingroup
+\catcode`!=0
+\catcode`\@=11
+\catcode`\_=12
+\catcode`\{=12 %set those to the same value (11/12) as below!
+\catcode`\}=12 %
+\catcode`<=1
+\catcode`>=2
+\catcode`\~=11
+\catcode`\\=11
+%% Expanded, when \catcode`\^^M=12 holds
+!global!long!def!exsh@start@Lexercise#1\end{Lexercise}< %
+  !exsh@dlua<exsh_cur_exercise=exercise({#1})> %
+  !endgroup!end<Lexercise>%
+>
+!global!long!def!exsh@start@skip@Lexercise#1\end{Lexercise}< %
+  !exsh@dlua<exsh_cur_exercise=exercise({#1})> %
+  !ifluatex!else%
+    !refstepcounter<!pgfkeysvalueof</exsh/exercise counter>>%
+  !fi
+  !endgroup!endgroup%
+  !expandafter!exsh@skipstuff%
+    !exsh@dlua<exsh_texprintlines(exsh_cur_exercise)>%
+>
+!global!long!def!exsh@start@lframed#1\end{solution}< %
+  !exsh@dlua<exsh_cur_solution=fragileframed([[#1]])> %
+  !endgroup!end<solution>%
+    !exsh@dlua<exsh_texprintlines(exsh_cur_solution)>%
+>
+!endgroup
+
+\def\exsh@lua@catcodesBG{
+\begingroup
+\catcode`!=12
+\catcode`\$=12
+\catcode`\#=12
+\catcode`\_=12
+\catcode`\^=12
+\catcode`\&=12
+\catcode`\|=12
+\catcode`\{=12 %set those to the same value (11/12) as above!
+\catcode`\}=12 %
+\catcode`\~=12
+\catcode`\@=11
+\catcode`\%=12
+\catcode`\ =12
+\catcode9=12
+\catcode`\^^I=12
+\catcode`\^^J=12\catcode`\^^M=12\catcode`\\=11\endlinechar-1}
+
+\newenvironment{Lexercise}{%
+  \exsh@lua@catcodesBG\exsh@start@Lexercise%
+}{%
+  \ifluatex
+    \exsh@dlua{exsh_texprintlines(exsh_cur_exercise)}%
+  \else
+    \refstepcounter{\pgfkeysvalueof{/exsh/exercise counter}}
+    Lexercise needs Lua\LaTeX!
+  \fi
+}
+
+\def\exsh@skipstuff@Lexercise{\exsh@lua@catcodesBG\exsh@start@skip@Lexercise}%
+\def\exsh@start@lframed@{\exsh@lua@catcodesBG\exsh@start@lframed}
+
+\exsh@dlua{dofile(kpse.find_file("exsh_lexercise.lua"))}

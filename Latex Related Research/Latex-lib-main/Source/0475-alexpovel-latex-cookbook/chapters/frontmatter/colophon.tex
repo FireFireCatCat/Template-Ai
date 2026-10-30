@@ -1,0 +1,42 @@
+% No \cleardoubleoddpage shenanigans: the colophon page is supposed to be on the verso
+% behind the title.
+
+\thispagestyle{empty}
+\vspace*{\fill}
+
+\begingroup% Keep changes local to this group
+    \hypersetup{hidelinks}
+    \color{g2}
+    \footnotesize
+
+    \begin{tabular}{
+        r
+        l
+    }
+        % \TransXYZ commands are from translations file
+            Name &
+                \texttt{\textbf{%
+                    \jobname{}% Always print the job name
+                }}
+                    \makeatletter
+                        % Only print if censoring is on; command defined by kvoptions
+                        \ifacp@censoring%
+                            % This duplicate \textt\textbf is necessary.
+                            % This if construct cannot be inside the one font commands
+                            % for \jobname{}
+                            \texttt{\textbf{(\TransCensorNotice{})}}
+                        \fi
+                    \makeatother
+                \\
+            \TransCompiledOn{} & \textbf{\DTMnow{}}\\
+        \addlinespace
+            \faIcon{git-alt} & \texttt{\textbf{\GitShortSHA{}} (\GitRefName{})} \\
+        \addlinespace
+            Engine & \prettybanner{}\\
+            \LaTeX{} Version & \hologo{\fmtname} (\fmtversion)\\
+            \glossaryname{} & \texttt{glossaries-extra} + \texttt{bib2gls}\\
+            \bibname{} & biblatex + \hologo{biber}\\
+            \TransGenerator{} & \texttt{latexmk}\\
+            \TransLatexClass{} & \KOMAScriptVersion{}
+    \end{tabular}%
+\endgroup%

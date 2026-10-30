@@ -1,0 +1,53 @@
+% easybook — a pure academic template built on ctexbook, for Chinese
+% theses or books. Ships with TeX Live; not bundled.
+%
+% Class documentation: texdoc easybook   |   https://ctan.org/pkg/easybook
+% Licence: LPPL-1.3c, (c) 2021-2025 Qu Yi.
+\documentclass[scheme=chinese,font=auto]{easybook}
+
+\title{数据结构导论}
+\author{王芳}
+\date{\today}
+
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\chapter*{前言}
+本书是数据结构课程的配套讲义，覆盖线性表、栈、队列与二叉树的基本操作及其复杂度分析。每章配有示例代码与练习题。
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{线性表}
+
+线性表是最基本的数据结构，元素之间存在线性的前后关系。常见实现方式有顺序表和链表两种。
+
+\section{顺序表}
+
+顺序表使用连续的内存空间存储元素，支持 $O(1)$ 的随机访问，但插入和删除操作在最坏情况下需要 $O(n)$ 时间，因为要移动后续元素。
+
+\section{链表}
+
+链表通过指针将不连续的节点串联起来。插入和删除操作只需 $O(1)$ 时间（在已知位置的情况下），但访问第 $k$ 个元素需要 $O(k)$ 时间。
+
+\chapter{栈与队列}
+
+栈遵循后进先出（LIFO）原则，队列遵循先进先出（FIFO）原则。两者都可以用顺序表或链表实现。
+
+\section{栈的应用}
+
+栈常用于表达式求值、括号匹配和函数调用的管理（调用栈）。
+
+\section{队列的应用}
+
+队列常用于广度优先搜索、任务调度和缓冲区管理。
+
+\chapter{二叉树}
+
+二叉树是每个节点最多有两个子节点的树形结构。二叉搜索树（BST）在平均情况下支持 $O(\log n)$ 的查找、插入和删除。
+
+\end{document}

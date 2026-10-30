@@ -1,0 +1,211 @@
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
+
+This book is meant to be 
+rigorous, 
+conservative, 
+elementary, 
+and minimalist.
+At the same time, it includes about the maximum that students can absorb in one semester.
+
+The present book is based 
+on courses given by the author 
+at Pennsylvania State University.
+These lectures were oriented toward sophomore and senior university students who are familiar with real numbers and continuity.
+This makes it possible to cover the material faster and more rigorously than in high school.
+Approximately one-third of the material used to be covered in high school, but not anymore.
+
+\section{Prerequisites}
+
+The students should be familiar 
+with the following topics:
+\begin{itemize}
+\item Elementary set theory: 
+$\in$,
+$\cup$, 
+$\cap$,
+$\backslash$,
+$\subset$,~$\times$.
+\item Real numbers: intervals, inequalities, algebraic identities.
+\item Limits, continuous functions, and the intermediate value theorem.
+\item Standard functions: 
+absolute value, 
+natural logarithm,
+exponential function. 
+Occasionally, trigonometric functions  are used.
+\item  Chapter~\ref{chap:trans} uses basic vector algebra.
+\item To read Chapter~\ref{chap:sphere}, it is better to have some previous experience with the \textit{scalar product}, also known as the \textit{dot product}.
+\item To read Chapter~\ref{chap:complex}, it is better to have some previous experience with complex numbers.
+\end{itemize} 
+
+\section{Overview}
+
+We use the so-called \textit{metric approach} introduced by Birkhoff.
+It means that we define the Euclidean plane as a \textit{metric space} that satisfies a list of properties (\textit{axioms}).
+This way we minimize the tedious parts
+which are unavoidable in the more classical Hilbert's approach.
+At the same time, the students have a chance to learn the geometry of metric spaces.
+
+Here is a dependency graph of the chapters.
+
+\begin{figure}[!ht]
+\centering
+
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,scale=1.4,
+  thick,main node/.style={circle,draw,font=\sffamily\bfseries,minimum size=8mm}]
+
+  \node[main node] (1) at (-1.5,10/6) {\ref{chap:metr}};
+  \node[main node] (2) at (-.5,10/6){\ref{chap:axioms}};
+  \node[main node] (3) at (.5,10/6) {\ref{chap:half-planes}};
+  \node[main node] (4) at (1.5,10/6) {\ref{chap:cong}};
+  \node[main node] (5) at (2.5,10/6) {\ref{chap:perp}};
+  \node[main node] (6) at (3.5,10/6) {\ref{chap:parallel}};
+  \node[main node] (7) at (4.5,10/6) {\ref{chap:angle-sum}};
+  \node[main node] (8) at (5.5,10/6) {\ref{chap:triangle}};
+  \node[main node] (9) at (5,5/6){\ref{chap:inscribed-angle}};
+  \node[main node] (10) at (4.5,0) {\ref{chap:inversion}};
+  \node[main node] (11) at (3,5/6) {\ref{chap:non-euclid}};
+  \node[main node] (12) at (3.6,0){\ref{chap:poincare}};
+  \node[main node] (13) at (3,-5/6) {\ref{chap:h-plane}};
+  \node[main node] (14) at (5,-5/6) {\ref{chap:trans}};
+  \node[main node] (15) at (4.5,-10/6) {\ref{chap:proj}};
+  \node[main node] (16) at (4,-5/6) {\ref{chap:sphere}};
+  \node[main node] (17) at (3.5,-10/6) {\ref{chap:klein}};
+  \node[main node] (18) at (5.5,0) {\ref{chap:complex}};
+  \node[main node] (19) at (4,15/6) {\ref{chap:car}};
+  \node[main node] (20) at (5,15/6) {\ref{chap:area}};
+
+  \path[every node/.style={font=\sffamily\small}]
+   (1) edge node{}(2)
+   (2) edge node{}(3)
+   (3) edge node{}(4)
+   (4) edge node{}(5)
+   (5) edge node{}(6)
+   (6) edge node{}(7)
+   (7) edge node{}(9)
+   (7) edge node{}(8)
+   (7) edge node{}(20)
+   (10) edge node{}(14)
+   (14) edge node{}(15)
+   (7) edge node{}(19)
+   (9) edge node{}(10)
+   (10) edge node{}(12)
+   (10) edge node{}(16)
+   (10) edge node{}(18)
+   (5) edge node{}(11)
+   (11) edge node{}(12)
+   (12) edge node{}(13)
+   (15) edge node{}(17)
+   (16) edge[dashed] node{}(17)
+   (13) edge node{}(17);
+\end{tikzpicture}
+\end{figure}
+
+In (\ref{chap:metr}) we introduce the concepts necessary to formulate the axioms;
+it includes metric spaces, 
+lines, 
+angle measure, 
+continuous maps,
+and congruent triangles.
+
+Next, we dive into Euclidean geometry:
+(\ref{chap:axioms}) Axioms and immediate corollaries;
+(\ref{chap:half-planes}) Half-planes and continuity;
+(\ref{chap:cong}) Congruent triangles;
+(\ref{chap:perp}) Circles, motions, and perpendicular lines;
+(\ref{chap:parallel}) Similar triangles and (\ref{chap:angle-sum}) Parallel lines  
+--- these are the first two chapters where we use Axiom~\ref{def:birkhoff-axioms:4}, an equivalent of Euclid's parallel postulate.
+In (\ref{chap:triangle}) we give the most classical theorems of triangle geometry;
+this chapter is included mainly as an illustration.
+
+In the following two chapters, we discuss the geometry of circles on the Euclidean plane:
+(\ref{chap:inscribed-angle}) Inscribed angles; (\ref{chap:inversion}) Inversion.
+Inversion will be used to construct the model of the hyperbolic plane.
+
+Next, we discuss non-Euclidean geometry:
+(\ref{chap:non-euclid})
+Neutral geometry --- geometry without the parallel postulate;
+(\ref{chap:poincare})
+Conformal disc model ---
+this is a construction of the hyperbolic plane,
+an example of a neutral plane that is not Euclidean.
+In (\ref{chap:h-plane}) we discuss the geometry of the constructed hyperbolic plane --- this is the high point in the book.
+
+In the remaining chapters, we discuss additional topics:
+(\ref{chap:trans}) Affine geometry;
+(\ref{chap:proj}) Projective geometry;
+(\ref{chap:sphere}) Spherical geometry;
+(\ref{chap:klein}) Projective model of the hyperbolic plane;
+(\ref{chap:complex}) Complex coordinates;
+(\ref{chap:car}) Geometric constructions;
+(\ref{chap:area}) Area.
+The proofs in these chapters are not completely rigorous.
+
+We encourage you to use the visual assignments on the author's website.
+
+\textbf{Classroom exercises} usually illustrate newly introduced concepts and are intended to be discussed in class.
+Exercises that are used later in the sequel are marked with an exclamation point: \textbf{Exercise!}
+A statement is marked with ``$\a$''\label{a-mark} (for example, ``\textbf{Theorem\abs}'') if its proof does not use Axiom~\ref{def:birkhoff-axioms:4}.
+This will become important starting from Chapter~\ref{chap:non-euclid}.
+
+
+\section{Disclaimer}
+ 
+Most of the proofs in the book have already appeared in Euclid's Elements.
+I did not try to find original references; it is an impossible task.
+
+\section{Recommended resources}
+
+\begin{itemize}
+\item {}\emph{Byrne's Euclid} \cite{byrne} --- a colored version of the first six books of Euclid's Elements edited by Oliver Byrne. 
+
+\item {}\emph{Kiselyov's geometry} \cite{kiselev} ---
+a classical textbook for school students written by Andrey Kiselyov; it should help if you have trouble following this book.
+
+\item {}\emph{Lessons in Geometry} by Jacques Hadamard \cite{hadamard} --- an encyclopedia of elementary geometry originally written for school teachers.
+
+%\item Moise's book, \cite{moise} --- should be good for further study.
+
+%\item Greenberg's book \cite{greenberg}  --- a historical tour in the axiomatic systems of various geometries.
+
+\item {}\emph{Problems in geometry} by Victor Prasolov \cite{prasolov} is perfect for mastering your problem-solving skills.
+
+\item {}\emph{Geometry in figures} by Arseniy Akopyan \cite{akopyan} --- an encyclopedia of Euclidean geometry with barely any words.
+
+\item {}\emph{Euclidea} \cite{euclidea} --- a fun and challenging way to learn geometric constructions.
+ 
+\item {}\emph{Geometry} by Igor Sharygin \cite{sharygin} --- the greatest textbook in geometry for school students.
+I recommend it to anyone who can read Russian.
+
+\item {}\emph{problems.ru} \cite{zadachi} --- an on-line collection of problems in Russian.
+
+\end{itemize}
+
+\section{Acknowledgments}
+
+{\sloppy
+
+Let me thank 
+Stephanie Alexander,
+Thomas Barthelme,
+Berk Ceylan,
+Matthew Chao, 
+Quinn Culver,
+Svetlana Katok, 
+Nina Lebedeva,
+Alexander Lytchak,
+Alexei Novikov,
+and Lukeria Petrunina
+for useful suggestions and for correcting misprints.
+
+This work was partially supported by
+NSF grants
+DMS-0103957,
+DMS-0406482,
+DMS-0905138,
+DMS-1309340,
+DMS-2005279,
+and Simons Foundation grants 
+245094, 584781.
+
+}

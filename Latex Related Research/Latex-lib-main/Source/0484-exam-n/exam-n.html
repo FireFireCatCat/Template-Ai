@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>exam-n class</title>
+<link href="https://nxg.me.uk" rev="author"/>
+
+
+<style class="distonly" type="text/css">body {
+  color: #333;
+  background: white;
+  margin-left: +30%;
+  width: 50%;            /* body is 50% of screen width */
+  margin-right: auto;    /* ie, 20% */
+  padding: 0.5em;        /* this will make a difference if I decide to
+     			    have the background a different colour */
+  /* I can't decide on font: Optima's always nice, but Gill looks
+     agreeably intense.  Helvetica's a decent fallback. */
+  font-family: "Helvetica Neue", Helvetica, "Gill Sans", gill, sans-serif;
+  /* font-family: Optima, "Gill Sans", gill, Helvetica, sans-serif; */
+  /* font-family: "Gill Sans", gill, Helvetica, sans-serif; */
+  /* I seem to have used 11pt at some point in the past, but this
+     is far too big -- did I ever have a reason for that, or is it
+     just due to browser changes? */
+  font-size: 10pt;
+  line-height: 150%;
+}
+
+div.topsidebar {
+    float: right;
+    width: 50%;                 /* ...of the body width (ie, 50% x 50% of screen) */
+    font-size: smaller;
+    margin-left: 1em;
+    padding-left: 1em;
+    border-left: solid thin #AAA;
+}
+
+/* On wider screens, move the sidebar out to the right hand side */
+/* This uses CSS3 media queries: http://www.w3.org/TR/css3-mediaqueries/ */
+@media screen and (min-width: 700pt) and (max-width: 850pt) {
+    body {
+        margin-left: 210pt;
+        width: 350pt;           /* 50% of 700pt */
+        margin-right: auto;
+    }
+    div.topsidebar {
+        position: absolute;
+        /* I feel this size should be 595pt (350 + 210 + 0.05*700),
+           but that's clearly not right -- I don't think I understand what the -5%
+           in the h1 spec below is actually 5% of! */
+        left: 570pt;
+        width: auto;
+        margin-left: 0pt;
+        padding-left: 0pt;
+        border: none;
+    }
+}
+/* On still-wider screens, expand the left-margin, keeping the sidebar attached to the right-hand edge.
+   When the screen is 850pt wide (expanding from the @media case above),
+   the left margin will be 210pt, the width 350pt, and the right margin therefore 290pt.*/
+@media screen and (min-width: 850pt) {
+    body {
+        margin-right: 290pt;    /* 290 = 850-(210+350) */
+        width: 350pt;
+        margin-left: auto;      /* ...takes up the slack */
+    }
+    div.topsidebar {
+        position: absolute;
+        width: 290pt;           /* same 290pt as above */
+        left: auto;
+        right: 0%;
+        padding-left: 0pt;
+        border: none;
+    }
+}
+
+
+code, pre {
+  font-family: Monaco, fixed;
+  font-size: 9pt;
+}
+
+a { text-decoration: none; }
+a:link { color: #66C; }
+a:visited { color: #669; }
+a[href]:hover { background: #EEE; }
+
+div.abstract {
+  font-style: oblique;
+  text-align: left;
+}
+div.abstract em { font-style: normal; }
+div.abstract code {
+  font-style: normal;
+  font-size: 80%;
+}
+
+/* a span/div style for attracting attention */
+.attention {
+  color: #822;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #822;
+  font-weight: 100;             /* few fonts have ultra-light weights */
+  line-height: 100%;            /* no need to spread out titles */
+}
+h1 {
+  margin-left: -40%;
+  margin-right: -5%;
+  padding: 0.5em;
+  border: solid thin #666;
+  text-align: right;
+}
+h2 {
+  margin-left: -40%;
+  margin-right: -5%;
+  padding: 0.2em;
+  border-top: solid thin #666;
+  clear: both;
+}
+
+h2.appendices {
+  margin-top: 10ex;
+  border-top: double medium #666;
+}
+h3 {
+  margin-left: -30%;
+  float: left;
+  width: 25%;
+  display: block;
+  text-align: right;
+  vertical-align: bottom;
+  padding-top: 0pt;
+  padding-right: 0.5em;
+  margin-top: 0pt;
+  line-height: 100%;
+}
+
+/*
+h4 {
+  color: #C66;
+}
+*/
+
+pre, table { background: #dde; }
+
+pre {
+  padding: 1em;
+  line-height: 130%;
+}
+
+table {
+  font-size: smaller;
+}
+td {
+  padding: 0.5ex;
+}
+
+Q:before { content: "“"; }
+Q:after  { content: "”"; }
+
+img.smallimage {
+  float: right;
+  margin: 24pt;
+  margin-right: -30%;
+}
+
+div.signature {
+  margin-left: -40%;
+  margin-right: -5%;
+  margin-top: 4ex;
+  text-align: right;
+  border: solid thin #666;
+  padding: 0.3em;
+  clear: both;
+}
+
+/* ============================================================
+ * Some other curiosities of my one-time formatting for web pages
+ */
+.doc-history {
+  font-size: xx-small;
+  background: #eee;
+  line-height: 100%;
+}
+
+div.subtoc, div.subsubtoc { display: none; }
+
+/* ============================================================
+ * Special formatting for ToC
+ */
+
+/*
+  If there's significant amount of text in front of the first subsection,
+  then the following are good to put in the per-document stylesheet:
+  width: 25%;
+  float: right;
+*/
+div#toc {
+  color: #888;
+  padding: 0;
+  font-size: smaller;
+  text-align: right;
+}
+div#toc a:link { color: #888; }
+div#toc &gt; ul {
+  padding: 0pt;
+  margin: 0pt;
+  list-style: none;
+}
+div#toc li {
+  padding: 0pt;
+  display: inline-block;
+}
+div#toc li:before {
+  content: "§ ";
+  margin-left: 1em;
+}
+/* the following elements aren't currently generated by structure.lx */
+div#toc li ul {
+  padding-left: 1em;
+  margin-left: 0;
+  font-style: italic;
+  display: inline;
+}
+div#toc li ul:before {
+  content: "( ";
+}
+div#toc li ul:after {
+  content: " ) ";
+}
+div#toc li li {
+  padding-left: 0pt;
+}
+div#toc li li:after {
+  content: "; ";
+}
+</style>
+<style type="text/css">
+dd ul { padding: 0pt; margin: 0pt; }
+</style>
+</head>
+
+<body>
+<h1>The exam-n class</h1>
+
+<p>Format exam papers</p>
+
+<p class="distonly">This is version exam-n-1.4.0, 2022 October 10.</p>
+
+
+
+<ul>
+
+<li class="distonly">See the sample exam in the distribution.</li>
+<li>If you're a question author, you probably don't want to read the
+full documentation.  Stick to the shorter
+<a href="notes-for-authors.pdf">notes for authors</a>.</li>
+<li>See the <a href="exam-n.pdf">documentation</a> for fuller
+discussion.</li>
+<li>The package's 'home page' is
+<a href="https://purl.org/nxg/dist/exam-n"><code>https://purl.org/nxg/dist/exam-n</code></a>,
+and the repository is available to
+<a href="https://heptapod.host/nxg/exam-n">browse</a>
+or clone.</li>
+<li>And it's on CTAN at <a href="https://www.ctan.org/pkg/exam-n">/pkg/exam-n</a>.</li>
+</ul>
+
+<h2>Overview</h2>
+
+<h3>Other exam styles</h3>
+<p>There are already multiple ‘exam’ LaTeX styles on CTAN,
+including
+the (original?) <a href="http://dante.ctan.org/tex-archive/macros/latex/contrib/exam/">exam class</a>,
+the extensive <a href="http://www.math.uakron.edu/~dpstory/webeq.html">AcroTeX</a> bundle,
+the
+<a href="http://dante.ctan.org/tex-archive/macros/latex/contrib/examdesign/">examdesign</a> and
+<a href="http://dante.ctan.org/tex-archive/macros/latex/contrib/exams/">exams</a>
+classes, and
+<a href="http://www.tex.ac.uk/cgi-bin/CTANcataloguesearch.pl?CATSTRING=exam">a variety of other packages</a>
+which mention exams in some way.
+Some of these are more focused on generating quizzes
+(even doing things like randomising answers)
+or on having a highly customisable layout.
+Several (including ‘exam-n’) have support for generating versions of
+the exam document which include answers, for the benefit of
+markers.</p>
+
+<h3>The exam-n style</h3>
+<p>What the ‘exam-n’ class can bring to this particular (rather crowded)
+party is:</p>
+<ul>
+<li>Direct support for collaborative development of an exam, using a
+model in which a departmental ‘exams convener’ or ‘exam chair’
+coordinates multiple authors writing individual questions.  This
+includes various completeness checks to avoid embarrasing mistakes.
+The class file and associated process is in regular use within a
+physics and astronomy department, and this work-flow is discussed in a
+little more detail within the class file documentation.</li>
+<li>Designed to have all of the ‘traditional’ exam paper features such
+as sectioning, per-part running marks, ‘Question <em>n</em> continued’
+catchwords, and so on.</li>
+<li>Designed to be locally adaptable.</li>
+<li>The class file is freely adaptable (LPPL).  The author can provide
+the usual basic free-software support, or potentially more elaborate
+support with a different arrangement.</li>
+</ul>
+
+<p>The focus of the ‘exam-n’ class is on the careful collaborative
+process of assembling an exam, and many of the features are to do with
+checks to avoid mistakes.  The result has, in effect, been validated
+by practice.</p>
+
+
+<h2>To install</h2>
+<p>Unpack the distribution tarball or zip
+file, and move the directory <code>move-to-texmf</code> (or its
+contents) to some
+location on the LaTeX search path.  You're probably looking for a
+directory called <code>texmf-local</code>, or something like that.</p>
+
+<p>‘Move…to a suitable place’ is admittedly very vague.  Here are some
+pointers, however:</p>
+<ul>
+<li>This can be the same location as your exam source files.  This
+will work, but you'll have to do this for each directory.</li>
+<li>See the good generic advice in
+<a href="http://www.tex.ac.uk/cgi-bin/texfaq2html?label=inst-wlcf">the
+TeX FAQ</a>.</li>
+<li>Your LaTeX environment might have some hints on ‘installing new
+style files’, or you can search online with some search string like
+that.</li>
+<li>If you're on a unix-like OS, then the command <code>kpsewhich
+guexam.cls</code> will show you which class file LaTeX will use (so if
+it produces no result, that's telling you that LaTeX won't find the
+files); also <code>kpsepath tex</code> will display, in an admittedly
+very oblique form, the list of places where TeX will search.</li>
+<li>If you're using MikTeX, then the documentation on the
+‘<a href="https://miktex.org/howto/miktex-console">MikTeX console</a>’
+includes a section on ‘Registering a user-managed TEXMF root
+directory’.  This rather obliquely says that you can ‘register a
+user-managed TEXMF root directory’.  What that means is that (i)
+you should go to a folder such as
+<code>...\Users\<em>yourname</em>\AppData\MikTeX</code>, (ii) create a
+sequence of folders so that you end up with
+<code>...\MikTeX\texmf\tex\latex\exam-n</code>, and (iii) put the
+distributed <code>.sty</code> and <code>.clo</code> files in the
+latter folder.  The directory <code>...\MikTex\texmf</code> is your
+‘user-managed TEXMF root directory’, and you should add it to MikTeX's
+search path using the instructions above.</li>
+</ul>
+
+
+<h2>Releases</h2>
+
+<p>With the version 1.1 release, the interface should now be regarded
+as rather stable.  However version 1.1 was the first to be released
+outside Glasgow University, so there may be some changes to the
+interface which will emerge with broader use, as well as some bug
+fixes.  The interface <em>may</em>, therefore, yet change.  If you use
+this class to produce exams, you should therefore include a copy of
+the class file locally, rather than relying on a central version.  If
+you need an earlier version of the class, let me know.</p>
+
+<p>The class was called <code>exam</code> until release 0.14, and
+<code>guexam</code> until release 1.1.  In the first case, it was
+renamed to avoid a conflict with a pre-existing LaTeX class with the
+same name; and in the second it was renamed to make it more
+generically useful to other institutions.</p>
+
+<h:dl xmlns:h="http://www.w3.org/1999/xhtml">
+<h:dt><h:span class="attention">1.4.0, 2022 October 10</h:span></h:dt><h:dd>
+    <ul>
+      <li>The [siunitx] option is now on by default, and the
+      <code>\units</code> macro produces a one-time-per-document
+      warning that it will be removed in the next version.</li>
+      <li>Having two <code>\partmarks</code> commands in an
+      environment is now detected as an error (it was documented as an
+      error, but not checked, so the extra <code>\partmarks</code>
+      commands were simply ignored).</li>
+    </ul>
+  </h:dd>
+
+<h:dt>1.4.0-b1, 2022 August 7</h:dt><h:dd>
+    <ul>
+      <li>The class file now depends on a version of LaTeX which is at least
+      the 2020/10/01 release.  This is so that we can use the current LaTeX
+      hooks mechanism.</li>
+      <li>Rework <code>\partmarks</code>: the <code>\partmarks</code>
+      indicator can now go <em>inside</em> most environments, including
+      list, quotes, unnumbered equations, and the various amsmath displays.  In these
+      cases, the indicator will automatically appear at the end of the
+      environment.  The starred variant of the command still exists, but
+      should rarely be necessary.</li>
+    </ul>
+  </h:dd>
+
+<h:dt>1.3.5-b1, 2022 July 11</h:dt><h:dd><ul>
+<li>Fix erroneous broken line before <code>\partmarks</code>, in
+compose mode, when a paragraph fills the last line.</li>
+<li>Fix support for STIX2 fonts in XeLaTeX and LuaLaTeX (it was
+working inaccurately before).</li>
+<li>Add an optional argument for <code>\part</code> to override part numbering.</li>
+<li>Use the <code>xcolor</code> package for colour management, instead
+of the core <code>color</code> package (the <code>xcolor</code>
+package is well-known and stable, and this means that we are
+compatible with TikZ).</li>
+<li><code>\partmarks</code> in solutions no longer gobble trailing space
+(doing so is probably right in questions, and is still the case, but
+<code>\partmarks</code> in solutions tend to be more interspersed with
+text).</li>
+<li><code>\label</code> within a <code>\part</code> now refers to the
+part number (as opposed to the question number).</li>
+<li>Avoid a ‘You can't use `\unskip' in vertical mode’ error,
+in certain circumstances.</li>
+<li>Add the <code>[siunitx]</code> option, indicating that we should
+load the <a href="https://www.ctan.org/pkg/siunitx">siunitx</a> package (default no).
+This is now preferred to the <code>\units</code> macro, and the latter will be
+removed in a forthcoming release.</li>
+<li>Renamed <code>A1.clo</code> to clearer <code>myclass.clo</code></li>
+<li>Repository moved from bitbucket to
+<a href="https://heptapod.host/nxg/exam-n">https://heptapod.host/nxg/exam-n</a>,
+when bitbucket dropped support for Mercurial.
+This means, incidentally, that links to specific issues at bitbucket
+are now broken.</li>
+<li>Bold-italic maths should now work correctly with STIX.</li>
+<li>Long <code>\partmarks</code> comments now appear as footnotes.</li>
+<li>Solutions are now set <code>\normalsize</code>.</li>
+<li>Bugfix: move definition of <code>\defaultpartmarkscategory</code>
+so it can be invoked within a <code>.clo</code> file straightforwardly.</li>
+<li>Define the <code>[uprightpi]</code> option to set <code>\pi</code>
+as an upright character, as appropriate for a constant (this is
+implemented fully only for the <code>[mtpro2]</code> and
+<code>[stix2]</code> options)..</li>
+<li>Note that the <code>\units</code> macro is likely to be deprecated
+in a forthcoming version, and replaced by a recommendation to use the
+standard <code>[siunitx]</code> package.</li>
+</ul></h:dd>
+
+<h:dt>1.3, 2018 November 21</h:dt><h:dd><ul>
+<li>Add a ‘category’ optional argument to <code>\partmarks</code>, and
+add <code>\defaultpartmarkscategory</code>.</li>
+</ul>
+</h:dd>
+
+<h:dt>1.2.1, 2018 July 2</h:dt><h:dd><ul>
+<li>Bugfix: ignore any content which appears after
+<code>\end{document}</code>, in <code>\includequestion</code> (author)
+files (fixes issue 6).</li>
+<li>The environments <code>{figure*}</code> and <code>{table*}</code> now produce an error.</li>
+<li>The macro <code>\vec</code> now produces correct greek bold maths.</li>
+<li>Docmentation: notes on unit formatting.</li>
+</ul>
+</h:dd>
+
+<h:dt>1.2, 2017 December 1</h:dt><h:dd><ul>
+<li>Use serif STIX2 fonts for sans and monospace cases, when using
+Lua- or XeLaTeX (the style doesn't use/encourage any sans-serif text,
+so this shouldn't matter).</li>
+<li>Fix font sizes in solutions.</li>
+<li>Adjustments to font-handling, which appear to have fixed LuaLaTeX differences.</li>
+<li>Add the <code>stix2</code> option, to use the
+<a href="http://www.stixfonts.org/">STIX2 font set</a>.</li>
+<li>Make it possible to use <code>\rubric</code> and <code>\baserubric</code> within a <code>.clo</code> file.
+This was advertised as being possible, but it seems it had never been tested!</li>
+</ul></h:dd>
+</h:dl>
+
+
+
+<p class="distonly"><a href="release-notes-dist.html">Earlier release notes</a> are available</p>
+
+
+<div class="signature">
+<a href="https://nxg.me.uk">Norman Gray</a><br/>
+2022 October 10
+</div>
+
+</body>
+</html>

@@ -1,0 +1,527 @@
+% \iffalse
+% makeindex -s gglo.ist -o eq-pin2corr.gls eq-pin2corr.glo
+% makeindex -s gind.ist -o eq-pin2corr.ind eq-pin2corr.idx
+%<*copyright>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% eq-pin2corr.sty package,                              %%
+%% Copyright (C) 2021  D. P. Story                       %%
+%%   dpstory@uakron.edu  dpstory@acrotex.net             %%
+%%                                                       %%
+%% This program can redistributed and/or modified under  %%
+%% the terms of the LaTeX Project Public License         %%
+%% Distributed from CTAN archives in directory           %%
+%% macros/latex/base/lppl.txt; either version 1.2 of the %%
+%% License, or (at your option) any later version.       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%</copyright>
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{eq-pin2corr}
+%<package> [2021/05/29 v2.0 Applies PIN security to quizzes]
+%<*driver>
+\documentclass{ltxdoc}
+%\usepackage[colorlinks,hyperindex=false,linktocpage,bookmarksnumbered]{hyperref}
+\usepackage[colorlinks,hyperindex=false]{hyperref}
+\usepackage{fancyvrb}
+\usepackage{calc}
+%\usepackage{eq-pin2corr}
+%\def\texorpdfstring#1#2{#1}
+%\pdfstringdefDisableCommands{\let\\\textbackslash}
+\OnlyDescription  % comment out for implementation details
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\gdef\brpr#1{\texttt{\char123\relax#1\char125\relax}}
+\let\darg\brpr
+\let\env\texttt
+\let\opt\texttt
+\let\app\textsf
+\let\pkg\textsf
+\let\uif\textsf
+\def\EXCL{!}
+\def\visispace{\symbol{32}}
+\def\ameta#1{\ensuremath{\langle\textit{\texttt{#1}}\rangle}}
+\def\meta#1{\textsl{\texttt{#1}}}
+\def\SUB#1{\ensuremath{{}_{\mbox{\scriptsize\ttfamily#1}}}}
+\def\CMD#1{\textbackslash#1}
+\makeatletter
+\renewcommand\theparagraph{\texorpdfstring{\protect\P\protect\ }{\textparagraph}}
+\renewcommand\thesubparagraph{\texorpdfstring{\protect\P\protect\P\protect\ }{\textparagraph\textparagraph}}
+\renewcommand{\section}
+  {\renewcommand{\@seccntformat}[1]{\thesection\quad}%
+  \@startsection {section}{1}{\z@}%
+    {-3.5ex \@plus -1ex \@minus -.2ex}%
+    {2.3ex \@plus.2ex}%
+    {\normalfont\Large\bfseries}}
+\renewcommand{\subsection}
+  {\renewcommand{\@seccntformat}[1]{\thesubsection\quad}%
+  \@startsection {subsection}{1}{\z@}%
+    {-3.5ex \@plus -1ex \@minus -.2ex}%
+    {2.3ex \@plus.2ex}%
+    {\normalfont\large\bfseries}}
+\renewcommand{\subsubsection}
+  {\renewcommand{\@seccntformat}[1]{\thesubsubsection\quad}%
+  \@startsection {subsubsection}{1}{\z@}%
+    {-3.5ex \@plus -1ex \@minus -.2ex}%
+    {2.3ex \@plus.2ex}%
+    {\normalfont\large\bfseries}}
+%
+\renewcommand{\paragraph}
+  {\renewcommand{\@seccntformat}[1]{\theparagraph\unskip\,}%
+  \@startsection{paragraph}{4}{0pt}{6pt}{-3pt}{\bfseries}}
+\renewcommand{\subparagraph}
+    {\renewcommand{\@seccntformat}[1]{\thesubparagraph\unskip\,}%
+    \@startsection{subparagraph}{5}{\parindent}{6pt}{-3pt}{\bfseries}}
+\edef\amtIndent{\the\parindent}
+\newenvironment{aebQuote}
+               {\list{}{\leftmargin\amtIndent}%
+                \item\relax}
+               {\endlist}
+\let\@latex@warning\@gobble
+\makeatother
+\InputIfFileExists{aebdocfmt.def}{\PackageInfo{eq-pin2corr}{Inputting aebdocfmt.def}}
+    {\def\IndexOpt{\DescribeMacro}\def\IndexKey{\DescribeMacro}\let\setupFullwidth\relax
+     \PackageInfo{eq-pin2corr}{aebdocfmt.def cannot be found}}
+\begin{document}
+\addtolength{\marginparwidth}{3pt}
+  \GetFileInfo{eq-pin2corr.sty}
+  \title{The  \textsf{eq-pin2corr} Package}
+  \author{D. P. Story\\
+    Email: \texttt{dpstory@uakron.edu}}
+  \date{processed \today}
+  \maketitle
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+\bgroup
+\value{secnumdepth}=3
+\value{tocdepth}=3
+  \tableofcontents
+\egroup
+  \DocInput{eq-pin2corr.dtx}
+\IfFileExists{\jobname.ind}{\newpage\setupFullwidth\par\PrintIndex}{\paragraph*{Index} The index goes here. Execute
+    \begin{quote}\texttt{makeindex -s gind.ist -o eq-pin2corr.ind eq-pin2corr.idx}\end{quote}
+    on the command line and recompile
+    \texttt{eq-pin2corr.dtx}.}
+\IfFileExists{\jobname.gls}{\PrintChanges}{\paragraph*{Change History} The list of changes goes here. Execute
+    \begin{quote}
+    \texttt{makeindex -s gglo.ist -o eq-pin2corr.gls eq-pin2corr.glo}
+    \end{quote}
+    on the command line and recompile \texttt{eq-pin2corr.dtx}.}
+\end{document}
+%</driver>
+% \fi
+% \MakeShortVerb{|}
+% \InputIfFileExists{aebdonotindex.def}{\PackageInfo{web}{Inputting aebdonotindex.def}}
+%    {\PackageInfo{web}{cannot find aebdonotindex.def}}
+%    \begin{macrocode}
+%<*package>
+%    \end{macrocode}
+%
+%    \section{Introduction}
+%    This package is an add-on to the \env{quiz} environment of the \pkg{exerquiz} package. It uses
+%    the \pkg{eq-save} package. To correct a quiz, the document consumer must press
+%    the \uif{Correct} button of a quiz and successfully enter the correct PIN number.
+%
+%    \changes{v1.0}{2021/02/20}{Completed documentation, publish package for first time}
+%
+%    \paragraph*{Purpose.} This package adds PIN security to a quiz created by
+%     the \env{quiz} environment. This package is designed for the educational
+%     sector, for instructors who use the quizzes of \pkg{exerquiz} to assess their
+%     students understanding of the course material.
+%
+%     \paragraph*{PDF Viewers.} Discussion of PDF viewers for document author and document consumer.
+%     \begin{aebQuote}
+%     \begin{description}
+%     \item[Instructor] Any PDF viewer may be used as a PDF previewer, \app{sumatraPDF}, for instance,
+%     can be used, but it has not functionality. To test the newly created document
+%     to see if it is functioning correctly, must use \app{Adobe Reader DC} or \app{Acrobat DC}.\footnote
+%     {We use DC here to refer to actually any Adobe AA/AR application. Earlier versions of these applications
+%     will work.}
+%     \item[Document consumers (students)] The \pkg{exerquiz} and \pkg{eq-pin2tocorr} extensively
+%     use JavaScript to perform many background tasks. For the student to have any success in this
+%     workflow, he/she must use \app{Adobe Reader}.
+%     \end{description}
+%     \end{aebQuote}
+%     \paragraph*{Workflow.} The package is designed for the following workflow:
+%     \begin{enumerate}
+%         \item The instructor creates the quiz using the \pkg{exerquiz} and
+%           \pkg{eq-pin2corr} packages.
+%         \item The instructor delivers the ``PDF quiz'' to each student. (System drive or email)
+%         \item The student takes the quiz. The student can press the \uif{Correct}
+%           but, unless he/she knows the PIN, the quiz is not marked up.
+%         \item The student saves the PDF quiz in \app{Adobe Reader DC}.
+%         \item The student returns the PDF to the instructor. (System drive or email)
+%         \item The instructor presses the \uif{Correct} button to mark up the quiz
+%         and record the grade of the student. The instructor saves the quiz.
+%         \item The instructor returns the PDF, at some point, to the student.
+%         \item Both instructor and student happily go on with their lives.
+%     \end{enumerate}
+%     \section{Options and package requirements}
+%    \begin{macrocode}
+\newif\ifPINshowScore \PINshowScorefalse
+\DeclareOption{showscore}{\PINshowScoretrue}
+\DeclareOption{!showscore}{\PINshowScorefalse}
+\ProcessOptions\relax
+\RequirePackage{exerquiz}[2021/05/21]
+\RequirePackage{eq-save}[2021/04/27]
+%    \end{macrocode}
+%     \section{Package commands}
+%     Implement local versions\DescribeMacro{\showScoreOn}\DescribeMacro{\showScoreOff}{} of the package options \opt{showscore} and \opt{!showscore},
+%     these are \cs{showScoreOn} and \cs{showScoreOff}.
+%    \begin{macrocode}
+\def\showScoreOn{\PINshowScoretrue}
+\def\showScoreOff{\PINshowScorefalse}
+%    \end{macrocode}
+% \subsection{PIN security on the \textsf{Correct} control}
+%    Define \DescribeMacro{\SaveAndSendMsg} a message that appears on the console when the PIN entered is not correct.
+%    \begin{macrocode}
+\flJSStr[noquotes]{\SaveAndSendMsg}{Success! %
+Now save and send to the instructor}
+%    \end{macrocode}
+%     \DescribeMacro\postSubmitQuizPIN
+%     Begin by modifying the \cs{postSubmitQuiz} command,
+%     which is a hook within the executing code of the \uif{End Quiz} control.
+%    \begin{macrocode}
+\begin{defineJS*}[\makeesc\@\makecmt\%]{\postSubmitQuizPIN}
+// Begin post submit quiz code%
+@ifPINSecurity%
+@ifPINshowScore@else
+      var f = this.getField("ScoreField.@oField");
+      if ( f!=null ) {
+        f.textSize=0;
+        f.value = "@SaveAndSendMsg";
+      } else {
+        var f = this.getField("PointsField.@oField");
+        if (f!=null) {
+          f.textSize=0;
+          f.value = "@SaveAndSendMsg";
+        }
+      }@fi@fi
+      oRecordOfQuizData["ScoreData.@oField"]=%
+[1*Score,1*NQuestions,1*ptScore,1*NPointTotal];
+      oRecordOfQuizData["RightWrong.@oField"]=%
+eval(RightWrong.toSource());
+      oRecordOfQuizData["ProbDist.@oField"]=%
+eval(ProbDist.toSource());
+      cntCorrectResponses();
+\end{defineJS*}
+%    \end{macrocode}
+%    The command name for the action of the \uif{End Quiz} control is
+%    \DescribeMacro{\eQzBtnActns}\cs{eQzBtnActns}.
+%    We save this and pre-pend a single code line, as needed.
+%    \begin{macrocode}
+\let\eQzBtnActnsSave\eQzBtnActns
+\def\makeEndQuizPIN{%
+  \let\eQzBtnActns\eQzBtnActnsPIN
+  \let\postSubmitQuiz\postSubmitQuizPIN
+}
+\def\eQzBtnActnsPIN{\ifPINshowScore\else
+  var bDisplaySilent=true;\r\fi
+  \eQzBtnActnsSave
+}
+%\makeEndQuizPIN
+%    \end{macrocode}
+%    The command name for the action of the \uif{Correct} control is \cs{CorrBtnActionsJS}
+%    we save this and later modify it.
+%    \begin{macrocode}
+\let\CorrBtnActionsJSSave\CorrBtnActionsJS
+%    \end{macrocode}
+%    We can turn on and off the PIN feature by expanding \DescribeMacro{\usePINCorrBtn}
+%    \cs{usePINCorrBtn} and \DescribeMacro{\restoreCorrBtn}\cs{restoreCorrBtn}.
+%    \begin{macrocode}
+\newif\ifPINSecurity \PINSecurityfalse
+\def\usePINCorrBtn{\PINSecuritytrue
+  \makeEndQuizPIN % dps5-25
+  \let\CorrBtnActionsJS\CorrBtnActionsPwdJS}
+\def\restoreCorrBtn{\PINshowScoretrue\PINSecurityfalse
+  \restoreEndQuiz % dps5-25
+  \let\CorrBtnActionsJS\CorrBtnActionsJSSave}
+%    \end{macrocode}
+%    The instructor can tediously press the \uif{Correction} button, or place
+%    an entry,
+%\begin{Verbatim}[xleftmargin=\parindent,fontsize=\small,
+%commandchars={!()},codes={\catcode`\%=9}]
+%var _PinCode1 = "02JRVZdRgYgCA-Rtje8VkD";
+%\end{Verbatim}
+%in the file \texttt{config.js}. If such a variable exists and its value
+%matches the PIN hash string, the instructor clicks the \uif{Correction} button
+%to get the quiz markup. Conceivably, the instructor might want different PIN names
+%and string hash values. The \DescribeMacro\classPINVar\cs{classPINVar} is a convenient
+%way of declaring the PIN variable name; eg, if |\classPINVar{_PinCode1}| is declared
+%prior to the \env{quiz} environment, the instructor need not manually enter the PIN.
+%\changes{v1.1}{2021/05/22}{Added \string\cs{ifFreezeQuiz} switch and \string\cs{FreezeThisQuiz}
+%convenience macro}
+%    \begin{macrocode}
+\def\classPINVar#1{\def\PINclassPV{#1}}
+\let\PINclassPV\@empty
+%    \end{macrocode}
+%    \DescribeMacro\FreezeThisQuiz
+%    Causes the interactive parts of a quiz to be readonly. This can be passed
+%    into the \uif{End Quiz} control so that when the student presses \uif{End Quiz}
+%    the quiz will be frozen (after a warning); or through the \uif{Correct} button,
+%    then the returned quiz will be readonly.
+%    \begin{macrocode}
+\newif\ifFreezeQuiz\FreezeQuizfalse
+\def\FreezeThisQuiz{\FreezeQuiztrue}
+\def\FreezeThisQuizNot{\FreezeQuizfalse}
+%    \end{macrocode}
+%    \DescribeMacro\CorrBtnActionsPwdJS
+%    The modified action for the \uif{Correct} button.
+%    we save this and later modify it.
+%    \begin{macrocode}
+\begin{defineJS*}[\makeesc\|\makecmt\%]{\CorrBtnActionsPwdJS}
+|ifx|PINclassPV|@empty%
+var userPIN = "";|else%
+var userPIN = "|PINclassPV";|fi
+if (userPIN == "") userPIN = undefined;
+try {
+  if ( typeof eval(userPIN) == "undefined") userPIN = undefined;
+} catch(e) { userPIN = undefined; }
+if (typeof userPIN == "undefined") {
+  var resp=app.response({
+    cQuestion: "Enter the PIN number",
+    cTitle: "View Answers",
+    bPassword: true
+  });
+    var _resp=Collab.hashString(resp);
+    if (resp != null) var _bQzResults = ( _resp ==_PinCode );
+} else var _bQzResults = ( eval(userPIN) ==_PinCode );
+if (_bQzResults) {
+%    \end{macrocode}
+%    (2021/05/24) Do nothing if  no quiz data
+%    \begin{macrocode}
+    if (typeof oRecordOfQuizData["ScoreData.|currQuiz"]!="undefined") {
+    RightWrong=eval("RightWrong.|currQuiz");
+    ProbDist=eval("ProbDist.|currQuiz");
+    correctQuiz("|currQuiz",3);
+    DisplayQuizResults("|currQuiz",3,3);
+    if (typeof correctSumryTbl == "function")
+      correctSumryTbl("|currQuiz",3);%
+%    \end{macrocode}
+%    (2021/05/22) If \cs{ifFreezeQuiz} is true, we add some code to freeze all operational
+%    components of this quiz.
+%    \begin{macrocode}
+|ifFreezeQuiz
+    var aFrzExt=new Array("obj.","grpobj.","essay.",%
+"beginQuiz.","endQuiz.");
+    for (var i=0; i<aFrzExt.length; i++) {
+      var f=this.getField(aFrzExt[i]+"|currQuiz");
+      if (f!=null) f.readonly=true;
+    }|fi
+  } else {
+    var retn=app.alert({%
+cMsg: "No quiz data, do you want to mark it anyway?",%
+cTitle: "AcroTeX", nIcon: 2, nType: 2});
+    if (retn==4) {
+      var bDisplaySilent=false;
+    	InitializeQuiz("|currQuiz",1,0);
+    	var f=this.getField("ScoreData.|currQuiz");
+    	f.value="0;0;0;0";
+    	cntCorrectResponses();
+      correctQuiz("|currQuiz",3);
+      DisplayQuizResults("|currQuiz",3,3,false);
+      if (typeof correctSumryTbl == "function")
+        correctSumryTbl("|currQuiz",3);
+    }
+  }
+} else {
+  if (resp != null) {
+    console.clear()
+    console.println("Something went wrong, %
+you entered an incorrect PIN Id, %
+or the class PIN Id (\\\\classPINVar) was incorrect or undefined");
+    app.beep(0);
+    console.show();
+  }
+}
+\end{defineJS*}
+%    \end{macrocode}
+%
+%    \subsection{Declare PIN for \textsf{Correction} and \textsf{Begin Quiz} controls}
+%     Two PIN-related commands are defined: (1) \cs{declPINId} is for security on the
+%     \uif{Correct} control; (2) \cs{declRePINId} is for security on the \uif{Begin Quiz}
+%     control.\medskip
+%
+%    \noindent\DescribeMacro\declPINId\hskip-\marginparsep\texttt{\darg{\ameta{PIN-Id}}\darg{\ameta{hash-str}}}
+%    Set the basic parameters of this PIN security scheme for the \uif{Correct} control:
+%    the pin-id and its corresponding hash-string.
+%    \begin{macrocode}
+\def\declPINId#1#2{\def\numPINId{#1}\def\hashPINId{#2}}
+\@onlypreamble\declPINId
+\declPINId{5243}{02JRVZdRgYgCA-Rtje8VkD} % PIN Id, hash-str
+%    \end{macrocode}
+%    \DescribeMacro\declRePINId\hskip-\marginparsep\texttt{\darg{\ameta{PIN-Id}}\darg{\ameta{hash-str}}}
+%    Set the basic parameters of this PIN security scheme on the \uif{Begin Quiz} control:
+%    the pin-id and its corresponding hash-string.
+%    \begin{macrocode}
+\def\declRePINId#1#2{\def\numRePINId{#1}\def\hashRePINId{#2}}
+\@onlypreamble\declRePINId
+\declRePINId{1234}{By9mbLF0NJMA2sN2x4D0VB}
+\begin{insDLJS}{pin}{Pin Code}
+var _PinCode = "\hashPINId";
+var _rePinCode = "\hashRePINId";
+\end{insDLJS}
+%    \end{macrocode}
+%   \subsection{Warn and Freeze on \textsf{End Quiz}}
+%    \DescribeMacro\useWarnEndQuiz
+%    (2021/05/22) Optional modifications to the \uif{End Quiz} control.
+%    \changes{v1.1}{2021/05/22}{Define \string\cs{useWarnEndQuiz} and
+%    \string\cs{EndQuizG@tePIN}}
+%    \begin{macrocode}
+\def\useWarnEndQuiz{\let\EndQuizG@te\EndQuizG@tePIN}
+\flJSStr{\EndQuizG@te@Msg}{Warning:
+Are you sure you want to end this quiz?\r\r
+The quiz will be frozen and no more changes will be allowed.
+Click 'Yes' to end the quiz or 'No' to continue working on the quiz.}
+\def\PINgobii#1#2{}
+\begin{defineJS}[\makeesc\|\makecmt\%]{\EndQuizG@tePIN}
+// Begin insertion of new code
+    var retn=app.alert({cMsg: |EndQuizG@te@Msg,%
+cTitle: "AcroTeX", nIcon: 2, nType: 2});
+    if (retn==4) {
+%    \end{macrocode}
+%    Freeze this quiz; we make a relevant fields readonly.
+%    \begin{macrocode}
+      var aFrzExt=new Array("mc.","obj.","grpobj.",%
+"beginQuiz.","endQuiz.");
+      for (var i=0; i<aFrzExt.length; i++) {
+        var f=this.getField(aFrzExt[i]+"|currQuiz");
+        if (f!=null) f.readonly=true;
+      }%
+|PINgobii
+\end{defineJS}
+%    \end{macrocode}
+% The \cs{PINglobii} vacuums up `\verb*! {!', which appears in \cs{eQzBtnActns} of
+% \pkg{exerquiz}, in the line \verb*!*EndQuizG@te {!.
+%
+%    \subsection{PIN Security on \textsf{Begin Quiz}}
+%
+%    \DescribeMacro\useBeginQuizPIN (2021/05/29) This command redefines the \uif{Begin Quiz} control to
+%    require PIN security to retake the quiz.
+%    \changes{v2.0}{2021/05/29}{Define \string\cs{useBeginQuizPIN}}
+%    \begin{macrocode}
+\def\useBeginQuizPIN{%
+  \ifx\BeginQuizG@te\BeginQuizG@tePIN\else
+  \let\BeginQuizG@te\BeginQuizG@tePIN\fi}
+%    \end{macrocode}
+%    \cs{restoreBeginQuiz} is defined in \pkg{exerquiz}, but because of a typo,
+%    it was originally defined as \cs{restorBeginQuiz} (no `e'); until the changes trickle
+%    through the system, we cover ourselves by \cs{let}ing \cs{restoreBeginQuiz}
+%    to \cs{restorBeginQuiz}, if the correct spelling of the command does not already
+%    exist.
+%    \begin{macrocode}
+\@ifundefined{restoreBeginQuiz}{\let\restoreBeginQuiz\restorBeginQuiz}{}
+%    \end{macrocode}
+%    \begin{macrocode}
+\flJSStr{\BeginQuizG@te@Msgi}{Enter the PIN number
+to retake this quiz}
+\flJSStr{\BeginQuizG@te@Msgii}{Press the Begin Quiz control to begin
+the quiz again}
+\def\PINgobiii#1#2#3{}
+%    \end{macrocode}
+%    \begin{macrocode}
+\begin{defineJS}[\makeesc\|\makecmt\%]{\BeginQuizG@tePIN}
+if (typeof oRecordOfQuizData["ScoreData.|currQuiz"] != "undefined" ) {
+  var resp=app.response({
+    cQuestion: |BeginQuizG@te@Msgi,
+    cTitle: "AcroTeX",
+    bPassword: true
+  });
+  var _respHash=_resp=Collab.hashString(resp);
+  if (_resp == _rePinCode) {
+      oRecordOfQuizData["ScoreData.|currQuiz"]=undefined;
+      app.alert(|BeginQuizG@te@Msgii);
+      var f=this.getField("tallyresets.|currQuiz");
+      if (f!=null) f.value=1+f.value;
+  }
+} else {
+|PINgobiii
+\end{defineJS}
+%    \end{macrocode}
+% \cs{PINglobiii} gobbles the three tokens `\verb*! {\jsR!', which appear in the definition of \cs{@initQuiz} in
+% \pkg{exerquiz}, in the line \verb*!\BeginQuizG@te\space\jsLB\jsR\jsT!.
+%
+%    \section{Tracking the number of \textsf{Begin Quiz} events}
+%     A command \cs{qzResetTally} is defined to hold the number of times a user has taken
+%     the same quiz. This field is readonly, and does not reset, unless you have know how to do it.
+%    \begin{macrocode}
+%    \end{macrocode}
+%    \DescribeMacro{\qzResetTally}\hskip-\marginparsep\texttt{[\ameta{options}]}
+%    The \cs{qzResetTally} text field, similar to \cs{sqTallyTotal}, is used to
+%    count the number of times a student needs to retake the same quiz.
+%    \begin{macrocode}
+%    \end{macrocode}
+%    The default appearance of \cs{qzResetTally}
+%    \begin{macrocode}
+\def\qzTallyTotalDefaults{%
+  \rawPDF{}\W{1}\BC{0 0 0}\S{I}\textColor{1 0 0 rg}
+  \Q{2}}
+%    \end{macrocode}
+%    The definition of \cs{qzResetTally}
+%    \begin{macrocode}
+\newcommand\qzResetTally[1][]{%
+  \textField[\presets{\qzTallyTotalDefaults}#1\DV{0}\V{0}
+  \Ff{\FfReadOnly}
+  ]{tallyresets.\currQuiz}{\TBW}{\DefaultHeightOfWidget}}
+%    \end{macrocode}
+%    \subsection{Placing a maximum on the number of resets}
+%    The next level of complication is to add a restriction onto the number of
+%    times the user can retake the quiz.\medskip\par
+%
+%    \noindent
+%    \DescribeMacro\setMaxRetakes\hskip-\marginparsep\texttt{\darg{\ameta{qz-name}}\darg{\ameta{num}}}
+%    A command that sets the maximum number of retakes \ameta{num} (nonneg integer) by declaring \cs{setMaxRetakes} prior
+%    to the quiz \ameta{qz-name}. \DescribeMacro\nMaxRetakes\cs{nMaxRetakes\darg{\ameta{qz-name}}}
+%    is a public macro that expands to the max number of retakes (\ameta{num}).
+%    \begin{macrocode}
+\newcommand{\setMaxRetakes}[2]{\expandafter
+  \def\csname1MaxReset#1\endcsname{#2}}
+\def\nMaxRetakes#1{\@nameuse{1MaxReset#1}}
+%    \end{macrocode}
+%    \subsection{JavaScript support for tracking}
+%    \DescribeMacro\useBeginQuizCnt Modifies \cs{BeginQuizG@te} (\pkg{exerquiz}, 2021/05/21 or later).
+%    \cs{useBeginQuizPIN} also modifies \cs{BeginQuizG@te}. These two are incompatible;
+%    one will overwrite the other. \cs{restoreBeginQuiz} retores \uif{Begin Quiz} to its default definition.
+%    \changes{v2.0}{2021/05/29}{Define \string\cs{useBeginQuizCnt}}
+%    \begin{macrocode}
+\def\useBeginQuizCnt{%
+  \ifx\BeginQuizG@te\BeginQuizG@teCNT\else
+  \let\BeginQuizG@te\BeginQuizG@teCNT\fi}
+%    \end{macrocode}
+%    \DescribeMacro\maxRetake@Msg The message that appears in an alert dialog box
+%    after the student has started the quiz more than the max number, as set by
+%    \cs{setMaxRetakes}.
+%    \begin{macrocode}
+\flJSStr[noquotes]{\maxRetake@Msg}{You have taken the quiz the maximum
+number of times permitted ("+nMaxReset+"). You will not be allowed to
+continue to re-take this quiz. Move on with your life.}
+%    \end{macrocode}
+%    The action added to \uif{Begin Quiz}, it determines if \cs{qzResetTally} is present for the current quiz
+%    and if so, increments the current value.
+%    \begin{macrocode}
+\begin{defineJS}[\makeesc\|\makecmt\%]{\BeginQuizG@teCNT}
+if (typeof oRecordOfQuizData["ScoreData.|currQuiz"] != "undefined" )
+{
+  var _bOKReset=true;
+  var f=this.getField("tallyresets.|currQuiz");
+  if (f!=null) var value=1*f.value;%
+|expandafter|ifx|csname1MaxReset|currQuiz|endcsname|relax|else
+  var nMaxReset=|csname1MaxReset|currQuiz|endcsname;
+  if (f!=null && value==nMaxReset) {
+    app.alert("|maxRetake@Msg");
+    _bOKReset=false;
+  }|fi
+  if (_bOKReset) {
+    oRecordOfQuizData["ScoreData.|currQuiz"]=undefined;
+    app.alert(|BeginQuizG@te@Msgii);
+    if (f!=null) f.value=1+value;
+  }
+} else {
+|PINgobiii
+\end{defineJS}
+%    \end{macrocode}
+% \cs{PINglobiii} gobbles the three tokens `\verb*! {\jsR!', which appear in the definition of \cs{@initQuiz} in
+% \pkg{exerquiz}, in the line \verb*!\BeginQuizG@te\space\jsLB\jsR\jsT!.
+%    \begin{macrocode}
+%</package>
+%    \end{macrocode}
+%\Finale

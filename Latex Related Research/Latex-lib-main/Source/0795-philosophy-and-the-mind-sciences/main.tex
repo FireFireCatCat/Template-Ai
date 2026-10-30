@@ -1,0 +1,127 @@
+%% Philosophy and the Mind Sciences article starter -- phimisci class.
+%%
+%% The phimisci class itself is NOT included in this download: it ships
+%% with every modern TeX distribution (and with latextemplates.com's
+%% compiler), so bundling a copy would only risk pinning you to an older
+%% version than your own system already has.
+%%
+%% Class documentation: texdoc phimisci  |  https://ctan.org/pkg/phimisci
+%% Licence: phimisci is LPPL-1.3c or later, (c) Ruhr-Universitaet Bochum.
+%%
+%% Check the journal's current author guidelines before submitting --
+%% https://philosophymindscience.org -- since a bundled class can go
+%% stale against a journal's live requirements.
+%%
+%% engine.txt: xelatex (required -- the class hard-errors with a
+%% ClassError "wrong-tex-engine" under pdflatex; lualatex also works).
+%%
+%% NO BIBLIOGRAPHY IN THIS STARTER -- and that is deliberate, not an
+%% oversight. This pipeline runs bibtex, never biber. phimisci loads
+%% \RequirePackage[style=apa,natbib=true]{biblatex} with no explicit
+%% backend= key, so biblatex's own default backend (biber) applies;
+%% forcing \PassOptionsToPackage{backend=bibtex}{biblatex} was tried and
+%% fails HARD at compile time with "Biber backend is required by style",
+%% because biblatex-apa's apa.bbx calls \DeclareSortingTemplate, a
+%% biber-only feature bibtex cannot process at all -- unlike lni/ijsra
+%% elsewhere in this batch, there is no bibtex-compatible path here. If
+%% your own workflow runs biber (most local TeX installs and Overleaf
+%% do), delete this comment block, add back \addbibresource{your.bib}
+%% and \printbibliography, and cite normally with \citep/\citet --
+%% biblatex + biber + phimisci's apa style works fine, just not under
+%% this site's bibtex-only compiler.
+%% "stage" MUST be passed explicitly. \l__phimisci_output_authors_bool
+%% starts life FALSE (\bool_new:N), and the class's `stage .default:n =
+%% {preparation}` only fires if you write the bare key "stage" with no
+%% value -- omitting the key entirely (as in a plain \documentclass
+%% {phimisci} with no options) never runs any \__phimisci_stage_*: code
+%% at all, so authors stay switched off and the header silently prints
+%% "Anonymized" even though nothing about the document asked for blind
+%% review. Confirmed by compiling without this option first: the author
+%% line vanished from the title page with no warning or error.
+%% stage=preparation shows authors+contact but suppresses the DOI/rights
+%% footer (appropriate for a not-yet-submitted draft); use stage=final
+%% once the paper is the journal's typeset, accepted version, or
+%% stage=submission to reproduce anonymous-review formatting on purpose.
+\documentclass[stage=preparation]{phimisci}
+
+\usepackage{booktabs}
+
+\title{Predictive Processing and the Boundaries of Cognitive Extension}
+
+%% Authors are \and-separated within ONE \author{...} call, with
+%% \affiliation{...} and (optionally) \orcid{...} inline per author.
+\author{
+  Ada Lovelace \affiliation{Institute of Analytical Engines, Berlin,
+  Germany} \orcid{0000-0002-1825-0097}
+  \and
+  Second Author \affiliation{Department of Philosophy, Example
+  University, USA}
+}
+
+\abstract{Predictive processing accounts of cognition are sometimes read
+as offering a principled criterion for extended cognition: whatever
+minimizes prediction error across an agent-environment coupling counts as
+part of the cognitive system. We argue this reading conflates two
+distinct notions of boundary -- functional and mechanistic -- and that
+predictive processing, properly understood, is neutral on the extended
+mind thesis rather than a vindication of it.}
+
+\keywords{predictive processing; extended cognition; philosophy of mind;
+active inference}
+
+%% \contact{Name}{email} prints the "Primary contact:" line at the foot
+%% of the title page -- omitting it leaves that label with nothing after
+%% it, so set it whenever \l__phimisci_output_contact_bool is on (true
+%% for every non-"submission" stage).
+\contact{Ada Lovelace}{ada@example.edu}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+The predictive processing framework has been enlisted on both sides of
+the extended cognition debate. Proponents of extended cognition read the
+framework's emphasis on agent-environment coupling as support for their
+view; critics read the same framework as committed to a boundary drawn
+firmly at the skull. We argue both readings overstate what the framework
+itself entails.
+
+\section{Two Notions of Boundary}
+A \emph{functional} boundary is drawn wherever a process contributes to
+minimizing prediction error; a \emph{mechanistic} boundary is drawn
+wherever the physical implementation of that process actually resides.
+Predictive processing, as a computational-level theory, speaks directly
+only to the former.
+
+\section{Why Extension Does Not Follow}
+Table~\ref{tab:boundaries} summarises the two readings and the boundary
+criterion each actually licenses.
+
+\begin{table}[htb]
+\centering
+\caption{Two readings of predictive processing and their boundary
+  criteria.}
+\label{tab:boundaries}
+\begin{tabular}{lll}
+\toprule
+Reading & Boundary criterion & Licenses extension? \\
+\midrule
+Extended-mind reading & Functional & Yes, if argued independently \\
+Internalist reading   & Mechanistic (assumed) & No, but not from PP alone \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Neither reading follows from the predictive processing framework by
+itself: functional continuity across a boundary is compatible with, but
+does not entail, that the mechanisms realizing the relevant computations
+extend beyond the organism.
+
+\section{Conclusion}
+Predictive processing is best read as neutral on the extended mind
+thesis. Settling the extended cognition debate requires an independent
+argument about mechanism, not a computational-level theory of prediction
+error minimization alone.
+
+\end{document}

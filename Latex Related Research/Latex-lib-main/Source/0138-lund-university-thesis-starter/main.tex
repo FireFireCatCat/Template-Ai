@@ -1,0 +1,68 @@
+\documentclass[10pt,twoside,openright]{book}
+\usepackage[papersize={169mm,239mm},top=14mm,bottom=14mm,textwidth=125mm,includehead,includefoot]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{newpxtext,newpxmath}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+\title{A Modular Lund Thesis Starter}
+\author{Alex Morgan}
+\date{2026}
+\begin{document}
+\frontmatter
+\maketitle
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+This compact starter follows the Lund template's book-sized thesis workflow:
+front matter, a kappa-style overview, research chapters, and appendices.
+Replace this text with the abstract of your dissertation.
+\tableofcontents
+\mainmatter
+\chapter{Introduction}
+\label{ch:introduction}
+Long-form research documents are easier to maintain when the front matter,
+chapters, papers, and appendices have clear boundaries. The upstream repository
+includes a full kappa and papers-based example in \texttt{upstream-example.tex}.
+\section{A modular workflow}
+Use one file per chapter or included paper, and keep local macros close to the
+material that needs them. This makes it practical to reuse a chapter in a
+paper-based dissertation.
+\chapter{Methods}
+\label{ch:methods}
+Suppose a review takes $r$ hours per section and a thesis has $n$ sections.
+Then the planned effort is
+\begin{equation}
+  T(n)=T_0+rn,
+\end{equation}
+where $T_0$ is the fixed setup cost.
+\begin{table}[ht]
+  \centering
+  \caption{A small thesis-planning table.}
+  \begin{tabular}{lrr}
+    \toprule
+    Phase & Sections & Days \\
+    \midrule
+    Outline & 3 & 1 \\
+    Draft & 6 & 4 \\
+    Revision & 6 & 2 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\chapter{Conclusion}
+The structure is deliberately small so that it can be extended with chapters,
+paper subdirectories, and per-paper bibliographies from the upstream example.
+\appendix
+\chapter{Submission checklist}
+\begin{itemize}
+  \item Confirm the degree, department, and defence information.
+  \item Check the contents, page numbering, figures, and references.
+  \item Apply current Lund University requirements before submission.
+\end{itemize}
+\backmatter
+\end{document}

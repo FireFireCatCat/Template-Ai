@@ -1,0 +1,65 @@
+\section{Beurteilung}
+\label{typ:beurteilung}
+Bei der Nutzung des Dokumenttyps Beurteilung werden einige Makros geladen, so dass Beurteilungen von
+Lehramtsanwärterinnen und Lehramtsanwärtern bzw. Lehrkräften in Ausbildung einfach gesetzt werden
+können. U.\,a. wird dazu die Titelseite entsprechend gestaltet und Umgebungen für die
+Handlungsfelder vorformatiert.
+
+\subsection{Paketoptionen}
+Die folgenden Optionen sollten in der Präambel dem Schule-Paket mitgegeben werden.
+\begin{options}
+ \opt{beurteilung}
+   Gibt den Namen des Beurteilenden an, z.\,B. \texttt{beurteilung=\{Marine Musterfrau\}}.
+
+ \opt{ref}
+   Gibt den Namen des Beurteilten an, z.\,B. \texttt{ref=\{Sabine Musterref\}}.
+
+ \opt{zeitraum}
+	 Gibt den Zeitraum des Gutachtens an (nicht nur die einzelnen gesehenen Unterrichte), z.\,B.
+\texttt{zeitraum=\{02.02.19--03.05.19\}}.
+
+ \opt{schulname}
+	Gibt den Namen der Schule an.
+
+ \opt{schullogo}
+  Lädt das Schullogo auf die Titelseite rechts oben. Das Schullogo sollte \LaTeX als
+\texttt{logo.pdf} vorliegen.
+
+ \opt{schulanschrift}
+  Wenn ein Schullogo gesetzt wird, kann zusätzlich der Name der Schule,
+
+ \opt{schulstr}
+  die Straße der Schule und
+
+ \opt{schulort}
+  der Ort der Schule ausführlich unter das Logo geschrieben werden.
+
+ \opt{lehramt}
+  Gibt an, um welches Lehramt es sich handelt, z.\,B. GyGe.
+\end{options}
+
+ \subsection{Befehle}
+ \begin{commands}
+     \command{setzeGrundlagen}[\{Termine\}]
+				 Über den Mechanismus können auf der Titelseite Einträge in die Tabelle zum hospitierten
+bzw. gegebenen Unterricht eingetragen werden. Dabei werden drei Spalten erwartet. Z.\,B.:
+
+			\texttt{\textbackslash setzeGrundlagen\{02.04.--01.05.2019 \& 9b \& Themen\}}
+ \end{commands}
+ 
+\subsection{Umgebungen}
+ \begin{commands}
+	 \command{begin}[\{handlungsfeld1\}]
+	 \command{begin}[\{handlungsfeld2\}]
+	 \command{begin}[\{handlungsfeld3\}]
+	 \command{begin}[\{handlungsfeld4\}]
+	 \command{begin}[\{handlungsfeld5\}]
+	 \command{begin}[\{handlungsfeld6\}]
+
+	In den Umgebungen \texttt{handlungsfeldX} können die Beurteilungen entsprechend zu den
+Handlungsfeldern geschrieben werden. Jedes Handlungsfeld wird dazu in einer \texttt{tcolorbox}
+gesetzt. Die zugehörigen Kompetenzen und Titel werden passend zugeordnet. Optional können der
+	 Umgebung weitere Optionen für die tcolorbox mitgegeben werden:
+
+	 \texttt{\textbackslash begin\{handlungsfeld1\}[colback=red]}.
+ \end{commands}

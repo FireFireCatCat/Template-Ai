@@ -1,0 +1,226 @@
+%% CUP Data Template starter — CUP-JNL-DTM document class.
+%%
+%% This class file (CUP-JNL-DTM.cls) IS bundled here: it is not part of any
+%% TeX Live distribution, so a download without it would not compile. Its
+%% own header carries no licence grant for the class itself — see this
+%% template's README.md for what that means and why it ships anyway.
+%%
+%% The class picks your bibliography TOOLCHAIN automatically from the
+%% `journal=' option below (natbib+bibtex for some journals, biblatex for
+%% others) — do not add your own \usepackage{natbib} or {biblatex}, and do
+%% not add \addbibresource yourself; see the Bibliography note at the end of
+%% this file for what changes if you pick a biblatex journal.
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Journal codes for the `journal=' class option, and which toolchain each
+% one selects:
+%   Glasgow Mathematical Journal: gmj      (bibtex + natbib, amsplain style)
+%   Forum of Mathematics, Pi:     fmp      (bibtex + natbib, amsplain style)
+%   Forum of Mathematics, Sigma:  fms      (bibtex + natbib, amsplain style)
+%   Wearable Technologies:        wet      (biblatex, author-year)
+%   Data and Policy:              dap      (biblatex, author-year)
+%   Data-centric Engineering:     dce      (biblatex, author-year)
+%   Environmental Data Science:   eds      (biblatex, author-year)
+%   Programmable Materials:       prm      (biblatex, author-year)
+%   Journal of Nonlinear Waves:   jnw      (biblatex, author-year)
+%   Flow:                         flw      (biblatex, APA style)
+%   Judgment and Decision Making: jdm      (biblatex, APA style)
+%   Psychometrika:                psy      (biblatex, APA style)
+%   Research Synthesis Methods:   rsm      (biblatex, numbered superscript)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[journal=gmj]{CUP-JNL-DTM}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks,allcolors=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\theoremstyle{definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\jname{Glasgow Mathematical Journal}
+\articletype{Research Article}
+\jyear{2026}
+
+\begin{document}
+
+\begin{Frontmatter}
+
+\title[Convergence of a discretised heat kernel on bounded domains]{Convergence of a discretised heat kernel on bounded domains}
+
+\author[1]{Ada Lovelace}
+\author[2]{Grace Hopper}
+
+\authormark{Lovelace and Hopper}
+
+\address[1]{\orgdiv{School of Mathematics}, \orgname{University of Somewhere}, \orgaddress{\city{Glasgow}, \postcode{G12 8QQ}, \country{United Kingdom}}}
+\address[2]{\orgdiv{Department of Applied Analysis}, \orgname{Institute of Computing}, \orgaddress{\city{Cambridge}, \postcode{CB2 1TN}, \country{United Kingdom}}. \email{g.hopper@example.ac.uk}}
+
+\keywords{heat kernel, finite differences, spectral convergence, bounded domains}
+
+\keywords[MSC Codes]{\codes[Primary]{35K05}; \codes[Secondary]{65M06, 65M12}}
+
+\abstract{We study a finite-difference discretisation of the heat kernel on
+a bounded Lipschitz domain and show that the discrete spectrum converges to
+the continuous Dirichlet spectrum at a rate governed by mesh regularity. The
+argument combines a discrete maximum principle with a compactness estimate
+that avoids explicit boundary-layer correctors, giving a proof that extends
+to piecewise-smooth boundaries. Numerical experiments on a square and an
+L-shaped domain corroborate the predicted first-order rate.}
+
+\end{Frontmatter}
+
+\section{Introduction}
+
+The heat equation on a bounded domain $\Omega \subset \mathbb{R}^d$ with
+Dirichlet boundary conditions is one of the most-studied elliptic problems in
+applied analysis, yet the convergence rate of finite-difference schemes on
+domains with non-smooth boundaries is still not settled in full generality.
+Classical results \citep{knuth:1984} establish first-order convergence for
+smooth boundaries; for corner domains the rate typically degrades unless the
+mesh is graded near the corner \citep{lesk:1977}.
+
+This paper gives a self-contained convergence proof that (i) applies to any
+bounded Lipschitz domain, (ii) does not require an explicit boundary-layer
+corrector, and (iii) recovers the classical first-order rate when the
+boundary is smooth.
+
+\section{Setting and Main Result}
+
+Let $\Omega \subset \mathbb{R}^d$ be a bounded Lipschitz domain and consider
+the heat equation
+\begin{equation}
+  \partial_t u = \Delta u \quad \text{in } \Omega \times (0, T], \qquad
+  u = 0 \text{ on } \partial\Omega, \qquad u(\cdot, 0) = u_0.
+  \label{eq:heat}
+\end{equation}
+We discretise \eqref{eq:heat} on a uniform grid of spacing $h$ restricted to
+$\Omega$, using the standard five-point Laplacian and forward Euler in time
+with step $\tau = c h^2$ for a fixed Courant number $c \le 1/(2d)$.
+
+\begin{theorem}[Discrete spectral convergence]
+\label{thm:main}
+Let $\lambda_h$ be the smallest eigenvalue of the discrete Dirichlet
+Laplacian on $\Omega_h = \Omega \cap h\mathbb{Z}^d$, and let $\lambda_1$ be
+the smallest eigenvalue of the continuous Dirichlet Laplacian on $\Omega$.
+Then there is a constant $C$, depending only on $\Omega$ and $d$, such that
+\begin{equation}
+  |\lambda_h - \lambda_1| \le C h,
+\end{equation}
+for all sufficiently small $h$.
+\end{theorem}
+
+\begin{remark}
+The constant $C$ in Theorem~\ref{thm:main} depends on the Lipschitz constant
+of $\partial\Omega$ but not on any interior regularity of the eigenfunction,
+which is what allows the argument to avoid a boundary-layer corrector.
+\end{remark}
+
+\begin{proof}[Proof sketch]
+The upper bound follows from a discrete Rayleigh quotient argument applied to
+a mollified restriction of the continuous first eigenfunction. The lower
+bound uses a discrete maximum principle to control the discrepancy between
+$\Omega_h$ and $\Omega$ near the boundary, avoided entirely for smooth
+boundaries and handled via a covering argument by half-spaces for Lipschitz
+corners. The full argument is given in the appendix.
+\end{proof}
+
+\section{Numerical Experiments}
+
+We verify Theorem~\ref{thm:main} on two test domains: the unit square, where
+the exact spectrum is known in closed form, and an L-shaped domain, which has
+a single reentrant corner.
+
+\begin{table}[t]
+\tabcolsep=0pt%
+\TBL{\caption{Observed convergence rate for $|\lambda_h - \lambda_1|$ as the
+mesh spacing $h$ halves. The L-shaped domain's reentrant corner does not
+degrade the rate below first order, consistent with
+Theorem~\ref{thm:main}.\label{tab:rates}}}
+{\begin{fntable}
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccc@{}}\toprule%
+\TCH{Domain} & \TCH{$h$} & \TCH{$|\lambda_h - \lambda_1|$} & \TCH{Observed rate} \\\midrule
+Square    & $2^{-4}$ & $1.83\times 10^{-2}$ & --- \\
+Square    & $2^{-5}$ & $9.14\times 10^{-3}$ & $1.00$ \\
+Square    & $2^{-6}$ & $4.57\times 10^{-3}$ & $1.00$ \\
+L-shape   & $2^{-4}$ & $2.41\times 10^{-2}$ & --- \\
+L-shape   & $2^{-5}$ & $1.22\times 10^{-2}$ & $0.98$ \\
+L-shape   & $2^{-6}$ & $6.15\times 10^{-3}$ & $0.99$ \\
+\botrule
+\end{tabular*}%
+\footnotetext[]{{Note:} rates are computed as $\log_2$ of the ratio of
+successive errors.}
+\end{fntable}}
+\end{table}
+
+Table~\ref{tab:rates} shows the observed rate holding at approximately $1$ on
+both domains, matching the bound in Theorem~\ref{thm:main} even at the
+reentrant corner of the L-shaped domain.
+
+\section{Conclusion}
+
+We have shown that the discrete Dirichlet spectrum converges to the
+continuous spectrum at first order on any bounded Lipschitz domain, with a
+proof that does not require an explicit boundary-layer corrector. The bound
+is sharp on both test domains, including one with a reentrant corner. A
+natural next step is extending the argument to Neumann boundary conditions,
+where the discrete maximum principle used here does not directly apply.
+
+\begin{appendix}
+\section{Proof of Theorem~\ref{thm:main}}
+\label{appendixA}
+
+We give the full argument omitted from Section~2. Fix $h > 0$ small and let
+$u_h$ denote the discrete first eigenfunction on $\Omega_h$, normalised so
+that $\|u_h\|_{\ell^2(\Omega_h)} = 1$. Extend $u_h$ to $\Omega$ by piecewise
+constant interpolation on the grid cells and denote the extension
+$\tilde{u}_h$. A standard discrete Rayleigh quotient estimate, together with
+the Lipschitz regularity of $\partial\Omega$, gives
+\[
+  \lambda_1 \le \frac{\int_\Omega |\nabla \tilde{u}_h|^2}{\int_\Omega \tilde{u}_h^2} \le \lambda_h + C_1 h,
+\]
+which is the upper bound. The lower bound follows from a discrete maximum
+principle argument applied to the difference between the discrete and
+continuous resolvents, covering the boundary by a finite collection of
+half-space charts (possible since $\partial\Omega$ is Lipschitz), giving a
+matching constant $C_2$ with $C = \max(C_1, C_2)$.
+\end{appendix}
+
+\begin{Backmatter}
+
+\paragraph{Acknowledgments}
+We thank the referees for comments that simplified the boundary argument in
+the appendix.
+
+\paragraph{Funding Statement}
+This research received no specific grant from any funding agency, commercial
+or not-for-profit sectors.
+
+\paragraph{Competing Interests}
+None.
+
+\paragraph{Data Availability Statement}
+The code used to generate Table~\ref{tab:rates} is available on request from
+the corresponding author.
+
+\paragraph{Author Contributions}
+Conceptualization: A.L. Methodology: A.L., G.H. Formal analysis: A.L.
+Numerical experiments: G.H. Writing: A.L., G.H. Both authors approved the
+final submitted draft.
+
+%% Bibliography: this journal code (gmj) uses the class's default bibtex +
+%% natbib[numbers] + amsplain toolchain, set automatically by `journal=gmj'
+%% above — hence citations rendering as numbers, not author-year, even
+%% though \citep{} is the natbib command used below. Only \bibliography{}
+%% is needed; do not add \bibliographystyle, the class sets amsplain itself.
+%%
+%% If you switch `journal=' to a biblatex journal (see the table at the top
+%% of this file), replace this \bibliography line with
+%% \addbibresource{references.bib} moved up to the preamble (before
+%% \begin{document}) and \printbibliography here instead.
+\bibliography{references}
+
+\end{Backmatter}
+
+\end{document}

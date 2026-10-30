@@ -1,0 +1,112 @@
+% AltaCV starter — github:liantze/AltaCV, LPPL-1.3 (or later).
+%
+% Engine: pdflatex. altacv.cls guards fontspec behind \iftutex (see the class
+% header) and has a genuine pdflatex branch — cmap/inputenc/fontenc plus the
+% `roboto` and `lato` LaTeX packages, both of which ship their own font files
+% inside TeX Live (kpsewhich roboto.sty / lato.sty both resolve in the pinned
+% image). So no engine.txt is written here: pdflatex works with no font
+% substitution at all, and is preferable per the packaging brief (no external
+% font dependency). This class was never blocked by the fontspec rule that
+% correctly skipped Awesome-CV.
+\documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}
+
+\geometry{left=1.25cm,right=1.25cm,top=1.5cm,bottom=1.5cm,columnsep=1.2cm}
+
+\usepackage{paracol}
+
+% pdflatex branch: bundled TeX-Live fonts, no system font dependency.
+\usepackage[rm]{roboto}
+\usepackage[defaultsans]{lato}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{SlateGrey}{HTML}{2E2E2E}
+\definecolor{LightGrey}{HTML}{666666}
+\definecolor{DarkPastelRed}{HTML}{450808}
+\definecolor{PastelRed}{HTML}{8F0D0D}
+\definecolor{GoldenEarth}{HTML}{E7D192}
+\colorlet{name}{black}
+\colorlet{tagline}{PastelRed}
+\colorlet{heading}{DarkPastelRed}
+\colorlet{headingrule}{GoldenEarth}
+\colorlet{subheading}{PastelRed}
+\colorlet{accent}{PastelRed}
+\colorlet{emphasis}{SlateGrey}
+\colorlet{body}{LightGrey}
+
+\begin{document}
+\name{Priya Natarajan}
+\tagline{Data Platform Engineer}
+
+\personalinfo{%
+  \email{priya.natarajan@example.com}
+  \phone{+1 415 555 0142}
+  \location{San Francisco, CA}
+  \homepage{priyanatarajan.dev}
+  \linkedin{priyanatarajan}
+  \github{priyanat}
+}
+
+\makecvheader
+
+\columnratio{0.6}
+\begin{paracol}{2}
+
+\cvsection{Experience}
+
+\cvevent{Staff Data Engineer}{Lumen Analytics}{2021 -- Present}{Remote}
+\begin{itemize}
+\item Redesigned the batch-to-streaming ingestion path, cutting p99 pipeline lag from 4 hours to 6 minutes.
+\item Built a self-serve schema-registry that removed a two-week onboarding step for new data producers.
+\item Chaired the data platform's quarterly reliability review across six dependent teams.
+\end{itemize}
+
+\divider
+
+\cvevent{Senior Data Engineer}{Windmill Health}{2018 -- 2021}{Boston, MA}
+\begin{itemize}
+\item Migrated the clinical reporting warehouse from a nightly cron pipeline to Airflow, restoring on-time delivery.
+\item Introduced column-level lineage tracking used to pass an external HIPAA audit with zero findings.
+\end{itemize}
+
+\cvsection{Projects}
+
+\cvevent{Open-source: parquet-diff}{Personal project}{2023}{}
+A CLI tool for semantic diffing of Parquet files by schema and row content, 900+ GitHub stars.
+
+\cvsection{Strengths}
+
+\cvtag{Distributed Systems}
+\cvtag{Data Modelling}\\
+\cvtag{Mentoring}
+\cvtag{Python}
+\cvtag{Spark}
+\cvtag{dbt}
+
+\switchcolumn
+
+\cvsection{Education}
+
+\cvevent{M.S. Computer Science}{Boston University}{2016 -- 2018}{Boston, MA}
+
+\cvevent{B.Tech Computer Science}{IIT Bombay}{2012 -- 2016}{Mumbai, India}
+
+\cvsection{Skills}
+
+\cvskill{SQL}{5}
+\divider
+\cvskill{Python}{5}
+\divider
+\cvskill{Distributed Systems}{4}
+\divider
+\cvskill{Public Speaking}{3}
+
+\cvsection{Languages}
+
+\cvskill{English}{5}
+\divider
+\cvskill{Hindi}{5}
+\divider
+\cvskill{Tamil}{4}
+
+\end{paracol}
+\end{document}

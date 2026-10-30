@@ -1,0 +1,87 @@
+\documentclass{uwmslide}
+
+\usepackage{graphicx}
+
+\title{Power Electronics Lab Update}
+\author{Priya Natarajan \\ University of Wisconsin--Madison}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{itemslide}{Outline}
+\item Motivation
+\item Converter Topology
+\item Bench Results
+\item Next Steps
+\end{itemslide}
+
+\begin{slide}{Motivation}
+Isolated DC-DC converters used in the lab's test rigs currently top out at
+88\% efficiency at rated load. This update covers a revised transformer
+winding that targets 94\% while keeping the same footprint.
+\end{slide}
+
+\begin{doubleslide}{Converter Topology}
+The revised design keeps the full-bridge primary side unchanged and
+replaces the secondary winding with an interleaved layout.
+
+\[
+\eta = \frac{P_{\mathrm{out}}}{P_{\mathrm{out}} + P_{\mathrm{loss}}}
+\]
+
+Interleaving halves the RMS current per winding segment, which is where
+most of the loss reduction comes from.
+\slidedivider
+\begin{tabular}{lr}
+Primary turns & 12 \\
+Secondary turns & 6 \\
+Core & ETD49 \\
+Switching freq. & 100 kHz
+\end{tabular}
+\end{doubleslide}
+
+\begin{leftitem}{Bench Setup}
+\item Electronic load swept 10--100\% rated current
+\item Efficiency logged at 20 points per sweep
+\item Thermal camera on the transformer body
+\slidedivider
+Full-load thermal images show a peak core temperature of 61\textdegree C,
+down from 79\textdegree C on the original winding.
+\end{leftitem}
+
+\begin{rightitem}{Efficiency Curve}
+Efficiency rises steadily from light load and plateaus above 40\% rated
+current, where interleaving pays off most.
+\slidedivider
+\item 20\% load: 89.1\%
+\item 50\% load: 93.8\%
+\item 80\% load: 94.2\%
+\item 100\% load: 93.6\%
+\end{rightitem}
+
+\begin{doubleitem}{Comparison}
+\item Original winding
+\item Peak efficiency 88.3\%
+\item Peak core temp 79\textdegree C
+\slidedivider
+\item Interleaved winding
+\item Peak efficiency 94.2\%
+\item Peak core temp 61\textdegree C
+\end{doubleitem}
+
+\begin{itemslide}{Next Steps}
+\item Repeat sweep at three ambient temperatures
+\item Move to a production-representative enclosure
+\item Draft the winding spec for the next board revision
+\end{itemslide}
+
+\begin{slide}{Thank You}
+Questions and feedback welcome.
+
+\medskip
+priya.natarajan@wisc.edu
+\end{slide}
+
+\end{document}

@@ -1,0 +1,421 @@
+\chapter{Grundlagen der Optimierung}
+\label{kap:grundlagen}
+
+Das in dieser Arbeit betrachtete Problem -- die Zuordnung von Arbeitsgängen zu
+Mitarbeitern bei minimaler Gesamtdauer -- ist kein Einzelfall, sondern eine
+Ausprägung einer seit Jahrzehnten untersuchten Problemklasse. Dieses Kapitel
+ordnet die Aufgabenstellung in die Theorie der Ablaufplanung ein, bestimmt ihre
+Komplexität und stellt die drei Lösungswege vor, die im weiteren Verlauf
+verglichen werden: ein exaktes Verfahren, zwei Konstruktionsheuristiken und ein
+stochastisches Verbesserungsverfahren. Die Darstellung folgt im Wesentlichen
+\textcite{pinedo2016scheduling}, der die Ablaufplanung als eigenständige
+Disziplin umfassend aufbereitet.
+
+\section{Zuordnungs- und Reihenfolgeprobleme}
+\label{sec:einordnung}
+
+\subsection{Ablaufplanung als Problemklasse}
+
+Die \Index{Ablaufplanung} beschäftigt sich mit der Frage, wie eine Menge von
+Aufgaben auf eine Menge von Ressourcen verteilt und zeitlich angeordnet wird,
+sodass ein vorgegebenes Gütemaß möglichst gut erfüllt ist. Die Ressourcen
+heißen in der Literatur traditionell \Index{Maschinen}, die Aufgaben
+\Index{Jobs} -- eine Sprechweise, die aus der Fertigungssteuerung stammt und
+auch dann beibehalten wird, wenn es sich, wie im vorliegenden Fall, um Menschen
+handelt. Diese terminologische Übertragung ist unproblematisch, solange man sich
+vergegenwärtigt, dass das Modell von allen Eigenschaften absieht, die über die
+Bearbeitungsdauer und die Zulässigkeit einer Zuordnung hinausgehen.
+
+Zu unterscheiden sind zwei Fragestellungen, die in der Praxis oft verschmelzen.
+Ein \Index{Zuordnungsproblem} fragt allein danach, \emph{wer} welche Aufgabe
+übernimmt; ein \Index{Reihenfolgeproblem} fragt zusätzlich, \emph{wann} das
+geschieht. Sind die Aufgaben voneinander unabhängig, existieren keine
+Rüstzeiten und keine Fälligkeitstermine, so zerfällt das Reihenfolgeproblem: Die
+Reihenfolge, in der ein Mitarbeiter seine zugeteilten Arbeitsgänge abarbeitet,
+ist für die Gesamtdauer ohne Belang, weil sich die Summe seiner
+Bearbeitungszeiten dadurch nicht ändert. Es bleibt ein reines
+Zuordnungsproblem. Genau diese Situation liegt der vorliegenden Arbeit zugrunde,
+und sie ist der Grund dafür, dass sich das Problem so kompakt formulieren lässt.
+
+\subsection{Die Drei-Feld-Notation}
+
+Für die Klassifikation von Problemen der Ablaufplanung hat sich die von
+\textcite{graham1969bounds} eingeführte und später erweiterte
+\Index{Drei-Feld-Notation} durchgesetzt. Ein Problem wird durch ein Tripel
+\begin{equation}
+  \alpha \mid \beta \mid \gamma
+\end{equation}
+beschrieben. Das Feld $\alpha$ benennt die \Index{Maschinenumgebung}, das Feld
+$\beta$ sammelt Nebenbedingungen und Sonderregeln, und $\gamma$ gibt die
+\Index{Zielfunktion} an. Die Notation ist deshalb so nützlich, weil sie eine
+Aufgabenstellung in wenigen Zeichen so präzise festlegt, dass sich unmittelbar
+in der Literatur nachschlagen lässt, was über sie bekannt ist -- insbesondere,
+ob sie effizient lösbar ist.
+
+Für die Maschinenumgebung paralleler Maschinen sind drei Stufen zu
+unterscheiden, die in Abbildung~\ref{abb:maschinenmodell} einander
+gegenübergestellt sind. Bei \Index{identischen parallelen Maschinen} ($P$)
+benötigt jede Maschine für denselben Job dieselbe Zeit $p_j$. Bei
+\Index{uniformen parallelen Maschinen} ($Q$) besitzt jede Maschine $i$ eine
+Geschwindigkeit $s_i$, sodass sich die Bearbeitungsdauer als $p_{ij} = p_j /
+s_i$ ergibt; die Maschinen unterscheiden sich also nur um einen einzigen Faktor,
+und wer bei einem Job schneller ist, ist es bei allen. Bei \Index{unabhängigen
+parallelen Maschinen} ($R$) schließlich ist $p_{ij}$ eine beliebige Matrix: Ein
+Mitarbeiter kann bei einem Arbeitsgang der schnellste und bei einem anderen der
+langsamste sein.
+
+\begin{figure}[tb]
+  \centering
+  \input{Abbildungen/tikz-maschinenmodell}
+  \caption[Maschinenmodelle im Vergleich]{Einordnung des Problems: identische, uniforme und unabhängige parallele Maschinen}
+  \label{abb:maschinenmodell}
+\end{figure}
+
+\subsection{Das Problem \texorpdfstring{$R\mid M_j\mid C_{\max}$}{R|Mj|Cmax}}
+
+Das Problem dieser Arbeit trägt die Signatur $R \mid M_j \mid C_{\max}$. Die
+drei Felder sind wie folgt zu lesen.
+
+Das $R$ steht für unabhängige parallele Maschinen. Diese Wahl ist keine
+vorsorgliche Verallgemeinerung, sondern durch den Gegenstand erzwungen: Die
+betrachteten Mitarbeiter unterscheiden sich nicht in einer pauschalen
+Arbeitsgeschwindigkeit, sondern in ihrer Erfahrung mit jeweils bestimmten
+Arbeitsgängen. Ein uniformes Modell würde die Daten sichtbar verfälschen.
+
+Das $M_j$ bezeichnet die \Index{Maschinenzulässigkeit}: Für jeden Arbeitsgang
+$j$ existiert eine Menge $M_j$ derjenigen Mitarbeiter, die ihn überhaupt
+ausführen dürfen. Diese Restriktion bildet die \Index{Qualifikation} ab. Wer für
+einen Arbeitsgang nicht qualifiziert ist, kommt für ihn nicht in Betracht --
+nicht zu höheren Kosten, sondern gar nicht. Modelltechnisch ist es daher
+sauberer und zugleich effizienter, unzulässige Paare erst gar nicht anzulegen,
+statt sie über eine große Strafkonstante auszuschließen.
+
+Das $C_{\max}$ schließlich ist der \Index{Makespan}, also der Zeitpunkt, zu dem
+auch der letzte Mitarbeiter fertig ist. Bezeichnet $x_{ij} \in \{0,1\}$ die
+Entscheidung, ob Mitarbeiter $i$ den Arbeitsgang $j$ übernimmt, so ist
+\begin{equation}
+  C_{\max} = \max_{i} \; \sum_{j} p_{ij}\, x_{ij}.
+  \label{eq:makespan}
+\end{equation}
+Der Makespan misst nicht die geleistete Arbeit, sondern die verstrichene Zeit.
+Er wird allein vom am stärksten belasteten Mitarbeiter bestimmt -- dem
+\Index{Engpass}. Diese Eigenschaft ist charakteristisch und hat weitreichende
+Folgen: Sie macht den Makespan zu einem sinnvollen Maß für die Frage
+\enquote{Wann ist der Auftrag abgeschlossen?}, sie führt aber, wie in
+Abschnitt~\ref{sec:sa} zu zeigen sein wird, zu erheblichen Schwierigkeiten bei
+Verfahren, die sich von lokalen Verbesserungen leiten lassen.
+
+\section{Komplexität}
+\label{sec:komplexitaet}
+
+\subsection{NP-Schwere}
+
+Die naheliegende Idee, alle Zuordnungen aufzuzählen, scheitert an ihrer Anzahl.
+Bei $n$ Arbeitsgängen und $m$ zulässigen Mitarbeitern je Arbeitsgang existieren
+bis zu $m^n$ Zuordnungen; der Suchraum wächst exponentiell. Schon bei moderaten
+Instanzgrößen übersteigt die vollständige Enumeration jede vertretbare
+Rechenzeit.
+
+Dass es sich dabei nicht um einen Mangel an Einfallsreichtum handelt, sondern um
+eine Eigenschaft des Problems, zeigt die Komplexitätstheorie. Bereits der
+Spezialfall $P2 \mid\mid C_{\max}$ -- zwei identische Maschinen, keine
+Nebenbedingungen -- ist \Index{NP-schwer}; er enthält das Problem
+\Index{Partition}, eines der klassischen NP-vollständigen Probleme im Katalog
+von \textcite{garey1979computers}, als Entscheidungsvariante. Da $R \mid M_j \mid
+C_{\max}$ diesen Spezialfall umfasst, ist es mindestens ebenso schwer. Nach
+gegenwärtigem Kenntnisstand existiert somit kein Algorithmus, der für jede
+Instanz in polynomieller Zeit eine beweisbar optimale Lösung liefert.
+
+Es lohnt, die Tragweite dieser Aussage nicht zu überschätzen. NP-Schwere ist
+eine Aussage über das Verhalten im schlechtesten Fall und über beliebig große
+Instanzen. Sie schließt nicht aus, dass konkrete Instanzen praktischer Größe
+exakt und schnell lösbar sind -- moderne Löser profitieren erheblich von
+Struktur, insbesondere von der durch $M_j$ erzeugten Ausdünnung des Modells. Die
+NP-Schwere ist also kein Verbot, exakte Verfahren einzusetzen; sie ist eine
+Warnung davor, sich auf ihre Skalierbarkeit zu verlassen.
+
+\subsection{Approximierbarkeit}
+
+Wenn Optimalität nicht garantiert werden kann, stellt sich die Frage nach
+garantierter Nähe zum Optimum. Ein Verfahren heißt
+\index{Approximationsalgorithmus}\emph{$\rho$-Approximation}, wenn es in
+polynomieller Zeit eine Lösung liefert, deren Zielwert höchstens um den Faktor
+$\rho$ über dem Optimum liegt.
+
+Das grundlegende Resultat für unabhängige parallele Maschinen stammt von
+\textcite{lenstra1990approximation}. Sie zeigen, dass sich für $R \mid\mid
+C_{\max}$ eine \Index{2-Approximation} in polynomieller Zeit konstruieren lässt.
+Das Verfahren beruht auf einem \Index{Rundungsverfahren}: Zunächst wird die
+\Index{LP-Relaxation} gelöst, deren Lösung Arbeitsgänge anteilig auf mehrere
+Maschinen verteilen darf; anschließend werden die gebrochenen Anteile so
+gerundet, dass der Fehler beschränkt bleibt. Dieselbe Arbeit zeigt zudem, dass
+keine $\rho$-Approximation mit $\rho < 3/2$ existieren kann, sofern nicht
+$\mathrm{P} = \mathrm{NP}$ gilt. Zwischen $3/2$ und $2$ klafft bis heute eine
+Lücke.
+
+Für die vorliegende Arbeit sind diese Ergebnisse vor allem als Maßstab von
+Bedeutung. Sie belegen, dass die Klasse $R$ nicht beliebig unzugänglich ist,
+sie zeigen aber auch, dass die theoretischen Garantien großzügig ausfallen: Ein
+Faktor $2$ bedeutet im schlechtesten Fall die doppelte Gesamtdauer. Die in
+dieser Arbeit eingesetzten Heuristiken tragen, wie sich zeigen wird, überhaupt
+keine Gütegarantie -- liefern aber praktisch weit bessere Ergebnisse, als es die
+Theorie im schlechtesten Fall zusichern würde.
+
+\section{Exakte Verfahren}
+\label{sec:exakt}
+
+\subsection{Ganzzahlige lineare Optimierung}
+
+Ein Modell der \index{Ganzzahlige lineare Optimierung}\emph{ganzzahligen linearen
+Optimierung} (\ac{milp}) beschreibt ein Problem durch eine lineare Zielfunktion
+und lineare Nebenbedingungen über teils ganzzahligen Variablen
+\parencite{wolsey2020integer}. Das hier betrachtete Problem lässt sich so
+formulieren:
+\begin{align}
+  \min \quad & C_{\max} \label{eq:milp-ziel}\\
+  \text{u.\,d.\,N.} \quad & \sum_{i \in M_j} x_{ij} = 1 && \text{für alle } j \label{eq:milp-vergabe}\\
+  & \sum_{j : i \in M_j} p_{ij}\, x_{ij} \le C_{\max} && \text{für alle } i \label{eq:milp-auslastung}\\
+  & x_{ij} \in \{0,1\}. \label{eq:milp-binaer}
+\end{align}
+Bedingung~\eqref{eq:milp-vergabe} stellt sicher, dass jeder Arbeitsgang genau
+einmal und nur an einen qualifizierten Mitarbeiter vergeben wird. Die
+Ungleichungen~\eqref{eq:milp-auslastung} verdienen besondere Beachtung: Sie
+fordern lediglich, dass $C_{\max}$ mindestens so groß ist wie die Auslastung
+jedes einzelnen Mitarbeiters. Erst im Zusammenspiel mit der Minimierung
+in~\eqref{eq:milp-ziel} erzwingen sie die Gleichheit aus~\eqref{eq:makespan} --
+ein Standardkniff, mit dem sich das nichtlineare Maximum linear ausdrücken
+lässt.
+
+\subsection{LP-Relaxation und Schranken}
+
+Lässt man die Ganzzahligkeitsforderung~\eqref{eq:milp-binaer} fallen und
+ersetzt sie durch $0 \le x_{ij} \le 1$, so entsteht die \Index{LP-Relaxation}.
+Sie ist in polynomieller Zeit lösbar. Da jede zulässige Lösung des
+ganzzahligen Problems auch für die Relaxation zulässig ist, liefert deren
+Optimalwert eine \index{Schranke!untere}\emph{untere Schranke} für das Optimum. Jede
+konkrete Zuordnung wiederum liefert eine \index{Schranke!obere}\emph{obere Schranke}.
+Die Differenz zwischen beiden heißt \Index{Dualitätslücke}; solange sie
+positiv ist, kann das Optimum irgendwo dazwischen liegen. Schließt sie sich, ist
+die Optimalität bewiesen.
+
+Neben der LP-Relaxation existieren einfachere, kombinatorisch begründete
+Schranken. Für den Makespan ist etwa
+\begin{equation}
+  C_{\max} \;\ge\; \frac{1}{m} \sum_{j} \min_{i \in M_j} p_{ij}
+  \label{eq:schranke-allgemein}
+\end{equation}
+gültig: Selbst wenn jeder Arbeitsgang von dem für ihn schnellsten Mitarbeiter
+erledigt und die Last vollkommen gleichmäßig verteilt würde, wäre diese Zeit
+nicht zu unterbieten. Eine solche Schranke ist in aller Regel nicht erreichbar
+-- sie ignoriert, dass die schnellsten Mitarbeiter einander im Weg stehen --,
+aber sie ist ohne nennenswerten Aufwand zu berechnen und erlaubt eine erste
+Einschätzung der Güte jeder gefundenen Lösung.
+
+\subsection{Branch-and-Bound}
+
+Das Standardverfahren zur exakten Lösung ganzzahliger Modelle ist
+\Index{Branch-and-Bound}, das auf \textcite{land1960automatic} zurückgeht und
+bei \textcite{nemhauser1988integer} ausführlich dargestellt ist. Es kombiniert
+zwei Ideen. Beim \Index{Verzweigen} wird das Problem an einer Variablen mit
+gebrochenem Wert in Teilprobleme zerlegt, etwa in die Fälle $x_{ij} = 0$ und
+$x_{ij} = 1$; die Vereinigung der Teilprobleme deckt den ursprünglichen
+Lösungsraum vollständig ab. Beim \Index{Beschränken} wird für jedes Teilproblem
+die Relaxation gelöst. Liegt deren Wert bereits über der besten bisher
+bekannten Lösung, so kann das Teilproblem samt allen seinen Nachfolgern
+verworfen werden, ohne es zu durchsuchen -- es kann dort nichts Besseres mehr
+geben.
+
+Genau in diesem Verwerfen liegt die Kraft des Verfahrens, und genau darin liegt
+auch die Bedeutung des Begriffs \enquote{beweisbar optimal}. Terminiert
+Branch-and-Bound regulär, so hat es nicht etwa alle Lösungen betrachtet;
+vielmehr hat es für jede nicht betrachtete Region gezeigt, dass sie keine
+bessere Lösung enthalten \emph{kann}. Das Ergebnis ist damit nicht eine Lösung,
+die man nach längerem Suchen nicht mehr verbessern konnte, sondern eine Lösung
+mit mathematischem Beweis ihrer Optimalität. Dieser Unterschied ist der
+entscheidende Vorzug exakter Verfahren gegenüber allen Heuristiken: Sie liefern
+nicht nur eine Antwort, sondern zugleich die Gewissheit, dass es keine bessere
+gibt. Erkauft wird er mit einer Laufzeit, die im schlechtesten Fall exponentiell
+bleibt. In dieser Arbeit wird dafür der freie \ac{milp}-Löser GLPK eingesetzt
+\parencite{glpk}.
+
+\section{Konstruktionsheuristiken}
+\label{sec:heuristiken}
+
+Eine \Index{Konstruktionsheuristik} baut eine Lösung in einem Durchgang auf,
+ohne sie nachträglich zu verbessern. Sie trifft jede Entscheidung nach einer
+festen Regel und nimmt sie nie zurück. Der Reiz solcher Verfahren liegt in ihrer
+Geschwindigkeit und Nachvollziehbarkeit; ihr Preis ist das Fehlen jeder
+Gütegarantie.
+
+Das \Index{Greedy-Verfahren} betrachtet die Arbeitsgänge in
+ihrer Eingangsreihenfolge und weist jeden demjenigen qualifizierten Mitarbeiter
+zu, der ihn am frühesten abschließen würde. Es entscheidet also stets lokal
+optimal, ohne die Folgen zu bedenken. Der bekannte Schwachpunkt ist die
+Behandlung langer Arbeitsgänge: Trifft ein solcher erst spät ein, sind alle
+Mitarbeiter bereits belegt, und er verlängert den Makespan unmittelbar.
+
+Die \Index{LPT-Regel} (\ac{lpt}) setzt genau hier an und dreht die Reihenfolge
+um: Die Arbeitsgänge werden absteigend nach ihrer Dauer sortiert und in dieser
+Reihenfolge vergeben. Die langen Brocken werden zuerst verteilt, solange noch
+Spielraum besteht; die kurzen dienen am Ende dem Feinausgleich. Bei unabhängigen
+Maschinen ist dabei zu klären, welche Dauer für die Sortierung maßgeblich ist,
+da $p_{ij}$ von der Zuordnung abhängt -- in dieser Arbeit wird die kürzestmögliche
+Dauer $\min_{i \in M_j} p_{ij}$ verwendet.
+
+Für identische parallele Maschinen hat \textcite{graham1969bounds} für die
+LPT-Regel die klassische Schranke
+\begin{equation}
+  \frac{C_{\max}^{\text{LPT}}}{C_{\max}^{*}} \;\le\; \frac{4}{3} - \frac{1}{3m}
+  \label{eq:graham}
+\end{equation}
+bewiesen. Sie besagt, dass LPT auf $P \mid\mid C_{\max}$ niemals mehr als rund
+ein Drittel über dem Optimum liegt -- ein bemerkenswert starkes Ergebnis für ein
+derart einfaches Verfahren.
+
+Es ist jedoch entscheidend, festzuhalten, dass diese Schranke im vorliegenden
+Fall \emph{nicht} gilt. Grahams Beweis nutzt an zentraler Stelle aus, dass die
+Maschinen identisch sind: Nur dann besitzt jeder Job eine wohldefinierte, von
+der Maschine unabhängige Dauer $p_j$, nur dann ist die Sortierung nach Dauer
+eindeutig, und nur dann lässt sich der Beitrag des zuletzt beendeten Jobs gegen
+die Durchschnittslast abschätzen. Bei unabhängigen Maschinen bricht diese
+Argumentation zusammen. Die Sortierung nach der kürzestmöglichen Dauer ist eine
+Konvention und keine Eigenschaft des Jobs; ein nach ihr kurzer Arbeitsgang kann
+für den Mitarbeiter, der ihn tatsächlich erhält, sehr lang sein. Die LPT-Regel
+bleibt für $R \mid M_j \mid C_{\max}$ eine plausible und in der Praxis brauchbare
+Faustregel -- aber eben nur das. Sie ohne diesen Vorbehalt mit Grahams Schranke
+zu versehen, wäre ein Fehlschluss, der in der Anwendungsliteratur nicht selten
+anzutreffen ist.
+
+\section{Simulated Annealing}
+\label{sec:sa}
+
+\subsection{Herkunft und Grundidee}
+
+Zwischen den schnellen, aber garantielosen Konstruktionsheuristiken und den
+exakten, aber teuren Verfahren stehen die \Index{Metaheuristik}en. Sie
+verbessern eine vorhandene Lösung schrittweise, ohne den Lösungsraum
+systematisch zu erschöpfen. Das in dieser Arbeit eingesetzte Verfahren ist
+\Index{Simulated Annealing} (\ac{sa}).
+
+Sein Name und seine Funktionsweise stammen aus der Metallurgie. Beim
+\Index{Ausglühen} eines Werkstücks wird das Metall stark erhitzt und
+anschließend langsam abgekühlt. Bei hoher Temperatur besitzen die Atome genug
+Energie, um ihre Gitterplätze zu verlassen; mit sinkender Temperatur ordnen sie
+sich zunehmend in einem energiearmen, regelmäßigen Kristallgitter an. Schreckt
+man das Werkstück dagegen rasch ab, gefrieren die Fehlstellen ein, und das
+Material bleibt spröde. Die langsame Abkühlung ist es, die den energetisch
+günstigen Zustand ermöglicht.
+
+\textcite{metropolis1953equation} entwickelten ein Verfahren, um dieses
+thermodynamische Verhalten zu simulieren. Unabhängig voneinander erkannten
+\textcite{kirkpatrick1983optimization} und \textcite{cerny1985thermodynamical},
+dass sich das Vorgehen auf beliebige Optimierungsprobleme übertragen lässt, wenn
+man die Zielfunktion als \Index{Energie} und einen Kontrollparameter als
+\Index{Temperatur} auffasst. Eine ausführliche theoretische Behandlung findet
+sich bei \textcite{laarhoven1987simulated}.
+
+\subsection{Das Metropolis-Kriterium}
+
+Der Kern des Verfahrens ist die Regel, nach der über die Annahme eines
+Kandidaten entschieden wird. Aus der aktuellen Lösung wird eine Nachbarlösung
+erzeugt und die Energiedifferenz $\Delta E$ bestimmt. Ist $\Delta E \le 0$, die
+Lösung also nicht schlechter, wird sie stets angenommen. Ist sie schlechter,
+wird sie nicht etwa verworfen, sondern mit der Wahrscheinlichkeit
+\begin{equation}
+  P(\text{Annahme}) = \exp\!\left(-\frac{\Delta E}{T}\right)
+  \qquad \text{für } \Delta E > 0
+  \label{eq:metropolis}
+\end{equation}
+dennoch übernommen. Dieses \Index{Metropolis-Kriterium} ist der eigentliche
+Grund für die Leistungsfähigkeit des Verfahrens. Ein Verfahren, das nur
+Verbesserungen akzeptiert, bleibt im ersten \index{Optimum!lokales}\emph{lokalen
+Optimum} stehen, das es erreicht. Die gelegentliche Annahme einer
+Verschlechterung erlaubt es, ein solches Tal wieder zu verlassen.
+
+Die Temperatur $T$ steuert dabei die Bereitschaft zur Verschlechterung. Bei
+großem $T$ geht der Exponent gegen null und die Wahrscheinlichkeit gegen eins:
+Das Verfahren nimmt fast alles an und irrt nahezu zufällig durch den Suchraum.
+Bei kleinem $T$ geht die Wahrscheinlichkeit gegen null, und das Verfahren
+verhält sich wie eine reine lokale Suche. Bemerkenswert ist ferner, dass
+\eqref{eq:metropolis} nicht nur von $T$, sondern auch von der Größe von $\Delta
+E$ abhängt: Kleine Verschlechterungen werden deutlich bereitwilliger
+hingenommen als große.
+
+\subsection{Abkühlung}
+
+Die \Index{Abkühlung} überführt das Verfahren von der Exploration in die
+Verfeinerung. Praktisch verbreitet ist die \index{Abkühlung!geometrische}\emph{geometrische Abkühlung}
+\begin{equation}
+  T_{k+1} = \alpha \cdot T_k, \qquad 0 < \alpha < 1,
+  \label{eq:abkuehlung}
+\end{equation}
+bei der die Temperatur in jedem Schritt um einen festen Faktor sinkt und somit
+$T_k = T_0 \cdot \alpha^k$ gilt. Gibt man Anfangstemperatur $T_0$,
+Endtemperatur $T_N$ und Schrittzahl $N$ vor, so ergibt sich $\alpha =
+(T_N/T_0)^{1/N}$. Diese Parametrisierung ist der direkten Wahl von $\alpha$
+vorzuziehen, weil sie an inhaltlich interpretierbaren Größen ansetzt.
+
+Theoretisch lässt sich zeigen, dass \ac{sa} unter einer hinreichend langsamen,
+logarithmischen Abkühlung mit Wahrscheinlichkeit eins gegen das globale Optimum
+konvergiert \parencite{laarhoven1987simulated}. Dieses Resultat ist praktisch
+allerdings ohne Wert, da die erforderlichen Laufzeiten die vollständige
+Enumeration übersteigen. In der Anwendung kühlt man schneller ab und verzichtet
+damit auf jede Garantie -- \ac{sa} liefert eine gute Lösung, aber keinen Beweis.
+
+\subsection{Nachbarschaft}
+
+Die \Index{Nachbarschaft} legt fest, welche Lösungen aus einer gegebenen Lösung
+in einem Schritt erreichbar sind. Ihre Gestaltung ist die eigentliche
+problemspezifische Entwurfsentscheidung: Ist sie zu klein, zerfällt der
+Suchraum in unerreichbare Gebiete; ist sie zu groß, verliert der Schritt seinen
+lokalen Charakter und das Verfahren entartet zur Zufallssuche.
+
+In dieser Arbeit werden die beiden in Abbildung~\ref{abb:nachbarschaft}
+dargestellten Operatoren kombiniert. Das \index{Nachbarschaft!Verschieben}\emph{Verschieben}
+nimmt einem Mitarbeiter einen Arbeitsgang ab und übergibt ihn einem anderen
+qualifizierten Mitarbeiter. Das \index{Nachbarschaft!Tauschen}\emph{Tauschen} kreuzt
+zwei Arbeitsgänge zwischen ihren Mitarbeitern, sofern beide für den jeweils
+anderen Arbeitsgang qualifiziert sind. Beide werden benötigt: Das Verschieben
+allein genügt nicht, denn sind zwei Mitarbeiter gleichermaßen ausgelastet, so
+verlagert jedes Verschieben das Problem nur, während allein ein Tausch die Last
+umverteilen kann, ohne sie an anderer Stelle zu erhöhen.
+
+\begin{figure}[tb]
+  \centering
+  \input{Abbildungen/tikz-nachbarschaft}
+  \caption[Nachbarschaftsoperatoren]{Die beiden Nachbarschaftsoperatoren: Verschieben und Tauschen}
+  \label{abb:nachbarschaft}
+\end{figure}
+
+\subsection{Das Plateauproblem}
+
+Abschließend ist auf eine Schwierigkeit hinzuweisen, die sich unmittelbar aus
+der Struktur des Makespans ergibt und für die Auslegung des Verfahrens von
+erheblicher Bedeutung ist. Nach \eqref{eq:makespan} ist $C_{\max}$ ein Maximum.
+Er ändert sich folglich nur dann, wenn ein Zug gerade den Engpass-Mitarbeiter
+betrifft. Jede Umverteilung zwischen zwei nicht ausgelasteten Mitarbeitern
+lässt die Zielfunktion vollkommen unverändert.
+
+Verwendet man den Makespan unmittelbar als Energie, so ist die Suchlandschaft
+daher von ausgedehnten \index{Plateau}\emph{Plateaus} durchzogen: Weite Bereiche
+besitzen exakt denselben Zielwert, und $\Delta E = 0$ liefert dem Verfahren
+keinerlei Hinweis, welche Richtung lohnend ist. Das Verfahren irrt über diese
+Ebenen, ohne geführt zu werden. Dieses \Index{Plateauproblem} tritt bei allen
+Max- und Min-Zielfunktionen auf und ist keine Eigenheit des vorliegenden Falls.
+
+Ein bewährter Ausweg besteht darin, die Energie um einen kleinen Zusatzterm zu
+ergänzen, der auch dann reagiert, wenn der Makespan es nicht tut. Bezeichnet
+$a_i$ die Auslastung des Mitarbeiters $i$, so bietet sich
+\begin{equation}
+  E = \max_i a_i \;+\; \lambda \sqrt{\sum_i a_i^{\,2}}
+  \label{eq:glaettung}
+\end{equation}
+an. Der zweite Term, die euklidische Norm des Auslastungsvektors, sinkt bereits
+dann, wenn die Last gleichmäßiger verteilt wird -- auch ohne dass der Makespan
+fällt. Damit erhält das Verfahren auf dem Plateau ein Gefälle, dem es folgen
+kann. Entscheidend ist die Wahl des Gewichts $\lambda$: Es muss klein genug
+sein, dass der Zusatzterm die Rangfolge zweier Lösungen mit verschiedenem
+Makespan niemals umkehrt. Er dient allein der Wegfindung, nicht der Bewertung.
+Die eigentliche Zielgröße bleibt der Makespan, und ausschließlich nach ihm wird
+die beste gefundene Lösung ausgewählt und berichtet. Welchen Unterschied diese
+Modifikation praktisch ausmacht, wird im Ergebniskapitel quantifiziert.

@@ -1,0 +1,47 @@
+\documentclass[landscape,a4paper,8pt]{article}
+\usepackage[margin=1.1cm]{geometry}
+\usepackage{multicol,amsmath,amssymb,booktabs,xcolor}
+\setlength{\columnsep}{0.7cm}
+\setlength{\parindent}{0pt}
+\newcommand{\topic}[1]{\vspace{0.4em}\textcolor{blue!60!black}{\large\bfseries #1}\par\smallskip}
+\newcommand{\key}[1]{\textbf{#1}: }
+\title{Signals and Systems\\\large Course Summary Sheet}
+\author{Your Name \quad Course code: EE---000}
+\date{}
+\begin{document}
+\maketitle
+\begin{multicols*}{3}
+\topic{Core signals}
+\key{Linearity} $T\{a x_1+b x_2\}=aT\{x_1\}+bT\{x_2\}$.\\
+\key{Time invariance} A shift in $x(t)$ causes the same shift in $y(t)$.
+\key{Convolution} $(x*h)(t)=\int_{-\infty}^{\infty}x(\tau)h(t-\tau)\,d\tau$.
+\key{Impulse response} For an LTI system, $y=x*h$ and $h=T\{\delta\}$.
+\topic{Transforms}
+\[
+X(j\omega)=\int x(t)e^{-j\omega t}dt,\qquad
+x(t)=\frac1{2\pi}\int X(j\omega)e^{j\omega t}d\omega.
+\]
+\key{Convolution theorem} $x*h\leftrightarrow XH$.
+\key{Differentiation} $dx/dt\leftrightarrow j\omega X(j\omega)$.
+\key{Sampling} $f_s>2f_{\max}$ prevents aliasing for band-limited signals.
+\topic{Filters}
+\begin{tabular}{@{}lll@{}}\toprule
+Filter & $H(j\omega)$ & Cutoff\\\midrule
+RC low-pass & $1/(1+j\omega RC)$ & $1/RC$\\
+RC high-pass & $j\omega RC/(1+j\omega RC)$ & $1/RC$\\
+\bottomrule\end{tabular}
+\topic{Problem checklist}
+\begin{enumerate}
+\item State assumptions and units.
+\item Draw the system boundary and identify the input/output.
+\item Choose time or frequency domain; do not mix conventions.
+\item Check limiting cases and dimensions.
+\item Interpret the result in one sentence.
+\end{enumerate}
+\topic{Exam workspace}
+\vspace{7cm}
+\topic{Common pitfalls}
+Sign errors in Fourier exponents; forgetting initial conditions; treating a
+finite-duration sample as band-limited; reporting a magnitude without units.
+\end{multicols*}
+\end{document}

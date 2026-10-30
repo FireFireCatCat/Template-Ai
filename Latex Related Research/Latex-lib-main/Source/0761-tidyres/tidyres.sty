@@ -1,0 +1,197 @@
+%-----------------------------------------------------------------------
+% tidyres.sty
+%-----------------------------------------------------------------------
+% Package:  tidyres - a simple interface for creating multi-column
+%           formal resumes in LaTeX
+% Author:   Yifan Liang (GitHub: futurelyf)
+% Version:  3.0.0 (September 15, 2026)
+% License:  This work is licensed under the Creative Commons
+%           "Attribution 4.0 International" license (CC BY 4.0).
+%           For detailed information about the license, please visit
+%           https://creativecommons.org/licenses/by/4.0/
+%-----------------------------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tidyres}[v3]
+
+%-----------------------------------------------------------------------
+% Packages
+%-----------------------------------------------------------------------
+\RequirePackage[top=0.5in, bottom=0.5in, right=0.5in, left=0.5in]{geometry}
+\RequirePackage{paracol}
+\RequirePackage{tabularray}
+\RequirePackage{enumitem}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage[dvipsnames]{xcolor}
+\RequirePackage{hologo}
+\RequirePackage{setspace}
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{fontawesome}
+\RequirePackage{expkv, expkv-cs, expkv-def}
+
+%-----------------------------------------------------------------------
+% Page and typography defaults
+%-----------------------------------------------------------------------
+\setlength{\parindent}{0pt}
+\setlength{\columnsep}{2em}
+\columnratio{0.12, 0.88}
+\setlist{label=\textbullet, leftmargin=*, nolistsep}
+\linespread{1.15}
+% \pagestyle{empty}
+
+% Font
+% \newfontfamily\textcm{CMU Serif}
+
+%-----------------------------------------------------------------------
+% Key-value definitions
+%-----------------------------------------------------------------------
+\ekvdefinekeys{tidyres}{
+  store   name        = \tidyres@name,
+  store   location    = \tidyres@location,
+  store   email       = \tidyres@email,
+  store   phone       = \tidyres@phone,
+  store   linkedin    = \tidyres@linkedin,
+  store   linkedinurl = \tidyres@linkedinurl,
+  initial name        = {},
+  initial location    = {},
+  initial email       = {},
+  initial phone       = {},
+  initial linkedin    = {},
+}
+
+% Full linkedin URL: given explicitly via linkedinurl, or built from suffix
+\def\tidyres@linkedinlink{%
+  \ifx\tidyres@linkedinurl\empty
+    https://www.linkedin.com/in/\tidyres@linkedin/%
+  \else
+    \tidyres@linkedinurl
+  \fi
+}
+
+%-----------------------------------------------------------------------
+% Title block
+%-----------------------------------------------------------------------
+\newcommand{\restitle}[1]{%
+  \ekvset{tidyres}{#1}%
+  \begin{spacing}{1.15}
+    \begin{tblr}{
+        column{1}  = {l},
+        column{2}  = {r},
+        column{3}  = {l},
+        cell{1}{1} = {r=4}{},
+        colspec    = {X[5]X[2.8]X[2.2]},
+      }
+      \hspace{6mm}{\fontsize{22}{22}\selectfont\scshape\tidyres@name}
+      & \faLocationArrow & \tidyres@location                          \\
+      & \faAt            & {\itshape\tidyres@email}                   \\
+      & \faPhone         & \tidyres@phone                             \\
+      & \faLinkedinSquare
+      & \href{\tidyres@linkedinlink}{Linkedin - {\itshape\tidyres@linkedin}} \\
+      \hline
+    \end{tblr}
+  \end{spacing}
+  \vspace{1.15em}
+}
+
+%-----------------------------------------------------------------------
+% Sections
+%-----------------------------------------------------------------------
+% Key-value setup for ressection
+\ekvdefinekeys{ressection}{
+  store   title   = \ressection@title,
+  initial title   = {Section},
+}
+
+\newenvironment{ressection}[1][]{%
+  \ekvset{ressection}{#1}%
+  \begin{paracol}{2}
+    {\scshape \ressection@title}
+  \switchcolumn
+}{%
+  \end{paracol}
+  \vspace{2.5ex}
+}
+
+\newcommand{\ressep}{\vspace*{0.5ex}}
+
+%-----------------------------------------------------------------------
+% Inline highlight box
+%-----------------------------------------------------------------------
+\newtcbox{\hlbox}[1][gray]{%
+  on line,
+  arc          = 3pt,
+  colback      = #1!10!white,
+  colframe     = #1!50!black,
+  before upper = {\rule[-3pt]{0pt}{10pt}},
+  fontupper    = \ttfamily,
+  boxrule      = 0pt,
+  boxsep       = 0pt,
+  left   = 2pt,
+  right  = 2pt,
+  top    = 1pt,
+  bottom = 1pt,
+}
+
+%%% Code for documentation purposes %%%
+% \tcbuselibrary{minted}
+% \newtcbox{\boxedtitle}[1][gray]{
+%     on line,
+%     arc=3pt,
+%     colback=#1!95!white,
+%     colframe=#1!95!white,
+%     boxrule=1pt,
+%     boxsep=0pt,
+%     left=3pt,
+%     right=3pt,
+%     top=3pt,
+%     bottom=3pt
+% }
+% \renewcommand{\theFancyVerbLine}{\rmfamily\textcolor{gray}{\arabic{FancyVerbLine}}}
+% \ekvdefinekeys{codeboxkey}{
+%     store title=\codeboxkey@title,
+%     initial title={},
+%     store color=\codeboxkey@color,
+%     initial color=LimeGreen
+% }
+% \ekvsetdef\codeboxkeyset{codeboxkey}
+% \newenvironment{codebox}[1][]{
+%     \codeboxkeyset{#1}
+%     \tcblisting{
+%         listing engine=minted,
+%         minted style=manni,
+%         minted language=tex,
+%         minted options={
+%             fontsize=\small,
+%             breaklines,
+%             autogobble,
+%             linenos,
+%             numbersep=0.25cm,
+%             escapeinside=||
+%         },
+%         enhanced jigsaw,
+%         breakable,
+%         listing only,
+%         left=0.75cm,
+%         lefttitle=0.3cm,
+%         arc=5pt,
+%         boxrule=1pt,
+%         colback=\codeboxkey@color!1!white,
+%         colframe=\codeboxkey@color!95!black,
+%         top=0cm,
+%         bottom=0cm,
+%         title={\texthr \boxedtitle[\codeboxkey@color]{\bfseries\textcolor{white}{CODE}} \textcolor{\codeboxkey@color}{\codeboxkey@title}},
+%         toptitle=0.5ex,
+%         bottomtitle=0.5ex,
+%         titlerule=0ex,
+%         colbacktitle=\codeboxkey@color!10!white,
+%         overlay={\begin{tcbclipinterior}
+%         \fill[\codeboxkey@color!5!white] (frame.south west) rectangle ([xshift=0.75cm]frame.north west);
+%         \end{tcbclipinterior}
+%         }
+%     }
+% }
+% {
+%     \endtcblisting
+% }
+%%% Last Update: 2025-09-15 %%%

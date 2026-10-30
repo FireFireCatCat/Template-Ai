@@ -1,0 +1,51 @@
+% Wi-Fi credential cards -- github:njallam/wifi-cards, MIT (verified in the
+% repo's own LICENSE file). Upstream's own wifi.tex is plain LaTeX (geometry +
+% fontawesome + qrcode, one card per page, values as \newcommand macros) --
+% no external QR-generation step at all, so nothing needed reimplementing;
+% the class isn't bundled here because fontawesome and qrcode both already
+% ship with TeX Live. No fontspec -- pdflatex-safe.
+%
+% Starter reworks the upstream's single business-card-sized page into a full
+% imposed A4 sheet of business-card-sized Wi-Fi cards (2 columns x 5 rows) for
+% an invented small-office guest network, printable and cut apart -- a full
+% sheet being closer to how these actually get handed out (reception desk,
+% coworking space) than a single card.
+\documentclass[a4paper]{article}
+\usepackage[margin=0.6cm]{geometry}
+\usepackage{fontawesome}
+\usepackage{qrcode}
+\usepackage{tikz}
+\pagestyle{empty}
+
+\newcommand{\ssid}{HarborView-Guest}
+\newcommand{\wifipassword}{Compass-47-Anchor}
+\newcommand{\authtype}{WPA2}
+
+\newcommand{\wificard}{%
+  \begin{minipage}[t][5.3cm][t]{8.4cm}
+    \centering
+    \vspace{0.2cm}
+    {\large\bfseries Harbor View Coworking}\\[0.1cm]
+    {\small Guest Wi-Fi}\\[0.2cm]
+    \qrcode[height=2.6cm]{WIFI:S:\ssid;T:\authtype;P:\wifipassword;;}\\[0.2cm]
+    {\large
+      \setlength\tabcolsep{4pt}
+      \begin{tabular}{ll}
+        \faWifi & \texttt{\ssid} \\
+        \faKey  & \texttt{\wifipassword} \\
+      \end{tabular}
+    }
+  \end{minipage}%
+}
+
+\begin{document}
+\noindent
+\setlength{\fboxsep}{2pt}
+\begin{tabular}{@{}c@{\hspace{0.4cm}}c@{}}
+  \fbox{\wificard} & \fbox{\wificard} \\[0.15cm]
+  \fbox{\wificard} & \fbox{\wificard} \\[0.15cm]
+  \fbox{\wificard} & \fbox{\wificard} \\[0.15cm]
+  \fbox{\wificard} & \fbox{\wificard} \\[0.15cm]
+  \fbox{\wificard} & \fbox{\wificard} \\
+\end{tabular}
+\end{document}

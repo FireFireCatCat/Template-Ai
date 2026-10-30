@@ -1,0 +1,142 @@
+% !TeX encoding = UTF-8
+\PassOptionsToPackage{cmyk}{xcolor}
+\documentclass[hyperref, UTF8, aspectratio=169]{beamer}
+
+% The theme's built-in font themes (Ubuntu/Win/Mac/Fandol) all call
+% \setsansfont by FAMILY NAME (e.g. "Latin Modern Sans"), which fontspec
+% cannot resolve in this image even though the OTF files are present —
+% the same "loads by family name, not filename stem" trap this catalogue
+% has hit before (TeX Gyre Pagella). FontTheme=Custom lets us load the
+% same Latin Modern family by its actual OTF filename stems instead.
+\makeatletter
+\newcommand{\beamer@scu@fontextend}{%
+	% Latin Modern Sans is on TeX Live but NOT in this image's fontconfig
+	% database (fc-list has no "Latin Modern"/"LM" family at all, only
+	% kpsewhich sees the OTF files) — Nimbus Sans is the closest free
+	% match that fontconfig actually resolves, and it is the same family
+	% the catalogue's own auriga/execushares starters already load.
+	\setsansfont{Nimbus Sans}
+	\setmonofont{DejaVu Sans Mono}
+}
+% The theme has no VI=none: its outer/inner theme code calls
+% \pgfuseimage{lg}/{lg-name}/{landmark}/{verify} UNCONDITIONALLY (only the
+% plain canvas backgrounds are gated by Background=). VI=SCU (the default)
+% points those at ./resources/SCU*.{pdf,png} — Sichuan University's own
+% crest artwork, which this starter does not have permission to bundle and
+% which is not part of the theme's LPPL grant. Left at the default, the
+% preview renders LaTeX's missing-image placeholder boxes with the file
+% path printed as caption text — caught by looking at the rendered PNG,
+% not by a clean compile log. VI=Custom lets us point the same four named
+% images at a blank placeholder instead, so the theme's own layout (crest
+% corner, footer logo, landmark curve) is still visible without shipping
+% someone else's institutional artwork.
+\newcommand{\beamer@scu@viextend}{%
+	\pgfdeclareimage[width=40pt]{lg}{./resources/blank.png}%
+	\pgfdeclareimage[height=36pt]{lg-name}{./resources/blank.png}%
+	\pgfdeclareimage[width=.35\paperwidth]{landmark}{./resources/blank.png}%
+	\pgfdeclareimage[height=30pt]{verify}{./resources/blank.png}%
+}
+\makeatother
+
+\usetheme[
+	ColorDisplay=JXred,
+	LanguageMode=en,
+	FontTheme=Custom,
+	% latinmodern-math.otf is bundled alongside main.tex: this image's
+	% fontconfig database has only 14 families (checked with fc-list),
+	% none of them a math font, and unicode-math's \setmathfont resolves
+	% purely through fontconfig/kpathsea family lookup — a bracket path
+	% or an absolute path both failed silently or loudly here. A bare
+	% filename colocated with the document is the one path that works.
+	MathFont=latinmodern-math.otf,
+	BIBMode=none,
+	Background=none,
+	VI=Custom,
+]{scu}
+
+\usepackage[english]{babel}
+\usepackage{booktabs}
+
+\title[Cold-Chain Logistics Review]{A Review of Last-Mile Cold-Chain Logistics}
+\subtitle{Findings from the 2026 regional pilot}
+\author{Wei Lin \and Fatima Haidari}
+\institute{Department of Operations Research}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+	\tableofcontents
+\end{frame}
+
+\section{The Pilot}
+
+\begin{frame}{Why last-mile cold chain}
+	\begin{itemize}
+		\item Temperature excursions in the final delivery leg account for most reported spoilage
+		\item Existing routing software optimises for time, not for thermal exposure
+		\item The 2026 pilot ran 14 weeks across three distribution hubs
+	\end{itemize}
+\end{frame}
+
+\section{Method}
+
+\begin{frame}{Two routing strategies compared}
+	\begin{columns}[onlytextwidth]
+		\begin{column}{.48\textwidth}
+			\structure{Baseline}
+			\begin{itemize}
+				\item Shortest-path routing
+				\item Fixed delivery windows
+				\item No thermal telemetry
+			\end{itemize}
+		\end{column}
+		\begin{column}{.48\textwidth}
+			\structure{Pilot}
+			\begin{itemize}
+				\item Thermal-aware routing
+				\item Dynamic window reordering
+				\item Per-parcel temperature logging
+			\end{itemize}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\section{Results}
+
+\begin{frame}{Spoilage rate by hub}
+	\begin{table}
+		\centering
+		\begin{tabular}{lccc}
+			\toprule
+			Hub & Baseline & Pilot & Change \\
+			\midrule
+			Northgate  & 4.8\% & 2.1\% & $-56\%$ \\
+			Riverside  & 6.2\% & 3.0\% & $-52\%$ \\
+			Harborview & 3.9\% & 2.4\% & $-38\%$ \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	Thermal-aware routing lowered spoilage at every hub, with the largest gain where baseline routes crossed the most traffic congestion.
+\end{frame}
+
+\section{Recommendation}
+
+\begin{frame}{What we recommend}
+	\begin{enumerate}
+		\item Roll out thermal-aware routing to all hubs by Q2
+		\item Keep per-parcel logging as a permanent QA signal, not just a pilot instrument
+		\item Re-run the comparison after a full winter season before committing capital spend
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}
+	\centering
+	\Huge Thank you
+\end{frame}
+
+\end{document}

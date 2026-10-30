@@ -1,0 +1,90 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[optengjnl]{opteng}
+\usepackage{booktabs}
+
+\subjterm{optical sensing, calibration, field instrumentation}
+\loginfo{Example manuscript compiled \today}
+\doi{10.0000/example.opteng}
+
+\begin{document}
+
+\title{Compact optical sensing for resilient field measurements}
+\author{Avery Morgan}
+\address{Centre for Applied Photonics, Northbridge Institute}
+\email{avery.morgan@example.org}
+
+\begin{abstract}
+Field instruments must remain useful when temperature, vibration, and available
+power change together. We describe a compact optical sensing workflow that uses
+an internal reference path and a short calibration sequence. In a laboratory
+trial the reference reduced the median measurement drift by 38 percent while
+adding less than two seconds to each acquisition. The example is intentionally
+small, so the complete manuscript can be adapted to the page-length checks used
+by Optical Engineering.
+\end{abstract}
+
+\section{Introduction}
+Optical instruments can measure a large range of physical quantities without
+placing electrical contacts in the sensing region. Their performance in the
+field nevertheless depends on alignment, ambient temperature, and the time
+between calibration points. A useful design therefore needs both a sensitive
+measurement channel and a modest way to estimate its current error.
+
+\section{Method}
+The instrument alternates a sample measurement with a reference measurement.
+Let $s$ be the sample response, $r$ the reference response, and $s_0,r_0$ the
+values recorded during calibration. We report the normalized response
+\begin{equation}
+  q = \frac{s/r}{s_0/r_0},
+  \label{eq:normalized-response}
+\end{equation}
+which removes a common multiplicative change in source intensity.
+
+\begin{figure}[t]
+  \centering
+  \fbox{\rule{0pt}{28mm}\rule{0.82\columnwidth}{0pt}}
+  \caption{Editable placeholder for the optical path diagram. Replace the
+  framed area with a publication-ready figure before submission.}
+  \label{fig:path}
+\end{figure}
+
+\section{Results}
+Table~\ref{tab:trial} shows the synthetic pilot measurements used to exercise
+the template's compact table style.
+
+\begin{table}[t]
+  \centering
+  \caption{Illustrative calibration trial.}
+  \label{tab:trial}
+  \begin{tabular}{lrr}
+    \toprule
+    Condition & Drift (\%) & Time (s)\\
+    \midrule
+    Uncorrected & 6.4 & 1.8\\
+    Reference path & 4.0 & 3.5\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The reference path improves stability at the cost of one additional acquisition.
+This trade-off is attractive when a later recalibration is expensive or when
+the instrument cannot be returned to a controlled laboratory.
+
+\section{Discussion and conclusion}
+Equation~\ref{eq:normalized-response} is a simple model, not a substitute for
+the uncertainty analysis required by a real experiment. The starter provides
+the structural pieces needed to add that analysis: a clear method section,
+editable visual material, a compact results table, and a bibliography. Authors
+should replace every synthetic value and placeholder metadata before submission.
+
+\begin{thebibliography}{9}
+\bibitem{saleh}
+B. E. A. Saleh and M. C. Teich, \emph{Fundamentals of Photonics}, 3rd ed.,
+Wiley, 2019.
+
+\bibitem{holst}
+G. C. Holst, \emph{Electro-Optical Imaging System Performance}, JCD Publishing,
+2008.
+\end{thebibliography}
+
+\end{document}

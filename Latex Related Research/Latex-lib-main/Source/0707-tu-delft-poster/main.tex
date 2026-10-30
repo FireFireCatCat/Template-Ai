@@ -1,0 +1,154 @@
+% tu-delft-poster — an A0 portrait poster in TU Delft's corporate
+% colours, on tikzposter (ships with TeX Live). See README.md for the
+% font substitution and class-substitution notes.
+\documentclass[a0paper, portrait]{tikzposter}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{lipsum}
+
+% TU Delft's own corporate design specifies Roboto Slab (headers) and
+% Arial (body). Neither resolves by fontconfig family name in the
+% pinned compiler image — only DejaVu and URW base-35 families are
+% reachable there — so \setmainfont with either name would silently
+% render blank text. Substituted with the closest available families:
+% DejaVu Serif in place of Roboto Slab, DejaVu Sans in place of Arial.
+\renewcommand{\familydefault}{\sfdefault}
+
+% TU Delft corporate palette (RGB, from tudelft.nl/en/tu-delft-corporate-design).
+\definecolor{tudelftblue}{RGB}{0,166,214}
+\definecolor{tudelftdarkblue}{RGB}{0,31,77}
+\definecolor{tudelftblack}{RGB}{0,0,0}
+
+\definecolorstyle{tudelft}{
+  \colorlet{colorOne}{tudelftdarkblue}
+  \colorlet{colorTwo}{tudelftblue}
+  \colorlet{colorThree}{white}
+}{
+  \colorlet{backgroundcolor}{white}
+  \colorlet{framecolor}{tudelftdarkblue}
+  \colorlet{titlefgcolor}{white}
+  \colorlet{titlebgcolor}{tudelftdarkblue}
+  \colorlet{blocktitlebgcolor}{tudelftblue}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+}
+\usecolorstyle{tudelft}
+
+\title{Poster Title Goes Here}
+\author{Author One, Author Two \quad\textbar\quad Faculty Name, TU Delft}
+\institute{\includegraphics[height=2.5cm]{tudelft-logo}}
+
+\begin{document}
+
+\maketitle
+
+\begin{columns}
+\column{0.33}
+
+\block{Introduction}{
+\lipsum[1]
+
+\lipsum[2]
+
+\lipsum[10]
+}
+
+\block{Related Work}{
+\lipsum[3]
+
+\lipsum[11]
+
+\begin{itemize}
+\item A first strand of prior work addressing a related but narrower
+question.
+\item A second strand that shares this poster's method but applies it
+to a different domain.
+\item A gap the present work closes, stated as concretely as possible.
+\end{itemize}
+}
+
+\block{Research Questions}{
+\begin{itemize}
+\item How does the proposed method compare against the strongest
+existing baseline?
+\item Does the improvement hold across different data regimes?
+\item What is the computational cost of the improvement?
+\end{itemize}
+}
+
+\column{0.34}
+
+\block{Method}{
+\lipsum[4]
+
+A results table:
+\vspace{0.5em}
+
+\begin{tabular}{lr}
+\hline
+Metric & Value \\
+\hline
+Accuracy & 0.94 \\
+Precision & 0.91 \\
+Recall & 0.89 \\
+Latency (ms) & 12 \\
+\hline
+\end{tabular}
+
+\vspace{1em}
+\lipsum[5]
+
+\lipsum[12]
+}
+
+\block{Implementation Notes}{
+\lipsum[6]
+
+\lipsum[13]
+}
+
+\block{Limitations}{
+\lipsum[14]
+}
+
+\column{0.33}
+
+\block{Results}{
+\lipsum[7]
+
+\lipsum[8]
+
+\lipsum[15]
+}
+
+\block{Discussion}{
+\lipsum[16]
+}
+
+\block{Conclusion}{
+\lipsum[9]
+
+Future work will extend this approach along the following directions:
+\begin{itemize}
+\item Scaling the method to larger, noisier datasets.
+\item Evaluating generalisation across institutions.
+\item Releasing the implementation as an open-source tool.
+\end{itemize}
+}
+
+\block{Acknowledgements}{
+\lipsum[17]
+}
+
+\end{columns}
+
+\block{Contact}{
+\texttt{author@tudelft.nl} \hfill TU Delft corporate design used with
+permission of the project owner.
+}
+
+\end{document}

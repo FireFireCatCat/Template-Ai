@@ -1,0 +1,138 @@
+% Long-form recipe -- ctan:xcookybooky, LPPL-1.3 (verified in the shipped
+% xcookybooky.sty header: "This file may be distributed and/or modified
+% under the conditions of the LaTeX Project Public License, either version
+% 1.3 of this license or (at your option) any later version"). Ships with
+% TeX Live (tex/latex/xcookybooky) -- starter does not bundle the class. No
+% fontspec -- pdflatex-safe.
+%
+% The package's own \step macro (a \lettrine-numbered preparation step) is
+% NOT used here: it passes \stepcounter{step}\thestep -- executable code, not
+% a bare letter -- as \lettrine's first argument, and the CURRENT TeX Live
+% lettrine (v2.83, dated 2025-12-06; xcookybooky itself dates from 2015) is
+% no longer tolerant of that, throwing a hard "Missing \endcsname inserted"
+% pile-up on every \end{recipe}. Confirmed by isolating \step down to a bare
+% \lettrine[...]{stepcounter...}{}  call with no xcookybooky involved at all
+% -- a real upstream incompatibility, not a mistake in this starter's markup.
+% Preparation steps below are plain manually-numbered paragraphs instead.
+%
+% The package's differentiator from the plainer cookybooky/cuisine families
+% is genuine support for recipes that run LONG (a wrapped ingredients table
+% alongside a preparation column, a \suggestion aside, a \hint callout box),
+% so this starter is one deliberately long recipe (a braised short-rib ragu
+% with a from-scratch stock sub-recipe) rather than a short card. No
+% \graph{} picture is supplied for either recipe -- the key accepts an empty
+% value and simply omits the image area, which is the correct choice here
+% rather than shipping a placeholder image of unclear provenance.
+\documentclass[a4paper]{article}
+\usepackage{xcookybooky}
+
+\begin{document}
+
+\begin{recipe}[portion = 6 people, preparationtime = 45 minutes,
+  bakingtime = 3 hours, source = House recipe]{Braised Short-Rib Rag\`u}
+
+\graph{}
+
+This is a slow, patient ragu built on braised beef short rib rather than
+ground meat -- the long braise breaks the connective tissue down into a
+sauce richer than any quick weeknight bolognese. Start the stock the day
+before if you can; it keeps well and the ragu is better for it.
+
+\ingredients
+{
+  2.5\,kg & bone-in beef short ribs \\
+  1 & onion, finely diced \\
+  2 & carrots, finely diced \\
+  2 & celery stalks, finely diced \\
+  6 & cloves garlic, minced \\
+  200\,ml & red wine \\
+  800\,g & crushed tomatoes \\
+  1 litre & Brown Beef Stock (see below) \\
+  2 & bay leaves \\
+  1 & sprig rosemary \\
+  3\,tbsp & tomato paste \\
+  & olive oil, salt, black pepper \\
+  500\,g & pappardelle, to serve \\
+}
+
+\preparation
+{
+\textbf{1.} Season the short ribs generously with salt and pepper. Heat a
+heavy casserole over high heat with a splash of olive oil and brown the
+ribs on all sides, working in batches so the pan stays hot. Set the ribs
+aside.
+
+\textbf{2.} Lower the heat to medium. Add the onion, carrot and celery to
+the same pot and cook for 8 minutes until softened. Add the garlic and
+tomato paste and cook for 2 minutes more, stirring constantly so the paste
+does not catch.
+
+\textbf{3.} Pour in the red wine, scraping up the browned bits from the
+bottom of the pot, and simmer for 3 minutes to cook off the alcohol.
+
+\textbf{4.} Return the ribs to the pot. Add the crushed tomatoes, stock, bay
+leaves and rosemary. Bring to a bare simmer, cover, and transfer to a
+160\textcelsius\ oven for 3 hours, until the meat falls from the bone.
+
+\textbf{5.} Lift the ribs out, discard the bones, and shred the meat back
+into the sauce. Skim excess fat from the surface. Simmer uncovered for a
+further 15 minutes to thicken. Taste and adjust the seasoning.
+
+\textbf{6.} Cook the pappardelle in well-salted water until al dente, then
+toss directly through the ragu with a splash of the pasta water.
+}
+
+\suggestion[Make ahead]{The ragu improves overnight in the refrigerator and
+freezes well for up to three months -- make a double batch.}
+
+\hint{If the sauce is too thin after 15 minutes of reducing, remove the
+lid entirely and simmer harder rather than adding flour or cornstarch: the
+gelatine from the bones is doing the thickening work.}
+
+\end{recipe}
+
+\begin{recipe}[portion = about 1.5 litres, preparationtime = 20 minutes,
+  bakingtime = 4 hours]{Brown Beef Stock}
+
+\graph{}
+
+A dark, roasted stock is what gives the ragu above its depth. This makes
+more than the ragu needs; freeze the rest in small containers.
+
+\ingredients
+{
+  2\,kg & beef bones (marrow and knuckle) \\
+  2 & onions, quartered, skin on \\
+  2 & carrots, halved \\
+  2 & celery stalks, halved \\
+  3\,tbsp & tomato paste \\
+  2 & bay leaves \\
+  10 & black peppercorns \\
+  3 litres & cold water \\
+}
+
+\preparation
+{
+\textbf{1.} Heat the oven to 220\textcelsius. Spread the bones, onions,
+carrots and celery on a roasting tray and roast for 45 minutes, turning
+once, until deeply browned.
+
+\textbf{2.} Transfer the roasted bones and vegetables to a large stockpot.
+Deglaze the roasting tray with a splash of water, scraping up the browned
+bits, and add this to the pot along with the tomato paste.
+
+\textbf{3.} Add the cold water, bay leaves and peppercorns. Bring to a
+bare simmer -- never a boil -- skimming any foam from the surface for the
+first 20 minutes.
+
+\textbf{4.} Simmer uncovered for 4 hours, topping up with water if it
+reduces below the level of the bones. Strain through a fine sieve,
+discarding the solids, and cool before refrigerating or freezing.
+}
+
+\hint{A rolling boil emulsifies the fat into the liquid and clouds the
+stock. Keep it at the barest simmer -- the occasional lazy bubble.}
+
+\end{recipe}
+
+\end{document}

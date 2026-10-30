@@ -1,0 +1,155 @@
+% allgemeine Voreinstellungen
+% ****************************************************************
+\pagestyle{scrheadings}
+
+% Farbe für Überschriften...
+% ****************************************************************
+% \addtokomafont{chapter}{\color{dlrgRot}}
+\addtokomafont{section}{\color{dlrgRot}}
+\addtokomafont{subsection}{\color{dlrgRot}}
+\addtokomafont{subsubsection}{\color{dlrgRot}}
+\addtokomafont{paragraph}{\color{dlrgRot}}
+
+% Kopfzeile festlegen
+% ****************************************************************
+\KOMAoptions{headsepline=0.7pt}
+\addtokomafont{headsepline}{\color{dlrgRot}}
+\setkomafont{pagehead}{\normalfont}
+
+% Kopf, Innenseite
+\automark[section]{section}
+\ifthenelse{\boolean{set@head}}{}{%
+    \ihead{\headmark}
+}
+% Kopf, Mitte
+\chead{}
+
+\ifthenelse{\boolean{dlrg@contentLayout@bauchbinde}}{
+    % Kopf, Außenseite
+    \addtokomafont{pagenumber}{\color{white}}
+    \newcommand*{\numberboxright}[1]{%
+        \colorbox{dlrgRot}{\parbox{6em}{\hfill~#1~}%
+    }}
+    \newcommand*{\numberboxleft}[1]{%
+        \colorbox{dlrgRot}{\parbox{6em}{~#1~}%
+    }}
+    \lehead{\vspace{-0.2em}\numberboxleft{\pagemark}}
+    \rohead{\vspace{-0.2em}\numberboxright{\pagemark}}
+}{
+    \ohead{\thetitle}
+}
+
+% Fußzeile festlegen
+% ****************************************************************
+\setkomafont{pagefoot}{\normalfont}
+
+\ifthenelse{\boolean{dlrg@contentLayout@bauchbinde}}{
+    \ifoot{\bauchbinde*{}}
+    \cfoot{}
+}{}
+
+\ifthenelse{\boolean{dlrg@contentLayout@footline}}{
+    \KOMAoptions{footsepline=0.7pt}
+    \addtokomafont{footsepline}{\color{dlrgRot}}
+
+    \ifthenelse{\boolean{set@foot}}{}{%
+        \cfoot{}
+    }
+    \IfFileExists{dlrg_wortmarke_rot.pdf}
+    {\pgfdeclareimage[height=0.7em]{dlrg_wortmarke_rot}{dlrg_wortmarke_rot.pdf}}
+    {\pgfdeclareimage[height=0.7em]{dlrg_wortmarke_rot}{dlrg_wortmarke_rot_platzhalter.pdf}}
+    \ifoot{\pgfuseimage{dlrg_wortmarke_rot}}
+    \ofoot{\pagemark}
+}{}
+
+% Titelseite
+% ****************************************************************
+\renewcommand{\maketitle}{
+    \begin{titlepage}
+        \begin{tikzpicture}[remember picture,overlay]
+            \ifthenelse{\equal{\dlrg@pubtitelbild}{}}{
+                \freigestellterAdlerWasserzeichen
+            }{
+                \node[inner sep=0] at (current page.center) {\includegraphics[width=\paperwidth,height=\paperheight]{\dlrg@pubtitelbild}};
+                    \ifthenelse{\equal{\dlrg@pubtitelbildcaption}{}}{}{
+                        \captionlistentry[figure]{Titelbild: \dlrg@pubtitelbildcaption}
+                    }
+            }
+
+            \ifthenelse{\isundefined{\thesubtitle}}{ %ohne Untertitel
+                \node [yshift=-15mm, stoerer, stoerer rot, stoerer links, stoerer title] at (current page.north west) {\thetitle};%
+            }{%mit Untertitel
+                \node [yshift=-15mm, stoerer, stoerer rot, stoerer links, stoerer title, stoerer zweiteilig] at (current page.north west) {%
+                    \thetitle \nodepart{stoerersubtitle} \thesubtitle%
+                };
+            }
+        \end{tikzpicture}
+
+        \bauchbinde{}
+
+        \ifthenelse{\isundefined{\titel@extra}}{}{\titel@extra}
+    \end{titlepage}
+}
+
+%Titeldefinitionen überschreiben
+\def\title#1{\gdef\@title{#1}\gdef\thetitle{#1}}
+\def\subtitle#1{\gdef\@subtitle{#1}\gdef\thesubtitle{#1}}
+
+%Möglichkeit Elemente auf der Titelseite zu plazieren
+\NewDocumentCommand\titelExtra{+m}{
+    \newcommand{\titel@extra}{
+        #1
+    }
+}
+
+% Querformat mit nicht gedrehter Fußzeile
+% ****************************************************************
+\newboolean{seiteneinstellung@gespeichert}
+\setboolean{seiteneinstellung@gespeichert}{false}
+
+\newcommand{\querformatSeite}{%
+    \ifthenelse{\boolean{seiteneinstellung@gespeichert}}{%Bereits einmal genutzt?
+        \cleardoubleoddpage
+        \seite@querformat
+    }{
+        \setboolean{seiteneinstellung@gespeichert}{true}
+        \storeareas\seite@hochformat
+        \cleardoubleoddpage
+        \KOMAoptions{paper=a4,paper=landscape}
+        \addtolength{\textwidth}{.3\paperwidth}
+        \addtolength{\textheight}{-.3\paperheight}
+        \activateareas
+        \storeareas\seite@querformat
+    }
+}
+
+\newcommand{\hochformatSeite}{%
+    \cleardoubleoddpage
+    \seite@hochformat
+}
+
+% Box mit Unterteilungen
+% ********************************************************************
+\newboolean{dlrg@firstPart}
+\newenvironment{redPartBox}{%
+    \setboolean{dlrg@firstPart}{true}%
+    \newcommand{\partTitle}[1]{%
+        \ifthenelse{\boolean{dlrg@firstPart}}{%
+            \begin{tcolorbox}[title=##1,
+                colframe=dlrgRot,
+                colback=white,
+                fonttitle=\bfseries,
+                enhanced jigsaw,
+                breakable
+            ]
+            \setboolean{dlrg@firstPart}{false}%
+        }{%
+            \tcbsubtitle{##1}%
+        }%
+    }%
+}{
+    \ifthenelse{\boolean{dlrg@firstPart}}{%
+    }{%
+        \end{tcolorbox}%
+    }%
+}

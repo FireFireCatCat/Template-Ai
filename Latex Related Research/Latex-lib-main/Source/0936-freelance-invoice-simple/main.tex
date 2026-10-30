@@ -1,0 +1,44 @@
+% Minimal Freelance Invoice — invoice.cls (treyhunner)
+%
+% Distinct from the already-shipped minimal-invoice (a different
+% upstream, mrzool/invoice-boilerplate, spreadtab-based): this class
+% computes its running subtotal/balance via dimen-register arithmetic
+% (fp + calc counters) rather than spreadtab, and lays out a plain,
+% unstyled longtable -- the deliberately bare end of this batch's
+% invoice spread. \hourrow uses the invoice's \hourlyrate default;
+% \unitrow takes an explicit rate for non-hourly line items.
+\documentclass{invoice}
+
+\def \tab {\hspace*{3ex}}
+
+\begin{document}
+
+\hfil{\Huge\bf Nadia Costa}\hfil
+\bigskip\break
+\hrule
+14 Willowmere Close \hfill 555.221.0847 \\
+Bristol BS8 1TH \hfill nadia@example.com
+\\ \\
+{\bf Invoice To:} \\
+\tab Priory Design Studio \\
+\tab 6 Cathedral Walk \\
+
+{\bf Date:} \\
+\tab \today \\
+
+\hourlyrate{45.00}
+
+\begin{invoiceTable}
+\feetype{UI Design}
+\hourrow{August 3, 2026}{6}
+\hourrow{August 4, 2026}{7.5}
+\hourrow{August 5, 2026}{4.25}
+\subtotal
+\feetype{Illustration (fixed rate)}
+\unitrow{Hero banner illustration}{1}{220.00}{item}
+\subtotal
+\feetype{Hosting}
+\feerow{Portfolio preview hosting, August}{18.00}
+\end{invoiceTable}
+
+\end{document}

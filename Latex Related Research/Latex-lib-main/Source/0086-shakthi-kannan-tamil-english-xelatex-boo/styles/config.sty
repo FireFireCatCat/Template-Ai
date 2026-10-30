@@ -1,0 +1,228 @@
+% Not needed but identification always helps
+\ProvidesPackage{config}[2016/01/31 Config file for the book]
+
+% Packages
+
+\usepackage[margin=1in]{geometry}
+\usepackage{titlesec}
+% PATCH: http://tex.stackexchange.com/questions/299969/titlesec-loss-of-section-numbering-with-the-new-update-2016-03-15
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}
+\patchcmd{\ttlh@hang}{\noindent}{}{}{}
+\makeatother
+
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{lmodern}
+\usepackage{tocloft}
+\usepackage{psvectorian}
+\usepackage{xpatch}
+\usepackage{amstext}
+\usepackage{afterpage}
+\usepackage{varwidth}
+\usepackage[absolute]{textpos}
+\usepackage{tfrupee}
+\usepackage{caption}
+
+% Margin
+
+\geometry{papersize={7.0in,9.0in}}
+\geometry{twoside}
+\geometry{footskip=0.75cm}
+
+% Fonts
+
+\newfontfamily{\englishfont}[Scale=1.1,Ligatures=TeX]{Liberation Serif-Bold}
+\newfontfamily{\tamilfont}[Scale=1.2,Ligatures=TeX]{Uni Ila.Sundaram-01}
+\newfontfamily{\tamilitalics}[Scale=1.2,Ligatures=TeX]{Uni Ila.Sundaram-03}
+\newfontfamily{\devanagirifont}[Scale=1.2,Ligatures=TeX]{Nakula}
+
+% Page style
+\setlength{\parindent}{4em}
+\setlength{\parskip}{1em}
+
+\pagestyle{fancy}
+
+\fancyhead{}
+\fancyfoot{} % clear all fields
+
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\slshape \booktitle}
+\fancyhead[LO]{\slshape\leftmark}
+
+% Chapter
+
+\renewcommand{\cftchapaftersnumb}{\hspace{0.5em}}
+\renewcommand{\cftsecaftersnumb}{\hspace{0.5em}}
+\renewcommand{\cftsubsecaftersnumb}{\hspace{0.5em}}
+
+\renewcommand{\chaptermark}[1]{%
+  \markboth{\thechapter.\ #1}{}}
+
+\titlespacing*{\chapter}{0pt}{-70pt}{0pt}
+
+\newcommand{\formatchaptertitle}[1]{%
+  \parbox[t]{\dimexpr\textwidth-10pt}{\raggedright\LARGE\scshape#1}}
+
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\hsp}{\hspace{20pt}}
+\ifthenelse{\boolean{bulletchapters}}%
+      {% Add bullet before chapter title
+      \titleformat{\chapter}[block]
+                  {\huge\bfseries}
+                  {\centering\small$\bullet$ \\{\small \tamilfont ஆதியே துணை}\\\huge\bfseries\thechapter\hsp\textcolor{gray75}{|}\hsp}
+                  {0pt}
+                  {\formatchaptertitle}
+      }
+      {% default
+      \titleformat{\chapter}[block]
+                  {\huge\bfseries}
+                  {\thechapter\hsp\textcolor{gray75}{|}\hsp}
+                  {0pt}
+                  {\formatchaptertitle}
+      }
+
+\setlength{\TPHorizModule}{3cm}
+\setlength{\TPVertModule}{3cm}
+
+% Spacing
+
+\onehalfspacing
+
+\ifthenelse{\boolean{leftmargini}}%
+      {% Set leftmargini
+        \setlength{\leftmargini}{4.5em}
+      }
+      {}
+
+% New commands
+
+\newcommand{\attrib}[1]{%
+  \nopagebreak{--- \raggedleft\tamilitalics #1 \\ \vspace{5mm}}}
+
+\newcommand{\vattrib}[1]{%
+  \nopagebreak{\vskip-0.25cm --- \raggedleft\tamilitalics #1 \\ \vspace{5mm}}}
+
+\newcommand{\vdattrib}[1]{%
+  \nopagebreak{\vskip-0.7cm --- \raggedleft\tamilitalics #1 \\ \vspace{5mm}}}
+
+\newcommand{\fattrib}[1]{%
+  \nopagebreak{--- \raggedleft\tamilfont #1 \\ \vspace{5mm}}}
+
+\newcommand{\separator}{%
+  \begin{center}
+    \psvectorian[width=5cm]{88}
+  \end{center}
+  }
+
+\newlength{\drop}
+
+\newcommand*{\titleTMB}[3][]{\begingroup% Three Men in a Boat
+\centering
+$\bullet$ \\
+{\small \tamilfont ஆதியே துணை} \\[0.1\textheight]
+\setlength{\unitlength}{0.9\textwidth}
+\rule{\unitlength}{1.6pt}\vspace*{-\baselineskip}\vspace*{2pt}
+\rule{\unitlength}{0.4pt}\\[\baselineskip]
+\ifthenelse{\equal{#1}{}}
+           { {\Huge \tamilfont #2}\\[\baselineskip] } % No optional argument
+           {
+             {\Huge \tamilfont #2}\\[\baselineskip]
+             {\LARGE \tamilfont #1}\\[0.2\baselineskip]  % With optional argument
+           }
+\rule{\unitlength}{0.4pt}\vspace*{-\baselineskip}\vspace{3.2pt}
+\rule{\unitlength}{1.6pt}\\[\baselineskip]
+\vfill
+{\LARGE \tamilfont #3}\\[\baselineskip]
+\vspace*{\drop}
+\endgroup}
+
+\newcommand*{\copyrightpage}{
+\begingroup
+\parindent 0pt
+\parskip \baselineskip
+\vspace*{2\baselineskip}
+\vfill
+\textcopyright{} 2016 \tamilfont{சிவன் கண்ணன், சக்தி கண்ணன்}
+\vspace*{2\baselineskip}
+\endgroup}
+
+\newcommand{\twofrac}[2]{\tamilitalics\ensuremath{\smash{\begin{array}{@{}c@{}}\text{\itshape #1}\\\hline\text{\itshape #2}\end{array}}}{\hbox{\tiny$\bullet$}}}
+\newcommand{\threefrac}[3]{\tamilitalics\ensuremath{\smash{\begin{array}{@{}c@{}}\text{\itshape #1}\\\hline\text{\itshape #2}\\\hline\text{\itshape #3}\end{array}}}{\hbox{\tiny$\bullet$}}}
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+
+\newcommand{\bullettitle}{\newpage\begin{textblock}{6}(0,0.45)\centering$\bullet$ \\{\small \tamilfont ஆதியே துணை}\end{textblock}}
+
+\newcommand{\bullettitlevspacing}{\vspace{3mm}}
+\newcommand{\bullettitlevmorespacing}{\vspace{6mm}}
+
+\newcommand{\selecttoptitle}{
+        \titleformat{\chapter}[block]
+                  {\huge\bfseries}
+                  {\centering\small$\bullet$ \\{\small \tamilfont ஆதியே துணை}\\\huge\bfseries\thechapter\hsp\textcolor{gray75}{|}\hsp}
+                  {0pt}
+                  {\formatchaptertitle}
+}
+
+\newcommand{\addornament}[2][]{\begingroup
+  \vfill
+  \begin{center}
+    \ifthenelse{\equal{#1}{}}
+               { \psvectorian[]{#2} } % No scaling
+               { \psvectorian[scale=#1]{#2} }
+  \end{center}
+  \vfill
+\endgroup}
+
+\newcommand{\vectorframelandscape}[1]{
+  \begin{pspicture}(0,0)(9,9)
+    \rput[tl](-2,12.5){\psvectorian[width=3cm]{63}}
+    \rput[tr](11,12.5){\psvectorian[width=3cm,mirror]{63}}
+    \rput[B](4.5,1.5){
+      \includegraphics[width=.9\linewidth]{#1}
+    }
+    \rput[bl](-2,-5){\psvectorian[width=3cm,flip]{63}}
+    \rput[br](11,-5){\psvectorian[width=3cm,flip,mirror]{63}}
+  \end{pspicture}
+}
+
+\newcommand{\vectorframeportrait}[1]{
+  \begin{pspicture}(0,0)(9,9)
+    \rput[tl](-2,12.5){\psvectorian[width=3cm]{63}}
+    \rput[tr](11,12.5){\psvectorian[width=3cm,mirror]{63}}
+    \rput[B](4.5,-1){
+      \includegraphics[width=8cm]{#1}
+    }
+    \rput[bl](-2,-5){\psvectorian[width=3cm,flip]{63}}
+    \rput[br](11,-5){\psvectorian[width=3cm,flip,mirror]{63}}
+  \end{pspicture}
+}
+
+% Redefine commands
+
+\renewcommand{\contentsname}{\tamilfont{பொருளடக்கம்}}
+
+\renewcommand{\listfigurename}{\tamilfont{படங்கள்}}
+\renewcommand{\figurename}{\tamilfont{படம்}}
+
+\setlength{\cftbeforetoctitleskip}{-3em}
+\setlength{\cftbeforeloftitleskip}{-3em}
+
+\renewcommand{\emph}[1]{{\tamilitalics #1 }}
+
+\renewcommand{\poemtitle}[1]{%
+\begin{center}
+#1
+\end{center}}
+
+\renewcommand{\cftchappagefont}{\englishfont}
+
+\xpatchcmd{\verse}{\itemsep}{\advance\topsep-\parskip\itemsep}{}{}
+
+\endinput

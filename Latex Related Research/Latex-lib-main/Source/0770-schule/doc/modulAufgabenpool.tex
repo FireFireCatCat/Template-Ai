@@ -1,0 +1,61 @@
+\section{Aufgabenpool} \sinceversion{0.8.4}
+\label{modul:aufgabenpool}
+Die Idee für das Modul \module{Aufgabenpool} bestand darin, dass Aufgaben einfach bei verschiedenen Klassenarbeiten oder Klausuren wieder genutzt werden können. Diese Aufgaben dürfen auch in verschiedenen Verzeichnissen liegen und sich einzeln setzen lassen. Besondere Berücksichtigung benötigen dabei eingebundene Dateien, wie z.\,B. Bilder oder Programmdateien, die relativ zur Aufgabendatei, an einem anderen Ort liegen als die Quelldatei für die Klausur. Für diesen Fall wird auf ein \textit{basedir} gesetzt, dass für jede eingebundene Aufgabe entsprechend gesetzt wird. Mit der Nutzung über \cs{getBasedir} lässt sich jede Datei relativ zur Aufgabendatei einbinden. Dieses gilt auch innerhalb der \env{loesung}-Umgebung.
+
+Zur Verwendung einer Aufgabe aus dem Aufgabenpool lassen sich auch Hinweise in der Aufgabe ablegen. Diese werden dann nicht mit ausgegeben, wenn die Aufgabe in einer Klassenarbeit bzw. Klausur mit eingebunden wird.
+
+\subsection{Befehle}
+\begin{commands}
+    \command{aufgabeninput}[\oarg{optionen}\marg{Verzeichnis}\marg{Datei}]
+        Bindet die Datei mit der Aufgabe ein, die im angegebenen Verzeichnis steht. Die Angabe des Verzeichnis wird als Grundlage für das \textit{basedir} für diese Aufgabe genutzt. Als optionalen Parameter lassen sich durch Komma getrennte Optionen angeben. Dadurch lässt sich in der eigentlichen Aufgabe steuern, ob bestimmte Elemente gesetzt werden sollen oder nicht. Näheres unter \ref{sec:optionen_aufgabenpool}.
+    \command{getBasedir}
+        Liefert das aktuelle \textit{basedir} zurück, um es in einer Aufgabe als Pfadergänzung bei der Einbindung von Dateien zu nutzen.
+    \command{setBasedir}
+        Eröffnet die Möglichkeit, dass \textit{basedir} als Eigenschaft bei anderen Aufgabentypen, die auf Grundlage des \pkg{xsim}-Pakets definiert sind, zu setzen. Bei Aufgabe ist dieses bereits gesetzt durch:
+        \begin{sourcecode}[gobble=12]
+            \xsimsetup{
+                aufgabe/begin-hook = \setBasedir,
+            }
+        \end{sourcecode}
+    \command{inputOnce}[\oarg{Verzeichnis}\marg{Datei}]\sinceversion{0.9.0}
+        Die angegebene Datei wird eingebunden. Dieses geschieht innerhalb eines Dokumentes aber genau einmal, auch wenn dieser Aufruf in mehreren Aufgaben angegeben ist. So kann z.\,B. auf einen gemeinsamen Text zurückgegriffen werden. Das Basedir wird im Pfad zur Datei mit berücksichtigt, so dass \cs*{getBasedir} nicht in der Pfadangabe mit genutzt werden darf. Ähnlich wie bei \cs{aufgabeninput} kann das Verzeichnis auch als optionaler Parameter separat angegeben werden.
+\end{commands}
+
+\subsection{Umgebungen}
+\begin{environments}
+    \environment{aufgabenpoolHinweis}\sinceversion{0.9.0}
+        Innerhalb dieser Umgebung können Hinweise zur Aufgabe gemacht werden, die an den Steller der Arbeit bzw. Klausur gerichtet sind. Diese werden dann in der einzelnd stehenden Aufgabe auch angezeigt. Wird die Aufgabe in einer Klassenarbeit bzw. Klausur eingebunden, werden diese Hinweise nicht mit gesetzt.
+\end{environments}
+
+\subsection{Optionen an Aufgaben}\sinceversion{0.9.0}\label{sec:optionen_aufgabenpool}
+Zu jeder Aufgabe lassen sich einstellbare Optionen angeben. Mit diesen kann man regeln, ob bestimmte Teile im fertigen Dokument mit eingebunden werden sollen oder nicht. So lassen sich zum Beispiel bestimmte Teilaufgaben ausklammern und nicht bei jeder Nutzung der Aufgabe darstellen. Es gibt auch die Möglichkeit die Einbindung weiterer Dokumente so zu regeln, dass sie einmal in einer Klassenarbeit/Klausur gesetzt werden, auch wenn sie in mehreren Aufgaben aus dem Aufgabenpool vorkommen.
+
+\subsubsection{Befehle}
+\begin{commands}
+    \command{ifAufgabenpoolOptionTF}[\marg{Optionname}\marg{<Wahr>}\marg{<Falsch>}]
+        Dieses bietet die Möglichkeit anhand der gewählten Option bestimmte Teile anzeigen zu lassen oder nicht. Der Wahr-Teil wird ausgeführt, wenn die angegeben Option gewählt ist. Gleiches gilt für den Falsch-Teil, wenn die Option nicht gewählt ist. Zur Vereinfachung gibt es diesen Befehl auch nur mit dem Wahr- oder Falsch-Teil.
+    \command{ifAufgabenpoolOptionT}[\marg{Optionname}\marg{<Wahr>}]
+        Siehe \cs*{ifAufgabenpoolOptionTF}.
+    \command{ifAufgabenpoolOptionF}[\marg{Optionname}\marg{<Falsch>}]
+        Siehe \cs*{ifAufgabenpoolOptionTF}
+    \command{setAufgabenpoolOptionen}[\marg{Optionennamen}]
+        Dieses kann im Kopf der Aufgabendatei genutzt werden, um die Optionen zu setzen. So lassen sich die verschiedenen Ansichten bereits im Aufgabendokument anzeigen.
+\end{commands}
+
+\subsection{Anhänge an Aufgaben}\sinceversion{0.10.0}
+Bei der Nutzung des Aufgabenpools kann es vorkommen, dass Aufgaben auch Elemente haben, die im Anhang angegeben werden. Teilweise können auch mehrere Aufgaben den gleichen Anhang nutzen. Daher werden zwei verschiedene Möglichkeiten zum Einbinden von Anhängen bereitgestellt. Die Ausgabe des Anhangs wird dann unterdrückt, wenn der Aufruf des Anhangs sich innerhalb einer eingebundenen Aufgabendatei befindet. Für das Gesamtdokument gibt es mit \cs{showIncludeAppendix} einen extra Befehl, der dann für die Ausgabe sorgt.
+
+\subsubsection{Umgebungen}
+\begin{environments}
+    \environment{onceAppendix}[\marg{Name}]
+    Innerhalb der Umgebung kann Inhalt für den Anhang angegeben werden. Durch die Angabe des Namens wird dafür gesorgt, dass Anhang mit gleichem Namen nur einmal ausgegeben wird.
+\end{environments}
+
+\subsubsection{Befehle}
+\begin{commands}
+    \command{inputOnceAppendix}[\marg{Datei}]
+        Eine Datei kann, mit \cs{getBasedir} für den Dateipfad, angegeben werden. Diese wird nur einmal als Anhang eingebunden in das Dokument.
+
+    \command{showIncludeAppendix}
+        Der Befehl wird an einer Stelle verwendet, an der die Anhänge eingebunden werden sollen.
+\end{commands}

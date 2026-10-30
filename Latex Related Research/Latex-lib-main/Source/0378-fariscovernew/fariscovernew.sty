@@ -1,0 +1,767 @@
+%
+% fariscovernew — Modern Arabic/English Title Page Generator
+% Author: Faris Hameed
+% Email: classsec81@gmail.com
+% License: LPPL 1.3c
+% Requires: XeLaTeX or LuaLaTeX
+% ---------------------------------------------------------------
+% [Lang][TitlePt][SubtitlePt][Color][MainFont][SubFont][SubRatio]{Title}{Subtitle}
+% ---------------------------------------------------------------
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{fariscovernew}[2026/03/21 v1.1 Title page (multi-styles, safe ratios, text colors)]
+
+%══════════════════════════════════════════════════════════════════
+% متطلبات المحرك
+%══════════════════════════════════════════════════════════════════
+\RequirePackage{iftex}
+\ifPDFTeX
+  \PackageError{fariscovernew}
+    {This package requires XeLaTeX or LuaLaTeX}
+    {Run with xelatex or lualatex.}
+\fi
+\RequirePackage{fontspec}
+\RequirePackage{bidi}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage[table,dvipsnames,svgnames,x11names]{xcolor}
+\RequirePackage{xparse}
+
+%══════════════════════════════════════════════════════════════════
+% إعدادات افتراضية
+%══════════════════════════════════════════════════════════════════
+\def\FarisLang{A}% A=Arabic, E=English
+
+\def\FarisBaseColor{ForestGreen}
+\def\FarisTitleColor{\FarisBaseColor!85!black}
+\def\FarisSubtitleColor{\FarisBaseColor!55!black}
+\def\FarisFrameColor{\FarisBaseColor!70!black}
+\def\FarisOuterFill{\FarisBaseColor!30}
+\def\FarisMiddleFill{\FarisBaseColor!10}
+\def\FarisAccentColor{\FarisBaseColor}
+
+\def\FarisPageWidth{18cm}
+\def\FarisPageHeight{26.7cm}
+\def\FarisCorner{8mm}
+\def\FarisStyle{triple}
+
+%══════════════════════════════════════════════════════════════════
+% ألوان النصوص — فارغ = يستخدم الافتراضي من BaseColor
+% قابلة للتخصيص من المستند في أي وقت
+%══════════════════════════════════════════════════════════════════
+\def\FarisTitleTextColor{}
+\def\FarisSubtitleTextColor{}
+
+% أوامر التخصيص للمستخدم النهائي
+\newcommand{\FarisSetTitleTextColor}[1]{\def\FarisTitleTextColor{#1}}
+\newcommand{\FarisSetSubtitleTextColor}[1]{\def\FarisSubtitleTextColor{#1}}
+\newcommand{\FarisResetTitleTextColor}{\def\FarisTitleTextColor{}}
+\newcommand{\FarisResetSubtitleTextColor}{\def\FarisSubtitleTextColor{}}
+\newcommand{\FarisResetTextColors}{%
+  \def\FarisTitleTextColor{}%
+  \def\FarisSubtitleTextColor{}%
+}
+
+% محلّلا اللون الفعلي عند الرسم
+\def\FarisResolveTitleColor{%
+  \ifx\FarisTitleTextColor\empty
+    \FarisTitleColor%
+  \else
+    \FarisTitleTextColor%
+  \fi
+}
+\def\FarisResolveSubtitleColor{%
+  \ifx\FarisSubtitleTextColor\empty
+    \FarisSubtitleColor%
+  \else
+    \FarisSubtitleTextColor%
+  \fi
+}
+
+%══════════════════════════════════════════════════════════════════
+% مفاتيح ضبط عامة
+%══════════════════════════════════════════════════════════════════
+\newcommand{\FarisSetStyle}[1]{\def\FarisStyle{#1}}
+
+\newcommand{\FarisSetColor}[1]{%
+  \def\FarisBaseColor{#1}%
+  \def\FarisTitleColor{\FarisBaseColor!85!black}%
+  \def\FarisSubtitleColor{\FarisBaseColor!55!black}%
+  \def\FarisFrameColor{\FarisBaseColor!70!black}%
+  \def\FarisOuterFill{\FarisBaseColor!30}%
+  \def\FarisMiddleFill{\FarisBaseColor!10}%
+  \def\FarisAccentColor{\FarisBaseColor}%
+}
+
+\newcommand{\FarisSetAccentColor}[1]{\def\FarisAccentColor{#1}}
+
+\newcommand{\FarisSetDims}[3]{%
+  \def\FarisPageWidth{#1}%
+  \def\FarisPageHeight{#2}%
+  \def\FarisCorner{#3}%
+}
+
+%══════════════════════════════════════════════════════════════════
+% خطوط (اختياري)
+%══════════════════════════════════════════════════════════════════
+\def\FarisMainFontCmd{}
+\def\FarisSubFontCmd{}
+
+%══════════════════════════════════════════════════════════════════
+% أبعاد داخلية — تُعلَن مرة واحدة
+%══════════════════════════════════════════════════════════════════
+\newdimen\FarisTSZ      % حجم العنوان الرئيسي
+\newdimen\FarisTBL      % baseline-skip العنوان
+\newdimen\FarisSSZ      % حجم العنوان الفرعي الصريح
+\newdimen\FarisSBL      % baseline-skip الفرعي
+\newdimen\FarisBaseDim  % قاعدة الحساب
+\newdimen\FarisTmpDim   % حجم مؤقت
+\newdimen\FarisTmpBL    % baseline-skip مؤقت
+\newdimen\FarisTextShiftY \FarisTextShiftY=0pt
+\newdimen\FarisRibbonThk  \FarisRibbonThk=14mm
+\newdimen\FarisSidebarW   \FarisSidebarW=22mm
+\newdimen\FarisInnerPad   \FarisInnerPad=1cm
+
+%══════════════════════════════════════════════════════════════════
+% أعلام منطقية
+%══════════════════════════════════════════════════════════════════
+\newif\iffarisSkip
+\newif\iffarisUseDefaultSub
+\newif\iffarisHaveTitlePt \farisHaveTitlePtfalse
+
+%══════════════════════════════════════════════════════════════════
+% مساعد فحص الفراغ أو الشرطة
+%══════════════════════════════════════════════════════════════════
+\newcommand{\farisCheckSkip}[1]{%
+  \farisSkipfalse
+  \if\relax\detokenize{#1}\relax
+    \farisSkiptrue
+  \else
+    \def\FarisTmpA{#1}\def\FarisTmpB{-}%
+    \ifx\FarisTmpA\FarisTmpB \farisSkiptrue\fi
+  \fi
+}
+
+%══════════════════════════════════════════════════════════════════
+% تغليف النص بحسب اللغة
+%══════════════════════════════════════════════════════════════════
+\newcommand{\FarisTitleWrap}[2]{%
+  \if\FarisLang E
+    {\FarisMainFontCmd #1 #2}%
+  \else
+    \beginR{\FarisMainFontCmd #1 #2}\endR%
+  \fi
+}
+\newcommand{\FarisSubtitleWrap}[2]{%
+  \if\FarisLang E
+    {\FarisSubFontCmd #1 #2}%
+  \else
+    \beginR{\FarisSubFontCmd #1 #2}\endR%
+  \fi
+}
+
+%══════════════════════════════════════════════════════════════════
+% أدوات اللون — كتلة makeatletter موحدة
+%══════════════════════════════════════════════════════════════════
+\makeatletter
+
+\def\Faris@splitRGB#1,#2,#3\relax{%
+  \def\Faris@r{#1}\def\Faris@g{#2}\def\Faris@b{#3}%
+}
+\def\Faris@splitHSB#1,#2,#3\relax{%
+  \def\Faris@H{#1}\def\Faris@S{#2}\def\Faris@B{#3}%
+}
+
+% اللون المتمّم (complement)
+\newcommand{\FarisDefineComplementColor}[2]{%
+  \colorlet{Faris@FrontTmp}{#1}%
+  \convertcolorspec{named}{Faris@FrontTmp}{rgb}{\Faris@rgb}%
+  \expandafter\Faris@splitRGB\Faris@rgb\relax
+  \pgfmathparse{1 - \Faris@r}\let\Faris@R\pgfmathresult
+  \pgfmathparse{1 - \Faris@g}\let\Faris@G\pgfmathresult
+  \pgfmathparse{1 - \Faris@b}\let\Faris@B\pgfmathresult
+  \expandafter\definecolor\expandafter{#2compl}{rgb}{\Faris@R,\Faris@G,\Faris@B}%
+  \colorlet{#2}{#2compl}%
+}
+
+% اللون الثلاثي (triad) بتدوير Hue
+\newcommand{\FarisDefineTriadFromColor}[2]{%
+  \colorlet{Faris@TriadSrc}{#1}%
+  \convertcolorspec{named}{Faris@TriadSrc}{hsb}{\Faris@hsb}%
+  \expandafter\Faris@splitHSB\Faris@hsb\relax
+  \pgfmathparse{\Faris@H + (\FarisDiamondTriadOffset/360)}\let\Faris@Hnew\pgfmathresult
+  \pgfmathparse{%
+    \Faris@Hnew > 1 ? \Faris@Hnew - 1 :
+    (\Faris@Hnew < 0 ? \Faris@Hnew + 1 : \Faris@Hnew)%
+  }\let\Faris@Htriad\pgfmathresult
+  \edef\Faris@hsbnew{\Faris@Htriad,\Faris@S,\Faris@B}%
+  \convertcolorspec{hsb}{\Faris@hsbnew}{rgb}{\Faris@rgbtriad}%
+  \expandafter\Faris@splitRGB\Faris@rgbtriad\relax
+  \expandafter\definecolor\expandafter{#2}{rgb}{\Faris@r,\Faris@g,\Faris@b}%
+}
+
+\makeatother
+
+%══════════════════════════════════════════════════════════════════
+% إعدادات diamondx
+%══════════════════════════════════════════════════════════════════
+\newif\iffarisDiamondBackComplement
+\farisDiamondBackComplementfalse
+\newcommand{\FarisDiamondBackComplementOn}{\farisDiamondBackComplementtrue}
+\newcommand{\FarisDiamondBackComplementOff}{\farisDiamondBackComplementfalse}
+
+\providecommand{\FarisDiamondTriadOffset}{90}
+\newcommand{\FarisSetDiamondTriadOffset}[1]{\def\FarisDiamondTriadOffset{#1}}
+
+\providecommand{\FarisOuterTint}{30}
+\providecommand{\FarisDiamondOuterTint}{\FarisOuterTint}
+\providecommand{\FarisDiamondBackTint}{\FarisDiamondOuterTint}
+\newcommand{\FarisSetDiamondTints}[2]{%
+  \def\FarisDiamondOuterTint{#1}%
+  \def\FarisDiamondBackTint{#2}%
+}
+\providecommand{\FarisDiamondBackTintII}{\FarisDiamondBackTint}
+\newcommand{\FarisSetDiamondBackTintII}[1]{\def\FarisDiamondBackTintII{#1}}
+
+\def\FarisDiamondBackAngle{-45}
+\def\FarisDiamondFrontAngle{45}
+\newcommand{\FarisSetDiamondAngles}[2]{%
+  \def\FarisDiamondBackAngle{#1}%
+  \def\FarisDiamondFrontAngle{#2}%
+}
+\newcommand{\FarisSetDiamondAnglePair}[1]{%
+  \def\FarisDiamondBackAngle{-#1}%
+  \def\FarisDiamondFrontAngle{#1}%
+}
+\providecommand{\FarisDiamondBackDelta}{10}
+\newcommand{\FarisSetDiamondBackDelta}[1]{\def\FarisDiamondBackDelta{#1}}
+
+%══════════════════════════════════════════════════════════════════
+% ماكروات حساب الحجم — تُعرَّف مرة واحدة خارج البيئة
+%══════════════════════════════════════════════════════════════════
+
+% (أ) تحديد القاعدة: TitleSize أو 12pt مع حارس الصفر
+\def\FarisSetBaseDim{%
+  \FarisBaseDim=0pt\relax
+  \iffarisHaveTitlePt
+    \ifdim\FarisTSZ>0pt\relax
+      \FarisBaseDim=\FarisTSZ
+    \fi
+  \fi
+  \ifdim\FarisBaseDim<1pt\relax
+    \FarisBaseDim=12pt
+  \fi
+}%
+
+% (ب) حساب تلقائي: 4/5 من القاعدة
+\def\FarisCalcAutoSub{%
+  \FarisTmpDim=\dimexpr \FarisBaseDim*4/5\relax
+}%
+
+% (ج) حساب بالنسبة المحددة في #7
+\def\FarisCalcRatioSub{%
+  \FarisTmpDim=\FARISratio\FarisBaseDim\relax
+}%
+
+% (د) بناء \FarisSubtitleSize مع حارسَي الصفر والتراتبية
+\def\FarisBuildSubSize{%
+  % حارس الصفر
+  \ifdim\FarisTmpDim<1pt\relax
+    \FarisTmpDim=10pt
+  \fi
+  % حارس التراتبية: الفرعي يجب أن يكون أصغر من الرئيسي
+  \iffarisHaveTitlePt
+    \ifdim\FarisTmpDim<\FarisTSZ\else
+      \FarisTmpDim=\dimexpr \FarisTSZ*4/5\relax
+    \fi
+  \fi
+  \FarisTmpBL=\FarisTmpDim
+  \divide\FarisTmpBL by 5\relax
+  \advance\FarisTmpBL by \FarisTmpDim
+  \edef\FarisSubtitleSize{%
+    \noexpand\fontsize{\the\FarisTmpDim}{\the\FarisTmpBL}\noexpand\selectfont
+  }%
+}%
+
+% (هـ) المنطق الموحد: SubRatio إن وُجد، وإلا 4/5 تلقائي
+\def\FarisApplyRatioOrAuto{%
+  \FarisSetBaseDim
+  \iffarisUseDefaultSub
+    \FarisCalcAutoSub
+  \else
+    \ifx\FARISratio\empty
+      \FarisCalcAutoSub
+    \else
+      \FarisCalcRatioSub
+    \fi
+  \fi
+  \FarisBuildSubSize
+}%
+
+%══════════════════════════════════════════════════════════════════
+% رسامو الأنماط
+%══════════════════════════════════════════════════════════════════
+\newcommand{\farisDrawtriple}{%
+  \coordinate (C) at (current page.center);
+  \node[draw=\FarisFrameColor, ultra thick, fill=\FarisOuterFill,
+        minimum width=\FarisPageWidth, minimum height=\FarisPageHeight,
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  \node[draw=\FarisFrameColor, line width=1.5pt, fill=\FarisMiddleFill,
+        minimum width={\dimexpr\FarisPageWidth-\FarisInnerPad\relax},
+        minimum height={\dimexpr\FarisPageHeight-\FarisInnerPad\relax},
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  \node[draw=\FarisFrameColor, line width=3.5pt, fill=white,
+        minimum width={\dimexpr\FarisPageWidth-2\FarisInnerPad\relax},
+        minimum height={\dimexpr\FarisPageHeight-2\FarisInnerPad\relax},
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  \FarisTextShiftY=0pt
+}
+
+\newcommand{\farisDrawdiagonal}{%
+  \coordinate (C) at (current page.center);
+  \node[fill=white, draw=\FarisFrameColor, line width=2pt,
+        minimum width=\FarisPageWidth, minimum height=\FarisPageHeight,
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  \node[fill=\FarisAccentColor, rotate=-18, anchor=center,
+        minimum width={\dimexpr\FarisPageWidth*13/10\relax},
+        minimum height={\dimexpr\FarisPageHeight/3\relax}] at (C) {};
+  \node[fill=\FarisFrameColor, rotate=12, anchor=center,
+        minimum width={\dimexpr\FarisPageWidth*9/10\relax},
+        minimum height={\dimexpr\FarisPageHeight/5\relax}] at (C) {};
+  \node[fill=white, draw=\FarisFrameColor, line width=1.2pt,
+        minimum width={\dimexpr\FarisPageWidth-2\FarisInnerPad\relax},
+        minimum height={\dimexpr\FarisPageHeight-2\FarisInnerPad\relax},
+        rounded corners=5mm, anchor=center] at (C) {};
+  \FarisTextShiftY=0pt
+}
+
+\newcommand{\farisDrawwave}{%
+  \coordinate (C) at (current page.center);
+  \node[fill=\FarisMiddleFill, draw=\FarisFrameColor, line width=1pt,
+        minimum width=\FarisPageWidth, minimum height=\FarisPageHeight,
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  \path[fill=\FarisAccentColor!20]
+    ($(C)+(-0.5*\FarisPageWidth, 0.2*\FarisPageHeight)$)
+      .. controls ($(C)+(-0.15*\FarisPageWidth, 0.35*\FarisPageHeight)$)
+      and        ($(C)+( 0.15*\FarisPageWidth, 0.05*\FarisPageHeight)$)
+      ..
+    ($(C)+( 0.5*\FarisPageWidth, 0.18*\FarisPageHeight)$)
+    -- ($(C)+( 0.5*\FarisPageWidth, 0.5*\FarisPageHeight)$)
+    -- ($(C)+(-0.5*\FarisPageWidth, 0.5*\FarisPageHeight)$) -- cycle;
+  \path[fill=\FarisBaseColor!80!black]
+    ($(C)+(-0.5*\FarisPageWidth,-0.22*\FarisPageHeight)$)
+      .. controls ($(C)+(-0.2*\FarisPageWidth,-0.05*\FarisPageHeight)$)
+      and        ($(C)+( 0.2*\FarisPageWidth,-0.35*\FarisPageHeight)$)
+      ..
+    ($(C)+( 0.5*\FarisPageWidth,-0.18*\FarisPageHeight)$)
+    -- ($(C)+( 0.5*\FarisPageWidth,-0.5*\FarisPageHeight)$)
+    -- ($(C)+(-0.5*\FarisPageWidth,-0.5*\FarisPageHeight)$) -- cycle;
+  \node[fill=white, draw=\FarisFrameColor, line width=1.6pt,
+        minimum width={\dimexpr\FarisPageWidth-2.2\FarisInnerPad\relax},
+        minimum height={\dimexpr\FarisPageHeight-2.2\FarisInnerPad\relax},
+        rounded corners=5mm, anchor=center] at (C) {};
+  \FarisTextShiftY=0pt
+}
+
+\newcommand{\farisDrawbadge}{%
+  \coordinate (C) at (current page.center);
+  \node[fill=white, draw=\FarisFrameColor, line width=1.2pt,
+        minimum width=\FarisPageWidth, minimum height=\FarisPageHeight,
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  \fill[\FarisAccentColor!20] (C) circle[radius=5.2cm];
+  \draw[\FarisFrameColor, line width=3pt] (C) circle[radius=4.6cm];
+  \fill[\FarisOuterFill] (C) circle[radius=4.2cm];
+  \draw[\FarisFrameColor, line width=1.2pt, dash pattern=on 3pt off 3pt]
+       (C) circle[radius=3.2cm];
+  \draw[\FarisFrameColor!60, line width=0.8pt] (C) circle[radius=2.2cm];
+  \FarisTextShiftY=0pt
+}
+
+\newcommand{\farisDrawdiamond}{%
+  \coordinate (C) at (current page.center);
+  \node[fill=\FarisMiddleFill, draw=\FarisFrameColor, line width=1pt,
+        minimum width=\FarisPageWidth, minimum height=\FarisPageHeight,
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  \node[fill=\FarisOuterFill, draw=\FarisFrameColor, line width=2.2pt, rotate=45,
+        minimum width={\dimexpr\FarisPageWidth*3/4\relax},
+        minimum height={\dimexpr\FarisPageHeight*3/4\relax},
+        anchor=center] at (C) {};
+  \node[fill=white, draw=\FarisFrameColor, line width=1.2pt, rotate=45,
+        minimum width={\dimexpr\FarisPageWidth*5/8\relax},
+        minimum height={\dimexpr\FarisPageHeight*5/8\relax},
+        anchor=center] at (C) {};
+  \FarisTextShiftY=0pt
+}
+
+% ===== مساعدا diamondx =====
+\newcommand{\farisDiamondBackSquareA}[1]{%
+  \node[fill=farisdiamondbackfill, draw=farisdiamondbackframe, line width=2.2pt,
+        rotate=#1,
+        minimum width={\dimexpr\FarisPageWidth*3/4\relax},
+        minimum height={\dimexpr\FarisPageHeight*3/4\relax},
+        anchor=center] at (C) {};
+  \node[fill=white, draw=farisdiamondbackframe, line width=1.2pt,
+        rotate=#1,
+        minimum width={\dimexpr\FarisPageWidth*5/8\relax},
+        minimum height={\dimexpr\FarisPageHeight*5/8\relax},
+        anchor=center] at (C) {};
+}
+\newcommand{\farisDiamondBackSquareB}[1]{%
+  \node[fill=farisdiamondback2fill, draw=farisdiamondback2frame, line width=2.2pt,
+        rotate=#1,
+        minimum width={\dimexpr\FarisPageWidth*3/4\relax},
+        minimum height={\dimexpr\FarisPageHeight*3/4\relax},
+        anchor=center] at (C) {};
+  \node[fill=white, draw=farisdiamondback2frame, line width=1.2pt,
+        rotate=#1,
+        minimum width={\dimexpr\FarisPageWidth*5/8\relax},
+        minimum height={\dimexpr\FarisPageHeight*5/8\relax},
+        anchor=center] at (C) {};
+}
+
+\newcommand{\farisDrawdiamondx}{%
+  \coordinate (C) at (current page.center);
+  % خلفية الصفحة
+  \node[fill=\FarisMiddleFill, draw=\FarisFrameColor, line width=1pt,
+        minimum width=\FarisPageWidth, minimum height=\FarisPageHeight,
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  % الواجهة
+  \colorlet{farisdiamondfrontbase}{\FarisBaseColor}%
+  \colorlet{farisdiamondfrontfill}{farisdiamondfrontbase!\FarisDiamondOuterTint}%
+  % الخلفي A
+  \colorlet{farisdiamondbackfill}{\FarisBaseColor!\FarisDiamondBackTint}%
+  \colorlet{farisdiamondbackframe}{\FarisFrameColor}%
+  \iffarisDiamondBackComplement
+    \FarisDefineComplementColor{\FarisBaseColor}{farisdiamondback_base_comp}%
+    \colorlet{farisdiamondbackfill}{farisdiamondback_base_comp!\FarisDiamondBackTint}%
+    \colorlet{farisdiamondbackframe}{farisdiamondback_base_comp!70!black}%
+  \fi
+  % الخلفي B (لون ثلاثي)
+  \FarisDefineTriadFromColor{\FarisBaseColor}{farisdiamondback2_triad_base}%
+  \colorlet{farisdiamondback2fill}{farisdiamondback2_triad_base!\FarisDiamondBackTintII}%
+  \colorlet{farisdiamondback2frame}{farisdiamondback2_triad_base!70!black}%
+  % ارسم B ثم A
+  \pgfmathsetmacro{\FarisBackAnglePlus}{\FarisDiamondBackAngle + \FarisDiamondBackDelta}
+  \farisDiamondBackSquareB{\FarisBackAnglePlus}
+  \farisDiamondBackSquareA{\FarisDiamondBackAngle}
+  % الواجهة الأمامية
+  \node[fill=farisdiamondfrontfill, draw=\FarisFrameColor, line width=2.2pt,
+        rotate=\FarisDiamondFrontAngle,
+        minimum width={\dimexpr\FarisPageWidth*3/4\relax},
+        minimum height={\dimexpr\FarisPageHeight*3/4\relax},
+        anchor=center] at (C) {};
+  \node[fill=white, draw=\FarisFrameColor, line width=1.2pt,
+        rotate=\FarisDiamondFrontAngle,
+        minimum width={\dimexpr\FarisPageWidth*5/8\relax},
+        minimum height={\dimexpr\FarisPageHeight*5/8\relax},
+        anchor=center] at (C) {};
+  \FarisTextShiftY=0pt
+}
+
+\newcommand{\farisDrawminimal}{%
+  \coordinate (C) at (current page.center);
+  \node[fill=white, draw=\FarisFrameColor!50, line width=0.8pt,
+        minimum width=\FarisPageWidth, minimum height=\FarisPageHeight,
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  \draw[\FarisFrameColor, line width=3pt]
+    ($(C)+(-0.4*\FarisPageWidth, 0.4*\FarisPageHeight)$) --
+    ($(C)+( 0.4*\FarisPageWidth, 0.4*\FarisPageHeight)$);
+  \draw[\FarisFrameColor, line width=3pt]
+    ($(C)+(-0.4*\FarisPageWidth,-0.4*\FarisPageHeight)$) --
+    ($(C)+( 0.4*\FarisPageWidth,-0.4*\FarisPageHeight)$);
+  \draw[\FarisAccentColor, line width=2pt]
+    ($(C)+(-0.47*\FarisPageWidth, 0.47*\FarisPageHeight)$) --
+    ($(C)+(-0.37*\FarisPageWidth, 0.47*\FarisPageHeight)$) --
+    ($(C)+(-0.37*\FarisPageWidth, 0.37*\FarisPageHeight)$);
+  \draw[\FarisAccentColor, line width=2pt]
+    ($(C)+( 0.47*\FarisPageWidth,-0.47*\FarisPageHeight)$) --
+    ($(C)+( 0.37*\FarisPageWidth,-0.47*\FarisPageHeight)$) --
+    ($(C)+( 0.37*\FarisPageWidth,-0.37*\FarisPageHeight)$);
+  \FarisTextShiftY=0pt
+}
+
+\newcommand{\farisDrawribbon}{%
+  \coordinate (C) at (current page.center);
+  \node[fill=\FarisMiddleFill, draw=\FarisFrameColor, line width=1.2pt,
+        minimum width=\FarisPageWidth, minimum height=\FarisPageHeight,
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  \node[fill=\FarisFrameColor, rotate=6, anchor=center,
+        minimum width={\dimexpr\FarisPageWidth+1.5cm\relax},
+        minimum height=\FarisRibbonThk]
+    at ($(C)+(0,0.35*\FarisPageHeight)$) {};
+  \node[fill=\FarisAccentColor, rotate=-6, anchor=center,
+        minimum width={\dimexpr\FarisPageWidth+1.5cm\relax},
+        minimum height=\FarisRibbonThk]
+    at ($(C)+(0,-0.35*\FarisPageHeight)$) {};
+  \node[fill=white, draw=\FarisFrameColor, line width=2pt,
+        minimum width={\dimexpr\FarisPageWidth-2\FarisInnerPad\relax},
+        minimum height={\dimexpr\FarisPageHeight-2\FarisInnerPad\relax},
+        rounded corners=5mm, anchor=center] at (C) {};
+  \FarisTextShiftY=0pt
+}
+
+\newcommand{\farisDrawsidebar}{%
+  \coordinate (C) at (current page.center);
+  \node[fill=\FarisOuterFill, draw=\FarisFrameColor, line width=1.2pt,
+        minimum width=\FarisPageWidth, minimum height=\FarisPageHeight,
+        rounded corners=\FarisCorner, anchor=center] at (C) {};
+  \path node[fill=\FarisFrameColor, anchor=north west,
+             minimum width=\FarisSidebarW,
+             minimum height=\FarisPageHeight]
+    at ($(C)+(-0.5*\FarisPageWidth, 0.5*\FarisPageHeight)$) {};
+  \node[fill=white, draw=\FarisFrameColor, line width=2pt,
+        minimum width={\dimexpr\FarisPageWidth-\FarisSidebarW-1.2\FarisInnerPad\relax},
+        minimum height={\dimexpr\FarisPageHeight-2\FarisInnerPad\relax},
+        rounded corners=5mm, anchor=west]
+    at ($(C)+(-0.5*\FarisPageWidth+\FarisSidebarW+0.6*\FarisInnerPad,0)$) {};
+  \FarisTextShiftY=0pt
+}
+
+% مصرّف النمط
+\newcommand{\farisDrawDispatch}{%
+  \expandafter\ifx\csname farisDraw\FarisStyle\endcsname\relax
+    \farisDrawtriple
+  \else
+    \csname farisDraw\FarisStyle\endcsname
+  \fi
+}
+
+%══════════════════════════════════════════════════════════════════
+% البيئة الرئيسية
+% [Lang][TitlePt][SubtitlePt][Color][MainFont][SubFont][SubRatio]{Title}{Subtitle}
+%══════════════════════════════════════════════════════════════════
+\NewDocumentEnvironment{FarisTitlePageEnv}{ o o o o o o o m m }{%
+  \begingroup
+  \def\FARISdash{-}%
+  \farisHaveTitlePtfalse
+
+  %────────────────────────────────────────────
+  % (1) اللغة
+  %────────────────────────────────────────────
+  \IfNoValueF{#1}{%
+    \farisCheckSkip{#1}%
+    \iffarisSkip\relax\else
+      \def\FarisLang{#1}%
+    \fi
+  }%
+
+  %────────────────────────────────────────────
+  % (4) اللون العام
+  %────────────────────────────────────────────
+  \IfNoValueF{#4}{%
+    \farisCheckSkip{#4}%
+    \iffarisSkip\relax\else
+      \FarisSetColor{#4}%
+    \fi
+  }%
+
+  %────────────────────────────────────────────
+  % (2) TitlePt
+  %   - رقم موجب  → يُطبَّق مباشرة
+  %   - 0 أو سالب → يُشتق من #3 × 5/4 إن كان #3 موجباً
+  %   - '-' أو فارغ أو غير موجود → نفس السلوك السابق
+  %────────────────────────────────────────────
+  \def\FarisTitleSize{}%
+  \FarisTSZ=0pt\relax
+  %
+  \IfNoValueF{#2}{%
+    \def\TMP{#2}%
+    \if\relax\detokenize{#2}\relax\else
+      \ifx\TMP\FARISdash\else
+        \dimen0=#2pt\relax
+        \ifdim\dimen0<1pt\relax
+          % #2 = 0 أو سالب → يُعامَل كـ '-'
+        \else
+          % #2 = رقم موجب صريح
+          \FarisTSZ=\dimen0\relax
+          \FarisTBL=\FarisTSZ
+          \divide\FarisTBL by 5\relax
+          \advance\FarisTBL by \FarisTSZ
+          \edef\FarisTitleSize{%
+            \noexpand\fontsize{\the\FarisTSZ}{\the\FarisTBL}\noexpand\selectfont
+          }%
+          \farisHaveTitlePttrue
+        \fi
+      \fi
+    \fi
+  }%
+  %
+  % إذا لم يُضبَط \FarisTSZ → نشتق من #3 × 5/4
+  \ifdim\FarisTSZ<1pt\relax
+    \IfNoValueF{#3}{%
+      \def\TMP{#3}%
+      \if\relax\detokenize{#3}\relax\else
+        \ifx\TMP\FARISdash\else
+          \dimen0=#3pt\relax
+          \ifdim\dimen0<1pt\relax
+            % #3 = 0 → لا اشتقاق
+          \else
+            % #3 موجب → TitleSize = #3 × 5/4
+            \FarisTSZ=\dimexpr \dimen0*5/4\relax
+            \FarisTBL=\FarisTSZ
+            \divide\FarisTBL by 5\relax
+            \advance\FarisTBL by \FarisTSZ
+            \edef\FarisTitleSize{%
+              \noexpand\fontsize{\the\FarisTSZ}{\the\FarisTBL}\noexpand\selectfont
+            }%
+            \farisHaveTitlePttrue
+          \fi
+        \fi
+      \fi
+    }%
+  \fi
+
+  %────────────────────────────────────────────
+  % (7) SubRatio — قراءة النسبة وتهيئة الحالة
+  %────────────────────────────────────────────
+  \def\FARISratio{}%
+  \farisUseDefaultSubfalse
+  %
+  \IfNoValueTF{#7}{%
+    % ─── #7 غير موجود
+    \farisUseDefaultSubtrue
+  }{%
+    \def\TMP{#7}%
+    \if\relax\detokenize{#7}\relax
+      % ─── #7 فارغ ""
+      \farisUseDefaultSubtrue
+    \else
+      \ifx\TMP\FARISdash
+        % ─── #7 = '-'
+        \farisUseDefaultSubtrue
+      \else
+        \dimen0=#7pt\relax
+        \ifdim\dimen0<0.001pt\relax
+          % ─── #7 = 0 أو سالب
+          \farisUseDefaultSubtrue
+        \else
+          % ─── #7 = رقم موجب → نحفظ النسبة
+          \edef\FARISratio{#7}%
+        \fi
+      \fi
+    \fi
+  }%
+
+  %────────────────────────────────────────────
+  % (3) SubtitlePt
+  %   - رقم موجب  → يُطبَّق مع حارس التراتبية
+  %   - 0 أو سالب → SubRatio (#7) أو 4/5 تلقائي
+  %   - '-' أو فارغ أو غير موجود → نفس السلوك السابق
+  %────────────────────────────────────────────
+  \def\FarisSubtitleSize{}%
+  %
+  \IfNoValueTF{#3}{%
+    % ─── #3 غير موجود
+    \FarisApplyRatioOrAuto
+  }{%
+    \def\TMP{#3}%
+    \if\relax\detokenize{#3}\relax
+      % ─── #3 فارغ ""
+      \FarisApplyRatioOrAuto
+    \else
+      \ifx\TMP\FARISdash
+        % ─── #3 = '-'
+        \FarisApplyRatioOrAuto
+      \else
+        \dimen0=#3pt\relax
+        \ifdim\dimen0<1pt\relax
+          % ─── #3 = 0 أو سالب
+          \FarisApplyRatioOrAuto
+        \else
+          % ─── #3 = رقم موجب صريح
+          \FarisSSZ=\dimen0\relax
+          % حارس التراتبية: الفرعي < الرئيسي دائماً
+          \iffarisHaveTitlePt
+            \ifdim\FarisSSZ<\FarisTSZ\else
+              \FarisSSZ=\dimexpr \FarisTSZ*4/5\relax
+            \fi
+          \fi
+          \FarisSBL=\FarisSSZ
+          \divide\FarisSBL by 5\relax
+          \advance\FarisSBL by \FarisSSZ
+          \edef\FarisSubtitleSize{%
+            \noexpand\fontsize{\the\FarisSSZ}{\the\FarisSBL}\noexpand\selectfont
+          }%
+        \fi
+      \fi
+    \fi
+  }%
+
+  %────────────────────────────────────────────
+  % (5) خط العنوان الرئيسي
+  %────────────────────────────────────────────
+  \def\FarisMainFontCmd{}%
+  \IfNoValueF{#5}{%
+    \farisCheckSkip{#5}%
+    \iffarisSkip\relax\else
+      \IfFontExistsTF{#5}{%
+        \if\FarisLang E
+          \newfontfamily\FarisMainFace{#5}%
+        \else
+          \newfontfamily\FarisMainFace[Script=Arabic]{#5}%
+        \fi
+        \def\FarisMainFontCmd{\FarisMainFace}%
+      }{%
+        \PackageWarning{fariscovernew1}{Main font '#5' not found; keeping default}%
+      }%
+    \fi
+  }%
+
+  %────────────────────────────────────────────
+  % (6) خط العنوان الفرعي
+  %────────────────────────────────────────────
+  \def\FarisSubFontCmd{}%
+  \IfNoValueF{#6}{%
+    \farisCheckSkip{#6}%
+    \iffarisSkip\relax\else
+      \IfFontExistsTF{#6}{%
+        \if\FarisLang E
+          \newfontfamily\FarisSubFace{#6}%
+        \else
+          \newfontfamily\FarisSubFace[Script=Arabic]{#6}%
+        \fi
+        \def\FarisSubFontCmd{\FarisSubFace}%
+      }{%
+        \PackageWarning{fariscovernew1}{Sub font '#6' not found; keeping default}%
+      }%
+    \fi
+  }%
+
+  %────────────────────────────────────────────
+  % الرسم
+  %────────────────────────────────────────────
+  \par\newpage
+  \thispagestyle{empty}%
+  \begingroup
+    \setLTR
+    \noindent\makebox[0pt][l]{%
+      \begin{tikzpicture}[remember picture, overlay, inner sep=0pt]
+        \farisDrawDispatch
+        \coordinate (Ctxt) at ($(current page.center)+(0,\FarisTextShiftY)$);
+        % يجب ان يتم استبدال السطر في النسخة v1.1 بهذا الطر في النسخ اللاحقة v1.2 ليحم بكس السطر
+        \node at (Ctxt) {%
+          \parbox[c]{\dimexpr\FarisPageWidth*82/100\relax}{%
+            \if\FarisLang E\else\setRL\fi
+            \centering
+            \FarisTitleWrap{\FarisTitleSize}{%
+              \color{\FarisResolveTitleColor}#8%
+            }\\[6pt]%
+            \FarisSubtitleWrap{\FarisSubtitleSize}{%
+              \color{\FarisResolveSubtitleColor}#9%
+            }%
+          }%
+        };
+      \end{tikzpicture}%
+    }%
+  \endgroup
+}{%
+  \endgroup\ignorespacesafterend
+}
+
+%══════════════════════════════════════════════════════════════════
+% الأمر المختصر
+%══════════════════════════════════════════════════════════════════
+\ProvideDocumentCommand{\FarisTitlePage}{ O{} O{} O{} O{} O{} O{} O{} m m }{%
+  \begin{FarisTitlePageEnv}[#1][#2][#3][#4][#5][#6][#7]{#8}{#9}%
+  \end{FarisTitlePageEnv}%
+}

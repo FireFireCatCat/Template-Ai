@@ -1,0 +1,41 @@
+%!TEX root=../main.tex
+\chapter{Introduction}
+\chaptermark{Introduction}
+\label{ch:introduction}
+
+\section{Motivation}
+Multi-robot systems increasingly operate in settings where wireless
+communication cannot be assumed to be instantaneous or reliable --
+warehouses with dense metal shelving, underground or underwater
+deployments, and outdoor sites with variable network coverage all
+introduce meaningful communication delay. Most trajectory planners for
+multi-robot coordination assume each robot has an up-to-date view of its
+neighbours' planned paths \citep{VanDenBerg2011}; under delay, that
+assumption breaks down and the planner's safety guarantees no longer hold.
+
+\section{Problem Statement}
+We consider a fleet of robots planning trajectories in a shared workspace,
+where communication between any pair of robots is delayed by an unknown
+but bounded amount. Each robot must plan a trajectory that remains
+collision-free with respect to its neighbours' actual (not merely
+last-known) positions, without assuming synchronized clocks or a
+zero-delay communication channel \citep{Zhou2017}.
+
+\section{Major Contributions}
+Our main contributions are as follows:
+\begin{itemize}
+  \item A trajectory planning method that reserves a time-varying safety
+    margin around each robot's path, sized according to a known
+    communication delay bound rather than a fixed worst-case margin.
+  \item A simulation study comparing the method against a delay-unaware
+    baseline across a range of delay magnitudes and robot densities.
+  \item A physical validation on a fleet of ground robots under
+    artificially injected communication delay.
+\end{itemize}
+
+\section{Outline of the Thesis}
+\cref{ch:introduction} introduces the problem and motivates the need for
+delay-aware planning. \cref{ch:related} reviews prior work on multi-robot
+trajectory planning and delay-tolerant coordination. Later chapters
+(omitted from this starter document) would present the planning method,
+simulation results, and physical robot trials in detail.

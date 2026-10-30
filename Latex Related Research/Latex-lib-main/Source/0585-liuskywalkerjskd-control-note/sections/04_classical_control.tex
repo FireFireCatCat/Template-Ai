@@ -1,0 +1,899 @@
+%=============================================================================
+\section{Classical Control Theory}
+%=============================================================================
+
+This is the section you have been waiting for. Classical control theory is where we learn to make systems do what we want. And the undisputed champion of classical control---the tool you will use on 95\% of your competition robots---is the PID controller.
+
+But before we dive into PID, we need to understand \textit{why} feedback control works in the first place.
+
+\subsection{The Concept of Feedback Control}
+
+\textbf{Open-loop control} is like cooking without tasting. You follow the recipe exactly, hope for the best, and serve. If the oven temperature is off by 10 degrees, your cake is ruined.
+
+\textbf{Closed-loop (feedback) control} is like cooking while constantly tasting. You taste, adjust the seasoning, taste again, adjust again. Even if the oven is off, you compensate in real time.
+
+Mathematically, a basic feedback loop looks like this:
+
+\begin{enumerate}
+    \item Compute the \textbf{error}: $e(t) = r(t) - y(t)$, where $r$ is the desired output (setpoint) and $y$ is the actual output.
+    \item Feed the error into a \textbf{controller} $C(s)$, which produces a control input $u(t)$.
+    \item The control input drives the \textbf{plant} $G(s)$, which produces the output $y(t)$.
+    \item Measure $y(t)$ and go back to step 1.
+\end{enumerate}
+
+The closed-loop transfer function from setpoint $R$ to output $Y$ is derived as follows.
+From the block diagram: the error is $E(s) = R(s) - Y(s)$, the controller output is $U(s) = C(s)E(s)$, and the plant output is $Y(s) = G(s)U(s)$. Combining: $Y = GCE = GC(R - Y)$, so $Y + GCY = GCR$, giving $Y(1 + GC) = GCR$, hence:
+\begin{equation}
+\frac{Y(s)}{R(s)} = \frac{C(s)G(s)}{1 + C(s)G(s)}
+\end{equation}
+
+This is the most important equation in classical control. Stare at it. Love it. Memorize it.
+
+\textbf{Dissecting the closed-loop transfer function:}
+
+Let $L(s) = C(s)G(s)$ be the \textbf{loop transfer function} (also called open-loop transfer function). Then:
+
+\begin{itemize}
+    \item \textbf{Complementary sensitivity} (setpoint tracking): $T(s) = \frac{L(s)}{1 + L(s)}$. This is what we wrote above --- it tells you how well the output follows the reference. Ideally $T(s) \approx 1$ at low frequencies (good tracking) and $T(s) \approx 0$ at high frequencies (noise rejection).
+
+    \item \textbf{Sensitivity function}: $S(s) = \frac{1}{1 + L(s)}$. This tells you how much a disturbance at the output affects the output. Small $S$ = good disturbance rejection. Note that $T(s) + S(s) = 1$ always --- you \textit{cannot} have perfect tracking and perfect disturbance rejection at the same frequency. This is a fundamental limitation of feedback.
+
+    \item \textbf{Input sensitivity}: $C(s) \cdot S(s) = \frac{C(s)}{1 + L(s)}$. This tells you how much control effort is needed. If this is large at high frequencies, your actuator will work overtime amplifying noise.
+\end{itemize}
+
+\textbf{The key insight:} At frequencies where $|L(j\omega)| \gg 1$ (high loop gain), $T \approx 1$ and $S \approx 0$ --- feedback works well. At frequencies where $|L(j\omega)| \ll 1$ (low loop gain), $T \approx 0$ and $S \approx 1$ --- feedback does nothing. The \textbf{bandwidth} is the frequency where $|L(j\omega)| = 1$ (the crossover), and it marks the boundary between ``feedback is helping'' and ``feedback is not helping.''
+
+\textbf{Why feedback is powerful:}
+\begin{itemize}
+    \item \textbf{Reduces sensitivity to model uncertainty.} Even if $G(s)$ is not perfectly known, feedback compensates.
+    \item \textbf{Rejects disturbances.} External forces (friction, wind, collisions) are automatically corrected.
+    \item \textbf{Improves dynamic response.} We can make the system faster or more damped by choosing $C(s)$ appropriately.
+\end{itemize}
+
+\textbf{The catch:} Feedback can also \textit{destabilize} a system. If your controller is too aggressive, the correction overshoots, the error reverses, the correction overshoots again, and you get oscillation or complete instability. This is why we need tools to analyze stability.
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Case Study: The Shower Temperature Problem}
+
+\vspace{0.3em}
+You have experienced feedback control instability in your own bathroom. Here is how:
+
+You step into the shower. The water is cold. You crank the hot knob (large $K_p$). Nothing happens for 2 seconds (the pipe delay---this is \textbf{transport lag}, a real control theory concept). Impatient, you crank it more. Suddenly, scalding water hits you. You jerk the knob to cold. Two seconds later, ice water. You oscillate between scalding and freezing for 30 seconds until you give up.
+
+\textbf{What went wrong (in control theory terms):}
+\begin{itemize}[nosep]
+    \item The \textbf{plant} is the water heater + pipes. It has a significant \textbf{time delay} ($\sim$2 seconds).
+    \item You (the controller) used a very high $K_p$---aggressive corrections.
+    \item Time delay adds phase lag. At the frequency where you are adjusting the knob, the total phase lag exceeds 180\textdegree{}. Your phase margin is negative. The system is \textbf{unstable}.
+\end{itemize}
+
+\textbf{The fix:} Turn the knob slowly and \textbf{wait}. This is equivalent to reducing $K_p$ so that your bandwidth is well below $1/(2 \times \text{delay})$. You are trading speed for stability---exactly the same trade-off you will face with every control loop on your robot.
+
+\textbf{Lesson:} Systems with time delay are fundamentally harder to control. If your robot has communication latency (e.g., CAN bus delay, vision processing delay), you \textit{must} account for it by reducing controller aggressiveness or using a Smith predictor (an advanced technique that compensates for known delays).
+\end{mdframed}
+
+\subsection{System Performance Metrics}
+
+When we design a controller, we need to define what ``good'' means. The standard metrics for a step response (sudden change in setpoint) are:
+
+\begin{itemize}
+    \item \textbf{Rise time} ($t_r$): Time to go from 10\% to 90\% of the final value. Faster is generally better.
+    \item \textbf{Overshoot} ($M_p$): How much the output exceeds the setpoint, expressed as a percentage. Less is generally better.
+    \item \textbf{Settling time} ($t_s$): Time until the output stays within $\pm$2\% (or 5\%) of the final value.
+    \item \textbf{Steady-state error} ($e_{ss}$): The remaining error after the system has settled. Ideally zero.
+\end{itemize}
+
+These metrics often conflict: faster rise time usually means more overshoot. Control design is about finding the right trade-off for your application. A gimbal tracking a target needs low overshoot (no jittering past the target). A chassis accelerating to top speed can tolerate some overshoot if it means getting there faster.
+
+\subsubsection{Stability Margins}
+
+Even if a system is stable, we want to know \textit{how stable} it is---how close it is to becoming unstable. This is measured by two numbers:
+
+\textbf{Gain margin (GM):} How much you can increase the loop gain before the system goes unstable. Measured in dB. A gain margin of 6 dB means you can double the gain before instability. Typical target: $>$ 6 dB.
+
+\textbf{Phase margin (PM):} How much additional phase lag the system can tolerate before going unstable. Measured in degrees. A phase margin of 45\textdegree{} means the system can tolerate an additional 45\textdegree{} of lag. Typical target: 30\textdegree--60\textdegree.
+
+You can read both margins from a \textbf{Bode plot} of the open-loop transfer function $C(s)G(s)$.
+
+\textbf{What is a Bode plot?} A Bode plot is two graphs stacked vertically, both with frequency on the horizontal axis (log scale). The \textbf{top graph (magnitude)} shows the gain $|G(j\omega)|$ in decibels (dB) vs.\ frequency, where 0 dB means unity gain, $+20$ dB means gain $= 10$, and $-20$ dB means gain $= 0.1$ (conversion: $\text{dB} = 20 \log_{10}(|G|)$). The \textbf{bottom graph (phase)} shows the phase angle $\angle G(j\omega)$ in degrees vs.\ frequency; a phase of $-90$\textdegree{} means the output lags the input by a quarter cycle.
+
+With magnitude and phase in hand, stability margins can be read directly from these two curves. Find the \textbf{phase crossover frequency} $\omega_{pc}$ where the phase crosses $-180$\textdegree, and read the magnitude there---the distance from the magnitude curve to 0 dB is your \textbf{gain margin}. Then find the \textbf{gain crossover frequency} $\omega_{gc}$ where the magnitude crosses 0 dB, and read the phase there---the distance from the phase curve to $-180$\textdegree{} is your \textbf{phase margin}. If both margins are positive, the system is stable.
+
+For hand analysis, a few asymptotic rules let you sketch the Bode plot without a computer. Each pole at $s = -a$ contributes $-20$ dB/decade rolloff starting at $\omega = a$ and $-45$\textdegree{}/decade phase change centered there. Each zero does the opposite ($+20$ dB/decade and $+45$\textdegree{}/decade). An integrator ($1/s$) contributes $-20$ dB/decade at all frequencies and a constant $-90$\textdegree{} phase. The DC gain sets the vertical offset of the magnitude plot.
+
+With these rules, you can sketch approximate Bode plots by hand in under a minute---invaluable during debugging when you need a quick sanity check.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{bode_plot.pdf}
+\caption{Bode plot of an open-loop system $L(s) = \frac{100}{s(s+2)(s+10)}$. The gain margin (orange) and phase margin (green) are read directly from the plot. Both are positive, so the system is stable.}
+\end{figure}
+
+\textbf{Rule of thumb:} If your system is oscillating, your phase margin is too small. If your system is sluggish, your gain margin is too large (you are being too conservative). A phase margin of around 45\textdegree{} usually gives a good balance.
+
+\subsection{Controller Design via Transfer Functions}
+
+The game of classical controller design is: given a plant $G(s)$, choose a controller $C(s)$ such that the closed-loop system $\frac{C(s)G(s)}{1+C(s)G(s)}$ meets your performance specifications.
+
+There are many approaches---root locus (a graphical method that plots how the system's poles move in the complex plane as you sweep the controller gain), frequency response shaping (sculpting the Bode plot to meet specs), pole placement (directly choosing where the closed-loop poles should be)---but for competition robotics, the most practical approach is:
+
+\begin{enumerate}
+    \item Start with a PID controller (next section).
+    \item Tune it using systematic methods.
+    \item If PID is not enough, add feedforward or switch to modern methods (Section 6).
+\end{enumerate}
+
+This might sound unsophisticated, but here is the truth: PID controls an estimated 95\% of all industrial control loops in the world. It is simple, robust, and effective. Do not overcomplicate things.
+
+\subsection{PID Controller}
+
+The PID controller computes the control signal as the sum of three terms based on the error $e(t)$:
+
+\begin{equation}
+u(t) = K_p e(t) + K_i \int_0^t e(\tau) d\tau + K_d \frac{de(t)}{dt}
+\end{equation}
+
+Each term has a distinct role:
+
+\begin{itemize}
+    \item \textbf{P (Proportional):} ``The error is big, so push hard. The error is small, so push gently.'' It is the most intuitive term---a simple spring-like response.
+    \item \textbf{I (Integral):} ``The error has been nonzero for a while, so there must be a persistent disturbance. Push harder until it is gone.'' It eliminates steady-state error but can cause overshoot and windup.
+    \item \textbf{D (Derivative):} ``The error is changing fast, so the system has momentum. Apply the brakes.'' It adds damping and reduces overshoot but amplifies noise.
+\end{itemize}
+
+\textbf{An analogy:} Imagine you are driving toward a stop sign.
+\begin{itemize}
+    \item P says: ``The stop sign is 100 meters away, press the gas.'' Then: ``It is 10 meters away, ease off.''
+    \item D says: ``You are approaching fast---start braking NOW, not when you are close.''
+    \item I says: ``You stopped 1 meter past the sign. Roll back slowly until you are exactly there.''
+\end{itemize}
+
+\subsubsection{PID Controller -- Continuous Form}
+
+The transfer function of a PID controller is:
+\begin{equation}
+C(s) = K_p + \frac{K_i}{s} + K_d s = K_p \left(1 + \frac{1}{T_i s} + T_d s\right)
+\end{equation}
+
+where $T_i = K_p / K_i$ is the integral time and $T_d = K_d / K_p$ is the derivative time.
+
+\textbf{Understanding PID in the frequency domain:}
+
+The PID controller's Bode plot reveals why it works:
+\begin{itemize}
+    \item \textbf{At very low frequencies} ($\omega \to 0$): The $K_i/s$ term dominates. The gain goes to infinity ($+\infty$ dB), which is why I eliminates steady-state error --- infinite gain at DC means zero error at DC.
+    \item \textbf{At mid frequencies}: $K_p$ dominates. The gain is approximately $20\log_{10}(K_p)$ dB. This is the frequency range where your controller does most of its work.
+    \item \textbf{At high frequencies} ($\omega \to \infty$): $K_d s$ dominates. The gain increases with frequency at $+20$ dB/decade, which is why D amplifies noise --- it has increasing gain at the very frequencies where noise lives.
+\end{itemize}
+
+The PID has \textbf{two break frequencies}: $\omega_1 = 1/T_i$ (where I hands off to P) and $\omega_2 = 1/T_d$ (where P hands off to D). Between them, the controller behaves like pure proportional control. The Bode magnitude plot looks like a ``V'' shape (or bathtub) on a log scale: high gain at low frequencies (I), flat in the middle (P), rising at high frequencies (D).
+
+\textbf{Why the alternative form matters:} The form $K_p(1 + \frac{1}{T_i s} + T_d s)$ makes the physical meaning clearer: $T_i$ tells you ``how long the integral looks back'' and $T_d$ tells you ``how far ahead the derivative looks.'' Larger $T_i$ means slower integral action. Larger $T_d$ means more anticipation (but also more noise sensitivity).
+
+\textbf{Effect of each gain:}
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Increase} & \textbf{Rise time} & \textbf{Overshoot} & \textbf{Settling time} & \textbf{SS error} \\
+\midrule
+$K_p$ & Decrease & Increase & Small change & Decrease \\
+$K_i$ & Decrease & Increase & Increase & Eliminate \\
+$K_d$ & Small change & Decrease & Decrease & No effect \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Practical starting point:} Start with P-only control. If there is steady-state error, add I. If there is too much overshoot or oscillation, add D. Do not start with all three at once---you will not know which knob is doing what.
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Case Study: Tuning a Gimbal Yaw Motor --- Watching P, I, D in Action}
+
+\vspace{0.3em}
+Let us walk through tuning a RoboMaster gimbal yaw axis step by step. The motor is a GM6020, controlled via CAN bus, and we want it to track a target angle. The setpoint is a 90\textdegree{} step command.
+
+\textbf{Step 1: P-only ($K_p = 5.0$, $K_i = 0$, $K_d = 0$)}
+
+The gimbal swings toward the target quickly but overshoots by about 15\textdegree{}, oscillates 3--4 times, and settles with a \textbf{2\textdegree{} steady-state error}. Why the error? Because as the gimbal approaches the target, the error shrinks, and so does the P output. At some point, the P output equals the friction torque, and the gimbal stops \textit{before} reaching the target. P alone cannot eliminate error caused by constant disturbances (like friction or gravity).
+
+\textbf{Step 2: Add I ($K_p = 5.0$, $K_i = 0.5$, $K_d = 0$)}
+
+The steady-state error vanishes! The integral term slowly accumulates the small residual error and pushes the motor until the error is exactly zero. But now the overshoot is worse (${\sim}$20\textdegree{}), and there is a slow oscillation that takes 2 seconds to die out. The integral is ``remembering'' past errors and adding unnecessary force. This is the classic I-term trade-off: it fixes DC error but worsens transient response.
+
+\textbf{Step 3: Add D ($K_p = 5.0$, $K_i = 0.5$, $K_d = 2.0$)}
+
+The overshoot drops dramatically to about 5\textdegree{}, and the oscillation is almost gone. The derivative term senses the rapid approach and applies a braking torque \textit{before} the gimbal reaches the target. It is like an experienced driver who starts braking well before the intersection, not at the last second.
+
+\textbf{Step 4: Fine-tune ($K_p = 6.0$, $K_i = 0.3$, $K_d = 3.0$)}
+
+We increase $K_p$ slightly for a faster rise time, reduce $K_i$ (we only need it for static friction, not aggressive error correction), and increase $K_d$ for more damping. The result: fast, smooth tracking with less than 3\textdegree{} overshoot and zero steady-state error. The gimbal locks onto the target in under 0.3 seconds.
+
+\textbf{What happens if you crank each parameter too high?}
+\begin{itemize}[nosep]
+    \item $K_p$ too high: The gimbal oscillates violently---it overshoots so hard that the correction overshoots in the other direction. This is the onset of instability.
+    \item $K_i$ too high: Slow, sloshy oscillation. The integral ``remembers'' too aggressively and keeps overcorrecting. The gimbal wobbles like jelly.
+    \item $K_d$ too high: The motor buzzes and vibrates. The derivative amplifies sensor noise, causing rapid back-and-forth torque commands. Your motor sounds like an angry bee.
+\end{itemize}
+
+\textbf{The lesson:} Each parameter has a ``sweet spot.'' Understanding the \textit{physical mechanism} of each term (spring, memory, damper) helps you diagnose problems instantly instead of blindly twiddling knobs.
+\end{mdframed}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{pid_tuning.pdf}
+\caption{PID tuning progression on a second-order plant. P-only has steady-state error; PI eliminates it but overshoots more; PID damps the overshoot while maintaining zero steady-state error.}
+\end{figure}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1.5pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{The Most Dangerous PID Bug: Positive Feedback}
+
+\vspace{0.3em}
+Before we move on, let us see what happens when the sign convention is wrong. This is the single most common and most destructive PID bug, and every competition team encounters it at least once.
+
+Consider a gimbal motor where you accidentally write \texttt{error = measurement - setpoint} instead of \texttt{error = setpoint - measurement}. Alternatively, the motor spins in the direction \textit{opposite} to what you assumed, or the encoder counts in the wrong direction. The effect is identical: positive error produces a control output that \textit{increases} the error instead of decreasing it. You have turned negative feedback into positive feedback.
+
+The system does not oscillate gently. It does not overshoot and settle. It \textbf{runs away instantly}---the output slams to the actuator limit within milliseconds and stays there. The motor spins at full speed in the wrong direction. If your robot has no mechanical stop, something breaks.
+
+The figure below compares a correctly wired PID (blue) with a sign-error PID (red) on the same plant. Notice that the red curve does not resemble a ``badly tuned'' response---it is qualitatively different. No amount of gain tuning can fix a sign error; only correcting the sign convention will.
+
+\textbf{How to check:} Before closing the loop, command a small positive setpoint change and verify that the control output moves the plant in the direction that \textit{reduces} the error. If it does not, flip the sign. This takes 10 seconds and can save hours of confused debugging.
+\end{mdframed}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{positive_feedback_pid.pdf}
+\caption{Correct PID (blue) tracks the setpoint smoothly. A sign-error PID (red) creates positive feedback: the output runs away to the actuator limit within milliseconds. This is not a tuning problem---no gain adjustment can fix it. Only correcting the sign convention will.}
+\end{figure}
+
+\subsubsection{PID Controller -- Discrete Form}
+
+Your microcontroller cannot compute continuous integrals and derivatives. It works with discrete samples at a fixed time step $T_s$. The discrete PID is:
+
+\begin{equation}
+u[n] = K_p \, e[n] + K_i \, T_s \sum_{k=0}^{n} e[k] + K_d \frac{e[n] - e[n-1]}{T_s}
+\end{equation}
+
+Or in a more implementation-friendly \textbf{incremental (velocity) form}:
+\begin{equation}
+\Delta u[n] = K_p (e[n] - e[n-1]) + K_i \, T_s \, e[n] + K_d \frac{e[n] - 2e[n-1] + e[n-2]}{T_s}
+\end{equation}
+
+\begin{equation}
+u[n] = u[n-1] + \Delta u[n]
+\end{equation}
+
+The incremental form has a practical advantage: if your controller resets or glitches, it does not produce a sudden large output---it only adjusts by a small increment. This is safer for your hardware.
+
+\textbf{Pseudocode for a basic discrete PID:}
+\begin{verbatim}
+    error = setpoint - measurement
+    integral += error * dt
+    derivative = (error - prev_error) / dt
+    output = Kp * error + Ki * integral + Kd * derivative
+    prev_error = error
+\end{verbatim}
+
+\textbf{Warning:} This naive implementation has three problems that will bite you in practice: integral windup, derivative kick, and noise amplification. Read the next section.
+
+\subsubsection{Improved PID Controllers}
+
+The textbook PID has several well-known problems. They are not independent---windup, kick, and noise amplification all stem from the same root cause: the three PID terms behave poorly at actuator limits or at high frequencies. Here are the fixes that every competition robot should use.
+
+\textbf{1. Integral windup and anti-windup}
+
+\textit{The problem:} When the actuator saturates (motor at max voltage), the integral term keeps accumulating error, growing without bound. When the error finally reverses, the huge integral takes a long time to ``unwind,'' causing massive overshoot.
+
+\textit{The fix (clamping):}
+\begin{verbatim}
+    integral += error * dt
+    integral = clamp(integral, -max_integral, max_integral)
+\end{verbatim}
+
+\textit{Better fix (back-calculation):} When the output is saturated, reduce the integral term proportionally:
+\begin{verbatim}
+    output_raw = Kp * error + Ki * integral + Kd * derivative
+    output = clamp(output_raw, -max_output, max_output)
+    integral += (error + (output - output_raw) / Ki) * dt
+\end{verbatim}
+
+\textbf{2. Derivative kick}
+
+Having tamed the integral, the next hazard appears when the setpoint changes abruptly.
+
+\textit{The problem:} When the setpoint changes suddenly (step command), the error $e = r - y$ jumps instantaneously. The derivative term sees this as an infinite rate of change and produces a huge spike (``kick'') in the output.
+
+\textit{The fix:} Differentiate the \textit{measurement} instead of the error:
+\begin{verbatim}
+    derivative = -(measurement - prev_measurement) / dt
+\end{verbatim}
+
+The measurement changes smoothly (your motor cannot teleport), so there is no kick.
+
+\textbf{3. Derivative noise amplification}
+
+Differentiating measurement instead of error solves the kick, but introduces a subtler problem.
+
+\textit{The problem:} Differentiation amplifies high-frequency noise. If your measurement is noisy, the derivative term will produce wildly fluctuating outputs.
+
+\textit{The fix:} Low-pass filter the derivative:
+\begin{equation}
+D(s) = \frac{K_d s}{1 + \frac{K_d}{N K_p} s}
+\end{equation}
+
+In code, this is a first-order low-pass filter on the derivative term, with $N$ (typically 8--20) controlling the filter cutoff.
+
+\textbf{4. Setpoint weighting}
+
+The previous three fixes made the PID robust. This last one makes it flexible.
+
+Sometimes you want the P and D terms to respond differently to setpoint changes vs.\ disturbances. Setpoint weighting introduces parameters $b$ and $c$:
+\begin{equation}
+u = K_p(b \cdot r - y) + K_i \int (r - y) \, dt + K_d \frac{d(c \cdot r - y)}{dt}
+\end{equation}
+
+Setting $b = 1, c = 0$ (derivative on measurement only) is the most common configuration.
+
+\subsection{Advanced PID Improvements}
+
+The four fixes above are the \textit{minimum} every competition robot needs. But there are deeper structural improvements that can dramatically change performance. Each is analyzed here in the frequency domain and demonstrated with simulation.
+
+\subsubsection{Integral Separation}
+
+\textit{The problem:} When the error is large (e.g., right after a step command), the integral term accumulates aggressively. This ``pre-charged'' integral causes overshoot once the system approaches the setpoint --- the integral has ``remembered'' too much history from the high-error phase.
+
+\textit{The fix:} Only activate the integral term when the error is smaller than a threshold $\varepsilon$:
+\begin{equation}
+u_I = \begin{cases} K_i \int e \, dt & \text{if } |e| < \varepsilon \\ 0 & \text{if } |e| \geq \varepsilon \end{cases}
+\end{equation}
+
+\textbf{Frequency domain interpretation:} Integral separation effectively makes the controller \textbf{nonlinear} --- it behaves like a PD controller (no integral) for large errors and switches to a full PID for small errors. In the frequency domain, this means:
+\begin{itemize}
+    \item During large transients: the open-loop gain at DC is finite (PD only), so there is no infinite low-frequency gain. This prevents the integral from ``winding up'' during the transient.
+    \item Near steady state: the integral activates, providing infinite DC gain and zero steady-state error --- exactly what we need.
+\end{itemize}
+
+The controller essentially has \textbf{two different Bode plots} depending on the error magnitude: one without the $K_i/s$ pole at low frequencies (PD-like) and one with it (PID). The threshold $\varepsilon$ controls when the ``switch'' happens.
+
+\textbf{Code:}
+\begin{verbatim}
+    if (fabs(error) < epsilon) {
+        integral += Ki * error * dt;
+    }
+    // else: integral stays frozen (neither grows nor resets)
+\end{verbatim}
+
+\textbf{Choosing $\varepsilon$:} Set it to the approximate steady-state error of the PD-only controller. This way, the integral only activates when PD has done most of the work and just needs the final nudge.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{integral_separation.pdf}
+\caption{Left: integral separation (blue) reduces overshoot compared to standard PID (red), because the integral does not accumulate during the large initial transient. Right: the control signals during the first second --- note how the separated version has a smaller peak.}
+\end{figure}
+
+\subsubsection{Derivative Placement: PID vs PI-D vs I-PD}
+
+The standard PID applies all three terms to the error $e = r - y$. But there are \textbf{three structural variants} that change which signals P and D act on:
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Structure} & \textbf{P acts on} & \textbf{I acts on} & \textbf{D acts on} \\
+\midrule
+PID & error $(r - y)$ & error $(r - y)$ & error $(r - y)$ \\
+PI-D & error $(r - y)$ & error $(r - y)$ & measurement $(-y)$ \\
+I-PD & measurement $(-y)$ & error $(r - y)$ & measurement $(-y)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Frequency domain analysis:} All three structures have the \textit{same} closed-loop disturbance rejection transfer function (from disturbance to output). They differ only in the \textit{setpoint-to-output} transfer function:
+
+\begin{itemize}
+    \item \textbf{PID:} $\frac{Y}{R} = \frac{(K_d s^2 + K_p s + K_i) G(s)}{s + (K_d s^2 + K_p s + K_i) G(s)}$ --- the numerator has a $K_d s^2$ term, which creates a ``derivative kick'' in the step response (numerator zeros amplify the step's high-frequency content).
+    \item \textbf{PI-D:} $\frac{Y}{R} = \frac{(K_p s + K_i) G(s)}{s + (K_d s^2 + K_p s + K_i) G(s)}$ --- the $K_d s^2$ is removed from the setpoint path, eliminating the derivative kick. The denominator (stability, disturbance rejection) is unchanged.
+    \item \textbf{I-PD:} $\frac{Y}{R} = \frac{K_i \cdot G(s)}{s + (K_d s^2 + K_p s + K_i) G(s)}$ --- both $K_d s^2$ and $K_p s$ are removed from the setpoint path. The step response is the smoothest (no overshoot from P or D) but also the slowest.
+\end{itemize}
+
+\textbf{The key insight:} These structures let you independently tune how the system responds to \textit{setpoint changes} (via the numerator) vs.\ how it rejects \textit{disturbances} (via the denominator). Same denominator = same stability, same disturbance rejection. Different numerator = different setpoint tracking behavior.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{derivative_placement.pdf}
+\caption{Left: PID (red) shows a derivative kick spike and overshoot. PI-D (blue) eliminates the kick. I-PD (green) is the smoothest but slowest. Right: the control signal reveals the violent kick in standard PID --- this spike is what strips gears.}
+\end{figure}
+
+\subsubsection{Filtered PID: Frequency Domain Proof}
+
+The ideal PID controller $C(s) = K_p + K_i/s + K_d s$ has a fundamental problem: the $K_d s$ term has \textbf{unbounded gain at high frequencies}. On a Bode plot, the magnitude of $K_d s$ rises at $+20$ dB/decade forever. This means:
+
+\begin{enumerate}
+    \item Sensor noise (which lives at high frequencies) gets amplified infinitely.
+    \item The controller demands infinitely fast actuator response, which is physically impossible.
+    \item In discrete time, the derivative term aliases high-frequency noise into the control band.
+\end{enumerate}
+
+\textbf{The fix --- filtered derivative:}
+\begin{equation}
+C_{\text{filtered}}(s) = K_p + \frac{K_i}{s} + \frac{K_d N s}{s + N}
+\end{equation}
+
+The term $\frac{Ns}{s+N}$ is a first-order high-pass filter with cutoff at $\omega = N$ rad/s. Below $N$, it behaves like a pure derivative ($\approx s$). Above $N$, it saturates to a constant gain $N$. On the Bode plot:
+
+\begin{itemize}
+    \item Below $\omega = N$: the filtered PID is identical to the ideal PID. Same performance.
+    \item Above $\omega = N$: the magnitude \textbf{flattens} instead of rising forever. Maximum derivative gain is $K_d \cdot N$. Noise amplification is bounded.
+\end{itemize}
+
+\textbf{Choosing $N$:} Typical values are $N = 8$--$20$. The rule: $N$ should be large enough that the derivative still works effectively at the controller bandwidth, but small enough to attenuate noise.\ Specifically: $N > 5 \times \omega_{\text{bandwidth}}$ (so the filter does not eat into useful derivative action) and $N < \omega_{\text{noise}} / 3$ (so noise is attenuated).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{pid_bode_comparison.pdf}
+\caption{Bode plot: ideal PID (red) has gain rising forever at high frequencies --- it will amplify every bit of sensor noise. Filtered PID (blue) flattens above $\omega = N$, bounding the noise amplification. Below the filter cutoff, both are identical.}
+\end{figure}
+
+\textbf{Output-stage LPF:} An alternative approach is to low-pass filter the \textit{entire} PID output before sending it to the actuator:
+\begin{equation}
+U(s) = \frac{\omega_f}{s + \omega_f} \cdot C(s) \cdot E(s)
+\end{equation}
+
+This is simpler to implement (one LPF after the PID) but it also filters the P and I terms, which can slow down the response. The derivative-only filter is preferred because it targets the problem precisely.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{pid_noise_filtering.pdf}
+\caption{Top: position response with noisy measurements. Unfiltered PID (red) oscillates due to noise-amplified derivative. Filtered derivative (blue) and output LPF (green) both smooth the response. Bottom: the unfiltered control signal is violent --- it would destroy a real motor.}
+\end{figure}
+
+\subsubsection{Two-Degree-of-Freedom PID (2-DOF)}
+
+Standard PID has \textbf{one degree of freedom}: you choose $K_p$, $K_i$, $K_d$ to meet your specifications. But there is a fundamental conflict: gains that give good \textit{setpoint tracking} (fast, low overshoot for step commands) are different from gains that give good \textit{disturbance rejection} (fast return after a bump).
+
+The 2-DOF PID resolves this by adding setpoint weighting parameters $b$ (on P) and $c$ (on D):
+\begin{equation}
+u = K_p(b \cdot r - y) + K_i \int (r - y) \, dt + K_d \frac{d(c \cdot r - y)}{dt}
+\end{equation}
+
+\textbf{Frequency domain analysis:} The closed-loop transfer functions become:
+\begin{align}
+\frac{Y}{R} &= \frac{(b K_p + c K_d s + K_i / s) \cdot G(s)}{1 + C(s) G(s)} \quad \text{(setpoint tracking --- tuned by $b$, $c$)} \\[4pt]
+\frac{Y}{D} &= \frac{G(s)}{1 + C(s) G(s)} \quad \text{(disturbance rejection --- independent of $b$, $c$!)}
+\end{align}
+
+\textbf{The magic:} $b$ and $c$ \textit{only} affect the setpoint transfer function. The disturbance rejection is controlled entirely by $K_p$, $K_i$, $K_d$. You can now:
+\begin{enumerate}
+    \item Tune $K_p$, $K_i$, $K_d$ for aggressive disturbance rejection.
+    \item Separately reduce $b$ (typically $0.5$--$0.8$) to soften the setpoint response and reduce overshoot.
+    \item Set $c = 0$ to eliminate derivative kick (this is the PI-D structure).
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{two_dof_pid.pdf}
+\caption{Left: different $b$ values control setpoint overshoot independently. Right: disturbance rejection at $t = 1.0$s is \textbf{identical} for all $b$ values --- proving that 2-DOF truly decouples the two objectives.}
+\end{figure}
+
+\subsubsection{Fuzzy PID}
+
+\textbf{Motivation.} A standard PID controller uses fixed gains $K_p$, $K_i$, $K_d$. But the \emph{optimal} gains depend on the operating conditions: when the error is large, an aggressive response is needed; when the error is small, fine control is more appropriate. Fuzzy PID adapts $K_p$, $K_i$, $K_d$ in real time based on the current error $e$ and its rate of change $\dot{e}$.
+
+\textbf{How it works.}
+\begin{enumerate}
+    \item \textbf{Fuzzification.} Define fuzzy sets for the error $e$ and its derivative $\dot{e}$. A common choice uses five linguistic levels: NB (Negative Big), NS (Negative Small), ZO (Zero), PS (Positive Small), PB (Positive Big). Membership functions (typically triangular or trapezoidal) map the crisp values of $e$ and $\dot{e}$ into degrees of membership in each fuzzy set.
+    \item \textbf{Rule table.} A rule table (e.g., $5 \times 5$ or $7 \times 7$) maps every combination of $(e,\, \dot{e})$ to adjustments $(\Delta K_p,\, \Delta K_i,\, \Delta K_d)$. Rules are written in plain language, for example:
+    \begin{itemize}
+        \item ``If $e$ is PB and $\dot{e}$ is PB $\Rightarrow$ increase $K_p$ strongly, decrease $K_i$ (to avoid windup), increase $K_d$.''
+        \item ``If $e$ is ZO and $\dot{e}$ is NS $\Rightarrow$ keep $K_p$ moderate, enable $K_i$ for steady-state accuracy, reduce $K_d$.''
+    \end{itemize}
+    \item \textbf{Defuzzification.} The fired rules are aggregated (commonly by centre-of-gravity) to produce crisp values of $\Delta K_p$, $\Delta K_i$, $\Delta K_d$.
+    \item \textbf{Gain update.} The actual PID gains are:
+    \[
+        K_p = K_{p0} + \Delta K_p, \qquad K_i = K_{i0} + \Delta K_i, \qquad K_d = K_{d0} + \Delta K_d
+    \]
+    where $K_{p0}$, $K_{i0}$, $K_{d0}$ are the baseline gains.
+\end{enumerate}
+
+\textbf{Example rule table for $\Delta K_p$ (simplified $3 \times 3$).}
+\begin{center}
+\begin{tabular}{c|ccc}
+    $e$ \textbackslash{} $\dot{e}$ & N & Z & P \\
+    \hline
+    N & PB & PS & ZO \\
+    Z & PS & ZO & NS \\
+    P & ZO & NS & NB \\
+\end{tabular}
+\end{center}
+Reading: when the error is Negative and getting more negative ($\dot{e} = $ N), increase $K_p$ strongly (PB) to drive the system back; when both are near Zero, no adjustment is needed (ZO).
+
+\textbf{Practical assessment.}
+\begin{itemize}
+    \item \textbf{Advantage:} Fuzzy PID adapts to changing conditions---load changes, nonlinear operating regions---without requiring an explicit system model.
+    \item \textbf{Disadvantage:} The rule table design is largely empirical. In effect, you trade ``tuning 3 gains'' for ``tuning a table of rules,'' which can be harder to validate rigorously.
+    \item \textbf{When to use:} In competition robotics, a well-tuned fixed PID or 2-DOF PID usually suffices. Fuzzy PID is worth considering when the system operates across very different regimes (e.g., a chassis that must handle both empty and fully loaded conditions).
+    \item \textbf{Compared to gain scheduling:} Gain scheduling manually switches between pre-tuned PID parameter sets at discrete operating points, which can cause transients at the switching boundaries. Fuzzy PID provides smoother transitions because the membership functions naturally interpolate between rules.
+\end{itemize}
+
+\subsection{PID Tuning Methods}
+
+You have designed a PID controller. Now comes the eternal question: what values of $K_p$, $K_i$, $K_d$ should you use?
+
+\subsubsection{Empirical Tuning}
+
+The most common method in competitions, because it requires no math and works surprisingly well.
+
+\textbf{Ziegler-Nichols ultimate gain method:}
+\begin{enumerate}
+    \item Set $K_i = 0$ and $K_d = 0$.
+    \item Gradually increase $K_p$ until the system oscillates with constant amplitude. This is the \textbf{ultimate gain} $K_u$, and the oscillation period is $T_u$.
+    \item Use the following table to set your PID gains:
+\end{enumerate}
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Controller} & $K_p$ & $K_i$ & $K_d$ \\
+\midrule
+P & $0.5 K_u$ & --- & --- \\
+PI & $0.45 K_u$ & $0.54 K_u / T_u$ & --- \\
+PID & $0.6 K_u$ & $1.2 K_u / T_u$ & $0.075 K_u T_u$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Warning:} Ziegler-Nichols gives aggressive tuning with about 25\% overshoot. For many competition applications, you will want to reduce $K_p$ and $K_i$ from these values.
+
+\textbf{Manual tuning (the practical way):}
+\begin{enumerate}
+    \item Start with $K_p$ only. Increase until the response is fast but slightly oscillatory.
+    \item Add $K_d$ to damp the oscillation. Increase until the oscillation is gone.
+    \item If there is steady-state error, add a small $K_i$. Increase slowly---too much causes slow oscillation.
+    \item Fine-tune. Test with different setpoints and disturbances.
+\end{enumerate}
+
+\textbf{Competition tip:} Always tune with the \textit{actual load} on the robot, not with the motor running freely. A gimbal with a camera mounted behaves very differently from a bare motor on a test bench.
+
+\subsubsection{Tuning with MATLAB Simulink}
+
+If you have access to MATLAB, you can model your system and use the \textbf{PID Tuner} app or \textbf{Simulink Control Design} to find optimal gains automatically.
+
+\textbf{Basic workflow:}
+\begin{enumerate}
+    \item Create a Simulink model of your plant (motor + load).
+    \item Add a PID Controller block.
+    \item Use the ``Tune'' button in the PID block to open the PID Tuner.
+    \item Adjust the response time and robustness sliders.
+    \item Export the gains to your embedded code.
+\end{enumerate}
+
+This is excellent for getting a starting point before fine-tuning on hardware. The key challenge is getting an accurate plant model---if the model is wrong, the tuning will be wrong.
+
+\subsection{System Identification: Figuring Out What Your Plant Actually Does}
+
+So far, we have assumed that you \textit{know} your plant model --- the transfer function $G(s)$ or the state-space matrices $A$, $B$, $C$, $D$. But where do these come from? You have two options:
+
+\begin{enumerate}
+    \item \textbf{First-principles modeling:} Write down the physics equations (Newton's laws, Kirchhoff's laws, etc.) and derive the model analytically. This is what we did for the DC brushed motor in Section 3. It works well when the physics is simple and well-understood.
+    \item \textbf{System identification (sysid):} Apply known inputs to the real system, measure the outputs, and \textit{fit} a mathematical model to the input-output data. This is what you do when the physics is too complex, unknown, or when you want to capture effects that first-principles models miss (nonlinear friction, cable stiffness, gear backlash).
+\end{enumerate}
+
+In practice, you almost always use \textbf{both}: first-principles to get the model structure (``it is a second-order system with a delay''), then sysid to get the actual parameter values ($K$, $\tau$, $\zeta$, etc.).
+
+\subsubsection{Step Response Method (Time Domain)}
+
+The simplest sysid technique. Apply a step input and record the output.
+
+\textbf{For a first-order system} $G(s) = \frac{K}{\tau s + 1}$:
+\begin{enumerate}
+    \item Apply a step of amplitude $A$ to the motor voltage.
+    \item Record the velocity response $y(t)$.
+    \item Read off:
+    \begin{itemize}[nosep]
+        \item $K$ = (final steady-state value) / $A$ = DC gain
+        \item $\tau$ = time to reach 63.2\% of the final value = time constant
+    \end{itemize}
+\end{enumerate}
+
+\textbf{For a second-order system} $G(s) = \frac{K\omega_n^2}{s^2 + 2\zeta\omega_n s + \omega_n^2}$:
+\begin{enumerate}
+    \item Apply a step and record.
+    \item Read off:
+    \begin{itemize}[nosep]
+        \item $K$ = (final value) / (step amplitude)
+        \item $M_p$ = percent overshoot $\Rightarrow$ $\zeta = \frac{-\ln(M_p/100)}{\sqrt{\pi^2 + \ln^2(M_p/100)}}$.
+        This is obtained by inverting the overshoot formula $M_p = e^{-\pi\zeta/\sqrt{1-\zeta^2}}$: take the logarithm of both sides, $\ln(M_p/100) = -\pi\zeta/\sqrt{1-\zeta^2}$, square both sides, and solve for $\zeta$.
+        \item $t_p$ = time to first peak $\Rightarrow$ $\omega_n = \frac{\pi}{t_p \sqrt{1 - \zeta^2}}$
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Practical tips:}
+\begin{itemize}
+    \item Log data at the highest rate your sensor supports (1 kHz+ for motors).
+    \item Run the test 3--5 times and average to reduce noise.
+    \item Test with different step amplitudes to check linearity. If the response shape changes, the system is nonlinear.
+    \item Record both the rising step (0 $\to$ V) and the falling step (V $\to$ 0). If they differ, you have asymmetric dynamics (e.g., different friction in forward and reverse).
+\end{itemize}
+
+\subsubsection{Frequency Response Method (Bode Identification)}
+
+Apply sinusoidal inputs at different frequencies and measure the gain and phase shift at each frequency. This directly constructs the Bode plot of the system.
+
+\textbf{Procedure:}
+\begin{enumerate}
+    \item Apply $u(t) = A \sin(\omega t)$ to the system.
+    \item Wait for transients to die out (several periods).
+    \item Measure the steady-state output amplitude $B$ and phase lag $\phi$.
+    \item Compute gain: $|G(j\omega)| = B/A$ and phase: $\angle G(j\omega) = \phi$.
+    \item Repeat for $\omega$ from 0.1$\times$ to 10$\times$ the expected bandwidth.
+\end{enumerate}
+
+\textbf{Why this is powerful:} The Bode plot directly tells you the system order (count the rolloff slopes), the resonance frequencies (peaks in the magnitude plot), and the time delays (linear phase decrease). You can then fit a transfer function to match the measured Bode plot.
+
+\textbf{Faster alternative --- chirp signal:} Instead of testing one frequency at a time, apply a \textbf{chirp} (frequency sweep) that ramps from low to high frequency over a few seconds. Then compute the FFT of both input and output, and divide: $G(j\omega) = \frac{Y(j\omega)}{U(j\omega)}$. One experiment gives you the entire Bode plot.
+
+\subsubsection{Least-Squares Identification (Automated)}
+
+For digital systems, sysid can be fully automated. Given input-output data $\{u[k], y[k]\}$, fit a discrete transfer function:
+\begin{equation}
+y[k] = -a_1 y[k{-}1] - \cdots - a_n y[k{-}n] + b_0 u[k{-}1] + \cdots + b_m u[k{-}m{-}1]
+\end{equation}
+
+This is a \textbf{linear regression} problem. Stack all samples into a matrix equation $\mathbf{y} = \Phi \boldsymbol{\theta}$ and solve by least squares: $\boldsymbol{\theta} = (\Phi^T \Phi)^{-1} \Phi^T \mathbf{y}$.
+
+\textbf{In Python (3 lines):}
+\begin{verbatim}
+    from scipy.signal import dlsim
+    from scipy.optimize import curve_fit
+    # Or use the dedicated library:
+    import control
+    sys_id = control.tf(num, den, dt)  # fit to data
+
+    # Even simpler with MATLAB:
+    % data = iddata(y, u, Ts);
+    % sys = tfest(data, 2);  % fit 2nd-order TF
+    % bode(sys);  % inspect the result
+\end{verbatim}
+
+\textbf{MATLAB's System Identification Toolbox} is the gold standard for this. The function \texttt{tfest(data, n)} fits an $n$-th order transfer function to recorded data automatically. Start with $n = 1$, increase until the fit is good (typically $n = 2$ is enough for motors).
+
+\subsubsection{Practical Sysid Workflow for Competition Robots}
+
+\begin{enumerate}
+    \item \textbf{Open-loop step test:} Disable all controllers. Send a known voltage step to the motor. Log encoder/IMU at maximum rate.
+    \item \textbf{Quick estimate:} Eyeball the step response for $K$ and $\tau$ (first-order) or $K$, $\zeta$, $\omega_n$ (second-order).
+    \item \textbf{Validate:} Simulate the identified model with the same step input. Overlay the simulation on the real data. If they match, you are done.
+    \item \textbf{Refine if needed:} If the first-order model is not accurate enough, try second-order. If there is a visible delay, add a time delay term $e^{-\tau_d s}$.
+    \item \textbf{Feed into controller design:} Use the identified model for PID tuning (MATLAB PID Tuner), LQR design ($A$, $B$ matrices), or feedforward computation.
+\end{enumerate}
+
+\textbf{Common gotchas:}
+\begin{itemize}
+    \item \textbf{Friction:} Static friction (stiction) makes the system nonlinear at low speeds. Your linear model will be inaccurate near zero velocity. Consider identifying separate models for ``moving'' and ``starting.''
+    \item \textbf{Backlash:} Gear backlash creates a dead zone. The system does not respond to small inputs until the gears engage. This shows up as a flat region in the step response.
+    \item \textbf{Saturation:} If your step amplitude drives the motor into saturation, the identified model will be wrong. Use a step amplitude within the linear operating range (typically 30--70\% of max voltage).
+    \item \textbf{Coupling:} On a multi-axis system (gimbal, chassis), moving one axis can excite another. Identify each axis separately with the others locked if possible.
+\end{itemize}
+
+\textbf{Why sysid matters:} A controller designed for a model with 20\% parameter error will have 20\% worse performance than one designed for the true model. Five minutes of data logging + sysid can save hours of manual PID tuning. This is especially true for LQR and MPC, which depend heavily on accurate $A$ and $B$ matrices.
+
+\subsection{Feedforward Control}
+
+Feedback is reactive---it waits for an error to occur, then corrects. Feedforward is \textbf{proactive}---it predicts what the system needs and provides it immediately.
+
+\textbf{Example:} You want your gimbal to track a target moving at constant velocity. With pure feedback, the controller is always chasing the target, resulting in a tracking error. With feedforward, you calculate the motor voltage needed to maintain that velocity and add it to the feedback output:
+\begin{equation}
+u(t) = u_{\text{feedforward}}(t) + u_{\text{feedback}}(t)
+\end{equation}
+
+The feedforward term handles the ``expected'' part of the motion; feedback handles the ``unexpected'' part (disturbances, model errors).
+
+\textbf{Gravity compensation} is a common feedforward term for robotic arms and gimbals:
+\begin{equation}
+u_{\text{ff}} = \tau_{\text{gravity}}(\theta) = mgl\sin(\theta)
+\end{equation}
+
+Without this term, your feedback controller wastes effort fighting gravity instead of tracking the reference.
+
+\textbf{The golden rule of feedforward:} Feedforward relies on the model, so it is only as good as the model. Feedback does not rely on the model, so it is always robust. \textbf{Use feedforward to improve performance, but always keep feedback as your safety net.}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Case Study: Cascaded PID on a Gimbal --- Why Two Loops Beat One}
+
+\vspace{0.3em}
+You want your gimbal to point at a specific angle. The naive approach: one PID loop from angle error directly to motor voltage. This works, but it is mediocre. Here is why, and what the pros do instead.
+
+\textbf{The problem with single-loop control:}
+
+The transfer function from voltage to angle is second-order (motor dynamics + integration from velocity to position). A single PID must handle both the fast electrical/current dynamics and the slow mechanical dynamics simultaneously. It is like asking one person to drive the car AND navigate at the same time---doable but stressful.
+
+\textbf{The cascaded (nested) loop solution:}
+
+Use two PID controllers in series:
+\begin{enumerate}[nosep]
+    \item \textbf{Inner loop (velocity):} Runs at 1 kHz. Input: desired velocity. Output: motor voltage command. This loop is fast and rejects disturbances (friction, load changes) quickly.
+    \item \textbf{Outer loop (position):} Runs at 200 Hz. Input: desired angle. Output: desired velocity (which becomes the inner loop's setpoint). This loop handles the slower position tracking.
+\end{enumerate}
+
+\textbf{Why cascaded is better:}
+\begin{itemize}[nosep]
+    \item Each loop handles one ``layer'' of dynamics. Simpler to tune---tune inner loop first (ignoring outer loop), then tune outer loop.
+    \item The inner loop acts as a ``shield''---it rejects disturbances before the outer loop even sees them. If someone bumps your gimbal, the velocity loop corrects within milliseconds.
+    \item Limits are enforced at each level: the outer loop outputs a velocity command that is naturally bounded, preventing sudden large torques.
+\end{itemize}
+
+\textbf{Adding feedforward to the mix:}
+
+Now add a velocity feedforward from the trajectory planner:
+\[
+\omega_{\text{cmd}} = \underbrace{K_p(\theta_{\text{ref}} - \theta)}_{\text{outer PID}} + \underbrace{\dot{\theta}_{\text{ref}}}_{\text{feedforward}}
+\]
+
+The feedforward gives the inner loop the velocity it needs to follow the reference trajectory. The outer PID only corrects small tracking errors. Result: smooth, accurate tracking even during fast motion. This is the architecture used by nearly every competitive RoboMaster gimbal.
+
+\textbf{Rule of thumb for cascaded loops:}
+\begin{itemize}[nosep]
+    \item Inner loop should be 5--10$\times$ faster than outer loop.
+    \item Tune from inside out: inner first, then outer.
+    \item Each loop should look like a simple first-order system to the loop above it.
+\end{itemize}
+\end{mdframed}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{cascaded_pid.pdf}
+\caption{Cascaded PID (blue) vs single PID (red) on a gimbal motor. Both track the 90\textdegree{} setpoint, but when a disturbance hits at $t=1.5$s, the cascaded architecture recovers much faster because the inner velocity loop absorbs the shock.}
+\end{figure}
+
+\subsection{PID Architectures: Single, Cascaded, and Parallel-Cascaded}
+
+The case study above demonstrated why cascaded PID outperforms a single-loop PID on a single axis. In practice, competition robots require coordinated multi-axis control (e.g., gimbal yaw + pitch, chassis X + Y + rotation). This section systematically compares three PID architectures and provides ready-to-use code for each.
+
+\subsubsection{Architecture 1: Single-Loop PID}
+
+The simplest architecture: one PID controller per axis, from position error directly to motor voltage.
+
+\[
+u(t) = K_p e(t) + K_i \int_0^t e(\tau)\,d\tau + K_d \frac{de(t)}{dt}, \qquad e(t) = r(t) - y(t)
+\]
+
+\textbf{Advantages:} Simple to implement, only one set of gains to tune per axis, minimal computational cost.
+
+\textbf{Limitations:} The single controller must simultaneously handle fast dynamics (electrical/current) and slow dynamics (mechanical/position). This coupling makes tuning difficult---increasing gains for faster tracking often triggers oscillation. Disturbance rejection is slow because the controller only reacts after the disturbance propagates through the entire plant to the position output.
+
+\subsubsection{Architecture 2: Cascaded (Series) PID}
+
+Two nested loops per axis: the outer loop generates a velocity (or current) setpoint for the inner loop.
+
+\[
+\omega_{\text{cmd}} = \text{PID}_{\text{outer}}\bigl(\theta_{\text{ref}} - \theta\bigr), \qquad
+u = \text{PID}_{\text{inner}}\bigl(\omega_{\text{cmd}} - \omega\bigr)
+\]
+
+The main advantage is separation of concerns: each loop handles a single dynamic layer, making tuning straightforward. The inner loop intercepts disturbances before they propagate to the outer loop, dramatically improving disturbance rejection. And because the outer loop's output is a bounded velocity command (not a raw voltage), saturation handling comes for free.
+
+These advantages translate into three concrete design rules. First, the inner loop bandwidth should be 5--10$\times$ that of the outer loop, so the outer loop ``sees'' the inner loop as an obedient, fast actuator. Second, from the outer loop's perspective, the inner loop should behave like a simple first-order system---well-tuned, fast, no overshoot. Third, always tune from inside out: stabilize the inner loop with the outer loop disabled, then close the outer loop.
+
+\subsubsection{Architecture 3: Parallel-Cascaded PID (Multi-Axis)}
+
+On a multi-axis system (e.g., a gimbal with yaw and pitch), each axis runs its own cascaded PID controller \textit{in parallel}. The axes share sensor data and can optionally include cross-axis coupling compensation.
+
+\textbf{Why coupling matters:} On a gimbal, pitching the camera shifts the center of mass, creating a torque disturbance on the yaw axis. Without compensation, the yaw controller sees this as an unexpected disturbance and reacts slowly. With a cross-coupling feedforward term, the yaw controller anticipates the pitch motion and compensates proactively:
+
+\[
+u_{\text{yaw}} = \text{CascadedPID}_{\text{yaw}}(\cdot) + k_{\text{cross}} \cdot \dot{\theta}_{\text{pitch}}
+\]
+
+\begin{verbatim}
+    // Parallel-cascaded PID with cross-coupling compensation
+    struct GimbalController {
+        CascadedPID yaw;
+        CascadedPID pitch;
+        float cross_yaw_from_pitch = 0.0f;  // coupling gain
+
+        struct Output { float yaw_voltage; float pitch_voltage; };
+
+        Output update(float yaw_ref, float yaw_pos, float yaw_vel,
+                      float pitch_ref, float pitch_pos, float pitch_vel,
+                      float yaw_vel_ff = 0, float pitch_vel_ff = 0) {
+            // Cross-coupling compensation: pitch rate disturbs yaw
+            float cross_comp = cross_yaw_from_pitch * pitch_vel;
+
+            float u_pitch = pitch.update(pitch_ref, pitch_pos,
+                                         pitch_vel, pitch_vel_ff);
+            float u_yaw   = yaw.update(yaw_ref, yaw_pos,
+                                       yaw_vel, yaw_vel_ff)
+                          + cross_comp;
+            return {u_yaw, u_pitch};
+        }
+
+        void reset() { yaw.reset(); pitch.reset(); }
+    };
+\end{verbatim}
+
+\subsubsection{Comparison Summary}
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+ & \textbf{Single PID} & \textbf{Cascaded PID} & \textbf{Parallel-Cascaded} \\
+\midrule
+Loops per axis & 1 & 2 & 2 \\
+Tuning difficulty & Medium & Low (layered) & Low (layered) \\
+Disturbance rejection & Slow & Fast & Fast \\
+Cross-axis coupling & Not handled & Not handled & Compensated \\
+Code complexity & Minimal & Moderate & Moderate \\
+Typical use case & Simple actuators & Single-axis gimbal & Multi-axis gimbal \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{pid_architectures.pdf}
+\caption{PID architecture comparison on a dual-axis gimbal. Top: yaw axis with disturbance at $t=2$s and cross-coupling from pitch motion at $t=0.5$s. Bottom: pitch axis. The parallel-cascaded architecture (green) with cross-coupling compensation provides the cleanest yaw response under both disturbance and coupling.}
+\end{figure}
+
+\textbf{Practical recommendation:} For any system with more than one controlled axis, use the parallel-cascaded architecture. The additional code complexity is minimal (a single struct wrapping two \texttt{CascadedPID} objects), while the performance gain from cross-coupling compensation and layered tuning is substantial.
+
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Practical Example: Two-Wheeled Self-Balancing Scooter (Parallel PID)}
+
+\vspace{0.3em}
+A two-wheeled self-balancing robot (like a Segway) is a classic \textit{parallel} multi-loop control problem. At least three objectives must be controlled simultaneously: balance (tilt angle), velocity, and yaw (steering). Each objective gets its own controller, and their outputs are \textit{summed} at the motor level.
+
+\begin{itemize}[nosep]
+    \item \textbf{Balance loop (fast):} PD controller on tilt angle $\phi$ from the IMU. This is the most critical loop---it must run at $\geq 500$\,Hz and react within milliseconds. The output is a torque command to both wheels (same direction).
+    \item \textbf{Velocity loop (medium):} PI controller on wheel velocity (encoder). The reference comes from the user joystick. The output is added to the balance torque. This loop prevents the robot from drifting while maintaining balance.
+    \item \textbf{Yaw loop (slow):} P controller on yaw rate (gyroscope). The output is a \textit{differential} torque---positive to the left wheel, negative to the right (or vice versa)---to turn the robot.
+\end{itemize}
+
+\textbf{Motor command fusion:}
+\[
+u_{\text{left}}  = \underbrace{\tau_{\text{balance}}}_{\text{PD on } \phi} + \underbrace{\tau_{\text{velocity}}}_{\text{PI on } v} + \underbrace{\tau_{\text{yaw}}}_{\text{P on } \dot{\psi}}
+\]
+\[
+u_{\text{right}} = \tau_{\text{balance}} + \tau_{\text{velocity}} - \tau_{\text{yaw}}
+\]
+
+The sign flip on $\tau_{\text{yaw}}$ creates differential drive for steering. Each loop is tuned independently: balance first (the robot must stand before it can move), then velocity, then yaw.
+\end{mdframed}
+
+\subsubsection{Output Conflict in Parallel PID}
+
+When multiple PID controllers run in parallel and their outputs are summed into the same actuator, they can \textit{fight each other}. This is the fundamental risk of parallel architectures.
+
+\textbf{The balancing scooter conflict.} Consider the balance loop commanding ``tilt forward to stay upright'' while the velocity loop simultaneously commands ``tilt backward to slow down.'' Both are correct in their own frame, but their summed output partially cancels, leaving the motor with a weak, confused command. In the worst case, the loops oscillate against each other: the velocity loop creates a tilt disturbance that the balance loop corrects, which changes velocity, which triggers the velocity loop again---an inter-loop limit cycle.
+
+\textbf{Why this happens:} In a cascade, the outer loop \textit{only} talks to the inner loop, and the inner loop \textit{only} talks to the actuator. The hierarchy prevents conflict by construction. In a parallel architecture, all loops talk to the actuator directly, so their objectives must be \textit{naturally compatible}. When they are not, the summed output becomes incoherent.
+
+\textbf{Mitigation strategies:}
+\begin{enumerate}[nosep]
+    \item \textbf{Bandwidth separation.} Ensure each loop operates in a distinct frequency band: the fastest loop (balance) dominates at high frequencies, the slowest (yaw) only acts at low frequencies. Conflicting commands are then separated in time scale and do not interfere.
+    \item \textbf{Priority saturation.} Clamp the slower loops' outputs so they cannot override the faster, safety-critical loop. For example, limit $|\tau_{\text{velocity}}|$ so it never exceeds a fraction of $|\tau_{\text{balance}}|$.
+    \item \textbf{Output budget allocation.} Reserve a fixed portion of actuator range for each loop: e.g., 60\% for balance, 30\% for velocity, 10\% for yaw. This guarantees that no loop can starve another.
+    \item \textbf{Convert to cascade.} If conflicts persist, restructure the controller so the velocity loop outputs a \textit{tilt angle reference} for the balance loop, rather than a torque that competes with it. This eliminates the conflict by design---at the cost of increased coupling between loops.
+\end{enumerate}
+
+\textbf{Rule of thumb:} parallel PID works well when the controlled variables are \textit{physically orthogonal} (e.g., balance vs.\ yaw on a scooter---one is sagittal, the other is lateral). It struggles when two loops try to control variables that share the same actuator degree of freedom (e.g., both balance and velocity demand sagittal torque).
+
+\subsubsection{Food for Thought: Is Inner-Loop $K_p$ the Same as Outer-Loop $K_d$?}
+
+Consider a position--velocity cascade. The outer loop outputs a velocity reference proportional to position error: $v_{\text{ref}} = K_p^{\text{outer}} (r - y)$. The inner loop then tracks this velocity. Now consider a single PID on position: the derivative term produces $K_d \cdot \dot{e} \approx -K_d \cdot \dot{y}$, which is a feedback proportional to velocity.
+
+\textbf{Are they equivalent?} \textit{Almost, but not quite.} In steady-state linear analysis, the outer $K_p$ acting through an ideal inner velocity loop produces an effect similar to $K_d$ on position error. Specifically, if the inner loop has unity gain and no dynamics (instantaneous velocity tracking), then:
+\[
+u = K_p^{\text{inner}} \bigl(K_p^{\text{outer}}(r-y) - \dot{y}\bigr)
+\]
+which expands to terms resembling $K_p \cdot e + K_d \cdot (-\dot{y})$ with $K_d \approx K_p^{\text{inner}}$.
+
+\textbf{But the cascade is superior in practice because:}
+\begin{enumerate}[nosep]
+    \item The inner loop has its \textit{own} integral term that eliminates velocity-level disturbances (friction, load changes) without relying on the outer loop.
+    \item The inner loop \textit{bandwidth-limits} the outer command, preventing the outer loop from demanding physically impossible accelerations. A raw $K_d$ has no such protection---it amplifies high-frequency noise and can saturate the actuator.
+    \item The inner loop provides a \textit{measured} velocity signal, not a numerically differentiated one. Differentiation amplifies noise; direct measurement does not.
+\end{enumerate}
+
+\textbf{Bottom line:} the derivative term and the inner proportional gain are conceptually related---both inject velocity-dependent damping. But the cascade architecture provides noise rejection, disturbance rejection at the velocity level, and implicit rate limiting that a bare $K_d$ term cannot match.

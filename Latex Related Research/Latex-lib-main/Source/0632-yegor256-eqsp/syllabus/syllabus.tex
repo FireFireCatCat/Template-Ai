@@ -1,0 +1,332 @@
+% SPDX-FileCopyrightText: Copyright (c) 2022 Yegor Bugayenko
+% SPDX-License-Identifier: MIT
+
+\documentclass[nobrand,anonymous,nodate,nosecurity]{huawei}
+\usepackage{multicol}
+\usepackage{href-ul}
+\usepackage{ffcode}
+\begin{document}
+
+{\sffamily{\bfseries\Large Ensuring Quality in Software Projects}\\
+Series of lectures by \href{https://www.yegor256.com}{Yegor Bugayenko}
+% to students of \href{https://innopolis.university/en/}{Innopolis University} in 2021,\\
+% and \href{https://www.youtube.com/playlist?list=PLaIsQH4uc08woJKRAA7mmjs9fU0jeKjjM}{video recorded}}
+
+% The entire set of slide decks is in \href{https://github.com/yegor256/ssd16}{yegor256/ssd16} GitHub repository.
+
+\begin{abstract}
+The course is a series of loosely coupled pieces of advice related to quality of software development.
+Pragmatic programmers may listen to them if they don't want
+to tolerate chaos in their projects. The course is not only about
+coding practices, but also about static analysis, test coverage,
+bug tracking, dependency and artifact management, build automation,
+DevOps, and many other things. If we don't do them right, they may
+severely jeopardize the quality of the entire project, no matter
+how good are your algorithms.
+\end{abstract}
+
+% \section*{Introduction}
+
+\textbf{What is the goal?}\\
+The primary objective of the course is to explain by example how
+quality in a software project can be put under control.
+
+\textbf{Who is the teacher?}\\
+I'm developing software for more than 30 years, being a hands-on programmer
+(see my GitHub account: \href{https://github.com/yegor256}{@yegor256})
+and a manager of other programmers. At the moment I'm a director
+of an R\&D laboratory in Huawei. Our primary research focus is
+software quality problems. You may find some lectures I've presented
+at some software conferences on
+\href{https://www.youtube.com/channel/UCr9qCdqXLm2SU0BIs6d_68Q}{my YouTube channel}.
+I also published \href{https://www.yegor256.com/books.html}{a few books}
+and wrote \href{https://www.yegor256.com/contents.html}{a blog} about software engineering
+and object-oriented programming.
+
+\textbf{Why this course?}\\
+In \href{https://www.youtube.com/watch?v=kPmbRkSWYnY}{one of my videos}
+a few years ago I explained what I believe is killing
+most software projects: it's the chaos they can't control. Most of us
+programmers start projects full of enthusiasm and best intentions.
+We are confident that this time the design will be solid, the code will
+be clean, and our customers will be happy because there will be no bugs.
+Eventually, sooner rather than later, the reality appears to be as bad
+as it was in the previous project: the code is messy, the design resembles
+spaghetti, and the bugs are unpredictable and hard to fix. We learn some
+lessons, abandon the project, and start a new one, again with the best
+intentions. But in a new project nothing changes.
+Most programmers that I know run in this cycle for decades.
+I believe, this course may help you not become one of them.
+
+\textbf{What's the methodology?}\\
+The course is a collection of individual cases not
+closely connected to each other. Each lecture discusses a single open-source
+GitHub repository. Each discussion highlights technical decisions made in the
+repository and explains them in details. Each lecture ends with a conclusion
+and a formulated recommendation. The recommendations may help students
+prevent and control chaos in their own future projects.
+
+\newpage
+\section*{Course Structure}
+
+Prerequisites to the course (it is expected that a student knows this):
+
+\begin{itemize}
+\item How to use Git
+\item How to code
+\item How to design software
+\item How to write automated tests
+\item How to deploy
+\end{itemize}
+
+After the course a student \emph{hopefully} will understand:
+
+\begin{itemize}
+\item How to avoid code smells
+\item How to convince a manager that quality is important
+\item How to deal with negligence of other programmers
+\item How to hire a programmer who cares
+\item How to argue with customers about quality
+\item How to discipline fellow programmers
+\item How to protect yourself from chaos
+\end{itemize}
+
+Also, a student will be able to practice:
+
+\begin{itemize}
+\item Source control:
+	\href{https://git-scm.com}{Git},
+	\href{https://subversion.apache.org}{Subversion}
+\item Build automation:
+	\href{https://en.wikipedia.org/wiki/Make_(software)}{Make},
+	\href{https://maven.apache.org}{Maven},
+	\href{https://gradle.org}{Gradle},
+	\href{https://gruntjs.com}{Grunt},
+	\href{https://github.com/ruby/rake}{Rake}
+\item Dependencies:
+	\href{https://maven.apache.org}{Maven Central},
+	\href{https://www.npmjs.com}{NpmJS},
+	\href{https://rubygems.org}{RubyGems},
+	\href{https://pypi.org/project/pip/}{PyPi}
+\item Static analysis:
+	\href{https://clang.llvm.org/extra/clang-tidy/}{Clang-Tidy},
+	\href{https://spotbugs.github.io}{SpotBugs},
+	\href{https://scan.coverity.com}{Coverity}
+\item Style checking:
+  \href{https://checkstyle.sourceforge.io}{Checkstyle},
+  \href{https://pmd.github.io}{PMD},
+  \href{https://rubocop.org}{Rubocop},
+  \href{https://eslint.org}{Eslint},
+  \href{https://www.qulice.com}{Qulice}
+\item Automated tests:
+	\href{https://junit.org/}{JUnit},
+	\href{https://mochajs.org}{Mocha}
+\item Integration tests:
+  \href{https://cucumber.io}{Cucumber},
+  \href{https://www.selenium.dev}{Selenium},
+  \href{https://en.wikipedia.org/wiki/Cross-browser_testing}{Cross-Browser}
+\item Performance testing:
+  \href{https://jmeter.apache.org}{JMeter}
+\item Mocking frameworks:
+	\href{https://site.mockito.org}{Mockito},
+	\href{https://github.com/powermock/powermock}{PowerMock}
+\item Textual documentation:
+	\href{https://en.wikipedia.org/wiki/Markdown}{Markdown},
+	\href{https://en.wikipedia.org/wiki/Wiki}{Wiki},
+	\href{https://en.wikipedia.org/wiki/LaTeX}{LaTeX},
+  \href{https://en.wikipedia.org/wiki/Controlled_natural_language}{CNL}
+\item Bug tracking:
+	\href{github.com/}{GitHub},
+	\href{https://www.atlassian.com/software/jira}{JIRA},
+	\href{https://www.bugzilla.org}{Bugzilla}
+\item Code reviews:
+	\href{github.com/}{GitHub},
+	\href{https://www.gerritcodereview.com}{Gerrit},
+	\href{https://www.atlassian.com/software/crucible}{Crucible}
+\item Test coverage:
+	\href{https://www.eclemma.org/jacoco/}{JaCoCo},
+	\href{codecov.io/}{Codecov}
+\item Mutation coverage:
+	\href{https://www.pitest.org}{PIT}
+\item Property-based testing:
+	\href{https://en.wikipedia.org/wiki/QuickCheck}{Quickcheck}
+\item DevOps:
+	\href{https://www.docker.com}{Docker},
+	\href{https://www.heroku.com}{Heroku},
+	\href{https://aws.amazon.com/}{AWS}
+\item Pre-flight builds:
+	\href{https://github.com/features/actions}{GitHub Actions},
+	\href{https://www.jenkins.io}{Jenkins},
+	\href{https://www.rultor.com}{Rultor}
+\item Metrics:
+	\href{https://www.sonarqube.org}{SonarQube},
+	\href{https://codeclimate.com/}{CodeClimate},
+	\href{https://www.jpeek.org}{jPeek}.
+\end{itemize}
+
+\newpage
+\section*{Lectures}
+
+\newcommand\github[1]{\href{https://github.com/#1}{#1}}
+
+This is a list of cases that will be discussed at the lectures:
+
+\begin{enumerate}
+	\item Ruby style checking with Rubocop in \github{yegor256/sibit}
+  \item XML style checking in \github{yegor256/xcop}
+	\item Custom Checkstyle rule in \github{yegor256/qulice}
+  \vspace{3pt}
+
+  \item GitHub actions in \github{yegor256/fibonacci} and \github{jcabi/jcabi-xml}
+	\item Code reviews in \github{objectionary/eo}
+  \item Making and testing a new GitHub Action in \github{yegor256/latexmk-action}
+  \vspace{3pt}
+
+	\item Npm dependencies and Grunt in \github{objectionary/eoc}
+	\item Managing Maven dependencies in \github{yegor256/takes} (with \href{https://github.com/renovatebot/renovate}{Renovate})
+	\item Multi-module \ff{pom.xml} in \github{objectionary/eo}
+  \vspace{3pt}
+
+	\item Build automation with \ff{Makefile} in \github{yegor256/fibonacci}
+	\item Build automation with Gradle in \github{objectionary/eo-intellij-plugin}
+  \vspace{3pt}
+
+	\item Making a Ruby gem in \github{yegor256/cobench}
+	\item Packaging for CTAN in \github{yegor256/iexec}
+	\item Deploying to Maven Central in \github{yegor256/cactoos}
+  \item Docker image releasing to the Hub in \github{yegor256/rultor-image}
+  \vspace{3pt}
+
+	\item Deploying Java app to Heroku in \github{yegor256/rultor}
+	\item Deploying Java app to Dokku in \github{yegor256/jare}
+	\item Deploying a Ruby web app in \github{yegor256/sixnines}
+  \item Reversive deployment to AWS EC2 in \github{yegor256/s3auth}
+  \vspace{3pt}
+
+  \item Unit vs. Integration testing in \github{jcabi/jcabi-xml}
+	\item Fake GitHub and AWS S3 objects in \github{jcabi/jcabi-github} and \github{jcabi/jcabi-s3}
+  \item Testing for thread-safety in \github{yegor256/cactoos}
+	\item Integration testing against DynamoDB Local in \github{yegor256/rultor}
+  \item Testcontainers in \github{yegor256/threecopies}
+  \item Parametrized testing with YAML in \github{objectionary/eo}
+  \vspace{3pt}
+
+  \item Credentials testing in \github{yegor256/0pdd}
+  \item Headless in-browser testing with Selenium in \github{yegor256/jare}
+  \item Stress testing in \github{yegor256/takes}
+  \item BDD with Cucumber in \github{cqfn/pdd}
+	\item JaCoCo coverage control in \github{yegor256/cactoos}
+  \item CNL for requirements specification in \github{yegor256/requs}
+  \vspace{3pt}
+
+  \item Hits-of-code and other metrics in \github{yegor256/cobench} and \github{yegor256/hoc}
+  \item Calculating Java cohesion metrics in \github{cqfn/jpeek}
+  \item Developers performance in \github{yegor256/cobench}
+  \item Documenting \ff{README.md} of a Java library in \github{yegor256/takes}
+\end{enumerate}
+
+Students are welcome to pick most interesting cases studies.
+
+\newpage
+\section*{Laboratory Classes}
+
+A few following laboratory classes may support the course, where students
+will be asked to solve some of these tasks (the most complex are at the bottom):
+
+\begin{enumerate}
+	\item Configure GitHub Action to publish code coverage to \href{https://www.codecov.io}{codecov}
+	\item Make both JUnit4 and JUnit5 tests work inside one Java repository
+	\item Create a new unit test in BDD style, using Cucumber or a similar framework
+	\item Design a coding style guide (in Markdown) for your favorite language
+	\item Configure GitHub Actions to deploy a new JavaScript library to \href{https://npmjs.org}{npmjs}
+	\item Automate headless Selenium+Safari integration testing in a simple web app
+	\item Automate mutation coverage publishing to \href{https://pages.github.com}{GitHub Pages}
+	\item Configure build to fail if test coverage is lower than 80\%
+	\item Create a new plugin for GitHub Actions to validate the layout of repository
+	\item Merge a pull request improving coding style to a 10k+ GitHub library
+	\item Create an automated test for Java+Hibernate+MySQL with \href{https://www.testcontainers.org}{testcontainers}
+	\item Create GitHub Action to spell check \texttt{README.md} using \href{http://aspell.net}{aspell}
+	\item Install Jenkins and configure it to merge branches on demand
+	\item Configure GitHub Action to send a message to Telegram when the build fails
+	\item Automate cross-browsing testing of a web app using \href{https://www.browserstack.com}{BrowserStack}
+	\item Configure property-based testing in an existing repository
+	\item In a existing Java project automated with Maven, replace Maven with Makefile
+	\item Automate comparison of two static analyzers, find out which one is stronger
+	\item Develop a Maven plugin to check the quality of POM file
+	\item Create a new style checking rule for PMD, to prohibit the use of non-final classes
+	\item Using \href{http://aspell.net}{aspell}, create a style checker validating grammar in Java comments
+\end{enumerate}
+
+There could be other tasks too.
+
+\newpage
+\section*{Grading}
+
+Students may form groups of up to four people. Each group will present
+their own public GitHub repository with a software module inside. The group
+will make a presentation of the quality control mechanisms that are
+present in the repository. They will have to explain during a 10-minutes
+oral presentation with live GitHub demonstration via screen sharing:
+
+\begin{itemize}
+	\item How enabled quality ensuring mechanisms work?
+	\item Why such mechanisms are in use?
+	\item How they help ensure quality?
+	\item How often they get activated?
+	\item What are the drawbacks of them?
+	\item What mechanism are not used and why?
+\end{itemize}
+
+Most probably, there will
+be no more than 20\% of ``A'' marks, no more than 40\% of ``B,''
+and the rest will go to ``C'' and ``D.'' However, this distribution is
+not mandatory: if all students make excellent presentations, everybody
+will get ``A.''
+
+Attendance will be tracked at the lectures. If you attend more than 75\%
+of all lectures, you will not get less than ``C''.
+
+At the laboratory classes each group will have to complete three
+home works and defend them verbally on-site.
+A completion of less than two will give everybody in the group a negative point,
+a completion of three --- will give a positive point; the point will be added
+to the grade given by the lecturer.
+
+Higher grades will be given for:
+
+\begin{itemize}
+	\item Better understanding of the reasons behind used mechanisms,
+	\item How they help ensure quality,
+	\item How often they get activated,
+	and
+	\item What are the drawbacks of them.
+\end{itemize}
+
+A retake exam is possible, following exactly the same procedure. However,
+the highest mark most probably possible at the retake is ``C.''
+
+Students are highly advised to discuss
+their repositories and quality ensuring mechanisms with each other,
+before the final exam, in order to understand their relative positions
+and maybe trigger new ideas.
+
+\newpage
+\section*{Learning Material}
+
+The following books are highly recommended to read (in no particular order):
+
+\begin{multicols}{2}\small\raggedright
+{\nospell{Steve McConnell}}, \emph{Software Estimation: Demystifying the Black Art}\\[3pt]
+{Robert Martin}, \emph{Clean Architecture: A Craftsman's Guide to Software Structure and Design}\\[3pt]
+{Steve McConnell}, \emph{Code Complete}\\[3pt]
+{Frederick Brooks Jr.}, \emph{Mythical Man-Month, The: Essays on Software Engineering}\\[3pt]
+{David Thomas et al.}, \emph{The Pragmatic Programmer: Your Journey To Mastery}\\[3pt]
+{Robert C. Martin}, \emph{Clean Code: A Handbook of Agile Software Craftsmanship}\\[3pt]
+{David West}, \emph{Object Thinking}\\[3pt]
+{Yegor Bugayenko}, \emph{Code Ahead}\\[3pt]
+{Michael Feathers}, \emph{Working Effectively with Legacy Code}\\[3pt]
+{\nospell{Jez Humble} et al.}, \emph{Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation}\\[3pt]
+{\nospell{Michael T. Nygard}}, \emph{Release It!: Design and Deploy Production-Ready Software}\\[3pt]
+\end{multicols}
+
+\end{document}

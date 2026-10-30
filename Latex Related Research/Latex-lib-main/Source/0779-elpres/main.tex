@@ -1,0 +1,57 @@
+\documentclass[16x9]{elpres}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\begin{document}
+
+\begin{rsli}
+  \begin{center}
+    \Large\bfseries Fleet Telemetry Migration\\[1em]
+    \normalsize\mdseries Moving 40{,}000 vehicles to the new data pipeline
+  \end{center}
+\end{rsli}
+
+\begin{psli}[Why Migrate]
+  \begin{citemize}
+    \item The old telemetry pipeline drops packets under load
+    \item No replay capability for post-incident analysis
+    \item New pipeline adds exactly-once delivery guarantees
+  \end{citemize}
+\end{psli}
+
+\begin{psli}[Migration Plan]
+  \begin{cenumerate}
+    \item Dual-write from vehicles to both pipelines
+    \item Validate parity on a 5\% sample for two weeks
+    \item Cut over reads, then retire the old pipeline
+  \end{cenumerate}
+\end{psli}
+
+\begin{psli}[Packet Loss, Before and After]
+  \begin{center}
+    \begin{tabular}{lcc}
+      Fleet segment & Old pipeline & New pipeline \\
+      \hline
+      Long-haul & 2.1\% & 0.03\% \\
+      Urban delivery & 3.4\% & 0.05\% \\
+      Regional & 1.8\% & 0.02\% \\
+    \end{tabular}
+  \end{center}
+\end{psli}
+
+\begin{psli}[What's Left]
+  \begin{cdescription}
+    \item[Retire old pipeline] scheduled for next quarter
+    \item[Alerting] still needs new-pipeline dashboards
+    \item[Cost] new pipeline runs 15\% cheaper at current volume
+  \end{cdescription}
+\end{psli}
+
+\begin{rsli}
+  \begin{center}
+    \Large Thank you
+  \end{center}
+\end{rsli}
+
+\end{document}

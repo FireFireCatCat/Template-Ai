@@ -1,0 +1,184 @@
+% File: rub-kunstgeschichte-example.tex
+% Copyright (C) 2025 by Joran Schneyer <joran.schneyer@ruhr-uni-bochum.de>
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% 
+% The Current Maintainer of this work is Joran Schneyer <joran.schneyer@ruhr-uni-bochum.de>.
+%
+% This work consists of the files rub-kunstgeschichte.dtx
+%                                 rub-kunstgeschichte-example.tex
+%                                 rub-kunstgeschichte.ins
+%           and the derived file  rub-kunstgeschichte.cls
+
+%%%% Start of the example document %%%%%
+
+% We start this example by using the rub-kunstgeschichte class
+\documentclass{rub-kunstgeschichte}
+
+% We add information for the title page
+\title{Example usage of the \textsf{rub-kunstgeschichte} class}
+\author{Joran Schneyer}
+\configureTitlepage{
+    email = {joran.schneyer@ruhr-uni-bochum.de}
+}
+
+%%%%% Bibliography %%%%%
+
+% We add bibliography entries.
+% These are normally put in an extra bib file. The name is not important.
+% You can call it something simple like "literature.bib".
+% Here, we simulate having this extra file by using the filecontents environment.
+\begin{filecontents}{rub-kunstgeschichte-example.bib}
+@manual{guidelines,
+    author = {{Kunstgeschichtliches Institut}},
+    year   = {2023},
+    title  = {Anleitung zur Erstellung von Hausarbeiten im Fach Kunstgeschichte},
+    organization = {Ruhr University Bochum},
+    url     = {https://kgi.ruhr-uni-bochum.de/wp-content/uploads/2023/04/Anleitung-zum-Erstellen-von-Hausarbeiten-im-Fach-Kunstgeschichte_Fassung-Juli-2023.pdf},
+    urldate = {2024-11-04}
+}
+@article{exampleArticle,
+    author  = {Maxi Mustermann},
+    title   = {A very interesting article},
+    year    = {2001},
+    journal = {Important example journal}
+}
+@book{exampleBook,
+    author    = {John Smith},
+    title     = {A long example book marked as primary literature},
+    year      = {2024},
+    keywords  = {source}
+}
+@inbook{bible,
+    author    = {{The Bible}},
+    title     = {The Holy Bible: King James Version},
+    booktitle = {The New Testament},
+    publisher = {Oxford University Press},
+    year      = {1769},
+    location  = {Oxford},
+    keywords  = {source}
+}
+@online{exampleWebsite,
+    author  = {{Example consortium}},
+    title   = {The truth about example documents},
+    year    = {2020},
+    note    = {Internet forum article},
+    url     = {https://example.com},
+    urldate = {2100-04-01}
+}
+@manual{biblatexDocs,
+    author   = {Philip Kime and Moritz Wemheuer and Philipp Lehman},
+    title    = {The biblatex Package},
+    subtitle = {Programmable Bibliographies and Citations},
+    year     = {2024},
+    url      = {https://ctan.org/pkg/biblatex},
+    urldate  = {2024-06-25}
+}
+@online{biblatexCheatsheet,
+    title   = {Biblatex Cheat Sheet},
+    author  = {Clea F. Rees},
+    year    = {2017},
+    url     = {https://ctan.org/pkg/biblatex-cheatsheet},
+    urldate = {2024-06-25}
+}
+\end{filecontents}
+
+% After that, we need to load the bibliography we just created to use it with biblatex.
+% You can have an arbitrary amount of literature bib files and load them each with \addbibresource, but often just having one bib file makes things easier.
+\addbibresource{rub-kunstgeschichte-example.bib}
+
+%%%%%% Load additional packages %%%%%
+
+% To set our language to german (using the new spelling rules) we load "babel".
+\usepackage[ngerman]{babel}
+% We also need to set the language for the "hyperref" package, since it is loaded in the class before we load babel.
+\hypersetup{ngerman=true}
+
+% For including the graphics and placing them where we want them, we load the "graphicx" and "float" packages.
+\usepackage{graphicx}
+\usepackage{float}
+
+%%%%% Main document %%%%%
+
+% Having finished the preamble, we begin the document
+\begin{document}
+    % The next command typesets the custom titlepage
+    \maketitle
+
+    % This command prints a table of contents
+    \tableofcontents
+
+    % We use \clearpage to continue on the next page
+    \clearpage
+
+    % Next we add different sections that explain common usage and some features of this class.
+    \section{Introduction}
+    The \textsf{rub-kunstgeschichte} class aims to implement the guidelines on scientific writing of the art history institute ``KGI'' (\textit{Kunstgeschichtliches Institut}) at Ruhr University Bochum.
+
+    This example document showcases a typical use of the \textsf{rub-kunstgeschichte} class.
+    Just by using the class, the page is already formatted so that the typeset text has 12pt font size, there is a 1.5 times line-spacing present and the page size is A4 with 2cm margins at top, left and bottom, as well as a 4cm margin on the right.\autocite[See:][11]{guidelines}
+
+    Also, paragraphs don't have an indentation in the first line by default, contrary to typical \LaTeX{} documents.
+    Furthermore the \textsf{hyperref} package is automatically loaded to enable clickable links and references.
+
+    Notably, the first page is a custom title page that aims to recreate the titlepage template of the guidelines in \LaTeX.
+    Note, how the fields have descriptive default values in CAPS, so that you can easily see which information is still missing for the title page.
+    As the documentation of this class states, you can either pass the corresponding key-value options into an optional argument of \verb|\maketitle|, or use the \verb|\configureTitlepage| macro in the preamble.\footnote{For a full list of titlepage options refer to the \textsf{rub-kunstgeschichte} class documentation.}
+
+    We use the \textsf{babel} package to set the language to german (even though this example document is actually written in english) to showcase how headings are automatically translated.
+
+    \section{How to cite sources}
+    This class automatically loads the \textsf{biblatex} package for sophisticated bibliography and citations.
+    The class also sets some options by default that make \textsf{biblatex} behave closer to the suggested citation style in the guidelines of the institute.
+
+    You can cite sources using the \verb|\autocite| command, which is configured by this class to use footnotes \autocite{exampleArticle}.
+    Page numbers can be added in the optional argument \autocite[394]{exampleBook} and citation signals in a second one that comes before the one for page numbers \autocite[see][]{exampleWebsite}.
+    You can even cite multiple sources at once using the \verb|\autocites| command \autocites[111]{exampleBook}[see also][13]{exampleArticle}.
+
+    For more information refer to the documentation of the \textsf{biblatex} package \autocite{biblatexDocs} or the biblatex cheatsheet \autocite{biblatexCheatsheet}.
+
+    \clearpage
+    % \appendix indicates that the main content ends here and what follows is part of the appendix e.g. bibliography, list of figure sources etc.
+    \appendix
+
+    \section{The appendix}
+    We finished the main content of the example document so we call \verb|\appendix| before this first appendix section.
+    It will automatically disable section numbering for any appendix sections.
+
+    Here, we can include a bibliography containing all cited sources, divided into primary and secondary literature, with \verb|\printbibliographies|.
+    Primary literature (also called a \textit{source}) is something like the bible\autocite{bible}, letters, treatises etc.
+    We put the bibliography on a new page by using \verb|\clearpage| before printing it.
+    Note, that since we used \verb|\usepackage[ngerman]{babel}| in the preamble, the headings of the bibliography are typed in german.
+
+    \clearpage
+    \printbibliographies% This is a special command of the rub-kunstgeschichte class that prints sources divided into primary and secondary literature in two subbibliographies.
+
+    \clearpage
+    \section{Figures}
+    The guidelines suggest putting all figures in a dedicated appendix section after the bibliography instead of in between the main content text.\autocite[10,25]{guidelines}
+
+    We can include figures with \verb|\includegraphics| inside a \texttt{figure} environment. We also add a caption with the meta information of the shown artwork,\autocite[25--26]{guidelines} as well as a short caption in square brackets and a label for back-referencing, so that we can use \verb|\ref| or the equivalent command \verb|\autoref| from the \textsf{hyperref} package.
+    E.g. we can reference the example figure as \autoref{fig:exampleArtwork}.
+    Additionally, we set the source of the figure using the custom \verb|\figuresource| command.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\linewidth]{example-image-golden}
+        \caption{An Artist, The artwork title, Where was it made?, The year, Material, Measurements, Where is it kept?, Inventory number.}
+        \label{fig:exampleArtwork}
+        \figuresource{\textcopyright{} \textsf{graphicx} package.}
+    \end{figure}
+
+    We can then include a list of figure sources at the end of the document:
+    \printfiguresources% This is a custom command of the rub-kunstgeschichte class which prints all the figure sources in order of the figures.
+
+% Finally we end the document environment
+\end{document}

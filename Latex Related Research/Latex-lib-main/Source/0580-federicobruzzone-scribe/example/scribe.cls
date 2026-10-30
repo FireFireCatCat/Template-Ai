@@ -1,0 +1,356 @@
+%%----------------------------------------------------------------------
+%% scribe.cls
+%% author: Federico Bruzzone (30-06-2025) last update: (01-06-2026)
+%%----------------------------------------------------------------------
+
+\def\filename{scribe}
+\def\fileversion{v0.2.0 (author: Federico Bruzzone)}
+\def\filedate{2026/06/01}
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{\filename}[\filedate{} \fileversion]
+\typeout{Class file \filename', \fileversion, <\filedate>}
+
+% =====================================
+% ========== Class options ============
+% =====================================
+\newif\if@scribelineno
+\@scribelinenofalse
+
+\DeclareOption{lineno}{\@scribelinenotrue}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+\ProcessOptions\relax
+
+% =====================================
+% ========== Load base class ==========
+% =====================================
+\LoadClass[
+	11pt,
+]{article}
+
+% ==================================================
+% ========== Custom packages and settings ==========
+% ==================================================
+\RequirePackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry} % Geometry is used to set the margins
+\RequirePackage[numbers,sort&compress]{natbib} % Natbib for bibliography management
+\setlength{\bibsep}{2pt} % Adjust space between bibliography entries
+\RequirePackage[greek,english]{babel} % Language support. Greek is usually used for math and technical documents.
+
+% ===========================
+% ========== Fonts ==========
+% ===========================
+\RequirePackage[T1]{fontenc} % Font encoding. That is, how the text is encoded in the font.
+\RequirePackage[utf8]{inputenc} % Input encoding. That is, how the text is encoded in the file.
+\RequirePackage{libertine} % Libertine font for text
+\RequirePackage{inconsolata} % Inconsolata for monospace text (default)
+% \RequirePackage[scaled=0.85]{beramono} % Bera Mono for monospace text (alternative)
+
+% ==================================
+% ========== Line numbers ==========
+% ==================================
+\if@scribelineno % Conditional for line numbers
+	\RequirePackage[left]{lineno} % Running mode; numbers on the left by default
+	\if@twocolumn
+		% In two columns each column's numbers go in its OUTER margin (left column
+		% on the left, right column on the right). We do NOT pick the side from
+		% \if@firstcolumn: lineno attaches the number when a line is first
+		% contributed to a column, but the asynchronous page builder can later
+		% push that line -- or an indivisible object such as a callout box or a
+		% display -- to the OTHER column. The number then keeps the stale side and
+		% lands in the gutter, overlapping the text at the top of a new column or
+		% page. Instead we record the number's true horizontal position with
+		% zref-savepos (resolved at shipout, hence always correct) and choose the
+		% side from it on the next run. This needs the usual two-pass compile
+		% (already done by the Makefile and regen-docs.sh); on a lone first pass
+		% the positions are unknown and every number falls on the left.
+		\RequirePackage{zref-savepos}
+		\renewcommand\makeLineNumber{%
+			\zsavepos{scribeLN\thelinenumber}%
+			\ifdim\zposx{scribeLN\thelinenumber}sp>0.5\paperwidth\relax
+				\makeLineNumberRight % past the page centre: right (second) column
+			\else
+				\makeLineNumberLeft  % first column, or the full-width banner
+			\fi}
+	\fi
+	\renewcommand\linenumberfont{\normalfont\footnotesize\color{red}} % Style for line numbers
+\fi
+
+% Helpers used by the front matter (guarded so they vanish when line numbers are
+% off). \scribenonum turns OFF galley numbering for the box that holds the
+% abstract/index terms (otherwise the minipage's line would get a stray number);
+% \scribeinternalnum numbers the lines INSIDE that box, continuing the count.
+% Together they make the abstract line-numbered per line in every layout,
+% including the full-width \twocolumn[...] banner (which lineno cannot number
+% from the outside), so numbering always starts at the abstract.
+\if@scribelineno
+	\newcommand{\scribenonum}{\nolinenumbers}
+	\newcommand{\scribeinternalnum}{\internallinenumbers}
+\else
+	\newcommand{\scribenonum}{}
+	\newcommand{\scribeinternalnum}{}
+\fi
+
+% ================================================
+% ========== Listings, math, and layout ==========
+% ================================================
+\RequirePackage{listings} % Listings package for code formatting
+\RequirePackage{amsmath,amssymb,amsthm,mathtools} % AMS packages for math
+\RequirePackage[inline]{enumitem} % For customizing lists
+\setlist[itemize]{noitemsep, topsep=0pt} % Remove space around itemize lists
+\setlist[enumerate]{noitemsep, topsep=0pt, label=\arabic*.} % Remove space around enumerate lists and set label style to arabic numbers
+\setlist*[enumerate]{label=(\roman*)}
+
+
+% ============================
+% ========== Tables ==========
+% ============================
+\usepackage{booktabs} % Booktabs package for better tables
+\usepackage{array} % Array package for advanced table formatting
+
+% ==============================
+% ========== Graphics ==========
+% ==============================
+\RequirePackage[dvipsnames]{xcolor} % Color package for text and comments
+
+\RequirePackage{graphicx} % Graphics package for including images
+\RequirePackage{float} % Float package for controlling figure placement
+\RequirePackage{caption} % Caption package for customizing captions
+\RequirePackage{subcaption} % Subcaption package for subfigures
+\RequirePackage{pmboxdraw} % This enables graphical glyps, e.g., ├── └──
+\RequirePackage{multicol} % Multicol package for multiple columns in figures
+% Caption style
+\captionsetup{
+	font=sf, % 'sf' for sans-serif, 'rm' for serif
+	labelfont=bf, % make 'Figure 1:' bold
+	% textfont=it, % make caption text italic
+	labelsep=colon, % adds a colon after Figure X
+	justification=centering % center caption text
+}
+
+\RequirePackage[
+	colorlinks=true,
+	linkcolor=MidnightBlue,
+	citecolor=MidnightBlue,
+	urlcolor=MidnightBlue
+]{hyperref} % Hyperref package for clickable links in the document and lots of other features
+
+% Colored dingbats
+\RequirePackage{pifont}
+\newcommand{\dingred}[1]{{\color{Red}\ding{#1}}}
+\newcommand{\dinggreen}[1]{{\color{Green}\ding{#1}}}
+\newcommand{\dingblue}[1]{{\color{Blue}\ding{#1}}}
+
+% =================================
+% ========== Callout boxes ========
+% =================================
+% Colored callout boxes built on tcolorbox: a thick colored left rule, a light
+% grey bold title bar, white body. \scribedefinebox{<name>}{<color>} creates an
+% environment {<name>box}{<title>} and an inline box \<name>boxinline{<text>},
+% mirroring the \scribedefinecomment{<name>}{<color>} pattern.
+\RequirePackage[most]{tcolorbox}
+\tcbuselibrary{breakable}
+\tcbset{
+	scribeboxbase/.style={
+		arc=2mm,
+		boxrule=0mm,
+		leftrule=1mm,
+		colback=white,
+		colbacktitle=black!10!white,
+		coltitle=black,
+		fonttitle=\bfseries,
+		left=0.5mm, lefttitle=0.5mm,
+		right=0.5mm, righttitle=0.5mm,
+		top=0.2mm, bottom=0.2mm,
+		toptitle=0.3mm, bottomtitle=0.3mm,
+	},
+	scribebox/.style={scribeboxbase, title={#1}},
+	scribeboxinline/.style={
+		on line,
+		arc=1.5mm,
+		boxrule=0pt,
+		leftrule=1mm,
+		fontupper=\bfseries,
+		boxsep=0pt,
+		left=1.5mm, right=1.5mm,
+		top=0.5mm, bottom=0.5mm,
+	},
+}
+\newcommand{\scribedefinebox}[2]{%
+	\newtcolorbox{#1box}[1]{breakable, colframe=#2, scribebox={##1}}%
+	\expandafter\newtcbox\csname #1boxinline\endcsname{colframe=#2, scribeboxinline}%
+}
+% Default palette (define your own with \scribedefinebox{<name>}{<color>}).
+\scribedefinebox{info}{MidnightBlue}
+\scribedefinebox{warn}{BrickRed}
+\scribedefinebox{tip}{ForestGreen}
+\scribedefinebox{note}{BurntOrange}
+
+% =====================================================
+% ========== Theorem-like boxes (numbered) ============
+% =====================================================
+% Counter-based boxes for theorems, definitions, lemmas, ... They wear the same
+% look as the callout boxes above but carry an automatic number and support
+% \label/\ref. \scribedefinetheorem{<name>}{<Heading>}{<color>} creates an
+% environment used as
+%     \begin{<name>}[<optional note>] ... \end{<name>}
+% e.g. \begin{theorembox}[Pythagoras] ... \label{thm:pyth} ... \end{theorembox}
+% All theorem-like boxes share ONE counter that restarts each section, so their
+% numbers are unique within a section (Theorem 2.1, Definition 2.2, ...). Put a
+% \label inside the environment and reference it with \ref (write the kind by
+% hand, as is usual: "Theorem~\ref{thm:pyth}").
+\newcounter{scribethm}
+\counterwithin{scribethm}{section}
+\newcommand{\scribedefinetheorem}[3]{%
+	\newenvironment{#1}[1][]{%
+		\refstepcounter{scribethm}%
+		\begin{tcolorbox}[breakable, colframe=#3, scribeboxbase,
+			title={#2~\thescribethm\ifstrempty{##1}{}{ \textmd{(##1)}}}]%
+	}{%
+		\end{tcolorbox}%
+	}%
+}
+% Default set (define your own with \scribedefinetheorem{<name>}{<Heading>}{<color>}).
+\scribedefinetheorem{theorembox}{Theorem}{MidnightBlue}
+\scribedefinetheorem{lemmabox}{Lemma}{MidnightBlue}
+\scribedefinetheorem{corollarybox}{Corollary}{MidnightBlue}
+\scribedefinetheorem{propositionbox}{Proposition}{MidnightBlue}
+\scribedefinetheorem{definitionbox}{Definition}{ForestGreen}
+\scribedefinetheorem{examplebox}{Example}{BurntOrange}
+\scribedefinetheorem{remarkbox}{Remark}{BrickRed}
+
+% ===========================
+% ========== ORCID ==========
+% ===========================
+\RequirePackage{orcidlink}
+
+% =====================================
+% ========== Headers/footers ==========
+% =====================================
+\RequirePackage{fancyhdr} % Fancyhdr package for custom headers and footers
+\pagestyle{fancy} % Set the page style to fancy
+\fancyhf{} % Clear all header and footer fields
+\fancyhead[L]{\leftmark} % Set left header to the left mark (section or chapter title)
+\fancyhead[R]{\scriberightmark} % Set right header to the right mark (subsection or subsection title)
+\fancyfoot[C]{\thepage} % Set page number in the footer (centered)
+\renewcommand{\headrulewidth}{0pt} % No line in header
+
+% ==============================
+% ========== Commands ==========
+% ==============================
+% Optional: toggle comments on/off
+\newif\ifscribeshowcomments
+\scribeshowcommentstrue % or \scribeshowcommentsfalse to hide all comments
+
+% Core macro to define new named comment commands
+\newcommand{\scribedefinecomment}[2]{%
+	\expandafter\newcommand\csname #1comment\endcsname[1]{%
+		\ifscribeshowcomments%
+			\textcolor{#2}{[\textbf{#1}] \textit{##1}}%
+		\fi%
+	}%
+}
+
+% Define a command to set the right mark in the header
+\newcommand{\scriberightmark}{}
+\newcommand{\scribesetrightmark}[1]{%
+	\renewcommand{\scriberightmark}{#1}%
+}
+
+% Define a command to set the divider line with a dingbat in the middle
+% Something like this:
+% ---------- ✧ ----------
+\newcommand{\scribedivider}{%
+	\par\medskip
+	\noindent
+	\makebox[\linewidth]{%
+		\hspace{2em}%
+		\makebox[0pt][l]{\rule[0.75ex]{\dimexpr0.5\linewidth - 3em}{0.5pt}}%
+		\hfill\ding{71}\hfill
+		\makebox[0pt][r]{\rule[0.75ex]{\dimexpr0.5\linewidth - 3em}{0.5pt}}%
+		\hspace{2em}%
+	}%
+	\par\medskip
+}
+
+
+% ==============================================
+% ========== Abstract and Index Terms ==========
+% ==============================================
+\renewenvironment{abstract}{
+	\begin{center}
+		\scribenonum
+		\begin{minipage}{0.93\linewidth}
+			\scribeinternalnum
+			\noindent\textbf{Abstract}---%\hspace{0.5em}
+			\itshape
+			}{%
+		\end{minipage}
+	\end{center}
+}
+
+\newenvironment{indexterms}{
+	\begin{center}
+		\scribenonum
+		\begin{minipage}{0.93\linewidth}
+			\scribeinternalnum
+			\noindent\textbf{Index Terms}---%\hspace{0.5em}
+			\itshape
+			}{%
+		\end{minipage}
+	\end{center}
+}
+
+\AtEndEnvironment{indexterms}{%
+	\scribedivider
+}
+
+% =====================================
+% ========== AtBeginDocument ==========
+% =====================================
+% Set up the document to use BibTeX
+\AtBeginDocument{%
+	\providecommand\BibTeX{{%
+				Bib\TeX}}}
+
+% Set the bibliography style to unsrt (unsorted). That is, the order of the references will be the order in which they are cited in the document.
+% Alternatively, we can use:
+% 1. `plainnat` to use the plain style, which sorts the references alphabetically by author.
+% 2. `alpha` to use the alpha style, which uses the first letter of the author's name and the year of publication.
+% More info: https://www.overleaf.com/learn/latex/Bibtex_bibliography_styles
+\AtBeginDocument{%
+	\bibliographystyle{unsrt}%
+}
+
+% Enable line numbers if the option is set
+\AtBeginDocument{%
+	\if@scribelineno
+		\linenumbers
+	\fi
+}
+
+% =============================
+% ========== Aliases ==========
+% =============================
+\newcommand{\tool}[1]{\textsc{#1}} % Command for tool names
+
+% =============================
+% ========== Patches ==========
+% =============================
+
+\RequirePackage{etoolbox} % For patching commands
+
+
+% Patch \maketitle to remove vertical space before the title (latexdef \@maketitle)
+\patchcmd{\@maketitle}
+{\begin{center}}               % Look for this token in \maketitle
+{\vspace{-1.5cm}\begin{center}} % Insert negative vspace before the center environment
+{}{} % success and failure code, do nothing
+
+% Do not line-number the title block (title, authors, date). \@maketitle runs
+% inside \maketitle's own group, so \nolinenumbers reverts automatically and the
+% abstract and body that follow are still numbered. In one column this makes the
+% numbering start at the abstract, like the two-column layout (where the title
+% block is boxed inside \twocolumn[...] and is never numbered anyway).
+\if@scribelineno
+	\pretocmd{\@maketitle}{\nolinenumbers}{}{}
+\fi

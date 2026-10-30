@@ -1,0 +1,21 @@
+% From mitthesis package
+% Documentation: https://ctan.org/pkg/mitthesis
+
+\ProvidesFile{mitthesis-lmodern.tex}[2026/07/27 v1.02 Load Latin Modern text and math fonts]
+
+%% Default fonts
+\ifpdftex
+	\ClassNoteNoLine{\ClassName}{Loading Latin Modern text and math fonts}
+	\RequirePackage[T1]{fontenc}
+	\RequirePackage{amssymb}
+%   \RequirePackage[]{babel} % load babel (with desired options) if using a language other than English
+	\RequirePackage{lmodern}
+	\RequirePackage{bm}
+\else
+	\ClassNoteNoLine{\ClassName}{Loading Latin Modern text and math fonts (default for unicode engines)}
+	%
+%   \RequirePackage[]{babel} % load babel (with desired options) if using a language other than English
+    \RequirePackage[warnings-off={mathtools-colon,mathtools-overbracket},mathbf=sym]{unicode-math}
+    % suppress warnings about lack of integration between mathtools and unicode-math.
+    % Unicode-math loads fontspec package, but default fonts are not selected by fontspec in this case.
+\fi

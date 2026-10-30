@@ -1,0 +1,509 @@
+%=============================================================================
+\section{非线性控制基础}
+%=============================================================================
+
+前一章介绍的 LQR 和 MPC 功能强大，但它们依赖于线性模型。如果你的机器人工作在远离平衡点的地方，会发生什么？倒立摆在竖直附近近似线性——但在摆起（swing-up）过程中，$\sin(\theta)$ 非线性占主导地位，线性方法会彻底失效。本章给你提供直接处理非线性的工具。
+
+我们将逐步建立四种技术——反馈线性化（Feedback Linearization）、滑模控制（Sliding Mode Control）、增益调度（Gain Scheduling）和基于李雅普诺夫的设计（Lyapunov-Based Design）——然后展示它们如何在一个实际的摆起-稳定控制器中组合使用。数学比 PID 整定更复杂，但回报是巨大的：这些方法让你能够控制线性理论根本无法触及的系统。
+
+你不需要掌握所有四种方法。理解每种方法背后的\textit{思想}——以及知道什么时候该用哪种——比记住每一个推导过程更有价值。话虽如此，在推导能说明设计思路的地方，我们还是会走一遍推导，因为比赛前凌晨两点出了问题，"直接套公式"是不够用的。
+
+%-----------------------------------------------------------------------------
+\subsection{线性方法为什么会失效}
+%-----------------------------------------------------------------------------
+
+你之前见过的每一个线性控制器都依赖于同一个技巧：在工作点处用雅可比矩阵近似非线性系统，然后为得到的线性模型设计控制器。这就是\textit{线性化}，效果非常好——只要你不离开那个工作点太远。
+
+以倒立摆为例，其完整动力学为：
+\begin{equation}
+ml^2 \ddot{\theta} + mgl\sin(\theta) = \tau
+\end{equation}
+
+在竖直平衡点（$\theta = \pi$，$\dot{\theta} = 0$）附近，可以令 $\theta = \pi + \delta$，其中 $\delta$ 很小。则 $\sin(\theta) = \sin(\pi + \delta) = -\sin(\delta) \approx -\delta$，线性化后的动力学变为 $ml^2 \ddot{\delta} - mgl\delta = \tau$——一个线性系统。LQR 可以轻松稳定它。
+
+但相图（phase portrait）能告诉你完整的故事。摆有两个平衡点：\textbf{悬垂位置}（$\theta = 0$），它是稳定的（保守情况下为中心，加阻尼后为稳定节点）；以及\textbf{竖直位置}（$\theta = \pi$），它是不稳定的（鞍点）。两者之间，\textbf{分离线}（separatrices）将相平面分成具有不同定性行为的区域。
+
+要可视化这一点，画出 $\dot{\theta}$ 关于 $\theta$ 的图。在 $\theta = \pi$ 附近，轨迹形成闭合轨道（无控制、无阻尼情况下），对应摆在顶部附近振荡。分离线是恰好以零速度通过鞍点的轨迹——它们将摆动运动与完整旋转分开。线性 LQR 在 $(\theta = \pi, \dot{\theta} = 0)$ 的小邻域内设计控制器，但这个邻域被分离线所限制。
+
+在 $\theta = \pi$ 附近的吸引域内，LQR 可以工作。在吸引域之外，控制器要么要求不可能的力矩，要么根本无法将摆摆起——线性化模型预测的行为和现实毫无关系。
+
+关键洞察：\textit{线性控制是非线性控制的特例，而不是反过来}。每个真实系统都是非线性的；线性模型只是方便的局部近似。当你需要全局行为——摆起、大幅机动、在宽工作范围内运行——你就需要非线性工具。
+
+离平衡点多远线性控制才会失效？没有统一的答案，取决于具体系统。对于倒立摆，线性化大约在竖直位置 $\pm 15°$ 以内是合理的。对于直线行驶的轮式机器人，线性模型在很大的速度范围内都是有效的，因为非线性（轮胎滑移、空气阻力）增长缓慢。在实践中，相图和仿真是回答这个问题的最好朋友。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase_portrait_pendulum.pdf}
+  \caption{倒立摆的相图（含轻微阻尼）。悬垂位置（$\theta = 0$）是稳定节点（绿色圆点）；竖直位置（$\theta = \pi$）是不稳定鞍点（红色方块）。虚线为分离线——振荡与旋转的分界。蓝色阴影区域是 $\theta = \pi$ 附近线性化有效的范围，LQR 在此区域内工作。超出此范围，就需要非线性工具。}
+\end{figure}
+
+%-----------------------------------------------------------------------------
+\subsection{反馈线性化（Feedback Linearization）}
+%-----------------------------------------------------------------------------
+
+\subsubsection{核心思想：消除非线性}
+
+我们非线性工具箱中的第一个工具，概念上也是最简单的：如果你知道非线性是什么，就直接把它消掉。
+
+假设你的系统具有\textbf{输入仿射}（input-affine）形式：
+\begin{equation}
+\ddot{x} = f(x, \dot{x}) + g(x)\,u
+\end{equation}
+其中 $f$ 表示非线性漂移动力学，$g$ 是输入耦合。许多机械系统都符合这种形式：非线性项（重力、科里奥利力、离心力）通过 $f$ 进入，执行器输入通过 $g$ 以乘法方式进入。核心想法简单得惊人：选择控制输入 $u$ 来\textit{消除}非线性，并将其替换为你想要的任何线性动力学。
+
+令：
+\begin{equation}
+u = \frac{v - f(x, \dot{x})}{g(x)}
+\end{equation}
+其中 $v$ 是一个新的"虚拟输入"，我们可以自由设计。代入：
+\begin{equation}
+\ddot{x} = f(x, \dot{x}) + g(x) \cdot \frac{v - f(x, \dot{x})}{g(x)} = v
+\end{equation}
+
+非线性消失了。系统现在是一个纯\textbf{双积分器}（double integrator）：$\ddot{x} = v$。你可以用任何线性控制器来设计 $v$——PD、LQR、极点配置，随你喜欢。
+
+这是\textit{精确}线性化，不是近似。我们没有丢掉高阶项，也没有假设小偏差。消除在代数上是完美的（假设模型完美）。必须满足两个条件：
+\begin{enumerate}[nosep]
+    \item 函数 $f(x, \dot{x})$ 和 $g(x)$ 必须被\textbf{精确已知}。
+    \item 在整个工作区域内输入耦合 $g(x) \neq 0$（否则会除以零）。
+\end{enumerate}
+
+\textbf{与雅可比线性化的对比。}雅可比线性化在某一点将 $f$ 和 $g$ 近似为常数并丢掉高阶项；结果只在局部有效。反馈线性化在控制律中使用\textit{完整的}非线性 $f$ 和 $g$，因此消除在全局成立（在 $g \neq 0$ 的地方）。代价是你必须在所有地方都知道 $f$ 和 $g$，而不仅仅是在某一个点。
+
+\textbf{MIMO 扩展（输入输出线性化）。}对于多输入系统 $\dot{\mathbf{x}} = \mathbf{f}(\mathbf{x}) + G(\mathbf{x})\mathbf{u}$，思想相同但代数涉及李导数（Lie derivatives）。对每个输出反复求导直到输入出现，将结果堆叠成矩阵方程并求逆。关键概念是\textit{相对阶}（relative degree）：必须对输出求导多少次输入才显式出现。如果总相对阶等于系统阶数，系统就是\textit{完全}反馈可线性化的。如果不是，则存在保持非线性的内部动力学——你必须验证这些"零动态"（zero dynamics）是稳定的（这是最小相位的非线性类比）。对于比赛机器人来说，SISO 反馈线性化可以覆盖大多数情况。
+
+\subsubsection{例子：倒立摆摆起}
+
+回到倒立摆：
+\begin{equation}
+ml^2 \ddot{\theta} + mgl\sin(\theta) = \tau
+\end{equation}
+
+改写为 $\ddot{\theta} = -\frac{g}{l}\sin(\theta) + \frac{1}{ml^2}\tau$。这里 $f(\theta) = -\frac{g}{l}\sin(\theta)$，$g = \frac{1}{ml^2}$。
+
+选择反馈线性化控制律：
+\begin{equation}
+\tau = mgl\sin(\theta) + ml^2 v
+\end{equation}
+
+第一项消除重力非线性；第二项注入虚拟输入。结果：
+\begin{equation}
+\ddot{\theta} = -\frac{g}{l}\sin(\theta) + \frac{1}{ml^2}\bigl(mgl\sin(\theta) + ml^2 v\bigr) = v
+\end{equation}
+
+纯双积分器。现在用 PD 控制设计 $v$，驱动 $\theta \to \pi$（竖直）：
+\begin{equation}
+v = -K_p(\theta - \pi) - K_d \dot{\theta}
+\end{equation}
+
+闭环变为 $\ddot{\theta} + K_d \dot{\theta} + K_p(\theta - \pi) = 0$，一个稳定的二阶线性系统，自然频率 $\omega_n = \sqrt{K_p}$，阻尼比 $\zeta = K_d / (2\sqrt{K_p})$。选择 $K_p$ 和 $K_d$ 把极点放在你想要的任何位置——与任何线性二阶系统拥有相同的设计自由度。
+
+下面是一个最小的 Python 实现：
+
+\begin{verbatim}
+import numpy as np
+
+def feedback_linearization_controller(theta, theta_dot,
+                                       m, l, g,
+                                       Kp, Kd, theta_ref=np.pi):
+    """Feedback linearizing controller for inverted pendulum."""
+    # Cancel nonlinearity + inject virtual input
+    v = -Kp * (theta - theta_ref) - Kd * theta_dot
+    tau = m * g * l * np.sin(theta) + m * l**2 * v
+    return tau
+\end{verbatim}
+
+\textbf{问题在于：}这要求精确知道 $m$、$l$ 和 $g$。如果你的模型说 $m = 0.5$ kg 但真实质量是 $0.55$ kg，$\sin(\theta)$ 项就不能被完美消除。10\% 的质量误差留下 10\% 的残余非线性，PD 外环必须处理它——而它并不是为非线性扰动设计的。
+
+具体来看：如果真实质量为 $\hat{m} = m + \Delta m$，实际闭环动力学变为 $\ddot{\theta} = v + \frac{\Delta m}{m} \frac{g}{l}\sin(\theta)$——残余项随建模误差增长。对于特性良好的系统（实验室中精心测量的摆），$\Delta m / m$ 很小，PD 环路可以吸收它。对于载荷未知的比赛机器人？那就危险了。
+
+\subsubsection{局限性}
+
+反馈线性化很优雅，但有实际的弱点：
+
+\begin{itemize}[nosep]
+    \item \textbf{模型敏感性。}不完美的消除留下残余非线性动力学，而线性外环并不是为处理它们而设计的。
+    \item \textbf{奇异性。}当 $g(x) \to 0$ 时，所需控制量 $u \to \infty$。对于倒立摆，$g$ 是常数，所以这不是问题。但对于接近运动学奇异点的机械臂，这是致命的。
+    \item \textbf{没有固有的鲁棒性。}未建模的动力学（摩擦、柔性、间隙）作为控制器未预见的扰动重新出现。
+    \item \textbf{需要全状态测量。}控制器需要计算 $f(x, \dot{x})$，这意味着你需要测量（或精确估计）完整状态。如果状态估计器有噪声，噪声会直接馈入消除项，可能激发高频动力学。
+\end{itemize}
+
+反馈线性化最适用于你有良好模型并且希望获得干净、可预测行为的系统。对于未知或特性不佳的系统，我们需要本质上更鲁棒的方法。
+
+%-----------------------------------------------------------------------------
+\subsection{滑模控制（Sliding Mode Control）}
+%-----------------------------------------------------------------------------
+
+\subsubsection{核心思想：通过不连续切换实现鲁棒性}
+
+反馈线性化很优雅，但它有一个致命假设：你得精确知道非线性项 $f(x)$。如果模型不准怎么办？我们需要一种即使模型有误差也能工作的方法。
+
+滑模控制（SMC）采取了根本不同的哲学：不去消除非线性，而是\textit{压制它}。不要试图建模扰动的每一个细节——只需知道它最坏能有多糟的上界，然后用比那更大的力去打它。设计一个控制器，把系统状态强迫到状态空间中一个选定的曲面上，然后不管扰动或模型误差如何都把它保持在那里。
+
+设定：在状态空间中定义一个\textbf{滑模面}（sliding surface）——一个系统具有期望动力学的流形。然后设计控制器 (1) 将状态驱动到该面上，(2) 使其保持在那里。扰动和模型误差无法将状态踢离该面，因为控制器在持续修正。
+
+我们的目标是：设计一个面（surface），让系统一旦到达这个面，误差就自动以我们选定的速率衰减——不管有什么扰动。对于跟踪参考 $x_d(t)$ 的二阶系统，误差 $e = x - x_d$，滑模面的一个自然选择是：
+\begin{equation}
+s = \dot{e} + \lambda e
+\end{equation}
+其中 $\lambda > 0$ 是设计参数。这是 $(e, \dot{e})$ 相平面中的一条直线。
+
+\textbf{为什么选这个面？}在面上（$s = 0$），误差动力学变为：
+\begin{equation}
+\dot{e} + \lambda e = 0 \quad \Longrightarrow \quad e(t) = e(0)\,e^{-\lambda t}
+\end{equation}
+
+误差以时间常数 $1/\lambda$ 指数衰减到零。这个动力学\textbf{独立于}被控对象模型、扰动或参数变化。一旦你在面上，收敛就由一个简单的一阶 ODE 保证。
+
+控制设计分为两部分：
+\begin{enumerate}
+    \item \textbf{到达阶段（Reaching phase）：}在有限时间内将状态驱动到滑模面。
+    \item \textbf{滑动阶段（Sliding phase）：}将状态保持在面上；降阶动力学处理其余事情。
+\end{enumerate}
+
+对于到达阶段，我们需要\textbf{到达条件}（reaching condition）：
+\begin{equation}
+s\,\dot{s} < -\eta\,|s|, \quad \eta > 0
+\end{equation}
+
+这保证 $s$ 的幅值不管正负都在减小，在有限时间 $t_r \leq |s(0)|/\eta$ 内到达 $s = 0$。
+
+\subsubsection{例子：带未知摩擦的速度控制}
+
+考虑电机驱动惯性负载：
+\begin{equation}
+J\,\dot{\omega} = \tau - d(t)
+\end{equation}
+其中 $J$ 是转动惯量，$\omega$ 是角速度，$\tau$ 是控制力矩，$d(t)$ 是未知的时变摩擦/扰动项，上界为 $|d(t)| \leq D_{\max}$。
+
+我们要跟踪参考速度 $\omega_{\text{ref}}$。定义滑模变量：
+\begin{equation}
+s = \omega - \omega_{\text{ref}}
+\end{equation}
+
+求导：$\dot{s} = \dot{\omega} - \dot{\omega}_{\text{ref}} = \frac{1}{J}(\tau - d(t)) - \dot{\omega}_{\text{ref}}$。
+
+选择控制律：
+\begin{equation}
+\tau = J\,\dot{\omega}_{\text{ref}} + K\,\mathrm{sign}(s), \quad K > D_{\max}
+\end{equation}
+
+代入：
+\begin{equation}
+\dot{s} = \frac{1}{J}\bigl(J\,\dot{\omega}_{\text{ref}} + K\,\mathrm{sign}(s) - d(t)\bigr) - \dot{\omega}_{\text{ref}} = \frac{K\,\mathrm{sign}(s) - d(t)}{J}
+\end{equation}
+
+检验到达条件：
+\begin{equation}
+s\,\dot{s} = \frac{s\bigl(K\,\mathrm{sign}(s) - d(t)\bigr)}{J} = \frac{K|s| - s\,d(t)}{J} \geq \frac{(K - D_{\max})|s|}{J} > 0
+\end{equation}
+
+等等——我们需要 $s\,\dot{s} < 0$ 才能收敛。让我们修正符号：$\tau = J\,\dot{\omega}_{\text{ref}} - K\,\mathrm{sign}(s)$。则：
+\begin{equation}
+s\,\dot{s} = \frac{-K|s| - s\,d(t)}{J} \leq \frac{-(K - D_{\max})|s|}{J} < 0
+\end{equation}
+
+因为 $K > D_{\max}$，到达条件成立。状态在有限时间内收敛到 $s = 0$，一旦到达那里，$\omega = \omega_{\text{ref}}$ 精确成立——不管未知摩擦 $d(t)$ 如何。这就是滑模控制的威力：鲁棒性是\textit{结构性的}，不依赖于精确建模。
+
+\textbf{相平面解释。}在 $(s, \dot{s})$ 相平面中，滑模面就是原点线 $s = 0$。到达条件迫使所有轨迹指向这条线，不管扰动如何。一旦轨迹到达 $s = 0$，它就永远留在那里——沿着面滑动。面"上方"（$s > 0$）的轨迹被推下来；"下方"（$s < 0$）的被推上去。结果是一个在有限时间内捕获所有轨迹的漏斗。
+
+\textbf{设计参数 $\lambda$。}对于更高阶系统（例如位置跟踪，其中位置误差 $e$ 和速度误差 $\dot{e}$ 都重要），滑模面 $s = \dot{e} + \lambda e$ 引入一个设计选择：$\lambda$。$\lambda$ 大意味着在面上快速收敛，但要求控制器在到达阶段更激进。$\lambda$ 小给出温和的收敛但误差衰减慢。一个好的起点：设 $\lambda$ 使 $1/\lambda$ 等于面上的期望稳定时间。
+
+\subsubsection{抖振问题（Chattering Problem）}
+
+这种鲁棒性是有代价的。$\mathrm{sign}(s)$ 函数在 $s$ 过零时以无限快的频率切换。理论上没问题。实际上会产生\textbf{抖振}（chattering）——控制信号中的高频振荡。这不仅仅是烦人；它会损坏执行器。电机线圈过热，齿轮磨损，机械结构振动。
+
+\textbf{修复 1：边界层（Boundary layer）。}用连续近似替代不连续的 $\mathrm{sign}(s)$：
+\begin{equation}
+\mathrm{sat}\!\left(\frac{s}{\Phi}\right) = \begin{cases} s/\Phi & \text{if } |s| \leq \Phi \\ \mathrm{sign}(s) & \text{if } |s| > \Phi \end{cases}
+\end{equation}
+其中 $\Phi > 0$ 是边界层宽度。在层内 $|s| < \Phi$，控制是比例的（光滑的）；在层外是原来的 bang-bang。折中是：$\Phi$ 越大控制越平滑，但允许量级为 $\Phi$ 的稳态误差。$\Phi$ 越小跟踪越好但抖振越多。实践中，将 $\Phi$ 调到与执行器带宽匹配——切换比电机能响应的更快是没有意义的。
+
+\textbf{修复 2：超扭转算法（Super-twisting algorithm）。}一种二阶滑模控制器，以\textit{连续}控制信号实现 $s = 0$：
+\begin{equation}
+u = -k_1 |s|^{1/2}\,\mathrm{sign}(s) + w, \qquad \dot{w} = -k_2\,\mathrm{sign}(s)
+\end{equation}
+
+积分项 $w$ 平滑地积累控制量，消除了施加力矩中的不连续性，同时保留了有限时间收敛到滑模面的特性。收敛的充分条件是 $k_1 > 0$ 且 $k_2$ 相对于扰动界足够大（具体不等式取决于系统；原始证明见 Levant 1993）。超扭转算法是当执行器健康很重要时的首选——在比赛机器人中，这总是重要的。
+
+\textbf{实用建议。}对于大多数比赛应用，从边界层方法开始（实现起来极其简单——只需在代码中将 \texttt{sign(s)} 替换为 \texttt{s/max(abs(s), phi)}）。如果发现跟踪精度不够，试试超扭转算法。额外的积分器状态容易添加，控制平滑度的改善非常显著。
+
+%-----------------------------------------------------------------------------
+\subsection{增益调度（Gain Scheduling）}
+%-----------------------------------------------------------------------------
+
+有时理论上优雅的方法并不是实践中最实用的。如果你的系统是非线性的，但随工作点的变化"缓慢"，你不一定需要反馈线性化或滑模控制的全套机制。增益调度是工程师务实的解决方案：设计多个线性控制器，每个针对不同的工作点调整，然后根据当前状态在它们之间切换或插值。它是工业中使用最广泛的非线性控制技术——也常常是最不被认为是非线性控制的技术。
+
+\textbf{例子：电机速度控制器。}直流电机在低速和高速下表现不同：
+\begin{itemize}[nosep]
+    \item \textbf{低速：}静摩擦（stiction）占主导。你需要高增益来克服它并保持精确跟踪。
+    \item \textbf{高速：}反电动势（back-EMF）提供自然阻尼。高增益导致超调和振荡。低增益就够了。
+\end{itemize}
+
+最简单的实现是一个查找表：
+
+\begin{verbatim}
+// Gain scheduling lookup table (C)
+typedef struct { float speed; float Kp; float Ki; } GainEntry;
+
+static const GainEntry table[] = {
+    {   0.0f, 8.0f, 4.0f },   // low speed: high gains
+    { 500.0f, 5.0f, 2.5f },   // mid speed
+    {1000.0f, 2.0f, 1.0f },   // high speed: low gains
+};
+
+// Interpolate Kp, Ki based on current speed
+void get_gains(float speed, float *Kp, float *Ki) {
+    int i = 0;
+    while (i < 2 && speed > table[i+1].speed) i++;
+    float alpha = (speed - table[i].speed)
+                / (table[i+1].speed - table[i].speed);
+    if (alpha < 0.0f) alpha = 0.0f;
+    if (alpha > 1.0f) alpha = 1.0f;
+    *Kp = table[i].Kp + alpha * (table[i+1].Kp - table[i].Kp);
+    *Ki = table[i].Ki + alpha * (table[i+1].Ki - table[i].Ki);
+}
+\end{verbatim}
+
+\textbf{优点：}
+\begin{itemize}[nosep]
+    \item 实现简单，易于通过实验调参。
+    \item 不需要新数学——每个工作点使用熟悉的 PID 或 LQR。
+    \item 当非线性"缓慢"时效果好（参数渐变）。
+    \item 易于验证：独立测试每个工作点。
+\end{itemize}
+
+\textbf{缺点：}
+\begin{itemize}[nosep]
+    \item 在工作点切换期间没有正式的稳定性保证。如果系统移动速度比增益调度预期的快，可能出现瞬态不稳定。
+    \item 需要在许多工作点进行大量测试。漏掉一个区域，你的状态空间中就潜伏着一个未调好的控制器。
+    \item 不能很好地处理快速、耦合的非线性。
+    \item 增益集之间的插值可能产生意外行为，如果增益面不光滑（例如，两个稳定增益集的凸组合不一定是稳定的）。
+\end{itemize}
+
+增益调度是"轻度非线性"系统的正确工具——动力学随工作点变化，但变化平滑且可预测。对于剧烈的非线性（如摆起），使用本章的其他方法。
+
+\textbf{关于实现的实用说明。}在比赛机器人中，增益调度经常以非正式的形式出现：队伍在低速下调好 PID 增益，发现高速时振荡，为高速降低增益，然后用一个 \texttt{if} 语句把两者粘在一起。这\textit{就是}增益调度——只是没有那个花哨的名字。把它系统化（一个带插值的正式查找表，在中间点做过测试）花费不多，却能防止困扰临时方案的"60\% 速度时的奇怪行为"问题。
+
+%-----------------------------------------------------------------------------
+\subsection{基于李雅普诺夫的设计（Lyapunov-Based Design）}
+%-----------------------------------------------------------------------------
+
+\subsubsection{摆起的能量整形（Energy Shaping）}
+
+非线性控制中最优美的方法是从\textbf{能量}的角度思考。不去消除非线性或压制扰动，而是重塑系统的能量景观，使期望状态成为自然的能量最低点。这就是基于李雅普诺夫的设计：找到一个标量的"类能量"函数，然后设计控制器使它始终减小。如果你能做到这一点，稳定性自动跟上——不需要线性化，不需要切换，不需要增益表。
+
+对于倒立摆，这种方法特别自然，因为系统本身就有一个定义良好的能量函数。倒立摆的总能量（动能加势能）为：
+\begin{equation}
+E = \frac{1}{2}ml^2\dot{\theta}^2 - mgl\cos(\theta)
+\end{equation}
+
+在悬垂位置（$\theta = 0$，$\dot{\theta} = 0$）：$E_{\text{hang}} = -mgl$。
+
+在竖直位置（$\theta = \pi$，$\dot{\theta} = 0$）：$E_{\text{up}} = mgl$。
+
+目标是给系统泵入能量，直到 $E = E_{\text{up}} = mgl$，然后保持住。定义能量误差：
+\begin{equation}
+\tilde{E} = E - E_{\text{up}} = \frac{1}{2}ml^2\dot{\theta}^2 - mgl\cos(\theta) - mgl
+\end{equation}
+
+\textbf{李雅普诺夫函数：}选择 $V = \frac{1}{2}\tilde{E}^2 \geq 0$。当且仅当 $E = E_{\text{up}}$ 时它为零，正是我们想要的。
+
+求导：
+\begin{equation}
+\dot{V} = \tilde{E}\,\dot{E}
+\end{equation}
+
+摆在力矩输入 $\tau$ 下的能量时间导数为：
+\begin{equation}
+\dot{E} = ml^2\dot{\theta}\ddot{\theta} + mgl\sin(\theta)\dot{\theta} = \dot{\theta}\bigl(ml^2\ddot{\theta} + mgl\sin(\theta)\bigr) = \dot{\theta}\,\tau
+\end{equation}
+
+所以 $\dot{V} = \tilde{E}\,\dot{\theta}\,\tau$。我们需要 $\dot{V} \leq 0$（李雅普诺夫稳定性要求"能量误差的能量"减小）。选择：
+\begin{equation}
+\tau = k\,\tilde{E}\,\dot{\theta}\cos(\theta), \quad k > 0
+\end{equation}
+
+则：
+\begin{equation}
+\dot{V} = \tilde{E}\,\dot{\theta}\,k\,\tilde{E}\,\dot{\theta}\cos(\theta) = k\,\tilde{E}^2\,\dot{\theta}^2\cos(\theta)
+\end{equation}
+
+嗯——这不总是负的。$\cos(\theta)$ 因子会变号。标准做法是用无符号版本的能量泵送：
+\begin{equation}
+\tau = k\,\tilde{E}\,\dot{\theta}
+\end{equation}
+
+则 $\dot{V} = k\,\tilde{E}^2\,\dot{\theta}^2 \geq 0$——等等，这是非负的，不是非正的。我们需要更仔细。重新来：我们要 $\tilde{E} \to 0$，所以定义：
+
+\begin{equation}
+\tau = -k\,\tilde{E}\,\dot{\theta}, \quad k > 0
+\end{equation}
+
+现在 $\dot{V} = \tilde{E}\,\dot{\theta}\,(-k\,\tilde{E}\,\dot{\theta}) = -k\,\tilde{E}^2\,\dot{\theta}^2 \leq 0$。
+
+这是\textit{半负定的}——当 $\dot{\theta} = 0$ 或 $\tilde{E} = 0$ 时等于零。由 LaSalle 不变性原理（LaSalle's invariance principle），系统收敛到 $\dot{V} = 0$ 处的最大不变集。集合 $\{\dot{\theta} = 0\}$ 包含竖直平衡点（$\theta = \pi$）和悬垂平衡点（$\theta = 0$），但悬垂平衡点处 $\tilde{E} \neq 0$，所以控制器会继续在那里注入能量——它不是闭环系统的不变集。唯一满足 $\dot{V} = 0$ 且动力学一致的不变集是 $\tilde{E} = 0$。
+
+在实际中，控制器使摆以越来越大的幅度摆动，直到 $E \approx E_{\text{up}}$，此时摆接近竖直位置——准备好由线性控制器接管。增益 $k$ 控制能量泵送的激进程度：$k$ 越大摆起越快但峰值力矩越高。有力矩限制时，选择 $k$ 足够小以避免控制器饱和，否则李雅普诺夫论证不再成立。
+
+\textbf{关键洞察：}能量整形控制器不试图跟踪特定轨迹。它只确保能量收敛到正确的水平。摆自己找到到达顶部的路，来回摆动幅度逐渐增大。这既鲁棒又优雅。
+
+\textbf{两阶段控制。}能量整形本身不能稳定竖直平衡点——当 $\tilde{E} = 0$ 且 $\dot{\theta} = 0$ 在 $\theta = \pi$ 处时，控制输出为零，但平衡点是不稳定的。任何扰动都会把摆推走。解决方案：用能量整形\textit{接近}竖直位置，然后切换到为线性化竖直动力学设计的线性控制器（LQR）。这种两阶段策略是真实倒立摆摆起的做法，并且可以推广到许多其他问题。
+
+\textbf{为什么用李雅普诺夫？}李雅普诺夫方法比倒立摆例子所展示的更一般。方法步骤是：(1) 找到一个在期望平衡点为零的正定函数 $V(\mathbf{x})$；(2) 选择控制输入使 $\dot{V} \leq 0$；(3) 调用 LaSalle 不变性原理得出收敛结论。这对任何你能找到合适 $V$ 的系统都有效——难点在于找到一个。对于机械系统，物理能量是自然的起点。对于其他系统，构造李雅普诺夫函数是一门艺术（有时可以借助平方和规划或其他计算工具来辅助）。
+
+%-----------------------------------------------------------------------------
+\subsection{非线性 MPC（NMPC）}
+%-----------------------------------------------------------------------------
+
+线性 MPC 已经很强了——但你让底盘全速过一个急弯，线性化模型就开始说谎。航向变化太大，$\cos\theta_0$ 和 $\sin\theta_0$ 在预测时域末端已经完全不准了。怎么办？答案是直接用非线性模型。上一章中我们看到线性 MPC 在每个时间步求解一个二次规划（QP），使用线性模型 $\mathbf{x}_{k+1} = A_d \mathbf{x}_k + B_d \mathbf{u}_k$。这在单个工作点附近表现良好。\textbf{非线性 MPC} 将同样的滚动时域思想扩展到完整非线性动力学：
+\begin{equation}
+\min_{\mathbf{u}[k], \ldots, \mathbf{u}[k+N-1]} \sum_{i=0}^{N-1} \ell\bigl(\mathbf{x}[k+i],\, \mathbf{u}[k+i]\bigr) + \ell_f\bigl(\mathbf{x}[k+N]\bigr)
+\end{equation}
+约束为：
+\begin{align}
+\mathbf{x}[k+i+1] &= f\bigl(\mathbf{x}[k+i],\, \mathbf{u}[k+i]\bigr) \quad \text{（\textbf{非线性}动力学）} \\
+\mathbf{g}\bigl(\mathbf{x}[k+i],\, \mathbf{u}[k+i]\bigr) &\leq 0 \quad \text{（一般非线性约束）}
+\end{align}
+
+代价 $\ell(\cdot)$ 和约束 $\mathbf{g}(\cdot)$ 也可以是非线性的——用 $\mathrm{SO}(3)$ 上的测地距离代替欧几里得距离，用曲面障碍物做避障等。
+
+\textbf{核心区别：}线性 MPC 求解\textit{凸} QP——保证多项式时间全局最优。NMPC 求解\textit{非凸}非线性规划（NLP）——可能存在多个局部极小值。这使得 NMPC 从根本上更难，但也从根本上更强。
+
+\textbf{求解方法。}最常用的是\textbf{序列二次规划（SQP）}：在当前轨迹猜测处线性化动力学和约束，求解得到的 QP（与线性 MPC 子问题相同），更新轨迹，重复。这与展望章节中 iLQR/DDP 的思路一致，但通过 QP 处理不等式约束。另一种方法是\textbf{直接配点法}：将整条轨迹转写为大型 NLP 的决策变量，交给 IPOPT 等通用求解器。
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{实例对比：差速驱动机器人上的线性 MPC vs NMPC}
+
+\vspace{0.3em}
+考虑一个差速驱动机器人跟踪半径 $R = 2$~m 的圆形路径。非线性运动学为：
+\[
+\dot{x} = v\cos\theta, \quad \dot{y} = v\sin\theta, \quad \dot{\theta} = \omega
+\]
+输入 $u = [v,\, \omega]^T$。
+
+\textbf{线性 MPC 的做法。}在当前航向 $\theta_0$ 处线性化：
+\[
+A = \begin{bmatrix} 0 & 0 & -v_0 \sin\theta_0 \\ 0 & 0 & v_0 \cos\theta_0 \\ 0 & 0 & 0 \end{bmatrix}, \quad
+B = \begin{bmatrix} \cos\theta_0 & 0 \\ \sin\theta_0 & 0 \\ 0 & 1 \end{bmatrix}
+\]
+走直线或缓弯时没问题。
+
+\textbf{线性 MPC 失效的场景。}在紧凑圆弧上（$R = 2$~m，$v = 1$~m/s），预测时域内航向变化 $\Delta\theta \approx 0.5$~rad（$\sim$29\textdegree）。线性化的 $\cos\theta_0$、$\sin\theta_0$ 已严重失准。优化器"看到"直线模型，真实轨迹却是弯的——弯内侧转向不足、弯外侧转向过度。
+
+\textbf{NMPC 的做法。}直接使用完整非线性模型。优化器正确捕捉曲率，横向误差大幅减小。
+
+\textbf{数值对比（典型值）：}
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+& \textbf{线性 MPC} & \textbf{NMPC} \\
+\midrule
+横向跟踪误差（紧凑圆弧） & 15--25 cm & $<$ 3 cm \\
+航向跟踪误差 & 5--10\textdegree & $<$ 1\textdegree \\
+每步计算时间（STM32H7） & 0.2 ms（QP） & 2--5 ms（SQP，3 次迭代） \\
+每步计算时间（笔记本） & $<$ 0.1 ms & 0.5--1 ms \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{取舍：}NMPC 在非线性轨迹上精度高 5--10 倍，但计算开销大 10--25 倍。走直线加缓弯用线性 MPC 够了。紧凑机动、非线性约束避障或大角度控制用 NMPC。
+\end{mdframed}
+
+\textbf{何时用线性 MPC vs NMPC。}\;系统在固定平衡点附近运行或算力严重受限时用\textbf{线性 MPC}。系统工作范围很宽、约束非线性或算力充裕时用\textbf{NMPC}。
+
+\textbf{实用工具：}\href{https://web.casadi.org/}{CasADi}（符号 NLP，Python/MATLAB/C++）、\href{https://docs.acados.org/}{acados}（快速嵌入式 NMPC，ARM 代码生成）、MATLAB \texttt{fmincon}。竞赛机器人推荐 acados 配合代码生成，在 STM32 上实现实时 NMPC。
+
+%-----------------------------------------------------------------------------
+\subsection{该用什么方法：决策指南}
+%-----------------------------------------------------------------------------
+
+有了多种非线性控制工具，选择正确的方法很重要。以下是一个实用指南：
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llllll@{}}
+\toprule
+\textbf{方法} & \textbf{需要模型？} & \textbf{鲁棒性} & \textbf{复杂度} & \textbf{最适用场景} \\
+\midrule
+PID & 不需要 & 低 & 低 & 简单 SISO，近线性 \\
+LQR & 需要（线性） & 中 & 中 & MIMO，近平衡点 \\
+反馈线性化 & 需要（非线性） & 低 & 中 & 已知非线性系统 \\
+滑模控制 & 部分（需上界） & 高 & 中 & 未知扰动 \\
+增益调度 & 需要（多点线性） & 中 & 低 & 宽工作范围 \\
+MPC & 需要（任意） & 中 & 高 & 约束、轨迹规划 \\
+\bottomrule
+\end{tabular}
+\caption{控制方法选择决策指南。"部分"表示你需要不确定性的上界，而非完整模型。}
+\end{table}
+
+几条经验法则：
+\begin{itemize}[nosep]
+    \item 如果你有好的模型且想要干净的数学：\textbf{反馈线性化}。
+    \item 如果你需要鲁棒性且能容忍一些实现复杂度：\textbf{滑模控制}（带边界层或超扭转）。
+    \item 如果系统"基本是线性的"但工作范围很宽：\textbf{增益调度}。
+    \item 如果需要摆起或在平衡点之间过渡：\textbf{李雅普诺夫/能量整形}。
+    \item 如果有硬约束（力矩限制、角度限制）：\textbf{MPC}。
+    \item 如果不确定，从 PID 开始，只有在它失效时才增加复杂度。
+\end{itemize}
+
+在比赛中，最常见的模式是用增益调度 PID 处理"常规"控制（底盘、射击轮），用能量整形加 LQR 的组合来完成"精彩"动作（摆起、平衡、激进机动）。滑模控制在学生机器人中出现较少，但当你面对不可预测的负载或环境扰动时极有价值——例如，一个必须在不同接触条件下施加一致力的机构。
+
+%-----------------------------------------------------------------------------
+% 案例研究
+%-----------------------------------------------------------------------------
+
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{案例研究：倒立摆——从摆起到稳定}
+
+\vspace{0.5em}
+这个案例研究通过展示非线性控制和线性控制如何在同一个系统上协同工作来串联整章内容。
+
+\textbf{阶段 1：能量整形（基于李雅普诺夫的摆起）。}
+
+摆从 $\theta = 0$（悬垂）静止开始。此时能量为 $E = -mgl$，比目标 $E_{\text{up}} = mgl$ 低 $2mgl$。能量整形控制器 $\tau = -k\,\tilde{E}\,\dot{\theta}$ 向系统泵入能量。每次摆动，摆都升得更高一些。控制器不规定轨迹——它只确保能量趋向 $E_{\text{up}} = mgl$。经过几次摆动（通常 3--5 次，取决于 $k$ 和力矩限制），摆到达竖直位置附近。
+
+\textbf{阶段 2：LQR 稳定（来自第 6 章）。}
+
+当角度误差 $|\theta - \pi| < 15°$（约 0.26 rad）时，切换到为线性化竖直平衡点设计的 LQR 控制器。LQR 增益是离线基于线性化模型 $\ddot{\delta} = \frac{g}{l}\delta + \frac{1}{ml^2}\tau$ 计算的，它们将摆精确稳定在竖直位置。
+
+\textbf{切换逻辑：}
+
+\begin{verbatim}
+if abs(theta - pi) < 0.26 and abs(theta_dot) < 2.0:
+    tau = -K_lqr @ np.array([theta - np.pi, theta_dot])
+else:
+    E = 0.5 * m * l**2 * theta_dot**2 - m * g * l * np.cos(theta)
+    E_tilde = E - m * g * l
+    tau = -k_swing * E_tilde * theta_dot
+\end{verbatim}
+
+速度条件 $|\dot{\theta}| < 2.0$ rad/s 防止在摆以高速通过竖直位置时切换（此时 LQR 会立刻失控）。
+
+\textbf{完整轨迹：}
+\begin{enumerate}[nosep]
+    \item $t = 0$：摆悬垂在 $\theta = 0$，$\dot{\theta} = 0$。
+    \item $t \approx 0$--$2$ s：能量整形使摆以越来越大的幅度摆动。
+    \item $t \approx 2$--$3$ s：摆到达 $|\theta - \pi| < 15°$ 且速度较低；控制器切换到 LQR。
+    \item $t > 3$ s：LQR 将摆稳定在竖直位置。小幅振荡指数衰减。
+\end{enumerate}
+
+\textbf{启示：}这种两阶段方法的适用范围远超倒立摆。许多机器人使用"粗糙"的非线性控制器到达期望工作点的邻域，然后切换到精确的线性控制器进行最终稳定。四旋翼从大姿态误差恢复、腿式机器人在步态之间过渡、机械臂伸入狭窄工作空间——模式都一样：非线性控制负责大动作，线性控制负责精细调整。
+
+\textbf{实现提示：}给切换条件加入滞环（hysteresis）。如果你在 $|\theta - \pi| < 15°$ 时切到 LQR，在 $|\theta - \pi| > 15°$ 时切回能量整形，边界附近的噪声会导致快速切换（"芝诺行为"）。改为在 $15°$ 切到 LQR，但只在 $20°$ 时切回能量整形。这个小死区消除了抖振。
+\end{mdframed}
+
+\vspace{1em}
+
+展望下一章：旋转动力学本质上是非线性的——旋转的复合\textit{不是}线性操作，欧拉角在 $\pm 90°$ 处的奇异性是非线性现象。本章的工具解释了四元数和旋转矩阵\textit{为什么}是那样的，以及为什么姿态控制需要我们在这里发展的非线性思维。反馈线性化出现在机械臂的计算力矩控制中；滑模控制出现在鲁棒姿态控制器中；李雅普诺夫方法支撑着旋转动力学中几乎每一个稳定性证明。下一章将建立这些基础。
+
+\textbf{关键思想总结：}
+\begin{itemize}[nosep]
+    \item 线性控制是局部的；非线性控制可以是全局的。
+    \item 反馈线性化：消除你知道的。优雅但脆弱。
+    \item 滑模控制：压制你不知道的。鲁棒但有抖振（可修复）。
+    \item 增益调度：务实工程师的插值法。简单但在过渡时没有理论保证。
+    \item 李雅普诺夫/能量整形：用能量思考，而非轨迹。优美而强大。
+    \item 实践中，把它们组合起来：非线性处理大动作，线性处理精细调整。
+\end{itemize}

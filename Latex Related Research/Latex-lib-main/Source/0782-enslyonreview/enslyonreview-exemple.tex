@@ -1,0 +1,533 @@
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_US
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  enslyonreview-exemple.tex — FULLY WORKED EXAMPLE for the enslyonreview class
+%
+%  ⚠  This file is for REFERENCE only.
+%     To write your own review, open and edit enslyonreview-gabarit.tex
+%     instead. Copy-paste sections from here as needed.
+%
+%  Content reproduces, verbatim, "Antiviral restriction factors in immunity
+%  and disease" by Erika Larrahondo Rodríguez (M2 Review, Dec 2024) — the
+%  finished-document example supplied by F. Roudier alongside review_M2.ott —
+%  so the class can be checked page-for-page against a real, previously
+%  approved review. Figures 1 and 2 are the original images extracted from
+%  that PDF; Table 1 and the 50-entry reference list are retyped in full,
+%  and citations are REAL biblatex \cite calls against
+%  enslyonreview-exemple.bib (clickable, auto-numbered) rather than typed
+%  bracket numbers — see that .bib file for the field conventions to follow.
+%
+%  Project structure:
+%    enslyonreview-gabarit.tex ← YOUR blank template (start here)
+%    enslyonreview-exemple.tex ← this file (full worked example)
+%    enslyonreview.cls         ← class file (same directory or on TEXMFHOME)
+%    enslyonreview.dbx         ← extra biblatex fields (pmid/pmcid/interest)
+%    enslyonreview-exemple.bib ← the 50 references cited below
+%    figures/                  ← fig1-restriction-mechanisms.jpg,
+%                                 fig2-disease-drivers.jpg
+%
+%  Compile order:
+%    pdflatex enslyonreview-exemple → biber enslyonreview-exemple
+%    → pdflatex enslyonreview-exemple → pdflatex enslyonreview-exemple
+%  On Overleaf: compilation is automatic (biber is used by default).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ── THEME — orange (default, official review_M2.ott rust/peach palette) ────
+\documentclass{enslyonreview}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  METADATA — populates the full-width title block on page 1, the running
+%  header/footer on every page, and the PDF metadata.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ── TITLE — full title (page 1) + short form (running header) ─────────────
+\reviewtitle{Antiviral restriction factors in immunity and disease: Regulation and dysregulation of their effector functions}
+\reviewshorttitle{Antiviral Restriction Factors}
+
+% ── AUTHOR — full name (page 1) + surname (running header) ────────────────
+% \textsc{} on the surname (enslyonstage convention) — no effect on
+% \reviewauthorshort, which stays plain (already just the surname, shown
+% small in the italic running header).
+\reviewauthor{Erika \textsc{Larrahondo Rodr\'iguez}}
+\reviewauthorshort{Larrahondo Rodr\'iguez}
+
+% ── AFFILIATION AND DATE — shown together in the peach band under the title
+\reviewaffiliation{Master Biosciences, D\'epartement de Biologie, \'Ecole Normale Sup\'erieure de Lyon.}
+\reviewdate{Dec 2024}
+
+% ── KEYWORDS ────────────────────────────────────────────────────────────
+\reviewkeywords{Antiviral, disease, innate immunity, restriction factors}
+
+% ── ABSTRACT — single paragraph, no bibliographic reference ───────────────
+\reviewabstract{Antiviral factors from the cell autonomous innate immunity are essential
+  cellular proteins that inhibit viral replication and play a central role in the host's
+  defense against infections. Novel technologies now enable the high-throughput screening of
+  these antiviral factors and facilitate detailed characterization of their molecular
+  mechanisms. In this review, we explore the diverse effector functions of these proteins,
+  focusing on their restriction of molecular processes and their interactions with viral
+  components. We also highlight how the dysregulation or genetic mutations of antiviral
+  factors can contribute to the onset and development of diseases. Finally, we emphasize
+  their dual role in immunity and pathology and discuss how interdisciplinary approaches will
+  continue to advance the field.}
+
+% ── BIBLIOGRAPHY — biblatex + biber (see compile order above) ─────────────
+\addbibresource{enslyonreview-exemple.bib}
+
+% ── "OF SPECIAL / OUTSTANDING INTEREST" ANNOTATIONS ────────────────────────
+% Declared here rather than in the .bib — see enslyonreview-exemple.bib's
+% header comment for why. Each key below matches an entrykey in that .bib
+% exactly (case-sensitive); \refspecialinterest → one bullet (•),
+% \refoutstandinginterest → two bullets (••), printed under that entry in
+% the reference list.
+\refspecialinterest{wangGenomewideCRISPRScreenings2024}{Using a genome-wide CRISPR-Cas9 screening, the authors identify SMCHD1 as a restriction factor for adeno-associated virus (AAV). Then they perform mechanistic studies that demonstrate SMCHD1 represses AAV transcription. This study identifies a restriction factor using a high-throughput screening and details its molecular mechanism.}
+
+\refoutstandinginterest{luIFI16PromotesProgression2024}{Using in vitro and in vivo experiments, the authors demonstrate that IFI16 promotes clear cell renal cell carcinoma (ccRCC) cell proliferation and tumor growth. Using transcriptome analysis and experimental validation they confirm the effect relies on the PI3K/AKT pathway. This study details the molecular mechanism through which IFI16 acts as a cancer driver in ccRCC.}
+
+\refspecialinterest{maharanaSAMHD1ControlsInnate2022}{Using in vitro experiments, authors show that SAMHD1 functions as a single-stranded RNA (ssRNA) 3' exonuclease and that in the absence of SAMHD1, cellular RNA is accumulated and leads to immune activation. This study demonstrates the role of SAMHD1 as a regulator of cellular RNA homeostasis.}
+
+\refoutstandinginterest{naumannDNADeaminationRequired2023}{Using in vivo experiments, the authors demonstrate that APOBEC3A can drive tumor development and that this effect is compromised in the absence of its DNA deamination activity. This study demonstrates APOBEC3A drives tumor development in vivo through the same mechanism as antiviral restriction.}
+
+\refoutstandinginterest{wuPhosphoproteomicsRevealsRole2022}{By performing phosphoproteomics on cells of chronic lymphocytic leukemia (CLL) patients and further experiments on KAP1 mutants, the authors show that phosphorylation of KAP1 though the B cell receptor pathway accelerates the cell cycle in CLL cells. This study shows a link between immune signaling, a restriction factor and cancer progression.}
+
+\refspecialinterest{yangKAP1StabilizesMYCN2024}{Using in vitro and RNA stability experiments, authors find that KAP1 is upregulated by MYCN and by forming a complex with other proteins, stabilizes MYCN mRNA and therefore promotes neuroblastoma proliferation. This study illustrates a KAP1 cancer-driving activity dependent on a mechanism different to the one involved in viral restriction.}
+
+\refspecialinterest{legrandSAMD9LActsAntiviral2024}{Here the authors use in vitro experiments and bioinformatic analyses to show that SAMD9L restricts primate lentiviruses by inhibiting translation through a conserved SLFN-like box active site. This study gives novel insight into the molecular mechanism through which SAMD9L restricts the viral cycle.}
+
+\refspecialinterest{manjunathAPOBEC3BDrivesPKRmediated2023}{In this study the authors use different RNA viruses to show that APOBEC3B promotes the PKR signaling pathway and limits stress granule dissociation during viral infection. Here authors study how the interaction between two restriction factors participates in antiviral response and specifically translation inhibition.}
+
+\refspecialinterest{okamotoSLFN11PromotesStalled2021a}{Using genome editing on a cell line derived from a Fanconi anemia (FA) patient, authors demonstrate that SLFN11 depletion lowers interstrand crosslink-induced chromosomal breaks and that SLFN11 promotes stalled fork degradation caused by nucleases in FA. This study demonstrates a disease-driving activity for SLFN11.}
+
+\refspecialinterest{heBST2InducedMacrophage2023}{Through in vivo and in vitro experiments, the authors show that BST2 silencing restricts colorectal cancer progression and macrophage polarization to an M2 phenotype. Also, that depletion of tumor-associated macrophages alleviates the protumoral effect of BST2. This study details the mechanism by which BST2 drives colorectal cancer progression.}
+
+\refspecialinterest{leonhardtAntiviralHIV1SERINC2023}{In this study the authors use cryoEM and fluorescent proteoliposome assay to determine that membrane transporters that can induce the flipping of lipids and therefore disrupt membrane asymmetry. This study uses structural and biochemical assays to unravel the viral restriction mechanism of SERINC proteins.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ── TITLE BLOCK — must be the first call after \begin{document}; assembles
+% the metadata above into the full-width header, then switches to two
+% columns for everything that follows.
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Early and effective response against infection is crucial in antiviral immunity. Antiviral
+factors, also referred to as restriction factors, are cellular proteins that confer intrinsic
+or cell-autonomous innate immunity to viral pathogens by inhibiting viral entry or
+replication. Restriction factors are a group of proteins that are able to restrict the viral
+replication cycle through a wide variety of mechanisms, ranging from transcriptional
+silencing to degradation of cellular biomolecules. Here we focused on restriction factors
+whose activity has been described in mammals. Although the precise definition of restriction
+factors has been debated, they share a set of common features: they have direct antiviral
+activities and generally not part of a complex signaling cascade, they can be constitutively
+expressed in most cell types and are often upregulated by interferon (IFN) (i.e a secreted
+cytokine with antiviral functions), and they often present signatures of positive selection
+(i.e the rapid fixation of beneficial non-synonymous mutations) as a result of the arms race
+between host and virus \cite{blanco-meloIntrinsicCellularDefenses2012,klugeSnapShotAntiviralRestriction2015}.
+
+The term ``restriction factor'' was first introduced in the early 1970s when the Friend virus
+susceptibility protein 1 (Fv1) was identified as restricting the retroviral Murine Leukemia
+Virus (MLV) infection in mice \cite{lillyFv2IdentificationLocation1970}. Since then, cell-intrinsic restriction factors
+have been identified to interfere with virtually all steps of the viral cycle and all virus
+types as part of the first line of defense against these pathogens. Several of these factors,
+such as SAMHD1 \cite{cogginsSAMHD1FunctionsHuman2020} and Tetherin/BST-2 \cite{sauterCounteractionMultifunctionalRestriction2014}, have been extensively
+studied, with their molecular mechanisms and corresponding viral resistance strategies
+described in detail. However, new restriction factors are still actively being discovered and
+technologies such as genome-wide CRISPR screenings have facilitated the identification of
+these proteins \cite{wangGenomewideCRISPRScreenings2024}, which will surely lead to the discovery of unexpected
+restriction mechanisms.
+
+Although restriction factors have often been classified according to the step of the viral
+cycle they inhibit \cite{klugeSnapShotAntiviralRestriction2015,serreroRestrictionFactorsRegulating2024}, many of these proteins exert their inhibitory
+action through common effector functions, such as nucleic acid degradation or
+protein-protein interactions. For instance, RNA-degrading restriction factors may act either
+by directly degrading viral RNA or by targeting viral mRNA, thereby preventing the synthesis
+of viral proteins. Moreover, these restriction factors are often broadly effective, inhibiting
+not only a wide array of viruses but also diverse viral families \cite{klugeSnapShotAntiviralRestriction2015}. However,
+these powerful effector functions can also be directed against endogenous cellular components
+or processes under physiological co
+nditions, and may therefore be harmful to the host.
+Highlighting the molecular mechanisms by which restriction factors antagonize the viral cycle
+can enhance our understanding of how these proteins successfully inhibit different viruses and
+how the dysregulation of innate restriction factors can have deleterious effects on the host.
+
+As studies of antiviral responses in different host-pathogen models progress, new restriction
+factors and associated mechanisms are characterized. Moreover, new insights arise on how
+restriction factors can be implicated in diseases, notably in inflammatory diseases, cancer
+and autoimmune disorders \cite{luIFI16PromotesProgression2024,russellSAMD9LAutoinflammatoryAtaxia2021,morelPKRDoubleStranded2009}. In this review, we explore
+different effector mechanisms through which restriction factors inhibit viral replication
+cycles and describe dysregulations in their effector functions and the resulting detrimental
+effects in the host. We aim to provide specific examples of restriction factors acting as
+drivers of disease and illustrate how these disease-driving mechanisms could be related or not
+with their antiviral activity. Finally, we offer our perspective on how restriction factors
+can both inhibit the viral cycle and act as drivers of disease, and how the field continuously
+evolves towards a more integral view of restriction factors.
+
+% A "key definitions" box for conceptual terms used throughout the review
+% — a single-column reviewbox (not reviewbox*) placed right after the
+% Introduction, as is common in Current Opinion-style reviews. The
+% definitions themselves are not new: each restates, as a standalone
+% glossary entry, what the Introduction paragraph above already says
+% parenthetically inline.
+\begin{reviewbox}[!ht]
+  \caption{\textbf{Key definitions.}}
+  \label{box:definitions}
+  \begin{description}
+    \item[Restriction factor] Cellular protein that confers intrinsic,
+      cell-autonomous innate immunity by directly inhibiting viral entry
+      or replication.
+    \item[Effector mechanism] The specific molecular process (nucleic
+      acid degradation, transcription/translation inhibition, direct
+      protein--virus interaction\ldots) through which a restriction
+      factor exerts its antiviral activity.
+    \item[Interferon (IFN)] Secreted cytokine with antiviral functions;
+      many restriction factors are constitutively expressed and further
+      upregulated by IFN signaling.
+    \item[Positive selection] The rapid fixation of beneficial
+      non-synonymous mutations -- a genomic signature of the evolutionary
+      arms race between host restriction factors and viruses.
+  \end{description}
+\end{reviewbox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Nucleotide or nucleic acid degradation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Each effector-mechanism section below is a self-contained development —
+% no \label needed unless another section explicitly cross-references it
+% (\cref{sec:...} / \crefcolor{sec:...}).
+
+An important mechanism that inhibits the viral cycle is the degradation of viral RNA/DNA or
+the prevention of viruses from synthesizing new genetic material (\crefcolor{fig:mechanisms}).
+A well studied example of this mechanism is the Sterile Alpha Motif and HD domain-containing
+protein 1 (SAMHD1), a deoxynucleoside triphosphate triphosphohydrolase that hydrolyzes dNTPs
+into deoxyribonucleosides and inorganic triphosphates. This protein is widely expressed at a
+basal level and highly expressed in myeloid lineage cells. It is also known to restrict HIV-1
+by inhibiting reverse transcription and viral complementary DNA (cDNA) synthesis through the
+depletion of cellular dNTPs \cite{goldstoneHIV1RestrictionFactor2011}. After this catabolic activity had been
+described, SAMHD1 was also shown to act as a restriction factor via RNase activity by
+degrading genomic RNA of HIV-1 and other retroviruses \cite{choiSAMHD1SpecificallyRestricts2015}. However, the role of
+RNA degradation in SAMHD1-mediated restriction has been debated, and a recent study has shown
+that RNA-bound SAMHD1 does not have a dNTPase or RNase activity \cite{orrisGuaninecontainingSsDNARNA2023}. The precise
+role of the catalytic activities of SAMHD1 in viral restriction remains to be elucidated.
+
+Cellular-intrinsic proteins that show antiviral activity through the targeting of nucleic
+acid material can also be drivers of disease. For instance, genetic mutations in SAMHD1 cause
+an inflammatory encephalopathy called Aicardi--Goutières syndrome (AGS). The specific
+consequences of defects in SAMHD1 function in this disease are still being studied. Recently,
+SAMHD1 has been shown to regulate innate immunity by lowering cellular RNA levels and
+therefore inhibiting the release of immunogenic double-stranded RNA from RNA-protein
+condensates. The mutations in SAMHD1 could therefore lead to an activation of immune response
+against cellular RNA and be linked to the inflammation and neurodegeneration seen in AGS
+\cite{maharanaSAMHD1ControlsInnate2022}. Moreover, restriction factors are sometimes associated with cancer
+progression, often because of their ability to disrupt physiological processes. Multiple
+studies have aimed to determine the role of SAMHD1 in cancer, with different roles being
+observed depending on the cancer type. In ovarian cancer, SAMHD1 depletion seems to induce
+upregulation of proinflammatory cytokines and an activation of innate immune cell signaling,
+and is consequently linked with improved prognosis \cite{gutierrez-chamorroSAMHD1ExpressionModulates2023}. In solid
+cancers, a positive prognosis has also been associated with low or no expression of SAMHD1,
+explained by its ability to modulate DNA damage response and a consequent increase in
+$\gamma$-H2AX and apoptosis in SAMHD1-depleted cells (\crefcolor{fig:disease}A)~\cite{felipModulationDNADamage2022}.
+
+Other examples of restriction factors that inhibit the viral cycle through modification or
+degradation of nucleic acids include RNaseL, Zinc-finger Antiviral Protein (ZAP) and the
+Apolipoprotein B mRNA Editing Catalytic Polypeptide-like (APOBEC) family. RNaseL is able to
+cleave viral RNA when activated by the 2$'$-5$'$-linked oligoadenylates produced by the
+2$'$-5$'$-oligoadenylate synthetase 1 (OAS1) protein \cite{klugeSnapShotAntiviralRestriction2015}. Recently, OAS1
+gain-of-function variants have been shown to cause an autoinflammatory immunodeficiency
+through RNAse L-mediated dysfunctions, that include cleavage of cellular RNA. This
+immunodeficiency can be cured by inhibiting RNAseL \cite{maggHeterozygousOAS1Gainoffunction2021}. ZAP, also known as
+poly(ADP-ribose) polymerase-13 (PARP13) selectively binds and degrades viral RNA, and is
+active against a wide variety of viruses, including HIV-1 and hepatitis B virus
+\cite{shaoVersatilityZincFingerAntiviral2024}. Finally, members of the APOBEC family induce the deamination of cytosines to
+uracils and consequently introduce point mutations in viral genomes. The full scope of their
+antiviral activity still remains to be discovered, with new antagonizing effects against
+viruses still being reported \cite{gottigApobec3ADeaminationFunctions2023}. In this family, APOBEC3A drives tumor
+development by a DNA deamination-dependent mechanism \cite{naumannDNADeaminationRequired2023}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Transcription inhibition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In the presence of viral DNA, another restriction mechanism is the inhibition of viral gene
+transcription (\crefcolor{fig:mechanisms}). The KRAB-associated protein 1 (KAP1), also known as
+tripartite motif containing 28 (TRIM28) is a core component of the constitutive
+heterochromatin machinery and recruits repressive histone modifiers that silence genes
+through H3K9 trimethylation. In addition, KAP1-mediated DNA methylation can also silence the
+transcription of viral genes in both RNA and DNA viruses. It was recently demonstrated that
+in Epstein-Barr Virus (EBV), KAP1 interacts with the $\gamma$-interferon-inducible protein 16
+(IFI16) to silence the EBV lytic switch protein ZEBRA, facilitating its heterochromatinization
+and leading to viral latency \cite{xuIFI16PartnersKAP12022}. For Moloney murine leukemia virus (MoLV)
+silencing, KAP1 is recruited to the provirus 5$'$ long-terminal, which results in a potent
+transcriptional silencing. The latter is dependent on the K779 residue of the protein
+\cite{leeCharacterizationInteractionTrim282018}. The extent of KAP1 antiviral activity remains to be elucidated in other
+viruses, notably in HIV where its role remains elusive.
+
+KAP1 also illustrates how dysregulation of transcription-inhibiting restriction factors can
+lead to detrimental phenotypes. A recent pan-cancer analysis showed that KAP1 is more
+expressed in various tumor tissues than in normal tissues, and that its abnormal expression is
+associated with poorer prognosis. Specifically, higher expression of KAP1 was positively
+correlated with tumor mutational burden and microsatellite instability \cite{shangSystematicPancancerAnalysis2023}. KAP1
+parental and maternal pathogenic variants have also been reported to cause renal embryonal
+tumors, probably through a deregulated transcriptional landscape during nephrogenesis that
+ultimately leads to tumorigenesis \cite{whitworthWilmsTumourResulting2024}. Additionally, constitutive KAP1
+phosphorylation through the B-cell receptor signaling pathway was higher in chronic
+lymphocytic leukemia (CLL) patients compared to control patients, with KAP1 depletion
+decelerating cell cycle progression of CLL cells (\crefcolor{fig:disease}B) \cite{wuPhosphoproteomicsRevealsRole2022}.
+Importantly, the mechanism by which restriction factors inhibit the viral cycle can be
+different to the mechanism by which they are involved in diseases. For example, KAP1 was
+recently reported to stabilize the mRNA of the MYCN proto-oncogene, with KAP1 knockdown
+decreasing MYCN-mediated neuroblastoma progression \cite{yangKAP1StabilizesMYCN2024}.
+
+MxA and MxB proteins are large GTPases of the dynamin superfamily that also act as restriction
+factors by inhibiting viral transcription. MxA acts as a restriction factor against a wide
+range of viruses including orthomyxoviruses and paramyxoviruses. Although known to accumulate
+in the cytoplasm, MxA was also shown to mediate transcription inhibition of the influenza
+virus genome by forming a complex with the viral nucleoprotein (NP) \cite{turanNuclearMxAProteins2004}. Recent
+studies on the link between MxA and disease have mostly focused on its influence on
+sensitivity to chemotherapeutic agents or its relationship with prognosis
+\cite{hayesExpressionMxAEsophageal2024,liExpressionMxAProtein2020}. MxB, another large GTPase, restricts various viruses through multiple
+antiviral mechanisms, including significantly reducing hepatitis B virus and herpesvirus RNA
+transcription, as well as inhibiting proviral DNA integration
+\cite{xieMxBImpedesNUP358mediated2020,wangInterferoninducibleMX2Host2020,schillingHumanMxBProtein2018}. Besides MxA binding of a viral protein and MxB
+restriction that seems to be dependent on GTPase activity, other mechanisms of transcription
+inhibition have also been described. In addition to its role in EBV latency, IFI16 is a
+nuclear DNA sensor that binds the herpes simplex virus 1 (HSV-1) genome in a
+sequence-independent manner \cite{howardNuclearDNASensor2022}. IFI16 accumulates on the genome by interacting
+with the backbone of dsDNA, reduces the association of transcription factors and leads to
+gene repression \cite{johnsonIFI16RestrictsHSV12014}. A wide set of studies on the role of IFI16 in driving
+cancers, mostly through immune signaling, have been performed, and showed recently that it
+promotes clear renal cell carcinoma due to increased levels of IL6 \cite{luIFI16PromotesProgression2024}.
+
+% ── FULL-WIDTH FIGURE — figure* spans both columns; a plain figure (no
+% star) would stay within a single column instead. \label first, referenced
+% from the text above/below via \crefcolor{fig:mechanisms}.
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=0.92\textwidth]{fig1-restriction-mechanisms}
+  \caption{\textbf{Restriction factors inhibit the viral cycle through different effector
+    mechanisms.} Two RNA viruses (green: retrovirus / yellow: ssRNA virus) and one DNA virus
+    (white) are used to illustrate restriction factor activity through the different stages
+    of the viral cycle. Blue cells represent host cells. Only nucleic acids from viral origin
+    are represented. Restriction factors are depicted in red. Arrows indicate binding, dashed
+    arrows indicate indirect effects.}
+  \label{fig:mechanisms}
+\end{figure*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Translation inhibition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Restriction factors can also inhibit the viral cycle by affecting viral protein translation
+(\crefcolor{fig:mechanisms}). The sterile alpha motif domain-containing 9 and 9-like proteins
+(SAMD9/9L) are encoded by paralogous genes and are ubiquitously expressed in many human
+tissues, where they are known to be poxvirus restriction factors that inhibit translation
+\cite{mengParalogousPairMammalian2018}. SAMD9 induces stress antiviral granules that inhibit translation by a
+mechanism including inhibition of ribosome entry and sequestration of viral RNA
+\cite{sivanHumanHostRange2018}. Recently, SAMD9L but not SAMD9 has also been shown to restrict HIV-1 and
+primate lentiviruses through the inhibition of viral and cellular translation. SAMD9L inhibits
+the late stages of viral replication in interferon-stimulated cells through restriction of
+viral protein synthesis. Interestingly, this inhibition was mediated by a Schlafen-like active
+site, identified by homology with the SLFN11, SLFN12, and SLFN13 Schlafen proteins that also
+act as cell autonomous restriction factors by inhibiting translation \cite{legrandSAMD9LActsAntiviral2024}.
+
+Pathogenic variants of SAMD9 are the cause of a complex multisystem disorder named MIRAGE
+syndrome (myelodysplasia, infection, restriction of growth, adrenal hypoplasia, genital
+phenotypes, and enteropathy), which was first described in 2016 and is due to gain-of-function
+mutations in the SAMD9 growth repressor gene that generate tissue hypoplasia. This syndrome is
+still being studied for the large range of phenotypic manifestations, as well as the different
+missense variants that drive the phenotypes \cite{suntharalinghamEmergingPhenotypesLinked2022}. SAMD9L mutations can
+cause severe autoinflammatory disease and ataxia-pancytopenia. Although SAMD9L already
+inhibits translation in physiological conditions, this activity is greatly increased both by
+missense and by truncating mutations. Moreover, phenotypic alterations triggered by truncating
+mutations might indicate an allosteric regulation of SAMD9L by its C terminus that, when lost,
+can lead to the exaggerated translational repression (\crefcolor{fig:disease}C) \cite{russellSAMD9LAutoinflammatoryAtaxia2021}.
+The dramatic phenotypes caused by SAMD9/9L mutations highlight the importance of some
+restriction factors not only in innate immunity proteins but also as regulators of
+physiological processes that upon deregulation can lead to deleterious phenotypes.
+
+Numerous other proteins are both able to inhibit translation of viral proteins and implicated
+in disease. Protein kinase R (PKR) is an interferon-induced kinase activated by binding to
+viral dsRNA and known to impair viral translation through the phosphorylation of the
+translation initiation factor eIF2$\alpha$. Interestingly, this translational shutdown has
+been shown to be driven by APOBEC3B \cite{manjunathAPOBEC3BDrivesPKRmediated2023}. The activation of PKR has been
+linked to neurodegenerative disorders and has been hypothesized to be an initiator of
+deregulated translation in Alzheimer's disease lymphocytes via p53 \cite{morelPKRDoubleStranded2009}. As
+mentioned above, members of the Schlafen family of proteins can also downregulate viral
+protein synthesis. For example, SLFN11 has been proven to restrict flavivirus and HIV-1
+infection, in a mechanism that seems to involve tRNA nucleolytic activity, as shown for
+SLFN13 \cite{valdezSchlafen11Restricts2019}. SLFN11 is also a putative DNA/RNA helicase considered as a guardian
+of the genome that has been shown to destabilize stalled replication forks and therefore
+drive Fanconi anemia \cite{okamotoSLFN11PromotesStalled2021a}. The mechanisms by which the wide range of translation
+inhibitory proteins can trigger diseases still remain largely unknown.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Direct protein-virus interaction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The best characterized example of a protein inhibiting the viral cycle only through physical
+interaction with viral components is perhaps tetherin (\crefcolor{fig:mechanisms}). Also known as
+bone marrow stromal antigen 2 (BST2) or CD317, tetherin was named after its ability to
+physically tether virions to the plasma membrane of infected cells and therefore prevent viral
+particle release. Tetherin is a cell membrane embedded dimer composed of a cytoplasmic region,
+a transmembrane helix, an extracellular coiled coil domain, and a C-terminal membrane anchor.
+The C-terminal anchor of tetherin is responsible for the attachment to the budding virus and
+it is the ectodomain that bends and allows the transition between the membrane bound tetherin
+and the bridge structure between the membrane and the virion \cite{ozcanBendingBST2Coiledcoil2017}. The antiviral
+activity of tetherin has been documented for an extensive range of viruses that include HIV-1,
+influenza A virus, and vesicular stomatitis virus. This list of targeted viruses will continue
+to extend, as exemplified by recent work proving rabies virus inhibition via this mechanism
+\cite{tanwattanaHumanBST2Inhibits2023}.
+
+In the past years, a growing body of evidence showed that tetherin can have an oncogenic role.
+Importantly, as a transmembrane glycoprotein, tetherin is also expressed in differentiated
+human B cells and enhances cell-cell interaction in the pre-B cell stages of differentiation
+\cite{jinBST2PromotesGrowth2019}. In colorectal cancer, in vivo and in vitro experiments showed that upregulation
+of tetherin increased the infiltration of tumor-associated macrophages, polarizing them to an
+M2 phenotype which in turn leads to an immunosuppressive tumor microenvironment
+\cite{heBST2InducedMacrophage2023}. In oral squamous cell carcinoma (OSCC), tetherin was shown to activate the
+epidermal growth factor receptor (EGFR) signaling pathway, important for proliferation and
+apoptosis in mammalian cells. Specifically, tetherin overexpression enhanced OSCC cell
+proliferation, inhibited OSCC cell apoptosis and induced resistance to the gefitinib
+antitumor agent (\crefcolor{fig:disease}D) \cite{jinBST2PromotesGrowth2019}.
+
+% Single-column-wide figure content on a figure* (two-column) float — the
+% *environment* controls column span (both here), \includegraphics's own
+% width= controls the image's actual size within it.
+\begin{figure*}[!t]
+  \centering
+  \includegraphics[width=0.55\textwidth]{fig2-disease-drivers}
+  \caption{\textbf{Restriction factors as drivers of disease.} The potential disease-driving
+    roles of one protein from each type of effector mechanism are summarized. \textbf{A.}
+    SAMHD1. \textbf{B.} KAP1. \textbf{C.} SAMD9L \textbf{D.} Tetherin. Blue cells represent
+    host cells. Red cells represent cancer cells. Red shading symbolizes dysfunction or
+    dysregulation. In immune cells, the red outline indicates activation. OSCC: Oral squamous
+    cell carcinoma. CLL: chronic lymphocytic leukemia. AGS: Aicardi--Goutières syndrome.}
+  \label{fig:disease}
+\end{figure*}
+
+Additional restriction factors are also able to bind viral components to restrict the viral
+cycle. Two members of the interferon-induced transmembrane (IFITM) family of proteins, IFITM2
+and IFITM3, have been shown to antagonize the HIV-1 envelope glycoprotein (Env) by interacting
+with it in cells and thereby impairing correct virion assembly \cite{yuIFITMProteinsRestrict2015}. IFITM3 has been
+identified as a $\gamma$-secretase modulatory protein in Alzheimer's disease, with experiments
+showing that knockout of IFITM3 reduces $\gamma$-secretase activity and thereby the formation
+of amyloid plaques. These results point to IFITM3 as a link between neuroinflammation and
+Alzheimer's disease \cite{hurInnateImmunityProtein2020}. The serine incorporator SERINC3 and SERINC5 proteins have
+recently been reported to restrict viral infection after the presence in the envelopes of
+HIV-1 virions was shown to reduce infectivity and to disrupt virus membrane asymmetry
+\cite{leonhardtAntiviralHIV1SERINC2023}. Interestingly, SERINC proteins have not yet been reported as drivers of
+disease. The P-selectin glycoprotein ligand 1 (PSGL-1) protein also restricts HIV-1 infection
+by binding and sequestering the gp41 protein at the plasma membrane, inhibiting envelope
+incorporation in the virions \cite{liuPSGL1InhibitsHIV12020}. The PSGL-1 protein has been proposed as an immune
+checkpoint and in an endotoxemia mice model, the blockage of PSGL-1 by an antibody
+significantly increased survival and decreased lung injury and levels of inflammatory factors
+\cite{wangRolePSGL1Pathogenesis2019}.
+
+% ── FULL-WIDTH TABLE — table* (two columns); table alone would stay within
+% one column, exactly like figure/figure* above. \footnotesize and
+% \renewcommand{\arraystretch}{1.3} are plain LaTeX, not class macros: a
+% four-column table this dense needs a smaller font and more row padding
+% than the default to stay readable — tune both to taste for your own table.
+% The >{\justifying\parindent0pt\arraybackslash} column prefixes (ragged2e,
+% loaded by the class) give properly justified, hyphenated cell text
+% without a paragraph indent — the plain p{width}/X column default is
+% justified too, but WITH a first-line indent inherited from the
+% document's \parindent, which looks wrong inside a table cell.
+\begin{table*}[!t]
+  \caption{\textbf{Antiviral restriction factors and their roles as disease drivers.}}
+  \label{tab:summary}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabularx}{\textwidth}{|>{\justifying\parindent0pt\arraybackslash}p{2.6cm}|>{\justifying\parindent0pt\arraybackslash}p{2.7cm}|>{\justifying\parindent0pt\arraybackslash}p{3.6cm}|>{\justifying\parindent0pt\arraybackslash}X|}
+    \hline
+    \rowcolor{colorAbstractBg}
+    \textbf{Type of effector mechanism} & \textbf{Restriction factor} & \textbf{Restriction mechanism} & \textbf{Role as a disease driver} \\
+    \hline
+    \multirow{4}{2.6cm}{Nucleotide or nucleic acid degradation}
+      & SAMHD1 \cite{cogginsSAMHD1FunctionsHuman2020,goldstoneHIV1RestrictionFactor2011,choiSAMHD1SpecificallyRestricts2015,orrisGuaninecontainingSsDNARNA2023,maharanaSAMHD1ControlsInnate2022,gutierrez-chamorroSAMHD1ExpressionModulates2023,felipModulationDNADamage2022} & Inhibition of cDNA synthesis, hydrolysis dNTPs & Aicardi--Goutières syndrome, depletion improves prognosis in some cancers \\
+      \cline{2-4}
+      & RNaseL \cite{klugeSnapShotAntiviralRestriction2015,maggHeterozygousOAS1Gainoffunction2021} & Degradation viral RNA & OAS1-mediated autoinflammatory immunodeficiency \\
+      \cline{2-4}
+      & ZAP/PARP13 \cite{shaoVersatilityZincFingerAntiviral2024} & Degradation viral RNA & Not reported \\
+      \cline{2-4}
+      & APOBEC family \cite{gottigApobec3ADeaminationFunctions2023,naumannDNADeaminationRequired2023} & Induction of hypermutation by deamination & Tumor development \\
+    \hline
+    \multirow{4}{2.6cm}{Transcription inhibition}
+      & KAP1/TRIM28 \cite{xuIFI16PartnersKAP12022,leeCharacterizationInteractionTrim282018,shangSystematicPancancerAnalysis2023,whitworthWilmsTumourResulting2024,wuPhosphoproteomicsRevealsRole2022,yangKAP1StabilizesMYCN2024} & Gene silencing by recruitment of histone modifiers, DNA methylation & Higher tumor mutational burden and microsatellite instability, renal embryonal tumor, cell cycle progression in chronic lymphocytic leukemia, stabilization of MYCN mRNA \\
+      \cline{2-4}
+      & MxA \cite{turanNuclearMxAProteins2004,hayesExpressionMxAEsophageal2024,liExpressionMxAProtein2020} & GTPase activity, formation of a complex with viral nucleoprotein & Promotion of resistance to chemotherapy \\
+      \cline{2-4}
+      & MxB \cite{xieMxBImpedesNUP358mediated2020,wangInterferoninducibleMX2Host2020,schillingHumanMxBProtein2018} & GTPase activity & Not reported \\
+      \cline{2-4}
+      & IFI16 \cite{luIFI16PromotesProgression2024,xuIFI16PartnersKAP12022,howardNuclearDNASensor2022,johnsonIFI16RestrictsHSV12014} & Accumulation on the dsDNA viral genome & Promotion of clear renal cell carcinoma \\
+    \hline
+    \multirow{4}{2.6cm}{Translation inhibition}
+      & SAMD9 \cite{mengParalogousPairMammalian2018,sivanHumanHostRange2018,suntharalinghamEmergingPhenotypesLinked2022} & Inhibition of ribosome entry and sequestration of viral RNA & MIRAGE syndrome \\
+      \cline{2-4}
+      & SAMD9L \cite{russellSAMD9LAutoinflammatoryAtaxia2021,mengParalogousPairMammalian2018,legrandSAMD9LActsAntiviral2024} & Restriction of viral protein synthesis through a Schlafen-like active site & Severe autoinflammatory disease and ataxia-pancytopenia \\
+      \cline{2-4}
+      & PKR \cite{morelPKRDoubleStranded2009,manjunathAPOBEC3BDrivesPKRmediated2023} & Phosphorylation of the eIF2$\alpha$ initiation factor & Deregulation of translation in Alzheimer's disease lymphocytes \\
+      \cline{2-4}
+      & SLFN11 \cite{valdezSchlafen11Restricts2019,okamotoSLFN11PromotesStalled2021a} & tRNA nucleolytic activity & Fanconi anemia \\
+    \hline
+    \multirow{4}{2.6cm}{Direct protein-virus interaction}
+      & Tetherin/BST2/ CD317 \cite{ozcanBendingBST2Coiledcoil2017,tanwattanaHumanBST2Inhibits2023,jinBST2PromotesGrowth2019,heBST2InducedMacrophage2023} & Tethering of budding virus to the infected cell & Immunosuppressive tumor microenvironment, enhances cell proliferation and inhibits cell apoptosis in oral squamous cell carcinoma \\
+      \cline{2-4}
+      & IFITM family \cite{yuIFITMProteinsRestrict2015,hurInnateImmunityProtein2020} & Impairment of virion assembly through glycoprotein binding & Amyloid plaques formation \\
+      \cline{2-4}
+      & SERINC family \cite{leonhardtAntiviralHIV1SERINC2023} & Disruption of virus membrane asymmetry & Not reported \\
+      \cline{2-4}
+      & PSGL-1 \cite{liuPSGL1InhibitsHIV12020,wangRolePSGL1Pathogenesis2019} & Inhibition of viral assembly through sequestration of gp41 protein & Blockage increases survival in an endotoxemia mice model \\
+    \hline
+  \end{tabularx}
+\end{table*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Concluding remarks}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Restriction mechanisms used by antiviral factors are able to target virtually all the steps of
+the viral cycle and depend on physical interactions as well as enzymatic or signaling
+activities (\crefcolor{tab:summary}). Because viral replication and host cellular systems
+depend on the same molecular mechanisms, namely, replication, transcription and translation,
+strategies used by cells to restrict viral infection can have deleterious effects on
+physiological processes. However, restriction factors can also drive pathological phenotypes
+through processes that are independent of their antiviral activity. In this review, we have
+illustrated the main mechanisms by which most proteins of the autonomous innate immune system
+can block the viral cycle. Additional mechanisms such as ISGylation of viral proteins or
+modification of membrane fluidity have also been described as important levels of innate
+cellular responses against certain viruses.
+
+The restriction factors discussed in this review highlight the variety of biological
+activities that can converge on the inhibition of a single molecular process. As our knowledge
+of viral infectious mechanisms progresses, more cellular proteins that use novel mechanisms to
+inhibit the viral cycle will be discovered. These studies will also evolve as we leverage new
+technologies such as CRISPR-based screens that are already being used in the high-throughput
+discovery of antiviral factors. Moreover, the disease-driving mechanisms discussed here stress
+the importance of studying restriction factor function beyond immune response. An important
+part of these proteins are involved in cellular processes outside of antiviral response and
+can as such disturb key biological processes such as cell apoptosis and proliferation.
+Overall, our understanding of restriction factors will be crucial to elucidate the complexity
+of antiviral response and the role antiviral proteins and mechanisms can have in organisms as
+a whole.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgements}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+I would like to thank François Roudier and Lucie Etienne for their valuable insight and advice
+through the writing of this review. I would also like to thank Marine Tronchon for her helpful
+comments on the manuscript.
+
+%--- Bibliography ------------------------------------------------------------
+\printbibliography[title=References]
+
+% \balance equalises the two columns' height on this very last page — call
+% it right after the bibliography prints, never earlier (it would disturb
+% the layout of every page before it).
+\balance
+
+\end{document}

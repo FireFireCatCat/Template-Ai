@@ -1,0 +1,509 @@
+%% Version: 1.0
+%% Author:  Florian Sihler, 3.02.2021
+%% This package is a beamer theme to be used with the latex beamer-class.
+%% Dev-Notes: All internal commands and registers will be prefixed with 'btdm@'
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemedigital-minimal}[2019/08/17 v1.0.0 Latex-Beamertheme digital-minimal]
+
+% die idee: gaanz unten ein dünner grauer block der alle Metainformationen enthält, oben nur ein Titel
+% break Folien für Sections mit simpler Dreiecks optic und übersicht über TOC -- neues Tut design
+
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=btdm,prefix=btdm@}
+
+\newif\ifbtdm@footfade@
+\DeclareVoidOption{nofootfade}{\btdm@footfade@false} \DeclareVoidOption{footfade}{\btdm@footfade@true}
+% todo: maybe change to something more flexible with beamer color-themes
+\DeclareVoidOption{darkmode}{\def\btdm@mode{darkmode}}
+\DeclareVoidOption{lightmode}{\def\btdm@mode{lightmode}}
+\def\btdm@mode{lightmode-fill}
+\DeclareVoidOption{lightmode-fill}{\def\btdm@mode{lightmode-fill}}
+\DeclareVoidOption{darkmode-git}{\def\btdm@mode{darkmode-git}}
+
+\newif\ifbtdm@largetrig@
+\DeclareVoidOption{small-triangle}{\btdm@largetrig@false} \DeclareVoidOption{large-triangle}{\btdm@largetrig@true}
+
+\newif\ifbtdm@primaryfoot@
+\DeclareVoidOption{primary-foot}{\btdm@primaryfoot@true} \DeclareVoidOption{gray-foot}{\btdm@primaryfoot@false}
+% bibliography
+\newif\ifbtdm@bibliography@ \btdm@bibliography@true % default: yes/ifloaded
+\DeclareVoidOption{nobib}{\btdm@bibliography@false} \DeclareVoidOption{showbib}{\btdm@bibliography@true}
+
+\DeclareStringOption[\btdm@defaultcolor]{color}[\btdm@defaultcolor]
+\ProcessKeyvalOptions*
+
+% \RequirePackage[defaultfam,light,tabular,lining]{montserrat}
+\RequirePackage[default]{lato}
+\RequirePackage[scaled=.95]{FiraMono}
+\AtEndPreamble{\RequirePackage{mdsymbol}}
+\AtBeginDocument{\fontseries{m}\selectfont}
+\linespread{1.015}
+
+% mabye check Londrina Solid
+\def\btdm@sbseries{\bfseries}
+
+
+% update math figures
+
+\RequirePackage{relsize}
+
+\RequirePackage{pgf,pgffor} % i do need it... always :)
+\RequirePackage{fontawesome} % foot symbols
+
+% \definecolor{btdm@primary@default@dark}{RGB}{136, 247, 226} % rgb(136, 247, 226)
+% \definecolor{btdm@primary@default@dark}{RGB}{245,235,103} % rgb(245,235,103)
+\definecolor{btdm@primary@default@dark}{RGB}{255,161,92} % rgb(255,161,92)
+% \definecolor{btdm@primary@default@dark}{RGB}{68,212,146} % rgb(68,212,146)
+% \definecolor{btdm@primary@default@dark}{RGB}{250,35,62} % rgb(250,35,62)
+\definecolor{btdm@primary@default@light}{RGB}{51,93,126}  % taken from lucy
+
+\newif\if@btdm@darkmode@
+\@namedef{btdm@mode@darkmode}{%
+\@btdm@darkmode@true
+\def\btdm@defaultcolor{btdm@primary@default@dark}
+\colorlet{btdm@primary}{\btdm@color}
+\colorlet{btdm@text}{black!1!white}
+\colorlet{btdm@frametitle}{btdm@text}
+\colorlet{btdm@contrast}{btdm@frametitle}
+\colorlet{btdm@block}{darkgray!55!black!99!btdm@primary}
+\colorlet{btdm@background}{darkgray!99!white!99!btdm@primary}
+\colorlet{btdm@softtext}{btdm@primary!40!btdm@background!95!white}
+\colorlet{btdm@border@up}{darkgray!90!black!99!btdm@primary}
+\colorlet{btdm@border@down}{darkgray!90!black!99!btdm@primary}
+\colorlet{btdm@foot}{gray}
+\colorlet{btdm@foot@page}{btdm@primary}
+\colorlet{btdm@section@fill}{btdm@primary}
+}
+\@namedef{btdm@mode@lightmode}{
+\@btdm@darkmode@false
+\def\btdm@defaultcolor{btdm@primary@default@light}
+\colorlet{btdm@primary}{\btdm@color}
+\colorlet{btdm@text}{black!99!gray}
+\colorlet{btdm@softtext}{gray!42!white!95!btdm@primary}
+\colorlet{btdm@frametitle}{btdm@primary}
+\colorlet{btdm@contrast}{white!75!btdm@primary}
+\colorlet{btdm@background}{white!99!gray}
+\colorlet{btdm@border@up}{btdm@background}
+\colorlet{btdm@border@down}{lightgray!12!white}
+\colorlet{btdm@block}{btdm@background}
+\colorlet{btdm@foot}{gray}
+\colorlet{btdm@foot@page}{btdm@primary}
+\colorlet{btdm@section@fill}{btdm@primary}
+}
+\@namedef{btdm@mode@lightmode-fill}{
+\@btdm@darkmode@false
+\def\btdm@defaultcolor{btdm@primary@default@light}
+\colorlet{btdm@primary}{\btdm@color}
+\colorlet{btdm@text}{black!99!gray}
+\colorlet{btdm@softtext}{gray!42!white!95!btdm@primary}
+\colorlet{btdm@frametitle}{white!99!btdm@primary}
+\colorlet{btdm@contrast}{btdm@frametitle}
+\colorlet{btdm@border@up}{btdm@primary}
+\colorlet{btdm@block}{btdm@primary!60!btdm@text}
+\colorlet{btdm@background}{white!99!gray}
+\colorlet{btdm@border@down}{lightgray!12!white}
+\colorlet{btdm@foot}{gray}
+\colorlet{btdm@foot@page}{btdm@primary}
+\colorlet{btdm@section@fill}{btdm@primary}
+}
+\@namedef{btdm@mode@darkmode-git}{
+\@btdm@darkmode@true
+\def\btdm@defaultcolor{btdm@primary@default@dark}
+\colorlet{btdm@primary}{\btdm@color}
+\definecolor{btdm@text}{RGB}{173,186,199}
+\colorlet{btdm@frametitle}{btdm@text}
+\colorlet{btdm@contrast}{white!99!btdm@primary}
+\definecolor{btdm@background}{RGB}{34,39,46}
+\definecolor{btdm@border@up}{RGB}{28,33,40}
+\colorlet{btdm@border@down}{btdm@border@up}
+\colorlet{btdm@softtext}{btdm@primary!26!btdm@background}
+\colorlet{btdm@block}{btdm@border@up!70!black!89!btdm@text}
+\colorlet{btdm@foot}{btdm@text!36!btdm@border@down}
+\colorlet{btdm@foot@page}{btdm@primary!70!btdm@background}
+\colorlet{btdm@section@fill}{btdm@primary}
+\colorlet{gray}{btdm@text!40!btdm@background}
+\colorlet{lightgray}{gray!70!btdm@background}
+}
+
+% update the selected color mode
+\def\btdm@update@mode{\csname btdm@mode@\btdm@mode\endcsname}
+\btdm@update@mode
+% optional argument can be used to change the mode
+% #2 is the new color to use (btdm@primary can be used to only change mode)
+\newcommand*\UpdateBtdmColor{\@ifstar\update@btdm@full\update@btdm@main}
+\newcommand*\update@btdm@main[2][\btdm@mode]{\update@btdm@full[#1]{#2}\relax}
+% the third argument allows for manual color modifications
+\newcommand*\update@btdm@full[3][\btdm@mode]{\edef\btdm@color{#2}\edef\btdm@mode{#1}\btdm@update@mode\@bsphack#3\@esphack\btdm@update@triangle\btdm@update@subboxes}
+% we update the triangle as it is cached
+% TODO: custom pages for new tasks
+
+\long\def\@btdm@firstoftwo#1#2{#1}
+\long\def\@btdm@secondoftwo#1#2{#2}
+\def\IfBtdmMode#1{\def\@tmp{#1}\ifx\@tmp\btdm@mode\expandafter\@btdm@firstoftwo\else\expandafter\@btdm@secondoftwo\fi}
+\def\IfBtdmDarkmode{\if@btdm@darkmode@\expandafter\@btdm@firstoftwo\else\expandafter\@btdm@secondoftwo\fi}
+
+\let\BtdmSetDarkmode\@btdm@darkmode@true
+\let\BtdmSetLightmode\@btdm@darkmode@false
+
+
+\setbeamercolor{palette primary}{fg=btdm@primary}
+
+\setbeamerfont{structure}{series=\btdm@sbseries}
+\setbeamerfont{frametitle}{parent=structure,size=\Large,series=\fontseries{ub}}
+\setbeamerfont{section title}{parent=frametitle,size=\huge}
+\setbeamerfont{section text}{parent=normal text,size=\scriptsize,shape=\slshape}
+\setbeamerfont{title}{parent=structure,size=\Huge,series=\fontseries{ub}}
+\setbeamerfont{subtitle}{shape=\slshape,size=\LARGE}
+% active section in the footline, custom
+\setbeamerfont{active section in head/foot}{series=\fontseries{b}}
+\setbeamerfont{enumerate item}{parent=normal text}
+\setbeamerfont{enumerate subitem}{parent=normal text}
+\setbeamerfont{enumerate subsubitem}{parent=normal text}
+
+\setbeamercolor{structure}{fg=btdm@primary}
+\setbeamercolor{title}{fg=btdm@primary}
+\setbeamercolor{description item}{fg=btdm@text}
+\setbeamercolor{bibliography item}{fg=btdm@text}
+\setbeamercolor{background canvas}{bg=btdm@background}%
+\setbeamercolor{normal text}{fg=btdm@text}
+\setbeamercolor{frametitle}{parent=structure,fg=btdm@frametitle,bg=btdm@border@up}
+\setbeamercolor{section title}{parent=structure,fg=btdm@contrast}
+\setbeamercolor{section text}{parent=section title,fg=btdm@contrast!70!btdm@primary}
+% TODO: option to have no triangle
+\setbeamercolor{footline}{bg=btdm@border@down,fg=btdm@foot}
+\setbeamercolor{page number in head/foot}{parent=footline,fg=btdm@foot!75!darkgray}
+\setbeamercolor{current page number in head/foot}{parent=footline,fg=btdm@foot@page}
+\setbeamercolor{enumerate item}{fg=btdm@primary}
+\setbeamertemplate{enumerate item}{\insertenumlabel.}
+\setbeamertemplate{enumerate subitem}{\insertenumlabel.\insertsubenumlabel}
+\AtBeginEnvironment{enumerate}{\leftmargini.5cm \leftmarginii.5cm}
+
+\ifbtdm@primaryfoot@
+\setbeamercolor{active section in head/foot}{fg=btdm@primary}
+\else
+\setbeamercolor{active section in head/foot}{parent=footline}
+\fi
+
+\setbeamercolor{bibliography entry author}{fg=btdm@text}
+\setbeamercolor{bibliography entry title}{fg=btdm@primary}
+
+
+\setbeamersize{text margin left=6mm,text margin right=6mm}
+
+\def\updateitemize#1{\setbeamertemplate{itemize items}{#1}%
+\settowidth\leftmargini{\usebeamertemplate{itemize items}}%
+\addtolength\leftmargini{\labelsep}}
+\def\updateitemizesub#1{\setbeamertemplate{itemize subitem}{#1}%
+\settowidth\leftmarginii{\usebeamertemplate{itemize subitem}}%
+\addtolength\leftmarginii{\labelsep}}
+\def\updateitemizesubsub#1{\setbeamertemplate{itemize subsubitem}{#1}%
+\settowidth\leftmarginiii{\usebeamertemplate{itemize subsubitem}}%
+\addtolength\leftmarginiii{\labelsep}}
+
+\updateitemize{\mdseries\faAngleRight}
+\newsavebox\btdm@itemize@sub
+\newsavebox\btdm@itemize@sub@sub
+\def\btdm@update@subboxes{%
+    \setbox\btdm@itemize@sub=\hbox{\raisebox{1.5pt}{\scalebox{.5}{\@declaredcolor{btdm@softtext}\mdseries\faCircle}}}%
+    \setbox\btdm@itemize@sub@sub=\hbox{\scalebox{.77}{\copy\btdm@itemize@sub}}%
+    \updateitemizesub{\copy\btdm@itemize@sub}%
+    \updateitemizesubsub{\copy\btdm@itemize@sub@sub}%
+}\AtBeginDocument{\btdm@update@subboxes}%
+
+
+% this code is based on that of dividing-lines but modified.
+% if i have the time i will regroup it as a package
+% idee, zeige Auszug 'C > D > E > F > G' für 'Abschnitt E',
+% zeige allgemein immer 5 und versuche aktuelle section zu zentrieren
+\def\btdmsetfootlinethreshold#1{\def\btdm@footline@threshold{#1}}
+\btdmsetfootlinethreshold{4}
+\AtBeginDocument{%
+    \ifnum\number\c@btdm@sectioncount<\btdm@footline@threshold\relax
+        \let\btdm@sectionmax@target@preview\thebtdm@sectioncount
+    \else
+        \edef\btdm@sectionmax@target@preview{\btdm@footline@threshold}%
+    \fi
+}
+
+\def\btdm@footer@tsymb#1{\hyperlink{btdm@slide@marker.#1}{\strut\ifnum\insertframenumber=#1\relax\(\blacklozenge\)\else\(\lozenge\)\fi}}
+\def\btdm@printshort@lowforsec#1{\csname btdm@section@#1@content\endcsname}
+
+\def\btdm@printshort@border{~~}
+\def\btdm@printshort@mid{~~}
+
+% we use very flat icons as sort of banners
+\def\btdm@sub#1{\pgfpicture
+\color{btdm@foot!55!btdm@background}
+\pgfsetcornersarced{\pgfpoint{.2mm}{.2mm}}
+\pgfpathrectanglecorners{\pgfpoint{-.85mm}{-.215mm}}{\pgfpoint{.85mm}{.215mm}}
+\pgfusepath{#1}
+\endpgfpicture}
+\newsavebox\btdm@subs@off \setbox\btdm@subs@off=\hbox{\btdm@sub{stroke}}
+\newsavebox\btdm@subs@on \setbox\btdm@subs@on=\hbox{\btdm@sub{stroke,fill}}
+\let\btdm@sub\relax
+\def\btdm@subsections@low#1{{% #1 is the section to filter
+\beamer@currentsubsection=0%
+\def\sectionentry##1##2##3##4##5{}%
+\def\slideentry##1##2##3##4##5##6{\ifnum##6=\c@part\ifnum##1=#1
+    \ifnum##2>\beamer@currentsubsection
+    \beamer@currentsubsection=##2%
+    \box\beamer@sectionbox\hskip1.25ex%
+    \setbox\beamer@sectionbox=% we always disable on last
+    \hbox{\beamer@link(##4){\ifnum\insertframenumber=\btdm@inserttotalframenumber \usebox\btdm@subs@off\else\ifnum\c@subsection=##2\ifnum##1=\c@section\relax\usebox\btdm@subs@on\else\usebox\btdm@subs@off\fi\else\usebox\btdm@subs@off\fi\fi}}%
+    \ht\beamer@sectionbox=.45ex%
+    \dp\beamer@sectionbox=.25ex%
+    \fi\fi\fi\ignorespaces}%
+\setbox\beamer@sectionbox=\null
+\hskip-1.25ex\relax\dohead
+\box\beamer@sectionbox\hfil}}
+
+\def\btdm@next@{\thinspace~\mdseries\faAngleRight~}
+\newsavebox\btdm@box@lowforsec
+\def\btdm@typesettocfooter@footfade{%
+\pgfmathsetmacro\btdm@disttotarget{int(min(100,max(5,30*abs(\i-\value{section}))))}%
+\ifnum\i>\btdm@sectionmax@target@start
+\pgfmathsetmacro\btdm@disttotarget@last{int(min(100,max(5,30*abs(\i-\value{section}-1))))}%
+{\btdm@printshort@mid\color{lightgray!\btdm@disttotarget@last!darkgray}\btdm@next@}\btdm@printshort@mid\fi
+\color{lightgray!\btdm@disttotarget!darkgray}}
+
+\newif\if@btdm@footer@has@sub@
+\@btdm@footer@has@sub@true
+% allow to disable if not wanted
+\let\BtdmNoSubsInFooter\@btdm@footer@has@sub@false
+\let\BtdmDoSubsInFooter\@btdm@footer@has@sub@true
+
+\def\btdm@@typesettocfooter{ % get start index as sec-2
+\setbox\@tempboxa=\hbox{\vphantom{\textbf{A}}}%
+\pgfmathsetmacro\btdm@sectionmax@target@start{int(max(1,\number\c@section-\btdm@footline@threshold/2))}%
+\edef\btdm@sectionmax@target@end{\the\numexpr\btdm@sectionmax@target@start+\btdm@sectionmax@target@preview}%
+\ifnum\btdm@sectionmax@target@end>\number\c@btdm@sectioncount\relax \edef\btdm@sectionmax@target@end{\number\c@btdm@sectioncount}\fi
+% try to update lower if upper was capped
+% we max the difference with 1
+\edef\btdm@sectionmax@target@start{\the\numexpr\btdm@sectionmax@target@end-\btdm@sectionmax@target@preview}%
+\ifnum\btdm@sectionmax@target@start<1 \def\btdm@sectionmax@target@start{1}\fi
+\btdm@footer@tsymb{1}~~\btdm@printshort@border
+% start: \btdm@sectionmax@target@start, end: \btdm@sectionmax@target@end
+\foreach \i in {\btdm@sectionmax@target@start,...,\btdm@sectionmax@target@end} {%
+    \ifbtdm@footfade@
+        \btdm@typesettocfooter@footfade
+    \else\ifnum\i>\btdm@sectionmax@target@start\btdm@printshort@mid\btdm@next@\btdm@printshort@mid\fi\fi
+    \setbox\btdm@box@lowforsec=\hbox{\btdm@printshort@lowforsec{\i}}%
+    % note: we always calc the non(semi)bold thickness
+    % \ifnum\value{section}=\i % old secton guard
+    \let\btdm@thesec\thesection
+    \@tempdima=\dimexpr\wd\btdm@box@lowforsec+.5em\relax
+    % we rlap them by setting them to the right
+    \if@btdm@footer@has@sub@\hb@xt@\z@{\smash{\tiny\@declaredcolor{lightgray}\raisebox{\dimexpr-\ht\btdm@box@lowforsec+.13ex}{\hskip.5\@tempdima\relax\hb@xt@\z@{\hss\btdm@subsections@low{\i}\hss}}}\hss}\fi\ifnum\value{section}=\i\ifnum\insertframenumber=\btdm@inserttotalframenumber \else \usebeamerfont{active section in head/foot}\usebeamercolor[fg]{active section in head/foot}\fi\fi
+    \parbox\@tempdima{\strut\centering\hyperlink{btdm@section.\i}{\usebox\@tempboxa\smash{\btdm@printshort@lowforsec{\i}}}\strut}% we erase all depth to allow sublinks to be clicked more easily
+}%
+\btdm@printshort@border~~\btdm@footer@tsymb{\btdm@inserttotalframenumber}}
+\newsavebox\btdm@toc@footerbox
+\def\btdm@toc@footerbox@cachedpage{-1}
+
+\def\btdm@typesettocfooter{%
+\ifnum\btdm@sectionmax@target@preview<0\else
+    \ifnum\btdm@toc@footerbox@cachedpage=\insertframenumber\else % use cache
+        % update cache
+        \xdef\btdm@toc@footerbox@cachedpage{\insertframenumber}%
+        \global\setbox\btdm@toc@footerbox=\hbox{\btdm@@typesettocfooter}\relax
+    \fi
+    \copy\btdm@toc@footerbox
+\fi}
+
+\def\btdm@footline@data{\btdm@typesettocfooter}
+
+% inject sections
+\newcounter{btdm@sectioncount}
+\setcounter{btdm@sectioncount}{0}
+\let\oldsection\section
+
+\def\btdmcustomauxdef#1#2{\expandafter\gdef\csname btdm@section@#1@content\endcsname{#2}}
+% we do not record star sections
+\def\section{\@ifstar{\oldsection*}{\@dblarg\btdm@section}}
+\def\btdm@section[#1]#2{%
+    \write\@auxout{\noexpand\btdmcustomauxdef{\thesection}{#1}}%
+    \hypertarget{btdm@section.\the\numexpr\value{section}+1}{}%hook to the next section
+    \ifx!#1!\oldsection{#2}\else\oldsection[#1]{#2}\fi
+}
+\AtEndDocument{\write\@auxout{\noexpand\setcounter{btdm@sectioncount}{\number\c@section}}}
+
+\usenavigationsymbolstemplate{}
+\newif\ifdmfoot \dmfoottrue
+\def\revealfooton#1{\only<-\the\numexpr#1-1|handout:0>{\global\dmfootfalse}\only<#1->{\global\dmfoottrue}}
+% allows to display foot on animations
+\let\btdm@footbottomleft\@empty
+
+\def\setfootmarker#1{\def\btdm@footbottomleft{#1}}
+\def\setfoottitlemarker#1{\def\btdm@footbottomleft@title{#1}}
+\setfoottitlemarker{\insertauthoremail\ifx\beamer@shortdate\@empty\else~/ \insertshortdate\fi}
+
+\def\btdm@bottomtoc@w{.7\paperwidth}
+\newdimen\btdmfootheight \btdmfootheight=13.96\p@
+\setbeamertemplate{footline}{\begingroup\btdm@footline@prefix\ifdmfoot
+\beamercolorbox[wd=\paperwidth,leftskip=\z@,rightskip=\z@,center,ht=\btdmfootheight,sep=3pt,shadow=false]{footline}% default color
+    \strut\minipage{\dimexpr\paperwidth-.5cm}%
+    \usebeamerfont{page number in head/foot}%
+    \strut\rlap{\btdm@footbottomleft}\hfill
+    \parbox\btdm@bottomtoc@w{\centering\smaller\btdm@footline@data}%
+    \hfill% we lap so it does not jump
+    \llap{\strut\textbf{{\usebeamercolor[fg]{current page number in head/foot}\insertframenumber}\usebeamercolor*[fg]{page number in head/foot}\ifnum\insertframestartpage=\insertframeendpage\else{.\insertslidenumber}\fi}\,/\,\btdm@inserttotalframenumber}%
+    \endminipage\strut
+\endbeamercolorbox\fi\endgroup}
+
+\let\btdmbibfont\footnotesize
+\def\printBibCommand{\let\bibfont\btdmbibfont\printbibliography[title={},heading=none,notcategory={@hide},locallabelwidth]}
+
+\AtEndPreamble{%
+\@ifundefined{ver@biblatex.sty}{}{%
+    \ifbtdm@bibliography@\btdm@setup@bib\fi
+}}
+
+\def\btdm@setup@bib{%
+\let\finentrypunct\@empty
+\def\btdm@lhook##1{\href{\thefield{url}}{##1}}%
+\DeclareBibliographyDriver{btdm@bibtheme}{%
+    \let\@tmp\@empty
+    \ifhyperref{\iffieldundef{url}{}{\let\@tmp\btdm@lhook}}{}%
+    \@tmp{\usebibmacro{bibindex}%
+    \usebibmacro{begentry}%
+    \usebibmacro{author/editor}%
+    \setunit{\labelnamepunct}\newblock
+    \usebibmacro{title}%
+    \newblock
+    \printtext{\space}% so it will be executed in sync
+    \mbox{\textcolor{btdm@softtext}{\usebibmacro{date}}}%
+    \newblock
+    \usebibmacro{finentry}}}%
+    \@for\@type:={article,book,booklet,collection,inbook,incollection,inproceedings,manual,misc,online,patent,periodical,proceedings,report,thesis,unpublished,*}\do{\DeclareBibliographyAlias{\@type}{btdm@bibtheme}}%
+\DeclareNameFormat{btdm@blx@nf}{\namepartfamily}%
+\DeclareFieldFormat{btdm@sb@title}{\textit{##1}}%
+\DeclareCiteCommand\btdm@sb@rawcite
+{\citetrackerfalse\pagetrackerfalse
+\usebibmacro{prenote}}%
+{\ifciteindex{\indexfield{indextitle}}{}%
+\let\@tmp\@empty
+\ifhyperref{\iffieldundef{url}{}{\let\@tmp\btdm@lhook}}{}%
+\@tmp{%
+\printfield[btdm@sb@title]{labeltitle}\hfill\null\nobreak\hfill\nobreak\mbox{\textcolor{gray}{\printnames[btdm@blx@nf][1-1]{author},~\printfield{year}}}%
+}}%
+{\multicitedelim}%
+{\usebibmacro{postnote}}%
+\DeclareBibliographyCategory{@hide}%
+}
+
+\def\btdm@outro{}
+\long\def\outro#1{\gdef\btdm@outro{#1}}
+\def\btdm@email{}
+\def\email#1{\gdef\btdm@email{#1}}
+\def\btdm@postpage{} \def\PostPage#1{\def\btdm@postpage{#1}}
+% we have to fake the totals because at end document is not recorded
+\def\btdm@inserttotalframenumber{\the\numexpr\inserttotalframenumber+1\relax}
+\AtEndDocument{%
+\begingroup
+\setfootmarker{\btdm@footbottomleft@title}%
+\begin{frame}[c]%
+\label{btdm@slide@marker.\btdm@inserttotalframenumber}% the important end marker
+\fontseries{medium}%
+\vfil\btdm@outro\vfil\relax
+\btdm@postpage
+\end{frame}
+\endgroup
+}
+
+\newdimen\btdm@vertshift \btdm@vertshift=1.5mm
+\newsavebox\btdm@triangle
+% generate the triangle on the left to not always do all recalculations
+\AtBeginDocument{\btdm@update@triangle\let\updateTriangle\btdm@update@triangle}
+% the update hook allows to change the triangle in color if there is a need to
+% change color mit document
+\def\btdm@update@triangle{%
+\setbox\btdm@triangle=\hbox{\usebeamerfont{frametitle}\ifbtdm@largetrig@
+   % size, y shift and x shift
+   \@tempdima=\dimexpr3.75ex+.45ex+3.85pt+1.3\btdm@vertshift\relax
+   \@tempdimb=\dimexpr-3.75ex/2-1.45pt-.65\btdm@vertshift\relax
+   \@tempdimc=\dimexpr-.25cm-.4ex\relax
+\else
+   \@tempdima=\dimexpr3.75ex+.45ex+4.12pt\relax
+   \@tempdimb=\dimexpr-3.75ex/2-.8pt\relax
+   \@tempdimc=\dimexpr-.25cm-.25ex\relax
+\fi
+\smash{\raisebox\@tempdimb{\resizebox*!\@tempdima{\@declaredcolor{btdm@block}\mdseries\faCaretLeft}}}\hskip\@tempdimc}%
+}
+
+\defbeamertemplate*{frametitle}{digital-minimal}[1][]{%
+\vskip\btdm@vertshift% l margin is the left margin so it is aligned with the text
+\usebeamerfont{frametitle}\strut
+\beamercolorbox[wd=\paperwidth,leftskip=\z@,rightskip=\z@,center,ht=3.75ex,dp=.45ex,sep=2pt,shadow=false]{frametitle}% default color
+\strut\smash{\minipage{\dimexpr\paperwidth-.5cm}%
+\hskip.5mm\usebeamercolor*[fg]{frametitle}\strut\insertframetitle\relax
+\hskip\dimexpr\wd\btdm@triangle+.45ex\null% account for the triangle if present
+\endminipage}\strut\llap{\copy\btdm@triangle}\strut
+\endbeamercolorbox
+}
+
+\def\titlenumber#1{\def\btdm@titlepage@number{#1}}
+\let\btdm@titlepage@number\@empty
+
+\def\titlesuffix#1{\def\btdm@titlesuffix{#1}}
+\let\btdm@titlesuffix\@empty
+\setbeamerfont{titlenumber}{size=\fontsize{72pt}{72pt},series=\btdm@sbseries}
+\setbeamercolor{titlenumber}{fg=btdm@softtext}
+\defbeamertemplate*{title page}{digital-minimal}[1][]{%
+\smash{\hskip\textwidth\llap{\raisebox{-.5\height}{\usebeamercolor[fg]{titlenumber}\usebeamerfont{titlenumber}\btdm@titlepage@number}}}\vskip2em\vfill
+\begin{center}
+\parskip=\medskipamount
+    {\usebeamerfont{title}\usebeamercolor*[fg]{title}\inserttitle}\par
+    {\usebeamerfont{subtitle}\usebeamercolor*[fg]{subtitle}\insertsubtitle}\relax
+\end{center}
+\vfill\smash{\rlap{\btdm@titlesuffix}}\null}
+
+
+\def\setauthormailsubject#1{\def\btdm@authormailsuff{?Subject=#1}}
+\let\btdm@authormailsuff\@empty
+\def\insertauthoremail{\ifx\btdm@email\@empty\insertauthor\else\href{mailto:\btdm@email\btdm@authormailsuff}{\insertauthor}\fi}
+
+\def\posttitlepage{}
+\newcommand<>\titleframe[1][]{% post tilepage
+% default reveal
+\begingroup % keep local
+\setfootmarker{\btdm@footbottomleft@title}%
+\@btdm@footer@has@sub@false
+\begin{frame}#2[c]
+   \label{btdm@slide@marker.1}%
+   \revealfooton{2}% can be overriden
+   \titlepage#1\posttitlepage
+\end{frame}
+\endgroup
+}
+
+% allows for section banners if wanted
+\newif\ifsectionbanner \sectionbannertrue
+\let\nosframe\sectionbannerfalse
+
+\def\BtdmMakeNextFullBottom{%
+% we do it globally so it can be used with animations that clear themselves up
+\gdef\btdm@footline@prefix{% do not show sub in foots:
+\@btdm@footer@has@sub@false
+\btdm@footfade@false % this way we do not fade on sections
+\global\let\btdm@footline@prefix\@empty}%
+\colorlet{btdm@border@down}{btdm@section@fill}%
+\colorlet{btdm@foot}{btdm@contrast}%
+\ifbtdm@primaryfoot@\setbeamercolor{active section in head/foot}{fg=btdm@contrast}\fi
+\colorlet{btdm@foot@page}{btdm@contrast}%
+\setbeamercolor{footline}{bg=btdm@border@down,fg=btdm@foot}
+}
+\let\btdm@footline@prefix\@empty
+
+\let\btdm@sec@width\z@
+\let\btdm@sec@text\@empty
+\newcommand\SetNextSectionText[2][.45\linewidth]{\def\btdm@sec@width{#1}\def\btdm@sec@text{#2}}
+\AtBeginSection[]{\ifsectionbanner\begingroup
+    \setfootmarker{\btdm@footbottomleft@title}%
+    \if@btdm@darkmode@\gdef\btdm@footline@prefix{% do not show sub in foots:
+    \@btdm@footer@has@sub@false\global\let\btdm@footline@prefix\@empty} \else\setbeamercolor{background canvas}{bg=btdm@section@fill}\BtdmMakeNextFullBottom\fi
+    \begin{frame}[t]\relax\relax
+        \hypertarget{section.\thesection}{}%
+        \null\hfill\ifx\btdm@sec@text\@empty\else\llap{\smash{\raisebox{-\height+.6cm}{\parbox{\btdm@sec@width}{\raggedleft\usebeamerfont{section text}\usebeamercolor[fg]{section text}\btdm@sec@text}}}}\fi\vskip3em\vfill\centering\usebeamerfont{section title}\usebeamercolor[fg]{section title}\strut\if@btdm@darkmode@\color{btdm@primary}\fi\insertsection\strut\vfill
+    \end{frame}
+\endgroup\fi\let\btdm@sec@text\@empty}
+\endinput

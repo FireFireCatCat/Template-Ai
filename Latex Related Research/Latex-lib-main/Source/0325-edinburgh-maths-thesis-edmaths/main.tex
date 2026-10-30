@@ -1,0 +1,147 @@
+%% University of Edinburgh School of Mathematics thesis/report starter —
+%% edmaths style.
+%%
+%% edmaths is NOT included in this download: edmaths.sty ships with TeX Live
+%% (and with latextemplates.com's compiler), so bundling a copy would only pin
+%% you to an older version than your own distribution already has.
+%%
+%% Documentation: texdoc edmaths  |  https://ctan.org/pkg/edmaths
+%% Licence: edmaths.sty is LPPL-1.3-or-later, (c) 2025 Josh Fogg
+%% (originally written by Thomas Koeppe, 2007).
+%%
+%% edmaths is a STYLE, not a class: it is loaded over `report'. That base class
+%% is not interchangeable — the package defines its abstract, laysummary,
+%% acknowledgements and declaration environments in terms of \chapter*, so
+%% loading it over `article' fails on the first undefined \chapter.
+%%
+%% The two University of Edinburgh crest/logo files that the upstream
+%% repository carries are NOT redistributable and TeX Live does not install
+%% them. This starter therefore bundles no logo and does not reference one —
+%% the title page below is the package's own, which is text-only.
+\documentclass[11pt,oneside]{report}
+
+%% \title and \author come BEFORE \usepackage{edmaths}, which is the reverse of
+%% the usual habit and is not optional here. The package's `hyperref' option
+%% bakes \@title and \@author into pdftitle/pdfauthor at load time, so if they
+%% are still unset the PDF metadata is filled with LaTeX's own
+%% "No \title given" warning text — and the stray braces in that message end
+%% the run with "Too many }'s" and no PDF at all.
+\title{The Title of Your Thesis}
+\author{Your Name}
+\date{2026}
+
+%% The degree option is what fills in the title page's degree line, via the
+%% package's \degreetext macro. It is REQUIRED: with no degree option the
+%% title page literally prints "Specify a degree option!" where the degree
+%% should be, which compiles cleanly and ships a broken cover.
+%%   phd | masterph | mastersc | mmath | y4project
+%%   firstyear | secondyear | thirdyear   (Maxwell Institute annual reports)
+%%
+%% `onehalf' sets the line spacing (single | onehalf | double). `hyperref' and
+%% `fancyhdr' are opt-in here rather than always-on, because the package
+%% configures them itself — loading either yourself as well gives you the
+%% usual "option clash"/redefinition mess rather than your settings winning.
+\usepackage[phd,onehalf,hyperref,fancyhdr]{edmaths}
+
+%% \shorttitle exists only when the `fancyhdr' option is given, and must come
+%% AFTER \usepackage{edmaths} — the package defines the macro, so calling it
+%% earlier is an undefined control sequence. Without it the running header
+%% uses the full title, which wraps badly on a long one.
+\shorttitle{Short Title}
+
+%% edmaths loads amsthm but declares NO theorem environments of its own, so
+%% these \newtheorem lines are yours to write — without them `theorem' is an
+%% undefined environment. Numbering within `chapter' gives Theorem 2.1 rather
+%% than a single counter running the length of the thesis.
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\begin{document}
+
+\maketitle
+
+%% \declaration takes one argument: pass an EMPTY one to get the School's
+%% standard wording (composed by myself, own work, sources acknowledged).
+%% Only supply text if your circumstances require a variant — a co-authored
+%% chapter, or work previously submitted elsewhere.
+\declaration{}
+
+\begin{abstract}
+  A single-page summary of the problem, the methods used, the principal
+  results and what they mean. Written to be read on its own, so no citations
+  and no references to numbered items in the body.
+\end{abstract}
+
+%% The lay summary is REQUIRED for Edinburgh PhD theses and is written for a
+%% reader outside your field. Delete this environment for a report or an
+%% undergraduate project, where it is not asked for.
+\begin{laysummary}
+  A plain-language account of what the research was about and why it matters,
+  aimed at someone with no background in the subject.
+\end{laysummary}
+
+\begin{acknowledgements}
+  Thank supervisors, collaborators, funders and anyone else who supported the
+  work.
+\end{acknowledgements}
+
+\dedication{For someone.}
+
+\tableofcontents
+
+\chapter{Introduction}
+\label{ch:intro}
+Motivate the problem, place it in the existing literature, and set out what
+the rest of the thesis does about it.
+
+\chapter{Background}
+\label{ch:background}
+The definitions and prior results the later chapters rely on.
+
+\begin{theorem}
+  \label{thm:example}
+  Every bounded sequence in $\mathbb{R}^n$ has a convergent subsequence.
+\end{theorem}
+
+\begin{proof}
+  Standard; see any text on real analysis.
+\end{proof}
+
+%% amsmath, amssymb, amscd, amsthm, geometry, ifthen and setspace are all
+%% loaded BY edmaths, so none of them need a \usepackage here. `proof' comes
+%% from amsthm and works out of the box; `theorem' does not, which is why the
+%% \newtheorem declarations are in the preamble above.
+
+\chapter{Results}
+\label{ch:results}
+The contribution. Theorem~\ref{thm:example} is used here, and
+Table~\ref{tab:example} reports the computations.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{lrr}
+    \hline
+    Case & Iterations & Residual \\
+    \hline
+    Baseline & 240 & $1.2\times10^{-6}$ \\
+    Improved & 118 & $4.7\times10^{-9}$ \\
+    \hline
+  \end{tabular}
+  \caption{Convergence of the two schemes.}
+  \label{tab:example}
+\end{table}
+
+\chapter{Conclusion}
+\label{ch:conclusion}
+What was established, what remains open, and where the work goes next.
+
+\appendix
+
+\chapter{Supplementary Material}
+Longer computations and data that would interrupt the main argument.
+
+\end{document}

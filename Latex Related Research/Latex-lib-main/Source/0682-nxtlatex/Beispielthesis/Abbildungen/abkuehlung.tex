@@ -1,0 +1,66 @@
+% Geometrische Abkühlung und die daraus folgende Annahmewahrscheinlichkeit.
+%
+% Echtes MetaPost, aber über luamplib direkt aus LuaLaTeX heraus gerechnet:
+% kein eigener mpost-Lauf nötig, und die Beschriftungen erben Schrift und
+% Mathematiksatz des Dokuments. Die Farben kommen aus nxtfarben.mp, das
+% Code/farben.py aus nxtlatexcolors.sty erzeugt -- dieselbe Quelle wie für
+% LaTeX, TikZ und matplotlib.
+%
+% Zwei Eigenheiten von MetaPost, über die man hier stolpert:
+%  1. Ein Name darf nicht auf einer Ziffer enden -- »T0« wäre »T« mit dem
+%     Suffix 0. Deshalb Tstart.
+%  2. Zahlen sind auf rund 32768 begrenzt, alpha^60000 läuft über. Der
+%     Verlauf wird daher über die normierte Laufvariable t in [0,1]
+%     gerechnet: T/Tstart = exp(-c*t) mit c = ln(Tstart/Tende).
+\begin{mplibcode}[alt={Kurvendiagramm über die Iterationen eines Laufs:
+  Die Temperatur fällt geometrisch von der Starttemperatur gegen null. Die
+  Wahrscheinlichkeit, eine Verschlechterung anzunehmen, bleibt zunächst
+  hoch und fällt dann ebenfalls auf null.}]
+% Pfad relativ zum Hauptdokument, nicht zu dieser Datei.
+input Abbildungen/nxtfarben;
+
+numeric b, h;
+b := 250;
+h := 105;
+
+% Abkühlung im Verfahren: Tstart = 25, Tende = 0,05, also c = ln(500).
+numeric c;
+c := 6.2146;
+
+% mexp(x) ist exp(x/256); die Faktoren 256 rechnen das um.
+vardef Tnorm(expr t) = mexp(-256 * c * t) enddef;
+
+% Annahmewahrscheinlichkeit exp(-dE/T); dE in Einheiten von Tstart.
+vardef Pann(expr t, dE) = mexp(-256 * dE / Tnorm(t)) enddef;
+
+beginfig(1);
+  for i = 1 upto 4:
+    draw (0, i*h/4) -- (b, i*h/4)
+      withcolor nxt_gray1 withpen pencircle scaled .3pt;
+  endfor
+
+  drawarrow (0,0) -- (b+12, 0) withcolor nxt_gray4 withpen pencircle scaled .5pt;
+  drawarrow (0,0) -- (0, h+12) withcolor nxt_gray4 withpen pencircle scaled .5pt;
+
+  path temp;
+  temp = (0, h) for i = 1 upto 80: .. (b*i/80, h*Tnorm(i/80)) endfor;
+  draw temp withcolor nxtgreen withpen pencircle scaled 1.2pt;
+
+  numeric dE; dE := 0.12;
+  path pann;
+  pann = (0, h*Pann(0, dE))
+    for i = 1 upto 80: .. (b*i/80, h*Pann(i/80, dE)) endfor;
+  draw pann dashed evenly scaled .7 withcolor nxt_orange
+    withpen pencircle scaled 1pt;
+
+  label.rt(btex \footnotesize Temperatur $T_k=T_{\mathrm{start}}\,\alpha^k$ etex,
+           (b*0.26, h*0.80)) withcolor nxtgreen;
+  label.rt(btex \footnotesize Annahme einer Verschlechterung $\exp(-\Delta E/T_k)$ etex,
+           (b*0.17, h*0.32)) withcolor nxt_orange;
+  label.bot(btex \footnotesize Iteration $k$ etex, (b/2, -7)) withcolor nxt_gray5;
+  label.lft(btex \footnotesize $T_{\mathrm{start}}$ etex, (0, h)) withcolor nxt_gray5;
+  label.lft(btex \footnotesize $0$ etex, (0, 0)) withcolor nxt_gray5;
+  label.bot(btex \footnotesize $0$ etex, (0, -7)) withcolor nxt_gray5;
+  label.bot(btex \footnotesize $60\,000$ etex, (b, -7)) withcolor nxt_gray5;
+endfig;
+\end{mplibcode}

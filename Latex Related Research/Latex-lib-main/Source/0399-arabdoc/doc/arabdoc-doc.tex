@@ -1,0 +1,258 @@
+% !TEX program = xelatex
+%% arabdoc-doc.tex — Documentation for the arabdoc package collection
+\documentclass[11pt,a4paper]{ltxdoc}
+
+\usepackage[a4paper,margin=2.5cm,headheight=15pt]{geometry}
+\usepackage{array,booktabs,tabularx,longtable}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage[table]{xcolor}
+\usepackage{bidi}
+\usepackage[no-math]{fontspec}
+\usepackage[quiet]{polyglossia}
+
+\setmainfont[Scale=1]{Amiri-Regular.ttf}
+\newfontfamily\arabicfont[Script=Arabic,Scale=0.95]{Amiri-Regular.ttf}
+\newfontfamily\englishfont[Scale=0.95]{TeX Gyre Termes}
+\setmonofont{Amiri-Regular.ttf}
+
+\setdefaultlanguage[calendar=gregorian,hijricorrection=1]{arabic}
+\setotherlanguage[variant=british]{english}
+
+\usepackage[breaklinks,colorlinks,linkcolor=blue,urlcolor=blue]{hyperref}
+\hypersetup{pdftitle={arabdoc documentation},pdfauthor={Dr Nibras Abo Alzahab}}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{0.7em}{}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\small\itshape \textenglish{arabdoc v1.0.0}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+\setstretch{1.4}
+
+\newcommand{\cmd}[1]{\textcolor{blue}{\texttt{\char`\\#1}}}
+\newcommand{\pkg}[1]{\texttt{#1}}
+
+\title{The \texttt{arabdoc} Package Collection\\[0.3em]
+\large One-line Arabic RTL setup for XeLaTeX}
+\author{Dr Nibras Abo Alzahab\\\texttt{nibras.abo.alzahab@gmail.com}}
+\date{\textenglish{Version 1.0.0 \quad 2025-01-15}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+The \pkg{arabdoc} collection provides a one-line setup for Arabic right-to-left typesetting in XeLaTeX. It replaces 15--25 lines of fragile preamble (package loading order, font configuration, caption overrides, section formatting) with a single \cmd{usepackage} call. The suite includes document classes, glossary support, and bibliography styles.
+\end{abstract}
+
+\tableofcontents
+
+\section{Overview}
+
+The suite consists of four packages:
+
+\begin{longtable}{lll}
+\toprule
+\textbf{Package} & \textbf{Type} & \textbf{Purpose} \\
+\midrule
+\pkg{arabdoc-setup} & \texttt{.sty} & Core RTL stack: bidi + polyglossia + fonts + captions \\
+\pkg{arabdoc} & \texttt{.cls} & Document classes: article, book, thesis, report \\
+\pkg{arabdoc-glossary} & \texttt{.sty} & Arabic glossary and acronym styles \\
+\pkg{arabdoc-bib} & \texttt{.sty} & Arabic bibliography support (biblatex) \\
+\bottomrule
+\end{longtable}
+
+\section{The Problem}
+
+Typesetting Arabic in LaTeX requires a specific package loading order. Getting it wrong causes compilation errors:
+
+\begin{quote}
+\texttt{! Package bidi Error: Oops! you have loaded package hyperref after bidi}
+\end{quote}
+
+A correct Arabic preamble requires 15--25 lines with exact ordering:
+
+\begin{english}\begin{verbatim}
+\usepackage{bidi}                              % must be before polyglossia
+\usepackage[no-math]{fontspec}                 % must be after bidi
+\usepackage[quiet]{polyglossia}                % must be after fontspec
+\setmainfont[Scale=1]{Amiri-Regular.ttf}
+\newfontfamily\arabicfont[Script=Arabic]{...}
+\newfontfamily\englishfont[Scale=0.95]{...}
+\setdefaultlanguage[calendar=gregorian]{arabic}
+\setotherlanguage{english}
+\usepackage[breaklinks,hidelinks]{hyperref}    % must be last
+\addto\captionsarabic{...}                     % 10+ caption overrides
+\titleformat{\section}{...}                    % section formatting
+\newcolumntype{L}[1]{...}                      % table column types
+\setstretch{1.5}                               % line spacing
+\end{verbatim}\end{english}
+
+One mistake in this order breaks the entire document. \pkg{arabdoc-setup} encapsulates all of this.
+
+\section{arabdoc-setup}
+
+\subsection{Usage}
+
+\begin{quote}
+\texttt{\char`\\usepackage[options]\{arabdoc-setup\}}
+\end{quote}
+
+\subsection{Options}
+
+\begin{longtable}{lll}
+\toprule
+\textbf{Option} & \textbf{Default} & \textbf{Description} \\
+\midrule
+\texttt{amiri} & \checkmark & Use Amiri font \\
+\texttt{scheherazade} & & Use Scheherazade New font \\
+\texttt{lateef} & & Use Lateef font \\
+\texttt{custom} & & User sets fonts manually \\
+\midrule
+\texttt{maghrib} & \checkmark & Western numerals (0,1,2...) \\
+\texttt{arabicdigits} & & Eastern Arabic numerals (\RL{٠،١،٢}) \\
+\midrule
+\texttt{gregorian} & \checkmark & Gregorian calendar \\
+\texttt{islamic} & & Hijri calendar \\
+\midrule
+\texttt{captions} & off & Arabic caption overrides \\
+\texttt{colorlinks} & off & Colored hyperlinks \\
+\texttt{legal-sections} & off & Section prefix ``المادة'' \\
+\bottomrule
+\end{longtable}
+
+\subsection{Examples}
+
+Minimal setup:
+\begin{quote}
+\texttt{\char`\\usepackage\{arabdoc-setup\}}
+\end{quote}
+
+Full setup with Arabic captions and Hijri calendar:
+\begin{quote}
+\texttt{\char`\\usepackage[amiri,captions,islamic,arabicdigits]\{arabdoc-setup\}}
+\end{quote}
+
+Legal document with colored links:
+\begin{quote}
+\texttt{\char`\\usepackage[amiri,captions,legal-sections,colorlinks]\{arabdoc-setup\}}
+\end{quote}
+
+\subsection{What it loads}
+
+\pkg{arabdoc-setup} automatically loads: \pkg{bidi}, \pkg{fontspec}, \pkg{polyglossia}, \pkg{hyperref}, \pkg{array}, \pkg{booktabs}, \pkg{tabularx}, \pkg{enumitem}, \pkg{float}, \pkg{titlesec}, \pkg{fancyhdr}, \pkg{setspace}, \pkg{xcolor}.
+
+\section{arabdoc}
+
+Document classes that auto-load \pkg{arabdoc-setup} with sensible defaults.
+
+\subsection{Classes}
+
+\begin{longtable}{ll}
+\toprule
+\textbf{Class} & \textbf{Base class} \\
+\midrule
+\pkg{arabdoc-article} & article \\
+\pkg{arabdoc-book} & book \\
+\pkg{arabdoc-report} & report \\
+\pkg{arabdoc-thesis} & book (with title page, abstract, front matter) \\
+\bottomrule
+\end{longtable}
+
+\subsection{Usage}
+
+\begin{quote}
+\texttt{\char`\\documentclass\{arabdoc-article\}}\\
+\texttt{\char`\\documentclass[amiri,captions]\{arabdoc-book\}}
+\end{quote}
+
+All \pkg{arabdoc-setup} options can be passed through the class.
+
+\subsection{arabdoc-thesis}
+
+The thesis class provides additional commands:
+
+\begin{longtable}{ll}
+\toprule
+\textbf{Command} & \textbf{Description} \\
+\midrule
+\cmd{university}\{...\} & University name \\
+\cmd{college}\{...\} & College name \\
+\cmd{department}\{...\} & Department name \\
+\cmd{supervisor}\{...\} & Supervisor name \\
+\cmd{degree}\{...\} & Degree name \\
+\cmd{subject}\{...\} & Subject field \\
+\bottomrule
+\end{longtable}
+
+\section{arabdoc-glossary}
+
+Simplified glossary and acronym management for Arabic documents.
+
+\subsection{Commands}
+
+\begin{longtable}{ll}
+\toprule
+\textbf{Command} & \textbf{Description} \\
+\midrule
+\cmd{newarabicacronym}\{key\}\{ABBR\}\{English\}\{Arabic\} & Bilingual acronym \\
+\cmd{newarabicterm}\{key\}\{English\}\{Arabic desc\} & Glossary term \\
+\cmd{newbilingualterm}\{key\}\{Arabic\}\{English\}\{Desc\} & Bilingual term \\
+\bottomrule
+\end{longtable}
+
+\subsection{Example}
+
+\begin{english}\begin{verbatim}
+\usepackage{arabdoc-glossary}
+\makeglossaries
+
+\newarabicacronym{bci}{BCI}{Brain-Computer Interface}{ترابط الدماغ–الحاسوب}
+\newarabicterm{neuron}{Neuron}{العَصَبُون: الوحدة الوظيفية الأساسية}
+\end{verbatim}\end{english}
+
+In text: \cmd{acrfull}\{bci\} produces ``\LR{BCI} (\LR{Brain-Computer Interface}) - ترابط الدماغ–الحاسوب''.
+
+\section{arabdoc-bib}
+
+Arabic bibliography support using \pkg{biblatex}.
+
+\subsection{Usage}
+
+\begin{english}\begin{verbatim}
+\usepackage{arabdoc-bib}
+\addbibresource{references.bib}
+...
+\printbibliography[heading=arabicbib]
+\end{verbatim}\end{english}
+
+Compile with: \texttt{xelatex} \textrightarrow{} \texttt{biber} \textrightarrow{} \texttt{xelatex} \textrightarrow{} \texttt{xelatex}
+
+\subsection{Custom title}
+
+\begin{quote}
+\texttt{\char`\\arabdocbibtitle\{قائمة المراجع\}}
+\end{quote}
+
+\section{Requirements}
+
+\begin{itemize}
+\item XeLaTeX (TeX Live 2021+ or MiKTeX)
+\item Amiri font family (or Scheherazade New / Lateef)
+\item TeX Gyre Termes font (for English text)
+\item Packages: bidi, polyglossia, fontspec, hyperref, glossaries, biblatex
+\end{itemize}
+
+\section{License}
+
+\begin{itemize}
+\item Package code: LPPL 1.3c
+\item Documentation: LPPL 1.3c
+\end{itemize}
+
+\end{document}

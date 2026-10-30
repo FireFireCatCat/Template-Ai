@@ -1,0 +1,650 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{exam-rtl}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue}
+
+\setmainfont[BoldFont={* Medium}]{IBM Plex Sans}
+\setsansfont[BoldFont={* Medium}]{IBM Plex Sans}
+\setmonofont{Cascadia Code-SemiLight}
+
+\makeatletter % إعادة صياغة ترتيب أرقام الفصول والأقسام
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\LR{\thesection.\arabic{subsection}}}
+\renewcommand{\thesubsubsection}{\LR{\thesubsection.\arabic{subsubsection}}}
+\makeatother
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.4\baselineskip}
+
+\newcommand{\engsf}[1]{\textenglish{\textsf{#1}}}
+\newcommand{\engtt}[1]{\textenglish{\texttt{#1}}}
+
+\TeacherMode
+\ShowMarks
+\ShowDifficulty
+\ShowType
+\ShowCorrection
+\ExamID{2026}
+
+\begin{document}
+
+\begin{center}
+    {\Large\bfseries دليل المستخدم لحزمة \engsf{exam-rtl}}\\[0.5em]
+    {\large الإصدار ٠.١}\\[0.5em] 
+    {\large نذير الجارودي}\\[0.5em]
+    {\large ٢٠٢٦/٠٨/٢٠}
+\end{center}
+
+\tableofcontents
+
+% ============================================================
+\section{مقدمة}
+% ============================================================
+
+حزمة \engtt{exam-rtl} هي نسخة عربية مخصصة للكتابة من اليمين إلى اليسار \engsf{(RTL)} من حزمة \engtt{exam-ltr}.
+توفر بيئة متكاملة لإنشاء اختبارات احترافية دون الحاجة إلى تنسيق يدوي.  فبمجرد كتابة الأسئلة، تتولى الحزمة تنسيقها، وترقيمها، وعرض إجاباتها.
+\paragraph*{الميزات الرئيسية:}
+
+\begin{itemize}
+    \item \textbf{ثمانية أنواع من الأسئلة}: اختيار من متعدد، صح/خطأ، ملء فراغ، ترتيب، توصيل، مقالي، جواب قصير، وقطعة قراءة.
+    \item \textbf{مفاتيح إجابة تلقائية}: يتم جمع الإجابات وعرضها تلقائياً في وضع المعلم.
+    \item \textbf{توزيع عشوائي ذكي}: خلط الخيارات وعناصر التوصيل بطريقة قابلة للتكرار.
+    \item \textbf{عرض البيانات الوصفية}: إظهار أو إخفاء الدرجات ومستوى الصعوبة ونوع السؤال.
+    \item \textbf{وضعا العرض}: نسخة الطالب (الإجابات مخفية) ونسخة المعلم (الإجابات ظاهرة).
+    \item \textbf{دعم اللغة العربية}: محاذاة من اليمين إلى اليسار وأرقام عربية شرقية.
+\end{itemize}
+
+% ============================================================
+\section{المتطلبات}
+% ============================================================
+
+قبل استخدام الحزمة، تأكد من توفر ما يلي:
+
+\begin{itemize}
+    \item \textbf{محرك \engsf{LaTeX}}: يجب استخدام \engtt{XeLaTeX}. \engtt{PDFLaTeX} و \engtt{LuaLaTeX} غير مدعومين.
+    
+    \item \textbf{الخط}: الخط الافتراضي هو \engsf{IBM Plex Sans Arabic}. تأكد من تثبيته على نظامك.
+    
+    \item \textbf{الحزم المطلوبة}: \engtt{xcolor}، \engtt{tcolorbox}، \engtt{fontspec}، \engtt{polyglossia}، \engtt{bidi}، \engtt{expl3}، \engtt{xparse} يتم تحميلها تلقائياً مع الحزمة.
+\end{itemize}
+
+% ============================================================
+\section{التثبيت}
+% ============================================================
+تأتي حزمة \engtt{exam-rtl} مُضمَّنة تلقائيًا عبر \engsf{(CTAN)} في توزيعات LaTeX الرئيسية (\engsf{TeX Live}، \engsf{MiKTeX}، \engsf{MacTeX})؛ حيث يتولى مدير الحزم تثبيتها. وفي حال تطلّب الأمر تثبيتها يدويًا، يُرجى اتباع إحدى الطرق الآتية.
+
+\subsection*{التثبيت السريع (لمشروع واحد)}
+
+هذه الطريقة مناسبة إذا كنت تريد تجربة الحزمة في مشروع واحد فقط.
+
+\begin{enumerate}
+    \item ضع ملف \engtt{exam-rtl.sty} في نفس المجلد الذي يحتوي على ملف \engtt{.tex} الخاص بك.
+    \item أضف الأمر \engtt{\textbackslash usepackage\{exam-rtl\}} في مقدمة ملفك.
+\end{enumerate}
+
+\subsection*{التثبيت الدائم (لكل المشاريع)}
+
+هذه الطريقة مناسبة إذا كنت تستخدم الحزمة في العديد من المشاريع.
+
+\paragraph*{لينكس / \engsf{macOS}:}
+
+\begin{enumerate}
+    \item أنشئ المجلد التالي في مجلدك الشخصي: \engtt{mkdir -p \~{}/texmf/tex/latex/exam-rtl}.
+    
+   \item انسخ ملف الحزمة إلى هذا المجلد: \engtt{cp exam-rtl.sty \~{}/texmf/tex/latex/exam-rtl/}.
+   
+    \item حدّث قاعدة بيانات \engtt{LaTeX}: \engtt{texhash \~{}/texmf}.
+\end{enumerate}
+
+\paragraph*{ويندوز \engsf{(MiKTeX)}:}
+
+\begin{enumerate}
+    \item أنشئ المجلد التالي: \engtt{C:\textbackslash texmf\textbackslash tex\textbackslash latex\textbackslash exam-rtl}.
+    
+    \item انسخ ملف \engtt{exam-rtl.sty} إلى هذا المجلد.
+    
+    \item حدّث قاعدة البيانات عبر تطبيق \engsf{MiKTeX Console} باختيار \engsf{``Refresh FNDB''}.
+\end{enumerate}
+
+\paragraph*{ويندوز \engsf{(TeX Live)}:}
+
+\begin{enumerate}
+    \item أنشئ المجلد التالي: \engtt{C:\textbackslash texlive\textbackslash texmf-local\textbackslash tex\textbackslash latex\textbackslash exam-rtl}.
+    
+    \item انسخ ملف \engtt{exam-rtl.sty} إلى هذا المجلد.
+    
+    \item حدّث قاعدة البيانات بتشغيل الأمر: \engtt{texhash}.
+\end{enumerate}
+% ============================================================
+\section{البدء السريع}
+% ============================================================
+
+هذا القسم يوضح الخطوات الأساسية لإنشاء اختبار باستخدام الحزمة.
+
+\subsection*{الخطوة ١: تحميل الحزمة}
+
+أضف الأمر التالي في مقدمة ملفك:
+\begin{LTR}\ttfamily
+\textbackslash usepackage\{exam-rtl\}
+\end{LTR}
+
+\subsection*{الخطوة ٢: تعيين وضع العرض}
+
+حدد الوضع المطلوب للاختبار:
+\begin{LTR}\ttfamily
+\textbackslash TeacherMode\qquad\%\quad\RL{إظهار مفاتيح الإجابة}\\
+\textbackslash ShowMarks\qquad\%\quad\RL{عرض الدرجات}\\
+\textbackslash ShowCorrection\qquad\%\quad\RL{عرض مربعات الإجابة}\\
+\textbackslash ExamID\{2026\}\qquad\%\quad\RL{تثبيت التوزيع العشوائي}
+\end{LTR}
+
+\subsection*{الخطوة ٣: كتابة الأسئلة}
+
+ضع كل سؤال داخل بيئة \engtt{Question} مع تحديد نوعه وصعوبته ودرجاته:
+\begin{LTR}\ttfamily
+\verb|\begin{Question}{MC}{سهل}{2}|\RL{\{اختر الإجابة الصحيحة\}}\\
+\verb|\begin{MC}|\\
+\verb|    \MCQuestion|\RL{\{ما هو ناتج ٢ + ٢ ؟\}}\{2\}\\
+\verb|        \MCOption|\RL{\{٣\}}\\
+\verb|        \MCOption|\RL{\{٤\}}\\
+\verb|        \MCOption|\RL{\{٥\}}\\
+\verb|        \MCOption|\RL{\{٦\}}\\
+\verb|\end{MC}|\\
+\verb|\end{Question}|
+\end{LTR}
+
+\subsection*{الخطوة ٤: التجميع}
+
+قم بتجميع الملف باستخدام \engtt{XeLaTeX}.
+
+% ============================================================
+\section{أوضاع العرض}
+% ============================================================
+
+توفر الحزمة عدة أوامر للتحكم في مظهر الاختبار.
+
+\subsection*{وضع الطالب ووضع المعلم}
+
+\begin{itemize}
+    \item \engtt{\textbackslash StudentMode}: إخفاء مفاتيح الإجابة (الوضع الافتراضي).
+    \item \engtt{\textbackslash TeacherMode}: إظهار مفاتيح الإجابة.\par
+          \textbf{ملاحظة:} إذا لم يتم تحديد الوضع، فسيتم استخدام وضع الطالب افتراضيًا.
+\end{itemize}
+
+\subsection*{عرض البيانات الوصفية}
+
+\begin{itemize}
+    \item \engtt{\textbackslash ShowMarks}: عرض الدرجات بجانب كل سؤال.
+    \item \engtt{\textbackslash ShowDifficulty}: عرض مستوى الصعوبة (سهل، متوسط، صعب).
+    \item \engtt{\textbackslash ShowType}: عرض نوع السؤال (اختيار من متعدد، صح/خطأ، ملء فراغ، ...).\par
+          \textbf{ملاحظة:} البيانات الوصفية مستقلة عن وضعي الطالب والمعلم ، وبالإمكان إظهار أو إخفاء أيا منها.
+\end{itemize}
+
+\subsection*{مربعات الإجابة}
+
+\begin{itemize}
+    \item \engtt{\textbackslash ShowCorrection}: إظهار مربعات الإجابة.\par
+          \textbf{ملاحظة:} هذا الأمر يعمل فقط مع \engtt{\textbackslash TeacherMode}.
+\end{itemize}
+
+\subsection*{بذرة التوزيع العشوائي}
+
+\begin{itemize}
+    \item \engtt{\textbackslash ExamID\{number\}}: تحديد بذرة ثابتة للتوزيع العشوائي.\par
+          استخدام الرقم نفسه يضمن تكرار النتيجة (البعثرة) نفسها في كل تجميعة.
+\end{itemize}
+
+% ============================================================
+\section{بيئة Question}
+% ============================================================
+
+بيئة \engtt{Question} هي الوعاء الأساسي لكل الأسئلة. تقوم بالترقيم التلقائي وإدارة البيانات الوصفية وجمع الإجابات.
+
+\subsection*{الصيغة}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Question}{Type}{Difficulty}{Marks}{Question Text}|\\
+\verb|...|\quad\RL{المحتوى}\\
+\verb|\end{Question}|
+\end{LTR}
+
+\subsection*{المعاملات}
+
+\begin{itemize}
+    \item \engtt{Type}: نوع السؤال.\par
+          القيم: \engtt{MC}، \engtt{TF}، \engtt{FillBlank}، \engtt{Ordering}، \engtt{Matching}، \engtt{Essay}، \engtt{ShortAnswer}، \engtt{ReadingPassage}.\par
+          \textbf{ملاحظة:} تُدرج البيئة المطابقة للقيمة في المحتوى.
+    
+    \item \engtt{Difficulty}: مستوى الصعوبة.\par
+          مثال: \texttt{سهل}، \texttt{متوسط}، \texttt{صعب}.
+    
+    \item \engtt{Marks}: عدد الدرجات.\par
+    بالإمكان إدخال الدرجات بالأرقام الشرقية (مثل ٢) أو الغربية (مثل 2).
+    
+    \item \engtt{Question Text}: نص السؤال الرئيسي.
+\end{itemize}
+
+% ============================================================
+\section{أنواع الأسئلة}
+% ============================================================
+
+يشرح هذا القسم كل نوع من أنواع الأسئلة مع الأمثلة.
+
+\subsection{اختيار من متعدد (MC)}
+
+بيئة \engtt{MC} تستخدم لأسئلة الاختيار من متعدد. تدعم توزيعاً عشوائياً للخيارات وتخزين الإجابة الصحيحة.
+
+\subsubsection*{الصيغة}
+
+\begin{LTR}\ttfamily
+\verb|\begin{MC}|\RL{[عدد الأعمدة]}\\
+\verb|    \MCQuestion|\RL{\{نص السؤال\}}\RL{\{رقم الإجابة الصحيحة\}}\\
+\verb|        \MCOption|\RL{\{الخيار الأول\}}\\
+\verb|        \MCOption|\RL{\{الخيار الثاني\}}\\
+\verb|        \MCOption|\RL{\{الخيار الثالث\}}\\
+\verb|      ...|\\
+\verb|\end{MC}|
+\end{LTR}
+
+\subsubsection*{مثال}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Question}{MC}{سهل}{٢}|\RL{\{اختر الإجابة الصحيحة\}}\\
+\verb|\begin{MC}[2]|\\
+\verb|    \MCQuestion|\RL{\{ما هو ناتج ٢ + ٢ ؟\}}\{2\}\\
+\verb|        \MCOption|\RL{\{٣\}}\\
+\verb|        \MCOption|\RL{\{٤\}}\\
+\verb|        \MCOption|\RL{\{٥\}}\\
+\verb|        \MCOption|\RL{\{٦\}}\\
+\verb|    \MCQuestion|\RL{\{ما هي عاصمة إسبانيا؟\}}\{3\}\\
+\verb|        \MCOption|\RL{\{لندن\}}\\
+\verb|        \MCOption|\RL{\{باريس\}}\\
+\verb|        \MCOption|\RL{\{مدريد\}}\\
+\verb|        \MCOption|\RL{\{برلين\}}\\
+\verb|\end{MC}|\\
+\verb|\end{Question}|
+\end{LTR}
+
+\subsubsection*{النتيجة}
+
+\begin{Question}{MC}{سهل}{٢}{اختر الإجابة الصحيحة}
+\begin{MC}[2]
+    \MCQuestion{ما هو ناتج ٢ + ٢ ؟}{2}
+        \MCOption{٣}
+        \MCOption{٤}
+        \MCOption{٥}
+        \MCOption{٦}
+    \MCQuestion{ما هي عاصمة إسبانيا؟}{3}
+        \MCOption{لندن}
+        \MCOption{باريس}
+        \MCOption{مدريد}
+        \MCOption{برلين}
+\end{MC}
+\end{Question}
+
+\textbf{ملاحظات:}
+\begin{itemize}
+    \item المعامل الاختياري \texttt{[عدد الأعمدة]}: يتحكم في عدد الأعمدة لعرض الخيارات. القيمة الافتراضية هي 4.
+    \item \texttt{\{رقم الإجابة الصحيحة\}}: يشير إلى ترتيب الخيار كما هو مكتوب (1، 2، 3، ...).
+    \item يتم توزيع الخيارات عشوائياً بناءً على \engtt{\textbackslash ExamID}.
+\end{itemize}
+
+\subsection{صح/خطأ (TF)}
+
+بيئة \engtt{TF} تستخدم لأسئلة الصح والخطأ. تدعم نمطين للعرض.
+
+\subsubsection*{الصيغة}
+
+\begin{LTR}\ttfamily
+\verb|\begin{TF}[النمط]|\\
+\verb|    \TFQuestion{العبارة}{صح/خطأ}|\\
+\verb|  ...|\\
+\verb|\end{TF}|
+\end{LTR}
+
+\subsubsection*{مثال}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Question}{TF}{سهل}{٢}|\RL{\{أجب بصح أو خطأ\}}\\
+\verb|\begin{TF}[options]|\\
+\verb|    \TFQuestion|\RL{\{الأرض تدور حول الشمس\}}\RL{\{صح\}}\\
+\verb|    \TFQuestion|\RL{\{القمر أكبر من الأرض\}}\RL{\{خطأ\}}\\
+\verb|\end{TF}|\\
+\verb|\end{Question}|
+\end{LTR}
+
+\subsubsection*{النتيجة}
+
+\begin{Question}{TF}{سهل}{٢}{أجب بصح أو خطأ}
+\begin{TF}[options]
+    \TFQuestion{الأرض تدور حول الشمس.}{صح}
+    \TFQuestion{القمر أكبر من الأرض.}{خطأ}
+\end{TF}
+\end{Question}
+
+\textbf{ملاحظات:}
+\begin{itemize}
+    \item النمط الافتراضي \engtt{bracket}: يضع أقواس بعد العبارة.
+    \item النمط \engtt{options}: يعرض ''\texttt{صح}'' و ''\texttt{خطأ}'' كخيارات.
+\end{itemize}
+
+\subsection{ملء فراغ (FillBlank)}
+
+بيئة \engtt{FillBlank} تستخدم لأسئلة ملء الفراغات. تدعم بنك كلمات اختياري.
+
+\subsubsection*{الصيغة}
+
+\begin{LTR}\ttfamily
+\verb|\begin{FillBlank}[true]|\\
+\verb|    \WordBank|\RL{\{كلمة١، كلمة٢، كلمة٣، {\large\dots}\,\}}\\
+\verb|    \FillQuestion{\Blank |\RL{نص مع}\{\RL{\{الإجابة\}}\\
+\verb|  ...|\\
+\verb|\end{FillBlank}|
+\end{LTR}
+
+\subsubsection*{مثال}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Question}{FillBlank}{سهل}{٣}|\RL{\{أكمل الفراغات\}}\\
+\verb|\begin{FillBlank}[true]|\\
+\verb|    \WordBank|\RL{\{مكة المكرمة ، المدينة المنورة ، جدة ، ينبع ، الرياض ، الدمام\}}\\
+\verb|    \FillQuestion|\}\RL{\textbackslash Blank. عاصمة السعودية هي}\{\RL{\{الرياض\}}\\
+\verb|    \FillQuestion|\}\RL{.هي قبلة المسلمين \textbackslash Blank[20mm]}\{\RL{\{مكة المكرمة\}}\\
+\verb|    \FillQuestion|\}\RL{.هي مدن ساحلية \textbackslash Blank و \textbackslash Blank و \textbackslash Blank}\{\RL{\{جدة ، ينبع ، الدمام\}}\\
+\verb|\end{FillBlank}|\\
+\verb|\end{Question}|
+\end{LTR}
+
+\subsubsection*{النتيجة}
+
+\begin{Question}{FillBlank}{سهل}{٣}{أكمل الفراغات}
+\begin{FillBlank}[true]
+    \WordBank{مكة المكرمة ، المدينة المنورة ، جدة ، ينبع ، الرياض ، الدمام}
+    \FillQuestion{عاصمة السعودية هي \Blank.}{الرياض}
+    \FillQuestion{\Blank[20mm] هي قبلة المسلمين.}{مكة المكرمة}
+    \FillQuestion{\Blank و \Blank و \Blank هي مدن ساحلية.}{جدة ، ينبع ، الدمام}
+\end{FillBlank}
+\end{Question}
+
+\textbf{ملاحظات:}
+\begin{itemize}
+    \item \engtt{\textbackslash Blank}: ينشئ فراغاً للإجابة. ومعامله الاختياري يحدد عرض الفراغ (الافتراضي \engsf{15mm}).
+    \item بالإمكان وضع أكثر من فراغ داخل النص. واستخدام \engtt{\textbackslash FullBlank} للفراغات كاملة العرض عند الحاجة.
+    \item \engtt{\textbackslash WordBank}: يعرض بنك الكلمات في إطار. ومعامله الاختياري يحدد إظهاره \engtt{[true]} من عدمه \engtt{[false]}.
+
+\end{itemize}
+
+\subsection{ترتيب (Ordering)}
+
+بيئة \engtt{Ordering} تستخدم لأسئلة الترتيب. يتم كتابة العناصر بالترتيب الصحيح، وتظهر للطالب بشكل عشوائي.
+
+\subsubsection*{الصيغة}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Ordering}|\RL{[عدد الأعمدة]}\\
+\verb|    \OrderQuestion|\RL{\{تعليمات الترتيب\}}\\
+\verb|        \OrderOption|\RL{\{العنصر الأول\}}\\
+\verb|        \OrderOption|\RL{\{العنصر الثاني\}}\\
+\verb|        \OrderOption|\RL{\{العنصر الثالث\}}\\
+\verb|      ...|\\
+\verb|    \OrderAnswer|\RL{[العرض]}\\
+\verb|\end{Ordering}|
+\end{LTR}
+
+\subsubsection*{مثال}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Question}{Ordering}{متوسط}{٤}|\RL{\{رتب ترتيبا صحيحا\}}\\
+\verb|\begin{Ordering}[3]|\\
+\verb|    \OrderQuestion|\RL{\{.رتب العمليات الأساسية لدورة الماء في الطبيعة\}}\\
+\verb|        \OrderOption|\RL{\{تبخر\}}\\
+\verb|        \OrderOption|\RL{\{تكاثف\}}\\
+\verb|        \OrderOption|\RL{\{تساقط\}}\\
+\verb|    \OrderAnswer|\\
+\verb|    \OrderQuestion|\RL{\{.رتب العصور التالية حسب تسلسلها الزمني\}}\\
+\verb|        \OrderOption|\RL{\{الحجري\}}\\
+\verb|        \OrderOption|\RL{\{البرونزي\}}\\
+\verb|        \OrderOption|\RL{\{الحديدي\}}\\
+\verb|    \OrderAnswer[5mm]|\\
+\verb|\end{Ordering}|\\
+\verb|\end{Question}|
+\end{LTR}
+
+\subsubsection*{النتيجة}
+
+\begin{Question}{Ordering}{سهل}{٤}{رتب ترتيبا صحيحا}
+\begin{Ordering}[3]
+    \OrderQuestion{رتب العمليات الأساسية لدورة الماء في الطبيعة.}
+        \OrderOption{تبخر}
+        \OrderOption{تكاثف}
+        \OrderOption{تساقط}
+    \OrderAnswer
+        \OrderQuestion{رتب العصور التالية حسب تسلسلها الزمني.}
+        \OrderOption{الحجري}
+        \OrderOption{البرونزي}
+        \OrderOption{الحديدي}
+    \OrderAnswer[5mm]
+\end{Ordering}
+\end{Question}
+
+\textbf{ملاحظات:}
+\begin{itemize}
+    \item اكتب العناصر بالترتيب الصحيح كما تريدها أن تكون في مفتاح الإجابة.
+    \item عناصر الترتيب تظهر للطالب بشكل عشوائي.
+    \item المعامل الاختياري \texttt{[عدد الأعمدة]}: يتحكم في عدد الأعمدة لعرض (لإظهار) عناصر الترتيب في السطر (الافتراضي 4).
+    \item \engtt{\textbackslash OrderAnswer}: يضيف مساحة لكتابة الترتيب (الجواب). ومعامله الاختياري يحدد عرض المساحة (الافتراضي \engsf{5mm}).
+\end{itemize}
+
+\subsection{توصيل (Matching)}
+
+بيئة \engtt{Matching} تستخدم لأسئلة التوصيل بين عمودين. العمود الأيمن ثابت، والعمود الأيسر يتوزع عشوائياً.
+
+\subsubsection*{الصيغة}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Matching}|\RL{[نسبة عرض العمود الأيمن]}\\
+\verb|    \MatchPair|\RL{\{العنصر الأيسر\}}\RL{\{العنصر الأيمن\}}\\
+\verb|  ...|\\
+\verb|\end{Matching}|
+\end{LTR}
+
+\subsubsection*{مثال}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Question}{Matching}{متوسط}{٣}|\RL{\{صل ما بين العمودين\}}\\
+\verb|\begin{Matching}[0.4]|\\
+\verb|    \MatchPair|\RL{\{كوكب يسمى الكوكب الأحمر\}}\RL{\{المريخ\}}\\
+\verb|    \MatchPair|\RL{\{أكبر كوكب في المجموعة الشمسية\}}\RL{\{المشتري\}}\\
+\verb|    \MatchPair|\RL{\{الكوكب الأقرب إلى الشمس\}}\RL{\{عطارد\}}\\
+\verb|\end{Matching}|\\
+\verb|\end{Question}|
+\end{LTR}
+
+\subsubsection*{النتيجة}
+
+\begin{Question}{Matching}{متوسط}{٣}{صل ما بين العمودين}
+\begin{Matching}[0.4]
+    \MatchPair{كوكب يسمى الكوكب الأحمر}{المريخ}
+    \MatchPair{أكبر كوكب في المجموعة الشمسية}{المشتري}
+    \MatchPair{الكوكب الأقرب إلى الشمس}{عطارد}
+\end{Matching}
+\end{Question}
+
+\textbf{ملاحظات:}
+\begin{itemize}
+    \item يجب كتابة أزواج العناصر بالشكل الصحيح داخل البيئة.
+    \item العمود الأيمن ثابت.
+    \item العمود الأيسر يتوزع عشوائياً.
+    \item المعامل الاختياري يتحكم في عرض العمود الأيمن (الافتراضي \textenglish{0.5}).
+\end{itemize}
+
+\subsection{مقالي (Essay)}
+
+بيئة \texttt{Essay} تستخدم للأسئلة المقالية التي تتطلب إجابات مطولة.
+
+\subsubsection*{الصيغة}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Essay}[أسطر/فراغ]|\\
+\verb|    \EssayQuestion|\RL{[عدد الأسطر]}\RL{\{نص السؤال\}}\RL{\{ملخص الإجابة\}}\\
+\verb|  ...|\\
+\verb|\end{Essay}|
+\end{LTR}
+
+\subsubsection*{مثال}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Question}{Essay}{صعب}{٥}|\RL{\{أجب عن الأسئلة التالية\}}\\
+\verb|\begin{Essay}[true]|\\
+\verb|    \EssayQuestion|\RL{\{ما هي الحوسبة السحابية؟\}}\RL{\{توفير خدمات تقنية المعلومات\dots\}}\\
+\verb|    \EssayQuestion[3]|\RL{\{ما أهمية الأمن السيبراني؟\}}\RL{\{حماية بيانات\dots\}}\\
+\verb|\end{Essay}|\\
+\verb|\end{Question}|
+\end{LTR}
+
+\subsubsection*{النتيجة}
+
+\begin{Question}{Essay}{صعب}{٥}{أجب عن الأسئلة التالية}
+\begin{Essay}[true]
+    \EssayQuestion{ما هي الحوسبة السحابية؟}{توفير خدمات تقنية المعلومات ...}
+    \EssayQuestion[3]{ما أهمية الأمن السيبراني؟}{حماية بيانات ...}
+\end{Essay}
+\end{Question}
+
+\textbf{ملاحظات:}
+\begin{itemize}
+    \item المعامل \texttt{[أسطر/فراغ]}: \texttt{[true]} يعرض أسطراً، و \texttt{[false]} يعرض فراغاً. (الافتراضي: \texttt{true})
+    \item المعامل الاختياري \texttt{[عدد الأسطر]}: يحدد عدد الأسطر المتاحة للإجابة (الافتراضي 4).    
+    \item \texttt{\{ملخص الإجابة\}}: يظهر ملخص الإجابة في وضع المعلم.
+\end{itemize}
+
+\subsection{جواب قصير (ShortAnswer)}
+
+بيئة \texttt{ShortAnswer} تستخدم للأسئلة التي تتطلب إجابات قصيرة.
+
+\subsubsection*{الصيغة}
+
+\begin{LTR}\ttfamily
+\verb|\begin{ShortAnswer}[أسطر/فراغ]|\\
+\verb|    \ShortQuestion|\RL{[عدد الأسطر]}\RL{\{نص السؤال\}}\RL{\{الإجابة\}}\\
+\verb|  ...|\\
+\verb|\end{ShortAnswer}|
+\end{LTR}
+
+\subsubsection*{مثال}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Question}{ShortAnswer}{سهل}{٣}|\RL{\{أجب باختصار\}}\\
+\verb|\begin{ShortAnswer}[true]|\\
+\verb|    \ShortQuestion[0]|\RL{\{ما هي عاصمة مصر؟\}}\RL{\{القاهرة\}}\\    
+\verb|    \ShortQuestion[1]|\RL{\{كم تبلغ مساحة مصر؟\}}\RL{\{حوالي ١,٠٠٢,٠٠٠ كيلو متر مربع\}}\\
+\verb|    \ShortQuestion[2]|\RL{\{ما هو موقع مصر الجغرافي؟\}}\RL{\{إفريقيا، ولها امتداد آسيوي\}}\\
+\verb|\end{ShortAnswer}|\\
+\verb|\end{Question}|
+\end{LTR}
+
+\subsubsection*{النتيجة}
+
+\begin{Question}{ShortAnswer}{سهل}{٣}{أجب باختصار}
+\begin{ShortAnswer}[true]
+    \ShortQuestion[0]{ما هي عاصمة جمهورية مصر العربية؟}{القاهرة}
+    \ShortQuestion[1]{كم تبلغ مساحة مصر؟}{حوالي ١,٠٠٢,٠٠٠ كيلو متر مربع}
+    \ShortQuestion[2]{ما هو موقع مصر الجغرافي؟}{إفريقيا، ولها امتداد آسيوي}
+\end{ShortAnswer}
+\end{Question}
+
+\textbf{ملاحظات:}
+\begin{itemize}
+    \item المعامل \texttt{[أسطر/فراغ]}: \texttt{[true]} يعرض أسطراً، و \texttt{[false]} يعرض فراغاً. (الافتراضي: \texttt{true})
+    \item المعامل \texttt{[عدد الأسطر]}: يحدد عدد الأسطر المتاحة للإجابة.\par        
+        
+0 (فراغ قصير بعد السؤال)\quad1 (الافتراضي: سطر كامل أسفل السؤال)\quad2 (سطران أسفل السؤال).
+    \item عند إدخال قيمة أكبر من 2، سيظهر سطران فقط.
+\end{itemize}
+
+\subsection{قطعة قراءة (ReadingPassage)}
+
+بيئة \texttt{ReadingPassage} تستخدم لعرض نصوص القراءة متبوعة بالأسئلة الخاصة بها.
+
+\subsubsection*{الصيغة}
+
+\begin{LTR}\ttfamily
+\verb|\begin{ReadingPassage}{العنوان}|\\
+\verb|...|\quad\RL{نص القطعة}\\
+\verb|\end{ReadingPassage}|
+\end{LTR}
+
+\subsubsection*{مثال}
+
+\begin{LTR}\ttfamily
+\verb|\begin{Question}{ReadingPassage}{متوسط}{٦}|\RL{\{اقرأ ثم أجب\}}\\
+\verb|\begin{ReadingPassage}|\RL{\{نص معلوماتي\}}\\
+\RL{
+جبل فوجي هو أعلى جبل في اليابان يقع على جزيرة هونشو بارتفاع 3,776 متراً، وهو رمز ثقافي مهم وله قدسيته لدى الشعب الياباني منذ قرون.
+}\\
+\verb|\end{ReadingPassage}|\\
+\verb|\begin{ShortAnswer}|\\
+\verb|    \ShortQuestion[0]|\RL{\{ما هو أعلى جبل في اليابان؟\}}\RL{\{جبل فوجي\}}\\    
+\verb|    \ShortQuestion[0]|\RL{\{أين يقع جبل فوجي؟\}}\RL{\{اليابان\}}\\    
+\verb|    \ShortQuestion[0]|\RL{\{كم يبلغ ارتفاع جبل فوجي؟\}}\RL{\{3776 متر\}}\\    
+\verb|\end{ShortAnswer}|\\
+\verb|\end{Question}|
+\end{LTR}
+
+\subsubsection*{النتيجة}
+
+\begin{Question}{ReadingPassage}{متوسط}{٦}{اقرأ ثم أجب}
+\begin{ReadingPassage}{نص معلوماتي}
+جبل فوجي هو أعلى جبل في اليابان يقع على جزيرة هونشو بارتفاع 3,776 متراً، وهو رمز ثقافي مهم وله قدسيته لدى الشعب الياباني منذ قرون.
+\end{ReadingPassage}
+\begin{ShortAnswer}
+    \ShortQuestion[0]{ما هو أعلى جبل في اليابان؟}{جبل فوجي}
+    \ShortQuestion[0]{أين يقع جبل فوجي؟}{اليابان}
+    \ShortQuestion[0]{كم يبلغ ارتفاع جبل فوجي؟}{3776 متر}
+\end{ShortAnswer}
+\end{Question}
+
+\textbf{ملاحظات:}
+\begin{itemize}
+    \item النص يظهر في إطار مستقل.
+    \item يمكن وضع أي نوع من الأسئلة بعد القطعة.
+    \item \texttt{\{العنوان\}}: إضافة عنوان للقطعة النصية.    
+\end{itemize}
+
+% ============================================================
+\section{نصائح وأخطاء شائعة}
+% ============================================================
+\begin{enumerate}
+    \item \textbf{تفعيل \texttt{\textbackslash ShowCorrection} بدون \texttt{\textbackslash TeacherMode}:}\par
+    الأمر \texttt{\textbackslash ShowCorrection} وحده لا يعرض الإجابات. يجب تفعيل \texttt{\textbackslash TeacherMode} و \texttt{\textbackslash ShowCorrection} معاً.
+    
+    \item \textbf{نسيان بيئة \texttt{Question}:}\par
+    جميع الأسئلة يجب أن تكون داخل بيئة \texttt{Question}. نسيانها يمنع ظهور البيانات الوصفية ومفاتيح الإجابة.
+    
+    \item \textbf{استخدام معرفات غير صحيحة لنوع السؤال:}\par
+    يجب استخدام المعرفات كما هي: \texttt{MC}، \texttt{TF}، \texttt{FillBlank}، \texttt{Ordering}، \texttt{Matching}، \texttt{Essay}، \texttt{ShortAnswer}، \texttt{ReadingPassage}.
+    
+    \item \textbf{استخدام محرك خاطئ:}\par
+    هذه الحزمة تعمل فقط مع \texttt{XeLaTeX}. \texttt{PDFLaTeX} و \texttt{LuaLaTeX} غير مدعومين.
+    
+    \item \textbf{أرقام شرقية في المعاملات الداخلية:}\par
+    استخدم أرقاماً غربية في معاملات البيئة والأوامر مثل رقم الإجابة الصحيحة وعدد الأسطر. الأرقام الشرقية مخصصة للنصوص فقط.
+    
+    \item \textbf{ترتيب العناصر في \texttt{Ordering}:}\par
+    الترتيب الذي تكتب به \texttt{\textbackslash OrderOption} يحدد الإجابة الصحيحة. تأكد من كتابتها بالترتيب الصحيح.
+    
+    \item \textbf{نسيان العنوان في \texttt{ReadingPassage}:}\par
+    بيئة \texttt{ReadingPassage} تتطلب عنواناً. إذا لم تكن هناك حاجة إلى عنوان مخصص، استخدم أقواسا فارغة \texttt{\{\}}لإظهار العنوان الإفتراضي.
+    
+    \item \textbf{الخط غير مثبت:}\par
+    الخط الافتراضي هو \engsf{IBM Plex Sans Arabic}. تأكد من تثبيته على نظامك.
+\end{enumerate}
+
+% ============================================================
+\section{الخاتمة}
+% ============================================================
+
+حزمة \texttt{exam-rtl} توفر أداة متكاملة وسهلة الاستخدام لإنشاء اختبارات عربية احترافية. مع دعمها لثمانية أنواع من الأسئلة، والتوزيع العشوائي الذكي، ومفاتيح الإجابة التلقائية، تمكّنك من التركيز على جودة المحتوى التعليمي بدلاً من التنسيق.
+\end{document}

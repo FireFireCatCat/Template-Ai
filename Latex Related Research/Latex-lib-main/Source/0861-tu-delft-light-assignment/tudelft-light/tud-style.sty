@@ -1,0 +1,70 @@
+% -----------------------------------------------------------------------------
+%
+% Copyright (c) 2020. San Kilkis. All rights reserved.
+%
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/
+%
+% --- Package Documentation: --------------------------------------------------
+%
+% This package defines colors and fonts as per the TU Delft House Style.
+%
+% -----------------------------------------------------------------------------
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tudelft-light/tud-style}
+
+\RequirePackage{xcolor}
+\RequirePackage{fontspec}
+
+% --- TU Delft Housestyle Colors: ---------------------------------------------
+\definecolor{tudelft-cyan}{cmyk}{1,0,0,0}
+\definecolor{tudelft-black}{cmyk}{0,0,0,1}
+\definecolor{tudelft-white}{cmyk}{0,0,0,0}
+\definecolor{tudelft-sea-green}{cmyk}{0.54,0,0.32,0}
+\definecolor{tudelft-green}{cmyk}{1,0.15,0.4,0}
+\definecolor{tudelft-dark-blue}{cmyk}{1,0.66,0,0.4}
+\definecolor{tudelft-purple}{cmyk}{0.98,1,0,0.35}
+\definecolor{tudelft-turquoise}{cmyk}{0.82,0,0.21,0.08}
+\definecolor{tudelft-sky-blue}{cmyk}{0.45,0,0.06,0.06}
+\definecolor{tudelft-lavendel}{cmyk}{0.45,0.2,0,0.07}
+\definecolor{tudelft-orange}{cmyk}{0.02,0.56,0.84,0}
+\definecolor{tudelft-warm-purple}{cmyk}{0.58,1,0,0.02}
+\definecolor{tudelft-fuchsia}{cmyk}{0.19,1,0,0.19}
+\definecolor{tudelft-bright-green}{cmyk}{0.36,0,1,0}
+\definecolor{tudelft-yellow}{cmyk}{0.02,0,0.54,0}
+
+% --- TU Delft Fonts: ---------------------------------------------------------
+%
+% Upstream ships proprietary Microsoft fonts (Arial, Georgia) plus a
+% TU-Delft-only restricted title face (TUDelft-UltraLight.ttf, whose own
+% metadata forbids use outside TU Delft communication items). None of these
+% may be redistributed, so all three are substituted with free,
+% metric-compatible TeX Live faces. See README.md for the full rationale.
+%
+% Loaded by exact TeX Live FILENAME (kpathsea), not by fontconfig family
+% name: this compiler image registers only ~14 fontconfig families, so
+% \setmainfont{Carlito} resolves to nothing and silently renders a blank
+% page. \kpsewhich <file> finds every font TeX Live ships regardless.
+\newfontfamily\tudtitlefamily[
+    Path = /opt/texlive/2025/texmf-dist/fonts/truetype/google/carlito/,
+    UprightFont = Carlito-Regular.ttf,
+    BoldFont = Carlito-Bold.ttf,
+]{Carlito-Regular.ttf}
+
+\newfontfamily\tudrmfamily[
+    Path = /opt/texlive/2025/texmf-dist/fonts/opentype/sorkin/gelasio/,
+    UprightFont = Gelasio-Regular.otf,
+    BoldFont = Gelasio-Bold.otf,
+    ItalicFont = Gelasio-Italic.otf,
+    BoldItalicFont = Gelasio-BoldItalic.otf,
+]{Gelasio-Regular.otf}
+
+\newfontfamily\tudsffamily[
+    Path = /opt/texlive/2025/texmf-dist/fonts/opentype/public/tex-gyre/,
+    UprightFont = texgyreheros-regular.otf,
+    BoldFont = texgyreheros-bold.otf,
+    ItalicFont = texgyreheros-italic.otf,
+    BoldItalicFont = texgyreheros-bolditalic.otf,
+]{texgyreheros-regular.otf}

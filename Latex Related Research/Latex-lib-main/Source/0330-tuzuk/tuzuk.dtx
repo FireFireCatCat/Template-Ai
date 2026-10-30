@@ -1,0 +1,148 @@
+% \iffalse
+%<*driver>
+\documentclass{ltxdoc}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{tuzuk.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+%<*package>
+\def\fileversion{v1.0.0}
+\def\filedate{2024/03/13}
+\NeedsTeXFormat{LaTeX2e}[2021/06/01]
+\ProvidesClass{tuzuk}[\filedate\space\fileversion\space Turkish Bylaws and Regulations Document Class]
+%</package>
+%
+%\fi
+%
+% \title{The \textsf{tuzuk} class\thanks{This document corresponds to \textsf{tuzuk}~\fileversion, dated \filedate.}}
+% \author{Özcan Oğuz \\ \texttt{ozcan@hackerspace.ist}}
+%
+% \maketitle
+%
+% \section{Introduction}
+%
+% The \textsf{tuzuk} class provides a standardized format for writing bylaws and regulations
+% especially in Turkish-governmental style. It includes features for creating numbered articles, subsections, and signature
+% areas commonly found in legal documents.
+%
+% \section{Usage}
+%
+% \DescribeMacro{\madde}
+% Create a new article in the document:
+% \begin{verbatim}
+%    \madde{1}{Article content goes here}
+% \end{verbatim}
+%
+% \DescribeMacro{\bolumadi}
+% Define a section title:
+% \begin{verbatim}
+%    \bolumadi{Section Title}
+% \end{verbatim}
+%
+% \DescribeMacro{\fikra}
+% Create a list of sub-items under an article:
+% \begin{verbatim}
+%    \begin{fikra}
+%      \item First item
+%      \item Second item
+%    \end{fikra}
+% \end{verbatim}
+%
+% \StopEventually{}
+%
+% \section{Implementation}
+%
+% \changes{v1.0.0}{2024/03/13}{Initial version}
+%
+%    \begin{macrocode}
+\LoadClass[12pt, onecolumn]{article}
+
+\ProcessOptions\relax
+
+% Required packages
+\RequirePackage[a4paper,
+                top=2.5cm, 
+                left=2.5cm, 
+                right= 2.5cm, 
+                bottom=2.5cm]{geometry}
+\RequirePackage{mathptmx}
+\RequirePackage{setspace}
+\onehalfspacing
+
+\RequirePackage{enumitem}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[turkish]{babel}
+\RequirePackage[normalem]{ulem}
+\RequirePackage{hyphenat}
+\RequirePackage[T1]{fontenc}
+%    \end{macrocode}
+%
+% Define variables for document metadata
+%    \begin{macrocode}
+\def\baskan#1{\def\@baskan{#1}}
+\def\baskanyrd#1{\def\@baskanyrd{#1}}
+\def\sekreter#1{\def\@sekreter{#1}}
+\def\sayman#1{\def\@sayman{#1}}
+\def\uye#1{\def\@uye{#1}}
+
+\def\tuzukbasligi#1{
+    \def\@tuzukbasligi{
+            \textbf{%
+                \MakeUppercase{#1}
+            }
+    }
+}
+%    \end{macrocode}
+%
+% Section title command
+%    \begin{macrocode}
+\newcommand{\bolumadi}[1]{\vspace{8pt} \noindent\textbf{#1}\newline}
+%    \end{macrocode}
+%
+% Article command
+%    \begin{macrocode}
+\newcommand{\madde}[2]{\noindent\textbf{Madde #1:} #2 \\}
+%    \end{macrocode}
+%
+% Title command
+%    \begin{macrocode}
+\renewcommand{\maketitle}{
+\thispagestyle{plain}
+    \begin{center}
+        \vspace{12pt}
+        \@tuzukbasligi
+    \end{center}
+}
+%    \end{macrocode}
+%
+% Paragraph environment
+%    \begin{macrocode}
+\newenvironment{fikra}
+    {\begin{enumerate}[label=\alph*.]
+    }
+    {%
+      \end{enumerate}  
+    }
+%    \end{macrocode}
+%
+% Signature area command
+%    \begin{macrocode}
+\newcommand{\imzalar}{
+    \renewcommand{\arraystretch}{1}
+    \vspace{1.5cm} \noindent  \begin{tabular}{p{5cm}p{5cm}p{5cm}}
+    \hrulefill & \hrulefill & \hrulefill \\
+    \centering \@baskan & \centering \@baskanyrd & \centering \@sekreter \\
+    \vspace{1cm} & \centering \\
+    \hrulefill & \hrulefill \\
+    \centering \@sayman & \centering \@uye \\
+    \end{tabular}
+}
+%    \end{macrocode}
+%
+% \Finale
+\endinput 

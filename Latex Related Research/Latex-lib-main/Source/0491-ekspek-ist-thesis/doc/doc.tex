@@ -1,0 +1,384 @@
+% arara: lualatex: { synctex: yes, shell: yes }
+\documentclass{ist-thesis}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{makecell}
+\usepackage{metalogo}
+\usepackage{booktabs}
+\usepackage{bm}
+
+\usepackage{minted}
+\definecolor{bg}{rgb}{0.97,0.97,0.97}
+\setminted{bgcolor = bg, breaklines, linenos, baselinestretch = 1.15}
+\setmintedinline{bgcolor = {}}
+\renewcommand{\theFancyVerbLine}{\scriptsize\textsf{\arabic{FancyVerbLine}}}
+
+\newrobustcmd*\package[1]{\href{https://ctan.org/pkg/#1}{\textcolor{ist-cyan}{\texttt{#1}}}}
+
+\begin{document}
+
+\begin{center}
+	{\Huge\bfseries A classe \texttt{ist-thesis}}
+	\par\bigskip
+	{\Large Classe \LaTeX{} de tese não oficial do Instituto Superior Técnico}
+	\par\bigskip\smallskip
+	Daniel de Schiffart \\
+	{\small com apoio de} \\
+	João Gonçalves \\
+	João Lourenço \bigskip \\
+	\url{https://github.com/ekspek/ist-thesis}
+\end{center}
+
+\bigskip\bigskip
+
+\begin{center}
+	\section*{Resumo}
+\end{center}
+Esta classe tem como objetivo preparar e formatar qualquer documento \LaTeX{} numa tese de mestrado de acordo com os regulamentos do Instituto Superior Técnico.
+
+\tableofcontents
+
+\clearpage
+
+\section*{Introdução}
+
+Mal de mim se não deixasse umas palavras minhas aqui mesmo.
+
+Eu aprendi a utilizar \LaTeX{} à dois anos, no início quarto ano, e como toda a gente deve esperar, foi a escrever relatórios para as cadeiras do Técnico. Depois de ter sido feito refém de algumas horas a escrever relatórios de Telecomunicações e Projeto de Sistemas Digitais, peguei-lhe o gosto e tenho aprendido a pouco e pouco os limites do que se pode fazer com \LaTeX{} (que são muitos, \textit{spoiler alert}). Vendo os semestres a passar e a preparar-me para ter o Técnico nas costas, queria deixar qualquer coisa atrás escrita em \LaTeX{} para a malta mais nova de aeroespacial. Uma sebenta, uns apontamentos, umas resoluções, enfim, qualquer coisa. O tempo passou e com a preguiça lá ia adiando qualquer motivação que tivesse para isso, especialmente considerando que a última coisa que alguém quer ouvir falar nas férias é de cadeiras acabadas. Portanto peguei na única coisa que fazia sentido nesta reta final: gastar tempo com o modelo da tese meses antes sequer de começar.
+
+Este projeto começou no final do ano passado como uma brincadeira. Estava a começar a apanhar o ritmo do \LaTeX{} e começava a reparar o quanto reutilizava certas \textit{packages}, certas definições, enfim, sempre o mesmo código em cada relatório que fazia. Considerando que as classes de \LaTeX{} definiam já um molhe de coisas quando são carregadas, comecei a ter isso em conta, olhando para as classes de \LaTeX{} online, nem pensava que fosse capaz de escrever uma de raíz. Mas o aspeto mente; é pura e simplesmente código \LaTeX{}, e embora fossem precisos uns trambolhões, lá apareceu o código a pouco e pouco.
+
+Muito deste trabalho transpõe o que aprendi a escrever a classe \href{https://github.com/ekspek/ist-relatorio}{\texttt{ist-relatorio}}, um projeto mais experimental e \textit{kaleidoscpópico} que mesmo assim ainda se prova útil quando preciso dele. Embora menos versátil, esta classe aqui ainda colocou vários desafios na interface entre o utilizador e o \textit{output}, mas acho que em geral o produto final está com bom aspeto, e ainda preservando alguma versatilidade. Aliás, para provar essa versatilidade, decidi implementar esta mesma documentação utilizando a classe, só mesmo por curiosidade, para ver se resultava. Eu sei que o abuso do \textit{Arial} em todas as páginas queima os olhos a ver, mas o Técnico é que manda \verb|¯\_('_')_/¯|
+
+A inspiração principal de passar para a tese foi o meu prazo para tal a reduzir mais e mais, mas também observar os inúmeros modelos de tese que estão espalhados pela net, para as mais variadas universidades à volta do mundo. Não fazia sentido ver o Técnico ficar para trás, especialmente considerando a \textit{imensa imensa} progressividade tecnológica deste nosso cantinho da Universidade de Lisboa. Menções especiais para o modelo de tese da TUDelft, criado à imagem do \textit{Huisstijl} deles, que li e reli para aprender a criar classes.
+
+E como é óbvio, também muita inspiração foi retirada do modelo de tese do Professor André Marta, que ainda detém o \textit{de facto} modelo de \LaTeX{} do Técnico. Admiro a disponibilidade dele para partilhar o código dele sem restrições e o quão bem montado está, tanto que pensei em largar a ideia completamente e utilizar o código dele. Eu não quero de modo algum competir com o projeto do professor Marta, apenas considero duas abordagens diferentes ao mesmo problema. E promovo que olhem para o projeto e escolham, vejam na \href{https://fenix.tecnico.ulisboa.pt/homepage/ist31052/documentos-para-elaboracao-da-tese}{página do Fénix} do professor.
+
+Não tenho muito mais a acrescentar. Ficam aqui as palavras típicas, revejam o produto final, contactem-me se necessário, partilhem o projeto, contribuam se puderem, divulguem se gostarem do que está aqui feito ou deixem sugestões para o que podia ser melhor.
+
+Muito boa sorte com a vossa tese!
+
+\begin{flushright}\itshape
+	Daniel Lopes de Schiffart \\
+	Aluno 81479 \\
+	Fevereiro de 2019
+\end{flushright}
+
+\clearpage
+
+\chapter{\textit{Quick Start} -- Os Básicos}
+
+Para carregar a classe e criar um documento com o aspeto de tese, é necessário fazer o download do ficheiro da classe, \texttt{ist-thesis.cls}. Após isso, num ficheiro \texttt{.tex} separado, a primeira linha do documento terá de ser
+\begin{minted}[linenos = false]{tex}
+\documentclass{ist-thesis}
+\end{minted}
+Isto carrega a classe. Introduza qualquer texto e compile para testar. Um exemplo de um documento \texttt{.tex} o mais pequeno possível válido que compila sem problemas encontra-se abaixo.
+\begin{minted}{tex}
+\documentclass{ist-thesis}
+
+\begin{document}
+
+Hello World!
+
+\end{document}
+\end{minted}
+
+Mais propriedades que a classe tem encontram-se nos capítulos que se seguem.
+
+\chapter{Argumentos Opcionais}
+
+Ao carregar a classe, no comando \mintinline{tex}{\documentclass}, é possível passar argumentos opcionais para definir opções globais da classe. Os argumentos opcionais estão listados aqui.
+\begin{description}
+	\item [portuguese] Define a língua portuguesa para o documento, principalmente no idioma de macros e expressões como índice e resumo. Esta opção está seleccionada por defeito e não precisa de ser passada.
+	\item [english] Define a língua inglesa para o documento, análogo à opção \texttt{portuguese}.
+	\item [\texttt{bw}] Ativa a opção preto e branco. Troca todas as instâncias de ciano no documento, como nas ligações e URLs, por preto.
+	\item [\texttt{origmath}] Retorna o tipo de letra matemático ao carregado originalmente pelo \LaTeX{}. Segue da discussão da secção \ref{sec:mathfont} e evita o carregamento da \textit{package} \package{newtxsf}.
+\end{description}
+
+Para ativar um ou mais argumentos, insira no início do ficheiro entre parênteses retos os argumentos a utilizar.
+\begin{minted}[linenos = false]{tex}
+\documentclass[english]{ist-thesis}
+\end{minted}
+Para carregar mais que um argumento, basta separá-los por vírgulas.
+\begin{minted}[linenos = false]{tex}
+\documentclass[english,origmath]{ist-thesis}
+\end{minted}
+
+\chapter{Comandos e Ambientes}
+
+Este capítulo contém a documentação oficial dos comandos e ambientes implementados na classe utilizáveis pelo utilizador e as suas funções e dependências dentro do documento que as utiliza. Também incluídas estão algumas modificações feitas a documentos base de \LaTeX{} para funcionarem corretamente com as funções implementadas.
+
+Estes comandos podem ser separados em três categorias, relevantes para a capa e informação do documento, na secção \ref{sec:metadata}, para a estrutura e secções especiais, na secção \ref{sec:spec}, e comandos internos definidos e utilizados pela classe, na secção \ref{sec:internal}.
+
+\section{Capa e Dados de Tese}\label{sec:metadata}
+
+A classe implementa um comando que permite criar a capa automaticamente, pedindo informação ao utilizador sobre os dados do documento e colocando-os no sítio certo. Para criar uma capa, basta utilizar o comando
+\begin{minted}{tex}
+\makecover
+\end{minted}
+Como o \LaTeX{} corre o código de cima para baixo, recomenda-se que o utilizador invoque este comando no início do documento, logo a seguir ao comando \mintinline{tex}{\begin{document}}.
+\begin{minted}{tex}
+\begin{document}
+
+\makecover
+\end{minted}
+
+Este comando por si só devolve uma capa com os dados preenchidos com valores pré-definidos. Para alterar estes valores, a classe fornece um conjunto de comandos, um para cada entrada da capa.
+
+\begin{description}
+	\item [\texttt{\textbackslash{}settitle\{}\textit{<título>}\texttt{\}}] Define o título.
+	\item [\texttt{\textbackslash{}setsubtitle\{}\textit{<subtítulo>}\texttt{\}}] Define o subtítulo.
+	\item [\texttt{\textbackslash{}setauthor\{}\textit{<autor(es)>}\texttt{\}}] Define o(s) autor(es). Para definir mais que um autor, a classe fornece um comando para separar autores, o comando \texttt{\textbackslash{}tand}. Consulte a secção \ref{sec:cmd_example} para exemplos de uso.
+	\item [\texttt{\textbackslash{}setdegree\{}\textit{<curso>}\texttt{\}}] Define o nome do curso.
+	\item [\texttt{\textbackslash{}setinstitution\{}\textit{<instituição>}\texttt{\}}] Define a instituição. Comando residual, não é utilizado na capa.
+	\item [\texttt{\textbackslash{}setdate\{}\textit{<data>}\texttt{\}}] Define a data.
+	\item [\texttt{\textbackslash{}setsupervisor\{}\textit{<orientador(es)>}\texttt{\}}] Define o(s) orientador(es). Para definir mais que um orientador, consulte o comando para definir autores.
+	\item [\texttt{\textbackslash{}setcsupervisor\{}\textit{<orientador(es)>}\texttt{\}}] Igual ao comando anterior, mas define o(s) orientador(es) vogais. Permite distinguir os dois grupos caso estes sejam diferentes.
+	\item [\texttt{\textbackslash{}setchairperson\{}\textit{<presidente>}\texttt{\}}] Define o presidente.
+	\item [\texttt{\textbackslash{}setcommittee\{}\textit{<vogal(is)>}\texttt{\}}] Define o(s) vogal(is). Para definir mais que um vogal, consulte o comando para definir autores.
+	\item [\texttt{\textbackslash{}setcoverimage[}\textit{<largura relativa>}\texttt{]\{}\textit{<imagem>}\texttt{\}}] Define a imagem de capa. Neste caso, é necessário dar o nome da imagem que se deve encontrar no mesmo diretório que o documento. A sintaxe é igual ao comando \mintinline{tex}{\includegraphics}, excepto que só aceita um argumento, a largura da imagem em relação à largura de texto (portanto um valor de 1 devolveria uma imagem que cobre a capa de margem a margem).
+\end{description}
+
+\subsection{Exemplo de Utilização}\label{sec:cmd_example}
+
+Para exemplificar o uso dos comandos da secção anterior, está aqui incluído um exemplo de sintaxe.
+\begin{minted}{tex}
+\settitle{Tese do Schiffart}
+\setsubtitle{Sobre um tema}
+\setauthor{Daniel de Schiffart}
+\setdegree{Mestrado Integrado em Engenharia Aeroespacial}
+\setsupervisor{Prof. Supervisor}
+\setcsupervisor{Prof. Supervisor Vogal}
+\setchairperson{Presidente}
+\setcommittee{Prof. A. \tand Prof. B.}
+\setcoverimage[0.5]{example-image-a}
+\end{minted}
+
+\section{Secções Especiais}\label{sec:spec}
+
+Na escrita de uma tese existem certas secções que são escritas por grande parte dos autores. Algumas das secções descritas no guia da Direcção Académica estão por isso implementadas na classe utilizando ambientes\footnotemark{} \LaTeX{} especiais para lhes atribuir formatação especial e facilitar a escrita ao utilizador. São elas três, a dedicatória, os agradecimentos, e o resumo.
+\footnotetext{Ambientes em \LaTeX{} são macros parecidas com comandos, mas em vez de serem chamados uma vez e o seu conteúdo escrito dentro dos argumentos, os ambientes têm princípio e fim delimitados pelo comando \texttt{\textbackslash{}begin} e \texttt{\textbackslash{}end}. Consulte os exemplos da secção \ref{sec:env_example}.}
+
+Os ambientes estão defindos em \LaTeX{} como listado a seguir.
+\begin{description}
+	\item [\texttt{dedication}] Dedicatória.
+	\item [\texttt{acknowledgements}] Agradecimentos.
+	\item [\texttt{tabstract}] Resumo. Este ambiente introduz palavras-chave no final da página, que podem ser escritas via um argumento opcional do ambiente. Consulte a secção \ref{sec:env_example} para a sintaxe de utilização.
+	\item [\texttt{fabstract}] Resumo na língua alternativa. Este ambiente é idêntico ao \texttt{tabstract}, mas deteta a língua utilizada no resto do documento e utiliza a língua contrária (inglês no caso do português, português no caso do inglês).
+\end{description}
+
+O texto escrito dentro destes ambientes é colocado numa página em separado para cada um, e aparecem no documento na ordem em que são escritos no texto.
+
+\subsection{Exemplo de Utilização}\label{sec:env_example}
+
+Exemplo de utilização dos ambientes fornecidos. Note-se que no ambiente do resumo (\texttt{tabstract}) é entregue um argumento extra, dentro de chavetas, que será impresso no final da página.
+
+\begin{minted}{tex}
+\begin{dedication}
+	Para dedicar a quem quiser.
+\end{dedication}
+
+\begin{acknowledgements}
+	Did you ever hear the tragedy of Darth Plagueis The Wise? I thought not. It's not a story the Jedi would tell you. It's a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life... He had such a knowledge of the dark side that he could even keep the ones he cared about from dying.
+\end{acknowledgements}
+
+
+\begin{tabstract}{Resumo, Palavras-Chave, Resumo Analítico}
+	Resumo e palavras-chave (em português e em inglês). O resumo analítico, também designado por resumo ou abstract, descreve o objectivo, o conteúdo do trabalho e as conclusões. Deve ser escrito em português e inglês, com um máximo de 250 palavras cada e acompanhado de 4 a 6 palavras-chave.
+\end{tabstract}
+
+
+\begin{fabstract}{Abstract}
+	The abstract describes the objective, the content of the project and the conclusions. It must be written in both portuguese and english, with a maximum of 250 words, accompanied by 4 to 6 keywords.
+\end{fabstract}
+\end{minted}
+
+\section{Comandos Internos}\label{sec:internal}
+
+Estes são utilizados para criar na capa e retornam os valores definidos pelo utilizador nos comandos da secção \ref{sec:metadata}. Estes são apenas utilizados internamente pela classe, mas podem ser utilizados pelo utilizador ao longo do documento para colocar o seu valor algures no texto.
+
+\begin{minted}[fontsize = \small]{tex}
+\ttitle{}
+\tsubtitle{}
+\tauthor{}
+\tsupervisor{}
+\tcsupervisor{}
+\tdegree{}
+\tchairperson{}
+\tcommittee{}
+\tinstitution{}
+\tdate{}
+\tcoverimage{}
+\tcoverimagewidth{}
+\end{minted}
+
+\section{Lista Completa de Comandos e Ambientes}
+
+Nesta secção estão listados todos os comandos disponíveis ao utilizador ao usar a classe.
+
+Primeiramente temos os comandos para criar a capa.
+\begin{minted}[fontsize = \small]{tex}
+\settitle{}
+\setsubtitle{}
+\setauthor{}
+\setdegree{}
+\setinstitution{}
+\setdate{}
+\setsupervisor{}
+\setcsupervisor{}
+\setchairperson{}
+\setcommittee{}
+\setcoverimage[]{}
+
+\tand
+
+\makecover
+\end{minted}
+
+Seguidos estão os ambientes disponíveis.
+\begin{minted}[fontsize = \small]{tex}
+\begin{dedication}
+\end{dedication}
+
+\begin{acknowledgements}
+\end{acknowledgements}
+
+\begin{tabstract}{}
+\end{tabstract}
+
+\begin{fabstract}{}
+\end{fabstract}
+\end{minted}
+
+Por fim, os comandos internos.
+\begin{minted}[fontsize = \small]{tex}
+\ttitle{}
+\tsubtitle{}
+\tauthor{}
+\tsupervisor{}
+\tdegree{}
+\tchairperson{}
+\tcommittee{}
+\tinstitution{}
+\tdate{}
+\tcoverimage{}
+\tcoverimagewidth{}
+\end{minted}
+
+\chapter{Implementação da Classe}
+
+Este capítulo é dedicado à descrição de como a classe e todas as suas funções foram implementadas dentro do contexto de \TeX{} e \LaTeX{}, com especial atenção às \textit{packages} utilizadas. Tem por isso um cariz mais técnico e não é necessária a sua leitura para qualquer utilização da classe.
+
+\section{Estilo de Página}
+
+As definições da página estão reduzidas aos tamanhos de margem. Estes estão estabelecidos em $2.5$ centímetros para todos os lados, e são definidos utilizando a \textit{package} \package{geometry}.
+
+Também definido está o espacamento entre linhas. Para este efeito é utilizada a \textit{package} \package{setspace}, que evita definir o espaçamento de linhas para \textbf{todo} o texto, definindo apenas o espaçamento para o corpo do texto, evitando definir por exemplo legendas de imagens ou tabelas. Permite também criar exceções a meio do texto via o comando \mintinline{tex}{\setspace}, mas sugere-se o seu uso apenas em situações especiais tendo em atenção o regulamento da Direcção Académica.
+
+\section{Cores e Hiperligações}
+
+As hiperligações feitas na tese de exemplo e nesta documentação são feitas utilizando a \textit{package} \package{hyperref}, e estão definidas para utilizar texto colorido (ao invés de links rectangulares a rodear o texto, que é o comportamento por defeito). Esta definição pode ser mudada utilizando os comandos descritos na documentação oficial da \textit{package}.
+
+As cores utilizadas nestas hiperligações (e não só) foram definidas utilizando a \textit{package} \package{xcolor}. A cor mais utilizada é o ciano do Instituto Superior Técnico, dado pelo \href{https://tecnico.ulisboa.pt/pt/sobre-o-tecnico/institucional/logo-e-manual-de-identidade/}{Manual de Identidade}, e definida como $1,0,0,0$ na escala de CMYK. A segunda definida é um cinzento de $0.2,0,0,0.8$ na escala de CMYK, dada no mesmo documento referido.
+
+Esta cor está definida na classe como \texttt{ist-cyan}.
+Estas cores estão definidas na classe como \texttt{ist-cyan} e \texttt{ist-gray} e podem ser reutilizadas de acordo com a sintaxe da \textit{package} \package{xcolor}.
+
+\section{Tipos de Letra}
+
+O tópico de tipos de letra tem vários pormenores a descrever, mas a escolha de cada um deles prende-se à decisão da Direcção Académica em escolher \textit{Arial} como o tipo de letra principal do documento. A discussão de cada tipo de letra implementado inclui a justificação relevante, mas é importante referir que para os tipos de letra não principais que serão descritos podem ser substituídos de acordo com a preferência do utilizador da forma que entender. Em geral, as implementações de tipos de letra num documento feito sem e com a classe \texttt{ist-thesis} são idênticas e devem funcionar como suposto.
+
+\subsection{Tipo de Letra Principal}
+\label{sec:mainfont}
+
+Em contraste com o tipo de letra de raíz de qualquer documento \LaTeX{}\footnotemark{}, \textit{Computer Modern}, o tipo de letra especificado pelo guia de preparação da dissertação, \textit{Arial}, é muito distinto, mas igualmente (ou mais) reconhecível. No entanto, um dos problemas é que este tipo de letra é muito mais omnipresente em sistemas com \textit{Windows} do que no restantes, como também na internet. É, por isso, um tipo de letra que não encontrou implementação nativa em \LaTeX{}.
+\footnotetext{Neste caso referimo-nos a documentos utilizando as classes base de \LaTeX{}, como \texttt{article}, \texttt{report}, ou \texttt{book}, entre outras.}
+
+No entanto, \textit{Arial} é baseado no tipo de letra \textit{Helvetica}, que é facilmente disponível online em vários formatos e codificações. Os dois tipos de letra são praticamente indistinguíveis, sendo o design de \textit{Arial} baseado fortemente em \textit{Helvetica} na altura da sua criação. Esta segunda opção, pela sua facilidade de obtenção, já encontrou várias implementações em \LaTeX{}.
+
+Para o tipo de letra base deste projeto escolhemos o tipo de letra \href{https://ctan.org/pkg/tex-gyre-heros}{\TeX{} Gyre Heros}, que está incluído em qualquer distribuição de \LaTeX{}. A razão desta escolha foi a sua facilidade de implementação e relativa solidez em várias misturas de propriedades, desde \textbf{negrito} a \textit{itálico} à {\bfseries\itshape mistura dos dois}, como também a caracteres estrangeiros, nomeadamente caracteres utilizados na língua portuguesa. A grande lacuna deste tipo de letra é a falta de tipografia matemática, uma lacuna que será discutida na secção \ref{sec:mathfont}.
+
+\subsection{\textit{Monoespaço}}
+
+O tipo de letra monoespaçado escolhido para o projeto foi \texttt{Inconsolata Narrow}, pela aparência relativamente semelhante ao tipo de letra principal, mas principalmente por preferência pessoal. Embora este tipo de letra não seja extensivamente utilizado na maioria das teses, é fulcral na introdução de código de programação a meio do texto onde caracteres monoespaçados mantêm coerência entre cada linha.
+
+\subsection{Tipografia Matemática}
+\label{sec:mathfont}
+
+Como anteriormente referido na secção \ref{sec:mainfont}, o tipo de letra utilizado para matemática não está incluído no tipo de letra principal utilizado e teve de ser seleccionado à parte.
+
+Para utilizadores com experiência em \LaTeX{}, o tipo de letra de raíz utilizado pelo \LaTeX{}, \textit{Computer Modern}, já inclui todas as funções necessárias para as mais variadas necessidades de escrita de textos matemáticos. E embora isto seja verdade, a colisão entre \textit{Arial} (ou \TeX{} Gyre Heros, neste caso) e \textit{Computer Modern} não é a mais agradável, o que levou à procura de uma alternativa mais satisfatória. Não obstante, para quem não se quiser preocupar com pormenores ou estiver satisfeito com o tipo de letra de matemática original, é incluída a opção \texttt{origmath} na classe para manter este tipo de letra.
+
+Neste projeto foi utilizada a \textit{package} \package{newtxsf}, que implementa um tipo de letra mais semelhante ao tipo de letra utilizado no resto do documento.
+
+\subsection{Tipos de Letra \textit{Serif}}
+
+Para os leitores mais perspicazes, podem ter reparado que ainda sobra uma família de tipos de letra por definir, os tipos de letra \textit{serif}.
+
+Para os leitores curiosos, passo a explicar. O \LaTeX{} implementa em cada documento duas famílias de tipos de letra principais, \textit{serif} e \textit{sans-serif}. Estes termos são utilizados geralmente (mesmo fora de qualquer contexto de \LaTeX{}) para descrever tipos de letra. O primeiro corresponde a tipos de letra mais pormenorizados, angulares e pontiagudos, sendo mais adequados a ler em papel. O segundo é utilizado para descrever tipos de letra mais simples e redondos, muito mais fáceis de ler em ecrãs ou outros suportes digitais onde o detalhe sacrifica alguma legibilidade. Para os leitores mais interessados deixo \href{https://en.wikipedia.org/wiki/Serif}{um link} que pode esclarecer o tópico.
+
+Por defeito, o \LaTeX{} utiliza tipos de letra \textit{serif}, como o já referido \textit{Computer Modern}, por defeito, deixando ao utilizador a opção de definir e utilizar a sua contrapartida \textit{sans-serif} em qualquer local no texto. No entanto, para o projeto em questão, de acordo com os regulamentos do Instituto Superior Técnico, utilizamos um tipo de letra \textit{sans-serif} como base, o que implica que está disponível a utilização de um tipo de letra \textit{serif} quando necessário.
+
+Como este tópico é de relativamente baixa relevância, deixámos este tipo de letra sem modificações, o que implica que quando é chamado, \textrm{como neste excerto}, obtemos o tipo de letra de raíz do \LaTeX{}.
+
+\subsection{Demonstrações}
+
+Os tipos de letra referidos nas secções anteriores estão demonstrados nesta secção. Por ordem, os tipos de letra normal (\textit{sans-serif}), itálico, maiúsculas pequenas, \textit{serif}, e matemático, todas acompanhadas pelo seu equivalente a negrito.
+
+\newrobustcmd*\textsample{Lorem ipsum dolor sit amet, consectetuer adipiscing elit.}
+\begin{quote}
+	\textsample \\
+	{\bfseries\textsample} \\
+	{\itshape\textsample} \\
+	{\bfseries\itshape\textsample} \\
+	{\scshape\textsample} \\
+	{\bfseries\scshape\textsample} \\
+	{\ttfamily\textsample} \\
+	{\bfseries\ttfamily\textsample} \\
+	{\rmfamily\textsample} \\
+	{\bfseries\rmfamily\textsample} \\
+	{$\textsample$} \\
+	{$\bm{\textsample}$} \\
+\end{quote}
+
+Também incluído aqui está uma demonstração de uma equação no tipo de letra \package{newtxsf} referido na secção \ref{sec:mathfont}.
+\begin{gather*}
+	\mathbb{P}\left(\frac{X_1 + \cdots + X_n}{\sqrt{n}} \leq y\right) \rightarrow \mathrm{R}(y) = \int_{-\infty}^{y} \frac{e^{-t^2/2}}{\sqrt{2\pi}}dt \qquad \mathrm{as} \quad n \rightarrow \infty
+\end{gather*}
+
+\section{\textit{Packages} Utilizadas}
+
+Fica na tabela \ref{tab:packages} um resumo de todas as \textit{packages} utilizadas na implementação da classe.
+\begin{table}[ht]
+	\centering
+	\caption{\textit{Packages} carregadas pela classe sem argumentos opcionais, dependendo do compilador utilizado.}
+	\label{tab:packages}
+	\begin{tabular}{c|c}\toprule
+		pdf\LaTeX{}				& \makecell{\XeLaTeX{} ou \\ \LuaLaTeX{}}	\\
+		\midrule
+		\multicolumn{2}{c}{\package{etoolbox}}				\\
+		\multicolumn{2}{c}{\package{ifluatex}}				\\
+		\multicolumn{2}{c}{\package{ifxetex}}				\\
+		\multicolumn{2}{c}{\package{ifpdf}}					\\
+		\multicolumn{2}{c}{\package{mathtools}}				\\
+		\multicolumn{2}{c}{\package{graphicx}}				\\
+		\multicolumn{2}{c}{\package{xcolor}}				\\
+		\multicolumn{2}{c}{\package{hyperref}}				\\
+		\multicolumn{2}{c}{\package{geometry}}				\\
+		\package{inputenc}		&							\\
+		\package{fontenc}		&							\\
+		\phantom{polyglossia}	& \package{fontspec}		\\
+		\multicolumn{2}{c}{\package{babel}}				    \\
+		\package{tgheros}		&							\\
+		\package{inconsolata}	&							\\
+		\multicolumn{2}{c}{\package{newtxsf}}				\\
+		\multicolumn{2}{c}{\package{microtype}}				\\
+		\multicolumn{2}{c}{\package{tocbibind}}				\\
+		\multicolumn{2}{c}{\package{setspace}}				\\
+		\multicolumn{2}{c}{\package{totpages}}				\\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\end{document}

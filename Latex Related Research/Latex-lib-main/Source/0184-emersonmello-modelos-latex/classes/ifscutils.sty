@@ -1,0 +1,460 @@
+% ifscutils.sty
+% ------------------------------------------------------------%
+% 2015-2026 - Emerson Ribeiro de Mello - mello@ifsc.edu.br
+% ------------------------------------------------------------%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ifscutils}[2026/10/21 v3.1 Utilidades para documentos no IFSC]
+
+% -------------------------------------------------%
+% Configurações para compatibilidade com diferentes engines de compilação
+% -------------------------------------------------%
+\RequirePackage{iftex}
+\ifPDFTeX
+  % -------- pdfLaTeX --------
+  \RequirePackage[utf8]{inputenc}
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage[brazilian]{babel}  
+  \RequirePackage{fix-cm}
+  \RequirePackage{newpxtext} 
+  \RequirePackage{newpxmath} 
+  \renewcommand*\familydefault{\sfdefault} % Todo o texto vira Sans Serif
+  \else
+  % -------- XeLaTeX ou LuaLaTeX --------
+  \RequirePackage{fontspec}
+  \RequirePackage{unicode-math}
+  \RequirePackage{newunicodechar}
+  \newunicodechar{º}{\textordmasculine}
+  \newunicodechar{ª}{\textordfeminine}
+
+  \RequirePackage[brazilian]{babel}    
+
+  % -------------------------------------------------%
+  % Escolha de fontes
+  % -------------------------------------------------%
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase,Renderer=HarfBuzz}
+
+  \IfFontExistsTF{Inconsolata}{
+    \setmonofont[
+      Scale          = 0.88 %MatchLowercase,
+    ]{Inconsolata}
+  }{}
+
+  \IfFontExistsTF{Inter}{
+    \setmainfont[
+      Scale          = .88,
+      SmallCapsFont = *,
+    ]{Inter}
+  }{
+    \setmainfont[Scale=.9]{TeX Gyre Heros}  
+  }
+  
+  \IfFontExistsTF{TeX Gyre Pagella Math}{
+      \setmathfont{TeX Gyre Pagella Math}[Scale=MatchLowercase]
+  }{
+      \setmathfont{Latin Modern Math}[Scale=MatchLowercase]
+  }
+\fi
+% -------------------------------------------------%
+
+\RequirePackage{tikz,pgf}
+\usetikzlibrary{calc,math,positioning}
+\RequirePackage{subcaption} %  para subfigures
+\RequirePackage{pdflscape}
+\RequirePackage{etoolbox} % \BeforeBeginEnvironment
+\RequirePackage{graphicx}
+\RequirePackage{breakcites} % para quebrar citações que estouram a margem
+\RequirePackage{soul}
+\RequirePackage{csquotes}
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{mdframed}
+\RequirePackage[inline]{enumitem}
+\RequirePackage[normalem]{ulem}
+\RequirePackage{xargs}
+\RequirePackage{xifthen}
+\RequirePackage{xcolor}
+\RequirePackage{siunitx}
+\RequirePackage{supertabular,longtable}
+\RequirePackage{ragged2e}
+\RequirePackage{fontawesome6}
+\RequirePackage{ccicons}
+\RequirePackage{pifont}
+\PassOptionsToPackage{hidelinks}{hyperref}
+\RequirePackage{array,booktabs,bookmark,multirow,hyperref}
+
+% Pacote com personalizações para o listings
+% Esse arquivo deve estar no mesmo diretório do ifscutils.sty ou 
+% em um diretório que esteja no caminho de busca do LaTeX
+\RequirePackage{ifsclistings}
+
+
+% Configuracoes para o pacote siunitx
+\sisetup{
+  locale = DE, % Configura o pacote para usar a vírgula como separador decimal
+  output-decimal-marker = {,}, % Define a vírgula como separador decimal na saída
+  group-separator = {.}, % Define o ponto como separador de milhares
+  group-minimum-digits = 4, % Define o número mínimo de dígitos para usar o separador de milhares
+  per-mode = symbol, % Define o formato para unidades por outra unidade (e.g. m/s)
+  detect-all % Detecta o modo matemático ou texto para formatar as unidades de acordo
+}
+
+
+%---------------------------------------------------------%
+% Aumentando a altura das linhas nas tabelas
+\renewcommand{\arraystretch}{1.2}
+% espaçamento entre linhas
+% \renewcommand{\baselinestretch}{1.05} 
+%---------------------------------------------------------%
+
+% ----------------------------------------------------
+% Definição de cores 
+% ----------------------------------------------------
+\definecolor{verdeifsc}{RGB}{50,160,65}
+\definecolor{vermelhoifsc}{RGB}{200,25,30}
+\definecolor{azul}{HTML}{7da6cb}
+\definecolor{amarelo}{HTML}{f0b400}
+\definecolor{amareloinfo}{HTML}{FEE886}
+\definecolor{vermelhoinfo}{HTML}{e44131}
+\definecolor{verdeinfo}{HTML}{31a250}
+\definecolor{azulinfo}{HTML}{4080ec}
+
+\definecolor{notecolor}{RGB}{9,105,218}
+\definecolor{tipcolor}{RGB}{26,127,25}
+\definecolor{importantcolor}{RGB}{130,80,223}
+\definecolor{warningcolor}{RGB}{253,165,15}
+\definecolor{cautioncolor}{RGB}{207,34,46}
+
+
+
+% ----------------------------------------------------
+% Criação do logo do IFSC com TikZ
+% ----------------------------------------------------
+\tikzmath{%
+  real \dimensao, \canto, \diametro, \dist, \col, \lin;%
+  \dimensao   = 1;%
+  \canto =  (.1 * \dimensao) ; % .1;
+  \diametro = 1.05 * \dimensao; % 1.05; 
+  \dist = 1.2 * \dimensao; % 1.1; 
+  \lin = 6;%
+  \col = 2.2;%
+}
+% Definindo os estilos para os nós do logo
+\tikzset{squarednode/.style={rectangle, fill=#1, minimum size=\dimensao cm,rounded corners=\canto cm}}%
+\tikzset{roundnode/.style={circle, fill=#1, minimum size=\diametro cm}}%
+
+\tikzset{%
+    pics/ifsclogo/.style n args={2}{
+        code = {
+          \node[roundnode=#1]   (circulo) at (\col,\lin) {};
+          \node[squarednode=#2] at (\col+\dist*1,\lin) {};
+          \node[squarednode=#2] at (\col+\dist*2,\lin) {};
+      
+          % 2a. linha
+          \node[squarednode=#2] at (\col,\lin-\dist) {};
+          \node[squarednode=#2] at (\col+\dist*1,\lin-\dist) {};
+      
+          % 3a. linha
+          \node[squarednode=#2] at (\col,\lin-\dist*2) {};
+          \node[squarednode=#2] at (\col+\dist*1,\lin-\dist*2) {};
+          \node[squarednode=#2] at (\col+\dist*2,\lin-\dist*2) {};
+      
+          % 4a. linha
+          \node[squarednode=#2] at (\col,\lin-\dist*3) {};
+          \node[squarednode=#2] at (\col+\dist*1,\lin-\dist*3) {};
+        }
+    }%
+}%
+
+%  Exemplo de como usar o LOGO:
+% \scalebox{.5}{\tikz \pic{ifsclogo={vermelhoifsc}{verdeifsc}};}%
+
+% Exemplo de como criar uma box
+% \newsavebox\ifsclogopreto%
+% \begin{lrbox}{\ifsclogopreto}
+%   \scalebox{.22}{\tikz \pic{ifsclogo};}%
+% \end{lrbox}
+% E como usar
+% \usebox\ifsclogopreto
+
+
+% Definindo o espaço entre caption e a tabela
+% \captionsetup[table]{skip=10pt}
+% \captionsetup[figure]{skip=10pt}
+% \captionsetup[lstlisting]{skip=10pt}
+
+% Novos tipos de colunas alinhado: à direita, centralizado ou esquerda e que permita definir a largura
+
+\newcolumntype{R}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+
+% Pacote para incluir listagem de códigos
+
+\renewcommand{\lstlistlistingname}{Lista de Códigos}
+\renewcommand*\lstlistingname{Listagem}
+
+
+% Para ficar visível os Overfull hbox
+\overfullrule=2cm
+
+% para corrigir um bug na margem lateral esquerda do subtitle
+\tikzset{mdfsubtitlebackground/.style={draw=none,fill=\mdf@subtitlebackgroundcolor}}
+
+
+%---------------------------------------------------------%
+% Comandos
+%---------------------------------------------------------%
+\newcommand{\licenciamentoLivre}{%
+\begin{center}%
+  \ccby~Documento licenciado sob \href{https://creativecommons.org/licenses/by/4.0/deed.pt_BR}{\color{azulinfo}{Creative Commons ``Atribuição 4.0 Internacional''.}}%  
+\end{center}%
+}
+
+\newcommand{\plagio}{
+  \begin{cuidado}[Plágio não é tolerado]
+    Você deve ser o único(a) responsável por fazer a entrega para essa atividade. Todo o código ou texto deverá ser produzido exclusivamente por você, exceto trechos de códigos que possam ter sido fornecidos como parte do enunciado.
+    
+    Você pode discutir com outros estudantes com o intuito de esclarecer pontos, isso é até incentivado, porém você não poderá copiar trechos de códigos, textos ou soluções de qualquer fonte (e.g. colegas da mesma turma ou de turmas anteriores, repositórios de códigos na Internet ou soluções providas por serviços como Copilot e ChatGPT). 
+  \end{cuidado}
+}
+
+\newcommand{\plagioGH}{
+  \begin{caution}[Plágio não é tolerado]
+    Você deve ser o único(a) responsável por fazer a entrega para essa atividade. Todo o código ou texto deverá ser produzido exclusivamente por você, exceto trechos de códigos que possam ter sido fornecidos como parte do enunciado.
+    
+    Você pode discutir com outros estudantes com o intuito de esclarecer pontos, isso é até incentivado, porém você não poderá copiar trechos de códigos, textos ou soluções de qualquer fonte (e.g. colegas da mesma turma ou de turmas anteriores, repositórios de códigos na Internet ou soluções providas por serviços como Copilot e ChatGPT). 
+  \end{caution}
+}
+
+
+% ---------------------------------------
+% todo list (check list) Optional commands: \cmark and \xmark
+% https://tex.stackexchange.com/a/313337
+% ex: \item [\cmark] Create new list
+\newlist{todolist}{itemize}{2}
+\setlist[todolist]{label={\ding{111}}}
+\newcommand{\cmark}{\rlap{\ding{111}}{\raisebox{2pt}{\large\hspace{1pt}\ding{51}}}%
+\hspace{-2.5pt}}
+\newcommand{\xmark}{\rlap{\ding{111}}{\large\hspace{1pt}\ding{55}}}
+
+
+% ---------------------------------------
+% Baloes de informacao
+% ---------------------------------------
+\newtcbox{\dest}[1][red]{on line,
+arc=0pt,outer arc=0pt,colback=#1!10!white,colframe=#1!50!black, boxsep=0pt,left=1pt,right=1pt,top=2pt,bottom=2pt, boxrule=0pt,bottomrule=0pt,toprule=0pt}
+\newtcbox{\destx}[1][red]{on line, arc=7pt,colback=#1!10!white,colframe=#1!50!black, before upper={\rule[-3pt]{0pt}{10pt}},boxrule=1pt, boxsep=0pt,left=6pt,right=6pt,top=2pt,bottom=2pt}
+
+\newtcolorbox[auto counter,number within=section]{caixainfo}[4][]{
+colback=#2,colframe=#2,coltitle=#3,fonttitle=\bfseries\sffamily,
+fontupper=\color{#3},
+boxrule=.1pt,
+detach title,
+breakable,
+pad at break*=0mm,
+#1,
+code={\ifdefempty{\tcbtitletext}{}{\tcbset{before upper={\tcbtitle\par}}}},
+enhanced,
+leftrule=15mm,
+underlay unbroken and first={\node[below,text=#3,anchor=east]
+at ([xshift=0mm]interior.base west) {\Huge  #4};}
+% enhanced jigsaw,
+% leftrule=22mm,
+% underlay unbroken and first={\node[below,text=#3,anchor=east]
+% at ([xshift=-6mm]interior.base west) {\Huge  #4};}
+}
+
+\newenvironmentx{informacao}[4][1=,2=verdeinfo!30,3=black!90,4=\faCircleInfo]{
+  \begin{caixainfo}[title=#1]{#2}{#3}{#4}
+  \parskip=0.3\baselineskip \advance\parskip by 0pt plus 1pt
+  \parindent=0pt
+}{
+  \end{caixainfo}
+}
+
+\newenvironmentx{informacaoazul}[4][1=,2=azulinfo!30,3=black!90,4=\faCircleInfo]{
+  \begin{caixainfo}[title=#1]{#2}{#3}{#4}
+  \parskip=0.3\baselineskip \advance\parskip by 0pt plus 2pt
+  \parindent=0pt
+}{
+  \end{caixainfo}
+}
+
+\newenvironmentx{atencao}[4][1=,2=amareloinfo!30,3=black!90,4=\faTriangleExclamation]{
+  \begin{caixainfo}[title=#1]{#2}{#3}{#4}
+  \parskip=0.3\baselineskip \advance\parskip by 0pt plus 2pt
+  \parindent=0pt
+}{
+  \end{caixainfo}
+}
+
+\newenvironmentx{cuidado}[4][1=,2=vermelhoinfo!30,3=black!90,4=\faCircleExclamation]{
+  \begin{caixainfo}[title=#1]{#2}{#3}{#4}
+\parskip=0.3\baselineskip \advance\parskip by 0pt plus 2pt
+\parindent=0pt
+}{\end{caixainfo}}
+
+% -------------------------------------------------%
+% Ambientes inspirados nos estilos de alertas do Markdown do GitHub
+% -------------------------------------------------%
+
+\tcbset{alertmarkdown/.style={%
+  arc=0mm, % arredondamento dos cantos
+  boxrule=0mm, % espessura da borda
+  leftrule=1mm, % espessura da barra lateral
+  left=2mm, % espaçamento entre a barra lateral e o conteúdo
+  top=1mm, % espaçamento superior
+  parbox=false, % para evitar que o conteúdo seja colocado dentro de uma caixa de parágrafo
+  enhanced, % para permitir o uso de recursos avançados do tcolorbox
+  opacityback=0, % transparência do fundo
+  opacitybacktitle=0, % transparência do título
+  opacityframe=0 % transparência da borda
+  }
+}
+
+\newtcolorbox{ghmarkdown}[3][]{alertmarkdown,borderline west={3pt}{0pt}{#3},coltitle=#3,title={#2~~\textbf{#1}}}
+
+\newenvironmentx{note}[3][1=Nota,2=\faCircleInfo,3=notecolor]{
+  \begin{ghmarkdown}[#1]{#2}{#3}
+  \parskip=0.3\baselineskip \advance\parskip by 0pt plus 2pt
+  \parindent=0pt
+}{
+  \end{ghmarkdown}
+}
+
+\newenvironmentx{tip}[3][1=Dica,2={\faLightbulb[regular]},3=tipcolor]{
+  \begin{ghmarkdown}[#1]{#2}{#3}
+  \parskip=0.3\baselineskip \advance\parskip by 0pt plus 2pt
+  \parindent=0pt
+}{
+  \end{ghmarkdown}
+}
+
+\newenvironmentx{important}[3][1=Importante,2={\faExclamation},3=importantcolor]{
+  \begin{ghmarkdown}[#1]{#2}{#3}
+  \parskip=0.3\baselineskip \advance\parskip by 0pt plus 2pt
+  \parindent=0pt
+}{
+  \end{ghmarkdown}
+}
+
+\newenvironmentx{warning}[3][1=Atenção,2={\faTriangleExclamation},3=warningcolor]{
+  \begin{ghmarkdown}[#1]{#2}{#3}
+  \parskip=0.3\baselineskip \advance\parskip by 0pt plus 2pt
+  \parindent=0pt
+}{
+  \end{ghmarkdown}
+}
+
+\newenvironmentx{caution}[3][1=Cuidado,2={\faCircleExclamation},3=cautioncolor]{
+  \begin{ghmarkdown}[#1]{#2}{#3}
+  \parskip=0.3\baselineskip \advance\parskip by 0pt plus 2pt
+  \parindent=0pt
+}{
+  \end{ghmarkdown}
+}
+% -------------------------------------------------%
+
+
+% -------------------------------------------------%
+%  Cabeçalho
+% -------------------------------------------------%
+\newcommand{\cabecalhoCurso}[6]{
+\hbadness=10000
+\noindent%
+\begin{center}%
+  \fbox{%
+  \begin{minipage}{.98\textwidth}%
+    \begin{tabular*}{\linewidth}{@{} l p{9.1cm} R{6cm}@{}}
+      \multirow{2}{*}{\scalebox{.20}{\tikz \pic{ifsclogo={black}{black}};}} & {\small #1} &  {\small #3} \\% 
+      &  {\small #2} &  {\small #4}%
+    \end{tabular*}
+    \begin{center}%
+      #5
+    \end{center}%
+    \begin{flushright}
+      {\small #6}
+    \end{flushright}
+  \end{minipage}%
+  }%
+\end{center}%
+\bigskip%
+}
+% -------------------------------------------------%
+% nome do aluno
+% -------------------------------------------------%
+\newcommand{\nomealuno}[2][\rule{.2\linewidth}{.4pt}]{
+\noindent \textbf{Nome:} #2 \hfill \textbf{Matrícula:} #1
+\bigskip}
+% -------------------------------------------------%
+
+
+% Use esse comando para fazer links para sites.
+% Os links ficarão em azual e dentro dos símbolos < e > 
+\newcommand{\MYhref}[3][blue]{\href{#2}{\color{#1}{<#3>}}}%
+
+
+% -------------------------------------------------%
+% Ambiente para casos de uso UML 
+% -------------------------------------------------%
+\definecolor{gainsboro}{rgb}{0.86, 0.86, 0.86}
+\newmdenv[
+    frametitlerulewidth=.5pt,
+    frametitlerule=true,
+    frametitlebackgroundcolor=gainsboro,
+    subtitlebelowskip=0pt,
+    subtitleaboveskip=2pt
+    ]{usecasemdframed}
+
+% Cabeçalho do ambiente usecase
+\newenvironment{cabecalhoUC}{%
+\newcommand{\atorPrimario}[1]{%
+\textbf{Ator primário} & ##1 \\%
+}%
+\newcommand{\atoresSecundarios}[1]{%
+\textbf{Atores secundários} & ##1 \\%
+}%
+\newcommand{\precondicoesUC}[1]{%
+\textbf{Pré-condições} & ##1 \\%
+}%
+\newcommand{\poscondicoesUC}[1]{%
+\textbf{Pós-condições} & ##1 \\%
+}%
+\begin{tabular}{@{}p{3.8cm} p{11.6cm}@{}}%
+}{%
+\end{tabular}%
+}%
+
+% https://tex.stackexchange.com/questions/82471/creating-a-new-environment-with-referencing
+% Contador para o ambiente usecase
+\newcounter{usecase}[section]
+\renewcommand*{\theusecase}{UC-\thechapter.\arabic{usecase}}
+\newcommand*{\usecaseautorefname}{Caso de Uso}
+\newcommand{\usecaseLabel}[1]{%
+\refstepcounter{usecase}\theusecase\label{#1}%
+}%
+
+% ambiente usecase
+\newenvironment{usecase}[3]{%
+\newenvironment{fluxoprincipal}{%
+\mdfsubtitle{Fluxo principal}%
+\begin{enumerate}%
+}{%
+\end{enumerate}%
+}%
+\newenvironment{fluxoalternativo}[1]{%
+\mdfsubtitle{Fluxo alternativo: ##1}%
+\begin{enumerate}%
+}{%
+\end{enumerate}%
+}%
+\newenvironment{fluxoexcecao}[1]{%
+\mdfsubtitle{Fluxo de exceção: ##1}%
+\begin{enumerate}%
+}{%
+\end{enumerate}%
+}%
+\begin{usecasemdframed}[frametitle={\usecaseLabel{#2}: #1}]%
+  \textbf{Resumo} #3\\[2mm]%
+}{%
+\end{usecasemdframed}%
+}%  

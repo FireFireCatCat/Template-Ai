@@ -1,0 +1,48 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=21mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{booktabs,tabularx,amsmath,siunitx,xcolor,fancyhdr,enumitem}
+\definecolor{kitblue}{HTML}{005B82}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small Physikalisches Praktikum}\fancyhead[R]{\thepage}\setlength{\headheight}{14pt}
+\begin{document}
+\begin{center}
+ {\color{kitblue}\LARGE\bfseries Versuchsprotokoll}\par\medskip
+ {\large P3/P4 — Dämpfung eines Federpendels}\par
+\end{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}lX>{\bfseries}lX@{}}
+ Name & Vorname Nachname & Datum & 29.08.2026\\
+ Versuch & P3/P4 & Gruppe & 07\\
+ Betreuer & Dr. Beispiel & Raum & 2.14
+\end{tabularx}
+\section*{Aufgabenstellung}
+Bestimmen Sie die Eigenfrequenz und die Dämpfung eines Federpendels aus einer
+Zeitreihe der Auslenkung. Vergleichen Sie die Messwerte mit dem Modell eines
+gedämpften harmonischen Oszillators.
+\section*{Aufbau und Durchführung}
+Feder, Masse, Wegsensor und Datenaufnahme werden auf einer stabilen Schiene
+montiert. Das Pendel wird um eine definierte Strecke ausgelenkt und ohne
+zusätzlichen Anstoß freigegeben. Die Auslenkung wird mit \SI{100}{Hz}
+aufgezeichnet; der Versuch wird dreimal wiederholt.
+\section*{Messwerte}
+\begin{tabular}{@{}l@{\quad}rr@{\quad}r@{}}
+\toprule
+Messung & $T$ (s) & $x_0$ (cm) & $x_5$ (cm)\\\midrule
+1 & 1.24 & 4.80 & 2.92\\
+2 & 1.25 & 4.75 & 2.88\\
+3 & 1.23 & 4.82 & 2.95\\
+\bottomrule
+\end{tabular}
+\section*{Auswertung}
+Für $x(t)=x_0 e^{-\delta t}\cos(\omega t+\varphi)$ ergibt sich aus den
+aufeinanderfolgenden Maxima beispielhaft
+\[T=(1.24\pm0.02)\ \si{\second},\qquad
+\delta=(0.10\pm0.01)\ \si{\per\second}.\]
+\section*{Fehlerbetrachtung und Fazit}
+Diskutieren Sie Sensorauflösung, Ablesezeitpunkt, Reibung und die Annahme
+einer linearen Feder. Die drei Periodendauern stimmen innerhalb der
+Messunsicherheit überein; das Modell beschreibt die Messreihe angemessen.
+\section*{Unterschriften}
+\noindent Student: \rule{45mm}{.4pt}\hfill Betreuer: \rule{40mm}{.4pt}
+\end{document}

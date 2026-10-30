@@ -1,0 +1,3244 @@
+% \iffalse meta-comment
+%  contracard.dtx -- part of contracard
+%
+%  Copyright 2013-2026 Sam Whited
+%
+%  This file may be distributed and/or modified under the
+%  conditions of the LaTeX Project Public License, either
+%  version 1.3c of this license or (at your option) any later
+%  version. The latest version of this license is in:
+%
+%  http://www.latex-project.org/lppl.txt
+%
+%  and version 1.3c or later is part of all distributions of
+%  LaTeX version 2008/05/04 or later.
+%
+% \fi
+%
+% \iffalse
+%
+%<*driver>
+\ProvidesFile{contracard.dtx}
+
+\documentclass[a4paper]{ltxdoc}
+\usepackage{iftex,listings}
+\usepackage{fancyvrb,framed,multicol,url,graphicx,cclicenses,pifont}
+\usepackage[enableidx]{contracard}
+\ifxetex
+  \usepackage{unicode-math}
+\else
+  \ifluatex
+    \usepackage{unicode-math}
+  \else
+    \usepackage[utf8x]{inputenc}
+  \fi
+\fi
+\usepackage[bookmarks, colorlinks=false, hidelinks]{hyperref}
+\usepackage[parfill]{parskip}
+\usepackage{bookmark}
+\usepackage[page,toc]{appendix}
+
+\usepackage{xcolor}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.95}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\fvset{gobble=2}
+
+\newenvironment*{exampledance}{%
+  \vspace{3em}
+  \begin{framed}
+    \begin{minipage}[t][76.2mm][t]{0.9\textwidth}
+}{%
+    \end{minipage}
+  \end{framed}
+}
+
+\newcommand*{\gittag}{%
+  \immediate\write18{%
+    rm gittag.tex 2> /dev/null; (git describe --tags --dirty || echo "v0.0") 2> /dev/null > gittag.tex
+  }%
+  \InputIfFileExists{gittag.tex}{}{}\unskip%
+  \immediate\write18{%
+    rm gittag.tex 2> /dev/null
+  }%
+}
+
+\NewDocumentCommand\name{m}{\textsc{#1}}
+\NewDocumentCommand\fname{m}{\textsf{#1}}
+\NewDocumentCommand\pkg{m}{\textsf{#1}}
+\NewDocumentCommand\cmdtt{m}{\texttt{#1}}
+\NewDocumentCommand\envtt{m}{\texttt{#1}}
+\NewDocumentCommand\texcmd{m}{\texttt{\textbackslash{}#1}}
+\NewDocumentCommand\regexp{m}{\texttt{#1}}
+\NewDocumentCommand\word{m}{\textit{#1}}
+
+\NewDocumentCommand{\macroargs}{so}{%
+  \IfNoValueTF{#2}
+    {These macros \IfBooleanTF{#1}{do not use}{use}}
+    {The \texcmd{\MakeLowercase#2} macro \IfBooleanTF{#1}{does not use}{uses}}
+  the standard argument layout described in \autoref{sec:moveshortcuts}.
+}
+
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+%
+% \fi
+%
+% \GetFileInfo{contracard.dtx}
+% \DoNotIndex{\#,\$,\%,\&,\@,\\,\{,\},\(,\),\^,\_,\~,\ }
+% \DoNotIndex{\@ne,\fi,\if,\@ifstar,\ifthenelse,\ifdefined,\ifx,\AND,\OR,\NOT}
+% \DoNotIndex{\advance,\begingroup,\catcode,\closein,\relax}
+% \DoNotIndex{\closeout,\day,\def,\edef,\protected@edef,\else,\empty,\endgroup,\end}
+% \DoNotIndex{\newcommand,\renewcommand,\unskip,\value}
+% \makeatletter
+% \errorcontextlines=999
+%
+% \title{Contra Card}
+% \author{
+%   \name{Sam Whited}\\*
+%   \texttt{sam@samwhited.com}
+% }
+% \date{\today\\*\gittag}
+%
+% \maketitle
+% \begin{exampledance}
+% \begin{contra}{Monarch Grove}{Martha Wild}{Duple becket}
+%   \move[2]{Slide left\moveindex{Slide Left}}
+%   \circleleft[][\textthreequarters]{6}
+%   \swing[Neighbor]{8}
+%   \longlines{}
+%   \dosido[\Leftrole{}]{8}
+%   \allemande[\Leftrole{}][left 1\textonehalf]{8}
+%   \move{Partner star promenade and butterfly whirl\moveindex{Star Promenade}\moveindex{Butterfly Whirl}}
+%   \dosido[\Rightrole{}][1\textonehalf]{8}
+%   \dosido{8}
+% \end{contra}
+% \end{exampledance}
+% \tableofcontents
+% \phantomsection
+% \addcontentsline{toc}{section}{\lodtitle}
+% \hypertarget{CC:LOD}{}
+% \listofdance{}
+%
+% \section{Introduction}
+%
+% The \textbf{Contra Card} project is designed to aid in the formatting and
+% typesetting of caller cards for traditional called dances such as contra,
+% square, and English Country Dance (ECD).
+%
+% The project comprises a \LaTeX\ package (\fname{contracard.sty}) and a
+% \LaTeX\ class (\fname{contracard.cls}).
+% The package provides the core functionality of Contra Card while the class
+% file acts as a convenience wrapper for making calling cards.
+%
+% This document is divided into two parts, one for the package and one for the
+% class, as well as a series of appendices.
+% \autoref{part:package} explains the various macros available in the package,
+% while \autoref{part:class} describes how to use the class to make calling
+% cards.
+% The appendices contain commentary on legacy contra dance terminology and how
+% this project addresses it, information about deprecated macros from previous
+% versions, help with upgrading from previous versions, and the complete
+% annotated source code of the package.
+%
+% \subsection{License}
+%
+% This project may be distributed and/or modified under the conditions of the
+% \LaTeX\ Project Public License, either version 1.3c of this license or (at
+% your opinion) any later version. The latest version of this license is in:
+%
+% \url{http://www.latex-project.org/lppl.txt}
+%
+% and version 1.3c or later is part of all distributions of \LaTeX\ version
+% 2008/05/04 or later.
+%
+% \subsection{Special thanks}
+%
+% \renewcommand{\thefootnote}{\fnsymbol{footnote}}%
+% \addtocounter{footnote}{1}%
+% Several people deserve a special thanks for their contributions to this
+% package.
+% Most notably the various callers and dancers who responded to my queries on
+% the \href{http://www.sharedweight.net/}{Shared Weight}, Traditional Dance
+% Callers, and \href{http://www.contradance.org/}{Chatahoochee Country Dancers}
+% mailing lists.
+% These comprise Andrea Nettleton, Bill Baritompa, Seth Tepfer, Richard Hopkins,
+% Chris Page, James Saxe, Mark Goodwin, Rob Harper, Eric Black, Kalia Kliban,
+% John Sweeney, Martha Wild\footnote{Dances by Martha Wild used in this
+% publication are reproduced from \textit{Calls of the Wild} by special
+% arrangement with the author.}, and Linda Leslie (in no particular order).
+%
+% \begin{exampledance}
+% \begin{contra}{Bicycle}{Sam Whited}{Duple becket}
+%   \balance[Ring]{}\circleleft[][\textonehalf]{4}
+%   \move[8]{Oval\footnote{Major sets circle left} left\moveindex{Oval}}
+%   \move[8]{Oval right to new neighbors\footnote{Identify next neighbor in
+%     advance, left diagonal}}
+%   \starleft{8}\footnote{Hands across star}
+%   \move[8]{\Rightrole{} pull by and \leftrole{} ricochet\footnote{\Leftrole{}
+%   cast out and around as in ends of a hey. For beginners: just stay put.}}
+%   \swing[Neighbor]{8}
+%   \balance[Ring]{}\move[4]{\Rightrole{} give \& take}
+%   \swing[Partner]{8}
+% \end{contra}
+% \end{exampledance}
+%
+% \StopEventually{}
+% \changes{0.1}{2013/02/09}{Created boilerplate for class}
+% \changes{0.3}{2013/02/20}{Split core functionality out into package}
+% \changes{0.4}{2013/02/22}{Support swung dances}
+% \changes{0.4}{2013/02/22}{Add list of dances}
+% \changes{0.4}{2013/02/22}{Add \pkg{tocloft} package to requirements}
+% \changes{1.0.0}{2013/09/09}{Start using \href{http://semver.org}{Semantic
+% Versioning}}
+% \changes{1.0.0}{2013/09/15}{Fix phrase separator issues}
+% \changes{3.0.0}{2026/05/28}{Documentation overhaul, move source code to an appendix}
+%
+% \clearpage
+% \phantomsection
+% \part{The \pkg{contracard} package}
+% \label{part:package}
+%
+% \section{Package Options}
+% \label{CCPACKAGE:OPTIONS}
+%
+% \begin{macro}{showcountbefore}
+% \changes{1.0.0}{2013/09/08}{New option}
+% \begin{macro}{showcountafter}
+% \changes{1.0.0}{2013/09/08}{New option}
+% \begin{macro}{enableidx}
+% \changes{1.0.0}{2013/09/08}{New option}
+% The package (or class) can be loaded with the following options.
+%
+% \begin{center}
+% \begin{tabular}{ l l l }
+%  Option & Description & More Info \\
+%  \hline
+%  \cmdtt{showcountafter}  & Show the count after each move & \autoref{macro:showcount} \\
+%  \cmdtt{showcountbefore} & Show the count before each move & \autoref{macro:showcount} \\
+%  \cmdtt{enableidx}       & Enable indexing & \autoref{macro:enableidx} \\
+% \end{tabular}
+% \end{center}
+%
+% For information on class-specific options see \autoref{CCCLASS:OPTIONS}.
+%
+% For example, to show the count after all dances in your document, you could
+% load the class with the \cmdtt{showcountafter} option like so:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[language=TeX,frame=single,numbers=none,caption={Using the package}]
+\usepackage[showcountafter]{contracard}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%
+% \section{The \envtt{contra} environment}
+% \label{sec:contraenv}
+%
+% \begin{environment}{contra}
+% \changes{0.1}{2013/02/14}{Create contra environment}
+% \changes{3.0.0}{2025/03/31}{Reset the footnote counter before new cards in the class}
+% The \envtt{contra} environment is used to create 32 bar contra dances and
+% represents a single calling card or dance description.
+% It resets the various counters, and displays some information about the
+% dance---if it is used inside of the \pkg{contracard} class, it also clears the
+% page, moves the dance form into the header, and resets the footnotes counter
+% The \texcmd{move} command and the various move shortcuts (\autoref{sec:moves})
+% should only be used inside a contra environment.
+% Creating a basic dance with the \envtt{contra} environment---like the examples
+% we've already seen---looks something like this:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,caption={XYZ by Bob Green}]
+\begin{contra}{XYZ}{Bob Green}{Duple improper}
+  \allemande[\Rightrole{}][right 1\textonehalf{}]{8}
+  \swing[Partner]{8}
+
+  \chain[\Rightrole{}]{}
+  \longlines{}
+
+  \moveindex{Zipper}
+  \move[4]{Partner pull by left and face back in}
+  \move[4]{Right diagonal same role pull by right}
+  \move[4]{Shadow pull by left}
+  \move[4]{%
+    Right diagonal same role pull by right, keep hands}
+
+  \move[4]{Right diagonal same role pull by right}
+  \move[4]{Shadow pull by left}
+  \move[4]{%
+    Right diagonal same role pull by right, keep hands}
+  \move[4]{Partner pull by left to where you started}
+  \notes{The ``Zipper" pull bys are slow, tell them to
+  count ``1, 2, 3, `woo!'" to stop the dancers from
+  rushing.}
+\end{contra}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% Which results in the following calling card (minus the outline which is added
+% separately to examples in this package to separate them from the rest of the
+% text):
+%
+% \begin{exampledance}
+% \begin{contra}{XYZ}{Bob Green}{Duple improper}
+%   \allemande[\Rightrole{}][right 1\textonehalf{}]{8}
+%   \swing[Partner]{8}
+%
+%   \chain[\Rightrole{}]{}
+%   \longlines{}
+%
+%   \moveindex{Zipper}
+%   \move[4]{Partner pull by left and face back in}
+%   \move[4]{Right diagonal same role pull by right}
+%   \move[4]{Shadow pull by left}
+%   \move[4]{%
+%     Right diagonal same role pull by right, keep hands}
+%
+%   \move[4]{Right diagonal same role pull by right}
+%   \move[4]{Shadow pull by left}
+%   \move[4]{%
+%     Right diagonal same role pull by right, keep hands}
+%   \move[4]{Partner pull by left to where you started}
+%
+%   \notes{The ``Zipper" pull bys are slow, tell them to
+%   count ``1, 2, 3, `woo!'" to stop the dancers from
+%   rushing.}
+% \end{contra}
+% \end{exampledance}
+%
+%
+% \end{environment}
+%
+%
+% \section{Formatting}
+%
+% These options change how the contra environment and the various moves in it
+% are formatted.
+%
+% \begin{macro}{\defaultcontraenv}
+% \begin{macro}{\dancetitleenv}
+% \changes{0.1}{2013/02/14}{Allow user to format moves}
+% \changes{0.3}{2013/02/20}{Allow user to format dance title block}
+% By default, all contra moves and the title block are wrapped in the
+% \cmdtt{flushleft} environment.
+% To change this you can renew these macros.
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\dancetitleformat}
+% \begin{macro}{\danceauthorformat}
+% \begin{macro}{\danceformformat}
+% \changes{0.3}{2013/02/20}{Allow the user to change the dance title format}
+% \changes{0.3}{2013/02/20}{Allow the user to change the dance form format}
+% To change the formatting of a dance's title, author, or form, redefine these
+% macros.
+% By default they are set to \texcmd{section*}, \texcmd{subsection*}, and
+% \texcmd{hspace\{\texcmd{fill}\}} respectively.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\movedelimiter}
+% \changes{0.3}{2013/02/20}{Allow customizing the move delimiter character}
+% \begin{macro}{\partdelimiter}
+% \changes{0.3}{2013/02/20}{Allow customizing the part delimiter}
+% \begin{macro}{\midpartdelimiter}
+% \changes{0.3}{2013/02/20}{Allow customizing the mid-part delimiter}
+% These commands define delimiters that are used between moves, or at the midway
+% point in a part.
+% By default moves are delimited by ``,", the part name is delimited from the
+% moves with a ``." and the midpart (ie. if a move falls on an 8 count boundary
+% by default) is delimited with ``;".
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\phraseseparator}
+% \changes{0.4}{2013/02/22}{Allow custom phrase separator character}
+% \begin{macro}{\phrasevspace}
+% \changes{0.4}{2013/02/22}{Allow custom phrase separation length}
+% The \texcmd{phraseseparator} macro is inserted between every
+% musical phrase and---by default---inserts \texcmd{phrasevspace} amount of
+% white space.
+% \end{macro}
+% \end{macro}
+%
+% For example, A dance with a centered title block, a custom mid-part delimiter
+% (an em-dash in this case), a custom part separator (``:") and a nice
+% horticultural dingbat as the phrase separator can be accomplished with:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[language=TeX,frame=single,caption={Formatting a dance}]
+\RenewDocumentCommand{\dancetitleenv}{}{center}
+\RenewDocumentCommand{\midpartdelimiter}{}{~~---}
+\RenewDocumentCommand{\phraseseparator}{}{\ding{167}}
+\RenewDocumentCommand{\partdelimiter}{}{:}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% which results in your dances looking something like this:
+%
+% \begin{exampledance}
+% \RenewDocumentCommand{\dancetitleenv}{}{center}%
+% \RenewDocumentCommand{\midpartdelimiter}{}{~~---}%
+% \RenewDocumentCommand{\phraseseparator}{}{\ding{167}}%
+% \RenewDocumentCommand{\partdelimiter}{}{:}
+% \begin{contra}{Broken Hey}{Seth Tepfer}{Duple becket}
+% \circleleft{8}
+% \chain[\Rightrole{}]{}
+%
+% \dosido[\Rightrole{}]{8}
+% \swing[Neighbor]{8}
+%
+% \longlines{}
+% \move[8]{\Rightrole{} right shoulder broken hey}
+% \balanceand\swing[partner]{10}
+% \move[2]{Slide left to next couple\moveindex{Slide left}}
+%
+% \notes{Broken Hey: \rightrole{} start \textonehalf{} hey passing right
+% shoulder \emph{but} when \leftrole{} get to center, allemande \emph{right}
+% 1$\times$ --- go back to partner.}
+%
+%   \vspace*{\fill}
+%   \begin{flushright}
+%   \href{http://creativecommons.org/licenses/by/3.0/}{%
+%     \IfFileExists{by-nc.png}{%
+%       \includegraphics[width=1cm]{by-nc.png}%
+%     }{\cc\by\nc}}
+%   \end{flushright}
+% \end{contra}
+% \end{exampledance}
+%
+% \begin{macro}{\showcountbefore}
+% \changes{1.0.0}{2013/09/07}{Allow showing the count before each move}
+% \begin{macro}{\showcountafter}
+% \changes{1.0.0}{2013/09/07}{Allow showing the count after each move}
+% \begin{macro}{\hidecountbefore}
+% \changes{1.0.0}{2013/09/07}{Allow hiding the count before each move}
+% \begin{macro}{\hidecountafter}
+% \changes{1.0.0}{2013/09/07}{Allow hiding the count after each move}
+% \phantomsection{}%
+% \label{macro:showcount}
+% These macros allow the user to show or hide the moves duration before or after
+% each move.
+% They have no arguments.
+
+% Showing the count can also be accomplished for all dances using the package
+% options described in \autoref{CCPACKAGE:OPTIONS}.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+
+% \begin{macro}{\countleftbracket}
+% \changes{1.0.0}{2013/09/10}{Add ability to change count brackets}
+% \begin{macro}{\countrightbracket}
+% \changes{1.0.0}{2013/09/10}{Add ability to change count brackets}
+% These commands can be used to set the left and right brackets which are
+% inserted on around the count as discussed above. By default, they are set to
+% plain left and right parenthesis. Note that these commands take a single
+% argument (the new bracket) instead of simply being something that you redefine
+% like many of the other formatting commands. They are not used for inserting
+% the brackets themselves; just for changing them.
+% \end{macro}
+% \end{macro}
+%
+% For instance, the following would result in a dance with the count shown
+% afterwards in square brackets:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[language=TeX,frame=single,caption={Showing the count}]
+\showcountafter{}
+\countleftbracket{$[$}
+\countrightbracket{$]$}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% This results in a dance formatted like so:
+%
+% \begin{exampledance}
+% \showcountafter{}%
+% \countleftbracket{$[$}%
+% \countrightbracket{$]$}%
+% \begin{contra}{Spacewalk}{Seth Tepfer}{Becket}
+%   \starleft[][all the way around]{8}
+%   \allemande[\Leftrole{}][left 1\textonehalf]{8}
+%   \balanceand[Neighbor]{}\swing{12}
+%   \circleleft[][\textthreequarters]{6}
+%   \swing[Partner]{10}
+%   \promenade[Partner][across]{6}
+%   \starleft[][all the way around]{8}
+%   \move[2]{slide right along set}
+%   \vspace*{\fill}
+%   \begin{flushright}
+%     \href{http://creativecommons.org/licenses/by-nc/3.0/}{%
+%       \IfFileExists{by-nc.png}{%
+%         \includegraphics[width=1cm]{by-nc.png}%
+%        }{\cc\bync}}
+%   \end{flushright}
+% \end{contra}
+% \end{exampledance}
+%
+%
+% \section{Role terms}
+% \label{sec:rolenames}
+%
+% \begin{macro}{\Rightrole}
+% \changes{3.0.0}{2026/04/27}{Add macro}
+% \begin{macro}{\rightrole}
+% \changes{3.0.0}{2026/04/27}{Add macro}
+% \begin{macro}{\Leftrole}
+% \changes{3.0.0}{2026/04/27}{Add macro}
+% \begin{macro}{\leftrole}
+% \changes{3.0.0}{2026/04/27}{Add macro}
+% Contra is an evolving folk tradition, and as such a number of different role
+% terms have been used throughout the years.
+% Despite the name, this package can also be used for creating dances other than
+% contra dances and these individual dance traditions may have their own role
+% terms.
+% These macros can be used in place of role names in your calling cards to make
+% it easier to change role names later.
+%
+% The uppercase version of the macro will print the role name starting with an
+% uppercase letter and the lowercase version will not.
+% By default each macro prints the plural form of the role since this is what is
+% mostly used in dance cards (ie. ``Robins chain" not ``Robin chain").
+% Each role macro also has a ``star" version which results in the singular
+% version of the role.
+%
+% For example, writing ``\texttt{First \textbackslash rightrole*\{\}}" results
+% in ``First \rightrole*{}" (\leftrole{} and \rightrole{} are used by default),
+% while writing: ``\texttt{\textbackslash Rightrole\{\} by the left}" results in
+% ``\Rightrole{} by the left".
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\setrightrole}
+% \changes{3.0.0}{2026/04/27}{Add macro}
+% \begin{macro}{\setleftrole}
+% \changes{3.0.0}{2026/04/27}{Add macro}
+% When you want to print new cards with different names, either because the
+% standards of your home dance have changed, or because you're calling at a
+% dance that uses different role terms, you can use the \texcmd{setrightrole}
+% and \texcmd{setleftrole} macros to update them.
+% Each macro expects two arguments: the singular form of the role name and the
+% plural form of the role name.
+% For example, to updates a set of calling cards to use ``leads and follows" one
+% might write:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[language=TeX,frame=single,caption={Setting role terms}]
+\setleftrole{lead}{leads}
+\setrightrole{follow}{follows}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+% \end{macro}
+% \end{macro}
+%
+% For example, here is a dance that uses ``Bares" and ``Bands" as was popular in
+% the queer contra community for a time.
+% The source as it may be written in your calling cards is presented first,
+% followed by a rendered card:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,caption={Whirling Dervish by Sam Whited}]
+\setleftrole{bare}{bares}
+\setrightrole{band}{bands}
+
+\begin{contra}{Whirling dervish}{Sam Whited}{Improper}
+  \walkaround[Neighbor][1¾]{8}
+  \halfheyricochet[\Leftrole{}][while \rightrole{} cross]{}
+  \swing[Partner]{16}
+  \move[8]{Spin like a Whirling Dervish\moveindex{Whirling Dervish}}
+  \balanceand\petronella{}
+  \balanceand\rollawaysashay[\leftrole{}][neighbor]{}
+  \balance[Neighbor]{}
+  \walkaroundleft[][1 time to new neighbors]{4}
+
+  \notes{A ``Whirling Dervish" is just a circle left in
+  single file except that you should spin over your left
+  shoulder the entire time you're doing it.}
+  \vspace*{\fill}
+  \begin{flushright}
+  \href{http://creativecommons.org/licenses/by/3.0/}{%
+    \IfFileExists{by.png}{%
+      \includegraphics[width=1cm]{by.png}%
+    }{\cc\by}}
+  \end{flushright}
+\end{contra}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% \begin{exampledance}
+% \setleftrole{bare}{bares}
+% \setrightrole{band}{bands}
+%
+% \begin{contra}{Whirling dervish}{Sam Whited}{Improper}
+%   \walkaround[Neighbor][1¾]{8}
+%   \halfheyricochet[\Leftrole{}][while \rightrole{} cross]{}
+%   \swing[Partner]{16}
+%   \move[8]{Spin like a Whirling Dervish\moveindex{Whirling Dervish}}
+%   \balanceand\petronella{}
+%   \balanceand\rollawaysashay[\leftrole{}][neighbor]{}
+%   \balance[Neighbor]{}
+%   \walkaroundleft[][1 time to new neighbors]{4}
+%
+%   \notes{A ``Whirling Dervish" is just a circle left in
+%   single file except that you should spin over your left
+%   shoulder the entire time you're doing it.}
+%   \vspace*{\fill}
+%   \begin{flushright}
+%   \href{http://creativecommons.org/licenses/by/3.0/}{%
+%     \IfFileExists{by.png}{%
+%       \includegraphics[width=1cm]{by.png}%
+%     }{\cc\by}}
+%   \end{flushright}
+% \end{contra}
+% \end{exampledance}
+%
+%
+% \section{Moves}
+% \label{sec:moves}
+%
+% \subsection{The \texcmd{move} command}
+%
+% \begin{macro}{\move}
+% \changes{0.1}{2013/02/14}{Add move command}
+% \changes{0.3}{2013/02/21}{Simplify dance logic using new counters}
+% \changes{1.0.0}{2013/09/10}{Improve indentation and line spacing}
+% \begin{macro}{\move*}
+% The \texcmd{move} command is what we'll use to actually typeset dance moves.
+% The other move shortcuts in this package are mostly just wrappers around
+% \texcmd{move} that add some options or indexing.
+% The command takes in a move to display, and (optionally) the number of beats
+% the move takes.
+% If the count is not specified, 8 is used as the default.
+% The ``star" variety of the command is used to skip typsetting the inter-move
+% punctuation.
+%
+% For an example of using the bare \texcmd{move} command see the example dance
+% in \autoref{sec:contraenv}.
+% \end{macro}
+% \end{macro}
+%
+% \subsection{Move shortcuts}
+% \label{sec:moveshortcuts}
+%
+% Often you may find yourself copy and pasting common moves that have the same
+% timing, wording, etc. For times like this \pkg{contracard} provides a number
+% of shortcut macros.
+% Most of these macros will take two optional arguments and one mandatory
+% argument.
+% The first argument will be text to display before the move name, normally the
+% person or people doing the move.
+% For example, to typeset an allemande we could write
+% \texcmd{allemande[Partner]\{8\}} which would result in something like
+% ``Partner allemande".
+% The second optional argument is text to put after the move name, normally
+% what direction and/or how far to go.
+% For example:
+% \texcmd{allemande[][right 1\textbackslash textonehalf]\{8\}} would print
+% something like ``Allemande right 1\textonehalf".
+% Notice that we have to provide an empty first argument if we only want to
+% print the second argument, and that the capitalization of ``allemande" is
+% handled for you.
+% And of course, you can provide both:
+% \texcmd{allemande[Partner][right 1\textbackslash textonehalf]\{8\}} would
+% print ``Partner allemande right 1\textonehalf".
+% The last argument, which is mandatory, is the number of counts of music taken
+% up by the move.
+% For moves that have a fixed count this last argument will have a default value
+% that can be changed in case you have a dance with timing that needs to be
+% fudged or, for some moves that shouldn't change, it may be omitted entirely.
+% This will always be noted in that macros description in the paragraphs below.
+%
+% \begin{macro}{\allemande}
+% \changes{1.0.0}{2013/09/05}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \macroargs[allemande]{}
+% \end{macro}
+%
+% \begin{macro}{\balance}
+% \changes{1.0.0}{2013/09/05}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\balanceand}
+% \changes{1.0.0}{2013/09/05}{Add move shortcut}
+% \changes{2.0.0}{2019/02/28}{Now modifies count and text of next move}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% If \texcmd{balanceand} is used the inter-move punctuation is omitted and
+% replaced with the word ``and".
+% This allows hybrid constructs such as \texcmd{balanceand[Ring]}
+% \texcmd{swing[partner]\{12\}} which would result in ``Ring balance and partner
+% swing" instead of ``Ring balance, Partner Swing".
+%
+% \macroargs*{}
+% Instead they only use the two optional arguments and omit the count.
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\butterflywhirl}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \macroargs[butterflywhirl]{}
+% \end{macro}
+%
+% \begin{macro}{\circleany}
+% \changes{3.0.0}{2026/04/27}{Add move shortcut}
+% \begin{macro}{\circleleft}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\circleright}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% Here are a few commands to deal with circles.
+% As usual, there is an optional
+% argument (in case you need to say something like ``Larks circle left" or
+% ``Circle left 1 time `round") and a mandatory argument (the number of beats to
+% circle).
+% The difference from the generic \texcmd{circleany} vs. the directional
+% commands is that the directional variety add themselves to the index under
+% their direction, ie. ``Circle Left" as well as under ``Circle".
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\courtesyturn}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \macroargs[courtesyturn]{}
+% \end{macro}
+%
+% \begin{macro}{\dosido}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\seesaw}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% These commands create a dosido or a see saw (left shoulder dosido).
+% Dosido's likely win the award for having the most local spellings (ie.
+% \word{do-si-do}, \word{do-se-do}, \word{dosado}, \word{dos-\`a-dos}, etc.) of
+% any contra move.
+% Because of this a special macro exists to change the spelling as printed by
+% the \texcmd{dosido} move shortcut.
+% For more informatoin see \autoref{macro:spelldosido}.
+%
+% \macroargs{}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\walkaround}
+% \changes{2.0.0}{2019/02/17}{Rename move}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\walkaroundleft}
+% \changes{2.0.0}{2019/02/17}{Rename move}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\walkaroundright}
+% \changes{2.0.0}{2019/02/17}{Rename move}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \phantomsection{}%
+% \label{macro:walkaround}
+% Several different macros exist for creating walk arounds (sometimes called
+% right or left shoulder round, spiral, gyre, etc.).
+% You can create a direction agnostic version with the \texcmd{walkaround}
+% macro, while the \texcmd{walkaroundleft} and \texcmd{walkaroundright} macros
+% use the ``shoulder round" variant and include the direction, they also index
+% the move under the given direction.
+%
+% \macroargs{}
+% For information about the terminology, see \autoref{appendix:notation}.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\hey}
+% \changes{3.0.0}{2026/04/27}{Add move shortcut}
+% \begin{macro}{\heyforfour}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\halfhey}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\halfheyricochet}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\fullhey}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\fullheyricochet}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% These macros produce various kinds of hey.
+% Though `hey for four' is often used to indicate `half a hey' we define `hey
+% for four' and `full hey' to have the same timing.
+% These macros do not use the mandatory final timing argument except for the
+% generic ``\texcmd{hey}" macro which can be used to construct heys that cross
+% phrase boundaries by changing the timing so that a second move can be added
+% later such as ``\texcmd{move[8]\{Hey (cont.)\}}" or similar.
+% The generic hey macro does not index the move under ``Full Hey" or ``Half
+% Hey", unlike the other hey macros.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{exampledance}
+% \begin{contra}{East Meets West}{Martha Wild}{Duple improper}
+%   \longlines{}
+%   \move{Walk around star \textthreequarters}\moveindex{Walk Around Star}
+%   \walkaroundright[Partner]{8}\swing{8}
+%   \halfpromenade{}
+%   \hey{8}
+%   \move{(continue hey)}
+%   \chain[\Rightrole{}]{}
+% \end{contra}
+% \end{exampledance}
+%
+% \begin{macro}{\chain}
+% \changes{3.0.0}{2026/04/27}{Add move shortcut}
+% \begin{macro}{\halfchain}
+% \changes{3.0.0}{2026/04/27}{Add move shortcut}
+% \begin{macro}{\fullchain}
+% \changes{3.0.0}{2026/04/27}{Add move shortcut}
+% \phantomsection{}%
+% \label{macro:chain}
+% What the modern contra dance crowd calls a ``chain" was historically half of a
+% chain.
+% The full chain is often simply called as two half chains, however, the
+% \texcmd{fullchain} command is also provided for convenience.
+% A \texcmd{halfchain} command is also provided which is exactly like the normal
+% chain macro except that it includes the word ``half" in the output and index.
+%
+% \macroargs*{}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\lines}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\longlines}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \macroargs*{}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\madrobin}
+% \changes{2.0.0}{2018/07/24}{New macro}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% The Mad Robin (sometimes called ``Sashay 'round") always takes up 8 full
+% beats.
+% \end{macro}
+%
+% \begin{macro}{\petronella}
+% \changes{1.0.0}{2013/09/08}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\petronellanella}
+% \changes{1.1.0}{2018/07/21}{Add nella-nella petronella variants}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% Petronella's are normally performed in rings of four, and aren't with another
+% individual, however, the \texcmd{petronella} macro still takes the standard
+% optional arguments (but not the mandatory timing argument) in case two
+% individuals are turning in a diamond pattern.
+% A petronella-nella has the same timing as a normal petronella but instead of
+% moving one place to the right dancers move two places.
+% \begin{exampledance}
+% \begin{contra}{Snowball Shimmy}{Seth Tepfer}{Duple becket}
+%   \move[8]{Circle left all the way}
+%   \allemande[\Leftrole{}][left 1\textonehalf]{8}
+%   \balanceand\swing[neighbor]{12}
+%   \balanceand[Partner]\petronella{}
+%   \balanceand\petronellanella{}
+%   \balanceand\swing[partner]{12}
+%   \notes{nella-nella variant of Erik Weberg's Wasatch Wiggle}
+% \end{contra}
+% \end{exampledance}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\promenade}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\halfpromenade}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% The \texcmd{promenade} and \texcmd{halfpromenade} commands work slightly
+% differently.
+% Both take the person (or direction) you're promenading as the optional
+% arguments, but the \texcmd{promenade} command also takes a mandatory argument
+% (the number of beats) while the \texcmd{halfpromenade} command is fixed at 8
+% beats.
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\rightandleftthrough}
+% \changes{1.0.0}{2013/09/08}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% Creates a right and left through (aka. rights and lefts).
+% These always take up 8 counts.
+% \end{macro}
+%
+% \begin{macro}{\rollaway}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Breaking change to allow complex notation}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\rollawaysashay}
+% \changes{2.0.0}{2018/07/25}{Renamed from ``\texcmd{rollawayhalfsashay}''}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \phantomsection{}%
+% \label{macro:rollaway}
+% ``Roll away" and ``roll away with a half sashay" always take 4 counts.
+% Unlike most of the move macros the second optional argument on roll aways is
+% placed after the ``roll" and there is a third optional argument that places
+% its text at the end of the roll away text.
+% This allows for easily including the person doing the roll away, the person
+% being rolled away, and the direction of the roll away.
+% For example:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[language=TeX,frame=single,numbers=none,caption={Using \texcmd{rollawaysashay}}]
+\rollawaysashay[Ones][Neighbors][across]{}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% This results in ``Ones roll neighbors away with a half sashay across".
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\handstar}
+% \changes{3.0.0}{2026/04/27}{Add move shortcut}
+% \begin{macro}{\starleft}
+% \changes{1.0.0}{2013/09/09}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\starright}
+% \changes{1.0.0}{2013/09/09}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% The \texcmd{handstar} macro can be used to easily create stars in either
+% direction.
+% It also also has ``left" and ``right" variants that specifically print the
+% text ``Left (or right) hand star" and index the move under ``Star left" and
+% ``Star right" in addition to simply indexing it as a ``Star".
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\sashay}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \macroargs[sashay]{}
+% \end{macro}
+%
+% \begin{macro}{\swing}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% Creates a basic swing. Probably the most common move in modern contra dance.
+% \macroargs[swing]{}
+% \end{macro}
+%
+% \begin{macro}{\turnalone}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout, require count}
+% \begin{macro}{\turncouple}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout, require count}
+% \begin{macro}{\turntogether}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout, require count}
+% ``Turn alone" and ``Turn as a couple" aren't exactly dance figures; just
+% directions that are often placed at the end of other figures.
+% For this reason, they should normally take 0 logical counts of music and be
+% prepended to other commands.
+% They do take a count, however, since some callers prefer to treat them as a
+% separate (normally 2-count) move.
+% Another common way is to add something like ``\texcmd{unskip, turn alone}" as
+% the second optional argument after another command and not use these shortcuts
+% at all.
+% For example, writing \texcmd{downthehall[][\textbackslash unskip, turn
+% alone]\{8\}} would result in something like ``Down the hall, turn alone (8)"
+% whereas ``\texcmd{downthehall\{6\}}\texcmd{turnalone\{2\}}" would result in
+% ``Down the hall (6), turn alone (2)" and would result in "Turn alone" being
+% added to the index (if indexing is on).
+% The choice is yours.
+%
+% \macroargs{}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\twirltoswap}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Add before/after text optional arguments}
+% \begin{macro}{\californiatwirl}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Add before/after text optional arguments}
+% \begin{macro}{\starthrough}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Add before/after text optional arguments}
+% \begin{macro}{\starthru}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Add before/after text optional arguments}
+% \begin{macro}{\boxthegnat}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Add before/after text optional arguments}
+% \begin{macro}{\swattheflea}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Add before/after text optional arguments}
+% \begin{macro}{\jerseytwirl}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Add before/after text optional arguments}
+% \begin{macro}{\arizonatwirl}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Add before/after text optional arguments}
+% ``Twirl to Swap" is probably in the running for having the most variations of
+% any Contra dance move.
+% A few of the more common ones are presented here.
+% They take the usual two optional arguments, but not the mandatory timing
+% argument.
+%
+% \macroargs*{}
+% \vspace{3em}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\downthehall}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% \begin{macro}{\upthehall}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Modernize argument layout}
+% ``Walk the hall" is often counted as a single move (sometimes with a
+% `turn alone' or similar in between the ``up" and ``down" poritions).
+% Because of this the timing must still be given.
+%
+% \macroargs{}
+% \end{macro}
+% \end{macro}
+%
+% \section{Dance information}
+%
+% \begin{macro}{\dancetitle}
+% \changes{1.0.0}{2013/09/11}{New macro}
+% \begin{macro}{\danceauthor}
+% \changes{1.0.0}{2013/09/11}{New macro}
+% \begin{macro}{\danceform}
+% \changes{1.0.0}{2013/09/11}{New macro}
+% These macros give information about the current (or previous, if you're not in
+% a dance environment) dance. They can be used for things like adding the dance
+% name and number to the header in a book, referencing the dance author in
+% footnotes, etc.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \section{Lists and Indices}
+%
+% \subsection{Lists}
+%
+% Just as many classes allow you to build a table of contents, or a list of
+% figures, \pkg{contracard} allows you to create a list of dances.
+%
+% \begin{macro}{\listofdance}
+% \phantomsection{}%
+% \label{macro:listofdance}
+% Prints a list of all dances used in the document.
+% \end{macro}
+%
+% \begin{macro}{\lodtitle}
+% The title of the list of dances.
+% This can be renewed before enabling indexing to change the list name.
+% \end{macro}
+%
+% An \hyperlink{CC:LOD}{example list of dances} can be found at the beginning of
+% this document.
+%
+% \subsection{Indices}
+% \changes{1.0.0}{2013/09/08}{Added support for indices}
+%
+% \pkg{Contra Card} has the ability to produce several different indices that
+% might be useful for your book or collection of dances. They are:
+%
+% \begin{center}
+% \begin{tabular}{ l l }
+%  Shortcut & Name \\
+%  \hline
+%  dbt & \hyperlink{CC:DBT}{Dances by Type} \\
+%  dba & \hyperlink{CC:DBA}{Dances by Author} \\
+%  mvp & \hyperlink{CC:MVP}{Moves by Page} \\
+%  mvd & \hyperlink{CC:MVD}{Moves by Dance} \\
+% \end{tabular}
+% \end{center}
+%
+% An example of each type of index can be found at the end of this document.
+%
+% \begin{macro}{\enableidx}
+% \changes{1.0.0}{2013/09/08}{New command}
+% \phantomsection{}%
+% \label{macro:enableidx}
+% Indexing is not turned on by default in Contra Card.
+% When you enable it, the \href{http://ctan.org/pkg/imakeidx}{\pkg{imakeidx}}
+% package is loaded, and the indices are created.
+% This means that \texcmd{enableidx} should \emph{only} be called in the
+% preamble.
+%
+% Because we use the \cmdtt{splitindex} option, you'll need to run the
+% \fname{splitindex} command against the index file. For instance, if your
+% project is called \fname{root.tex} you'll want to run:
+%
+% \begin{quote}
+% \cmdtt{\$ splitindex root}
+% \end{quote}
+% \end{macro}
+%
+% \begin{macro}{\pauseindexing}
+% \changes{1.0.0}{2013/09/10}{New command}
+% \begin{macro}{\resumeindexing}
+% \changes{1.0.0}{2013/09/10}{New command}
+% On occasion you might have a dance that you don't want to include in the index
+% for some reason. When this happens, you can temporarily disable indexing (and
+% later enable it again).
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\dbtname}
+% \changes{1.0.0}{2013/09/08}{New command}
+% \begin{macro}{\dbaname}
+% \changes{1.0.0}{2013/09/08}{New command}
+% \begin{macro}{\mvpname}
+% \changes{1.0.0}{2013/09/08}{New command}
+% \begin{macro}{\mvdname}
+% \changes{1.0.0}{2013/09/08}{New command}
+% The names of each index can also be changed by redefining these commands. This
+% should also be done \emph{before} the indexing functionality is turned on.
+% This means that if you're loading \pkg{Contra Card} with the \cmdtt{enableidx}
+% package option, you shouldn't mess with these commands.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\moveindex}
+% \changes{1.0.0}{2013/09/08}{New command}
+% \begin{macro}{\moveindex*}
+% \changes{1.0.0}{2013/09/08}{New command}
+% For any of the move shortcut macros, index entries are automatically added for
+% the given move.
+% However, for moves that you define yourself with the \texcmd{move} command,
+% you'll need to add index entries manually.
+% This can be done with \texcmd{moveindex}.
+% This macro takes a single argument (the index entry to add) and should only be
+% called from within the \cmdtt{contra} environment.
+% The star version of the command also typesets the first argument (so you don't
+% have to write it twice).
+% \end{macro}
+% \end{macro}
+%
+% \section{Counters}
+%
+% Lots of counters are used throughout Contra Card for various tasks. The
+% following counters do everything from keeping track of the timing, to counting
+% the number of moves in a dance.
+%
+% If you're just formatting standard 32 bar contra dances, you will almost never
+% need to touch these.
+%
+% \subsection{Musical counts}
+%
+% \begin{macro}{dancecount}
+% \begin{macro}{partcount}
+% \changes{0.2}{2013/02/15}{Create a counter for the current musical part}
+% \changes{0.3}{2013/02/21}{Change to contain the count, not the part itself}
+% \begin{macro}{phrasecount}
+% \changes{0.2}{2013/02/15}{Create a counter for the current musical phrase}
+% \changes{0.3}{2013/02/21}{Change to contain the count, not the phrase itself}
+% \begin{macro}{dancepart}
+% \changes{0.3}{2013/02/21}{Create a new counter for the current phrase}
+% \begin{macro}{dancephrase}
+% \changes{0.3}{2013/02/21}{Create a new counter for the current phrase}
+% These counters help us keep track of the counts (or `steps') in the dance. The
+% \cmdtt{dancecount} is reset at the start of each new dance, the
+% \cmdtt{partcount} is reset at the begining of each part (eg.\ \cmdtt{A1} or
+% \cmdtt{B1}), and the \cmdtt{phrasecount} is reset every time the part changes
+% (eg.~from \cmdtt{A} to \cmdtt{B}). The \cmdtt{dancepart} and \cmdtt{dancephrase}
+% counters contain the number of the part of phrase in the dance (instead of the
+% number of steps).
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{dancepartlength}
+% \changes{0.4}{2013/02/22}{Create a new counter for the part length}
+% \begin{macro}{dancephraselength}
+% \changes{0.4}{2013/02/22}{Create a new counter for the phrase length}
+% \begin{macro}{\resetdancepartlength}
+% \changes{1.0.0}{2013/08/12}{Add ability to easily reset counter}
+% \begin{macro}{\resetdancephraselength}
+% \changes{1.0.0}{2013/08/12}{Add ability to easily reset counter}
+% Most contra dances are composed of two 32 count phrases, each with two 16
+% count parts, however, it's sometimes useful to change these lengths.
+% It's important to fully understand how the move command works before modifying
+% these values.
+% Changing just one or the other can have unexpected consequences.
+% You can set them back quickly afterwards with the reset commands.
+%
+% For example, if we set the \cmdtt{dancepartlength} to ``12" and the
+% \cmdtt{dancephraselength} to ``24" like so:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[language=TeX,frame=single,caption={Changing the dance length}]
+\setcounter{dancepartlength}{12}
+\setcounter{dancephraselength}{24}
+\showcountafter{}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% We can create a nice mixer in waltz time:
+%
+% \begin{exampledance}
+% \setcounter{dancepartlength}{12}
+% \setcounter{dancephraselength}{24}
+% \begin{contra}{Turn Around Waltz}{Sam Whited}{Circle waltz}
+%   \showcountafter{}
+%
+%   \move[6]{Roll \rightrole*{} on left away}\moveindex{Roll Away}
+%   \move[6]{Forward and back}\moveindex{Forward and Back}
+%   \move[6]{Roll \rightrole*{} on left away}\moveindex{Roll Away}
+%   \move[6]{Forward and back}\moveindex{Forward and Back}
+%   \move[6]{Hands out and in, turn out}\moveindex{Turn Alone}
+%   \move[6]{Hands in and out, turn in}\moveindex{Turn Alone}
+%   \move[6]{Hands out and in, \rightrole{} cast right}\moveindex{Cast Right}
+%   \move[6]{Parallels or free waltz}\moveindex{Parallels}
+%
+%   \notes{Circles of 4 or 8 couples brings you back to your original partner
+%   for free waltz at end; for 3 or 7 put partner on your left to start.
+%   Get people into square formation, then ask them to merge squares to make
+%   things easier.}
+% \end{contra}
+% \resetdancepartlength
+% \resetdancephraselength
+% \end{exampledance}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\resetdancephrase}
+% \begin{macro}{\resetdancepart}
+% \begin{macro}{\resetdancephrase*}
+% \begin{macro}{\resetdancepart*}
+% \changes{0.2}{2013/02/15}{Allow the user to reset the phrase}
+% \changes{0.3}{2013/02/21}{Change name of \texcmd{progressed}}
+% The phrase will continue to increment (\cmdtt{A}, \cmdtt{B}, \cmdtt{C}) unless
+% the user resets it by calling \texcmd{resetdancephrase}.
+% The user can also manually reset the part.
+% If the value of the phrase or part would be
+% the same after resetting, no action is taken.
+% You can use the splat version of the commands to force a reset (eg.~even if
+% the \cmdtt{dancephrase} counter is already at 1, the \cmdtt{dancephrase} and
+% \cmdtt{phrasecount} counters will still be reset).
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\newdancephrase}
+% \changes{0.3}{2013/02/21}{Allow user to manually start a new phrase}
+% \begin{macro}{\newdancepart}
+% \changes{0.3}{2013/02/21}{Allow user to manually start a new part}
+% The user can also manually start a new phrase or part:
+% \end{macro}
+% \end{macro}
+%
+% To see how this can be useful consider the following blues contras by caller
+% (and all around cat's pajamas) Seth Tepfer. Each one comprises three 16 count
+% phrases (\cmdtt{A1}, \cmdtt{B1}, and \cmdtt{C1}). The first employs the
+% \texcmd{newdancephrase} command to reset the phrase every 16 counts, the
+% second changes the \cmdtt{dancephraselength} and lets Contra Card handle
+% figuring out how to break up the phrases. Both methods produce the same
+% result.
+%
+% \clearpage
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,caption={Untitled Blues \textnumero{} 1 by Seth Tepfer}]
+\begin{contra}{Untitled Blues \textnumero{} 1}{Seth Tepfer}{Improper}
+  \setlength{\phrasevspace}{0em}
+  \RenewDocumentCommand{\partdelimiter}{}{:}
+  \walkaround[Neighbor]{8}
+  \walkaround[\Rightrole{}]{8}
+  \newdancephrase{}
+  \balanceand[Partner]\swing{12}
+  \newdancephrase{}
+  \chain[\Rightrole{}]{}
+  \starleft{8}
+  \vspace*{\fill}
+  \begin{flushright}
+    \href{http://creativecommons.org/licenses/by-nc/3.0/}{%
+      \IfFileExists{by-nc.png}{%
+        \includegraphics[width=1cm]{by-nc.png}%
+       }{\cc\bync}}
+  \end{flushright}
+\end{contra}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% \begin{exampledance}
+% \begin{contra}{Untitled Blues \textnumero{} 1}{Seth Tepfer}{Improper}
+%   \setlength{\phrasevspace}{0em}
+%   \RenewDocumentCommand{\partdelimiter}{}{:}
+%   \walkaround[Neighbor]{8}
+%   \walkaround[\Rightrole{}]{8}
+%   \newdancephrase{}
+%   \balanceand[Partner]\swing{12}
+%   \newdancephrase{}
+%   \chain[\Rightrole{}]{}
+%   \starleft{8}
+%   \vspace*{\fill}
+%   \begin{flushright}
+%     \href{http://creativecommons.org/licenses/by-nc/3.0/}{%
+%       \IfFileExists{by-nc.png}{%
+%         \includegraphics[width=1cm]{by-nc.png}%
+%        }{\cc\bync}}
+%   \end{flushright}
+% \end{contra}
+% \end{exampledance}
+%
+% \clearpage
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,caption={Untitled Blues \textnumero{} 2 by Seth Tepfer}]
+\begin{contra}{Untitled Blues \textnumero{} 2}{Seth Tepfer}{Improper}
+  \setlength{\phrasevspace}{0em}
+  \RenewDocumentCommand{\partdelimiter}{}{:}
+  \setcounter{dancephraselength}{16}
+
+  \walkaround[Neighbor]{8}
+  \allemande[\Leftrole{}][left 1\textonehalf]{8}
+  \balanceand[Partner]\swing{12}
+  \halfpromenade[][across]{}
+  \chain[\Rightrole{}]{}
+  \vspace*{\fill}
+  \begin{flushright}
+    \href{http://creativecommons.org/licenses/by-nc/3.0/}{%
+      \IfFileExists{by-nc.png}{%
+        \includegraphics[width=1cm]{by-nc.png}%
+       }{\cc\bync}}
+  \end{flushright}
+\end{contra}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% \begin{exampledance}
+% \begin{contra}{Untitled Blues \textnumero\ 2}{Seth Tepfer}{Duple minor im.}
+%   \setlength{\phrasevspace}{0em}
+%   \RenewDocumentCommand{\partdelimiter}{}{:}
+%   \setcounter{dancephraselength}{16}
+%
+%   \walkaround[Neighbor]{8}
+%   \allemande[\Leftrole{}][left 1\textonehalf]{8}
+%   \balanceand[Partner]\swing{12}
+%   \halfpromenade[][across]{}
+%   \chain[\Rightrole{}]{}
+%   \vspace*{\fill}
+%   \begin{flushright}
+%     \href{http://creativecommons.org/licenses/by-nc/3.0/}{%
+%       \IfFileExists{by-nc.png}{%
+%         \includegraphics[width=1cm]{by-nc.png}%
+%        }{\cc\bync}}
+%   \end{flushright}
+% \end{contra}
+% \resetdancephraselength
+% \end{exampledance}
+%
+% \subsection{Move counts}
+
+% \begin{macro}{phrasemovenum}
+% \changes{1.0.0}{2013/09/05}{Add counter for the number of moves in the phrase}
+% \begin{macro}{partmovenum}
+% \changes{1.0.0}{2013/09/05}{Add counter for the number of moves in the part}
+% \begin{macro}{halfpartmovenum}
+% \changes{1.0.0}{2013/09/10}{Add counter for the number of moves in half the part}
+% \begin{macro}{dancemovenum}
+% \changes{1.0.0}{2013/09/05}{Add counter for the number of moves in the dance}
+% The following counters are used to keep track of the number of moves that have
+% occurred thus far in the given dance, phrase, or part. They are incremented
+% every time \texcmd{move} is called.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \section{Helper macros}
+% \label{sec:helpers}
+%
+% The following macros are used by the \pkg{contracard} package to perform
+% various tasks. Those that may also be of use to the contra dance writer have
+% been left unhidden.
+%
+% \begin{macro}{\timesaround}
+% \changes{1.0.0}{2013/09/05}{Split out ability to calculate times around}
+% Sometimes it's useful to calculate the approximate number of times a given
+% move can be done in a certain number of beats of music (eg.~the number of
+% times around one can allemande in 6 beats).
+% For this, the \texcmd{timesaround} macro was created.
+% It takes two arguments: the number of beats it takes to go one time around
+% (eg.~4 for an allemande) and the total number of beats you have to work with.
+% It spits out an integer, a fraction, or a mixed number and a word matching the
+% regular expression:
+% \regexp{/{[}1-9{]}*{[}\textonequarter\textonehalf%
+% \textthreequarters{]}?(\textbackslash\ times?)?/}.
+%
+% For example: \texcmd{timesaround\{4\}\{6\}} produces:
+% ``\timesaround{4}{6}".
+% \end{macro}
+%
+% \begin{macro}{\notes}
+% \changes{1.0.0}{2013/09/10}{Make adding notes easier}
+% \changes{3.0.0}{2026/04/27}{Fix overriding the default environment}
+% \begin{macro}{\setdefaultnotesenv}
+% \changes{1.0.0}{2013/09/10}{Allow changing the default notes environment}
+% \begin{macro}{\prenotevspace}
+% \changes{1.0.0}{2013/09/10}{Allow changing the default notes vspace}
+% This macro can be used to insert some nicely formatted notes at the end of
+% your calling cards. Just use it in the \cmdtt{contra} environment right after
+% your last move.
+%
+% By default, all notes are set using the \cmdtt{flushleft} environment, and
+% with \texcmd{fill} amount of vspace before them.
+% This can easily be changed by calling \texcmd{setdefaultnotesenv} and by
+% setting the \texcmd{prenotevspace} length.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%
+% \begin{macro}{\spelldosido}
+% \changes{1.0.0}{2013/09/12}{Change how Do-si-do is spelled easily}
+% \begin{macro}{\spellDosido}
+% \changes{1.0.0}{2013/09/12}{Change how Do-si-do is spelled easily}
+% \begin{macro}{\setdosidospelling}
+% \changes{1.0.0}{2013/09/12}{Change how Do-si-do is spelled easily}
+% \phantomsection{}%
+% \label{macro:spelldosido}
+% These macros can be used for easily changing the spelling of `Do-si-do'
+% anywhere a \texcmd{dosido} command is found (and in the index).
+% By default, we spell it the contra dance way (`Do-si-do').
+% For example, running
+% \texcmd{setdosidospelling\{dos-\textbackslash \`{}a-dos\}} will cause
+% \texcmd{spellDosido} to render: `Dos-\`a-dos' and \texcmd{spelldosido} to
+% render: `dos-\`a-dos'.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \clearpage
+% \phantomsection
+% \part{The \pkg{contracard} class}
+% \label{part:class}
+%
+% The Contra Card project also provides a class (\fname{contracard.cls}) which
+% acts as a convenience wrapper around the core functionality provided by the
+% package. This is useful for generating calling cards, and saves you the
+% trouble of looking up standard card sizes and figuring out margins and where
+% to put headings and the like.
+%
+% \phantomsection
+% \subsection{Options}
+% \label{CCCLASS:OPTIONS}
+%
+% \begin{macro}{small}
+% \begin{macro}{medium}
+% \begin{macro}{large}
+% \begin{macro}{a7paper}
+% \begin{macro}{draft}
+% \changes{1.0.0}{2013/09/11}{Pass option through to \cmdtt{article} class}
+% The class can be loaded with any of the following options.
+% The various size options are summarized in the table below.
+% Any unrecognized options are passed to the \pkg{contracard} package.
+% The \cmdtt{draft} option, if present, will be passed through to the underlying
+% \cmdtt{article} class.
+%
+% \begin{center}
+% \begin{tabular}{ l l l }
+%  Option & Size (mm) & Size (in) \\
+%  \hline
+%  \cmdtt{small}   & 127.0 $\times$ 76.2  & 5.0 $\times$ 3.0 \\
+%  \cmdtt{medium}  & 152.4 $\times$ 101.6 & 6.0 $\times$ 4.0 \\
+%  \cmdtt{large}   & 203.2 $\times$ 27.0  & 8.0 $\times$ 5.0 \\
+%  \cmdtt{a7paper} & 105.0 $\times$ 74.0  & 4.1 $\times$ 2.9 \\
+% \end{tabular}
+% \end{center}
+%
+% For example, to generate a collection of 4$\times$6 inch calling cards with
+% the count displayed after each move you might use the following class
+% declaration:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,numbers=none,caption={Using the class}]
+\documentclass[medium,showcountafter]{contracard}
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% For information on options that may be passed through to the package see
+% \autoref{CCPACKAGE:OPTIONS}.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \bookmarksetup{startatroot}
+% \cleardoublepage
+% \begin{appendices}
+% \section{On Notation}
+% \label{appendix:notation}
+%
+% \begin{macro}{\gypsy}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \begin{macro}{\gypsy*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \begin{macro}{\gypsyleft}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \begin{macro}{\gypsyleft*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \begin{macro}{\gypsyright}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \begin{macro}{\gypsyright*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% In some circles (pun intended) the move ``walk around" or ``right/left
+% shoulder round" (also ``spiral", ``gyre", ``eyes", etc.) is called a ``gypsy".
+% This is considered an ethnic slur by some groups of the Romani people.
+% Even if the contra term is not likely derived from the slur, I see no reason
+% not to use an alternative.
+% In version 2 of this document---and in calling cards generated with this
+% package---I have chosen to use the term ``walk around" when no direction needs
+% to be specified, or ``right/left shoulder round" when it does.
+% This avoids creating an uncomfortable situation for a dancer hearing a word
+% that to them may be associated with hostility, and a lifetime of persecution.
+% It seems to me that providing a safe and welcoming dance environment is worth
+% the trivial inconvenience of having to learn a new move name.
+%
+% The commands listed in the margin have been renamed, for their alternatives
+% see \texcmd{walkaround} and its variants (\autoref{macro:walkaround}).
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ladieschain}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\ladieschain*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\menchain}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\menchain*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\halfladieschain}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\halfladieschain*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\halfmenchain}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\halfmenchain*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\fullladieschain}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\fullladieschain*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\fullmenchain}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\fullmenchain*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% Because contra is a called dance, the names of the roles are more important
+% than a dance like swing or blues where they’re only ever stated to politely
+% ask a new partner if they prefer to lead or follow.
+% In recent years there has been a push to use more inclusive terms that don’t
+% artificially constrain new dancers to a single role like the gendered terms
+% ``gents" and ``ladies" do.
+% The most popular of these terms are ``Larks" for the left hand role, and
+% ``Robins" for the right hand role and they are used as the default in this
+% project.
+%
+% For information on changing the role names see \autoref{sec:rolenames}.
+%
+% The commands listed in the margin have been renamed, for their alternatives
+% see \texcmd{chain}, \texcmd{halfchain}, and \texcmd{fullchain}
+% (\autoref{macro:chain}).
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%%%
+%
+% \clearpage
+% \section{Deprecated macros}
+% \label{appendix:deprecated}
+%
+% \begin{macro}{\longpetronella}
+% \changes{1.0.0}{2013/09/08}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\longpetronella*}
+% \changes{1.0.0}{2013/09/08}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\longpetronellanella}
+% \changes{1.1.0}{2018/07/21}{Add nella-nella petronella variants}
+% \changes{2.0.0}{2019/02/24}{Remove move}
+% \begin{macro}{\rollawayhalfsashay}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Renamed to ``\texcmd{rollawaysashay}''}
+% \begin{macro}{\rollawayhalfsashay*}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Renamed to ``\texcmd{rollawaysashay*}''}
+% \begin{macro}{\rawhs}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\rawhs*}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Remove move}
+% \begin{macro}{\listofdances}
+% \changes{3.0.0}{2026/04/27}{Remove macro, use \texcmd{listofdance}}
+% These macros (as well as the ones mentioned in \autoref{appendix:notation})
+% have been removed from the package, resulting in a major version bump.
+% If you were using any of these macros in your documents, you may wish to
+% continue using an older version of this package or update your documents
+% before upgrading.
+% For information about what version each macro was removed in see
+% \hyperlink{CC:CHANGES}{Change History}.
+%
+% In particular, the \texcmd{rawhs} and \texcmd{rollawayhalfsashay} macros have
+% been replaced with \texcmd{rollaway} and \texcmd{rollawaysashay} (see
+% \autoref{macro:rollaway}), which are much easier to read and write.
+%
+% The \texcmd{listofdances} macro was already a duplicate of the
+% \texcmd{listofdance} (\autoref{macro:listofdance}) macro, which is the default
+% created by the indexing package.
+% It was removed to avoid having duplicate macros.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\robinschain}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Rename macro}
+% \begin{macro}{\robinschain*}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\larkschain}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Rename macro}
+% \begin{macro}{\larkschain*}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\halfrobinschain}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Rename macro}
+% \begin{macro}{\halfrobinschain*}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\halflarkschain}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Rename macro}
+% \begin{macro}{\halflarkschain*}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\fullrobinschain}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Rename macro}
+% \begin{macro}{\fullrobinschain*}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\fulllarkschain}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Rename macro}
+% \begin{macro}{\fulllarkschain*}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% Version 3.0.0 of this package introduced a new argument structure that made it
+% easier to refer to a specific role as well as macros that made it easier to
+% use specific role terms and change them as necessary.
+% Because of this the \texcmd{robinschain} and \texcmd{larkschain} commands that
+% were originally introduced in version 2.0 were also renamed.
+% For their alternatives see \texcmd{chain}, \texcmd{halfchain}, and
+% \texcmd{fullchain} (\autoref{macro:chain}).
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \clearpage
+% \section{Upgrading from 2.x}
+%
+% \begin{macro}{\dosido*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\seesaw*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\swing*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\balance*}
+% \changes{1.0.0}{2013/09/05}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\balanceand*}
+% \changes{1.0.0}{2013/09/05}{Add move shortcut}
+% \changes{2.0.0}{2019/02/28}{Now modifies count and text of next move}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\allemande*}
+% \changes{1.0.0}{2013/09/05}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\butterflywhirl*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\circleleft*}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\circleright*}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\courtesyturn*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\walkaround*}
+% \changes{2.0.0}{2019/02/17}{Rename move}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\walkaroundleft*}
+% \changes{2.0.0}{2019/02/17}{Rename move}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\walkaroundright*}
+% \changes{2.0.0}{2019/02/17}{Rename move}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\heyforfour*}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\halfhey*}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\halfheyricochet*}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\fullhey*}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\fullheyricochet*}
+% \changes{2.0.0}{2019/03/03}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\lines*}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\longlines*}
+% \changes{1.0.0}{2013/09/11}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\madrobin*}
+% \changes{2.0.0}{2018/07/24}{New macro}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\petronella*}
+% \changes{1.0.0}{2013/09/08}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\petronellanella*}
+% \changes{1.1.0}{2018/07/21}{Add nella-nella petronella variants}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\promenade*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\halfpromenade*}
+% \changes{1.0.0}{2013/09/06}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\rightandleftthrough*}
+% \changes{1.0.0}{2013/09/08}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\rightsandlefts*}
+% \changes{1.0.0}{2013/09/08}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\rightsandlefts}
+% \changes{1.0.0}{2013/09/08}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\rollaway*}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{2.0.0}{2018/07/25}{Breaking change to allow complex notation}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\rollawaysashay*}
+% \changes{2.0.0}{2018/07/25}{Renamed from ``\texcmd{rollawayhalfsashay*}''}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\starleft*}
+% \changes{1.0.0}{2013/09/09}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\starright*}
+% \changes{1.0.0}{2013/09/09}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\sashay*}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\turnalone*}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\turncouple*}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\turntogether*}
+% \changes{1.0.0}{2013/09/10}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\downthehall*}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% \begin{macro}{\upthehall*}
+% \changes{1.0.0}{2013/09/12}{Add move shortcut}
+% \changes{3.0.0}{2026/04/27}{Remove macro}
+% When upgrading from 2.x first replace any macros listed in
+% \autoref{appendix:notation} and \autoref{appendix:deprecated} with
+% their new equivalents.
+% In addition, all ``starred" versions of the move macros have been removed and
+% a new argument structure has been added to make the regular version of the
+% move more flexible (see \autoref{sec:moveshortcuts}).
+%
+% Many macros in the project are meant to be overridden, for example the
+% \texcmd{defaultcontraenv} or \texcmd{dancetitleformat} macros.
+% Previously these were declared using \texcmd{newcommand*}, but in 3.0.0 they
+% were upgraded to use the \LaTeXe{} \texcmd{NewDocumentCommand} style
+% declarations.
+% You may wish to update your re-definitions to use
+% \texcmd{RenewDocumentCommand} or \texcmd{RenewExpandableDocumentCommand} as
+% appropriate.
+%
+% Finally, the turn macros (\texcmd{turnalone}, \texcmd{turncouple}, and
+% \texcmd{turntogether}) now require a count instead of defaulting to 0.
+%
+% For a full list of changes, see \hyperlink{CC:CHANGES}{Change History}.
+%
+% Though there is not currently an automated mechanism to update latex code,
+% much of the tedious work can be done with a simple find and replace, for
+% example using \cmdtt{sed(1)}.
+%
+% For example, to replace a 2.0 style move with a single optional argument
+% that is printed after the command with a 3.0 style move you can use the
+% following:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,numbers=none,caption={Upgrading moves to 3.0.0}]
+sed "mycards.tex" \
+  -e 's,\\halfhey\[\([^\[]*\)\]{},\\halfhey[][\1]{},g' \
+  -e 's,\\circleleft\[\(.*\)\]{,\\circleleft[][\1]{,g' \
+  …
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% For the starred versions (where the argument position remains the same), a
+% simple replace will be enough.
+% You'll want to do this after the non-starred versions of the command to avoid
+% mixing up which outputs are corrected star versions or uncorrected bare
+% versions of the macro.
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,numbers=none,caption={Upgrading star moves to 3.0.0}]
+sed "mycards.tex" \
+  -e 's,\\swing\*,\\swing,g' \
+  -e 's,\\dosido\*,\\dosido,g' \
+  -e 's,\\starleft\*,\\starleft,g' \
+  …
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% Allemande's are an exception to this as they already had a three argument
+% structure, albeit a different one than the 3.0.0 version expects.
+% For these you'll need to capture all three arguments (the optional argument
+% and the two mandatory arguments) and re-arrange them like so:
+%
+% \clearpage{}
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,numbers=none,caption={Upgrading allemandes to 3.0.0}]
+sed "mycards.tex" \
+  -e 's,\\allemande\*\[\(.*\)\]{\([0-9]*\)}{\(.*\)},\\allemande[\1][\3]{\2},g'
+  …
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% These regular expressions are not meant to be a comprehensive way to upgrade,
+% but may help save you some time when upgrading a large collection of cards.
+% You will still need to go through each card individually and ensure that
+% nothing was missed or broken.
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \section{Upgrading from 1.x}
+%
+% Aside from removing deprecated macros, (see \autoref{appendix:deprecated}),
+% you will also want to search your dances for the text ``\texcmd{balanceand}"
+% and decrement the following move by 4 counts.
+% Previously, the \texcmd{balanceand} macros took up 0 logical counts of music,
+% but in version 2.0 it adds 4 counts to the next move.
+% Several new move shortcuts were also added in version 2.0 of this package
+% which may be able to replace uses of the generic \texcmd{move} macro in your
+% dances.
+% For a full list, see \hyperlink{CC:CHANGES}{Change History}.
+%
+% \clearpage
+% \section{Annotated Source}
+%
+% This appendix contains the full, annotated, source code for the contracard
+% class and package.
+%
+% Contributions are welcome, and the latest development version of the project
+% can always be found at \url{https://codeberg.org/SamWhited/contracard}.
+% Instructions for submitting a patch can be found in the file
+% \href{https://codeberg.org/SamWhited/contracard/src/branch/main/CONTRIBUTING.md}{%%
+% \texttt{CONTRIBUTING.md}}.
+%
+% \subsection{Source formatting and display}
+%
+% Source code in the document will be prefixed with a line number and have no
+% background (unlike code samples that are meant to be used in your own
+% documents).
+% For example, the source code starts by declaring the version of \LaTeX{}
+% required by the package and class (\LaTeXe{}) and conditionally includes a
+% line letting \TeX{} know that this is a package (or a class, depending on the
+% file).
+% All that would be displayed in this document like this:
+%
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}[1996/12/01]
+%<contracard-pkg>\ProvidesPackage{contracard}
+%<contracard-cls>\ProvidesClass{contracard}
+%<*contracard-pkg|contracard-cls>
+    [2026/04/27 Class for creating dance calling cards]
+%</contracard-pkg|contracard-cls>
+%    \end{macrocode}
+%
+%
+% \subsection{Building and using \pkg{contracard}}
+%
+% \paragraph{Dependencies} The following dependencies are loaded by
+% \pkg{contracard} (you do not need to include them in your project,
+% \pkg{contracard} does this for you); before building the \pkg{contracard}
+% package you should verify that they are installed.
+%
+% \iffalse
+%<*contracard-pkg>
+% \fi
+%    \begin{macrocode}
+\RequirePackage{calc}
+\RequirePackage{intcalc}
+\RequirePackage{ifthen}
+\RequirePackage{tocloft}
+\RequirePackage{textcomp}
+%    \end{macrocode}
+% \iffalse
+%</contracard-pkg>
+% \fi
+%
+% If you're using the class, you'll want the following additional dependencies
+% installed:
+%
+% \iffalse
+%<*contracard-cls>
+% \fi
+%    \begin{macrocode}
+\AtEndOfClass{\LoadClass{article}}
+\AtEndOfClass{\RequirePackage{geometry}}
+\AtEndOfClass{\RequirePackage[compact]{titlesec}}
+\AtEndOfClass{\RequirePackage{contracard}}
+%    \end{macrocode}
+% \iffalse
+%</contracard-cls>
+% \fi
+%
+% \paragraph{Building \pkg{contracard}} Once you have all the required packages,
+% building \pkg{contracard} from source can be accomplished in multiple ways.
+% If the Makefile is present running \cmdtt{make} will generate the
+% documentation, package, and class.
+% To manually extract the files, run \cmdtt{pdflatex} or \cmdtt{xelatex} against
+% \fname{contracard.ins}:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,numbers=none,caption={Splitting the dtx file}]
+$ xelatex contracard.ins
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% Afterwards you can generate the documentation by running it again against
+% \fname{contracard.dtx}:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,numbers=none,caption={Building the documentation}]
+$ xelatex --shell-escape contracard.dtx
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% The \cmdtt{-{}-shell-escape} option is only required if you want the output to
+% contain version information.
+% This will also require that you have \pkg{git} installed (and the git repo
+% itself) as the version is determined by running:
+%
+% \iffalse
+%<*figure>
+% \fi
+\begin{lstlisting}[frame=single,numbers=none,caption={Using \cmdtt{git} to find the version}]
+$ git describe --tags --dirty
+\end{lstlisting}
+% \iffalse
+%</figure>
+% \fi
+%
+% \paragraph{Using \pkg{contracard}} Building results in two main files, a class
+% and a package.
+% In general, if you want to make a calling card, use the \pkg{contracard} class
+% and if you want to print a contra dance in a book or article, use a different
+% class and require the \pkg{contracard} package.
+%
+%
+% \iffalse
+%<*contracard-pkg>
+% \fi
+%
+% \subsection{Formatting}
+%
+% Several options exist which can be loaded package (or class) wide.
+% For more information about each option, see \autoref{CCPACKAGE:OPTIONS}.
+%
+%    \begin{macrocode}
+\DeclareOption{showcountafter}{\showcountafter}
+\DeclareOption{showcountbefore}{\showcountbefore}
+\DeclareOption{enableidx}{\AtEndOfPackage{\enableidx}}
+%    \end{macrocode}
+%
+% Showing the count can also be turned on or off using a macro.
+% These don't print anything by themselves, instead they define or undefine
+% internal commands with similar names so that the environments and macros which
+% use them can check for their existence.
+%
+%    \begin{macrocode}
+\NewDocumentCommand{\showcountbefore}{}{\def\@showcountbefore{}}
+\NewDocumentCommand{\showcountafter}{}{\def\@showcountafter{}}
+\NewDocumentCommand{\hidecountbefore}{}{\let\@showcountbefore\undefined}
+\NewDocumentCommand{\hidecountafter}{}{\let\@showcountafter\undefined}
+%    \end{macrocode}
+%
+% Next we define various commands and lengths that define defaults about the
+% formatting and layout.
+% These aren't meant to be called directly by users, instead, they can be
+% renewed or reset to customize the output of Contra Card.
+%
+%    \begin{macrocode}
+\NewDocumentCommand{\defaultcontraenv}{}{flushleft}
+\NewDocumentCommand{\dancetitleenv}{}{flushleft}
+
+\NewDocumentCommand{\dancetitleformat}{}{\section*}
+\NewDocumentCommand{\danceauthorformat}{}{\subsection*}
+\NewDocumentCommand{\danceformformat}{}{\hspace{\fill}}
+
+\NewDocumentCommand{\movedelimiter}{}{,}
+\NewDocumentCommand{\partdelimiter}{}{.}
+\NewDocumentCommand{\midpartdelimiter}{}{;}
+
+\newlength{\phrasevspace}
+\setlength{\phrasevspace}{1em}
+\NewDocumentCommand{\phraseseparator}{}{\vspace{\phrasevspace}}
+%    \end{macrocode}
+%
+% The commands for defining the bracket styling and default environments work a
+% bit differently, they actually take the bracket to use and do the redefinition
+% of the internal commands themselves.
+% This is probably how all the other formatting stuff should work.
+%
+%    \begin{macrocode}
+\def\cc@countleftbracket{(}
+\def\cc@countrightbracket{)}
+\NewDocumentCommand{\countleftbracket}{m}{\def\cc@countleftbracket{#1}}
+\NewDocumentCommand{\countrightbracket}{m}{\def\cc@countrightbracket{#1}}
+
+\def\cc@defaultnotesenv{flushleft}
+\NewDocumentCommand{\setdefaultnotesenv}{m}{\def\cc@defaultnotesenv{#1}}
+\newlength{\prenotevspace}
+\setlength{\prenotevspace}{\fill}
+%    \end{macrocode}
+%
+% Now we define various counters used by \texcmd{move} and the \texttt{contra}
+% environment to keep track of the dance and its phrasing, as well as various
+% commands for resetting them manually.
+%
+%    \begin{macrocode}
+\newcounter{dancecount}
+\newcounter{partcount}
+\newcounter{phrasecount}
+\newcounter{dancepart}
+\newcounter{dancephrase}
+
+\newcounter{dancepartlength}
+\newcounter{dancephraselength}
+\newcommand*{\resetdancepartlength}{%
+  \setcounter{dancepartlength}{16}}
+\newcommand*{\resetdancephraselength}{%
+  \setcounter{dancephraselength}{32}}
+\resetdancepartlength
+\resetdancephraselength
+
+\newcommand*{\resetdancephrase}{%
+  \ifthenelse{\value{partcount}=16}{\newline}{}%
+  \@ifstar{\@resetdancephraseStar}{\@resetdancephraseNoStar}%
+}
+\newcommand*{\@resetdancephraseStar}{%
+  \setcounter{dancephrase}{1}%
+  \setcounter{phrasecount}{0}%
+  \setcounter{phrasemovenum}{0}%
+  \resetdancepart*%
+}
+\newcommand*{\@resetdancephraseNoStar}{%
+  \ifthenelse{\value{dancephrase}=1}{}{%
+    \setcounter{dancephrase}{1}%
+    \setcounter{phrasecount}{0}%
+    \setcounter{phrasemovenum}{0}%
+    \resetdancepart%
+  }%
+}
+\newcommand*{\resetdancepart}{%
+  \@ifstar{\@resetdancepartStar}{\@resetdancepartNoStar}%
+}
+\newcommand*{\@resetdancepartStar}{%
+  \setcounter{dancepart}{1}%
+  \setcounter{partcount}{0}%
+  \setcounter{partmovenum}{0}%
+  \setcounter{halfpartmovenum}{0}%
+}
+\newcommand*{\@resetdancepartNoStar}{%
+  \ifthenelse{\value{dancepart}=1}{}{%
+    \setcounter{dancepart}{1}%
+    \setcounter{partcount}{0}%
+    \setcounter{partmovenum}{0}%
+    \setcounter{halfpartmovenum}{0}%
+  }%
+}
+
+\newcommand*{\newdancephrase}{%
+  \ifthenelse{\NOT\value{phrasecount}=0}{\par\phraseseparator\par}{}%
+  \addtocounter{dancephrase}{1}%
+  \setcounter{phrasecount}{0}%
+  \setcounter{phrasemovenum}{0}%
+  \resetdancepart*%
+}
+\newcommand*{\newdancepart}{%
+  \par\nopagebreak%
+  \addtocounter{dancepart}{1}%
+  \setcounter{partcount}{0}%
+  \setcounter{partmovenum}{0}%
+  \setcounter{halfpartmovenum}{0}%
+}
+
+\newcounter{phrasemovenum}
+\newcounter{partmovenum}
+\newcounter{halfpartmovenum}
+\newcounter{dancemovenum}
+\setcounter{phrasemovenum}{0}
+\setcounter{partmovenum}{0}
+\setcounter{halfpartmovenum}{0}
+\setcounter{dancemovenum}{0}
+%    \end{macrocode}
+%
+% \subsection{The \cmdtt{contra} environment}
+%
+% The contra environment is currently the only dance environment and is the main
+% environment used to print dances and calling cards.
+% This environment behaves a little differently if it's called using the class,
+% in which case it always resets the footnotes to 0 (assuming that any footnotes
+% are specific to the calling card being created).
+% It also clears the page if it's creating a new card as opposed to printing a
+% dance in a document, and sets the page styles.
+%
+%    \begin{macrocode}
+\NewDocumentCommand{\dancetitle}{}{}
+\NewDocumentCommand{\danceauthor}{}{}
+\NewDocumentCommand{\danceform}{}{}
+
+\NewDocumentEnvironment{contra}{O{\defaultcontraenv}mmm}{%
+  \ifdefined\@ccisclass\setcounter{footnote}{0}\fi%
+  \global\def\dancetitle{\ignorespaces#2\unskip}
+  \global\def\danceauthor{\ignorespaces#3\unskip}
+  \global\def\danceform{\ignorespaces#4\unskip}
+  \setlength{\parskip}{0.3em plus 0.2em minus 0.3em}
+  \refstepcounter{dance}
+  \addcontentsline{lod}{dance}{%
+    \protect\numberline{\thedance}\ignorespaces#2\unskip}
+  \setcounter{dancecount}{0}
+  \setcounter{dancemovenum}{0}
+  \resetdancepart*
+  \resetdancephrase*
+  \ifdefined\@ccisclass\clearpage\fi%
+%    \end{macrocode}
+%
+% If indexing is on, this environment is where that gets handled.
+%
+%    \begin{macrocode}
+  \ifthenelse{\isundefined{\imki@wrindexentry}}{%
+    \index{\ignorespaces#4\unskip}
+  }{%
+    \index[dbt]{\ignorespaces#4\unskip}
+    \index[dba]{\ignorespaces#3\unskip}
+  }%
+  \begin{\dancetitleenv}
+    \ifdefined\@ccisclass%
+      \pagestyle{myheadings}
+      \thispagestyle{myheadings}
+      \markboth{}{\danceformformat{\ignorespaces#4\unskip}}
+    \else%
+      {\danceformformat{\ignorespaces#4\unskip}}%
+    \fi%
+    {\dancetitleformat{\ignorespaces#2\unskip}}%
+    {\danceauthorformat{\ignorespaces#3\unskip}}%
+  \end{\dancetitleenv}
+  \newcommand*{\@contraenv}{#1}
+  \begin{\@contraenv}
+%    \end{macrocode}
+%
+% Note that certain whitespace (new lines, vertical tabs, and form feeds)
+% have no effect in this environment since it strictly handles how moves and
+% parts are laid out in the card or dance.
+% Contra Card attempts to handle line breaks for your, and provides you with
+% hooks to insert vertical space at the appropriate times.
+%
+%    \begin{macrocode}
+  \catcode10=9\relax % New line
+  \catcode11=9\relax % Vertical Tab
+  \catcode12=9\relax % Form Feed
+}{%
+  \end{\@contraenv}
+}
+%    \end{macrocode}
+%
+% \subsection{Role terms}
+%
+% The role names are expandable (not protected) commands since we never know
+% where they're going to wind up and they should always be simple text.
+%
+%    \begin{macrocode}
+\NewExpandableDocumentCommand{\cc@rightrole}{}{robin}
+\NewExpandableDocumentCommand{\cc@rightrolepl}{}{robins}
+\NewExpandableDocumentCommand{\cc@leftrole}{}{lark}
+\NewExpandableDocumentCommand{\cc@leftrolepl}{}{larks}
+\NewExpandableDocumentCommand{\cc@Rightrole}{}{Robin}
+\NewExpandableDocumentCommand{\cc@Rightrolepl}{}{Robins}
+\NewExpandableDocumentCommand{\cc@Leftrole}{}{Lark}
+\NewExpandableDocumentCommand{\cc@Leftrolepl}{}{Larks}
+
+\NewDocumentCommand{\Rightrole}{s}{%
+  \IfBooleanTF{#1}
+    {\cc@Rightrole}{\cc@Rightrolepl}}
+\NewDocumentCommand{\rightrole}{s}{%
+  \IfBooleanTF{#1}
+    {\cc@rightrole}{\cc@rightrolepl}}
+\NewDocumentCommand{\Leftrole}{s}{%
+  \IfBooleanTF{#1}
+    {\cc@Leftrole}{\cc@Leftrolepl}}
+\NewDocumentCommand{\leftrole}{s}{%
+  \IfBooleanTF{#1}
+    {\cc@leftrole}{\cc@leftrolepl}}
+
+\NewDocumentCommand{\setrightrole}{mm}{%
+  \RenewDocumentCommand{\cc@rightrole}{}{\MakeLowercase #1}
+  \RenewDocumentCommand{\cc@rightrolepl}{}{\MakeLowercase #2}
+  \RenewDocumentCommand{\cc@Rightrole}{}{\MakeUppercase #1}
+  \RenewDocumentCommand{\cc@Rightrolepl}{}{\MakeUppercase #2}
+}
+\NewDocumentCommand{\setleftrole}{mm}{%
+  \RenewExpandableDocumentCommand{\cc@leftrole}{}{\MakeLowercase #1}
+  \RenewExpandableDocumentCommand{\cc@leftrolepl}{}{\MakeLowercase #2}
+  \RenewExpandableDocumentCommand{\cc@Leftrole}{}{\MakeUppercase #1}
+  \RenewExpandableDocumentCommand{\cc@Leftrolepl}{}{\MakeUppercase #2}
+}
+%    \end{macrocode}
+%
+% \subsection{The \texcmd{move} macro}
+%
+% The builk of the functionality of this package is implemented in the
+% \texcmd{move} command.
+%
+%    \begin{macrocode}
+\newlength{\cc@partsepwidth}%
+\newcounter{movecount}%
+\newboolean{balanceandbool}
+\setboolean{balanceandbool}{false}
+\NewDocumentCommand{\move}{sO{8}m}{%
+  \setlength{\parindent}{0pt}%
+  \setlength{\cc@partsepwidth}{%
+    \widthof{\Alph{dancephrase}\arabic{dancepart}%
+    \partdelimiter\ }}%
+  \setlength{\hangindent}{\cc@partsepwidth}%
+  \ifthenelse{\value{phrasecount}=\value{dancephraselength}}{%
+    \ifthenelse{\NOT\(#2=0\)}{%
+      \newdancephrase%
+    }{}%
+  }{%
+    \ifthenelse{\(\value{partcount}=\value{dancepartlength}\)%
+      \AND\NOT\(#2=0\)}{%
+      \newdancepart%
+    }{}%
+  }%
+  \ifthenelse{\value{partmovenum}=0}{%
+    \Alph{dancephrase}\arabic{dancepart}\partdelimiter\ %
+  }{}%
+  \setcounter{movecount}{0}%
+  \addtocounter{movecount}{#2}%
+  \ifthenelse{\boolean{balanceandbool}}{~\addtocounter{movecount}{4}}{\relax}%
+  \addtocounter{dancecount}{\value{movecount}}%
+  \addtocounter{phrasecount}{\value{movecount}}%
+  \addtocounter{partcount}{\value{movecount}}%
+  \addtocounter{phrasemovenum}{1}%
+  \addtocounter{partmovenum}{1}%
+  \addtocounter{halfpartmovenum}{1}%
+  \addtocounter{dancemovenum}{1}%
+  \ifthenelse{%
+    \isundefined{\@showcountbefore}\OR\(\value{movecount}=0\)%
+  }{%
+    \relax%
+  }{%
+    \cc@countleftbracket%
+    \ignorespaces\themovecount\unskip%
+    \cc@countrightbracket~%
+  }%
+  \ignorespaces#3\unskip%
+  \ifthenelse{%
+    \isundefined{\@showcountafter}\OR\(\value{movecount}=0\)%
+  }{\relax}{%
+    ~\cc@countleftbracket%
+    \ignorespaces\themovecount\unskip%
+    \cc@countrightbracket%
+  }%
+  \ifthenelse{\NOT\(\value{movecount}=0\)}{%
+    \ifthenelse{%
+      \value{partcount}=\intcalcDiv{\value{dancepartlength}}{2}%
+    }{%
+      \setcounter{halfpartmovenum}{0}%
+    }{}%
+    \IfBooleanF{#1}{%
+      \ifthenelse{%
+        \value{partcount}=\intcalcDiv{\value{dancepartlength}}{2}%
+      }{%
+        \midpartdelimiter%
+        \looseness=-1\linebreak[2]\space\nopagebreak\ignorespaces%
+      }{%
+        \ifthenelse{%
+          \NOT\value{partcount}=\value{dancepartlength}%
+        }{%
+          \movedelimiter\linebreak[1]\space\nopagebreak\ignorespaces%
+        }{}%
+      }%
+    }%
+  }{}%
+%    \end{macrocode}
+%
+% If \texcmd{balanceand} was used before this move, this boolean had been set to
+% `true' and it should only affect the next move, so always reset it to false at
+% the end of each move.
+%
+%    \begin{macrocode}
+  \setboolean{balanceandbool}{false}%
+}
+%    \end{macrocode}
+%
+% \subsection{Move Shortcuts}
+%
+% Next come the various move shortcut definitions.
+% These are mostly just duplicates of each other with the text (and sometimes
+% argument layout) changed.
+%
+%    \begin{macrocode}
+\NewDocumentCommand{\allemande}{O{}O{}m}{%
+  \moveindex{Allemande}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Allemande}%
+      {\ignorespaces#1\unskip\ allemande}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\balance}{O{}O{}}{%
+  \moveindex{Balance}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Balance}%
+      {\ignorespaces#1\unskip\ balance}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+%    \end{macrocode}
+%
+% Unlike most of the move shortcuts, \texcmd{balanceand} works a bit
+% differently.
+% Instead of having its own move count and being followed by a separator, it
+% creates a 0 length move, skips the separator, and then sets some properties
+% that add 4 counts to the next move.
+%
+%    \begin{macrocode}
+\NewDocumentCommand{\balanceand}{O{}O{}}{%
+  \cc@checkphrasestart%
+  \moveindex{Balance}%
+  \move*[0]{%
+    \IfBlankTF{#1}%
+      {Balance}%
+      {\ignorespaces#1\unskip\ balance}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}\ and}%
+  \setboolean{balanceandbool}{true}%
+}
+
+\NewDocumentCommand{\butterflywhirl}{O{}O{}m}{%
+  \moveindex{Butterfly Whirl}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Butterfly whirl}%
+      {\ignorespaces#1\unskip\ butterfly whirl}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\circleany}{O{}O{}m}{%
+  \moveindex{Circle}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Circle}%
+      {\ignorespaces#1\unskip\ circle}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\circleleft}{O{}O{}m}{%
+  \moveindex{Circle Left}%
+  \moveindex{Circle}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Circle left}%
+      {\ignorespaces#1\unskip\ circle left}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\circleright}{O{}O{}m}{%
+  \moveindex{Circle Right}%
+  \moveindex{Circle}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Circle right}%
+      {\ignorespaces#1\unskip\ circle right}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\courtesyturn}{O{}O{}m}{%
+  \moveindex{Courtesy Turn}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Courtesy turn}%
+      {\ignorespaces#1\unskip\ courtesy turn}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\dosido}{O{}O{}m}{%
+  \moveindex{\spellDosido}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {\spellDosido}%
+      {\ignorespaces#1\unskip\ \spelldosido}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\seesaw}{O{}O{}m}{%
+  \moveindex{See Saw}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {See saw}%
+      {\ignorespaces#1\unskip\ see saw}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\walkaround}{O{}O{}m}{%
+  \moveindex{Walk around}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Walk around}%
+      {\ignorespaces#1\unskip\ walk around}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\walkaroundright}{O{}O{}m}{%
+  \moveindex{Walk around}%
+  \moveindex{Right shoulder round}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Walk around right}%
+      {\ignorespaces#1\unskip\ walk around right}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\walkaroundleft}{O{}O{}m}{%
+  \moveindex{Walk around}%
+  \moveindex{Left shoulder round}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Walk around left}%
+      {\ignorespaces#1\unskip\ walk around left}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\hey}{O{}O{}m}{%
+  \moveindex{Hey}%
+  \moveindex{Hey for Four}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Hey}%
+      {\ignorespaces#1\unskip\ hey}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\heyforfour}{O{}O{}}{%
+  \moveindex{Hey}%
+  \moveindex{Hey for Four}%
+  \moveindex{Full Hey}%
+  \move[16]{%
+    \IfBlankTF{#1}%
+      {Hey for four}%
+      {\ignorespaces#1\unskip\ hey for four}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\halfhey}{O{}O{}}{%
+  \moveindex{Hey}%
+  \moveindex{Hey for Four}%
+  \moveindex{Half Hey}%
+  \move[8]{%
+    \IfBlankTF{#1}%
+      {Half a hey}%
+      {\ignorespaces#1\unskip\ half a hey}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\halfheyricochet}{O{}O{}}{%
+  \moveindex{Hey}%
+  \moveindex{Hey for Four}%
+  \moveindex{Half Hey}%
+  \moveindex{Half Hey Ricochet}%
+  \moveindex{Ricochet Hey}%
+  \move[8]{%
+    \IfBlankTF{#1}%
+      {Half hey ricochet}%
+      {\ignorespaces#1\unskip\ half hey ricochet}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\fullhey}{O{}O{}}{%
+  \moveindex{Hey}%
+  \moveindex{Hey for Four}%
+  \moveindex{Full Hey}%
+  \move[16]{%
+    \IfBlankTF{#1}%
+      {Full hey}%
+      {\ignorespaces#1\unskip\ full hey}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\fullheyricochet}{O{}O{}}{%
+  \moveindex{Hey}%
+  \moveindex{Hey for Four}%
+  \moveindex{Full Hey}%
+  \moveindex{Full Hey Ricochet}%
+  \moveindex{Ricochet Hey}%
+  \move[16]{%
+    \IfBlankTF{#1}%
+      {Full hey ricochet}%
+      {\ignorespaces#1\unskip\ full hey ricochet}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\chain}{O{}O{}}{%
+  \moveindex{Chain}%
+  \move[8]{%
+    \IfBlankTF{#1}%
+      {Chain}%
+      {\ignorespaces#1\unskip\ chain}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\halfchain}{O{}O{}}{%
+  \moveindex{Chain}%
+  \moveindex{Half chain}%
+  \move[8]{%
+    \IfBlankTF{#1}%
+      {Half chain}%
+      {\ignorespaces#1\unskip\ half chain}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\fullchain}{O{}O{}}{%
+  \moveindex{Full chain}%
+  \move[16]{%
+    \IfBlankTF{#1}%
+      {Full chain}%
+      {\ignorespaces#1\unskip\ full chain}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\lines}{O{}O{}}{%
+  \moveindex{Lines forward and back}%
+  \move[8]{%
+    \IfBlankTF{#1}%
+      {Lines forward and back}%
+      {\ignorespaces#1\unskip\ lines forward and back}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\longlines}{O{}O{}}{%
+  \moveindex{%
+    Long Lines Forward and Back\ \seealso{Lines Forward and Back}{X}}%
+  \lines[Long]{}
+}
+
+\NewDocumentCommand{\madrobin}{O{}O{}}{%
+  \moveindex{Mad Robin}%
+  \move[8]{%
+    \IfBlankTF{#1}%
+      {Mad robin}%
+      {\ignorespaces#1\unskip\ mad robin}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\petronella}{O{}O{}}{%
+  \moveindex{Petronella}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Petronella}%
+      {\ignorespaces#1\unskip\ petronella}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\petronellanella}{O{}O{}}{%
+  \moveindex{Petronella}%
+  \moveindex{Petronella-nella}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Petronella-nella}%
+      {\ignorespaces#1\unskip\ petronella-nella}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\promenade}{O{}O{}m}{%
+  \moveindex{Promenade}
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Promenade}%
+      {\ignorespaces#1\unskip\ promenade}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\halfpromenade}{O{}O{}}{%
+  \moveindex{Promenade}
+  \move[8]{%
+    \IfBlankTF{#1}%
+      {Half promenade}%
+      {\ignorespaces#1\unskip\ half promenade}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\rightandleftthrough}{O{}O{}}{%
+  \moveindex{Right and left through}%
+  \moveindex{Rights and lefts|seealso{Right and left through}}%
+  \move[8]{%
+    \IfBlankTF{#1}%
+      {Right and left through}%
+      {\ignorespaces#1\unskip\ right and left through}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\rollaway}{O{}O{}O{}}{%
+  \moveindex{Roll away}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Roll}%
+      {\ignorespaces#1\unskip\ roll}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip} away%
+    \IfBlankF{#3}{\ \ignorespaces#3\unskip}}%
+}
+\NewDocumentCommand{\rollawaysashay}{O{}O{}O{}}{%
+  \moveindex{Roll Away}%
+  \moveindex{Roll Away with a Half Sashay}%
+  \moveindex{Half Sashay}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Roll}%
+      {\ignorespaces#1\unskip\ roll}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip} away with a half shashay%
+    \IfBlankF{#3}{\ \ignorespaces#3\unskip}}%
+}
+
+\NewDocumentCommand{\handstar}{O{}O{}m}{%
+  \moveindex{Star}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Star}%
+      {\ignorespaces#1\unskip\ star}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\starleft}{O{}O{}m}{%
+  \moveindex{Star}%
+  \moveindex{Star left}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Left hand star}%
+      {\ignorespaces#1\unskip\ left hand star}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\starright}{O{}O{}m}{%
+  \moveindex{Star}%
+  \moveindex{Star right}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Right hand star}%
+      {\ignorespaces#1\unskip\ right hand star}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\sashay}{O{}O{}m}{%
+  \moveindex{Sashay}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Sashay}%
+      {\ignorespaces#1\unskip\ sashay}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\swing}{O{}O{}m}{%
+  \moveindex{Swing}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Swing}%
+      {\ignorespaces#1\unskip\ swing}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\turnalone}{O{}O{}m}{%
+  \moveindex{Turn Alone}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Turn alone}%
+      {\ignorespaces#1\unskip\ turn alone}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\turncouple}{O{}O{}m}{%
+  \moveindex{Turn as a Couple}%
+  \moveindex{Turn Together|see{Turn as a Couple}}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Turn as a couple}%
+      {\ignorespaces#1\unskip\ turn as a couple}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\turntogether}{O{}O{}m}{%
+  \moveindex{Turn as a Couple}%
+  \moveindex{Turn Together|see{Turn as a Couple}}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Turn together}%
+      {\ignorespaces#1\unskip\ turn together}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\twirltoswap}{O{}O{}}{%
+  \moveindex{Twirl to Swap}%
+  \move[4]{Twirl to swap}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Twirl to swap}%
+      {\ignorespaces#1\unskip\ twirl to swap}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\californiatwirl}{O{}O{}}{%
+  \moveindex{California Twirl}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {California twirl}%
+      {\ignorespaces#1\unskip\ california twirl}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\starthrough}{O{}O{}}{%
+  \moveindex{Star Thru|see{Star Through}}%
+  \moveindex{Star Through}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Star through}%
+      {\ignorespaces#1\unskip\ star through}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\starthru}{O{}O{}}{%
+  \moveindex{Star Thru|see{Star Through}}%
+  \moveindex{Star Through}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Star thru}%
+      {\ignorespaces#1\unskip\ star thru}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\boxthegnat}{O{}O{}}{%
+  \moveindex{Box the Gnat}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Box the gnat}%
+      {\ignorespaces#1\unskip\ box the gnat}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\swattheflea}{O{}O{}}{%
+  \moveindex{Swat the Flea}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Swat the flea}%
+      {\ignorespaces#1\unskip\ swat the flea}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\jerseytwirl}{O{}O{}}{%
+  \moveindex{Jersey Twirl}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Jersey twirl}%
+      {\ignorespaces#1\unskip\ jersey twirl}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\arizonatwirl}{O{}O{}}{%
+  \moveindex{Arizona Twirl}%
+  \move[4]{%
+    \IfBlankTF{#1}%
+      {Arizona twirl}%
+      {\ignorespaces#1\unskip\ arizona twirl}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+
+\NewDocumentCommand{\downthehall}{O{}O{}m}{%
+  \moveindex{Down the hall}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Down the hall}%
+      {\ignorespaces#1\unskip\ down the hall}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+\NewDocumentCommand{\upthehall}{O{}O{}m}{%
+  \moveindex{Up the hall}%
+  \move[#3]{%
+    \IfBlankTF{#1}%
+      {Up the hall}%
+      {\ignorespaces#1\unskip\ up the hall}%
+    \IfBlankF{#2}{\ \ignorespaces#2\unskip}}%
+}
+%    \end{macrocode}
+%
+% \subsection{Indexing and Lists}
+%
+% That was a lot of moves!
+% Now that those are out of the way, let's handle indexing and lists.
+%
+%    \begin{macrocode}
+\newlistof{dance}{lod}{\cfttoctitlefont\lodtitle}
+
+\NewExpandableDocumentCommand{\lodtitle}{}{List of Dances}
+
+\NewExpandableDocumentCommand{\cc@createindices}{}{%
+  \makeindex[name=\cc@dbt,title=\dbtname]
+  \makeindex[name=\cc@dba,title=\dbaname]
+  \makeindex[name=\cc@mvp,title=\mvpname]
+  \makeindex[name=\cc@mvd,title=\mvdname]
+}%
+\NewExpandableDocumentCommand{\enableidx}{}{%
+  \PassOptionsToPackage{splitindex}{imakeidx}
+  \RequirePackage{imakeidx}
+  \cc@createindices
+}%
+
+\NewExpandableDocumentCommand{\pauseindexing}{}{\def\cc@indexingpaused{}}
+\NewExpandableDocumentCommand{\resumeindexing}{}{\let\cc@indexingpaused\undefined}
+%    \end{macrocode}
+% \begin{macro}{\cc@dbt}
+% \changes{1.0.0}{2013/09/08}{New command}
+% \begin{macro}{\cc@dba}
+% \changes{1.0.0}{2013/09/08}{New command}
+% \begin{macro}{\cc@mvp}
+% \changes{1.0.0}{2013/09/08}{New command}
+% \begin{macro}{\cc@mvd}
+% \changes{1.0.0}{2013/09/08}{New command}
+% Though you probably don't need to change this, the shortcut for each index can
+% be changed by redefining these commands before you turn on indexing
+% functionality.
+% Make sure they are expandable (not-protected).
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%    \begin{macrocode}
+\NewExpandableDocumentCommand{\cc@dbt}{}{dbt}
+\NewExpandableDocumentCommand{\cc@dba}{}{dba}
+\NewExpandableDocumentCommand{\cc@mvp}{}{mvp}
+\NewExpandableDocumentCommand{\cc@mvd}{}{mvd}
+
+\NewExpandableDocumentCommand{\dbtname}{}{Dances by Type}
+\NewExpandableDocumentCommand{\dbaname}{}{Dances by Author}
+\NewExpandableDocumentCommand{\mvpname}{}{Moves by Page}
+\NewExpandableDocumentCommand{\mvdname}{}{Moves by Dance}
+
+\NewDocumentCommand{\moveindex}{sm}{%
+  \IfBooleanT{#1}{#1}%
+  \ifthenelse{\isundefined{\cc@indexingpaused}}{%
+    \ifthenelse{\isundefined{\imki@wrindexentry}}{%
+      \index{#2}%
+    }{%
+      \index[mvp]{#2}%
+      \imki@wrindexentry{mvd}{#2}{\arabic{dance}}%
+    }%
+  }{}%
+}
+%    \end{macrocode}
+%
+% \subsection{Helper Macros}
+%
+% Next we have a few helper macros for printing nicely formatted notes, spelling
+% \spelldosido{}, and calculating timings (see \autoref{sec:helpers}).
+%
+%    \begin{macrocode}
+\newcounter{timesaround}
+\newcounter{quartertimesaround}
+\NewDocumentCommand{\timesaround}{mm}{%
+  \setcounter{timesaround}{%
+    \intcalcDiv{\intcalcNum{#2}}{\intcalcNum{#1}}}%
+  \setcounter{quartertimesaround}{%
+    \intcalcMod{\intcalcNum{#2}}{\intcalcNum{#1}}%
+  }%
+  \ifthenelse{\value{timesaround}>0}{\arabic{timesaround}}{}%
+  \ifthenelse{\value{quartertimesaround}=1}{\textonequarter}{%
+    \ifthenelse{\value{quartertimesaround}=2}{\textonehalf}{%
+      \ifthenelse{\value{quartertimesaround}=3}{\textthreequarters}{}%
+    }%
+  }%
+  \ifthenelse{%
+    \value{timesaround}>1\OR%
+    \(\value{timesaround}=1\AND\NOT\value{quartertimesaround}=0\)%
+  }{\ times}{%
+    \ifthenelse{\value{timesaround}=1}{\ time}{}%
+  }%
+}%
+%    \end{macrocode}
+%
+% The notes command is meant to be placed inside the \cmdtt{contra} environment
+% after the moves.
+%
+%    \begin{macrocode}
+\NewDocumentCommand{\notes}{O{\cc@defaultnotesenv}m}{%
+  \par\nopagebreak\vspace*{\prenotevspace}
+  \begin{#1}
+    \setlength{\baselineskip}{1.1em plus 0.1em minus 0.2em}
+    \def\cc@notestitle{\textbf{\ignorespaces Notes\unskip}}%
+    \setlength{\parindent}{0pt}%
+    \setlength{\cc@partsepwidth}{%
+      \widthof{\footnotesize \cc@notestitle~}}%
+    \setlength{\hangindent}{\cc@partsepwidth}%
+    {\footnotesize \cc@notestitle~\ignorespaces#2\unskip}%
+  \end{#1}
+}
+
+\def\spelldosido{do-si-do}
+\def\spellDosido{Do-si-do}
+\NewDocumentCommand{\setdosidospelling}{m}{%
+  \protected@edef\spelldosido{\expandafter\MakeLowercase#1}
+  \protected@edef\spellDosido{\expandafter\MakeUppercase#1}
+}
+%    \end{macrocode}
+%
+% The \texcmd{cc@checkphrasestart} command is used internally by \texcmd{move}
+% to reset the phrase when the number of beats hits a phrase boundary.
+%
+%    \begin{macrocode}
+\NewDocumentCommand{\cc@checkphrasestart}{}{%
+  \ifthenelse{\value{phrasecount}=\value{dancephraselength}}{%
+    \newdancephrase%
+  }{%
+    \ifthenelse{\(\value{partcount}=\value{dancepartlength}\)}{%
+     \newdancepart%
+    }{}%
+  }%
+}
+
+\ProcessOptions\relax
+%    \end{macrocode}
+% \iffalse
+%</contracard-pkg>
+% \fi
+%
+% \iffalse
+%<*contracard-cls>
+% \fi
+%
+% \subsection{\fname{contracard.cls}}
+%
+% Finally, we come to the class-specific code.
+% When building this code will be stripped out into a separate file,
+% \fname{contracard.cls}.
+% The class is actually relatively short, most of the functionality resides in
+% the package.
+% First we setup some options that can be passed to the class.
+% For information on each option see \autoref{CCCLASS:OPTIONS}.
+%
+%    \begin{macrocode}
+\AtBeginDocument{\large}
+\PassOptionsToPackage{%
+  margin=0.5in,top=0.75in,paperwidth=6in,paperheight=4in%
+}{geometry}%
+\DeclareOption{small}{%
+  \AtBeginDocument{%
+    \titleformat{\section}{\normalsize\bfseries}{\thesection}{1em}{}%
+    \titleformat{\subsection}{\normalsize}{\thesection}{1em}{}%
+  }
+  \PassOptionsToPackage{%
+    margin=0.25in,top=0.75in,paperwidth=5in,paperheight=3in%
+  }{geometry}%
+}
+\DeclareOption{medium}{%
+  \AtBeginDocument{\large}
+  \PassOptionsToPackage{%
+    margin=0.5in,top=0.75in,paperwidth=6in,paperheight=4in%
+  }{geometry}%
+}
+\DeclareOption{large}{%
+  \AtBeginDocument{\Large}
+  \PassOptionsToPackage{%
+    margin=0.75in,top=1in,paperwidth=8in,paperheight=5in%
+  }{geometry}%
+}
+\DeclareOption{a7paper}{%
+  \AtBeginDocument{%
+    \titleformat{\section}{\normalsize\bfseries}{\thesection}{1em}{}%
+    \titleformat{\subsection}{\normalsize}{\thesection}{1em}{}%
+  }
+  \PassOptionsToPackage{%
+    margin=5mm,top=15mm,paperwidth=105mm,paperheight=74mm%
+  }{geometry}%
+}
+\DeclareOption{draft}{%
+  \PassOptionsToClass{draft}{article}%
+}
+\DeclareOption*{%
+  \PassOptionsToPackage{\CurrentOption}{contracard}%
+}
+%    \end{macrocode}
+%
+% Then we clear page styling by default since these are index cards that
+% probably don't need page numbers.
+%
+%    \begin{macrocode}
+\AtBeginDocument{\pagestyle{empty}}
+\AtBeginDocument{\pagenumbering{gobble}}
+%    \end{macrocode}
+%
+% We also define a marker that we can check in the package to see if we were
+% loaded by the class.
+% This is mostly used by the \cmdtt{contra} environment to set display
+% properties for index cards and to reset the footnote numbers for each new
+% dance (unlike a book where multiple dances are on a page and the footnotes
+% should still be sequentially numered).
+% This pushes even more of the classes functionality into the package and is
+% part of why the class is so small.
+%
+%    \begin{macrocode}
+\newcommand*{\@ccisclass}{}
+\ProcessOptions\relax
+%    \end{macrocode}
+% \iffalse
+%</contracard-cls>
+% \fi
+%
+%
+% \end{appendices}
+%
+% \addtocontents{toc}{\bigskip}
+% \clearpage
+% \setcounter{IndexColumns}{2}
+% \phantomsection
+% \addcontentsline{toc}{section}{Index}
+% \PrintIndex
+% \clearpage
+% \phantomsection
+% \addcontentsline{toc}{section}{Listings}
+% \PrintIndex
+% \lstlistoflistings
+% \clearpage
+% \phantomsection
+% \addcontentsline{toc}{section}{\dbtname}
+% \hypertarget{CC:DBT}{}
+% \printindex[\cc@dbt]
+% \clearpage
+% \phantomsection
+% \addcontentsline{toc}{section}{\dbaname}
+% \hypertarget{CC:DBA}{}
+% \printindex[\cc@dba]
+% \clearpage
+% \phantomsection
+% \addcontentsline{toc}{section}{\mvpname}
+% \hypertarget{CC:MVP}{}
+% \printindex[\cc@mvp]
+% \clearpage
+% \phantomsection
+% \addcontentsline{toc}{section}{\mvdname}
+% \hypertarget{CC:MVD}{}
+% \printindex[\cc@mvd]
+%
+% \makeatletter
+%   \renewenvironment{theglossary}{%
+%   \glossary@prologue
+%   \setlength\emergencystretch{5em}
+%   \GlossaryParms \let\item\@idxitem \ignorespaces}{}
+% \makeatother
+% \clearpage
+% \phantomsection
+% \addcontentsline{toc}{section}{Change History}
+% \hypertarget{CC:CHANGES}{}
+% \PrintChanges
+% \Finale
+%
+% \iffalse
+%\fi
+\endinput

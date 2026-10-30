@@ -1,0 +1,118 @@
+\documentclass[12pt,a4paper,twoside]{article}
+\usepackage[protrusion,final,verbose]{microtype}
+\usepackage[english]{turnthepage}
+\makeindex
+\usepackage[bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=1,%
+breaklinks=true,colorlinks=true,final,menucolor=red,pdfauthor={Merciadri Luca},%
+pdfkeywords={math},pdftitle={The turnthepage package},pdfsubject={(La)TeX},pdftoolbar=true]{hyperref}
+\hypersetup{urlcolor=red,linkcolor=blue,citecolor=blue,colorlinks=true}
+
+\providecommand{\etex}{$\epsilon$-\TeX}
+
+\title{The \textbf{turnthepage} package}
+\author{Luca Merciadri, Marc van Dongen, H.-Martin M\"unch}
+\date{2024-11-15 v2.0a}
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+\section{Introduction}
+On some exams' sheets, some professors or lecturers like to indicate to the reader that the `page' can be turned.
+That avoids oversights to the student, thereby avoiding them cold sweat at the end of the exam, realizing that
+there were other questions they needed to answer. One might implement a \LaTeX{} mechanism so that each odd page
+(except the last one, if the last page is odd) displays a message to turn the page. This mechanism can also
+be useful for different kinds of documents.
+
+This package can thus be used for exams, or special documents printed `twoside'.
+
+\section{General Use}
+
+\subsection{Loading the Package}
+The general method to \textit{load the package} is to use
+\begin{center}
+\begin{verbatim}
+\usepackage[option]{turnthepage}
+\end{verbatim}
+\end{center}
+
+\subsection{Available Options\label{subsec:ao}}
+The \textit{following options are available}:
+\begin{itemize}
+\item \verb|short|: will display `/\ldots' at the bottom of each odd page, in its right corner, \index{\texttt{short}}
+\item \verb|english|: will display `\textit{Turn the page.}' at the bottom of each odd page, in its right corner, \index{\texttt{english}}
+\item \verb|francais|: will display `\textit{Tournez la page.}' at the bottom of each odd page, in its right corner, \index{\texttt{francais}}
+\item \verb|nederlands|: will display `\textit{Sla de pagina om.}' at the bottom of each odd page, in its right corner, \index{\texttt{nederlands}}
+\item \verb|deutsch|: will display `\textit{Bitte wenden.}' at the bottom of each odd page, in its right corner, \index{\texttt{deutsch}}
+\end{itemize}
+As the package calls \verb|\turnthepage| where it needs to be placed, you can define \verb|\turnthepage| as you want.
+For example, if you want a more polite way to say it, you can use
+\begin{verbatim}
+\renewcommand{\turnthepage}{\itshape Turn the page please.}
+\end{verbatim}
+after the preamble.
+
+The package automatically detects \etex\ and recent ($\geq$ 2024-06-01) \LaTeX-format versions and loads \verb|\turnpageetex|,
+for older versions it loads \verb|\turnpagewoetex|, which does not even use \etex!
+
+\section{Version History\label{sec:vh}}
+\begin{enumerate}
+\addtocounter{enumi}{-1}
+ \item \verb|v1.0|:  The package is introduced to the \LaTeX{} world (happy new 2011 year!).
+ \item \verb|v1.1|:  New options are added thanks to Mr. van Dongen's suggestions:
+                     \verb|english| now replaces \verb|long|, and \verb|francais|, \verb|nederlands|, \verb|deutsch|
+                     are implemented as translations of `Turn the page.' in French, Dutch, and German.
+ \item \verb|v1.2|:  In \verb|v1.1|, setting page numbering to `arabic' lead to errors. As a result, Mr. Philipp Stephani
+                     proposed to use \verb|zref-abspage| and \verb|zref-lastpage| at the place of \verb|lastpage|.
+                     After some slight modifications, one can now use any page numbering style.
+ \item \verb|v1.3a|: Mx. H.-Martin M\"unch told me (Merciadri Luca) by personal communication that the package
+                     cannot be used on all \LaTeX{} distributions, when they are not \etex{} capable. Fortunately,
+                     they had previously implemented the \verb|pagesLTS| package, which does not rely on \etex.
+                     It allowed them to write three files:
+\begin{itemize}
+ \item \verb|turnpageetex|: old \verb|turnthepage|'s equivalent (using \etex),
+ \item \verb|turnpagewoetex|: old \verb|turnthepage|'s equivalent using \verb|pagesLTS|,
+ \item \verb|turnthepage|: main file.
+\end{itemize}
+                     The package now works for users who do not have \etex: when invoking \verb|turnthepage|,
+                     the \verb|turnthepage| package decides to use either \verb|turnpageetex| or  \verb|turnpagewoetex|
+                     depending on \etex{} availability. It is also possible to use e.g. the \verb|turnpagewoetex| package
+                     independently. You simply need to replace
+\begin{verbatim}
+\usepackage[option]{turnthepage}
+\end{verbatim}
+                     by
+\begin{verbatim}
+\usepackage[option]{turnpagewoetex}
+\end{verbatim}
+                     and the same remark applies for \verb|turnpageetex|. Many thanks go to Mx. Martin M\"unch for this, who also added info messages depending on the package's status so that the user is now more aware about what's going on.
+ \item \verb|v2.0a|: The \verb|pagesLTS| package has been renamed \verb|pageslts| and since version~2.0a requires \etex.
+                     The necessary code from the old \verb|pagesLTS| has been merged into the  \verb|\turnpagewoetex| package,
+                     so that \verb|pagesLTS| (or \verb|pageslts|) is no longer required.
+                     \verb|turnpageetex| now uses the commands provided by modern \LaTeX-formats.
+\end{enumerate}
+
+\section{Thanks}
+Many thanks go to
+\begin{itemize}
+\item Marc van Dongen for his help at \cite{mvd1},
+\item Martin M\"unch for their personal communications and their version of \verb|turnthepage| without \etex,
+\item Philipp Stephani at \cite{ps}.
+\end{itemize}
+
+\section{Contact}
+If you have any question concerning this package (limitations, bugs, \ldots),
+please contact Luca Merciadri at
+\href{mailto:Luca.Merciadri@student.ulg.ac.be}{Luca.Merciadri@student.ulg.ac.be}.
+If Luca Merciadri is not reachable, try
+\href{mailto:dongen@cs.ucc.ie}{Marc van Dongen at  dongen@cs.ucc.ie} or
+\href{mailto:Martin.Muench@Uni-Bonn.de}{H.-Martin M\"unch at Martin.Muench@Uni-Bonn.de}.
+\newpage
+\phantomsection
+\makeatletter\@input@{\jobname.ind}\makeatother
+\newpage
+\section{References}
+\nocite{*}
+\bibliographystyle{siam}
+\label{biblio}
+\bibliography{turnthepage-bib}
+\end{document}

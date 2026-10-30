@@ -1,0 +1,224 @@
+%-----------------------------------------
+% Modern Professional Resume
+% Author: Aditya Singh 
+% License: MIT
+%-----------------------------------------
+
+\documentclass[letterpaper,10pt]{article}
+
+%================================================================================
+%                             PACKAGES
+%================================================================================
+
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage{fontawesome5}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{geometry}
+\usepackage{xstring} 
+\usepackage{scalerel}
+
+
+
+%================================================================================
+%                             STYLING
+%================================================================================
+
+% COLORS (Black and White)
+\definecolor{primary}{HTML}{000000}    % Black
+\definecolor{secondary}{HTML}{333333}  % Very Dark Gray
+\definecolor{accent}{HTML}{666666}     % Dark Gray
+\definecolor{lightgray}{HTML}{999999}  % Medium Gray
+\definecolor{sectionline}{HTML}{CCCCCC}% Light Gray
+
+% LAYOUT
+\geometry{
+  paper=letterpaper,
+  left=0.75in,
+  right=0.75in,
+  top=0.6in,
+  bottom=0.6in,
+  columnsep=0.25in
+}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\tabcolsep}{0in}
+\setlength{\headheight}{12pt}
+
+% FONTS
+\urlstyle{same}
+
+% SECTION FORMATTING
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large\bfseries\color{primary}
+}{}{0em}{}[\color{sectionline}\titlerule\vspace{-5pt}]
+
+% LIST FORMATTING
+\setlist[itemize]{leftmargin=*, label=$\bullet$, itemsep=2pt, topsep=2pt}
+\setlist[itemize,1]{label=\color{primary}\large\textbullet}
+
+%================================================================================
+%                         CUSTOM COMMANDS
+%================================================================================
+
+% Subheading list
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in,label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+
+% Main content entries
+\newcommand{\resumeSubheading}[4]{%
+  \item
+  \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & {\small\bfseries #2} \\
+    \textit{\color{primary} #3} & {\textit{\color{primary} #4}} \\
+  \end{tabular*}\vspace{-2pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{%
+  \item
+  \begin{tabular*}{1.0\textwidth}[t]{@{}l@{\extracolsep{\fill}}r@{}}
+    #1 & \href{#2}{\color{accent}\faExternalLinkSquare*} \\
+  \end{tabular*}\vspace{-6pt}
+}
+
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=12pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}}
+\newcommand{\resumeItem}[1]{\item\small{#1}}
+
+% Scalable bullet for certifications
+\newcommand{\sbullet}[1]{\mathbin{\scalerel*{\textbullet}{#1}}}
+
+% Contact item (unused)
+\newcommand{\contactItem}[2]{%
+  \item \small\textbf{#1:} \href{#2}{\underline{\color{accent}\StrBehind{#2}{://}}}
+}
+
+%================================================================================
+%                           DOCUMENT START
+%================================================================================
+
+\begin{document}
+
+\begin{center}
+    {\Huge \scshape ADITYA SINGH} \\[6pt]
+    \large Bangalore, Karnataka, India \\[8pt]
+\end{center}
+
+%-----------CONTACT-----------
+\section{CONTACT}
+\begin{center}
+\small
+
+\href{mailto:adityarathore2606@gmail.com}{\raisebox{-0.1\height}{\faEnvelope}\ adityarathore2606@gmail.com} $|$
+\href{https://linkedin.com/in/adityasinghgdev}{\raisebox{-0.1\height}{\faLinkedin}\ adityasinghgdev} $|$
+\href{https://github.com/EchoSingh}{\raisebox{-0.1\height}{\faGithub}\ EchoSingh} $|$
+\href{https://leetcode.com/rayo_n}{\raisebox{-0.1\height}{\faCode}\ rayo\_n} $|$
+\href{https://www.hackerrank.com/rayo_n}{\raisebox{-0.1\height}{\faHackerrank}\ rayo\_n} $|$
+\href{https://www.kaggle.com/adi2606}{\raisebox{-0.1\height}{\faKaggle}\ adi2606} 
+\end{center}
+
+
+%-----------EDUCATION---------------------------
+\section{EDUCATION}
+\vspace{5 pt}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Dayananda Sagar College of Engineering}{May 2022 -- May 2026}
+      {Bachelor of Engineering in Information Science and Engineering --- \textbf{CGPA: 9.29}}{Bangalore, Karnataka}
+  \resumeSubHeadingListEnd
+
+%-----------EXPERIENCE-----------
+\section{EXPERIENCE}
+\vspace{5 pt}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Nokia}{April 2025 -- Present}
+      {Machine Learning Intern}{Bangalore, Karnataka}
+      \resumeItemListStart
+        \resumeItem{Developed and curated Industrial OT Text Dataset for Large Language Model (LLM) fine-tuning, extracting data from industrial documents, product guides, service manuals, and standards.}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+\section{PROJECTS}
+\vspace{5 pt}
+\resumeSubHeadingListStart
+
+  \item
+  \begin{tabular*}{1.0\textwidth}[t]{@{}l@{\extracolsep{\fill}}r@{}}
+    \textbf{\large{\underline{Face Aging Using Conditional GAN}}} & \textit{Feb 2025 -- Apr 2025} \\
+    \multicolumn{2}{@{}l}{\href{https://www.kaggle.com/code/adi2606/face-aging-using-conditional-gan}{\texttt{kaggle.com/adi2606/code}}} \\
+  \end{tabular*}
+  \resumeItemListStart
+      \resumeItem{Built a GAN-based pipeline to generate aged versions of children's faces using Conditional GAN architecture.}
+      \resumeItem{Trained for 50 epochs with final generator loss of 5.9297 and discriminator loss of 0.0082, achieving stable convergence.}
+      \resumeItem{Received a \textbf{Bronze Medal on Kaggle} with \textbf{21+ upvotes}.}
+      \resumeItem{\textbf{Tech Stack:} Python, GANs, Kaggle.}
+  \resumeItemListEnd
+  \vspace{5pt}
+
+  \item
+  \begin{tabular*}{1.0\textwidth}[t]{@{}l@{\extracolsep{\fill}}r@{}}
+    \textbf{\large{\underline{CarGoPlus - Car Rental Management System}}} & \textit{Sep 2024 -- Dec 2024} \\
+    \multicolumn{2}{@{}l}{\href{https://github.com/EchoSingh/CarGoPlus}{\texttt{github.com/EchoSingh/CarGoPlus}}} \\
+  \end{tabular*}
+  \resumeItemListStart
+      \resumeItem{Developed a car rental management system with a GUI using C++ and \textbf{wxWidgets}, integrated with a \textbf{MySQL backend}.}
+      \resumeItem{Gained hands-on experience with \textbf{wxWidgets} for creating native desktop interfaces and managing event-driven programming.}
+      \resumeItem{\textbf{Technologies:} C++, wxWidgets, MySQL, Visual Studio.}
+  \resumeItemListEnd
+  \vspace{5pt}
+
+\resumeSubHeadingListEnd
+
+
+
+%-----------ACHIEVEMENTS-----------
+\section{Achievements}
+\resumeSubHeadingListStart
+
+  \resumeSubheading
+    {Sandbox 2025 Cybersecurity Hackathon}{March 1–2, 2025}
+    {Top 10 Finalist}{}
+    \resumeItemListStart
+      \resumeItem{Recognized for developing innovative cybersecurity solutions. \href{https://github.com/EchoSingh/ML-DeepFake-Detection-Defense--BAM-}{(GitHub Repository)}}
+    \resumeItemListEnd
+
+  \resumeSubheading
+    {Kaggle Expert}{Ongoing}
+    {Notebook Expert Rank: \textbf{1,318} of 51,736 (Top 2.5\%) \quad | \quad Dataset Expert Rank: \textbf{679} of 9,268 (Top 7.3\%)}{}
+    \resumeItemListStart
+      \resumeItem{Earned \textbf{7 medals} for high-quality contributions to notebooks and datasets.}
+    \resumeItemListEnd
+
+  \resumeSubheading
+    {LeetCode}{Ongoing}
+    {Contest Rating: \textbf{1,531} (Top 35.76\% Globally)}{}
+
+
+\resumeSubHeadingListEnd
+
+
+%-----------SKILLS---------------
+
+\section*{Technical Skills}
+\vspace{5pt}
+\begin{itemize}[leftmargin=0.15in, label={}]
+    \item \textbf{Languages:} C++, Java, Python, SQL 
+    \item\textbf{Frameworks/Libraries:} wxWidgets, Android SDK, Hugging Face Transformers
+    \item \textbf{ML \& Data:} Large Language Models (LLMs), Dataset Curation, Docling, CleanText
+    \item \textbf{Tools:} Visual Studio Code, Eclipse, JetBrains Fleet, Kaggle, Google Colab
+\end{itemize}
+
+\end{document}

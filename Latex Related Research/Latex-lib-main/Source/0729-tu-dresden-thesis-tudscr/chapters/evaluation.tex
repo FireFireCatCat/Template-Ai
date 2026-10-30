@@ -1,0 +1,40 @@
+\chapter{Evaluation}
+\label{ch:evaluation}
+
+\section{Experimental Setup}
+
+Experiments were run on a five-node cluster. Table~\ref{tab:results}
+summarises throughput under increasing partition rates.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Throughput (requests/s) under simulated partition rates.}
+  \label{tab:results}
+  \begin{tabular}{@{}lrr@{}}
+    \toprule
+    Partition rate & Baseline & Proposed \\
+    \midrule
+    0\%  & 12{,}400 & 12{,}100 \\
+    5\%  & 9{,}800  & 11{,}600 \\
+    10\% & 6{,}200  & 10{,}900 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Latency Under Load}
+
+Figure~\ref{fig:latency} shows median request latency as the partition
+rate increases.
+
+\begin{figure}[htbp]
+  \centering
+  \rule{0.6\textwidth}{4cm}
+  \caption{Median latency versus simulated partition rate.}
+  \label{fig:latency}
+\end{figure}
+
+\section{Discussion}
+
+The proposed protocol maintains throughput more effectively than the
+baseline once the partition rate exceeds 5\%, at the cost of a small
+constant latency overhead \citep{ongaro2014search}.

@@ -1,0 +1,48 @@
+\documentclass[
+  final,
+  screen,
+  editorial=false,
+  informations=false,
+  membership-reminder=false,
+  detailedtoc=2,
+  number=42,
+  date=2026-08
+]{letgut}
+
+\addbibresource{references.bib}
+\title{La lettre des outils ouverts}
+\author{Association GUTenberg}
+
+\begin{document}
+\maketitle
+% letgut's end-of-document bookmark hook assumes article's author command is
+% still defined after its custom title page has run.
+\makeatletter
+\ProvideDocumentCommand{\author}{m}{\gdef\@author{#1}}
+\makeatother
+
+\inputarticle*{editorial}
+
+\section{Une chaîne éditoriale reproductible}
+
+Un bon bulletin technique doit être lisible à l'écran comme sur papier. La
+classe \texttt{letgut} rassemble une mise en page de bulletin, des marges
+éditoriales et une bibliographie locale afin que chaque numéro puisse être
+reconstruit sans accès réseau. Cette démonstration cite une source de référence
+sur la composition numérique~\cite{knuth1984}.
+
+\begin{announcement}[color=orange!65!black,colback=yellow!10]{À retenir}
+  Gardez les données éditoriales, les images et le fichier bibliographique dans
+  le même dossier que le numéro distribué.
+\end{announcement}
+
+\subsection{Un exemple de code}
+
+\begin{lstlisting}[language={[LaTeX]TeX},caption={Une section minimale}]
+\section{Titre}
+Un paragraphe de contenu, suivi de \cite{lamport1994}.
+\printbibliography
+\end{lstlisting}
+
+\printbibliography[heading=subtitle,title={Références}]
+\end{document}

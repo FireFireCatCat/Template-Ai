@@ -1,0 +1,29 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[margin=1.7cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+\definecolor{tomato}{HTML}{B84A3A}
+\definecolor{leaf}{HTML}{516B4D}
+\definecolor{cream}{HTML}{FBF6EA}
+\pagestyle{fancy}\fancyhf{}\lhead{\sffamily\small\color{leaf}THE EVERYDAY TABLE}\rhead{\sffamily\small\color{tomato}RECIPES}\cfoot{\sffamily\small\thepage}\renewcommand{\headrulewidth}{0pt}
+\titleformat{\section}{\Large\bfseries\color{leaf}}{}{0pt}{}[\color{tomato}\titlerule]
+\newcommand{\recipe}[4]{%
+  \section*{#1}\textit{#2}\hfill\textcolor{tomato}{#3}\par\smallskip
+  \begin{tcolorbox}[colback=cream,colframe=tomato!55!black,boxrule=.4pt,arc=1mm]
+  \begin{multicols}{2}\textbf{Ingredients}\par\smallskip\begin{itemize}[leftmargin=*,nosep]#4\end{itemize}\columnbreak\textbf{Method}\par\smallskip\begin{enumerate}[leftmargin=*,nosep]\item Prepare the ingredients and heat the pan or oven as directed.\item Combine in stages, tasting as you go and keeping the texture in mind.\item Rest briefly, finish with the garnish, and serve warm.\end{enumerate}\end{multicols}\end{tcolorbox}\medskip}
+\begin{document}
+\begin{center}{\sffamily\fontsize{28}{30}\selectfont\bfseries\color{leaf} The Everyday Table}\par\smallskip{\large A practical recipe-book starter}\par\smallskip\textcolor{tomato}{Simple food · clear steps · room to make it yours}\end{center}
+\vspace{4pt}
+\recipe{Roasted tomato and white bean soup}{Serves 4}{45 minutes}{\item 800 g ripe tomatoes\item 2 cans cannellini beans\item 1 onion, diced\item 3 cloves garlic\item 750 ml vegetable stock\item 2 tbsp olive oil\item basil, salt, pepper}
+\recipe{Citrus grain salad}{Serves 4}{30 minutes}{\item 250 g pearl couscous\item 2 oranges\item 1 cucumber\item 100 g toasted almonds\item 1 handful parsley\item 3 tbsp olive oil\item lemon juice and salt}
+\recipe{Oat and pear crumble}{Serves 6}{50 minutes}{\item 5 ripe pears\item 100 g rolled oats\item 80 g plain flour\item 75 g butter\item 60 g brown sugar\item 1 tsp cinnamon}
+\section*{Kitchen notes}
+\begin{itemize}[leftmargin=*]\item Keep preparation and cooking time in the recipe header so the page works as a quick reference.\item Replace the method steps with your own detailed sequence when a recipe needs more than three stages.\item Add an image with \texttt{graphicx} or divide the book into sections with ordinary \texttt{section} headings.\end{itemize}
+\end{document}

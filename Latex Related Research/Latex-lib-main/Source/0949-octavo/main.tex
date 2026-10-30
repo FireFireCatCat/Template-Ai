@@ -1,0 +1,82 @@
+% octavo — a modification of the standard `book` class implementing
+% Tschichold/Rosarivo classical page-proportion and margin theory, plus
+% signature imposition for hand bookbinding. Ships with TeX Live; not
+% bundled.
+%
+% `demy` selects one of the class's nine classical paper formats
+% (foolscap/crown/post/largepost/demy/medium/royal/superroyal/imperial).
+% `titlepage` is passed explicitly: the class's own \ExecuteOptions sets
+% notitlepage as the ACTUAL default (a standalone \@titlepagetrue earlier
+% in the file is overridden by it), so \maketitle is undefined unless
+% this is passed.
+%
+% Class documentation: texdoc octavo | https://ctan.org/pkg/octavo
+% Licence: LPPL, (c) 2003, 2007 Stefan A. Revets — the grant is in the
+% package's octavo.ins file, not octavo.dtx itself.
+\documentclass[demy,11pt,openright,titlepage]{octavo}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\title{On the Proportions of the Well-Made Book}
+\author{Cecilia Hartmann}
+\date{\today}
+
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\chapter*{Preface}
+This short treatise gathers a printer's working notes on classical
+page design — the kind of book Jan Tschichold or Hugh Williamson might
+have kept beside the composing stone. It is set in the \emph{demy}
+format, one of nine classical trim sizes this class provides.
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{The Golden Canon}
+
+Long before typography had a name, scribes and printers noticed that
+certain page proportions felt more settled than others. The
+\emph{golden canon of page construction}, reconstructed by Jan
+Tschichold from medieval manuscripts, divides the page and its text
+block so that the margins grow in a fixed ratio outward from the
+spine: the inner margin narrowest, the head somewhat wider, the outer
+wider still, and the foot widest of all.
+
+\section{Why the Margins Are Not Equal}
+
+An equal margin on all four sides looks correct on a single sheet, but
+wrong in a bound book: two facing pages with equal margins read as a
+single wide gutter, pulling the eye toward the spine instead of toward
+the text. Tschichold's unequal margins compensate for the way an open
+book is actually seen — as a spread, not as two isolated rectangles.
+
+\chapter{Signatures and Imposition}
+
+A book is not printed one page at a time. Pages are grouped into
+\emph{signatures} — folded sheets of 8, 16, or 32 pages — and the
+pages within a signature are arranged, or \emph{imposed}, so that
+after folding and trimming they fall into the correct reading order.
+
+\section{Folding an Octavo Signature}
+
+An octavo signature folds a single large sheet in half three times,
+producing eight leaves (sixteen pages) per signature — hence the class
+and format's shared name. Getting the imposition wrong is invisible on
+screen and catastrophic on paper: pages print in the wrong order, or
+upside down, only discovered after folding.
+
+\backmatter
+
+\chapter{Further Reading}
+
+Tschichold's \emph{The Form of the Book} and Williamson's \emph{Methods
+of Book Design} remain the standard references for the ideas this
+class implements in code.
+
+\end{document}

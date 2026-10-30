@@ -1,0 +1,33 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=0.4cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{tikz,xcolor,qrcode}
+\pagestyle{empty}
+\definecolor{blue}{HTML}{1D4ED8}
+\definecolor{yellow}{HTML}{FACC15}
+\newcommand{\card}{%
+  \begin{tikzpicture}
+    \draw[fill=white,draw=blue,line width=.8pt] (0,0) rectangle (8.6,5.4);
+    \fill[blue] (0,3.98) rectangle (8.6,5.4);
+    \fill[yellow] (0,3.98) rectangle (1.05,5.4);
+    \node[anchor=west,text=blue,font=\sffamily\bfseries\Large]
+      at (.56,4.69) {TRYBIBBY};
+    \node[anchor=west,text=white,font=\sffamily\small]
+      at (1.32,4.69) {studio};
+    \node[anchor=north west,text=blue,font=\sffamily\bfseries\large]
+      at (.6,3.42) {Taylor Brooks};
+    \node[anchor=north west,font=\sffamily\small]
+      at (.62,2.95) {brand and product strategy};
+    \node[anchor=north west,font=\sffamily\scriptsize]
+      at (.62,2.27) {taylor@example.org  |  +1 555 010 2040};
+    \node[anchor=south east] at (8.0,.45)
+      {\qrcode[height=1.28cm]{https://taylorbrooks.example}};
+  \end{tikzpicture}%
+}
+\begin{document}
+\noindent\begin{tabular}{cc}
+  \card&\card\\[.15cm]\card&\card\\[.15cm]
+  \card&\card\\[.15cm]\card&\card\\[.15cm]\card&\card
+\end{tabular}
+\end{document}

@@ -1,0 +1,54 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=18mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{multi-sudoku}
+
+\definecolor{puzzleblue}{HTML}{1E4E79}
+\title{A Multi-Size Sudoku Worksheet}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{How to use this sheet}
+Fill each grid so that a value appears only once in every row, column, and
+sub-grid.  The `multi-sudoku` package accepts familiar tabular syntax and
+supports grids larger than the usual 9 by 9 format.
+
+\begin{center}
+  \begin{minipage}[t]{0.31\linewidth}
+    \centering
+    \textcolor{puzzleblue}{\large\bfseries 4 $\times$ 4}\par\smallskip
+    \begin{sudoku}[size=4x4,length=2.1em,fontsize=\normalsize,thickness=1pt]
+      1 &   & 3 &   \NL
+        & 4 &   & 2 \nl
+        & 1 & 4 &   \NL
+      4 &   &   & 1
+    \end{sudoku}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.64\linewidth}
+    \centering
+    \textcolor{puzzleblue}{\large\bfseries 9 $\times$ 9}\par\smallskip
+    \begin{sudoku}[size=9x9,length=1.17em,fontsize=\scriptsize,thickness=1pt]
+      5 & 3 &   &   & 7 &   &   &   &   \nl
+      6 &   &   & 1 & 9 & 5 &   &   &   \nl
+        & 9 & 8 &   &   &   &   & 6 &   \NL
+      8 &   &   &   & 6 &   &   &   & 3 \nl
+      4 &   &   & 8 &   & 3 &   &   & 1 \nl
+      7 &   &   &   & 2 &   &   &   & 6 \NL
+        & 6 &   &   &   &   & 2 & 8 &   \nl
+        &   &   & 4 & 1 & 9 &   &   & 5 \nl
+        &   &   &   & 8 &   &   & 7 & 9
+    \end{sudoku}
+  \end{minipage}
+\end{center}
+
+\section*{Editing notes}
+Change the optional `size`, `length`, `fontsize`, and `thickness` keys on an
+individual `sudoku` environment to make a worksheet or a large-format puzzle.
+Blank cells are left empty; clues are ordinary numbers.
+\end{document}

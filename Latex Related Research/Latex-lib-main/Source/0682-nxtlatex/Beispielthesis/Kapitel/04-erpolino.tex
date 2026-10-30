@@ -1,0 +1,216 @@
+\chapter{Das Unternehmen Erpolino}
+\label{kap:erpolino}
+
+Die vorangegangenen Kapitel haben das Zuordnungsproblem in allgemeiner Form
+entwickelt. Damit aus dem Modell eine rechenbare Instanz wird, sind konkrete
+Zahlen nötig: Wer arbeitet im Betrieb, welche Tätigkeiten darf diese Person
+ausführen, wie schnell erledigt sie diese, und welche Arbeitsgänge stehen
+überhaupt an. Dieses Kapitel beschreibt das Unternehmen, aus dem diese Daten
+stammen, und legt offen, wie die Zahlen der Untersuchung zustande
+kommen.\footnote{Die Erpolino Metallverarbeitung GmbH ist ein frei erfundenes
+Unternehmen. Sämtliche in dieser Arbeit genannten Angaben zu Geschichte,
+Größe, Kundenstruktur, Personal und Auftragsbestand sowie alle Zahlenwerte der
+Qualifikationsmatrix und des Fertigungsloses sind konstruiert und dienen
+ausschließlich dazu, das Verfahren an einer in sich stimmigen Instanz
+vorzuführen. Ein realer Betrieb dieses oder ähnlichen Namens ist nicht
+gemeint, und die Ergebnisse lassen keinen Rückschluss auf reale Betriebsdaten
+zu.}
+
+\section{Unternehmen und Fertigung}
+\label{sec:unternehmen}
+
+Die Erpolino Metallverarbeitung GmbH mit Sitz in Reutlingen wird 1978 als
+Dreherei mit vier Beschäftigten gegründet. Der Standort liegt in der Region
+Neckar-Alb, einem von mittelständischer Zulieferindustrie geprägten Teil
+Baden-Württembergs, dessen Nähe zu den Ballungsräumen Stuttgart und Tübingen
+den Kundenkreis des Unternehmens bis heute prägt. Seit 2004 führt die zweite
+Generation der Gründerfamilie das Unternehmen; die Geschäftsanteile befinden
+sich vollständig in Familienbesitz. Diese Eigentümerstruktur ist für die
+Fragestellung der vorliegenden Arbeit insofern relevant, als Investitions- und
+Organisationsentscheidungen ohne externe Kapitalgeber getroffen werden und
+Veränderungen in der Planung entsprechend selten aus formalen Vorgaben,
+sondern aus praktischem Bedarf entstehen.
+
+Gegenwärtig beschäftigt das Unternehmen rund 120 Mitarbeitende, von denen etwa
+45 in der Fertigung tätig sind. Die übrigen Stellen verteilen sich auf
+Konstruktion, Vertrieb, Einkauf, Qualitätsmanagement, Verwaltung und
+Instandhaltung. Das Unternehmen betreibt keine eigene Produktentwicklung und
+vertreibt keine eigenen Erzeugnisse, sondern arbeitet ausschließlich in der
+\Index{Lohnfertigung}: Es fertigt Präzisionsteile nach Zeichnungen und
+Spezifikationen seiner Auftraggeber. Der wirtschaftliche Kern des
+Geschäftsmodells liegt damit nicht im Produkt, sondern in der verfügbaren
+Fertigungskapazität und in der Fähigkeit, diese termingerecht bereitzustellen.
+
+Die Kunden stammen im Wesentlichen aus drei Branchen. Der \Index{Maschinenbau}
+bezieht Gehäuse-, Trag- und Rahmenteile in kleinen Stückzahlen, häufig als
+Ersatz- oder Vorserienteile. Die \Index{Antriebstechnik} fragt Wellen,
+Buchsen, Lagerböcke und Getriebedeckel nach, meist in mittleren Losgrößen und
+mit engen Form- und Lagetoleranzen. Die \Index{Medizintechnik} schließlich
+verlangt kleine Stückzahlen bei hohen Anforderungen an Oberflächengüte und
+Dokumentation. Keiner dieser Kunden vergibt Großserien; die typische
+\Index{Losgröße} liegt zwischen einem Dutzend und einigen hundert Teilen. Für
+die Fertigung bedeutet dies einen häufigen Wechsel zwischen Aufträgen und
+einen entsprechend hohen Anteil an Rüst- und Einrichtvorgängen.
+
+Die Fertigungstiefe umfasst sechs Bereiche: Drehen, Fräsen, Schweißen,
+Schleifen, CNC-Programmierung und Qualitätsprüfung. Der Maschinenpark besteht
+überwiegend aus CNC-Dreh- und Bearbeitungszentren, ergänzt um konventionelle
+Maschinen für Einzelteile und Nacharbeit. Wärmebehandlung und
+Oberflächenveredelung werden zugekauft und sind nicht Gegenstand dieser
+Arbeit. Die sechs Bereiche sind keine räumlich getrennten Abteilungen mit
+festem Personal, sondern Tätigkeitsfelder, zwischen denen die Beschäftigten je
+nach Auftragslage wechseln. Genau diese Flexibilität ist der Ausgangspunkt der
+Untersuchung: Sie eröffnet Spielräume in der Zuteilung, die bislang nicht
+systematisch genutzt werden.
+
+\section{Qualifikationen der Mitarbeitenden}
+\label{sec:qualifikationen}
+
+Ob eine Person einen Arbeitsgang übernehmen kann, entscheidet sich an ihrer
+Qualifikation. Das Unternehmen unterscheidet die \ZahlQualifikationen{}
+Qualifikationen Drehen, Fräsen, Schweißen, Schleifen, CNC-Programmierung und
+Qualitätsprüfung. Sie werden über Ausbildung, innerbetriebliche Einweisung und
+in Teilen über externe Zertifikate erworben; das Schweißen und die
+Qualitätsprüfung unterliegen dabei formalen Nachweispflichten gegenüber den
+Kunden der Medizintechnik. Niemand in der Fertigung beherrscht alle sechs
+Felder, und niemand beherrscht nur eines: Die Beschäftigten verfügen in der
+Regel über zwei oder drei Qualifikationen.
+
+Erfasst wird dieser Sachverhalt in einer \Index{Qualifikationsmatrix}. Sie ordnet
+jedem Paar aus Mitarbeiter und Qualifikation entweder einen Zahlenwert oder die
+Angabe zu, dass die Qualifikation nicht vorliegt. Der Zahlenwert ist die
+\Index{Effizienz} der Person in diesem Feld. Sie ist als Verhältniszahl definiert:
+Der Wert $1{,}00$ entspricht der \Index{Normalleistung}, also derjenigen Leistung, die
+der Arbeitsplanung als Vorgabewert zugrunde liegt. Ein Wert über $1{,}00$
+bedeutet, dass die Person schneller arbeitet als die Vorgabe, ein Wert
+darunter, dass sie länger braucht. Die Bearbeitungsdauer eines Arbeitsgangs
+ergibt sich daraus als Quotient aus der Grundzeit des Arbeitsgangs und der
+Effizienz der ausführenden Person. Eine Grundzeit von 120 Minuten führt bei
+einer Effizienz von $1{,}20$ folglich auf 100 Minuten, bei einer Effizienz von
+$0{,}90$ dagegen auf rund 133 Minuten.
+
+Die im Unternehmen auftretenden Werte liegen zwischen $0{,}85$ und $1{,}40$.
+Diese Spanne ist erklärungsbedürftig, denn sie ist erheblich: Zwischen der
+langsamsten und der schnellsten Bearbeitung desselben Arbeitsgangs liegt ein
+Faktor von mehr als eineinhalb. Sie erklärt sich aus der Zusammensetzung der
+Belegschaft. Wer eine Tätigkeit seit Jahren täglich ausübt, erreicht Werte im
+oberen Bereich; wer die Qualifikation zwar besitzt, sie aber nur gelegentlich
+einsetzt, liegt unter der Normalleistung. Die Effizienz misst damit keine
+persönliche Leistungsbereitschaft, sondern Routine im jeweiligen Feld. Sie ist
+zudem qualifikationsbezogen und nicht personenbezogen: Dieselbe Person kann in
+einem Feld über und in einem anderen unter der Normalleistung liegen.
+
+Fehlt die Qualifikation, so ist die Zuordnung nicht etwa langsam, sondern
+unzulässig. Für diesen Fall existiert kein Effizienzwert, und in der Matrix
+steht ein Strich. Diese Unterscheidung ist für die Modellierung wesentlich: Ein
+fehlender Eintrag darf nicht durch einen sehr kleinen Effizienzwert ersetzt
+werden, weil das Verfahren eine solche Zuordnung sonst zwar teuer, aber
+grundsätzlich zulässig behandeln würde. Wie diese Schranke im linearen Modell
+umgesetzt wird, ist in Kapitel~3 dargelegt.
+
+\begin{landscape}
+\begin{table}
+  \centering
+  \input{Tabellen/qualifikationsmatrix}
+  \caption[Qualifikationsmatrix der Fertigung]{Qualifikationsmatrix: Effizienz je Mitarbeiter und Qualifikation. Der Wert 1,00 entspricht der Normalleistung; ein Strich bedeutet, dass die Qualifikation nicht vorliegt und die Zuordnung damit unzulässig ist.}
+  \label{tab:qualifikationsmatrix}
+\end{table}
+\end{landscape}
+
+Tabelle~\ref{tab:qualifikationsmatrix} zeigt die Matrix für die
+\ZahlMitarbeiter{} Mitarbeitenden, die in dieser Arbeit betrachtet werden. Zwei
+Beobachtungen sind für das weitere Vorgehen wichtig. Erstens ist die Matrix
+dünn besetzt: Von den $\ZahlMitarbeiter \times \ZahlQualifikationen = 48$
+denkbaren Kombinationen sind nur 21 belegt. Zweitens ist die Besetzung
+ungleichmäßig. Fünf Personen dürfen drehen, aber nur zwei sind für die
+CNC-Programmierung qualifiziert, und beim Schweißen wie bei der
+Qualitätsprüfung sind es jeweils drei. Damit ist bereits an der Matrix
+ablesbar, wo Engpässe zu erwarten sind: Arbeitsgänge, die eine seltene
+Qualifikation verlangen, konkurrieren um dieselben wenigen Personen,
+unabhängig davon, wie gut die übrige Belegschaft ausgelastet ist.
+
+\section{Das Fertigungslos einer Kalenderwoche}
+\label{sec:fertigungslos}
+
+Als Datengrundlage der Untersuchung dient das Fertigungslos einer
+Kalenderwoche, wie es die \Index{Arbeitsvorbereitung} zu Wochenbeginn freigibt.
+Es umfasst \ZahlAufgaben{} Arbeitsgänge, die aus Kundenaufträgen der drei
+genannten Branchen hervorgehen. Jeder Arbeitsgang ist durch drei Angaben
+bestimmt: eine Bezeichnung, die das zu bearbeitende Teil und die Tätigkeit
+benennt, die geforderte Qualifikation und eine \Index{Grundzeit} in Minuten.
+
+Die Grundzeit stammt aus dem Arbeitsplan des jeweiligen Teils. Sie ist die
+kalkulierte Bearbeitungszeit bei Normalleistung und schließt Nebenzeiten wie
+Aufspannen und Messen ein, nicht jedoch die \Index{Rüstzeit} der Maschine, die im
+Unternehmen gesondert erfasst und in dieser Arbeit nicht modelliert wird. Die
+Grundzeiten des betrachteten Loses liegen zwischen 45 und 150 Minuten. Diese
+Spanne ist typisch für den Betrieb: Die kurzen Arbeitsgänge entfallen
+überwiegend auf die Qualitätsprüfung, die langen auf Fräs- und Schweißarbeiten
+an größeren Bauteilen.
+
+Aus der Kombination von Fertigungslos und Qualifikationsmatrix ergibt sich die
+Größe der Probleminstanz. Von den $\ZahlMitarbeiter \times \ZahlAufgaben = 192$
+denkbaren Zuordnungen sind \ZahlPaare{} zulässig; mehr als die Hälfte scheidet
+also allein an der fehlenden Qualifikation aus. Für jedes der \ZahlPaare{}
+zulässigen Paare ist eine Bearbeitungszeit definiert, für alle übrigen keine.
+
+\input{Tabellen/arbeitsgaenge}
+
+Tabelle~\ref{tab:arbeitsgaenge} führt die \ZahlAufgaben{} Arbeitsgänge mit
+Bezeichnung, Grundzeit, geforderter Qualifikation und der Dauer auf, die sich
+in der später berechneten Zuordnung tatsächlich ergibt. Der Vergleich der
+beiden Zeitspalten macht die Wirkung der Effizienz sichtbar: Wo die Dauer unter
+der Grundzeit liegt, hat das Verfahren den Arbeitsgang einer Person mit
+überdurchschnittlicher Routine zugewiesen; wo sie darüber liegt, war eine
+schnellere Person entweder nicht qualifiziert oder bereits stärker belastet als
+der Gesamtplan es zulässt. Dass das Verfahren einzelne Arbeitsgänge bewusst
+langsamer ausführen lässt, als es möglich wäre, ist kein Fehler, sondern
+Ausdruck der Zielsetzung: Minimiert wird nicht die Summe der Bearbeitungszeiten,
+sondern die Belastung der am stärksten ausgelasteten Person.
+
+\section{Bisherige Disposition und ihre Schwächen}
+\label{sec:disposition}
+
+Die Zuteilung der Arbeitsgänge erfolgt im Unternehmen bislang ohne
+rechnergestützte Optimierung. Die Fertigungsleitung öffnet zu Wochenbeginn eine
+Tabellenkalkulation, in der die freigegebenen Arbeitsgänge und die verfügbaren
+Personen aufgelistet sind, und trägt die Zuordnung von Hand ein. Die
+Qualifikationsmatrix existiert dabei durchaus, sie liegt jedoch als eigenes
+Tabellenblatt vor und wird beim Eintragen aus dem Gedächtnis herangezogen. Eine
+Prüfung, ob die eingetragene Person die geforderte Qualifikation überhaupt
+besitzt, findet nicht automatisch statt.
+
+Das Vorgehen folgt einer erkennbaren Regel, auch wenn diese nirgends
+niedergeschrieben ist. Zuerst werden die Arbeitsgänge mit seltenen
+Qualifikationen verteilt, weil dort kaum Wahlmöglichkeiten bestehen. Danach
+werden die verbleibenden Arbeitsgänge der Reihe nach vergeben, wobei die
+Fertigungsleitung jeweils die Person auswählt, die den Arbeitsgang am
+schnellsten erledigen kann und noch als frei gilt. Diese Regel ist plausibel
+und liefert zulässige Pläne. Sie ist zugleich eine \Index{Greedy-Regel} im Sinne
+von Kapitel~2: Sie trifft jede Entscheidung lokal und revidiert sie nicht,
+wenn sich später herausstellt, dass eine andere Wahl den Gesamtplan verbessert
+hätte.
+
+Daraus folgt die zentrale Schwäche. Wer in einem Feld die höchste Effizienz
+besitzt, erhält dort tendenziell jeden Arbeitsgang und ist am Ende der Woche
+überlastet, während andere Kapazität ungenutzt bleibt. Da das Los erst
+abgeschlossen ist, wenn der letzte Arbeitsgang beendet wurde, bestimmt allein
+die am stärksten belastete Person den \Index{Makespan}. Eine Zuordnung, die einen
+schnellen Mitarbeiter entlastet und dafür einen Arbeitsgang bewusst einer
+langsameren Person überträgt, kann den Gesamtplan folglich verkürzen, obwohl
+sie die Summe der Bearbeitungszeiten erhöht. Genau diese Möglichkeit ist einer
+Regel, die Arbeitsgang für Arbeitsgang die jeweils schnellste Person wählt,
+strukturell verschlossen.
+
+Wie groß der dadurch verschenkte Spielraum ist, lässt sich beziffern. Die
+nachgebildete Greedy-Regel erreicht auf dem betrachteten Los einen Makespan von
+\MakespanGreedy{} Minuten, das exakte Verfahren dagegen \Optimum{} Minuten. Die
+Differenz von rund einer halben Stunde entsteht nicht durch zusätzliche
+Kapazität, sondern allein durch eine andere Verteilung derselben Arbeit auf
+dieselben Personen. Hinzu kommen zwei Nachteile, die sich nicht in Minuten
+ausdrücken lassen: Die Zuteilung ist an das Erfahrungswissen einzelner Personen
+gebunden und bei deren Abwesenheit nur eingeschränkt reproduzierbar, und sie
+ist gegenüber den Beschäftigten nicht begründbar, weil kein nachvollziehbares
+Kriterium vorliegt, nach dem sie zustande gekommen ist. Ein Optimierungsmodell
+beseitigt beide Nachteile als Nebeneffekt: Es macht die Regel explizit, nach
+der geplant wird.

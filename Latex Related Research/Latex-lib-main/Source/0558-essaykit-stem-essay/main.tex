@@ -1,0 +1,62 @@
+% Original STEM essay starter using essaykit (LPPL-1.3c, CTAN: essaykit).
+% The prose and structure here are original catalogue content; essaykit is
+% used only as the installed formatting package.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{microtype}
+\usepackage{essaykit}
+\usepackage{amsmath}
+\title{A Short STEM Essay}
+\author{Student Name \\ Course or Institution}
+\date{\today}
+
+\begin{document}
+\maketitle
+\maintitle[titlecolor=mybluecolour]{Why small experiments make better engineering decisions}
+
+\begin{abstract}
+  A compact essay starter with a clear claim, evidence boxes, quotations and
+  a source list. Replace the sample topic and sources with your own argument.
+\end{abstract}
+
+\section{Claim and context}
+Engineering decisions are often made with incomplete information. A small
+experiment narrows the uncertainty before a team commits to an expensive
+design. This essay argues that the best experiment is not the most realistic
+one: it is the smallest test that can distinguish between the competing
+explanations for a failure or opportunity.
+
+\rbox[title=Working claim,color=softblue]{
+  Prefer experiments that change one decision, measure one observable outcome,
+  and can be repeated by somebody who did not design the test.
+}
+
+\section{A practical method}
+Start by writing down two hypotheses, $H_0$ and $H_1$, and the observation that
+would make them disagree. If a sensor is suspected of causing latency, for
+example, compare the same request path with and without that sensor while
+holding the payload and load constant. The result is more useful than a large
+benchmark that changes several variables at once.
+
+\begin{enumerate}
+  \item State the decision the experiment is meant to inform.
+  \item Choose a measurable outcome and a stopping rule.
+  \item Record the setup, including the conditions that could confound it.
+  \item Run a baseline before changing the proposed mechanism.
+  \item Publish the result, including an unsuccessful or inconclusive result.
+\end{enumerate}
+
+\quoter{The important thing is not to stop questioning.}{Albert Einstein}
+
+\section{Limits and conclusion}
+Small experiments do not eliminate uncertainty; they make its remaining shape
+visible. A result from a quiet test environment may not predict production
+behaviour, and a controlled test can miss interactions between components.
+Those limits belong in the conclusion rather than in a footnote. The useful
+outcome is a better next decision, not a claim that the system is proven safe.
+
+\rrule
+\sources{\href{https://www.nist.gov/}{NIST Engineering Statistics Handbook},
+  \href{https://www.iso.org/standard/62085.html}{ISO 9001:2015 quality principles},
+  Course notes or assigned reading}
+\end{document}

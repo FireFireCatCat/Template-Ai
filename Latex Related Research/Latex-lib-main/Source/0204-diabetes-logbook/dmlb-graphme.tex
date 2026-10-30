@@ -1,0 +1,38 @@
+\documentclass[a4paper]{article}
+\usepackage[
+   top=1.5cm, 
+   bottom=0.6cm, 
+   hmargin=1cm,% FIXME multi-row single-entry date misaligned if greater
+   footskip=4.40004pt,
+   headsep=10pt,
+   ]{geometry}
+\usepackage[graph]{diabetes-logbook}
+\nonstopmode%
+% CONSTS ==============================
+   \edef\myRelPath{./graphs/}% RELATIVE PATH FOR AUXILIARY FILES
+   \edef\mya{3}% Y-AXIS SCALE COMPRESSION FACTOR AFTER \MYB
+   \edef\myb{8}% BEGIN Y-AXIS TICK SCALING FROM \MYB
+   %% \edef\myc{3}% ADDITIONAL EQUIDISTANT GRID LINES AFTER \MYB + 1, I.E., 1 -> NO EXTRA
+   \edef\myd{21}% DAYS PER GRAPH; TO NEGATE WARNINGS; DOESN'T MATTER IF COMMENTED OUT
+% COLORS ==============================
+   % COMMENT OUT SECTION FOR DEFAULT COLOR SCHEME
+   % ROWS
+   \definecolor{oddRowColor}{RGB}{55,24,34}
+   \definecolor{evenRowColor}{RGB}{28,19,23}
+   % TEXT
+   \colorlet{oddRowTextColor}{-oddRowColor}
+   \colorlet{evenRowTextColor}{-evenRowColor}
+   % TABLE
+   \definecolor{tableColor}{RGB}{180,232,252}
+   % HEADER/FOOTER
+   \colorlet{headerColor}{green!50}
+   % PAGE BACKGROUND
+   \definecolor{pageBG}{RGB}{28,24,32}
+   \pagecolor{pageBG}
+   % GRAPH CURVE
+   \colorlet{curveColor}{pink!80!black}
+\begin{document}
+\end{document}
+
+xelatex -shell-escape graphme.tex
+pdflatex -shell-escape graphme.tex

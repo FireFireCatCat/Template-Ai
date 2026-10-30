@@ -1,0 +1,173 @@
+%======================================================
+% Conference Booklet / Book of Abstracts — adapted from AMCOS_booklet
+% https://github.com/maximelucas/AMCOS_booklet (GPL-3.0)
+% Original authors: Maxime Lucas, Pau Clusella
+%
+% Simplified from upstream: dropped the online/print dual-compile
+% machinery (\ifOnline switch, two separate abstract sets under
+% abstracts/tex/) and the cover page, which upstream includes as an
+% external PDF ("our cover was produced with canva.com" — not
+% redistributable without that design tool). This starter draws its own
+% simple title page in LaTeX instead, and ships ONE version with real
+% (invented) abstract content in place of upstream's Jane-Austen-style
+% filler text.
+%======================================================
+\documentclass[openany, parskip=full, 12pt, a4paper]{scrbook}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{xspace}
+\usepackage{microtype}
+\usepackage{cmbright}
+\usepackage{color}
+\usepackage[table]{xcolor}
+\usepackage{scrhack}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{longtable}
+\usepackage{ifthen}
+\usepackage[english]{babel}
+\usepackage[hidelinks]{hyperref}
+
+\pagestyle{plain}
+\setcounter{secnumdepth}{-2}
+
+\input{preamble_booklet}
+
+\begin{document}
+
+% TITLE PAGE
+%--------------------------------------------------------------------
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+{\Huge \bfseries \textcolor{myblue}{Complex Networks in Motion}}\\[1em]
+{\Large 4th International Workshop on Dynamical Networks}\\[2em]
+{\large Book of Abstracts}\\[3em]
+{\large 14--16 September 2026 \\ Coastal University, Porthaven}
+\vfill
+{\small The open-source \LaTeX{} template used to typeset this booklet,
+AMCOS\_booklet, is available at
+\url{https://github.com/maximelucas/AMCOS_booklet}.}
+\end{titlepage}
+
+\tableofcontents
+
+% ABOUT
+%---------------------------------------------------------------------
+\chapter{About}
+
+\section{The workshop}
+Complex Networks in Motion brings together researchers studying how
+networked systems evolve over time — from neural populations to power
+grids — with a focus on methods that combine dynamical-systems theory
+with network inference from data.
+
+\section{Organizing committee}
+\begin{center}
+\begin{tabular}{lll}
+Amara Okafor & Diego Fontan & Ines Larsen \\
+Bo Lindqvist & Farah Haddad & Jian Wu \\
+Camille Dubois & Grace Muthoni & Karim El-Sayed
+\end{tabular}
+\end{center}
+
+% TIMETABLE
+%---------------------------------------------------------------------
+\chapter{Timetable}
+
+KL: Keynote Lecture, IS: Invited Speaker, CT: Contributed Talk.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{|C{0.15\linewidth}| C{0.04\linewidth}|  C{0.3\linewidth} C{0.0\linewidth} C{0.4\linewidth}|}
+\hline
+\eventtype{9:00}{Registration \& Coffee}
+\KL{9:30}{Sofia Ramirez}{}{Coastal University}{Synchronisation in adaptive networks}
+\IS{10:30}{Tomasz Nowak}{}{Baltic Institute}{Inferring coupling from time series}
+\tablebreak{11:15}{Coffee Break}
+\CT{11:30}{Priya Anand}{}{Delta Tech}{A spectral test for hidden community structure}
+\CT{12:00}{Liu Wei}{}{Northshore Institute}{Delay-coupled oscillators on random graphs}
+\end{longtable}
+\end{center}
+
+% TALKS
+%---------------------------------------------------------------------
+\chapter{List of Abstracts --- Talks}
+
+\section{Monday 14th}
+
+\begin{abstract}{Synchronisation in adaptive networks}{%
+	S. Ramirez}{%
+	Coastal University, Porthaven}{%
+	\KLtag}
+We study networks whose coupling weights adapt in response to the
+synchrony of the nodes they connect, a mechanism observed in both neural
+plasticity and power-grid load balancing. We derive a reduced set of
+equations for the joint evolution of phase and weight dynamics, and show
+that adaptive coupling can stabilise partial synchrony states that are
+unstable under fixed coupling. Numerical continuation confirms the
+prediction on networks of up to 200 Kuramoto oscillators.
+\end{abstract}
+
+\begin{abstract}{Inferring coupling from time series}{%
+	T. Nowak}{%
+	Baltic Institute, Gdynia}{%
+	\IStag}
+Reconstructing the interaction structure of a dynamical network from
+observed trajectories alone is a central inverse problem in network
+science. We compare three inference methods — transfer entropy,
+Granger causality, and a phase-response-curve-based estimator — on
+synthetic data with known ground truth, and report substantial
+sensitivity to observation noise and sampling rate that is rarely
+discussed in application papers.
+\end{abstract}
+
+\section{Monday 14th, continued}
+
+\begin{abstract}{A spectral test for hidden community structure}{%
+	P. Anand}{%
+	Delta Tech, Bengaluru}{%
+	\CTtag}
+We propose a spectral statistic, computed from the normalized graph
+Laplacian, that distinguishes networks with planted community structure
+from Erdős--Rényi null models at sample sizes where modularity-based
+tests lose power. The statistic requires no prior estimate of the
+number of communities.
+\end{abstract}
+
+\begin{abstract}{Delay-coupled oscillators on random graphs}{%
+	L. Wei}{%
+	Northshore Institute, Shanghai}{%
+	\CTtag}
+Transmission delays between coupled oscillators are unavoidable in
+physically extended networks. We characterise how delay interacts with
+random graph topology to produce multistability between in-phase and
+splay states, and give an analytic condition, in terms of the graph's
+spectral gap, for the in-phase state to remain the unique attractor.
+\end{abstract}
+
+% POSTERS
+%------------------------------------------------------------------
+\chapter{List of Posters}
+
+\vspace{-1em}
+
+\poster{Epidemic spreading with heterogeneous recovery rates}{J. Almeida}{Riverside College}
+\poster{Community detection under partial observability}{H. Park}{Northshore Institute}
+\poster{A dataset of intercity mobility networks, 2018--2025}{M. Haile}{Delta Tech}
+
+% USEFUL INFO
+%------------------------------------------------------------------
+\chapter{Useful Information}
+
+\textbf{Venue.} All sessions take place in the Bayview Lecture Hall,
+Coastal University.
+
+\textbf{Wi-Fi.} Network \texttt{CU-Guest}, no password required.
+
+\textbf{Lunch.} Served daily in the adjacent Refectory, 12:30--13:30.
+
+\end{document}

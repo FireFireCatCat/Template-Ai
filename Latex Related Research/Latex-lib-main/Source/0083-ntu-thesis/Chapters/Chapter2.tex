@@ -1,0 +1,23 @@
+%!TEX root=../main.tex
+\chapter{Related Work}
+\chaptermark{Related Work}
+\label{ch:related}
+
+\section{Multi-Robot Trajectory Planning}
+Reciprocal velocity obstacle methods and their successors plan each
+robot's trajectory against the current predicted positions of its
+neighbours, assuming those predictions are current \citep{VanDenBerg2011}.
+When communication is delayed, a neighbour's broadcast position may already
+be out of date by the time it is used for planning.
+
+\section{Delay-Tolerant Coordination}
+Delay-tolerant coordination has been studied more broadly in distributed
+robotics, typically by bounding the uncertainty introduced by delay and
+inflating safety margins accordingly \citep{Zhou2017}.
+
+\section{Gap Addressed by This Thesis}
+Prior delay-tolerant planners generally use a fixed, worst-case safety
+margin regardless of the actual delay bound in effect. This thesis
+explores sizing the margin according to a known delay bound, which we
+show recovers much of the path efficiency lost under a fixed worst-case
+margin.

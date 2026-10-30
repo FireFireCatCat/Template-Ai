@@ -1,0 +1,220 @@
+\documentclass[a4paper,landscape]{article}
+\usepackage[top=5mm,bottom=5mm,left=5mm,right=5mm]{geometry}
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb,booktabs}
+
+\setsansfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}
+\renewcommand{\familydefault}{\sfdefault}
+\pagestyle{empty}
+\setlength{\columnsep}{7pt}
+\setlist[itemize]{leftmargin=7pt,topsep=0pt,itemsep=0pt,parsep=0pt}
+\setlist[enumerate]{leftmargin=10pt,topsep=0pt,itemsep=0pt,parsep=0pt}
+
+\definecolor{banner}{HTML}{F5E66B}
+\definecolor{section}{HTML}{0050D0}
+\definecolor{concept}{HTML}{008B8B}
+\definecolor{process}{HTML}{8A2BE2}
+\definecolor{category}{HTML}{228B22}
+\newcommand{\hlhighlight}[1]{\par\smallskip\noindent\colorbox{banner}{\strut\textbf{#1}}\par}
+\newcommand{\sectitle}[1]{\par\smallskip\noindent\textcolor{section}{\textbf{#1}}\par}
+\newcommand{\concept}[1]{\textcolor{concept}{\textbf{#1}}}
+\newcommand{\procname}[1]{\textcolor{process}{\textbf{#1}}}
+\newcommand{\category}[1]{\textcolor{category}{\textbf{#1}}}
+\newcommand{\lbl}[1]{\textcolor{category}{\textbf{#1}}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\begin{document}
+\fontsize{5.5pt}{6.2pt}\selectfont
+\raggedright
+\begin{multicols}{7}
+
+\hlhighlight{Data types}
+\sectitle{Measurement scales}
+\begin{itemize}
+\item \concept{Nominal:} labels only; mode and counts.
+\item \concept{Ordinal:} ranked labels; median and percentiles.
+\item \concept{Interval:} equal gaps, no true zero; differences valid.
+\item \concept{Ratio:} equal gaps and true zero; ratios valid.
+\end{itemize}
+\sectitle{Variables}
+\begin{itemize}
+\item \lbl{Discrete:} countable values.
+\item \lbl{Continuous:} values on an interval.
+\item \lbl{Missing:} record why; never silently replace with zero.
+\end{itemize}
+
+\hlhighlight{Descriptive statistics}
+\sectitle{Centre}
+\begin{itemize}
+\item Mean: $\bar{x}=n^{-1}\sum_i x_i$.
+\item Median: middle ordered observation.
+\item Weighted mean: $\bar{x}_w=\sum_iw_ix_i/\sum_iw_i$.
+\end{itemize}
+\sectitle{Spread}
+\begin{itemize}
+\item Range: $\max(x)-\min(x)$.
+\item Variance: $s^2=\frac{1}{n-1}\sum_i(x_i-\bar{x})^2$.
+\item Standard deviation: $s=\sqrt{s^2}$.
+\item IQR: $Q_3-Q_1$; robust to outliers.
+\end{itemize}
+\sectitle{Useful checks}
+\begin{itemize}
+\item Compare units before comparing magnitudes.
+\item Plot the distribution before choosing a summary.
+\item Report centre together with a spread measure.
+\end{itemize}
+
+\hlhighlight{Probability}
+\sectitle{Rules}
+\begin{itemize}
+\item Complement: $P(A^c)=1-P(A)$.
+\item Union: $P(A\cup B)=P(A)+P(B)-P(A\cap B)$.
+\item Conditional: $P(A\mid B)=P(A\cap B)/P(B)$.
+\item Independence: $P(A\cap B)=P(A)P(B)$.
+\end{itemize}
+\sectitle{Bayes}
+\[
+P(A\mid B)=\frac{P(B\mid A)P(A)}{P(B)}.
+\]
+\begin{itemize}
+\item \category{Prior:} belief before observing data.
+\item \category{Likelihood:} data probability under a model.
+\item \category{Posterior:} updated belief after data.
+\end{itemize}
+
+\hlhighlight{Random variables}
+\sectitle{Expectation}
+\begin{itemize}
+\item $E[X]=\sum_xxP(X=x)$ for discrete $X$.
+\item $\operatorname{Var}(X)=E[X^2]-E[X]^2$.
+\item $E[aX+b]=aE[X]+b$.
+\item $\operatorname{Var}(aX+b)=a^2\operatorname{Var}(X)$.
+\end{itemize}
+\sectitle{Common distributions}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Model & Mean; variance\\
+\midrule
+Bernoulli($p$) & $p$; $p(1-p)$\\
+Binomial($n,p$) & $np$; $np(1-p)$\\
+Poisson($\lambda$) & $\lambda$; $\lambda$\\
+Normal($\mu,\sigma^2$) & $\mu$; $\sigma^2$\\
+\bottomrule
+\end{tabular}
+
+\hlhighlight{Sampling}
+\sectitle{Standard error}
+\begin{itemize}
+\item $SE(\bar{x})=s/\sqrt{n}$.
+\item Larger samples reduce standard error, not necessarily bias.
+\item Central limit approximation: $\bar{x}\approx N(\mu,\sigma^2/n)$.
+\end{itemize}
+\sectitle{Intervals}
+\begin{itemize}
+\item Approximate 95\% mean interval: $\bar{x}\pm1.96\,SE$.
+\item A confidence procedure has coverage over repeated samples.
+\item State estimator, confidence level, and assumptions.
+\end{itemize}
+\sectitle{Sampling bias}
+\begin{itemize}
+\item \category{Coverage:} target population missing from frame.
+\item \category{Non-response:} respondents differ systematically.
+\item \category{Measurement:} instrument or wording changes answers.
+\end{itemize}
+
+\hlhighlight{Hypothesis tests}
+\sectitle{Workflow}
+\begin{enumerate}
+\item State $H_0$, $H_1$, parameter, and direction.
+\item Choose $\alpha$ and a test statistic.
+\item Compute statistic and p-value.
+\item Report effect size and uncertainty, not p-value alone.
+\end{enumerate}
+\sectitle{Errors}
+\begin{itemize}
+\item Type I: reject a true null; probability $\alpha$.
+\item Type II: fail to reject a false null; probability $\beta$.
+\item Power: $1-\beta$; increases with effect and sample size.
+\item A p-value is not $P(H_0\mid\text{data})$.
+\end{itemize}
+\sectitle{Decision}
+\begin{itemize}
+\item If $p\le\alpha$, reject $H_0$.
+\item If $p>\alpha$, do not reject $H_0$.
+\item Statistical significance is not practical significance.
+\end{itemize}
+
+\hlhighlight{Regression}
+\sectitle{Linear model}
+\[
+y_i=\beta_0+\beta_1x_i+\varepsilon_i,
+\qquad E[\varepsilon_i\mid x_i]=0.
+\]
+\begin{itemize}
+\item $\beta_1$: expected change in $y$ for one unit of $x$.
+\item $R^2=1-\mathrm{SSE}/\mathrm{SST}$.
+\item Residual: $e_i=y_i-\hat{y}_i$.
+\end{itemize}
+\sectitle{Assumptions}
+\begin{itemize}
+\item Linearity, independent errors, constant variance.
+\item Normal errors support small-sample inference.
+\item Inspect residuals versus fitted values and predictors.
+\item Correlation does not establish causation.
+\end{itemize}
+\sectitle{Classification}
+\begin{itemize}
+\item Precision $=TP/(TP+FP)$; recall $=TP/(TP+FN)$.
+\item Specificity $=TN/(TN+FP)$.
+\item F1 $=2PR/(P+R)$.
+\end{itemize}
+
+\hlhighlight{Data workflow}
+\sectitle{\procname{Prepare}}
+\begin{enumerate}
+\item Define the unit of analysis and target.
+\item Validate types, ranges, duplicates, and missingness.
+\item Split train/test before fitting transformations.
+\end{enumerate}
+\sectitle{\procname{Evaluate}}
+\begin{itemize}
+\item Use a baseline before a complex model.
+\item Choose metrics that reflect the decision cost.
+\item Cross-validation estimates out-of-sample performance.
+\item Keep a final test set untouched until the end.
+\end{itemize}
+\sectitle{Reproducibility}
+\begin{itemize}
+\item Record data version, code version, seed, and environment.
+\item Separate exploratory analysis from confirmatory claims.
+\item Preserve transformations with the fitted model.
+\end{itemize}
+
+\hlhighlight{Exam checklist}
+\sectitle{Before answering}
+\begin{itemize}
+\item Define symbols and units.
+\item Draw the relevant quantity or data-generating process.
+\item Write the assumptions before applying a formula.
+\item Check limiting cases and sign conventions.
+\item Round only at the final step.
+\end{itemize}
+\sectitle{Interpretation}
+\begin{itemize}
+\item Give the direction, magnitude, and uncertainty.
+\item Distinguish association, prediction, and causation.
+\item Explain what the result does not show.
+\end{itemize}
+\sectitle{Workspace}
+\vspace{13mm}
+\noindent\rule{\linewidth}{0.2pt}\\
+\vspace{13mm}
+\noindent\rule{\linewidth}{0.2pt}
+
+\end{multicols}
+\end{document}

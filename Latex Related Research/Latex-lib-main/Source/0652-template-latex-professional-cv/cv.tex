@@ -1,0 +1,133 @@
+% Template:     Professional-CV
+% Advertencia:  Archivo principal
+% Versión:      4.1.8 (12/07/2026)
+% Codificación: UTF-8
+%
+% Autor: Pablo Pizarro R.
+%        pablo@ppizarror.com
+%
+% Manual template: [https://template-latex.github.io/professional-cv]
+% Licencia MIT:    [https://opensource.org/licenses/MIT]
+
+% CREACIÓN DEL DOCUMENTO
+\documentclass[
+	spanish, % Idioma: spanish, english, etc.
+	letterpaper
+]{article}
+
+% INFORMACIÓN DEL USUARIO
+\def\name {John Doe}
+\def\email {john@email.com}
+\def\phonenumber {+12 3456 7890}
+
+\def\birthday {1}
+\def\birthmonth {Enero}
+\def\birthyear {1980}
+
+\def\photo {img/foto}
+\def\sign {img/firma}
+
+% IMPORTACIÓN DEL TEMPLATE
+\input{template}
+
+% CONFIGURA EL HEADER
+% 	Otras funciones:
+%	\addheadericon{map-marker-alt}	Inserta un ícono
+%	\addheaderseparator				Agrega un separador
+%	\addheaderspace{0.25cm}			Agrega un espacio horizontal
+%	\addheaderurl[Título]{http...}	Agrega un enlace
+\addheadermail{\email}
+\addheadertext{\phonenumber}
+\addheaderlink{https://johndoe.com}
+\addheaderlink[linkedin]{https://linkedin.com/john.doe} % template-latex.github.io/icons
+\addheaderlink[github]{https://github.com/ppizarror}
+\addheadernewline
+
+\addheadertext[map-marker-alt]{Calle \#123, Región, País} % Ícono opcional en []
+
+% INICIO DEL DOCUMENTO
+\begin{document}
+
+% CONFIGURACIONES DE PÁGINA
+\templatePagecfg
+
+% PÁRRAFO DE RESUMEN (ALTERNATIVA: photosummary, summary, summarynocol)
+% 	Variaciones por cada entorno:
+%	\begin{summary}				Línea negra por defecto
+% 	\begin{summary}[..]			Línea punteada
+%	\begin{summary}[none]		Sin línea
+\begin{summary}[none]%
+	\noindent\emph{\lipsum[75]} \\
+	\lipsum[75]
+\end{summary}
+
+% TABLA ANTECEDENTES PERSONALES
+%	Desactivar la foto con la configuración \personaltabledatapic
+\begin{personaltabledata}
+	\personaltableentry{Fecha de Nacimiento}{\birthday, \birthmonth del \birthyear}
+	\personaltableentry{Lugar de Nacimiento}{Ciudad, Región, País}
+	\personaltableentry{Edad}{99 años}
+	\personaltableentry{Nacionalidad}{Nación}
+	\personaltableentry{Estado Civil}{Soltero}
+	\personaltableentry{RUT}{12.345.678-9}
+\end{personaltabledata}
+
+% EXPERIENCIA
+%	cvblock toma un parámetro opcional para definir el estilo de línea divisoria:
+%		\begin{cvblock}[]{Experiencia}		Línea negra por defecto
+%		\begin{cvblock}[..]{Experiencia}	Línea punteada
+%		\begin{cvblock}[none]{Experiencia}	Sin línea
+%	Además existen los bloques estrictos (cvsblock) que ignoran todos los saltos
+%	de línea;  se recomienda para que el espaciado sea consistente independiente
+%	de los espacios y  líneas nuevas que existan dentro de éste.  Los argumentos
+%	son exactamente los mismos que cvblock normal
+\begin{cvsblock}[]{Experiencia}
+	\begin{institution}[http://empresa.com]{Empresa A}{Ciudad 1, Región 1, País 1}
+		\institutionentry{Jefe de Obras}{Enero \apo 15}{\present}{\lipsum[66]}
+		\institutionentry{Ayudante de Oficina Técnica}{Junio \apo 14}{diciembre \apo 14}{\lipsum[65]}
+	\end{institution}
+	
+	\begin{institution}{Empresa B}{Ciudad 2, Región 2, País 2}
+		\institutionentry{Ayudante de Ingeniería}{Febrero 2004}{diciembre 2007}{}
+	\end{institution}
+
+	\begin{institutionicon}{Empresa C}{Ciudad 3, Región 3, País 3}{img/icono}
+		\institutionentry{Ayudante de Oficina Técnica}{Marzo 2008}{abril 2014}{\lipsum[133]}
+	\end{institutionicon}
+\end{cvsblock}
+
+% EDUCACIÓN
+\begin{cvsblock}{Educación}
+	\begin{institution}[]{Universidad}{Ciudad, Región, País}
+		\institutionentrynodate{Magíster en Ciencias}{\lipsum[130]} % Sin fecha
+		\institutionentry{Ingeniería Civil}{1995}{2001}{}
+	\end{institution}
+
+	\begin{institution}[http://colegio.com]{Colegio}{Ciudad, Región, País}
+		\institutionentry{Enseñanza básica}{1984}{1990}{}
+		\institutionentry{Enseñanza media}{1991}{1994}{}
+	\end{institution}
+\end{cvsblock}
+
+% OTROS
+%	cvblocki/cvsblocki: Itemize
+%	cvblocke/cvsblocke: Enumerate
+\begin{cvblocki}{Premios \& Reconocimientos}
+	\item Premio N°1 del año 2000
+	\item Reconocimiento al mejor \quotes{ingeniero}, \url{https://example.com/johndoe}
+\end{cvblocki}
+
+% HABILIDADES
+\begin{cvblock}{Conocimientos \& Habilidades}
+	\otherentry{Uso de software:}{Excel, \LaTeX}
+	\otherentry{Idiomas:}{Español, Inglés}
+\end{cvblock}
+
+% FIRMA
+\begin{signature}
+	\signatureentry{\name}
+	\signatureentry{Ingeniero Civil}
+\end{signature}
+
+% FIN DEL DOCUMENTO
+\end{document}

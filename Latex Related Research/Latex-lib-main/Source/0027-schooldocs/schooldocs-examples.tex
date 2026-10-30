@@ -1,0 +1,327 @@
+
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{times,lmodern,charter}
+\usepackage{schooldocs}
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{centeredline}
+\usepackage{hyperref}
+\usepackage{lipsum}
+
+\definecolor{darkbrown}{rgb}{0.5,0.1,0.1}
+
+\pagestyle{collection}
+\title{The schooldocs package}
+\subject{Example file for titles and styles}
+\author{Antoine Missier}
+\institute{Royal College of Pataphysics}
+\date{December 28, 2023}
+\renewcommand{\titlestyle}{\Huge} %\sffamily
+\hypersetup{colorlinks, linkcolor=blue}
+%\setcounter{tocdepth}{0}
+
+\begin{document}
+
+\maketitle
+
+On the following pages we showcase various title formatting options
+and the different styles. 
+This initial page has been created using the \textbf{collection} style, for which
+the main title style has been redefined through
+\verb|\renewcommand{\titlestyle}{\Huge}|.
+
+
+\medskip
+In most examples (dated may 4, 2020), we have utilized
+the \textsf{lmodern} package font, which pairs well with a sans-serif title style.
+To achieve this, simply redefine the title style using
+\smallskip
+\centeredline{\verb|\renewcommand\titelstyle{\LARGE\bfseries\sffamily}|.}
+
+\smallskip
+For examples dated january 25 or december 28, 2023, we have opted 
+for the \textsf{charter}, or	\textsf{times} fonts. 
+For these fonts, the default title style setting 
+\verb|\LARGE\bfseries| is suitable.
+
+
+\seprule
+
+\begin{center} \Large \color{darkbrown}
+\bfseries Table of contents
+\end{center}
+
+\bigskip
+
+\begin{multicols}{2}
+\begin{enumerate}[\bfseries 1.]
+	\item \hyperlink{schooldocs-example-center}{\bfseries The standard title}
+	\item \hyperlink{schooldocs-example-left}{\bfseries A left-aligned title}
+	\item \hyperlink{schooldocs-example-right}{\bfseries A right-aligned title}
+	\item \hyperlink{schooldocs-example-norule}{\bfseries
+		The standard title without rule}
+	\item \hyperlink{schooldocs-example-boxed}{\bfseries A title in boxed shape}
+	\item \hyperlink{schooldocs-example-seprule}{\bfseries
+		The \texttt{\textbackslash seprule} and \texttt{\textbackslash correct} macros}
+	\item \hyperlink{schooldocs-example-small}{\bfseries A ``small'' title}
+	\item \hyperlink{schooldocs-example-classic}{\bfseries The classic style layout}
+	\item \hyperlink{schooldocs-example-elegant}{\bfseries The elegant style layout}
+	\item \hyperlink{schooldocs-example-modern}{\bfseries The modern style layout}
+	\item \hyperlink{schooldocs-example-soft}{\bfseries The soft style layout}
+	\item \hyperlink{schooldocs-example-exam}{\bfseries The exam style layout}
+	\item \hyperlink{schooldocs-example-examcorrect}{\bfseries
+		Exam style with the \texttt{\textbackslash correct} macro}
+	\item \hyperlink{schooldocs-example-collection}{\bfseries The collection style layout}
+	\item \hyperlink{schooldocs-example-identity}{\bfseries 
+		The identity style in collection}
+	\item \hyperlink{schooldocs-example-small-identity}{\bfseries 
+		A ``small'' title with identity}
+	\item \hyperlink{schooldocs-example-modern-small-identity}{\bfseries 
+		Small title, identity and modern style}
+	\item \hyperlink{schooldocs-example-left-identity}{\bfseries 
+		A left-aligned title with identity}
+\end{enumerate}
+\end{multicols}
+
+\newpage
+\hypertarget{schooldocs-example-center}{}
+\addcontentsline{toc}{section}{The standard title}
+
+\fontfamily{lmr}\selectfont
+\pagestyle{empty}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+\renewcommand{\subjectstyle}{}
+\renewcommand{\authorstyle}{}
+\renewcommand{\datestyle}{}
+\renewcommand{\titlestyle}{\LARGE\bfseries\sffamily}
+\renewcommand\subjectstyle{\large}
+\setlength{\titletopskip}{-1.32cm}
+\setlength\titlesep{2\medskipamount}
+\schooldocstitles
+\title{The standard title}
+\subject[Pathography / M2A]{Pathography / Master 2A}
+\date{May 4, 2020}
+
+\maketitle
+\lipsum[1]
+
+\newpage
+\hypertarget{schooldocs-example-left}{}
+\addcontentsline{toc}{section}{A left-aligned title}
+
+\renewcommand{\titleflush}{flushleft}
+\title{A left-aligned title}
+\maketitle
+\lipsum[1]
+
+\newpage
+\hypertarget{schooldocs-example-right}{}
+
+\renewcommand{\titleflush}{flushright}
+\title{A right-aligned title}
+\maketitle
+\lipsum[1]
+
+\newpage
+\hypertarget{schooldocs-example-norule}{}
+
+\renewcommand{\titleflush}{center}
+\title{The standard title without rule}
+\maketitle[0pt]
+\lipsum[1]
+
+\newpage
+\hypertarget{schooldocs-example-boxed}{}
+
+\renewcommand{\titlestyle}{\LARGE\sffamily\bfseries\boxedshape}
+\title{A title in boxed shape}
+\maketitle
+\lipsum[1]
+
+\newpage
+\hypertarget{schooldocs-example-seprule}{}
+
+\renewcommand{\titlestyle}{\LARGE\bfseries\sffamily}
+\title{The \textbackslash seprule and \textbackslash correct macros}
+\correct
+\maketitle
+\lipsum[1]\seprule\lipsum[2]\seprule\lipsum[3]
+
+\newpage
+\hypertarget{schooldocs-example-small}{}
+
+\fontfamily{bch}\selectfont
+\title{A ``small'' title}
+\date{January 25, 2023}
+\makesmalltitle
+\lipsum[1]
+
+\newpage
+\hypertarget{schooldocs-example-classic}{}
+
+\fontfamily{lmr}\selectfont
+\setcounter{page}{1}
+\pagestyle{classic}
+\title[The classic style]{The classic style layout}
+\date{May 4, 2020}
+\maketitle
+\section*{Pellentesque a nulla}
+\lipsum[1-3]
+\section*{Vestibulum lectus}
+\lipsum[5-9]
+
+\newpage
+\hypertarget{schooldocs-example-elegant}{}
+
+\setcounter{page}{1}
+\setcounter{section}{0}
+\addtolength{\headheight}{-\baselineskip}
+\pagestyle{elegant}
+\title[The elegant style]{The elegant style layout}
+\schooldocstitles
+\maketitle
+\section*{Pellentesque a nulla}
+\lipsum[1-3]
+\section*{Vestibulum lectus}
+\lipsum[5-9]
+
+\newpage
+\hypertarget{schooldocs-example-modern}{}
+
+\setcounter{page}{1}
+\setcounter{section}{0}
+\renewcommand{\headrulewidth}{0.4pt}
+\pagestyle{modern}
+\title[The modern style]{The modern style layout}
+\maketitle
+\section*{Pellentesque a nulla}
+\lipsum[1-3]
+\section*{Vestibulum lectus}
+\lipsum[5-9]
+
+\newpage
+\hypertarget{schooldocs-example-soft}{}
+
+\setcounter{page}{1}
+\setcounter{section}{0}
+\pagestyle{soft}
+\title[The soft style]{The soft style layout}
+\maketitle
+\section*{Pellentesque a nulla}
+\lipsum[1-3]
+\section*{Vestibulum lectus}
+\lipsum[5-9]
+
+\newpage
+\hypertarget{schooldocs-example-exam}{}
+
+\setcounter{page}{1}
+\setcounter{section}{0}
+\fontfamily{ptm}\selectfont 
+\pagestyle{exam}
+\title[The exam style]{The exam style layout}
+\date{December 28, 2023}
+\subtitle{Duration of the test: 2\,h}
+\maketitle
+\section*{Pellentesque a nulla}
+\lipsum[1-3]
+\section*{Vestibulum lectus}
+\lipsum[5-9]
+
+\newpage
+\hypertarget{schooldocs-example-examcorrect}{}
+
+\setcounter{page}{1}
+\setcounter{section}{0}
+\correct
+\maketitle
+\section*{Pellentesque a nulla}
+\lipsum[1-3]
+\section*{Vestibulum lectus}
+\lipsum[5-9]
+
+\newpage
+\hypertarget{schooldocs-example-collection}{}
+
+\setcounter{page}{1}
+\setcounter{section}{0}
+\fontfamily{bch}\selectfont
+\pagestyle{collection}
+\title[The collection style]{The collection style layout}
+\date{December 28, 2023}
+\subtitle{Duration of the test: 2\,h}
+\maketitle
+\section*{Ultrices bibendum}
+\lipsum
+\lipsum[1-3]
+\section*{Etiam facilisis}
+\lipsum[1-5]
+
+\newpage
+\hypertarget{schooldocs-example-identity}{}
+
+\thispagestyle{identity}
+Here we present a single page with the \textbf{identity} style
+within a document using the collection style.
+\par\medskip
+\textbf{Question:} Analyze the previous text and provide a written summary of its content.
+
+\newpage
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\subjectstyle}{}
+\renewcommand{\authorstyle}{}
+\renewcommand{\datestyle}{}
+\hypertarget{schooldocs-example-small-identity}{}
+
+\setcounter{page}{1}
+\renewcommand{\titlestyle}{\LARGE\bfseries}
+\renewcommand\subjectstyle{\large}
+\renewcommand{\headrulewidth}{0pt}
+\setlength{\titletopskip}{-1.32cm}
+\setlength\titlesep{2\medskipamount}
+\title{A ``small'' title}
+\date{January 25, 2023}
+\thispagestyle{identity}
+\schooldocstitles
+\makesmalltitle
+\lipsum[1]
+
+\newpage
+\hypertarget{schooldocs-example-modern-small-identity}{}
+
+\setcounter{page}{1}
+\setcounter{section}{0}
+\title[The modern style]{The modern style layout}
+\pagestyle{modern}
+\thispagestyle{identity}
+\makesmalltitle
+\section*{Pellentesque a nulla}
+\lipsum[1-3]
+\section*{Vestibulum lectus}
+\lipsum[5-6]
+
+\newpage
+\hypertarget{schooldocs-example-left-identity}{}
+
+\setcounter{page}{1}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+\renewcommand{\titleflush}{flushleft}
+\title{A left-aligned title}
+\pagestyle{empty}
+\thispagestyle{identity}
+\schooldocstitles
+\maketitle
+\lipsum[1]
+
+\setcounter{page}{2} % for the lastpage field in headers or footers
+\end{document}

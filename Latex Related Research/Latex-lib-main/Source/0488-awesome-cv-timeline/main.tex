@@ -1,0 +1,177 @@
+% Awesome CV Timeline starter — github:Slyces/awesome-cv-timeline, LPPL-1.3c.
+%
+% Engine: xelatex. Forked from Awesome-CV (posquit0), adding a two-column
+% layout with a genuine graphical TIMELINE drawn between the sidebar and
+% the body (see \timeline{} below) — a layout feature no other CV in this
+% catalogue has.
+%
+% This starter deliberately OMITS the publications/bibliography feature:
+% the upstream examples hardcode `backend=biber` in the class's biblatex
+% load, and this pipeline runs classic bibtex, not biber — citations would
+% silently never resolve. \addbibresource is never called by the class
+% itself (only by the upstream example .tex files), so simply not using it
+% avoids the trap entirely rather than patching biblatex's backend.
+\documentclass[11pt, a4paper]{resume}
+
+\setlength{\sidemargin}{1.5cm}
+\geometry{left=\sidemargin, top=1.5cm, right=\sidemargin, bottom=2cm, footskip=.5cm}
+
+\colorlet{awesome}{awesome-emerald}
+
+%----------------------------------------------------------------------------------------
+%          Header Information
+%----------------------------------------------------------------------------------------
+
+\name{Jordan}{Ashworth}
+\address{Boston, MA}
+\mobile{+1 555 010 0100}
+\email{jordan.ashworth@example.com}
+\github{jordanashworth}
+\linkedin{jordan-ashworth}
+
+\position{Backend Engineer}
+% \photo{images/photo.jpg} % optional; left unset here
+
+\makecvfooter{\today}{Jordan Ashworth~~~\textperiodcentered~~~Resume}{\thepage}
+
+\begin{document}
+
+\makecvheader
+
+\begin{cvsummary}
+    Backend engineer with 8 years' experience building distributed
+    systems. Most recently led a migration to a queue-based architecture
+    that cut p99 latency by 40\%.
+\end{cvsummary}
+
+% \headersmargin and \columnsmargin are used by the upstream multi-pages
+% example but never \newlength'd anywhere in resume.cls (only sidemargin,
+% leftcolumnwidth and timelinemargin are) — a real upstream omission, not
+% a document-level choice. Declared here rather than patching the class,
+% since these are genuinely document layout lengths.
+\newlength{\headersmargin}
+\newlength{\columnsmargin}
+
+% \headersmargin positions the absolutely-placed sidebar/body textblocks
+% relative to the TOP of the page (textpos convention) — it must clear
+% the actual rendered height of the header + summary above, which varies
+% with how many lines they wrap to. The upstream example's -0.2cm assumed
+% a single-line, no-summary header; tuned by hand here against this
+% starter's actual two-line header + two-line summary.
+\setlength{\headersmargin}{3.6cm}
+\setlength{\leftcolumnwidth}{5cm}
+\setlength{\columnsmargin}{0.5\sidemargin}
+\setlength{\timelinemargin}{0.5cm}
+
+% Draws the timeline down the middle of the page, spanning the sections
+% that land on the RIGHT side of the layout. \cvsection increments a
+% GLOBAL A/B/C/... counter every time it is called, in document order —
+% it is not tied to which textblock the section is physically in. Here
+% Contact=A, Skills=B (both in the left sidebar), Experience=C,
+% Education=D (both in the right body) — so the timeline must start at
+% C, the first section on the right, per the class's own \timeline{<letter>}
+% convention ("first section on the right side").
+\timeline{C}
+
+\begin{textblock*}{\leftcolumnwidth}(0pt, \headersmargin)
+    \vspace{-2mm}
+
+    \cvsection{Contact}
+    % Upstream's relative-width tabular* formula here rendered far wider
+    % than the 5cm sidebar column and overflowed into the body text —
+    % replaced with a simple two-column table sized to the column width.
+    \begin{tabular*}{\leftcolumnwidth}{@{}l@{\hspace{2mm}}l@{}}
+        \caddressicon & \caddress\\
+        \cmobileicon & \cmobile\\
+        \cemailicon & \cemail\\
+        \cgiticon & \cgituser \\
+        \clinkedinicon & \clinkedinuser\\
+    \end{tabular*}
+
+    \vspace{3mm}
+
+    \cvsection{Skills}
+    \skillcategory{Languages}
+    \begin{skillstable}
+        \skill{Go}\skill{Python}\skill{SQL}
+    \end{skillstable}
+
+    \skillcategory{Infrastructure}
+    \begin{skillstable}
+        \skill{Kubernetes}\skill{Kafka}\skill{PostgreSQL}
+    \end{skillstable}
+
+    \skillcategory{Languages (spoken)}
+    % Upstream's relative-width tabular* formula here rendered far too
+    % wide for a 5cm sidebar column and overflowed into the body text —
+    % replaced with a plain fixed-width minipage list instead of
+    % debugging the original formula further.
+    \begin{minipage}{\leftcolumnwidth}
+        \hobbiesstyle{English (Native)}\\
+        \hobbiesstyle{Spanish (Conversational)}
+    \end{minipage}
+\end{textblock*}
+
+\begin{textblock*}
+    {\paperwidth - 2\sidemargin - \leftcolumnwidth - \columnsmargin - 2\timelinemargin}
+    (\leftcolumnwidth + \columnsmargin + 2\timelinemargin, \headersmargin)
+    \vspace{-2mm}
+
+    \cvsection{Experience}
+    \begin{cventries}
+        \cventry
+        {Senior Backend Engineer}
+        {Northwind Systems}
+        {Boston, MA}
+        {Mar 2022 -- Present}
+        {
+        \begin{cvitems}
+            \item {Led the migration of the order-processing service to a queue-based architecture, cutting p99 latency by 40\%.}
+            \item {Owned the on-call rotation for the platform.}
+        \end{cvitems}
+        }
+        % cvitems applies -4mm \vspace on BOTH sides, which compounds
+        % between adjacent short entries and collides with the next
+        % \cventry's title row — added back explicitly.
+        \vspace{4mm}
+
+        \cventry
+        {Backend Engineer}
+        {Fernbridge Analytics}
+        {Remote}
+        {Jul 2018 -- Feb 2022}
+        {
+        \begin{cvitems}
+            \item {Built the ingestion pipeline handling 2M events/day.}
+        \end{cvitems}
+        }
+    \end{cventries}
+
+    \cvsection{Education}
+    \begin{cventries}
+        \cventry
+        {M.Sc., Computer Science}
+        {University of Michigan}
+        {Ann Arbor, MI}
+        {2014 -- 2016}
+        {
+        \begin{cvitems}
+            \item {Thesis on fault-tolerant distributed queues.}
+        \end{cvitems}
+        }
+        \vspace{4mm}
+
+        \cventry
+        {B.Sc., Computer Engineering}
+        {Purdue University}
+        {West Lafayette, IN}
+        {2010 -- 2014}
+        {
+        \begin{cvitems}
+            \item {Graduated with honours.}
+        \end{cvitems}
+        }
+    \end{cventries}
+\end{textblock*}
+
+\end{document}

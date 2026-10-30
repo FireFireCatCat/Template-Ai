@@ -1,0 +1,34 @@
+% titling — fine control over \maketitle, on a full separate title page.
+\documentclass[titlepage]{article}
+\usepackage{titling}
+
+\pretitle{\begin{center}\Huge\bfseries}
+\posttitle{\par\end{center}\vskip 1em}
+\preauthor{\begin{center}\Large}
+\postauthor{\par\end{center}}
+\predate{\begin{center}\large}
+\postdate{\par\end{center}}
+
+\title{A Legible Result Communicated Over Coffee}
+\author{A. Researcher \\ Department of Computational Something \\ University of Somewhere}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+This starter uses \texttt{titling} to reformat \verb|\maketitle| — the
+pre/post hooks around the title, author and date let a plain
+\texttt{article} class produce a proper separate title page (via the
+class's own \texttt{titlepage} option) without a custom class.
+
+Replace this paragraph with the actual introduction of the document.
+The point of this second page is to show that the document continues
+past the title page, the way any real report, thesis chapter or article
+would.
+
+\section{Body}
+A second section, so the structure of a multi-section document is
+visible past the title page.
+
+\end{document}

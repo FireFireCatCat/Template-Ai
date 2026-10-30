@@ -1,0 +1,80 @@
+% esami starter -- a single exam version.
+%
+% The package is architected around generating SEVERAL randomly-shuffled
+% exam versions from a bank of external per-question .tex files, pulled in
+% via \esercizi{filename} (which \input's the file through the class's own
+% \selectrandomly machinery). Two real findings from getting this to
+% compile cleanly:
+%
+% 1. \esercizi{file} shows exactly ONE \newproblem{} block from that file
+%    (it is a VARIANT bank for randomised exam generation, not a container
+%    of "all the exercises in this file" -- confirmed against the upstream
+%    doc/examples/testA-pdflatex.pdf, whose test1.tex etc. each contain
+%    several \newproblem variants and only one appears per file per
+%    version). So each question here lives in its own file
+%    (mcq-dice.tex, mcq-median.tex, problem-stderr.tex,
+%    problem-coinflip.tex, shipped alongside this file).
+%
+% 2. Typing exercises directly inline in main.tex via \newproblem{...}
+%    (skipping \esercizi{}/\selectrandomly entirely) reliably corrupted
+%    internal list state ("Something's wrong--perhaps a missing \item") the
+%    moment a test/questions (MCQ) section was followed by a
+%    problem/problem* section in the same document -- reproduced
+%    deterministically. Going through \esercizi{} + separate files (as
+%    upstream itself always does) avoids it.
+%
+% \numcompiti{1} runs the version-generation loop for exactly one version,
+% the smallest self-contained document that still exercises the package's
+% differentiator: \bChoices[random] shuffles MCQ answer order and
+% \FPsetpar/\FPsv draw+report randomised numeric parameters.
+\documentclass[a4paper,english]{article}
+
+\usepackage[shuffle,xyz,pointsonright,nosolutions,noquizsolutions]{esami}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,textcomp}
+
+\def\examname{Introduction to Statistics -- Midterm Exam}
+\def\numcompiti{1}
+\date{2026/10/14}
+\def\Data{\longdate}
+\usepackage{babel}
+
+\renewcommand{\checkpoints}{ } % skip the exercise-points consistency check
+
+\begin{document}
+
+\testversioni
+\pagestyle{esame}
+
+\whiledo{\thevers<\numcompiti}{\stepvers
+
+\FPeval\seme{round((\thenomefile+(3*\thevers)):0)}
+\randomi=\seme
+\permuta
+
+\testa
+\istruzionii
+
+\section*{Part One --- Multiple Choice}
+
+\begin{test}[8]
+\begin{questions}
+\esercizi{mcq-dice,mcq-median}
+\end{questions}
+\end{test}
+
+\newpage
+\section*{Part Two --- Worked Problems}
+\istruzioniii
+
+\esercizi{problem-stderr}
+\esercizi{problem-coinflip}
+
+\closevers
+\newpage
+\setcounter{page}{1}
+}
+
+\end{document}

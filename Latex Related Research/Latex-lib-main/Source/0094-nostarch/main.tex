@@ -1,0 +1,106 @@
+% nostarch — a technical-book class written for No Starch Press's house
+% style by Boris Veytsman, released independently under the LPPL. This
+% starter uses the class's typographic structure (half-title, formal
+% title page, copyright page, index) but is NOT an official No Starch
+% Press product and carries no publisher branding, address, or ISBN —
+% those fields in upstream's own sample are the actual publisher's real
+% contact details and are not appropriate to ship as boilerplate.
+%
+% nocfonts: No Starch's real books use commercial fonts (New Baskerville
+% etc.) that are not present in this image; nocfonts tells the class to
+% fall back to free substitutes instead, so this compiles under plain
+% pdflatex without those commercial packages.
+%
+% Class documentation: texdoc nostarch | https://ctan.org/pkg/nostarch
+% Licence: LPPL-1.3 or later, (c) 2008-2023 Boris Veytsman.
+\documentclass[nocfonts]{nostarch}
+
+\usepackage{natbib}
+\usepackage{nshyper}
+\usepackage{amsmath}
+\makeindex
+
+\begin{document}
+
+\frontmatter
+
+\author{Marcus Webb}
+\nostarchlocation{}
+
+\title{\emph{Practical Compiler Construction}}
+
+\subtitle{Building a Language, One Pass at a Time}
+
+\makehalftitle
+
+\maketitle
+
+\begin{copyrightpage}
+\textbf{\sffamily\MakeUppercase{\emph{Practical Compiler Construction}}}
+
+This is a sample starter document generated from the \texttt{nostarch}
+\LaTeX{} class. It is not an official No Starch Press publication.
+\end{copyrightpage}
+
+\begin{dedicationpage}
+For everyone who has ever stared at a shift-reduce conflict.
+\end{dedicationpage}
+
+\tableofcontents
+
+\chapter*{Foreword}
+This book grew out of a compilers course taught over several years. It
+assumes you can already write ordinary programs, but have never
+written a program that reads programs.
+
+\mainmatter
+
+\chapter{Lexical Analysis}
+\label{ch:lexer}
+
+The first stage of any compiler turns a stream of characters into a
+stream of \emph{tokens}\index{tokens}. A lexer\index{lexer} recognizes
+patterns — identifiers, numbers, keywords — using regular expressions
+compiled down to a finite automaton.
+
+\section{Regular Expressions to Automata}
+
+Every regular expression can be converted to a nondeterministic finite
+automaton (NFA)\index{finite automaton!nondeterministic} via Thompson's
+construction, and every NFA to an equivalent deterministic finite
+automaton (DFA)\index{finite automaton!deterministic} via the subset
+construction.
+
+\textbf{Note.} Most real lexer generators skip the NFA step entirely
+and construct the DFA directly from the regular expression's syntax
+tree.
+
+\chapter{Parsing}
+\label{ch:parser}
+
+A parser\index{parser} consumes the token stream and builds a parse
+tree according to a grammar. This chapter covers recursive-descent
+parsing for LL(1) grammars and shift-reduce parsing for LR(1)
+grammars\index{grammar!LR(1)}.
+
+\textbf{Tip.} Recursive-descent parsers are easier to write by hand; LR
+parsers are easier to generate from a grammar specification and handle
+a strictly larger class of grammars\index{grammar!LL(1)}.
+
+\section{Handling Ambiguity}
+
+The classic dangling-else problem\index{dangling else} is a textbook
+example of grammar ambiguity: an \texttt{if}-\texttt{then}-\texttt{else}
+grammar resolves it by convention, binding each \texttt{else} to the
+nearest unmatched \texttt{if}, per~\citet{aho2006compilers}. A rigorous
+treatment of parser generator theory appears
+in~\citet{grune2008parsing}.
+
+\backmatter
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\printindex
+
+\end{document}

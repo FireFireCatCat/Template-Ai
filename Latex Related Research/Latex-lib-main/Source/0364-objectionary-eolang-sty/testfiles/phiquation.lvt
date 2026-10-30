@@ -1,0 +1,71 @@
+% SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
+% SPDX-License-Identifier: MIT
+
+\input{regression-test.tex}
+\documentclass{article}
+\usepackage{eolang}
+\begin{document}
+
+\START
+\showboxbreadth=-1
+\showboxdepth=-1
+
+\input{phiquation-cache.tex}
+\phiSaveTo{cached-phiquation.tex}
+\input{phiquation-cache.tex}
+\begin{tabular}{l}
+\vbox{\input{cached-phiquation.tex}} \\
+\end{tabular}
+
+\begin{phiquation*}
+x -> ? \\
+y -> ? \\
+\end{phiquation*}
+
+\begin{phiquation*}
+[[ a -> x]]
+[[ b -> ?]], \\
+\Delta = 43.6
+\end{phiquation*}
+
+\begin{phiquation*}
+x -> [[ a -> ?]] \\
+y -> [[ \Delta ..> 4 ]].
+\end{phiquation*}
+
+\phiSaveTo{a.tex}
+\begin{phiquation*}
+x -> y
+\end{phiquation*}
+\begin{tabular}{l}
+\vbox{\input{a.tex}} \\
+\end{tabular}
+
+\begin{phiquation*}
+x -> z
+\end{phiquation*}
+
+\phiSaveTo{b.tex}
+\begin{phiquation*}
+% leading comment
+a -> [[
+  @ -> &.z,
+  ^ !-> $.b,
+  0->?, 5!->?, 12:=?, 19~>?,
+  *->?,
+  D>?, L>?,
+  0/g->?, 5/g!->?, 12/g:=?, 19/g~>?,
+  u -> ?, % comment
+  b -> [[ c -> \
+    |x|(56) \
+    .|bye|(55),
+    \rho -> |hello|.|x|($),
+    \alpha_0->?,
+    \Delta ~> |01-FE-C3| ]]]]
+
+\beta_1 := [ \varphi -wait> \varnothing ]
+% tail comment
+\end{phiquation*}
+
+\end{document}
+\END

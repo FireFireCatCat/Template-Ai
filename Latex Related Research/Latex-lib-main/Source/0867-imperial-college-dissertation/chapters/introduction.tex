@@ -1,0 +1,50 @@
+\chapter{Introduction}
+
+Bifurcation theory studies how the qualitative behaviour of a dynamical
+system changes as a parameter is varied. This dissertation examines the
+subcritical pitchfork bifurcation, a canonical example in which a stable
+equilibrium loses stability discontinuously as unstable branches collide
+with it, in contrast to the smooth, continuous loss of stability seen in
+the supercritical case \citep{strogatz2015nonlinear}.
+
+This is an example of a citation. \citet{taylor1923stability} is a classic
+early example of a bifurcation analysis, applied to the stability of
+Couette flow between rotating cylinders. Sensitivity to initial
+conditions in nonlinear systems more generally was made famous by
+\citet{lorenz1963deterministic}.
+
+Figure~\ref{fig:subcritical_pitchfork_bifurcation} shows the bifurcation
+diagram for the model system studied here. Table~\ref{tab:example} lists
+a small set of computed equilibrium values used to validate the
+numerical continuation code against the closed-form solution.
+
+\begin{figure}[t]
+\centering
+\begin{subfigure}[b]{0.8\textwidth}
+\centering
+\resizebox{\linewidth}{!}{\input{chapters/subcritical.tikz}}
+\end{subfigure}
+\caption{Bifurcation diagram for the subcritical pitchfork bifurcation, $\dot{x} = rx + x^3$, where for $r < 0$ there is a stable equilibrium at $x = 0$ and two unstable equilibria at $x = \pm\sqrt{-r}$, and for $r > 0$ the equilibrium at $x = 0$ is unstable.}
+\label{fig:subcritical_pitchfork_bifurcation}
+\end{figure}
+
+\begin{table}[hp]
+\centering
+\hrule \vspace{0.5em}
+\begin{tabular}{cccccc}
+$r$ & $-4$ & $-3$ & $-2$ & $-1$ & $0$ \\
+$x^*=\sqrt{-r}$ & $2.000$ & $1.732$ & $1.414$ & $1.000$ & $0.000$ \\
+\end{tabular}
+\caption{Non-zero equilibrium branch $x^*=\sqrt{-r}$ of $\dot{x}=rx+x^3$ for a range of the bifurcation parameter $r$, used to check the numerical continuation code against the closed-form root.}
+\vspace{0.5em} \hrule
+\label{tab:example}
+\end{table}
+
+\section{Structure of this dissertation}
+
+Chapter~\ref{ch:methods} sets out the numerical continuation method used
+to trace the equilibrium branches shown above, and describes how the
+stability of each branch was determined from the sign of the linearised
+system's eigenvalue. Chapter~\ref{ch:conclusion} summarises the findings
+and suggests directions for extending the analysis to a two-parameter
+unfolding of the bifurcation.

@@ -1,0 +1,160 @@
+\documentclass[11pt]{article}
+\newcommand{\myname}{Jane Student}
+\newcommand{\myemail}{jstudent}
+\newcommand{\myhwtype}{Homework}
+\newcommand{\myhwnum}{4}
+\newcommand{\myclass}{CS 201}
+\newcommand{\mylecture}{Lec}
+\newcommand{\mysection}{A}
+
+% Prefix for numbered questions.
+\newcommand{\questiontype}{Question}
+
+\usepackage{amsmath, amsfonts, amsthm, amssymb}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage[T1]{fontenc}
+\usepackage{framed}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\card}{\vert}{\vert}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt plus 1pt}
+
+\newcounter{questionCounter}
+\newcounter{partCounter}[questionCounter]
+
+% A named question, e.g. "Super Fancy Named Question", instead of a number.
+\newenvironment{namedquestion}[1]{%
+    \addtocounter{questionCounter}{1}%
+    \setcounter{partCounter}{0}%
+    \vspace{.2in}%
+        \noindent{\bf #1}%
+    \vspace{0.3em} \hrule \vspace{.1in}%
+}{}
+
+% An auto-numbered question.
+\newenvironment{numedquestion}[0]{%
+    \stepcounter{questionCounter}%
+    \vspace{.2in}%
+        \noindent{\bf \questiontype \; \arabic{questionCounter}. }%
+    \vspace{0.3em} \hrule \vspace{.1in}%
+}{}
+
+\newenvironment{alphaparts}[0]{%
+  \begin{enumerate}[label=\textbf{(\alph*)}]
+}{\end{enumerate}}
+
+\newenvironment{arabicparts}[0]{%
+  \begin{enumerate}[label=\textbf{\arabic{questionCounter}.\arabic*})]
+}{\end{enumerate}}
+
+\newcommand{\answerbox}[1]{%
+\begin{framed}
+\vspace{#1}
+\end{framed}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{\myclass\ \mylecture\mysection}}
+\fancyhead[C]{\textbf{\myname\ (\myemail)}}
+\fancyhead[R]{\textbf{\myhwtype\ \myhwnum}}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyfoot[C]{\thepage}
+
+\begin{document}
+\thispagestyle{plain}
+\begin{center}
+  {\Large \myclass{} \myhwtype{} \myhwnum} \\
+  \myname{} (\myemail{}) \\
+  \today
+\end{center}
+
+\begin{numedquestion}
+  Prove that if $n$ is an odd integer, then $n^2$ is odd.
+
+  \begin{framed}
+  Write $n = 2k+1$ for some integer $k$. Then
+  \[
+    n^2 = (2k+1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1,
+  \]
+  which is of the form $2m+1$ with $m = 2k^2+2k$ an integer, so $n^2$ is odd.
+  \end{framed}
+\end{numedquestion}
+
+\begin{numedquestion}
+  Let $A$ and $B$ be sets. Show that $\card{A \cup B} = \card{A} + \card{B} -
+  \card{A \cap B}$.
+
+  \begin{framed}
+  Every element of $A \cup B$ is counted once in $\card{A} + \card{B}$ unless
+  it lies in both sets, in which case it is counted twice — once for $A$ and
+  once for $B$. Subtracting $\card{A \cap B}$ removes exactly that double
+  count, leaving each element of $A \cup B$ counted once.
+  \end{framed}
+\end{numedquestion}
+
+\begin{namedquestion}{Recurrence Relation}
+  Solve the recurrence $T(n) = 2T(n/2) + n$ with $T(1) = 1$.
+
+  \begin{framed}
+  By the Master Theorem with $a = 2$, $b = 2$, $f(n) = n$: since $f(n) =
+  \Theta(n^{\log_b a}) = \Theta(n)$, this is case 2, so
+  $T(n) = \Theta(n \log n)$.
+  \end{framed}
+\end{namedquestion}
+
+\begin{numedquestion}
+  Use the \texttt{arabicparts} environment for sub-parts that should include
+  the question number.
+  \begin{arabicparts}
+    \item Show $\ceil{x} - \floor{x} \in \{0, 1\}$ for any real $x$.
+    \item Give an $x$ for which this is $0$, and one for which it is $1$.
+  \end{arabicparts}
+
+  \begin{framed}
+  \begin{arabicparts}
+    \item If $x$ is an integer, $\ceil{x} = \floor{x} = x$, so the difference
+    is $0$. Otherwise $\floor{x} < x < \ceil{x} = \floor{x} + 1$, so the
+    difference is $1$.
+    \item $x = 3$ gives $0$; $x = 3.5$ gives $1$.
+  \end{arabicparts}
+  \end{framed}
+\end{numedquestion}
+
+\begin{numedquestion}
+  Use the \texttt{alphaparts} environment for lettered sub-parts, and prove
+  the following by induction.
+  \begin{alphaparts}
+    \item State the claim: $\sum_{k=1}^{n} (2k - 1) = n^2$.
+    \item Prove it.
+  \end{alphaparts}
+
+  \begin{framed}
+  \begin{description}
+    \item[Base case ($n=1$):] $\sum_{k=1}^{1}(2k-1) = 1 = 1^2$.
+    \item[Inductive step:] Assume $\sum_{k=1}^{n}(2k-1) = n^2$. Then
+    \[
+      \sum_{k=1}^{n+1}(2k-1) = n^2 + (2(n+1)-1) = n^2 + 2n + 1 = (n+1)^2,
+    \]
+    completing the induction.
+  \end{description}
+  \end{framed}
+\end{numedquestion}
+
+% Use \setcounter{questionCounter}{<x>} to force the next question's number,
+% e.g. when the written assignment's numbering does not start at 1.
+\setcounter{questionCounter}{7}
+\begin{numedquestion}
+  This question is forced to start at number 8 — useful when a handout's
+  numbering does not match the order questions appear in this document.
+
+  \answerbox{2cm}
+\end{numedquestion}
+
+\end{document}

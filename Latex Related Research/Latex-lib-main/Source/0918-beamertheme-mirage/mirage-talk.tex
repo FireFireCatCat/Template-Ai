@@ -1,0 +1,114 @@
+\DocumentMetadata{
+  lang=en,
+  pdfstandard=ua-2,
+  tagging=on,
+  tagging-setup={math/setup=mathml-SE}
+}
+\documentclass[font-size=12pt]{ltx-talk}
+\usepackage[light]{talkthemeMirage}
+
+\usepackage{caladea}
+\usepackage[lining,tabular,sfdefault]{carlito}
+
+% xelatex won't work now due to https://github.com/latex3/tagging-project/issues/832
+\ifboolexpr{bool{xetex} or bool{luatex}}{
+  % \setmathfont{STIX Two Math}
+  % \setmathfont{Erewhon Math}
+  \setmathfont{Fira Math}
+}{% Sans math font in pdflatex:
+  \usepackage[T1]{fontenc}
+  \usepackage{newtxsf}
+}
+\title{Experimental Mirage ltx-talk Theme}
+\subtitle{A presentation theme inspired by a musical album art}
+\author{LianTze Lim}
+\institute{(Optional) Institute Name}
+\date{2026/08/27}
+
+\begin{document}
+
+\maketitle[framestyle = wallpaper] % no header nor footer
+
+
+\section{Introduction}
+\begin{frame}
+\frametitle{Sample frame title}
+This is some text in a frame, for the sake of showing an example.
+
+\begin{itemize}
+    \item Some text
+    \begin{itemize}
+        \item Some text on second level itemize
+        \item Some text on second level itemize
+    \end{itemize}
+    \item Some text
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Another sample frame}
+\begin{enumerate}
+\item Some text
+    \begin{enumerate}
+        \item Some text on second level enumerate
+        \item Some text on second level enumerate
+    \end{enumerate}
+\item And finally some \alert{alerted text}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Customisable Pullquotes}
+\begin{pullquote}
+    Can it be real\\
+    The world is a mirage
+\end{pullquote}
+
+\colorlet{mirage@pullquote}{MirageBlue}
+\renewcommand{\MiragePullquoteOpen}{«}
+\begin{pullquote}\raggedright
+Slowly, gently, night unfurls its splendour\\
+Grasp it, sense it, tremulous and tender
+\end{pullquote}
+
+\end{frame}
+
+\section{Blocks}
+
+
+% \renewcommand{\MirageFrametitlePrefix}{\faDove}
+% \renewcommand{\MirageProofPrefix}{\faCheckSquare[regular]}
+% \renewcommand{\MirageTheoremPrefix}{\faCogs}
+
+\begin{frame}[allowframebreaks]
+\frametitle{This theme supports blocks}
+
+    \begin{exampleblock}{Gosh I've no idea what I'm writing, do you?}
+    Now solve $x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$. This should be easy, right?
+    \end{exampleblock}
+
+    \begin{alertblock}{Gosh I've no idea what I'm writing, do you?}
+    \setlength{\abovedisplayshortskip}{-1em}
+    \[ x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}, \quad\therefore \alpha \neq \Omega \]
+    \end{alertblock}
+
+    \begin{block}{Gosh I've no idea what I'm writing, do you?}
+    \setlength{\abovedisplayshortskip}{-1em}
+    \[ x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}, \quad\therefore \alpha \neq \Omega \]
+    \end{block}
+
+    % ltx-talk doesn't yet provide these environments out of the box
+    % \begin{proof}
+    % As everyone can clearly see, $1+1=2$.
+    % \end{proof}
+
+    % \begin{theorem}
+    % A wonderful thing is about to happen -- it \emph{will} eventually happen.
+    % \end{theorem}
+    
+    % \begin{definition}
+    % A wonderful thing is about to happen -- it \emph{will} eventually happen.
+    % \end{definition}
+\end{frame}
+
+\end{document}

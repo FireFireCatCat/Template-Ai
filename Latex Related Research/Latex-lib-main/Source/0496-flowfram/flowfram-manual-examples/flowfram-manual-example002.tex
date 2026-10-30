@@ -1,0 +1,68 @@
+% This file is embedded in flowfram-manual.pdf 
+% Example 2 Frame Stacking Order
+% Label: "ex:stackingorder"
+% arara: pdflatex
+% arara: pdfcrop
+\documentclass[10pt]{article}
+\pagestyle{empty}
+\usepackage[T1]{fontenc}
+\usepackage{flowfram}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\usepackage{fancybox} 
+
+\newflowframe
+  {0.4\typeblockwidth}% width
+   {0.6\typeblockwidth}% height
+   {0pt}% x
+   {0.6\typeblockwidth}% y
+   [upper]% label
+ \setflowframe*{upper}{border=plain} 
+
+\newflowframe
+  {0.4\typeblockwidth}% width
+   {0.6\typeblockwidth}% height
+   {0.6\typeblockwidth}% x
+   {0pt}% y
+   [lower]% label
+ \setflowframe*{lower}{border=shadowbox} 
+
+\newflowframe
+  {0.4\typeblockwidth}% width
+   {0.6\typeblockwidth}% height
+   {0.3\typeblockwidth}% x
+   {0.3\typeblockwidth}% y
+   [middle]% label
+ \setflowframe*{middle}{backcolor=yellow} 
+
+\newcounter{sample} 
+
+\newdynamicframe
+  {0.5\typeblockwidth}% width
+   {0.5\typeblockwidth}% height
+   {0.75\typeblockwidth}% x
+   {0.25\typeblockwidth}% y
+   [sample]% label
+ \setdynamiccontents*{sample}{% 
+   \hfill\stepcounter{sample}
+  Sample \thesample\ (dynamic).\par
+  \includegraphics[width=\linewidth]{example-image-a}
+} 
+
+\newstaticframe
+  {0.5\typeblockwidth}% width
+   {0.5\typeblockwidth}% height
+   {0.5\typeblockwidth}% x
+   {0.5\typeblockwidth}% y
+   [sample]% label
+
+
+\begin{document}
+START (sample \stepcounter{sample}\thesample). \lipsum[1-2] END. 
+
+\setstaticcontents*{sample}{% 
+   \stepcounter{sample}
+  Sample \thesample\ (static).\par
+  \includegraphics[width=\linewidth]{example-image-b}
+} 
+\end{document}

@@ -1,0 +1,2166 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2025--2026 by Volker Reichenberger
+% <volker.reichenberger@reutlingen-university.de>
+%
+% This file is part of the nxtlatex package.
+%
+% This file may be distributed and/or modified under the conditions
+% of the LaTeX Project Public License, either version 1.3c of this
+% license or (at your option) any later version.
+% The latest version of this license is in
+%    https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{nxtlatex.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \changes{v1.3}{2026/09/24}{%
+%   \textsf{nxtthesis} baut auf \textsf{report} statt auf KOMA-Script
+%   \textsf{scrreprt} auf und übersetzt damit auch getaggt (PDF/UA);
+%   Kolumnentitel mit \textsf{fancyhdr}, Beschriftungen und Flattersatz
+%   der Richtlinie ohne \textsf{caption} und \textsf{ragged2e};
+%   \cs{subtitle}, \cs{addchap}, \cs{addsec} bleiben erhalten. Mit
+%   Tagging stellt die Klasse die Kapitelvorlage des Kerns auf ihr
+%   Aussehen ein und lädt für \textsf{listings} die Anpassung des
+%   \LaTeX-Projekts; die Beispielthesis ist getaggt und laut veraPDF
+%   PDF/UA-2-konform. Neuer Befehl \cs{kapitaelchen}: Kapitälchen nur, wo
+%   der Schnitt sie hat, sonst Versalien. Titelseite mit dem Logo NuT-RU.
+%   Die NXT-Logos kommen aus dem NXT Logo Font (Version~1.0): keine
+%   Bilddateien mehr, Farbschemata des Corporate Design, neue Makros
+%   \cs{nxtzeichen} und \cs{nxtlogostandard}. Der Font wird aus seinem
+%   Repository (Submodul) gebaut.
+%   \textsf{nxtthesis}: sieben neue Fontoptionen (\texttt{newtx},
+%   \texttt{times}, \texttt{bookman}, \texttt{charter},
+%   \texttt{garamond}, \texttt{utopia}, \texttt{concrete}); wo eine
+%   Schrift einen Semibold-Schnitt mitbringt, ersetzt dieser den fetten.
+%   Neue Option \texttt{richtlinie} für die verbindlichen
+%   Layoutvorgaben der Fakultät und \texttt{kapitaelchen} für
+%   Überschriften in Kapitälchen.
+%   Abkürzungsverzeichnis über \textsf{acro} mit \cs{akronym};
+%   Symbolverzeichnis mit \cs{Symbol} und \cs{printsymbols}; beide
+%   Verzeichnisse als \textsf{longtable} und damit mehrseitig.
+%   \cs{subtitle} wird auf der Titelseite gesetzt; \cs{hauptteil}
+%   schaltet von römischen auf arabische Seitenzahlen; Kolumnentitel mit
+%   Kapitel und Seitenzahl. Titelfelder sind vorbelegt, ein vergessenes
+%   Feld bricht nicht mehr ab.
+%   Neu beigelegt: eine vollständige Beispielarbeit
+%   (\texttt{Beispielthesis/}) und eine Einführung
+%   (\texttt{Anleitung/}).
+%   \cs{eigenständigkeitserklärung} im Wortlaut der Richtlinie
+%   (Stand 17.12.2025) mit Pflichtangabe \texttt{ki} und optionaler
+%   Partnerhochschule. Titelseite auch auf Englisch. Option \texttt{logo}.
+%   Titel und Autor stehen in den PDF-Metadaten. Die Klasse lädt
+%   \textsf{amsmath}.
+%   \textsf{nxtlatexcolors}: mit \cs{DocumentMetadata} kein doppelter
+%   Eintrag \texttt{/OutputIntents} mehr (PDF/A).
+%   \textsf{nxtlatexlogos}: Alternativtexte für alle Logos.
+%   \textsf{nxtbrief}: \textsf{fontawesome5}, KOMA-Option
+%   \texttt{parskip} statt Paket, Rücksendeadresse aus
+%   \texttt{fromname}; Laden mit \cs{LoadLetterOption}.
+%   Beamer-Thema heißt jetzt \texttt{beamerthemeNXT.sty}, passend zu
+%   \cs{usetheme}\texttt{\{NXT\}}; Untertitel auf der Titelfolie,
+%   farbige Blocküberschriften, \cs{emph} overlay-fähig; die
+%   wirkungslosen Makros \cs{nxtBeamerSkyline} und
+%   \cs{nxtBeamerUniversityLogo} entfallen.
+%   \texttt{nxtlatex.ins} fragt nicht mehr nach dem Überschreiben.
+%   Build und Regressionstests mit \textsf{l3build}.
+%   Logo-Dateinamen in dieser Dokumentation berichtigt.%
+% }
+% \changes{v1.2}{2026/04/21}{%
+%   Neue Pakete: \textsf{nxtlatexcolors} (Farbpalette) und
+%   \textsf{nxtlatexlogos} (Logo-Makros für alle Vorlagen).
+%   Logo-Installationsskripte \texttt{getnxtlogos} und
+%   \texttt{getnxtlogos.ps1} hinzugefügt.
+%   \textsf{nxtthesis}: neue Fontoptionen \texttt{segoeui}, \texttt{stix},
+%   \texttt{fira}; Serifenschrift in Überschriften; mehr Abstand nach
+%   \cs{chapter}; Eigenständigkeitserklärung mit zwei separaten
+%   Unterschriftszeilen (linksbündig mit \texttt{minipage}).
+%   \textsf{beamerthemenxt}: überarbeitete Titelfolie; Footer-Seitenzahl
+%   mit robustem rechtem Rand (\cs{hspace*}).
+%   Dokumentation: \cs{GetFileInfo} auf \texttt{nxtlatex.dtx} korrigiert;
+%   \cs{item}-Labels mit \cs{cs} und \cs{oarg} statt \cs{verb}.%
+% }
+% \changes{v1.1}{2026/03/10}{Zusammenfassung zu einem einzigen Paket nxtlatex}
+% \changes{v1.0}{2025/09/29}{Erste öffentliche Version von nxtthesis}
+%
+% \GetFileInfo{nxtlatex.dtx}
+%
+% \title{Das Paket \textsf{nxtlatex}\\[0.5ex]
+%   \large \LaTeX-Klassen und -Themen für die Fakultät NXT}
+% \author{Volker Reichenberger\\
+%   \texttt{volker.reichenberger@reutlingen-university.de}}
+% \date{2026/09/24 v1.3}
+%
+% \maketitle
+%
+% \begin{abstract}
+% Das Paket \textsf{nxtlatex} enthält \LaTeX-Werkzeuge für die Fakultät
+% \emph{NXT Nachhaltigkeit und Technologie} der Hochschule Reutlingen:
+% eine Thesis-Klasse (\textsf{nxtthesis}), eine Briefdefinition
+% (\textsf{nxtbrief}) und ein Beamer-Thema (\textsf{beamerthemeNXT}).
+% Alle Komponenten setzen LuaLaTeX voraus.
+% Alle Komponenten orientieren sich am Erscheinungsbild der Fakultät
+% NXT, können aber für andere Fakultäten oder Hochschulen angepasst werden.
+% \end{abstract}
+%
+% \tableofcontents
+%
+% \section{Einführung}
+%
+% Das Paket \textsf{nxtlatex} bündelt drei \LaTeX-Komponenten:
+% \begin{description}
+%   \item[\textsf{nxtthesis}] Klasse für wissenschaftliche
+%     Abschlussarbeiten, basierend auf der Standardklasse
+%     \textsf{report}. Setzt LuaLaTeX voraus.
+%   \item[\textsf{nxtbrief}] Letter-Class-Option (LCO) für
+%     KOMA-Script \textsf{scrlttr2}. Setzt LuaLaTeX und den Font
+%     \emph{Segoe UI} voraus.
+%   \item[\textsf{beamerthemeNXT}] Beamer-Präsentationsthema.
+%     Setzt LuaLaTeX und den Font \emph{Segoe UI} voraus.
+% \end{description}
+% Dazu kommen zwei Pakete, die alle drei verwenden:
+% \begin{description}
+%   \item[\textsf{nxtlatexcolors}] die Farbpalette der Fakultät
+%     (Abschnitt~\ref{sec:farben}).
+%   \item[\textsf{nxtlatexlogos}] Makros für die Logos aus dem NXT Logo
+%     Font (Abschnitt~\ref{sec:logos}).
+% \end{description}
+%
+% Dazu kommt der NXT Logo Font (\texttt{NXT\_Logo.otf},
+% Abschnitt~\ref{sec:font}), der die Logos der Fakultät als Zeichen
+% enthält.
+%
+% \section{Installation}
+%
+% In TeX~Live und MiKTeX ist \textsf{nxtlatex} bereits enthalten. Von Hand
+% erzeugt
+% \begin{verbatim}
+%   latex nxtlatex.ins
+% \end{verbatim}
+% die Dateien \texttt{nxtlatexcolors.sty}, \texttt{nxtlatexlogos.sty},
+% \texttt{nxtthesis.cls}, \texttt{nxtbrief.lco} und
+% \texttt{beamerthemeNXT.sty}.
+% Kopieren Sie diese Dateien sowie \texttt{NXT\_Logo.otf} in ein
+% Verzeichnis, das \TeX{} findet, z.\,B.\ in
+% \verb|~/texmf/tex/latex/nxtlatex/|. Im Quellverzeichnis erledigt
+% \texttt{make install} dasselbe.
+%
+% \section{nxtthesis -- Klasse für Abschlussarbeiten}
+% \label{sec:nxtthesis}
+%
+% \subsection{Verwendung}
+%
+% \begin{verbatim}
+% \documentclass[german,gyre]{nxtthesis}
+% \title{Titel der Arbeit}
+% \author{Vorname Nachname}
+% \adresse{Musterstraße 1, 12345 Musterstadt}
+% \matrikelnummer{1234567}
+% \akademischergrad{Bachelor of Science}
+% \studiengang{Nachhaltige Technologie}
+% \abgabedatum{31. März 2026}
+% \erstpruef{Prof. Dr. Erstprüfer}
+% \erstpruefbezeichnung{Erstprüfer/in}
+% \zweitpruef{Prof. Dr. Zweitprüfer}
+% \zweitpruefbezeichnung{Zweitprüfer/in}
+% \begin{document}
+% \maketitle
+% \tableofcontents
+% \hauptteil
+% ...
+% \eigenständigkeitserklärung[ki=keine]
+% \end{document}
+% \end{verbatim}
+%
+% \subsection{Klassenoptionen}
+%
+% \begin{description}
+%   \item[\texttt{german}] Setzt Deutsch als Dokumentsprache (Standard).
+%   \item[\texttt{english}] Setzt Englisch als Dokumentsprache. Auch die
+%     Titelseite erscheint dann auf Englisch, ebenso die Vorbelegungen
+%     von \cs{fakultaet} und \cs{hochschule}. Die Erklärung zur
+%     wissenschaftlichen Arbeit bleibt deutsch, weil die Richtlinie nur
+%     einen deutschen Wortlaut vorgibt.
+%   \item[\texttt{gyre}] Verwendet TeX~Gyre~Pagella (Serif),
+%     TeX~Gyre~Heros (Sans) und TeX~Gyre~Pagella~Math.
+%   \item[\texttt{libertinus}] Verwendet Libertinus Serif/Math
+%     und Source~Sans~3.
+%   \item[\texttt{segoeui}] Verwendet Segoe~UI (Sans-Serif) und
+%     Source~Code~Pro (Mono) mit Euler-Math. Passend zum
+%     Beamer-Thema und Brieflayout.
+%   \item[\texttt{stix}] Verwendet STIX~Two~Text (Serif),
+%     Source~Sans~3 und STIX~Two~Math. Empfehlenswert für
+%     mathematisch geprägte Arbeiten.
+%   \item[\texttt{fira}] Verwendet Fira~Sans (Sans-Serif),
+%     Fira~Mono und Fira~Math. Modernes, gut lesbares Schriftbild.
+%   \item[\texttt{newtx}] Verwendet TeX~Gyre~TermesX -- die
+%     überarbeitete Times aus dem Paket \textsf{newtx} --, dazu
+%     TeX~Gyre~Heros und TeX~Gyre~Termes~Math.
+%   \item[\texttt{times}] Verwendet die Systemschriften Times~New~Roman,
+%     Arial und Courier~New mit TeX~Gyre~Termes~Math. Times~New~Roman
+%     bringt \emph{keine} echten Kapitälchen mit; Abkürzungen erscheinen
+%     deshalb im normalen Schnitt, und \texttt{kapitaelchen} setzt die
+%     Überschriften serifenlos statt in Kapitälchen. Wer Times braucht
+%     und Kapitälchen will, nimmt \texttt{newtx}.
+%   \item[\texttt{bookman}] Verwendet TeX~Gyre~Bonum (die freie
+%     Bookman), TeX~Gyre~Heros und TeX~Gyre~Bonum~Math. Weit laufend und
+%     dadurch platzhungrig.
+%   \item[\texttt{charter}] Verwendet XCharter -- die freie Fassung von
+%     Matthew Carters Charter --, Source~Sans~3 und XCharter~Math.
+%   \item[\texttt{garamond}] Verwendet EB~Garamond mit Source~Sans~3 und
+%     Garamond~Math. Statt des fetten Schnitts wird SemiBold verwendet.
+%     Kleine Mittellänge; bei 11\,pt schon an der unteren Grenze.
+%   \item[\texttt{utopia}] Verwendet Erewhon -- die OpenType-Fassung von
+%     Robert Slimbachs Utopia --, Source~Sans~3 und Erewhon~Math.
+%   \item[\texttt{concrete}] Verwendet CMU~Concrete mit Euler~Math, also
+%     die Schriften aus Knuths \emph{Concrete Mathematics}, dazu
+%     CMU~Bright und CMU~Typewriter. Eigenwilliges Paar mit starkem
+%     Charakter.
+% \end{description}
+%
+% Ohne Fontoption wird keine Schriftfamilie gesetzt; LuaLaTeX
+% verwendet dann Latin Modern.
+%
+% Bringt die gewählte Schrift einen Semibold-Schnitt mit, wird dieser
+% statt des fetten verwendet. Der Anhang der beiliegenden
+% \texttt{ThesisanleitungNXT.pdf} zeigt jede Option auf denselben drei
+% Seiten.
+%
+% \subsection{Befehle}
+%
+% \DescribeMacro{\abgabedatum}
+% \DescribeMacro{\studiengang}
+% \DescribeMacro{\akademischergrad}
+% \DescribeMacro{\adresse}
+% \DescribeMacro{\matrikelnummer}
+% \DescribeMacro{\erstpruef}
+% \DescribeMacro{\erstpruefbezeichnung}
+% \DescribeMacro{\zweitpruef}
+% \DescribeMacro{\zweitpruefbezeichnung}
+% Setzen die Metadaten für die Titelseite.
+%
+% \DescribeMacro{\fakultaet}
+% \DescribeMacro{\hochschule}
+% Vorbelegt mit \emph{NXT Nachhaltigkeit und Technologie} bzw.\
+% \emph{Hochschule Reutlingen}. Können überschrieben werden, um
+% die Klasse an anderen Einrichtungen zu verwenden.
+%
+% \DescribeMacro{\ort}
+% Der Ort unter der Titelseite der Richtlinie und in der Erklärung.
+% Vorbelegt mit \emph{Reutlingen}.
+%
+% \DescribeMacro{\subtitle}
+% Ein optionaler Untertitel, gesetzt unter dem Titel.
+%
+% \DescribeMacro{\maketitle}
+% Erzeugt die Titelseite mit allen definierten Metadaten. Leere Felder
+% bleiben weg. Titel und Autor gehen außerdem in die PDF-Metadaten.
+%
+% \DescribeMacro{\hauptteil}
+% Beginnt den Hauptteil: Seitenzahlen ab hier arabisch und ab~1. Davor
+% stehen Titelseite und Verzeichnisse mit römischen Seitenzahlen.
+%
+% \DescribeMacro{\eigenständigkeitserklärung}
+% \cs{eigenständigkeitserklärung}\oarg{Optionen} setzt die Erklärung zur
+% wissenschaftlichen Arbeit im Wortlaut der Richtlinie der Fakultät
+% (Stand 17.12.2025) auf eine eigene Seite, darunter Ort, Abgabedatum und
+% eine Unterschriftslinie mit dem Namen. Optionen:
+% \begin{description}
+%   \item[\texttt{ki=keine}] keine inhaltsgenerierenden KI-Werkzeuge
+%     genutzt;
+%   \item[\texttt{ki=kennzeichnung}] Nutzung erlaubt, die Werkzeuge sind
+%     der Arbeit angefügt;
+%   \item[\texttt{ki=ohnekennzeichnung}] Nutzung erlaubt, ohne
+%     Kennzeichnungspflicht;
+%   \item[\texttt{partnerhochschule=}\meta{Name}] die Arbeit wird auch an
+%     einer Partnerhochschule eingereicht (Kapitel~8 der Richtlinie);
+%   \item[\texttt{partnerordnung=}\meta{Text}] die Prüfungsordnung, nach
+%     der das geschieht, etwa \enquote{des Bachelorstudiengangs X}.
+% \end{description}
+% Die Richtlinie verlangt eine der drei KI-Angaben; fehlt sie, warnt die
+% Klasse. Die Erklärung ist immer deutsch, auch mit \texttt{english}.
+%
+% \DescribeMacro{\kapitaelchen}
+% |\kapitaelchen{erpolino}| setzt Kleinbuchstaben in Kapitälchen -- aber
+% nur, wo die Schrift sie im aktuellen Schnitt hat. Sonst, etwa fett in
+% Latin Modern oder überall mit |times|, erscheint der Text in Versalien.
+% |\textsc| ließe dort den Text in Kleinbuchstaben stehen. Abkürzungen aus
+% |\akronym| verhalten sich von selbst so.
+%
+% \DescribeMacro{\Index}
+% |\Index{Begriff}| setzt \emph{Begriff} kursiv und trägt ihn
+% gleichzeitig in den Index ein.
+%
+% \DescribeMacro{kapitaelchen}
+% Setzt Titel und Überschriften in Kapitälchen statt fett. Ohne diese
+% Option werden sie fett gesetzt; bringt die gewählte Schrift einen
+% Semibold-Schnitt mit, wird dieser statt des fetten verwendet.
+%
+% Bringt die Schrift keine echten Kapitälchen mit -- das betrifft nur
+% |times| --, werden die Überschriften stattdessen serifenlos gesetzt.
+% Aus Versalien heruntergerechnete Kapitälchen wären zu leicht; die
+% Serifenlose hebt sich vom Serifentext deutlich genug ab. Der Titel und
+% die Abkürzungen bleiben in diesem Fall in der Serifenschrift.
+%
+% \DescribeMacro{logo}
+% Setzt das Logo NuT-RU (NXT Nachhaltigkeit und Technologie, Reutlingen
+% University) zentriert über den Titel der Titelseite. Ohne diese
+% Option bleibt die Titelseite ohne Logo. Mit |richtlinie| steht es
+% ohnehin dort -- die Richtlinie der Fakultät schreibt das Logo vor --,
+% die Option ist dann wirkungslos.
+%
+% Das Logo kommt aus dem NXT Logo Font (Abschnitt~\ref{sec:logos}).
+%
+% \DescribeMacro{richtlinie}
+% Schaltet die verbindlichen Layoutvorgaben der Fakultät NXT ein:
+% 11\,pt, 1,5-zeilig, Flattersatz, Rand links 3\,cm und sonst 2,5\,cm,
+% Beschriftungen 10\,pt fett, fortlaufende Nummerierung von Tabellen,
+% Abbildungen und Formeln, eigene Titelseite. Das Ergebnis ist deutlich
+% nüchterner als die Vorgabe der Klasse, aber prüfungsfest.
+% Die Optionen |kapitaelchen| und |richtlinie| schließen einander nicht
+% aus; |richtlinie| gewinnt jedoch, wo sie etwas vorschreibt.
+%
+% \subsection{Abkürzungsverzeichnis}
+% \label{sec:abkuerzungen}
+%
+% Die Klasse lädt das Paket \textsf{acro} und richtet es fertig ein.
+% Es sind keine zusätzlichen Programmläufe nötig; zwei
+% \LaTeX-Durchgänge genügen.
+%
+% \DescribeMacro{\akronym}
+% |\akronym{MSE}{Mean Squared Error}| deklariert eine Abkürzung.
+% Das erste Argument wird groß geschrieben angegeben, so wie die
+% Abkürzung gelesen werden soll.
+%
+% Im Text wird die Abkürzung dann über den \emph{klein} geschriebenen
+% Schlüssel angesprochen: |\ac{mse}| liefert beim ersten Mal
+% \enquote{Mean Squared Error (\textsc{mse})} und danach nur noch
+% \enquote{\textsc{mse}}. Daneben gibt es |\acs| (nur Kurzform),
+% |\acl| (nur Langform), |\acf| (volle Form) und |\acp| (Plural).
+%
+% Kurzformen werden in Kapitälchen gesetzt. Echte Kapitälchen
+% entstehen nur aus Kleinbuchstaben, deshalb schreibt |\akronym| das
+% erste Argument intern klein. Damit beim Kopieren aus dem PDF und bei
+% der Volltextsuche trotzdem \enquote{MSE} und nicht
+% \enquote{mse} herauskommt, hinterlegt |\akronym| die
+% Großschreibung zusätzlich für die PDF-Lesezeichen und -- über das
+% Paket \textsf{accsupp} -- für den kopierbaren Text. Man muss sich
+% darum nicht selbst kümmern.
+%
+% Weitere Schlüssel von \textsf{acro} lassen sich optional
+% durchreichen, etwa eine abweichende Pluralform:
+% \begin{quote}
+% |\akronym[long-plural-form = Gradientenabstiegsverfahren]|\\
+% |            {GD}{Gradient Descent}|
+% \end{quote}
+%
+% \paragraph{Abkürzungen, die im eigenen Langnamen stecken}
+% Manche Abkürzungen sind Teil ihres eigenen Langnamens -- die Fakultät
+% NXT heißt vollständig \enquote{NXT Nachhaltigkeit und
+% Technologie}. Die übliche erste Nennung \enquote{NXT
+% Nachhaltigkeit und Technologie (NXT)} wäre hier doppelt
+% gemoppelt. Sauber wird das so:
+% \begin{quote}
+% |\akronym[first-style = long]|\\
+% |          {NXT}{\acs*{nxt} Nachhaltigkeit und Technologie}|
+% \end{quote}
+% In der Langform steht die Kurzform als |\acs*{nxt}|, damit sie in
+% Kapitälchen erscheint und beim Kopieren trotzdem \enquote{NXT}
+% liefert; der Stern verhindert, dass die Nennung mitgezählt wird.
+% |first-style = long| sorgt dafür, dass bei der ersten Nennung nur der
+% Langname ohne Klammerzusatz erscheint und danach die Kurzform.
+%
+% Ein naheliegender, aber falscher Weg ist |\textsc{NXT}| in der
+% Langform: Kapitälchen entstehen nur aus Kleinbuchstaben, auf
+% Großbuchstaben bewirkt |\textsc| nichts. Und |\textsc{nxt}| liefert
+% zwar Kapitälchen, beim Kopieren aber \enquote{nxt}.
+%
+% \DescribeMacro{\printacronyms}
+% Gibt das Verzeichnis aus, üblicherweise nach |\tableofcontents|.
+% Es erscheint als eigenes Kapitel und enthält nur die Abkürzungen,
+% die auch tatsächlich benutzt wurden.
+%
+% \subsection{Symbolverzeichnis}
+%
+% \DescribeMacro{\Symbol}
+% |\Symbol|\oarg{acro-Schlüssel}\marg{Kürzel}\marg{Zeichen}\marg{Bedeutung}
+% trägt ein Formelzeichen ins Symbolverzeichnis ein, etwa
+% |\Symbol{lambda}{\lambda}{Gewicht des Glättungsterms}|. Das Zeichen
+% wird im Mathematiksatz gesetzt; sortiert wird nach dem Kürzel, und das
+% Kürzel dient auch als Kopiertext und für die PDF-Lesezeichen. Das
+% optionale Argument reicht weitere Schlüssel an \textsf{acro} durch, etwa
+% eine Einheit über |extra|. Steht in der Bedeutung Mathematik, schreibt
+% man sie als |\texorpdfstring{$k$}{k}|: \textsf{acro} legt die Bedeutung
+% auch als Kopiertext ab, und dort warnt \textsf{hyperref} sonst vor dem
+% Mathematikmodus.
+%
+% \DescribeMacro{\printsymbols}
+% Gibt das Symbolverzeichnis aus. Anders als das Abkürzungsverzeichnis
+% enthält es alle deklarierten Symbole, auch unbenutzte.
+%
+% \paragraph{Vordefinierte Abkürzungen}
+% Die Klasse deklariert |nxt| und |hsrt| bereits selbst, passend zu den
+% Vorbelegungen von |\fakultaet| und |\hochschule|. |\ac{nxt}| und
+% |\ac{hsrt}| stehen also ohne weiteres Zutun zur Verfügung. Da nur
+% benutzte Abkürzungen im Verzeichnis erscheinen, stören sie nicht,
+% wenn eine Arbeit sie nicht verwendet.
+%
+% \subsection{Logos}
+% \label{sec:logos}
+%
+% Die Logos der Fakultät kommen aus dem NXT Logo Font
+% (\texttt{NXT\_Logo.otf}, Abschnitt~\ref{sec:font}), der dem Paket
+% beiliegt. Es gibt nichts herunterzuladen; die Formen stammen
+% unverändert aus den Vorlagen des Corporate Design. Das Paket
+% \textsf{nxtlatexlogos} -- alle drei Komponenten laden es -- stellt
+% bereit:
+% \begin{description}
+%   \item[\cs{nxtzeichen}\oarg{Optionen}] nur das Zeichen;
+%   \item[\cs{nxtlogo}\oarg{Optionen}] Zeichen und NXT (»kurz«);
+%   \item[\cs{nxtlogonut}\oarg{Optionen}] mit »Nachhaltigkeit und
+%     Technologie«;
+%   \item[\cs{nxthsrtlogo}\oarg{Optionen}] dazu »Reutlingen University«;
+%   \item[\cs{nxtlogostandard}\oarg{Optionen}] die Standardform: Zeilen
+%     oben, NXT unten.
+% \end{description}
+% Optionen:
+% \begin{description}
+%   \item[\texttt{width}, \texttt{height}] die Größe; ohne Angabe ist
+%     das Zeichen 1\,cm hoch.
+%   \item[\texttt{schema}] das Farbschema: \texttt{farbig} (Vorgabe),
+%     \texttt{schwarz}, \texttt{weiss}, \texttt{weisseTextmarke},
+%     \texttt{weisseZeile}.
+%   \item[\texttt{zeichenfarbe}, \texttt{nxtfarbe},
+%     \texttt{zeilenfarbe}] die Farben der drei Teile einzeln, etwa für
+%     den Druck in CMYK; \texttt{farbe} setzt alle drei.
+%   \item[\texttt{alt}] der Text, den Bildschirmleser vorlesen und den
+%     man beim Kopieren aus dem PDF erhält. Voreingestellt ist der Name
+%     des Logos.
+% \end{description}
+% Findet \TeX{} eine ältere \texttt{NXT\_Logo.otf} ohne Logos, warnt
+% das Paket.
+%
+% \DescribeMacro{\hsrtlogograu}
+% \DescribeMacro{\hsrtskyline}
+% Das Hochschullogo und die Skyline aus dem Brieffuß sind keine
+% Zeichen im Font: Sie gehören der Hochschule, das Hochschullogo enthält
+% das Landeswappen. Die beiden Makros binden die Dateien
+% \texttt{Logo\_HSRT\_Grau.pdf} und \texttt{hsrtskyline.pdf} ein;
+% gebraucht werden sie nur von Brief und Folien. Fehlt eine Datei, wird
+% das Makro stillschweigend übergangen. Das optionale Argument geht an
+% |\includegraphics|.
+%
+% Die Dateien lädt eines der beiden beiliegenden Skripte von der
+% Hochschul-Website und installiert sie im lokalen \texttt{texmf}-Baum:
+% \begin{verbatim}
+% sh getnxtlogos                                            % macOS, Linux
+% powershell -ExecutionPolicy Bypass -File getnxtlogos.ps1  % Windows
+% \end{verbatim}
+% In TeX~Live liegen die Skripte bei der Dokumentation, unter
+% \texttt{doc/latex/nxtlatex} in dem Baum, den
+% |kpsewhich -var-value TEXMFDIST| nennt.
+%
+% \subsection{Barrierefreiheit und PDF/A}
+% \label{sec:barrierefreiheit}
+%
+% Die Klasse schreibt Titel, Autor und Sprache in die PDF-Metadaten,
+% lässt den Titel statt des Dateinamens anzeigen, versieht die Logos mit
+% Alternativtexten und hinterlegt für Abkürzungen und Symbole einen
+% kopierbaren Text. Eigene Abbildungen bekommen ihren Alternativtext
+% über |\includegraphics[alt={...}]{...}|.
+%
+% Ein getaggtes, barrierefreies PDF (PDF/UA) entsteht mit
+% \begin{verbatim}
+% \DocumentMetadata{lang=de, pdfversion=2.0,
+%                   pdfstandard=ua-2, tagging=on}
+% \end{verbatim}
+% vor |\documentclass|. Deshalb baut \textsf{nxtthesis} seit Version~1.3
+% auf der Standardklasse \textsf{report} auf und verwendet nur Pakete,
+% die das \LaTeX-Projekt als verträglich mit dem Tagging führt
+% (\texttt{latex3.github.io/tagging-project}). \textsf{listings} ist von
+% sich aus nicht verträglich; verwendet die Arbeit es, lädt die Klasse
+% bei aktivem Tagging die Anpassung, die das \LaTeX-Projekt dafür
+% bereitstellt. Mit dem Tagging stellt die Klasse außerdem die
+% Kapitelüberschrift des Kerns auf ihr eigenes Aussehen ein. Die
+% Beispielthesis ist so gesetzt; veraPDF bestätigt PDF/UA-2 für sie und
+% für alle zwölf Schriftoptionen.
+%
+% |lang=de| statt |de-DE|: Mit |de-DE| nennt babel die Sprache
+% »german-germany«, und biblatex warnt, weil es den Namen nicht kennt.
+% Die Hauptsprache der Arbeit gibt ohnehin die Klasse vor.
+%
+% Für ein PDF/A genügt |pdfstandard=a-2b|; das sRGB-Farbprofil übernimmt
+% dann \LaTeX{} selbst.
+%
+% \subsection{Von KOMA-Script zu report}
+%
+% Bis Version~1.2 baute die Klasse auf \textsf{scrreprt} auf. Satzspiegel
+% und Aussehen sind geblieben; |\subtitle|, |\addchap| und |\addsec|
+% stellt die Klasse weiter bereit. Andere KOMA-Befehle wie |\KOMAoptions|
+% oder |\setkomafont| gibt es nicht mehr. Hilfsdateien einer mit 1.2
+% übersetzten Arbeit stören nicht; im Zweifel löscht man die
+% \texttt{.aux}- und \texttt{.toc}-Dateien.
+%
+% \section{nxtbrief -- Brieflayout}
+% \label{sec:nxtbrief}
+%
+% \subsection{Verwendung}
+%
+% \begin{verbatim}
+% \documentclass{scrlttr2}
+% \LoadLetterOption{nxtbrief}
+% \usepackage[ngerman]{babel}
+% \begin{document}
+% \setkomavar{fromname}{Prof. Dr. Musterfrau}
+% \setkomavar{signature}{Musterfrau}
+% \setkomavar{fromemail}{musterfrau@hs-muster.de}
+% \setkomavar{fromphone}{+49\,(0)1234\,56789}
+% \setkomavar{frommobilephone}{+49\,(0)152\,12345678}
+% \begin{letter}{Empfänger\\Straße\\PLZ Ort}
+% \opening{Sehr geehrte Damen und Herren,}
+% ...
+% \closing{Mit freundlichen Grüßen}
+% \end{letter}
+% \end{document}
+% \end{verbatim}
+%
+% \subsection{Anpassung}
+%
+% Die rechte Spalte und die Rücksendeadresse sind auf die Fakultät
+% NXT voreingestellt. Die Rücksendeadresse beginnt mit dem Namen aus
+% |fromname|; eine ganz andere setzt |\setkomavar{backaddress}{...}| im
+% Dokument. Für andere Einrichtungen dient die LCO-Datei als Vorlage.
+%
+% Der Briefkopf zeigt |\nxthsrtlogo| aus dem NXT Logo Font, der Fuß der
+% ersten Seite |\hsrtskyline| (Abschnitt~\ref{sec:logos}). Wer andere
+% Grafiken will, definiert diese Makros um.
+%
+% \section{beamerthemeNXT -- Präsentationsthema}
+% \label{sec:beamerthemenxt}
+%
+% Ein vollständiges Beispiel findet sich in der Datei
+% \texttt{BeispielfolienNXT.tex}, die dem Paket beiliegt.
+%
+% \subsection{Verwendung}
+%
+% \begin{verbatim}
+% \documentclass{beamer}
+% \usetheme{NXT}
+% \title{Präsentationstitel}
+% \author{Autor}
+% \date{\today}
+% \begin{document}
+% \frame{\titlepage}
+% \begin{frame}{Folientitel}
+%   \begin{itemize}
+%     \item Punkt 1
+%     \item Punkt 2
+%   \end{itemize}
+% \end{frame}
+% \end{document}
+% \end{verbatim}
+%
+% \subsection{Logos}
+%
+% Das Thema verwendet die Logo-Makros aus \textsf{nxtlatexlogos}
+% (Abschnitt~\ref{sec:logos}):
+% \begin{description}
+%   \item[\cs{nxthsrtlogo}] Titelfolie.
+%   \item[\cs{nxtlogo}] Folienüberschrift (rechts).
+% \end{description}
+% Die Aufzählungszeichen sind das NXT-Zeichen aus dem Font. Andere
+% Logos setzt man, indem man die Makros nach |\usetheme{NXT}| umdefiniert:
+% \begin{verbatim}
+% \renewcommand{\nxthsrtlogo}[1][]{\includegraphics[#1]{mein-logo.pdf}}
+% \end{verbatim}
+%
+% |\emph| setzt fett in NXT-Grün und versteht Overlay-Angaben wie
+% |\emph<2>{...}|.
+%
+% \section{Farben}
+% \label{sec:farben}
+%
+% Das Paket \textsf{nxtlatexcolors} definiert die NXT-Farbpalette; alle
+% drei Komponenten laden es:
+% \begin{description}
+%   \item[\texttt{nxtgreen}] RGB(0, 139, 146) -- das charakteristische
+%     Grün der Fakultät.
+%   \item[\texttt{nxt.violet}], \texttt{nxt.blue}, \texttt{nxt.orange}
+%     Weitere Akzentfarben.
+%   \item[\texttt{nxt.gray0}\,--\,\texttt{nxt.gray8}] Abstufungen von
+%     Hell- bis Dunkelgrau.
+% \end{description}
+%
+% \section{NXT Logo Font}
+% \label{sec:font}
+%
+% Der Font \texttt{NXT\_Logo.otf} (SIL Open Font License~1.1) enthält die
+% Logos der Fakultät als Zeichen. Er hat ein eigenes Repository,
+% \texttt{gitlab.reutlingen-university.de/reichenb/nxt-logo-font}; dort
+% steht er auch für Word und andere Programme zum Download.
+% \begin{description}
+%   \item[\texttt{a}--\texttt{z}] das NXT-Zeichen (\texttt{i}: invertiert,
+%     nur die Quadrate);
+%   \item[\texttt{A}--\texttt{Z}, \texttt{0}--\texttt{9}] Buchstaben und
+%     Ziffern im Raster des Zeichens;
+%   \item[U+E000, U+E001] das Zeichen, das invertierte Zeichen;
+%   \item[U+E010, U+E020, U+E030, U+E040] die Logos kurz, NuT, NuT-RU
+%     und Standard als Farbglyphen (COLR/CPAL) mit fünf Paletten, eine je
+%     Farbschema;
+%   \item[+1, +2, +3] dieselben Logos zerlegt in Zeichen, Wortmarke und
+%     Unterzeilen, jeweils einfarbig -- daraus setzen die Makros aus
+%     Abschnitt~\ref{sec:logos} jedes Farbschema zusammen.
+% \end{description}
+% Die Kante des Zeichens ist 1\,em, seine Unterkante liegt auf der
+% Grundlinie. \textsf{nxtlatexlogos} lädt den Font als |\nxtlogofont|;
+% |{\nxtlogofont a}| setzt das Zeichen in der aktuellen Textfarbe.
+%
+% \StopEventually{\PrintChanges\PrintIndex}
+%
+% \section{Implementierung}
+%
+% \subsection{nxtlatexcolors.sty}
+% \label{sec:impl:nxtlatexcolors}
+%
+%<*nxtlatexcolors>
+%    \begin{macrocode}
+\ProvidesPackage{nxtlatexcolors}[2026/09/24 v1.3 NXT color palette]
+
+\RequirePackage{xcolor}
+
+% Mit \DocumentMetadata verwaltet LaTeX den Katalog selbst. Ein eigener
+% Eintrag /OutputIntents stünde dann doppelt darin, und das PDF wäre
+% ungültig. Deshalb geht das Farbprofil in diesem Fall über die
+% Schnittstelle von pdfmanagement.
+\IfDocumentMetadataTF{%
+  \SetKeys[document/metadata]{colorprofiles={A=sRGB.icc}}%
+}{%
+  \RequirePackage{colorprofiles}%
+  \AtBeginDocument{%
+    \ifx\colorpro@rgb@profile\relax\else
+      \immediate\pdfextension obj stream
+        attr {/N 3}
+        file {\colorpro@rgb@profile}%
+      \edef\nxtcolors@srgbobj{\pdffeedback lastobj}%
+      \pdfextension catalog {%
+        /OutputIntents [<<%
+          /Type /OutputIntent%
+          /S /GTS_PDFA1%
+          /DestOutputProfile \nxtcolors@srgbobj\space 0 R%
+          /OutputConditionIdentifier (\colorpro@rgb@identifier)%
+          /Info (\colorpro@rgb@info)%
+          /RegistryName (\colorpro@rgb@registry)%
+        >>]%
+      }%
+    \fi
+  }%
+}
+
+\definecolor{nxtgreen}{RGB}{0,139,146}
+\colorlet{nxtcolor}{nxtgreen}
+\definecolor{footgray}{RGB}{160,160,160}
+
+\definecolor{nxt.verylightgray}{RGB}{240,238,230}
+\definecolor{nxt.gray0}{RGB}{228,224,220}
+\definecolor{nxt.gray1}{RGB}{208,203,196}
+\definecolor{nxt.gray2}{RGB}{195,190,181}
+\definecolor{nxt.gray3}{RGB}{138,133,128}
+\definecolor{nxt.gray4}{RGB}{99,102,100}
+\definecolor{nxt.gray5}{RGB}{84,86,88}
+\definecolor{nxt.gray6}{RGB}{70,72,75}
+\definecolor{nxt.gray7}{RGB}{60,62,65}
+\definecolor{nxt.gray8}{RGB}{48,50,52}
+
+\definecolor{nxtgreen.2}{HTML}{009BA4}
+\definecolor{nxtgreen.3}{HTML}{64C2C8}
+\definecolor{nxtgreen.4}{HTML}{38B6AB}
+\definecolor{nxt.violet}{HTML}{7978AE}
+\definecolor{nxt.blue}{HTML}{377DB7}
+\definecolor{nxt.orange}{HTML}{FF8A44}
+
+\definecolor{nxt.yellow}{RGB}{254,167, 39}
+\definecolor{nxt.red}{RGB}{173,  0, 41}
+\definecolor{nxt.magenta}{RGB}{172,  0, 79}
+\definecolor{nxt.navy}{RGB}{  0, 76,132}
+\definecolor{nxt.cyan}{RGB}{ 59,188,211}
+\definecolor{nxt.olive}{RGB}{ 80,125, 81}
+\definecolor{nxt.lightolive}{RGB}{121,156,104}
+\definecolor{nxt.lightblue}{RGB}{ 55,110,159}
+\definecolor{nxt.darkblue}{RGB}{ 49, 71,100}
+
+% Die Farben der Logos (Corporate Design 11/2024): Grau der Unterzeilen
+% und Schwarz der einfarbigen Fassung.
+\definecolor{nxt.logograu}{HTML}{707173}
+\definecolor{nxt.logoschwarz}{HTML}{1D1D1B}
+%    \end{macrocode}
+%</nxtlatexcolors>
+%
+% \subsection{nxtlatexlogos.sty}
+% \label{sec:impl:nxtlatexlogos}
+%
+%<*nxtlatexlogos>
+%    \begin{macrocode}
+\ProvidesPackage{nxtlatexlogos}[2026/09/24 v1.3 NXT logo macros]
+
+\RequirePackage{graphicx}
+\RequirePackage{nxtlatexcolors}
+\RequirePackage{fontspec}
+\RequirePackage{accsupp}
+
+% Die NXT-Logos kommen aus dem Font NXT_Logo.otf, der dem Paket
+% beiliegt -- keine Bilddateien, nichts herunterzuladen. Geladen wird
+% über den Dateinamen: Eine ältere Fassung, die als »NXT Logo« im System
+% installiert ist, soll nicht gezogen werden.
+% Alle Schnitte auf dieselbe Datei: Ein Logo in fetter oder kursiver
+% Umgebung (etwa ein Aufzählungszeichen) bliebe sonst mit einer Warnung
+% über fehlende Schnitte stehen.
+\newfontfamily{\nxtlogofont}{NXT_Logo.otf}[
+  BoldFont = *, ItalicFont = *, BoldItalicFont = *, SlantedFont = *]
+
+% Die Logos gibt es erst ab Version 1.0 des Fonts. Findet TeX eine
+% ältere Datei -- etwa aus einer veralteten Installation --, fehlten sie
+% sonst stillschweigend.
+\begingroup
+  \nxtlogofont
+  \iffontchar\font"E030 \else
+    \PackageWarningNoLine{nxtlatexlogos}{%
+      NXT_Logo.otf ist zu alt und enthaelt keine Logos.\MessageBreak
+      Bitte nxtlatex aktualisieren (tlmgr update nxtlatex)}%
+  \fi
+\endgroup
+
+\ExplSyntaxOn
+\tl_new:N \l__nxtlogo_farbe_a_tl
+\tl_new:N \l__nxtlogo_farbe_b_tl
+\tl_new:N \l__nxtlogo_farbe_c_tl
+\tl_new:N \l__nxtlogo_alt_tl
+\dim_new:N \l__nxtlogo_breite_dim
+\dim_new:N \l__nxtlogo_hoehe_dim
+\box_new:N \l__nxtlogo_box
+
+% Farbschemata des Corporate Design: je eine Farbe für Zeichen, die
+% Wortmarke NXT und die Unterzeilen.
+\cs_new_protected:Npn \__nxtlogo_schema:nnn #1#2#3
+  {
+    \tl_set:Nn \l__nxtlogo_farbe_a_tl {#1}
+    \tl_set:Nn \l__nxtlogo_farbe_b_tl {#2}
+    \tl_set:Nn \l__nxtlogo_farbe_c_tl {#3}
+  }
+\keys_define:nn { nxtlatexlogos }
+  {
+    schema .choice: ,
+    schema / farbig .code:n =
+      \__nxtlogo_schema:nnn { nxtgreen } { nxtgreen } { nxt.logograu } ,
+    schema / schwarz .code:n =
+      \__nxtlogo_schema:nnn { nxt.logoschwarz } { nxt.logoschwarz } { nxt.logoschwarz } ,
+    schema / weiss .code:n =
+      \__nxtlogo_schema:nnn { white } { white } { white } ,
+    schema / weisseTextmarke .code:n =
+      \__nxtlogo_schema:nnn { nxtgreen } { white } { white } ,
+    schema / weisseZeile .code:n =
+      \__nxtlogo_schema:nnn { nxtgreen } { nxtgreen } { white } ,
+    farbe .code:n = \__nxtlogo_schema:nnn {#1} {#1} {#1} ,
+    zeichenfarbe .tl_set:N = \l__nxtlogo_farbe_a_tl ,
+    nxtfarbe     .tl_set:N = \l__nxtlogo_farbe_b_tl ,
+    zeilenfarbe  .tl_set:N = \l__nxtlogo_farbe_c_tl ,
+    width  .dim_set:N = \l__nxtlogo_breite_dim ,
+    height .dim_set:N = \l__nxtlogo_hoehe_dim ,
+    alt    .tl_set:N  = \l__nxtlogo_alt_tl ,
+    % Aus der Zeit der Bilddateien: \includegraphics-Schlüssel, die
+    % hier nichts bewirken, werden stillschweigend übergangen.
+    keepaspectratio .code:n = ,
+    unknown .code:n =
+      \msg_warning:nne { nxtlatexlogos } { schluessel } { \l_keys_key_str } ,
+  }
+\msg_new:nnn { nxtlatexlogos } { schluessel }
+  { Unbekannter~Schluessel~'#1'~fuer~ein~NXT-Logo~wird~uebergangen. }
+
+% #1 erster Codepunkt (Zeichen-Ebene), #2 Zahl der Ebenen (1-3),
+% #3 Alternativtext, #4 Optionen.
+% Die Ebenen sind Glyphen gleicher Breite; übereinandergesetzt und je
+% eingefärbt ergeben sie das Logo. Ohne width und height ist das
+% Zeichen 1 cm hoch.
+\cs_new_protected:Npn \__nxtlogo_ebene:nn #1#2
+  {
+    \hbox_overlap_right:n
+      { \exp_args:Nv \color { l__nxtlogo_farbe_#2_tl } \char \int_eval:n {#1} }
+  }
+\cs_new_protected:Npn \__nxtlogo_setzen:nnnn #1#2#3#4
+  {
+    % Wie \includegraphics: erst den Absatz beginnen. Sonst landete ein
+    % Logo am Absatzanfang als eigene Zeile in der vertikalen Liste.
+    \mode_leave_vertical:
+    \group_begin:
+      \keys_set:nn { nxtlatexlogos } { schema = farbig }
+      \dim_zero:N \l__nxtlogo_breite_dim
+      \dim_zero:N \l__nxtlogo_hoehe_dim
+      \tl_set:Nn \l__nxtlogo_alt_tl {#3}
+      \keys_set:nn { nxtlatexlogos } {#4}
+      % Erst bei 10pt setzen und messen: Das Zeichen ist 1 em hoch, die
+      % Breite hängt von der Form ab.
+      \hbox_set:Nn \l__nxtlogo_box
+        { \nxtlogofont \fontsize {10pt} {10pt} \selectfont \char \int_eval:n {#1} }
+      \dim_compare:nNnTF \l__nxtlogo_breite_dim > \c_zero_dim
+        { \dim_set:Nn \l_tmpa_dim { 10pt * \l__nxtlogo_breite_dim / \box_wd:N \l__nxtlogo_box } }
+        {
+          \dim_compare:nNnTF \l__nxtlogo_hoehe_dim > \c_zero_dim
+            { \dim_set_eq:NN \l_tmpa_dim \l__nxtlogo_hoehe_dim }
+            { \dim_set:Nn \l_tmpa_dim { 1cm } }
+        }
+      \hbox_set:Nn \l__nxtlogo_box
+        {
+          \nxtlogofont \fontsize { \l_tmpa_dim } { \l_tmpa_dim } \selectfont
+          \int_step_inline:nn { #2 - 1 }
+            { \__nxtlogo_ebene:nn { #1 + ##1 - 1 } { \int_to_alph:n {##1} } }
+          \exp_args:Nv \color { l__nxtlogo_farbe_ \int_to_alph:n {#2} _tl }
+          \char \int_eval:n { #1 + #2 - 1 }
+        }
+      % Kopiert man das Logo aus dem PDF, kommt der Alternativtext heraus;
+      % Bildschirmleser lesen ihn vor. pdfstringdef (für Umlaute) gibt es
+      % nur mit hyperref, sonst genügt escape für ASCII.
+      \exp_args:Ne \BeginAccSupp
+        {
+          method = \IfPackageLoadedTF { hyperref } { pdfstringdef } { escape } ,
+          ActualText = { \l__nxtlogo_alt_tl }
+        }
+      \box_use_drop:N \l__nxtlogo_box
+      \EndAccSupp { }
+    \group_end:
+  }
+\NewDocumentCommand \nxtzeichen { O{} }
+  { \__nxtlogo_setzen:nnnn { "E000 } { 1 } { NXT } {#1} }
+\NewDocumentCommand \nxtlogo { O{} }
+  { \__nxtlogo_setzen:nnnn { "E011 } { 2 } { NXT } {#1} }
+\NewDocumentCommand \nxtlogonut { O{} }
+  {
+    \__nxtlogo_setzen:nnnn { "E021 } { 3 }
+      { NXT~Nachhaltigkeit~und~Technologie } {#1}
+  }
+\NewDocumentCommand \nxthsrtlogo { O{} }
+  {
+    \__nxtlogo_setzen:nnnn { "E031 } { 3 }
+      { NXT~Nachhaltigkeit~und~Technologie,~Reutlingen~University } {#1}
+  }
+\NewDocumentCommand \nxtlogostandard { O{} }
+  {
+    \__nxtlogo_setzen:nnnn { "E041 } { 3 }
+      { NXT~Nachhaltigkeit~und~Technologie,~Reutlingen~University } {#1}
+  }
+\ExplSyntaxOff
+
+% Hochschullogo und Skyline bleiben Bilddateien: Sie gehören der
+% Hochschule, das Hochschullogo enthält das Landeswappen. getnxtlogos
+% lädt sie herunter; fehlen sie, entfallen die Makros stillschweigend.
+% Die Skyline ist Schmuck und für Bildschirmleser ein artifact.
+\newcommand{\hsrtskyline}[1][]{\IfFileExists{hsrtskyline.pdf}{\includegraphics[artifact,#1]{hsrtskyline.pdf}}{}}
+\newcommand{\hsrtlogograu}[1][]{\IfFileExists{Logo_HSRT_Grau.pdf}{\includegraphics[alt={Logo Hochschule Reutlingen},#1]{Logo_HSRT_Grau.pdf}}{}}
+%    \end{macrocode}
+%</nxtlatexlogos>
+%
+% \subsection{nxtthesis.cls}
+% \label{sec:impl:nxtthesis}
+%
+%<*nxtthesis>
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{nxtthesis}[2026/09/24 v1.3 NXT Thesis Class (LuaLaTeX)]
+
+% Basis ist die Standardklasse report, nicht mehr KOMA-Script: Die
+% KOMA-Klassen gelten beim LaTeX-Projekt als unverträglich mit dem
+% Tagging, report als verträglich -- Voraussetzung für ein barrierefreies
+% PDF. Schriftgröße 11 pt wie bisher.
+\LoadClass[a4paper,11pt]{report}
+
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=nxtthesis,prefix=nxtthesis@}
+
+\DeclareBoolOption{german}
+\DeclareBoolOption{english}
+\DeclareBoolOption{gyre}
+\DeclareBoolOption{libertinus}
+\DeclareBoolOption{segoeui}
+\DeclareBoolOption{stix}
+\DeclareBoolOption{fira}
+\DeclareBoolOption{newtx}
+\DeclareBoolOption{times}
+\DeclareBoolOption{bookman}
+\DeclareBoolOption{charter}
+\DeclareBoolOption{garamond}
+\DeclareBoolOption{utopia}
+\DeclareBoolOption{concrete}
+\DeclareBoolOption{richtlinie}
+\DeclareBoolOption{kapitaelchen}
+\DeclareBoolOption{logo}
+
+\ProcessKeyvalOptions*
+
+% Beide Sprachen werden geladen, die gewählte ist die Hauptsprache. Die
+% Erklärung zur wissenschaftlichen Arbeit bleibt auch in einer
+% englischen Arbeit deutsch und braucht dann die deutsche Trennung.
+\ifnxtthesis@english
+  \RequirePackage[ngerman,main=english]{babel}
+\else
+  \RequirePackage[english,main=ngerman]{babel}
+\fi
+
+\RequirePackage{fontspec}
+\RequirePackage{etoolbox}
+
+% amsmath vor unicode-math laden: unicode-math baut auf amsmath auf und
+% verlangt diese Reihenfolge. Weil jede Schriftoption unten unicode-math
+% lädt, muss amsmath hier davor stehen. Eine Arbeit braucht amsmath
+% praktisch immer und muss es nun nicht mehr selbst laden.
+\RequirePackage{amsmath}
+
+\ifnxtthesis@gyre
+  \setmainfont{TeX Gyre Pagella}
+  \setsansfont{TeX Gyre Heros}
+  \RequirePackage{unicode-math}
+  \setmathfont{TeX Gyre Pagella Math}
+\fi
+
+\ifnxtthesis@libertinus
+  % Semibold statt Bold, wo die Schrift es hergibt: Der fette Schnitt
+  % fällt sonst gegenüber dem Grundtext zu schwer aus.
+  \setmainfont{Libertinus Serif}[
+    BoldFont       = {Libertinus Serif Semibold},
+    BoldItalicFont = {Libertinus Serif Semibold Italic},
+  ]
+  \setsansfont{Source Sans 3}
+  \RequirePackage{unicode-math}
+  \setmathfont{Libertinus Math}
+\fi
+
+\ifnxtthesis@segoeui
+  \setmainfont{Segoe UI}[BoldFont={Segoe UI Semibold}]
+  \setsansfont{Segoe UI}[BoldFont={Segoe UI Semibold}]
+  \setmonofont{Source Code Pro}[BoldFont={Source Code Pro Semibold}]
+  \RequirePackage{unicode-math}
+  \setmathfont{Euler Math}
+\fi
+
+\ifnxtthesis@stix
+  \setmainfont{STIX Two Text}[
+    BoldFont       = {STIX Two Text SemiBold},
+    BoldItalicFont = {STIX Two Text SemiBold Italic},
+  ]
+  \setsansfont{Source Sans 3}
+  \RequirePackage{unicode-math}
+  \setmathfont{STIX Two Math}
+\fi
+
+\ifnxtthesis@fira
+  \setmainfont{Fira Sans}[BoldFont={Fira Sans Medium}]
+  \setsansfont{Fira Sans}[BoldFont={Fira Sans Medium}]
+  \setmonofont{Fira Mono}
+  \RequirePackage{unicode-math}
+  \setmathfont{Fira Math}
+\fi
+
+\ifnxtthesis@newtx
+  % newtx selbst ist ein Paket aus der pdflatex-Zeit und verträgt sich
+  % nicht mit fontspec und unicode-math. Es bringt aber OpenType-Dateien
+  % mit -- TeX Gyre TermesX, eine überarbeitete Times --, und die lassen
+  % sich direkt setzen. Die Mathematik übernimmt TeX Gyre Termes Math,
+  % das metrisch dazu passt.
+  \setmainfont{TeX Gyre TermesX}
+  \setsansfont{TeX Gyre Heros}
+  \RequirePackage{unicode-math}
+  \setmathfont{TeX Gyre Termes Math}
+\fi
+
+\ifnxtthesis@times
+  % Times New Roman ist eine Systemschrift und liegt nicht in jeder
+  % Installation vor. Eine Mathematikvariante gibt es nicht -- TeX Gyre
+  % Termes Math ist metrisch Times-kompatibel und die nächstliegende
+  % Wahl.
+  %
+  % Achtung: Times New Roman bringt keine echten Kapitälchen mit. Die
+  % Abkürzungen der Klasse werden damit aus Versalien heruntergerechnet
+  % und wirken zu leicht. Wer Times braucht, aber echte Kapitälchen
+  % will, nimmt die Option newtx.
+  \setmainfont{Times New Roman}
+  \setsansfont{Arial}
+  \setmonofont{Courier New}
+  \RequirePackage{unicode-math}
+  \setmathfont{TeX Gyre Termes Math}
+\fi
+
+\ifnxtthesis@bookman
+  % Bookman = TeX Gyre Bonum, die freie URW Bookman. Heros als
+  % Serifenlose, weil beide aus derselben URW-Familie stammen.
+  \setmainfont{TeX Gyre Bonum}
+  \setsansfont{TeX Gyre Heros}
+  \RequirePackage{unicode-math}
+  \setmathfont{TeX Gyre Bonum Math}
+\fi
+
+\ifnxtthesis@charter
+  % XCharter ist die freie TeX-Fassung der Charter von Matthew Carter.
+  \setmainfont{XCharter}
+  \setsansfont{Source Sans 3}
+  \RequirePackage{unicode-math}
+  \setmathfont{XCharter Math}
+\fi
+
+\ifnxtthesis@garamond
+  % EB Garamond mit der dazugehörigen Garamond-Math. Der Semibold-Schnitt
+  % ersetzt den fetten; Garamond ist eine leichte Schrift, deren Bold
+  % gegenüber dem Grundtext zu schwer ausfällt.
+  \setmainfont{EB Garamond}[
+    BoldFont       = {EB Garamond SemiBold},
+    BoldItalicFont = {EB Garamond SemiBold Italic},
+  ]
+  \setsansfont{Source Sans 3}
+  \RequirePackage{unicode-math}
+  \setmathfont{Garamond Math}
+\fi
+
+\ifnxtthesis@utopia
+  % Erewhon ist die OpenType-Fassung der Utopia von Robert Slimbach.
+  % Erewhon-Math löst das ältere »Utopia with Math Design« ab, das nur
+  % mit pdflatex funktioniert.
+  \setmainfont{Erewhon}
+  \setsansfont{Source Sans 3}
+  \RequirePackage{unicode-math}
+  \setmathfont{Erewhon Math}
+\fi
+
+\ifnxtthesis@concrete
+  % Concrete mit Euler -- die Schriften aus Knuths »Concrete
+  % Mathematics«. CMU Bright ist die dazugehörige Serifenlose, CMU
+  % Typewriter die Schreibmaschinenschrift.
+  \setmainfont{CMU Concrete}
+  \setsansfont{CMU Bright}
+  \setmonofont{CMU Typewriter Text}
+  \RequirePackage{unicode-math}
+  \setmathfont{Euler Math}
+\fi
+
+\RequirePackage{nxtlatexlogos}
+
+% Das Logo der Titelseite. Unter »richtlinie« steht es immer: Die
+% Richtlinie der Fakultät schreibt das Hochschullogo vor. Sonst
+% erscheint es nur mit der Option »logo«. Es ist das Logo NuT-RU: Es
+% nennt Fakultät und Hochschule und kommt dem verlangten Hochschullogo
+% damit am nächsten. Die Breite ist so gewählt, dass das Zeichen etwa
+% so groß ist wie früher im kurzen Logo.
+%
+% \nxtthesis@titellogo{Abstand darunter} setzt Logo und Abstand nur,
+% wenn das Logo gewünscht ist. Sonst entsteht gar nichts, auch kein
+% leerer Absatz, der den Titel nach unten schöbe. Das Logo kommt aus dem
+% NXT Logo Font und steht immer zur Verfügung.
+\newif\ifnxtthesis@titellogo
+\ifnxtthesis@richtlinie \nxtthesis@titellogotrue \fi
+\ifnxtthesis@logo \nxtthesis@titellogotrue \fi
+\ifnxtthesis@richtlinie
+  \newcommand*{\nxtthesis@logobreite}{6cm}
+\else
+  \newcommand*{\nxtthesis@logobreite}{5cm}
+\fi
+\newcommand{\nxtthesis@titellogo}[1]{%
+  \ifnxtthesis@titellogo
+    \nxthsrtlogo[width=\nxtthesis@logobreite]\par
+    #1%
+  \fi
+}
+
+\def\abgabedatum#1{\def\@abgabedatum{#1}}
+\newcommand{\printabgabedatum}{\@abgabedatum}
+
+\def\fakultaet#1{\def\@fakultaet{#1}}
+\newcommand{\printfakultaet}{\@fakultaet}
+
+\def\hochschule#1{\def\@hochschule{#1}}
+\newcommand{\printhochschule}{\@hochschule}
+
+\def\studiengang#1{\def\@studiengang{#1}}
+\newcommand{\printstudiengang}{\@studiengang}
+
+\def\akademischergrad#1{\def\@akademischergrad{#1}}
+\newcommand{\printakademischergrad}{\@akademischergrad}
+
+\def\adresse#1{\def\@adresse{#1}}
+\newcommand{\printadresse}{\@adresse}
+
+\def\matrikelnummer#1{\def\@matrikelnummer{#1}}
+\newcommand{\printmatrikelnummer}{\@matrikelnummer}
+
+\def\erstpruef#1{\def\@erstpruef{#1}}
+\newcommand{\printerstpruef}{\@erstpruef}
+\def\erstpruefbezeichnung#1{\def\@erstpruefbezeichnung{#1}}
+\newcommand{\printerstpruefbezeichnung}{\@erstpruefbezeichnung}
+
+\def\zweitpruef#1{\def\@zweitpruef{#1}}
+\newcommand{\printzweitpruef}{\@zweitpruef}
+\def\zweitpruefbezeichnung#1{\def\@zweitpruefbezeichnung{#1}}
+\newcommand{\printzweitpruefbezeichnung}{\@zweitpruefbezeichnung}
+
+% Nicht jede Schrift bringt echte Kapitälchen mit. Fehlen sie, rechnet
+% LaTeX sie aus Versalien herunter -- das Ergebnis ist zu leicht und
+% fällt gegenüber dem Grundtext ab. Für solche Schriften wird deshalb
+% der normale Schnitt verwendet, nicht der gefälschte.
+\newif\ifnxtthesis@echtekapitaelchen
+\nxtthesis@echtekapitaelchentrue
+\ifnxtthesis@times \nxtthesis@echtekapitaelchenfalse \fi
+
+% Auszeichnung von Titel und Überschriften. Voreingestellt ist fett; die
+% Option »kapitaelchen« stellt auf Kapitälchen um. Drei Rollen, weil sie
+% sich im Rückfall unterschiedlich verhalten:
+%   \nxtthesis@titelschrift    -- der Titel auf der Titelseite
+%   \nxtthesis@ueberschrift    -- die Gliederungsüberschriften
+%   \nxtthesis@kopfschrift     -- der Kolumnentitel
+%
+% Hat die Schrift keine echten Kapitälchen (nur »times«), werden aus
+% Versalien heruntergerechnete Kapitälchen vermieden. Die Überschriften
+% weichen dann auf die Serifenlose aus -- sie hebt sich vom Serifentext
+% deutlich genug ab, ohne fett zu wirken. Titel und Abkürzungen bleiben
+% in der Serifenschrift.
+\ifnxtthesis@kapitaelchen
+  \ifnxtthesis@echtekapitaelchen
+    \newcommand{\nxtthesis@titelschrift}{\scshape}
+    \newcommand{\nxtthesis@ueberschrift}{\rmfamily\scshape}
+    \newcommand{\nxtthesis@kopfschrift}{\rmfamily\scshape}
+  \else
+    \ClassWarningNoLine{nxtthesis}{%
+      Die gewaehlte Schrift hat keine echten Kapitaelchen.\MessageBreak
+      Ueberschriften werden deshalb serifenlos gesetzt;\MessageBreak
+      Titel und Abkuerzungen bleiben in der Serifenschrift%
+    }
+    \newcommand{\nxtthesis@titelschrift}{\bfseries}
+    \newcommand{\nxtthesis@ueberschrift}{\sffamily\bfseries}
+    \newcommand{\nxtthesis@kopfschrift}{\sffamily}
+  \fi
+\else
+  \newcommand{\nxtthesis@titelschrift}{\bfseries}
+  \newcommand{\nxtthesis@ueberschrift}{\rmfamily\bfseries}
+  \newcommand{\nxtthesis@kopfschrift}{\rmfamily}
+\fi
+
+% Die Gliederungsüberschriften. Unter »richtlinie« immer fett in der
+% Grundschrift, wie die Richtlinie es zeigt; sonst nach der Wahl oben.
+\ifnxtthesis@richtlinie
+  \newcommand*{\nxtthesis@gliederung}{\bfseries}
+\else
+  \newcommand*{\nxtthesis@gliederung}{\nxtthesis@ueberschrift}
+\fi
+
+% ------------------------------------------------ Satzspiegel und Absätze
+\ifnxtthesis@richtlinie
+  \RequirePackage[a4paper,left=3cm,top=2.5cm,right=2.5cm,bottom=2.5cm]{geometry}
+  \RequirePackage{setspace}
+  \onehalfspacing
+  % Absätze durch eine Leerzeile getrennt, ohne Einzug. parskip richtet
+  % auch Listen darauf ein. Der Abstand ist eine Zeile im 1,5-fachen
+  % Zeilenabstand, deshalb erst zu Dokumentbeginn gesetzt.
+  \RequirePackage{parskip}
+  % \dimexpr ist nötig: \baselineskip ist ein Glue-Register, danach
+  % liest TeX kein »plus« mehr -- »plus1pt« landete als Text auf einer
+  % eigenen Seite vor der Titelseite.
+  \AtBeginDocument{\parskip=\dimexpr\baselineskip\relax \@plus \p@\relax}
+  % Flattersatz mit Silbentrennung. Das \raggedright des Kerns gäbe dem
+  % rechten Rand unendliche Dehnbarkeit; TeX müsste dann nie trennen, und
+  % der Rand franste aus. Endliche Dehnbarkeit (2 em) lässt die Trennung
+  % aktiv und den Rand gleichmäßig -- die Richtlinie verlangt in
+  % Abschnitt 3.3 ausdrücklich eine sinnvolle Silbentrennung. Das leistete
+  % früher ragged2e; das Paket ist mit dem Tagging nur teilweise
+  % verträglich, die drei Zuweisungen genügen.
+  \rightskip=\z@ \@plus 2em\relax
+  \@rightskip=\rightskip
+  \parfillskip=\z@ \@plus 1fil\relax
+\else
+  % Der Satzspiegel der früheren KOMA-Fassung: 147 mm breit, 44 Zeilen,
+  % gleiche Ränder links und rechts, großzügiger Fußsteg.
+  \RequirePackage[a4paper,textwidth=418pt,hmarginratio=1:1,top=84.5pt,
+    lines=44,headheight=17pt,headsep=20.4pt,footskip=47.6pt]{geometry}
+  \setlength{\parindent}{1em}
+\fi
+
+% ------------------------------------------------------- Überschriften
+% Kapitel: Nummer und Titel in einer Zeile, linksbündig; bei mehrzeiligen
+% Titeln hängt der Text hinter der Nummer. report setzte sonst »Kapitel 1«
+% in eine eigene Zeile darüber.
+\ifnxtthesis@richtlinie
+  \newcommand*{\nxtthesis@kapitelgroesse}{\normalsize}
+  \newcommand*{\nxtthesis@abschnittgroesse}{\normalsize}
+  \newcommand*{\nxtthesis@unterabschnittgroesse}{\normalsize}
+  \newcommand*{\nxtthesis@kapitelvor}{\z@}
+  \newcommand*{\nxtthesis@kapitelnach}{\baselineskip}
+\else
+  \newcommand*{\nxtthesis@kapitelgroesse}{\huge}
+  \newcommand*{\nxtthesis@abschnittgroesse}{\Large}
+  \newcommand*{\nxtthesis@unterabschnittgroesse}{\large}
+  \newcommand*{\nxtthesis@kapitelvor}{2\baselineskip}
+  \newcommand*{\nxtthesis@kapitelnach}{2\baselineskip}
+\fi
+\renewcommand*{\@makechapterhead}[1]{%
+  \vspace*{\nxtthesis@kapitelvor}%
+  {\parindent\z@ \raggedright
+   \normalfont\nxtthesis@gliederung\nxtthesis@kapitelgroesse
+   \ifnum\c@secnumdepth>\m@ne
+     \setbox\z@\hbox{\thechapter\hspace{.6em}}%
+     \noindent\hangindent\wd\z@ \hangafter\@ne \box\z@
+   \fi
+   #1\par\nobreak}%
+  \vskip\nxtthesis@kapitelnach\relax
+}
+\renewcommand*{\@makeschapterhead}[1]{%
+  \vspace*{\nxtthesis@kapitelvor}%
+  {\parindent\z@ \raggedright
+   \normalfont\nxtthesis@gliederung\nxtthesis@kapitelgroesse
+   #1\par\nobreak}%
+  \vskip\nxtthesis@kapitelnach\relax
+}
+% Mit aktivem Tagging ersetzt latex-lab \chapter schon beim Laden von
+% report durch eine Vorlage (Instanz »chapter«), die \@makechapterhead
+% nicht mehr benutzt -- die Überschrift sähe dann aus wie in report,
+% mit »Kapitel 1« in einer eigenen Zeile. Deshalb wird die Vorlage in
+% diesem Fall auf das Aussehen der Klasse eingestellt: kein Präfix,
+% Nummer und Titel in einer Zeile, Schrift und Abstände wie oben.
+% \section & Co. laufen über \@startsection und brauchen das nicht.
+\IfInstanceExistsT{heading}{chapter}{%
+  \DeclareInstance{heading}{chapter}{display}{
+    name                 = chapter,
+    level                = 0,
+    placement            = top,
+    before-vspace        = \z@,
+    after-penalty-vspace = \nxtthesis@kapitelvor,
+    after-vspace         = \nxtthesis@kapitelnach,
+    number-format        = \thechapter,
+    heading-decls        = \raggedright\normalfont\nxtthesis@gliederung
+                           \nxtthesis@kapitelgroesse,
+    headformat-instance  = nxtkapitel,
+    mark-cmd             = \chaptermark{#1},
+    contents-extra       = \addtocontents{lof}{\protect\addvspace{10\p@}}%
+                           \addtocontents{lot}{\protect\addvspace{10\p@}},
+  }%
+  \DeclareInstance{headformat}{nxtkapitel}{hang}{
+    heading-indent   = \z@,
+    number-title-sep = .6em,
+  }%
+}
+% Abschnitte mit den Abständen von report, aber in der Schrift der
+% Klasse und linksbündig statt im Blocksatz.
+\renewcommand{\section}{\@startsection{section}{1}{\z@}%
+  {-3.5ex \@plus -1ex \@minus -.2ex}{2.3ex \@plus .2ex}%
+  {\normalfont\nxtthesis@gliederung\nxtthesis@abschnittgroesse\raggedright}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}%
+  {-3.25ex \@plus -1ex \@minus -.2ex}{1.5ex \@plus .2ex}%
+  {\normalfont\nxtthesis@gliederung\nxtthesis@unterabschnittgroesse\raggedright}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}%
+  {-3.25ex \@plus -1ex \@minus -.2ex}{1.5ex \@plus .2ex}%
+  {\normalfont\nxtthesis@gliederung\normalsize\raggedright}}
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\z@}%
+  {3.25ex \@plus 1ex \@minus .2ex}{-1em}%
+  {\normalfont\nxtthesis@gliederung\normalsize}}
+% Kapiteleinträge im Inhaltsverzeichnis in der Schrift der Überschriften.
+\patchcmd{\l@chapter}{\bfseries}{\nxtthesis@gliederung}{}%
+  {\ClassWarningNoLine{nxtthesis}{Kapiteleintraege im Verzeichnis unveraendert}}
+
+% KOMA-Befehle, die Arbeiten verwenden: \addchap und \addsec setzen eine
+% Überschrift ohne Nummer, aber mit Eintrag im Inhaltsverzeichnis und im
+% Kolumnentitel; die Sternform ohne Eintrag.
+\NewDocumentCommand{\addchap}{s o m}{%
+  \chapter*{#3}%
+  \IfBooleanF{#1}{%
+    \phantomsection
+    \addcontentsline{toc}{chapter}{\IfValueTF{#2}{#2}{#3}}}%
+  \markboth{\IfValueTF{#2}{#2}{#3}}{\IfValueTF{#2}{#2}{#3}}%
+}
+\NewDocumentCommand{\addsec}{s o m}{%
+  \section*{#3}%
+  \IfBooleanF{#1}{%
+    \phantomsection
+    \addcontentsline{toc}{section}{\IfValueTF{#2}{#2}{#3}}}%
+}
+% Hilfsdateien einer Arbeit, die noch mit der KOMA-Fassung (bis 1.2)
+% übersetzt wurde, enthalten \nonumberline. Ohne diese Definition bräche
+% der erste Lauf nach dem Update ab.
+\providecommand*{\nonumberline}{}
+% Der Untertitel, ebenfalls aus KOMA bekannt.
+\newcommand*{\subtitle}[1]{\gdef\@subtitle{#1}}
+\let\@subtitle\@empty
+\ifnxtthesis@richtlinie
+  % Die Richtlinie kennt für die Titelseite nur 14 pt fett (Titel) und
+  % 12 pt (alles Übrige). Der Untertitel bleibt deshalb bei 12 pt.
+  \newcommand*{\nxtthesis@untertitelschrift}{\normalfont}
+\else
+  % Der Untertitel bleibt ohne Auszeichnung: Er steht direkt unter dem
+  % Titel, und zwei gleich ausgezeichnete Zeilen übereinander verlieren
+  % den Kontrast, der die Hierarchie sichtbar macht.
+  \newcommand*{\nxtthesis@untertitelschrift}{\normalfont\Large}
+\fi
+
+% ---------------------------------------------------- Kolumnentitel
+% fancyhdr statt scrlayer-scrpage (beim Tagging ungeprüft). Ohne
+% »richtlinie«: links das laufende Kapitel, rechts die Seitenzahl, unten
+% nichts. Mit »richtlinie«: nur die Seitenzahl, unten rechts.
+\RequirePackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand*{\headrulewidth}{\z@}
+\renewcommand*{\footrulewidth}{\z@}
+\ifnxtthesis@richtlinie
+  \fancyfoot[R]{\normalfont\thepage}
+\else
+  % Der Kolumnentitel folgt der Schrift der Überschriften, bleibt aber
+  % klein und ohne Fettung -- fett wäre zu laut für eine
+  % Orientierungshilfe.
+  \fancyhead[L]{\normalfont\nxtthesis@kopfschrift\small\leftmark}
+  \fancyhead[R]{\normalfont\small\thepage}
+\fi
+% Auch Kapitelanfangsseiten (Seitenstil plain) bekommen den Kopf, sonst
+% stünde dort keine Seitenzahl.
+\fancypagestyle{plain}{}
+% Die Marke: Nummer und Name des Kapitels, wie in der Überschrift.
+% fancyhdr definiert \chaptermark beim Umschalten auf »fancy« neu,
+% deshalb erst danach.
+\renewcommand*{\chaptermark}[1]{%
+  \markboth{\ifnum\c@secnumdepth>\m@ne\thechapter\enskip\fi#1}{}}
+\renewcommand*{\sectionmark}[1]{}
+% report, makeidx und biblatex schreiben ihre Marken in Versalien
+% (»INHALTSVERZEICHNIS«). Hier gilt die Schreibweise der Überschrift:
+% Beim Setzen der Marke wird \MakeUppercase wirkungslos. Im Kopf käme
+% das zu spät -- der Kern führt \MakeUppercase schon in der Marke aus.
+\let\nxtthesis@markboth\markboth
+\let\nxtthesis@markright\markright
+\renewcommand*{\markboth}[2]{%
+  \begingroup\let\MakeUppercase\@firstofone
+  \nxtthesis@markboth{#1}{#2}\endgroup}
+\renewcommand*{\markright}[1]{%
+  \begingroup\let\MakeUppercase\@firstofone
+  \nxtthesis@markright{#1}\endgroup}
+
+\RequirePackage{nxtlatexcolors}
+
+\def\ort#1{\def\@ort{#1}}
+\newcommand{\printort}{\@ort}
+\ort{Reutlingen}
+
+% Vorbelegungen für die Felder der Titelseite. Ohne sie quittiert ein
+% vergessenes Feld den Lauf mit »Undefined control sequence« in
+% \maketitle -- eine Meldung, die nicht verrät, welche Angabe fehlt.
+% Leer vorbelegte Felder bleiben auf der Titelseite schlicht leer.
+\adresse{}
+\matrikelnummer{}
+\akademischergrad{}
+\studiengang{}
+\abgabedatum{}
+\erstpruef{}
+\zweitpruef{}
+
+% Die festen Texte der Titelseite, je nach Hauptsprache.
+\ifnxtthesis@english
+  \newcommand*{\nxtthesis@txt@thesisgrad}{Thesis submitted for the degree of}
+  \newcommand*{\nxtthesis@txt@arbeitgrad}{Thesis submitted for the degree of}
+  \newcommand*{\nxtthesis@txt@fakultaet}{at the faculty}
+  \newcommand*{\nxtthesis@txt@derhochschule}{of}
+  \newcommand*{\nxtthesis@txt@anderhochschule}{at}
+  \newcommand*{\nxtthesis@txt@studiengang}{in the degree programme}
+  \newcommand*{\nxtthesis@txt@vorgelegtvon}{Submitted by:}
+  \newcommand*{\nxtthesis@txt@vorgelegtbei}{Submitted to:}
+  \newcommand*{\nxtthesis@txt@matrikel}{Matriculation number}
+  \newcommand*{\nxtthesis@txt@abgabe}{Date of submission:}
+  \erstpruefbezeichnung{First examiner}
+  \zweitpruefbezeichnung{Second examiner}
+\else
+  \newcommand*{\nxtthesis@txt@thesisgrad}{Thesis zur Erlangung des akademischen Grades}
+  \newcommand*{\nxtthesis@txt@arbeitgrad}{Arbeit zur Erlangung des akademischen Grades}
+  \newcommand*{\nxtthesis@txt@fakultaet}{an der Fakultät}
+  \newcommand*{\nxtthesis@txt@derhochschule}{der}
+  \newcommand*{\nxtthesis@txt@anderhochschule}{an der}
+  \newcommand*{\nxtthesis@txt@studiengang}{im Studiengang}
+  \newcommand*{\nxtthesis@txt@vorgelegtvon}{Vorgelegt von:}
+  \newcommand*{\nxtthesis@txt@vorgelegtbei}{Vorgelegt bei:}
+  \newcommand*{\nxtthesis@txt@matrikel}{Matrikelnummer}
+  \newcommand*{\nxtthesis@txt@abgabe}{Abgabedatum:}
+  \erstpruefbezeichnung{Erstprüfer}
+  \zweitpruefbezeichnung{Zweitprüfer}
+\fi
+
+% Die Titelseite zählt schon römisch (i), die Seite danach ist ii. Zählte
+% sie arabisch, hießen Titelseite und erste Seite des Hauptteils beide
+% »1«, und hyperref vergäbe denselben Seitenanker zweimal.
+\newcommand{\nxtthesis@vorspannzahlen}{%
+  \setcounter{page}{2}%
+}
+
+% Eine Zeile der Titelseite, die nur entsteht, wenn das Feld gefüllt ist.
+% #1 ist das Feld, #2 die zu setzende Zeile.
+%
+% Der Block wird mit \par statt mit \\ gesetzt. Mit \\ bricht die
+% Titelseite ab, sobald ein Feld leer bleibt: Ein \\ ohne folgende Zeile
+% ergibt »There's no line here to end«, und genau das passiert bei einem
+% leeren Feld am Ende des Blocks. Da \parskip in dieser Variante null
+% ist, sitzen die Zeilen mit \par genauso eng wie mit \\.
+\newcommand{\nxtthesis@zeile}[2]{%
+  \ifdefempty{#1}{}{\noindent #2\par}%
+}
+
+% Der Untertitel ist optional:
+% ohne \subtitle bleibt die Titelseite unverändert. Das Argument enthält
+% den Abstand, der nur zusammen mit dem Untertitel entstehen soll.
+\newcommand{\nxtthesis@untertitel}[1]{%
+  \ifdefempty{\@subtitle}{}{%
+    #1%
+    {\nxtthesis@untertitelschrift\@subtitle\par}%
+  }%
+}
+
+\newcommand{\hauptteil}{%
+  \cleardoublepage
+  \pagenumbering{arabic}%
+  \setcounter{page}{1}%
+}
+
+\ifnxtthesis@richtlinie
+  \newcommand*{\nxtthesis@zehnpunkt}{\fontsize{10pt}{12pt}\selectfont}
+  % Fußnoten in 10 pt; einzeilig setzt setspace sie ohnehin.
+  \renewcommand*{\footnotesize}{\nxtthesis@zehnpunkt}
+  \counterwithout{table}{chapter}
+  \counterwithout{figure}{chapter}
+  \counterwithout{equation}{chapter}
+  % Beschriftungen: 10 pt fett, zentriert, »Tabelle 3.« mit Punkt. Die
+  % Richtlinie ist hier widersprüchlich: Ihre Tabelle in Abschnitt 3.2
+  % nennt Beschriftungen linksbündig, ihre eigenen Beispiele setzen sie
+  % zentriert. Wir folgen den Beispielen. Früher über das Paket caption,
+  % das mit dem Tagging unverträglich ist.
+  \setlength{\abovecaptionskip}{.5\baselineskip}
+  \setlength{\belowcaptionskip}{\z@}
+  \long\def\@makecaption#1#2{%
+    \vskip\abovecaptionskip
+    {\nxtthesis@zehnpunkt\bfseries\centering #1.\ #2\par}%
+    \vskip\belowcaptionskip}
+  \AtBeginDocument{%
+    \@ifpackageloaded{biblatex}{%
+      \setlength{\bibhang}{1cm}%
+      \renewcommand*{\bibfont}{\normalfont\normalsize\setstretch{1}}%
+    }{}%
+  }
+\fi
+
+\ifnxtthesis@english
+  \fakultaet{NXT Sustainability and Technology}
+  \hochschule{Reutlingen University}
+\else
+  \fakultaet{NXT Nachhaltigkeit und Technologie}
+  \hochschule{Hochschule Reutlingen}
+\fi
+
+% pdfusetitle übernimmt \title und \author in die PDF-Metadaten. Der
+% Schlüssel wirkt nur als Paketoption, nicht über \hypersetup. Ein
+% Bildschirmleser liest dann den Titel vor und nicht den Dateinamen
+% (pdfdisplaydoctitle); PDF/UA verlangt beides.
+\PassOptionsToPackage{pdfusetitle}{hyperref}
+\RequirePackage{hyperref}
+\hypersetup{
+  hidelinks,
+  pdfdisplaydoctitle,
+}
+% Die Dokumentsprache im PDF: Ein Bildschirmleser wählt danach die
+% Aussprache. babel setzt sie nicht selbst.
+\ifnxtthesis@english
+  \hypersetup{pdflang=en}
+\else
+  \hypersetup{pdflang=de-DE}
+\fi
+
+\RequirePackage{makeidx}
+\makeindex
+
+\RequirePackage{booktabs}
+
+\newcommand{\Index}[1]{\index{#1}\emph{#1}}
+
+\RequirePackage{acro}
+\RequirePackage{accsupp}
+\RequirePackage{array}
+\RequirePackage{longtable}
+% Überschrift der Verzeichnisse: wie \chapter*, aber mit Kolumnentitel --
+% report setzt bei \chapter* keine Marke, im Kopf stünde sonst noch das
+% vorige Verzeichnis.
+\NewAcroTemplate[heading]{nxtkapitel}
+  {\chapter*{\acrolistname}\markboth{\acrolistname}{\acrolistname}}
+\acsetup{
+  list/heading  = nxtkapitel,
+  list/display  = used,
+  list/template = longtable,
+  list/exclude  = symbol,
+  make-links    = true,
+}
+% Kurzformen in Kapitälchen -- aber nur, wenn die Schrift echte
+% mitbringt. Sonst bleibt es beim normalen Schnitt: Heruntergerechnete
+% Versalien wirken zu leicht und fallen im Text unangenehm auf.
+%
+% Auch eine Schrift mit Kapitälchen hat sie nicht in jedem Schnitt:
+% Latin Modern etwa kennt keine fetten. In einer fetten Überschrift wiche
+% LaTeX dann auf den fetten Normalschnitt aus, und weil das Kürzel für
+% Kapitälchen klein geschrieben ist, stünde dort »erpolino«. Deshalb
+% wird vorher geprüft, ob der Schnitt existiert; wenn nicht, erscheint
+% das Kürzel in Versalien.
+\newcommand{\nxtthesis@kapitaelchen}[1]{%
+  \ifcsname\f@encoding/\f@family/\f@series/sc\endcsname
+    {\scshape #1}%
+  \else
+    \MakeUppercase{#1}%
+  \fi
+}
+\ifnxtthesis@echtekapitaelchen
+  \acsetup{format/short = \nxtthesis@kapitaelchen}
+\fi
+% Dieselbe Prüfung für eigene Auszeichnungen, etwa einen Firmennamen:
+% \kapitaelchen{erpolino}. Robust, damit es auch in Überschriften und
+% Beschriftungen steht. Ohne echte Kapitälchen (times) immer Versalien.
+\NewDocumentCommand{\kapitaelchen}{m}{%
+  \ifnxtthesis@echtekapitaelchen
+    \nxtthesis@kapitaelchen{#1}%
+  \else
+    \MakeUppercase{#1}%
+  \fi
+}
+% Die Vorlage »longtable« setzt die Erläuterung voreingestellt in eine
+% p-Spalte. Deren Grundlinie liegt bei einzeiligen Einträgen nicht auf
+% der Grundlinie der Kurzform -- das Symbol steht dann sichtbar höher.
+% Eine m-Spalte zentriert vertikal und behebt das.
+\acsetup{
+  templates/colspec = {
+    >{\bfseries}l@{\hspace{2em}}>{\raggedright\arraybackslash}m{.72\linewidth}
+  }
+}
+\ifnxtthesis@english
+  \acsetup{list/name = List of Abbreviations}
+\else
+  \acsetup{list/name = Abkürzungsverzeichnis}
+\fi
+
+\ExplSyntaxOn
+\tl_new:N \l__nxt_akronym_id_tl
+\tl_new:N \l__nxt_akronym_kurz_tl
+\cs_new_protected:Npn \__nxt_akronym:nnn #1#2#3
+  {
+    \tl_set:Nx \l__nxt_akronym_id_tl { \text_lowercase:n {#2} }
+    % Die Kurzform wird nur dann klein geschrieben, wenn sie auch in
+    % Kapitälchen gesetzt wird -- echte Kapitälchen entstehen nur aus
+    % Kleinbuchstaben. Bringt die Schrift keine mit, bleibt die Kurzform
+    % groß, sonst stünde »mse« klein im Text.
+    \legacy_if:nTF { nxtthesis@echtekapitaelchen }
+      { \tl_set_eq:NN \l__nxt_akronym_kurz_tl \l__nxt_akronym_id_tl }
+      { \tl_set:Nn \l__nxt_akronym_kurz_tl {#2} }
+    \use:x
+      {
+        \exp_not:N \DeclareAcronym { \l__nxt_akronym_id_tl }
+          {
+            short     = { \l__nxt_akronym_kurz_tl } ,
+            long      = { \exp_not:n {#3} } ,
+            pdfstring = { \exp_not:n {#2} } ,
+            short-acc = { \exp_not:n {#2} } ,
+            \exp_not:n {#1}
+          }
+      }
+  }
+\NewDocumentCommand \akronym { O{} m m }
+  { \__nxt_akronym:nnn {#1} {#2} {#3} }
+
+\cs_new_protected:Npn \__nxt_symbol:nnnn #1#2#3#4
+  {
+    \use:x
+      {
+        \exp_not:N \DeclareAcronym { sym- \exp_not:n {#2} }
+          {
+            short        = { \exp_not:N \ensuremath { \exp_not:n {#3} } } ,
+            long         = { \exp_not:n {#4} } ,
+            short-format = { } ,
+            tag          = symbol ,
+            % Sortiert wird nach dem Kürzel, nicht nach dem Zeichen: Die
+            % Kurzform ist hier Mathematik und ließe sich nicht ordnen.
+            sort         = { \exp_not:n {#2} } ,
+            % short-acc muss gesetzt sein. Die Klasse lädt accsupp (damit
+            % die Kapitälchen der Abkürzungen kopierbar bleiben), und acro
+            % leitet den Kopiertext sonst selbst aus der Kurzform ab --
+            % dabei wendet es » ` « auf deren erstes Token an. Bei einem
+            % Zeichen wie \lambda ist das ein Makro, und der Lauf bricht
+            % mit »Improper alphabetic constant« ab. Das Kürzel ist als
+            % Kopiertext ohnehin die bessere Wahl: aus \lambda wird beim
+            % Kopieren »lambda« statt eines unbrauchbaren Zeichens.
+            short-acc    = { \exp_not:n {#2} } ,
+            % Aus demselben Grund das Kürzel für die PDF-Lesezeichen und
+            % Linkziele: Mathematik lässt sich dort nicht darstellen, und
+            % hyperref warnte sonst für jedes Symbol.
+            pdfstring    = { \exp_not:n {#2} } ,
+            \tl_if_empty:nF {#1} { extra = { \exp_not:n {#1} } , }
+          }
+      }
+  }
+\NewDocumentCommand \Symbol { O{} m m m }
+  { \__nxt_symbol:nnnn {#1} {#2} {#3} {#4} }
+\ExplSyntaxOff
+
+% Beide Verzeichnisse sind longtables ohne Beschriftung. longtable zählt
+% den Tabellenzähler hoch und gleich wieder zurück, hyperref vergibt
+% deshalb beiden denselben Anker (»duplicate destination table.0.1«).
+% Innerhalb der Gruppe bekommt das Symbolverzeichnis einen eigenen.
+\newcommand{\printsymbols}{%
+  \begingroup
+  \renewcommand*{\theHtable}{symbole.\arabic{table}}%
+  \printacronyms[
+    include = symbol,
+    exclude = {},
+    display = all,
+    name    = \nxtthesis@symbolname,
+  ]%
+  \endgroup
+}
+
+\ifnxtthesis@english
+  \newcommand{\nxtthesis@symbolname}{List of Symbols}
+\else
+  \newcommand{\nxtthesis@symbolname}{Symbolverzeichnis}
+\fi
+
+\ifnxtthesis@english
+  \akronym[first-style = long]{NXT}{\acs*{nxt} Sustainability and Technology}
+  \akronym{HSRT}{Reutlingen University}
+\else
+  \akronym[first-style = long]{NXT}{\acs*{nxt} Nachhaltigkeit und Technologie}
+  \akronym{HSRT}{Hochschule Reutlingen}
+\fi
+
+\ifnxtthesis@richtlinie
+\renewcommand*{\maketitle}{%
+  \pagenumbering{roman}%
+  \begin{titlepage}
+    % Die Zeilen der Titelseite sind Absätze (siehe \nxtthesis@zeile);
+    % der Absatzabstand der Richtlinie gilt hier nicht.
+    \parskip=\z@\relax
+    \setstretch{1}%
+    \fontsize{12pt}{16pt}\selectfont
+    \begin{center}
+      % Wie in der anderen Titelseite wird der Block mit \par gesetzt
+      % und nicht mit \\: Ein \\ hinter einem leeren Feld bricht mit
+      % »There's no line here to end« ab.
+      \nxtthesis@titellogo{\vspace{2\baselineskip}}%
+      {\fontsize{14pt}{18pt}\selectfont\bfseries\@title\par}
+      \nxtthesis@untertitel{\vspace{.5\baselineskip}}
+      \vspace{3\baselineskip}
+      \ifdefempty{\@akademischergrad}{}{%
+        \nxtthesis@txt@arbeitgrad\par
+        \printakademischergrad\par
+        \vspace{3\baselineskip}
+      }%
+      \nxtthesis@zeile{\@studiengang}{\nxtthesis@txt@studiengang\ \printstudiengang}%
+      \nxtthesis@txt@anderhochschule\ \printhochschule\par
+    \end{center}
+    \vfill
+    \noindent\nxtthesis@txt@vorgelegtvon\par
+    \vspace{.5\baselineskip}
+    \nxtthesis@zeile{\@author}{\@author}%
+    \nxtthesis@zeile{\@matrikelnummer}{\nxtthesis@txt@matrikel\ \@matrikelnummer}%
+    \vspace{2\baselineskip}
+
+    \nxtthesis@zeile{\@erstpruef}{\nxtthesis@txt@vorgelegtbei}%
+    \vspace{.5\baselineskip}
+    \nxtthesis@zeile{\@erstpruef}{\@erstpruef}%
+    \nxtthesis@zeile{\@zweitpruef}{\@zweitpruef}%
+    \vspace{2\baselineskip}
+
+    \noindent
+    \printort, \@abgabedatum
+  \end{titlepage}
+  \nxtthesis@vorspannzahlen
+}
+\else
+\renewcommand*{\maketitle}{%
+  \pagenumbering{roman}%
+  \begin{titlepage}
+    \parskip=\z@\relax
+    % Der Satzspiegel gibt dem Fußsteg viel Raum -- auf einer Textseite
+    % ist das richtig, auf der Titelseite lässt es den unteren Block zu
+    % hoch enden. \enlargethispage gilt nur für diese eine Seite und
+    % lässt sie tiefer laufen; der dehnbare Raum verteilt sich dann bis
+    % dorthin.
+    \enlargethispage{3cm}%
+    \begin{center}
+      \null\vspace{2cm}
+      % Ohne die Option »logo« oder ohne NXT_Logo.pdf entsteht auch der
+      % Abstand darunter nicht, sonst rutschte der Titel ohne Grund nach
+      % unten.
+      \nxtthesis@titellogo{\vspace{2\baselineskip}}%
+      {\huge\nxtthesis@titelschrift\@title\par}
+      \nxtthesis@untertitel{\vspace{.75\baselineskip}}
+      \vfill
+      % Auch hier \par statt \\: Ein leeres Feld ließe sonst ein \\ ins
+      % Leere laufen (»There's no line here to end«).
+      \ifdefempty{\@akademischergrad}{}{%
+        \nxtthesis@txt@thesisgrad\par
+        \vspace{.5\baselineskip}
+        \printakademischergrad\par
+        \vspace{.5\baselineskip}
+      }%
+      \nxtthesis@txt@fakultaet\ \printfakultaet\par
+      \nxtthesis@txt@derhochschule\ \printhochschule\par
+      \ifdefempty{\@studiengang}{}{%
+        \vspace{.5\baselineskip}
+        \nxtthesis@txt@studiengang\par
+        \vspace{.5\baselineskip}
+        \printstudiengang\par
+      }%
+    \end{center}
+    \vfill
+    \noindent\nxtthesis@txt@vorgelegtvon\par
+    \nxtthesis@zeile{\@author}{\@author}%
+    \nxtthesis@zeile{\@adresse}{\@adresse}%
+    \nxtthesis@zeile{\@matrikelnummer}{\nxtthesis@txt@matrikel\ \@matrikelnummer}%
+    \vspace{24pt}
+    \nxtthesis@zeile{\@abgabedatum}{\nxtthesis@txt@abgabe\ \@abgabedatum}%
+    \vspace{1em}
+    \nxtthesis@zeile{\@erstpruef}{\@erstpruefbezeichnung: \@erstpruef}%
+    \nxtthesis@zeile{\@zweitpruef}{\@zweitpruefbezeichnung: \@zweitpruef}%
+  \end{titlepage}
+  \nxtthesis@vorspannzahlen
+}
+\fi
+
+% Quelltext mit listings in einem getaggten PDF: listings ist mit dem
+% Tagging nicht von sich aus verträglich und bricht ab. Das LaTeX-Projekt
+% liefert die nötige Anpassung vorerst als Datei mit tagpdf aus
+% (tagpdfdocu-listings-support.ltx); kommt sie als latex-lab-listings in
+% den Kern, wird diese genommen. Geladen wird nur, wenn die Arbeit
+% listings verwendet und das Tagging aktiv ist. Die Datei braucht @ als
+% Buchstaben; eine Gruppe darum verwürfe ihre Definitionen.
+\ExplSyntaxOn
+\cs_new_protected:Npn \__nxt_listings_tagging:
+  {
+    \cs_if_exist:NT \tag_if_active:T
+      {
+        \tag_if_active:T
+          {
+            \IfFileExists { latex-lab-listings.sty }
+              { \RequirePackage { latex-lab-listings } }
+              {
+                \IfFileExists { tagpdfdocu-listings-support.ltx }
+                  {
+                    \char_set_catcode_letter:N \@
+                    \input { tagpdfdocu-listings-support.ltx }
+                    \char_set_catcode_other:N \@
+                  }
+                  { }
+              }
+          }
+      }
+  }
+\AddToHook { begindocument/before }
+  { \IfPackageLoadedT { listings } { \__nxt_listings_tagging: } }
+\ExplSyntaxOff
+
+% Die Erklärung zur wissenschaftlichen Arbeit, im Wortlaut der
+% Richtlinie (Kapitel 7 und 8, Stand 17.12.2025). Der Wortlaut gibt es
+% nur auf Deutsch; die Erklärung bleibt deshalb auch in einer englischen
+% Arbeit deutsch.
+\newcommand{\nxtthesis@erkl@grundsatz}{%
+  Ich versichere hiermit, die Arbeit selbstständig verfasst und keine
+  anderen als die angegebenen Quellen und Hilfsmittel benutzt, die
+  wörtlich oder inhaltlich übernommenen Stellen als solche kenntlich
+  gemacht und die Allgemeine Studien- und Prüfungsordnung für das
+  Bachelor- und Masterstudium der Hochschule Reutlingen, die
+  fachspezifische Studien- und Prüfungsordnung und die Regeln zur
+  Sicherung der guten wissenschaftlichen Praxis der Hochschule
+  Reutlingen beachtet zu haben.\par}
+\newcommand{\nxtthesis@erkl@nurhier}{%
+  Diese Arbeit oder Teile dieser Arbeit sind weder Bestandteil einer
+  anderen Prüfungsleistung an dieser noch an einer anderen
+  wissenschaftlichen Institution.\par}
+% #1 Name der Prüfungsordnung (darf leer sein), #2 Partnerhochschule
+\newcommand{\nxtthesis@erkl@partner}[2]{%
+  Diese Arbeit wird gemäß der fachspezifischen Studien- und
+  Prüfungsordnung\ifblank{#1}{}{ #1} auch an der Partnerhochschule #2
+  eingereicht. Darüber hinaus sind diese Arbeit oder Teile dieser
+  Arbeit weder Bestandteil einer anderen Prüfungsleistung an dieser
+  noch an einer anderen wissenschaftlichen Institution.\par}
+\newcommand{\nxtthesis@erkl@ki@keine}{%
+  Ich versichere außerdem, keine KI-basierten, inhaltsgenerierenden
+  Hilfsmittel verwendet zu haben.\par}
+\newcommand{\nxtthesis@erkl@ki@kennzeichnung}{%
+  Ich versichere außerdem, dass die Nutzung von KI-Tools von der/m
+  Prüfenden explizit erlaubt wurde und ich in meiner Arbeit davon
+  Gebrauch gemacht habe. Die verwendeten KI-Tools sind der Arbeit nach
+  fakultätsinternen Zitier- und Dokumentationsvorgaben angefügt. Ich
+  habe inhaltsgenerierende KI-Tools lediglich unterstützend eingesetzt
+  und die Kernthesen meiner Arbeit nicht von der KI übernehmen lassen.
+  Ich bin mir bewusst, dass die Nutzung von KI-Tools keine Garantie für
+  Richtigkeit bietet und ich die Verantwortung für alle KI-generierten
+  Inhalte in dieser Arbeit trage.\par}
+\newcommand{\nxtthesis@erkl@ki@ohnekennzeichnung}{%
+  Ich versichere außerdem, dass ich inhaltsgenerierende KI-Tools
+  lediglich unterstützend eingesetzt und die Kernthesen meiner Arbeit
+  nicht von der KI habe übernehmen lassen. Ich bin mir bewusst, dass die
+  Nutzung von KI-Tools keine Garantie für Richtigkeit bietet und ich die
+  Verantwortung für alle KI-generierten Inhalte in dieser Arbeit
+  trage.\par}
+
+\ExplSyntaxOn
+\tl_new:N \l__nxt_erkl_ki_tl
+\tl_new:N \l__nxt_erkl_partner_tl
+\tl_new:N \l__nxt_erkl_ordnung_tl
+\keys_define:nn { nxtthesis / erklaerung }
+  {
+    ki .choices:nn =
+      { keine , kennzeichnung , ohnekennzeichnung }
+      { \tl_set_eq:NN \l__nxt_erkl_ki_tl \l_keys_choice_tl } ,
+    partnerhochschule .tl_set:N = \l__nxt_erkl_partner_tl ,
+    partnerordnung    .tl_set:N = \l__nxt_erkl_ordnung_tl ,
+  }
+\NewDocumentCommand \eigenständigkeitserklärung { O{} }
+  {
+    \group_begin:
+    \keys_set:nn { nxtthesis / erklaerung } {#1}
+    \tl_if_empty:NT \l__nxt_erkl_ki_tl
+      {
+        \msg_warning:nn { nxtthesis } { ki-fehlt }
+      }
+    % V: die Inhalte übergeben, nicht die Variablen -- \ifblank prüft
+    % sonst den Namen der Variablen und hielte sie nie für leer.
+    \use:e
+      {
+        \exp_not:N \nxtthesis@erklaerung
+          { \exp_not:V \l__nxt_erkl_ki_tl }
+          { \exp_not:V \l__nxt_erkl_partner_tl }
+          { \exp_not:V \l__nxt_erkl_ordnung_tl }
+      }
+    \group_end:
+  }
+\msg_new:nnn { nxtthesis } { ki-fehlt }
+  {
+    Die~Erklärung~zur~wissenschaftlichen~Arbeit~verlangt~eine~Angabe~
+    zur~Nutzung~von~KI-Tools. \\
+    Bitte~\iow_char:N\\eigenständigkeitserklärung[ki=...]~mit~
+    keine,~kennzeichnung~oder~ohnekennzeichnung~angeben.
+  }
+\ExplSyntaxOff
+
+% #1 KI-Option (leer, wenn keine gewählt), #2 Partnerhochschule (leer
+% ohne), #3 Prüfungsordnung der Partnerhochschule.
+\newcommand{\nxtthesis@erklaerung}[3]{%
+  \clearpage
+  \begin{otherlanguage}{ngerman}%
+    \addchap{Erklärung zur wissenschaftlichen Arbeit}%
+    \nxtthesis@erkl@grundsatz
+    \ifblank{#2}{\nxtthesis@erkl@nurhier}{\nxtthesis@erkl@partner{#3}{#2}}%
+    \ifblank{#1}{}{%
+      \csname nxtthesis@erkl@ki@#1\endcsname
+    }%
+    \vspace{3\baselineskip}%
+    % Links Ort und Datum, rechts die Linie für die Unterschrift und
+    % darunter der Name -- wie in der Vorlage der Richtlinie. Beide
+    % Blöcke hängen an ihrer ersten Grundlinie ([t]); die Linie steht
+    % damit auf der Höhe von Ort und Datum.
+    \par\noindent
+    \begin{minipage}[t]{.45\textwidth}
+      \printort, \ifdefempty{\@abgabedatum}{\hrulefill}{\@abgabedatum}%
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[t]{.45\textwidth}
+      \rule{\linewidth}{.4pt}\par
+      \@author
+    \end{minipage}\par
+  \end{otherlanguage}%
+}
+%    \end{macrocode}
+%</nxtthesis>
+%
+% \subsection{nxtbrief.lco}
+% \label{sec:impl:nxtbrief}
+%
+%<*nxtbrief>
+%    \begin{macrocode}
+\ProvidesFile{nxtbrief.lco}[2026/09/24 v1.3 NXT letter class option]
+
+% parskip=half- entspricht dem früher geladenen Paket parskip mit
+% Option parfill: eine halbe Zeile Absatzabstand, letzte Zeile frei.
+% KOMA rät vom Paket parskip ab und bringt die Option selbst mit.
+\KOMAoptions{
+  fontsize=10pt,
+  foldmarks=MPvb,
+  backaddress=plain,
+  pagenumber=footright,
+  refline=nodate,
+  parskip=half-
+}
+
+\RequirePackage{fontspec}
+\setmainfont{Segoe UI}[
+  BoldFont={Segoe UI Semibold}]
+\setsansfont{Segoe UI}[
+  BoldFont={Segoe UI Semibold}]
+\setmonofont{Source Code Pro}[
+  BoldFont={Source Code Pro Semibold}]
+
+\RequirePackage{nxtlatexcolors}
+\RequirePackage{nxtlatexlogos}
+\RequirePackage[stretch=10]{microtype}
+\RequirePackage{lastpage}
+\RequirePackage{fontawesome5}
+\RequirePackage[colorlinks=true,linkcolor=]{hyperref}
+\RequirePackage{eso-pic}
+
+% Header: logo (first page only)
+\addtoplength{firstheadvpos}{4mm}
+\setplength{firstheadwidth}{\dimexpr\paperwidth-\useplength{toaddrhpos}-8mm\relax}
+\setkomavar{firsthead}{%
+  \hfill\nxthsrtlogo[width=7.2cm]%
+}
+
+% Rücksendeadresse: Absendername aus fromname, dazu die Anschrift der
+% Fakultät. Andere Einrichtungen überschreiben sie im Dokument mit
+% \setkomavar{backaddress}{...}.
+\setkomavar{backaddress}{%
+  \usekomavar{fromname}, NXT, Hochschule Reutlingen, 72762 Reutlingen}
+
+\setlength{\oddsidemargin}{\useplength{toaddrhpos}}%
+\addtolength{\oddsidemargin}{-1in}%
+\setlength{\textwidth}{12.7cm}
+\setplength{locvpos}{\useplength{firstheadvpos}}
+\setplength{locwidth}{46mm}
+\setplength{lochpos}{10mm}
+\setplength{locheight}{27.2cm}
+\setplength{backaddrheight}{1.4cm}
+
+\addtokomafont{pagenumber}{\footnotesize\sffamily}
+
+% Right column: date, sender details, page number
+% Customize for your institution
+\setkomavar{location}{%
+  \footnotesize
+  \begin{tabular}[t]{l@{}}
+    {}\\[4mm]
+  \end{tabular}%
+  \\[85mm]
+  {\footnotesize\sffamily
+  \begin{tabular}[t]{l@{}}
+    \usekomavar{date}\\[22mm]
+    \textbf{\usekomavar{fromname}}\\[5mm]
+    NXT\\
+    Nachhaltigkeit und Technologie\\
+    Hochschule Reutlingen\\
+    Alteburgstraße 150\\[0mm]
+    72762 Reutlingen\\[5mm]
+    \faPhoneSquare*\\[0mm]
+    \usekomavar{fromphone}\\[5mm]
+    \Large\faMobile*\\[0mm]
+    \usekomavar{frommobilephone}\\[5mm]
+    \faAt\\[0mm]
+    \usekomavar{fromemail}\\[5mm]
+    \faHome\\[0mm]
+    nxt.reutlingen-university.de
+  \end{tabular}%
+  }
+  \vfill
+  {\usekomafont{pagenumber}{Seite~\thepage/\pageref{LastPage}}}\\[20mm]
+}
+
+% Page numbers
+\renewcommand{\pagemark}{%
+  {\usekomafont{pagenumber}{Seite~\thepage/\pageref{LastPage}}}}
+\setkomavar{firstfoot}{%
+  \AddToShipoutPictureFG*{%
+    \AtPageLowerLeft{%
+      \raisebox{2mm}{\hsrtskyline[width=\paperwidth]}%
+    }%
+  }%
+}
+
+% Signature left aligned
+\setplength{sigindent}{0pt}
+\renewcommand{\raggedsignature}{\raggedright}
+%    \end{macrocode}
+%</nxtbrief>
+%
+% \subsection{beamerthemeNXT.sty}
+% \label{sec:impl:beamerthemenxt}
+%
+%<*beamerthemenxt>
+%    \begin{macrocode}
+\ProvidesPackage{beamerthemeNXT}[2026/09/24 v1.3 NXT Beamer Theme]
+
+\mode<presentation>{
+  \usetheme{default}
+  \usecolortheme{default}
+  \useinnertheme{default}
+  \useoutertheme{default}
+}
+
+% 16:9 aspect ratio
+\geometry{papersize={16cm,9cm}}
+
+% NXT color palette (loads colorprofiles + sRGB OutputIntent)
+\RequirePackage{nxtlatexcolors}
+
+\setbeamercolor{title}{fg=nxtgreen}
+\setbeamercolor{frametitle}{fg=nxtgreen}
+\setbeamercolor{footline}{fg=black,bg=white}
+
+\RequirePackage{ragged2e}
+% amssymb entfällt: unicode-math bringt dieselben Zeichen mit (etwa
+% \blacksquare unten), und beide zusammen erzeugen Konflikte.
+\RequirePackage{amsmath}
+
+% Font
+\RequirePackage{fontspec}
+\setmainfont{Segoe UI}[
+  BoldFont={Segoe UI Semibold}]
+\setsansfont{Segoe UI}[
+  BoldFont={Segoe UI Semibold}]
+\setmonofont{Source Code Pro}[
+  BoldFont={Source Code Pro Semibold}]
+
+\RequirePackage{unicode-math}
+\setmathfont{Euler-Math}
+
+% Logos und \nxtlogofont (der NXT Logo Font) aus nxtlatexlogos
+\RequirePackage{nxtlatexlogos}
+\newcommand{\nxtlogofontchar}{{\nxtlogofont a}}
+\newcommand{\nxtlogofontcharsmall}{{\tiny\nxtlogofont a}}
+
+% Itemize bullets: NXT logo in nxtgreen
+\setbeamertemplate{itemize item}{\color{nxtgreen}\nxtlogofontcharsmall}
+\setbeamertemplate{itemize subitem}{\color{nxtgreen}$\blacksquare$}
+\setbeamertemplate{itemize subsubitem}{\color{nxtgreen}$\blacksquare$}
+
+\setbeamercolor{enumerate item}{fg=nxtgreen}
+\setbeamercolor{enumerate subitem}{fg=nxtgreen}
+\setbeamercolor{enumerate subsubitem}{fg=nxtgreen}
+
+% Block-Überschriften: fett und je Blocktyp in einer eigenen Farbe.
+% block -> NXT-Grün, alertblock -> NXT-Rot, exampleblock -> nxtgreen.3.
+% Nur die Titelfarbe (fg); ohne bg bleiben die Blöcke wie gehabt ohne
+% farbigen Balken.
+\setbeamerfont{block title}{series=\bfseries}
+\setbeamercolor{block title}{fg=nxtgreen}
+\setbeamerfont{block title alerted}{series=\bfseries}
+\setbeamercolor{block title alerted}{fg=nxt.red}
+\setbeamerfont{block title example}{series=\bfseries}
+\setbeamercolor{block title example}{fg=nxt.blue}
+
+% Beschriftung von Tabellen und Abbildungen: Das Wort »Tabelle« bzw.
+% »Abbildung« steht bei Beamer voreingestellt in der Strukturfarbe
+% (blau). Hier stattdessen in der normalen Textfarbe, damit es nicht
+% heraussticht -- gilt für beide, da Beamer denselben Beschriftungsnamen
+% verwendet.
+\setbeamercolor{caption name}{fg=normal text.fg}
+
+% Frame title
+\setbeamertemplate{frametitle}{%
+  \vskip10pt
+  \leavevmode
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=1.8ex,dp=1ex]{frametitle}%
+      \raggedright\bfseries\hspace{1cm}\insertframetitle\ %
+      \hfill\ \ 
+      \raisebox{0mm}{\nxtlogo[height=4mm]}\hspace*{3mm}%
+    \end{beamercolorbox}%
+  }%
+}
+
+\addtolength{\footskip}{5mm}
+
+% Footline
+\setbeamertemplate{footline}{%
+  \ifnum\c@framenumber=1\else
+    \leavevmode%
+    \hbox{%
+      \begin{beamercolorbox}[wd=\paperwidth,ht=2ex,dp=1ex]{footline}%
+        \usebeamerfont{footline}\tiny\color{footgray}%
+        \hspace{1cm}%
+        \insertshortauthor\hspace{4em}%
+        \insertshorttitle\hspace{4em}%
+        \insertdate\hspace{4em}%
+        \hfill\insertframenumber/\inserttotalframenumber\hspace*{5mm}%
+      \end{beamercolorbox}%
+    }%
+  \fi
+}
+
+% Title page
+\defbeamertemplate*{title page}{simple}[1][]{%
+  \vbox to \paperheight{%
+    % Die beiden hboxen (0,7 + 0,3 = volle Höhe) bündig stapeln.
+    % Ohne \offinterlineskip fügt TeX Zeilenabstand-Glue dazwischen und
+    % das vbox läuft um genau diesen Betrag über (»Overfull \vbox«).
+    \offinterlineskip
+    % upper 70%: green background, title/author/date centered
+    \hbox{%
+      \hspace*{-\beamer@leftmargin}%
+      \setlength{\fboxsep}{0pt}%
+      \colorbox{nxtgreen}{%
+        \parbox[b][\dimexpr.7\paperheight\relax][c]{\paperwidth}{%
+          \centering
+          {\huge\bfseries\color{white}\inserttitle\par}%
+          % Untertitel optional: Ohne \subtitle ist \insertsubtitle leer
+          % (Beamers eigenes Idiom), dann entsteht auch kein Abstand.
+          \ifx\insertsubtitle\@empty\else
+            \vspace{0.4em}%
+            {\large\color{white}\insertsubtitle\par}%
+          \fi
+          \vspace{0.5em}%
+          {\large\color{white}\insertauthor\par}%
+          \vspace{0.3em}%
+          {\large\color{white}\insertdate\par}%
+        }%
+      }}%
+    % lower 30%: white, logo centered
+    \hbox{%
+      \hspace*{-\beamer@leftmargin}%
+      \setlength{\fboxsep}{0pt}%
+      \colorbox{white}{%
+        % [b] statt [t]: sonst trägt die Parbox ihre Höhe als Tiefe, und
+        % die untere schiebt das vbox um .3\paperheight über die Seite
+        % hinaus (»Overfull \vbox«). Mit [b] ist die Tiefe null und beide
+        % Boxen addieren sich exakt zu \paperheight. Die untere Höhe ist
+        % der exakte Rest zu 0,7\paperheight -- »0,3\paperheight« wäre um
+        % die Fixpunkt-Rundung daneben und ergäbe ein »Underfull \vbox«.
+        \parbox[b][\dimexpr\paperheight-.7\paperheight\relax][c]{\paperwidth}{%
+          \centering
+          \nxthsrtlogo[height=.12\paperheight]%
+        }%
+      }}%
+  }%
+}
+
+% No navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% \emph fett in nxtgreen. Mit \renewcommand<> bleibt \emph
+% overlay-fähig (\emph<2>{...}), wie Beamer es selbst definiert.
+\renewcommand<>{\emph}[1]{{\only#2{\bfseries\color{nxtgreen}}#1}}
+
+% RaggedRight in itemize and enumerate
+\let\olditemize\itemize
+\let\endolditemize\enditemize
+\renewenvironment{itemize}{\olditemize\RaggedRight}{\endolditemize}
+\let\oldenumerate\enumerate
+\let\endoldenumerate\endenumerate
+\renewenvironment{enumerate}{\oldenumerate\RaggedRight}{\endoldenumerate}
+%    \end{macrocode}
+%</beamerthemenxt>
+%
+% \Finale

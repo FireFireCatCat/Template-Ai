@@ -1,0 +1,94 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[brazilian,english]{babel}
+\usepackage{amsmath,booktabs,geometry,setspace,array,hyperref}
+\geometry{top=3cm,bottom=2cm,left=3cm,right=2cm}
+\onehalfspacing
+\setlength{\parindent}{1.25cm}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=black}
+\title{Práticas abertas para a documentação de pesquisas}
+\author{João Silva\thanks{joao.silva@example.org} \and Ana Souza}
+\date{}
+
+\begin{document}
+\begin{center}
+  {\large\bfseries INSTITUTO DE EXEMPLO}\par
+  \vspace{6pt}
+  {\Large\bfseries \MakeUppercase{Práticas abertas para a documentação de pesquisas}}\par
+  \vspace{6pt}
+  João Silva\textsuperscript{1} \quad Ana Souza\textsuperscript{2}
+\end{center}
+\noindent\textsuperscript{1}Departamento de Métodos, Universidade A.\\
+\textsuperscript{2}Laboratório de Dados, Universidade B.
+
+\begin{abstract}
+Este artigo apresenta um roteiro para registrar decisões, transformações e
+resultados de uma pesquisa computacional. O modelo combina metadados,
+descrição metodológica e uma tabela de rastreabilidade em uma estrutura
+compatível com submissões acadêmicas brasileiras.
+\end{abstract}
+\noindent\textbf{Palavras-chave:} documentação; ciência aberta; métodos.
+
+\selectlanguage{english}
+\begin{abstract}
+This article presents a workflow for recording decisions, transformations, and
+results in computational research. The model combines metadata, a methods
+description, and a traceability table in a structure suitable for academic
+submissions.
+\end{abstract}
+\noindent\textbf{Keywords:} documentation; open science; methods.
+\selectlanguage{brazilian}
+
+\section{Introdução}
+Uma pesquisa pode ser tecnicamente correta e ainda assim difícil de revisar
+quando as decisões intermediárias não são registradas. Este modelo separa a
+descrição do problema, os procedimentos e as evidências que sustentam a
+conclusão.
+
+\section{Procedimentos metodológicos}
+Para cada observação $x_i$, o valor normalizado é definido por
+\begin{equation}
+  z_i = \frac{x_i-\mu}{\sigma},
+  \label{eq:normalization}
+\end{equation}
+onde $\mu$ e $\sigma$ devem ser calculados apenas no conjunto de treinamento.
+Essa convenção torna o exemplo reproduzível e explicita uma decisão que
+frequentemente fica escondida no texto.
+
+\begin{quote}
+  Citações diretas longas devem ser apresentadas em bloco, com a fonte e a
+  referência completas, conforme as normas adotadas pela revista.
+\end{quote}
+
+\section{Resultados e discussão}
+A Tabela~\ref{tab:trace} registra as etapas que levam aos resultados. Em um
+artigo real, substitua os valores ilustrativos pelos dados da pesquisa.
+\begin{table}[ht]
+  \centering
+  \caption{Registro de rastreabilidade do estudo.}
+  \label{tab:trace}
+  \begin{tabular}{p{0.25\linewidth}p{0.27\linewidth}p{0.30\linewidth}}
+    \toprule
+    Etapa & Entrada & Evidência produzida \\
+    \midrule
+    Limpeza & 240 observações & conjunto validado \\
+    Modelagem & conjunto validado & estimativas e erros \\
+    Revisão & estimativas & relatório e dados \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Considerações finais}
+O autor deve conferir a paginação, as chamadas de figuras e tabelas, os
+metadados e a versão vigente das normas antes da submissão. A equação
+\eqref{eq:normalization} exemplifica como manter as escolhas analíticas
+visíveis no corpo do texto.
+
+\section*{Referências}
+\begin{enumerate}
+  \item J. W. Creswell, \emph{Research Design}, Sage, 2018.
+  \item R. D. Peng, ``Reproducible research in computational science,''
+  \emph{Science}, 2011.
+\end{enumerate}
+\end{document}

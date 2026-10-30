@@ -1,0 +1,30 @@
+\chapter{Numerical Method}
+\label{ch:methods}
+
+The equilibria of $\dot{x} = f(x, r) = rx + x^3$ satisfy $f(x, r) = 0$,
+which is solved here by pseudo-arclength continuation: starting from the
+known trivial branch $x = 0$, each subsequent point on a branch is found
+by Newton iteration on $f$, augmented with an arclength constraint that
+lets the solver step past the fold where $\partial f/\partial x = 0$.
+
+\section{Stability}
+
+The stability of an equilibrium $x^*$ is determined by the sign of
+$\partial f/\partial x$ evaluated at $x^*$:
+\begin{equation}
+  \frac{\partial f}{\partial x}\bigg|_{x^*} = r + 3(x^*)^2.
+\end{equation}
+For the trivial branch $x^* = 0$ this reduces to $r$ itself, so the
+origin is stable for $r < 0$ and unstable for $r > 0$ --- the pitchfork
+at $r = 0$ in Figure~\ref{fig:subcritical_pitchfork_bifurcation}. For the
+non-trivial branch $x^* = \pm\sqrt{-r}$, substituting gives
+$\partial f/\partial x = -2r$, which is positive (unstable) throughout
+its range $r < 0$, confirming the two dashed branches in the figure.
+
+\section{Validation}
+
+The continuation code was validated against the closed-form root
+$x^* = \sqrt{-r}$ at the five values of $r$ listed in
+Table~\ref{tab:example}; the maximum absolute error over this range was
+below $10^{-10}$, consistent with the Newton corrector's quadratic
+convergence.

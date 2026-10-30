@@ -1,0 +1,62 @@
+\documentclass[11pt,oneside]{book}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{principia}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\title{A Working Notebook in Peanese Notation}
+\author{A. Researcher}
+\date{\today}
+
+\begin{document}
+\frontmatter
+\maketitle
+\tableofcontents
+
+\chapter{How to use this starter}
+This starter is a compact book-shaped example for the \texttt{principia}
+package. Keep ordinary exposition in the surrounding chapters and use the
+package commands when a proposition needs the distinctive notation of
+Whitehead and Russell's \emph{Principia Mathematica}.
+
+\mainmatter
+\chapter{A small formal system}
+\section{Propositions and scope}
+The Peanese connectives are ordinary LaTeX math material, so they can be
+introduced inline: $p \pmimp q$ and $p \pmiff q$. Square scope dots are
+available in several lengths, for example
+\[
+  \pmnot p \pmor q,\qquad
+  p \pmandd q \pmimp r,\qquad
+  p \pmanddd q \pmiff r.
+\]
+The starred proposition marker and definition notation make a useful compact
+house style for numbered arguments:
+\[
+  \pmsn{2}{1}\; p \pmimp p \pmdf
+\]
+\section{A reusable argument pattern}
+Let $P$ and $Q$ be propositional functions. A substitution can be set out
+without drawing a custom symbol each time:
+\[
+  \pmsub{P x}{P a},\qquad
+  \pmsubbb{P x}{P a}{Q x}{Q a}{R x}{R a}.
+\]
+Use the macros in \texttt{principia.sty} as the source of truth for the
+notation; this document intentionally demonstrates a small, readable subset.
+
+\chapter{Notes for an author}
+\begin{itemize}
+  \item Keep logical expressions in math mode so spacing remains stable.
+  \item Put long deductions in displayed equations and explain each step in
+        prose immediately before or after it.
+  \item Extend the starter by adding chapters and by selecting the volume-
+        specific commands documented in the upstream package manual.
+\end{itemize}
+
+\backmatter
+\chapter*{Colophon}
+This starter uses the LPPL-1.3c \texttt{principia} package by Landon D. C.
+Elkind. No upstream example prose, images, or logo are bundled.
+\end{document}

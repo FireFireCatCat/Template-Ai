@@ -1,0 +1,315 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Documentation for the tcolorbox inner theme
+% A beamer inner theme which reproduces standard beamer blocks using tcolorboxes
+% Maintained by samcarter
+%
+% Project repository and bug tracker:
+% https://github.com/samcarter/beamertheme-tcolorbox
+%
+% Released under the LaTeX Project Public License v1.3c or later
+% See https://www.latex-project.org/lppl.txt
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% !TeX program = txs:///arara
+% arara: latexmk: {
+% arara: --> engine: pdflatex,
+% arara: --> options: [
+% arara: -->    '-shell-escape',
+% arara: -->    '-synctex=1',
+% arara: -->    '-interaction=nonstopmode',
+% arara: -->  ]
+% arara: --> }
+\documentclass{scrartcl}
+
+\usepackage[
+  themecolor=samteal
+]{\jobname-settings}
+
+\usepackage[edges]{forest}
+
+% meta %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{The tcolorbox beamer inner theme}
+\subtitle{A beamer inner theme to replicate standard beamer blocks with tcolorboxes}
+\author{%
+  \texorpdfstring{
+    \texttt{samcarter}\\
+    \url{https://github.com/samcarter/beamertheme-tcolorbox}\\
+    \url{https://ctan.org/pkg/beamertheme-tcolorbox}
+  }{samcarter}}
+\date{Version v1.6 \textendash{} 2026/09/22}
+\packagename{beamertheme-tcolorbox}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+\label{intro}
+
+Over the last decade of answering beamer problems and more recently also being one of the maintainers of the beamer class, I saw countless of requests about beamer blocks. There were users who were looking for sometimes smaller, sometimes larger tweaks to the blocks in their document, for example "How to use the rectangular blocks with sharp corners, but with the shadows from the rounded beamer blocks". Other users encountered various tiny or something bigger problems with the default beamer blocks, like issues with some pdf viewers in which the seams of the underlying colorboxes would become visible.
+
+For all these cases, there is now an alternative to the default beamer blocks: The tcolorbox inner beamer theme will replace the usual beamer mechanism to draw blocks with tcolorboxes. The tcolorboxes will automatically adopt the look and feel (round vs.\ sharp corners and shadows) as well as the colours of the normal beamer blocks.
+
+\blurb
+
+\section{Usage}
+
+The basic usage is fairly simple. One just needs to load the theme via
+\begin{tcolorbox}[lower separated=false,title={Usage}]
+\begin{samcode}
+\useinnertheme{tcolorbox}
+\end{samcode}
+\end{tcolorbox}
+and after that, one can use the normal beamer \saminline|block| environment as usual.
+
+Behind the scenes, this will replace the default mechanism of puzzling together the block from two separate \saminline|beamercolorboxes|, with one tcolorbox.
+
+In this simple configuration, the look and feel of the new blocks will be taken from other themes loaded in the presentation. For example if the Madrid theme is loaded, the resulting tcolorbox will have the usual colours, rounded corners and a shadow:
+
+\begin{tcblisting}{
+  title={Example},
+  compilable listing sam
+}
+\documentclass{beamer}
+\usetheme{Madrid}
+\useinnertheme{tcolorbox}
+\begin{document}
+\begin{frame}
+  \begin{block}{Title}
+    Body
+  \end{block}
+  \begin{alertblock}{Title}
+    Body
+  \end{alertblock}
+  \begin{exampleblock}{Title}
+    Body
+  \end{exampleblock}
+\end{frame}
+\end{document}
+\end{tcblisting}
+
+Additional settings done by user, like e.g. \saminline|\setbeamertemplate{blocks}[rounded]|, won't be taken into account and the \saminline|tcolorbox| inner theme should be loaded after such modifications.
+
+\section{Options}
+
+In addition to automatically adopting settings from other themes, one can also explicitly influence the look and feel via these options:
+\begin{description}
+\item[blocks] controls if tcolorboxes should be used for beamer blocks (default: \saminline|true|)
+\item[inmargin] controls if the block titles are placed in the left sidebar instead of the top of the block, e.g. for themes like \saminline|Bergen| (default: \saminline|false|, but set to \saminline|true| if the \saminline|inmargin| inner theme is detected)
+\item[rounded] controls if corners are rounded or sharp (default: \saminline|false|, but set to \saminline|true| if the \saminline|rounded| inner theme is detected)
+\item[shaded] controls if there is a short colour gradient between the title and the body (default: \saminline|false|, but set to \saminline|true| if the block corners are rounded)
+\item[shadow] controls if the block has a shadow (default: \saminline|false|, but set to \saminline|true| if the \saminline|shadow| outer theme is detected)
+\item[showtitle] controls if a small coloured stripe is shown for blocks with empty title (default: \saminline|true|, but set to \saminline|false| if the block has rounded corners)
+\item[titlepage] controls if tcolorboxes should be used for the title page, section page etc. (default: \saminline|true|)
+\item[buttons] controls if beamer buttons should be replaced with tcboxes (default: \saminline|false|)
+\end{description}
+These options can be set to \saminline|true| or \saminline|false| (calling either option without explicit \saminline|true| or \saminline|false| will set it to \saminline|true|).
+
+If one, for example, likes the Antibes theme, but prefers the blocks to have shadows, they can now easily be added:
+\begin{tcblisting}{
+  title={Example},
+  compilable listing sam
+}
+\documentclass{beamer}
+\usetheme{Antibes}
+\useinnertheme[
+  shadow
+]{tcolorbox}
+\begin{document}
+\begin{frame}
+  \begin{block}{Title}
+    Body
+  \end{block}
+  \begin{alertblock}{Title}
+    Body
+  \end{alertblock}
+  \begin{exampleblock}{Title}
+    Body
+  \end{exampleblock}
+\end{frame}
+\end{document}
+\end{tcblisting}
+
+Beyond these two options, the users also has the myriads of options of the tcolobox package to their disposal, e.g.\ via \saminline|\tcbthemeset{...}| to only change options for beamer blocks or \saminline|\tcbset{...}| and \saminline|\tcbsetforeverylayer{...}| to change options for all tcolorboxes:
+\begin{tcblisting}{
+  title={Example},
+  compilable listing sam
+}
+\documentclass{beamer}
+\usetheme{Ilmenau}
+\useinnertheme{tcolorbox}
+\tcbthemeset{
+  borderline={1pt}{0pt}{black,dashed}
+}
+\begin{document}
+\begin{frame}
+  \begin{block}{Title}
+    Body
+  \end{block}
+  \begin{alertblock}{Title}
+    Body
+  \end{alertblock}
+  \begin{exampleblock}{Title}
+    Body
+  \end{exampleblock}
+\end{frame}
+\end{document}
+\end{tcblisting}
+
+To make other tcoloboxes look like beamer blocks, one can access the collected options via \saminline|code={\pgfkeysalsofrom\tcbthemeoptions}|:
+\begin{tcblisting}{
+  title={Example},
+  compilable listing sam
+}
+\documentclass{beamer}
+\usetheme{Berlin}
+\useinnertheme{tcolorbox}
+\begin{document}
+\begin{frame}
+  \begin{block}{Title}
+    Body
+  \end{block}
+  \begin{tcolorbox}[
+    title={Title},
+    code={\pgfkeysalsofrom\tcbthemeoptions}
+  ]
+    Body
+  \end{tcolorbox}
+\end{frame}
+\end{document}
+\end{tcblisting}
+
+\section{Caveats}
+
+\subsection{Using with \texttt{\textbackslash pause}}
+
+Using the \saminline|\pause| macro in pgf-based environments like a \saminline|tikzpicture| or a \saminline|tcolorbox| is known to cause problems like disappearing footlines.
+There are some ways to avoid such problems:
+
+\begin{enumerate}
+\item The best solution to problems with \saminline|\pause| is to not use \saminline|\pause|. Instead one can use overlays like \saminline|\only<...>{...}|, \saminline|\visible<...>{...}|, \saminline|\uncover<...>{...}| etc.
+\item Alternatively, one could switch to another covered style for the presentation, e.g. by adding \saminline|\setbeamercovered{transparent=0}| to the preamble.
+\end{enumerate}
+
+\subsection{Theorem title font}
+
+Normally, theorem titles are upright in beamer. To get the same result with the \saminline|tcolorbox| inner theme, use \saminline|\setbeamerfont{block title}{shape=\upshape}|.
+
+\clearpage
+\section{ltx-talk}
+
+There is also an experimental \saminline|ltx-talk| version of the tcolorbox inner theme available.
+Most of the theme options are the same, only the \saminline|inmargin| and \saminline|buttons| options do not exist:
+\begin{tcblisting}{
+  title={ltx-talk theme},
+  compilable listing sam
+}
+  \DocumentMetadata{}
+  \documentclass{ltx-talk}
+  \usepackage[
+    shadow,
+    rounded,
+    shaded,
+    showtitle,
+    titlepage,
+    blocks
+  ]{talkthemetcolorbox} 
+  \begin{document}
+  \begin{frame}
+    \begin{block}{Title}
+      Body
+    \end{block}
+    \begin{alertblock}{Title}
+      Body
+    \end{alertblock}
+    \begin{exampleblock}{Title}
+      Body
+    \end{exampleblock}
+  \end{frame}
+  \end{document}
+\end{tcblisting}
+
+Internally, the tcolorbox ltx-talk theme works a bit differently than the normal beamer theme and thus making customisations is a bit different, too. The ltx-talk theme uses a set of tcolorbox styles to store the options used for the different blocks and boxes:
+\begin{center}
+\begin{forest}
+  baseline,
+  for tree={%
+    folder,
+    grow'=0,
+    font=\ttfamily,
+    draw
+  }
+  [titlepage
+    [titlepage-title]
+    [titlepage-author]
+    [titlepage-institute]
+    [titlepage-date]
+  ]
+\end{forest}
+\qquad
+\begin{forest}
+  baseline,
+  for tree={%
+    folder,
+    grow'=0,
+    font=\ttfamily,
+    draw
+  }
+  [block
+    [alertblock]
+    [exampleblock]
+  ]
+\end{forest}
+\end{center}
+
+These styles can be used to adjust the appearance of the different elements:
+\begin{tcblisting}{
+  title={ltx-talk theme},
+  compilable listing sam
+}
+  \DocumentMetadata{}
+  \documentclass{ltx-talk}
+  
+  \usepackage{talkthemetcolorbox}
+  
+  \title{Some Very Interesting Title}
+  \subtitle{Subtitle}
+  \author{Author Name}
+  \institute{Cool Conference}
+  
+  \tcbset{
+    titlepage/.append style={
+      colback=lightgray,
+      width=10cm
+    },
+    titlepage-title/.append style={
+      drop lifted shadow
+    },
+    block/.append style={
+      borderline={1pt}{0pt}{black,dashed}
+    },
+    alertblock/.append style={
+      colbacktitle=orange
+    },
+  }
+  
+  \begin{document}
+  
+  \maketitle
+  
+  \begin{frame}
+    \begin{block}{Title}
+      Body
+    \end{block}
+    \begin{alertblock}{Title}
+      Body
+    \end{alertblock}
+    \begin{exampleblock}[colbacktitle=teal]{Title}
+      Body
+    \end{exampleblock}
+  \end{frame}
+  
+  \end{document}
+\end{tcblisting}
+
+\end{document}

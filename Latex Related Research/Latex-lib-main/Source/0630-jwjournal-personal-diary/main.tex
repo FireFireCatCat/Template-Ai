@@ -1,0 +1,61 @@
+%% jwjournal personal-diary starter — Jinwen XU's jwjournal class.
+%%
+%% The jwjournal class itself is NOT included in this download: it ships
+%% with every modern TeX distribution (and with latextemplates.com's
+%% compiler), so bundling a copy would only risk pinning you to an older
+%% version than your own system already has.
+%%
+%% Class documentation: https://ctan.org/pkg/jwjournal
+%% (README: https://github.com/Jinwen-XU/jwjournal)
+%% Licence: LPPL-1.3c, (c) 2023-2025 Jinwen XU -- verified directly in the
+%% shipped jwjournal.cls header.
+%%
+%% NOTE: despite the name, this is NOT an academic-journal article class --
+%% it is a personal DIARY/JOURNAL writer, dated entries with a lightweight
+%% markdown-like text syntax on top of einfart/minimart (the same base
+%% classes as the already-catalogued einfart-minimal-article and
+%% stylish-article/lebhart pages, but a genuinely different document type:
+%% a diary, not an article).
+%%
+%% Inside \begin{jwjournal}...\end{jwjournal}, plain text uses the class's
+%% own markdown-like syntax (per its README):
+%%   - a line starting with a date (YYYY-MM-DD etc.) begins a new entry;
+%%     text after the date is weather/location, shown right-aligned after
+%%     the first "|";
+%%   - "## {title}" / "### {title}" / "#### {title}" start unnumbered
+%%     (sub)sections -- note the REQUIRED braces around the title, unlike
+%%     Markdown; "##+"/"###+"/"####+" give numbered versions;
+%%   - "[Note] text" starts a note line (also "【...】" for CJK);
+%%   - *italic*, **bold**, ***bold italic***, `code` work inline;
+%%   - ">>> text" boxes the rest of a paragraph as a coloured aside.
+%%
+%% ENGINE: einfart requires XeLaTeX or LuaLaTeX under XeTeX (pdfTeX loads
+%% minimart instead, per the class's own \sys_if_engine_pdftex: branch);
+%% see engine.txt.
+\documentclass{jwjournal}
+
+\begin{document}
+
+\begin{jwjournal}
+2026-01-05 Sunny | Home
+
+Today I started keeping a journal with this template.
+
+## {What I like about it}
+
+Dated entries render with a coloured tag showing the day of the week,
+and *italic*, **bold**, and `inline code` all work without any extra
+markup commands.
+
+[Note] Text after a bracketed tag like this one starts a note line.
+
+>>> Text after three angle brackets is boxed as a coloured aside, useful
+for a remark that should not interrupt the flow of the entry.
+
+2026-01-06 Cloudy | Office
+
+A short entry the next day, to show consecutive dated entries flowing
+one after another down the page.
+\end{jwjournal}
+
+\end{document}

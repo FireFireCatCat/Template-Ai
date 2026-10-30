@@ -1,0 +1,64 @@
+\documentclass[
+  paperwidth=7in,
+  paperheight=9in,
+  blockwidth=6in,
+  blockheight=8in,
+  bleed=0.1in
+]{photobook}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage{hyperref}
+\definecolor{night}{HTML}{17212B}
+\definecolor{sunset}{HTML}{D97745}
+\hypersetup{colorlinks=true,urlcolor=sunset,linkcolor=night}
+\pagestyle{empty}
+\title{A Small Atlas of\\Everyday Light}
+\author{Your Name}
+\date{2026}
+\begin{document}
+\maketitle
+\chapter*{How to use this starter}
+\addcontentsline{toc}{chapter}{How to use this starter}
+This photo-book starter treats each page as a deliberate visual cell. Replace
+the drawn panels with photographs using \verb|\imagecell[fill]{}{your-image}|,
+or keep the panels as captions, maps, and small pieces of editorial text. The
+\texttt{photobook} class supplies the page, cell, bleed, and spread mechanics;
+the content below is intentionally synthetic.
+\tableofcontents
+\chapter{Morning routes}
+\begin{inlinecell}{\textwidth}{2.1in}
+  \colorbox{night}{\parbox[c][1.9in][c]{\textwidth}{\centering\color{white}
+    \fontsize{25}{30}\selectfont Replace this panel\\[-2pt]
+    \normalsize with a full-bleed photograph}}
+\end{inlinecell}
+\section*{06:40 — north window}
+The first light is rarely a single colour. It moves across brick, glass, and
+leaves at different speeds, which makes a sequence of small observations more
+useful than one grand description. Use short sections like this for captions or
+field notes alongside the visual material.
+\begin{inlinecell}{0.47\textwidth}{1.35in}
+  \colorbox{sunset}{\parbox[c][1.15in][c]{0.47\textwidth}{\centering\color{white}
+    \Large IMAGE 01\\[-2pt]\small caption or location}}
+\end{inlinecell}\hfill
+\begin{inlinecell}{0.47\textwidth}{1.35in}
+  \colorbox{night}{\parbox[c][1.15in][c]{0.47\textwidth}{\centering\color{white}
+    \Large IMAGE 02\\[-2pt]\small caption or location}}
+\end{inlinecell}
+\chapter{After the weather}
+\begin{inlinecell}{\textwidth}{2.4in}
+  \fcolorbox{sunset}{white}{\parbox[c][2.1in][c]{0.94\textwidth}{\centering
+    \color{night}\Large A place for a landscape,\\[0.3em]
+    \normalsize contact sheet, or foldout reference}}
+\end{inlinecell}
+Pair a large visual cell with a short note. The class can align, crop, and add
+bleed to real images while keeping the surrounding page structure stable. A
+longer project can split each chapter into separate files and use the class's
+spread helpers for print-ready layouts.
+\chapter*{Colophon}
+\addcontentsline{toc}{chapter}{Colophon}
+Set the trim size, bleed, image resolution, and colour workflow for the printer
+here. Keep a record of the photographer, location, date, and image licence for
+every photograph you add to the book.
+\end{document}

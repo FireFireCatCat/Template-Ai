@@ -1,0 +1,400 @@
+%=============================================================================
+\section{数字信号处理}
+%=============================================================================
+
+你可能纳闷："说好的控制理论呢，怎么先讲信号处理？"问得好。原因很简单：\textbf{数据不干净，控制器再好也白搭。}
+
+你的 IMU（惯性测量单元，Inertial Measurement Unit）读数满是噪声，再怎么调 PID 参数都是白费力气。所以在学控制之前，先学怎么把信号清理干净。
+
+\subsection{理解频域}
+
+日常中我们习惯在\textbf{时域（time domain）}里看信号——电压随时间变化，位置随时间变化，很直觉。但换一个视角来看，很多问题会\textit{简单得多}。这个视角就是\textbf{频域（frequency domain）}。
+
+核心思想一句话就能说清：\textit{任何信号都可以拆成一堆不同频率的正弦波叠在一起。}你那嘈杂的陀螺仪读数？其实就是一个干净的低频旋转信号，上面糊了一层高频噪声。只要分辨出哪些频率是"有用信号"、哪些是"噪声"，就能精准地把噪声切掉。
+
+打个比方：音乐播放器上的均衡器（EQ）。低音、中音、高音全搅在时域波形里，但均衡器能让你单独拉高或压低某个频段。控制系统里的滤波器干的就是这事。
+
+\textbf{一条关键直觉：}系统里慢悠悠的、有意义的变化（比如底盘转向）发生在低频；快速的、没意义的毛刺（比如电气噪声、振动）发生在高频。频域让我们能把它们分开。
+
+\subsection{拉普拉斯变换与傅里叶变换}
+
+这两种变换是你从时域进入频域的通行证。它们密切相关，但用途略有不同。
+
+\subsubsection{拉普拉斯变换}
+
+我们为什么要发明一种新的"语言"？因为时域里的微分方程太难解了。
+
+拉普拉斯变换（Laplace Transform）将时域函数 $f(t)$ 转换为复变量 $s$ 的函数：
+
+\begin{equation}
+F(s) = \mathcal{L}\{f(t)\} = \int_0^{\infty} f(t) e^{-st} \, dt
+\end{equation}
+
+其中 $s = \sigma + j\omega$ 是复数。实部 $\sigma$ 描述指数增长或衰减，虚部 $j\omega$ 描述振荡。
+
+\textbf{为什么要学它？}因为拉普拉斯变换能把微分方程"降级"成代数方程。与其解
+\[
+m\ddot{x} + b\dot{x} + kx = F(t),
+\]
+（需要微积分），不如解
+\[
+(ms^2 + bs + k)X(s) = F(s),
+\]
+（纯代数）。导数变成乘以 $s$，积分变成除以 $s$，一下子就轻松了。
+
+你每天都会用到的最重要的拉普拉斯变换对：
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{时域} & \textbf{$s$ 域} & \textbf{出现场合} \\
+\midrule
+$1$（阶跃输入） & $\frac{1}{s}$ & 指令一个新设定值 \\
+$e^{-at}$ & $\frac{1}{s+a}$ & 一阶系统响应 \\
+$\sin(\omega t)$ & $\frac{\omega}{s^2 + \omega^2}$ & 振荡、振动 \\
+$\dot{f}(t)$ & $sF(s) - f(0)$ & 控制器中的微分 \\
+$\int f(t)\,dt$ & $\frac{F(s)}{s}$ & 控制器中的积分 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{实用建议：}积分公式不用死记。你只需要记住一件事：$s$ 就是"求导"，$1/s$ 就是"积分"。光这一条，就能撑过 80\% 的控制理论。
+
+\textbf{$e^{-st}$ 到底在干什么？}核函数 $e^{-st} = e^{-\sigma t} e^{-j\omega t}$ 相当于一根"探针"，同时问两个问题：$e^{-\sigma t}$——"信号是不是以速率 $\sigma$ 在增长或衰减？"；$e^{-j\omega t}$——"频率 $\omega$ 的成分有多少？"把 $f(t) \cdot e^{-st}$ 在全时间上积分，就是在算信号和各种指数正弦波之间的"相关性"。结果 $F(s)$ 是一张覆盖整个复平面的地图，精确标出了信号中每种指数振荡模态有多少成分。
+
+\textbf{常用拉普拉斯变换对——推导过程：}
+
+\textbf{单位阶跃}（Unit Step） $u(t) = 1$，$t \geq 0$：
+\[
+\mathcal{L}\{1\} = \int_0^{\infty} e^{-st} \, dt = \left[-\frac{e^{-st}}{s}\right]_0^{\infty} = \frac{1}{s}
+\]
+
+\textbf{指数衰减}（Exponential Decay） $e^{-at}$：
+\[
+\mathcal{L}\{e^{-at}\} = \int_0^{\infty} e^{-at} e^{-st} \, dt = \int_0^{\infty} e^{-(s+a)t} \, dt = \frac{1}{s+a}
+\]
+注意 $F(s) = \frac{1}{s+a}$ 在 $s = -a$ 时"爆掉了"。这个让函数趋于无穷的特殊 $s$ 值叫做\textbf{极点}——下面马上正式定义。
+
+\subsubsection{初识极点与零点}
+
+我们刚才看到 $\mathcal{L}\{e^{-at}\} = \frac{1}{s+a}$，分母在 $s = -a$ 处为零，$F(s)$ 在那里趋于无穷。这个点就叫\textbf{极点（Pole）}。
+
+一般来说，对任何 $s$ 的有理函数——大多数\textbf{传递函数}（系统输出与输入在 $s$ 域中的比值，下一章会正式推导）都是有理的——我们可以写成：
+\[
+G(s) = \frac{N(s)}{D(s)} = \frac{(s - z_1)(s - z_2) \cdots}{(s - p_1)(s - p_2) \cdots}
+\]
+\begin{itemize}[nosep]
+    \item \textbf{极点}（$p_i$）：分母 $D(s)$ 的根，即 $G(s) \to \infty$ 的那些 $s$ 值。
+    \item \textbf{零点}（$z_i$）：分子 $N(s)$ 的根，即 $G(s) = 0$ 的那些 $s$ 值。
+\end{itemize}
+
+\textbf{现在为什么就要关心这个？}因为极点的位置直接告诉你时域行为：
+\begin{itemize}[nosep]
+    \item 极点在 $s = -a$（负实数）$\to$ 产生 $e^{-at}$——指数衰减。$a$ 越大，衰减越快。
+    \item 极点在 $s = +a$（正实数）$\to$ 产生 $e^{+at}$——指数增长，系统不稳定。
+    \item 一对共轭复极点 $s = -\sigma \pm j\omega$ $\to$ 产生 $e^{-\sigma t}\cos(\omega t)$——衰减振荡。（有没有觉得眼熟？和前面 $e$ 与 $\pi$ 那节说的一模一样！）
+\end{itemize}
+
+简单总结：\textbf{极点告诉你系统内部藏着哪些指数和振荡模态。}这一章里我们设计的每一个滤波器，本质上都是在选择把极点和零点放在哪里。我们将在第~\ref{sec:system_analysis_tf}~节更严格地回顾极点与零点，把它们和稳定性、响应速度以及整体系统性能联系起来。
+
+\textbf{斜坡}（Ramp） $t \cdot u(t)$：
+\[
+\mathcal{L}\{t\} = \frac{1}{s^2}
+\]
+注意：时域乘以 $t$ 对应于对 $s$ 求导后取反号：$\mathcal{L}\{t \cdot f(t)\} = -\frac{d}{ds}F(s)$。由于 $\mathcal{L}\{1\} = 1/s$，所以 $\mathcal{L}\{t\} = -\frac{d}{ds}\frac{1}{s} = \frac{1}{s^2}$。
+
+\subsubsection{傅里叶变换}
+
+傅里叶变换（Fourier Transform）是拉普拉斯变换的"安分"版本——让 $s = j\omega$（也就是把实部 $\sigma$ 设为 0）就得到了：
+
+\begin{equation}
+F(j\omega) = \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, dt
+\end{equation}
+
+拉普拉斯变换覆盖整个复平面（连不稳定的发散信号也能应付），而傅里叶变换只活在虚轴上。它回答的是一个单纯的问题："这个信号里每个频率各有多少？"
+
+\textbf{什么时候用哪个：}分析和设计控制系统（传递函数、稳定性）时用\textbf{拉普拉斯变换}；分析信号（噪声、振动、频率成分）时用\textbf{傅里叶变换}。
+
+实际工程中，数字系统用的是\textbf{离散傅里叶变换（DFT）}，通过\textbf{快速傅里叶变换（FFT）}算法高效计算。想知道传感器数据里藏着什么频率？扔进 FFT 就行。MATLAB 的 \texttt{fft()} 或 Python 的 \texttt{numpy.fft.fft()} 一行搞定。
+
+\subsubsection{频谱}
+
+信号经过傅里叶变换后，得到的就是它的\textbf{频谱（Frequency Spectrum）}——一幅标出了各频率分量大小（和相位）的图。
+
+看频谱就像给信号拍 X 光片：如果在 50 Hz 处看到一个尖峰，那多半是工频干扰；10 Hz 以下的宽包通常就是你真正感兴趣的信号；而全频段的随机模糊，那就是白噪声了。
+
+\textbf{实际案例：}假设你的云台编码器给出一个嘈杂的速度读数。你记录了 1 秒数据，计算 FFT，看到 3 Hz 处有个清晰的峰（云台正在以 3 Hz 跟踪目标），加上 50 Hz 以上一片噪声乱麻。现在你心里有数了：设计一个截止频率在 20--30 Hz 的低通滤波器，信号就会变干净。
+
+频谱包含两部分：
+\begin{itemize}
+    \item \textbf{幅度谱}（Magnitude Spectrum） $|F(j\omega)|$：每个频率分量的强度。
+    \item \textbf{相位谱}（Phase Spectrum） $\angle F(j\omega)$：每个频率分量的时间偏移。
+\end{itemize}
+
+在滤波器设计中，我们主要关心幅度谱。相位在后面分析控制回路稳定性时才变得重要（\textit{相位裕度}——系统在变得不稳定之前还能容忍多少额外相位滞后；详见经典控制章节）。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{frequency_spectrum.pdf}
+\caption{上图：时域中的噪声信号看起来毫无希望。下图：FFT 立刻揭示出隐藏在噪声中的 5 Hz 信号和 42 Hz 谐振。}
+\end{figure}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{案例分析：用 FFT 排查底盘振动}
+
+\vspace{0.3em}
+竞赛机器人的经典翻车现场：麦克纳姆轮底盘低速好好的，一到高速就振动，整个车架嗡嗡响。大家怀疑螺丝松了，拧紧所有螺丝。还是振。
+
+\textbf{诊断方法：}在出问题的速度下行驶时，记录 5 秒 IMU 加速度计数据。用 Python 跑一遍 FFT：
+
+\begin{verbatim}
+    import numpy as np
+    freqs = np.fft.rfftfreq(len(data), d=1.0/sample_rate)
+    spectrum = np.abs(np.fft.rfft(data))
+    plt.plot(freqs, spectrum)
+\end{verbatim}
+
+你看到 42 Hz 处有个巨大的尖峰。有意思。你算了一下：高速行驶时，麦轮辊子接触地面的频率是……大约 42 Hz。辊子接触频率恰好与车架结构谐振频率吻合。
+
+\textbf{解决方案：}
+\begin{itemize}[nosep]
+    \item 在控制回路中加一个 42 Hz 的\textbf{陷波滤波器（Notch Filter，带阻滤波器）}，防止控制器激励谐振。
+    \item 加物理阻尼（橡胶减振垫），把谐振频率移开。
+    \item 加固车架，把谐振频率推到工作频率范围以上。
+\end{itemize}
+
+\textbf{教训：}不用 FFT 的话，你可能会花好几个小时拧螺丝。用了 FFT，10 秒内根本原因一目了然。\textbf{频域是一种调试神器。}只要有什么东西在振荡而你不知道为什么，记录数据，看频谱。
+\end{mdframed}
+
+案例中的 42 Hz 谐振找到了——但光找到不够，我们还得把它干掉。这就是滤波器的用武之地。
+
+\subsection{基于频域的滤波器设计}
+
+既然我们能在频域中"看见"信号，就可以设计滤波器——保留我们想要的频率，剔除不想要的。
+
+滤波器本质上是一个在不同频率下增益不同的系统。我们用滤波器的\textbf{频率响应（Frequency Response）}来描述它——一张增益对频率的图（称为\textbf{波特幅度图，Bode Magnitude Plot}）。
+
+\subsubsection{低通滤波器}
+
+机器人中最常用的滤波器。通过低频，衰减高频。
+
+\textbf{一阶低通滤波器（Low-Pass Filter，LPF）：}
+\begin{equation}
+H(s) = \frac{\omega_c}{s + \omega_c}
+\end{equation}
+
+其中 $\omega_c = 2\pi f_c$ 是截止角频率（rad/s）。低于 $\omega_c$ 的频率增益约为 1（信号通过）；高于 $\omega_c$ 的频率以 $-20$ dB/十倍频的斜率衰减（信号被压制）。
+
+\textbf{在时域中}，这等价于一个指数移动平均：
+\begin{equation}
+y[n] = \alpha \cdot x[n] + (1 - \alpha) \cdot y[n-1]
+\end{equation}
+
+这是对连续滤波器做后向欧拉（Backward Euler）离散化的结果。从 $H(s) = \frac{\omega_c}{s + \omega_c}$ 对应的微分方程 $\dot{y} + \omega_c y = \omega_c x$ 出发，用后向差分 $\dot{y} \approx \frac{y[n] - y[n-1]}{T_s}$ 替代导数：
+\[
+\frac{y[n] - y[n-1]}{T_s} + \omega_c y[n] = \omega_c x[n].
+\]
+解出 $y[n]$：$(1 + \omega_c T_s)\,y[n] = \omega_c T_s \, x[n] + y[n-1]$，整理得 $y[n] = \alpha \, x[n] + (1 - \alpha)\,y[n-1]$，其中 $\alpha = \frac{T_s}{T_s + \frac{1}{2\pi f_c}}$，$T_s$ 是采样周期。
+
+\textbf{适用场景：}平滑带噪声的传感器读数（陀螺仪、加速度计、电机电流）。这是你 90\% 的情况下会用到的滤波器。
+
+\textbf{注意：}低通滤波器会引入\textbf{相位滞后（Phase Lag）}——输出相对于输入有延迟。滤波越激进（截止频率越低），引入的滞后越大。在快速控制回路中，这种滞后可能使系统失稳。平滑信号和快速响应之间永远存在权衡。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{lpf_response.pdf}
+\caption{左图：LPF 阶跃响应——截止频率越低，上升越慢，但输出越平滑。右图：对含噪声的 3 Hz 信号滤波——LPF 恢复出真实信号，同时去除了高频噪声。}
+\end{figure}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{案例分析：为什么低通滤波器能免费送你"软启动"}
+
+\vspace{0.3em}
+假设你命令电机从 0 瞬间跳到 5000 RPM（阶跃输入）。没有任何滤波器的话，设定值突变——电机驱动器看到一个突如其来的全电压指令，齿轮猛地咬合，底盘猛地一窜，你的队友把咖啡洒了一地。
+
+现在在设定值上串一个一阶低通滤波器：$r_{\text{filtered}}(s) = \frac{\omega_c}{s + \omega_c} \cdot R(s)$。会发生什么？
+
+$s$ 域中的阶跃输入是 $R(s) = \frac{5000}{s}$。经过滤波器后：
+\[
+R_{\text{filtered}}(s) = \frac{5000 \, \omega_c}{s(s + \omega_c)}
+\]
+
+做拉普拉斯逆变换：
+\[
+r_{\text{filtered}}(t) = 5000 \left(1 - e^{-\omega_c t}\right)
+\]
+
+阶跃变成了一个\textbf{平滑的指数斜坡}。时间常数是 $\tau = 1/\omega_c$。经过 $3\tau$，输出达到目标的 95\%；经过 $5\tau$，达到 99\%。
+
+\textbf{这对你的机器人意味着什么：}
+\begin{itemize}[nosep]
+    \item \textbf{机械保护：}齿轮和皮带有扭矩上限。阶跃指令可能崩掉齿轮或断掉皮带。LPF 限制了变化速率，让力保持在安全范围内。
+    \item \textbf{限制涌入电流：}突然施加电压会引起巨大的涌入电流（反电动势为零时 $I = V/R$）。LPF 让电压缓慢爬升，电流保持在可控范围。
+    \item \textbf{可调节的激进程度：}想要更快的斜坡？增大 $\omega_c$（提高截止频率）。想要更柔和的斜坡？减小 $\omega_c$。一个参数控制全部行为。
+\end{itemize}
+
+\textbf{与线性斜坡的对比：}你也可以让设定值线性爬升（比如每秒增加 1000 RPM）。但 LPF 更好，因为它能平滑\textit{任何}设定值的突变——不只是初始阶跃，运行过程中的突然变化也一样。这是一个"设好就不用管"的方案。
+
+\textbf{代码极其简单：}
+\begin{verbatim}
+    setpoint_filtered += alpha * (setpoint_raw - setpoint_filtered);
+\end{verbatim}
+
+一行代码。没有查找表，没有状态机。这就是 LPF 作为软启动机制的魅力所在。
+\end{mdframed}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{lpf_soft_start.pdf}
+\caption{LPF 软启动：单个参数 $\tau$ 控制电机加速的激进程度。阶跃指令变成了平滑的指数曲线。}
+\end{figure}
+
+\subsubsection{带通滤波器}
+
+带通滤波器（Band-Pass Filter）通过特定频率范围，衰减其他所有频率。可以看作低通和高通滤波器的组合。
+
+\begin{equation}
+H(s) = \frac{\frac{\omega_0}{Q} s}{s^2 + \frac{\omega_0}{Q} s + \omega_0^2}
+\end{equation}
+
+其中 $\omega_0$ 是中心频率，$Q$ 是品质因数（$Q$ 越高，通带越窄）。
+
+\textbf{适用场景：}从信号中提取特定频率分量。例如，如果你知道目标在某个特定频率下振荡，想跟踪它同时剔除其他一切。
+
+在机器人中，带通滤波器没有低通滤波器常见，但在振动分析和谐振检测方面很有用。
+
+\subsubsection{高通滤波器}
+
+高通滤波器（High-Pass Filter）通过高频，衰减低频。它是低通滤波器的反面。
+
+\textbf{一阶高通滤波器：}
+\begin{equation}
+H(s) = \frac{s}{s + \omega_c}
+\end{equation}
+
+\textbf{适用场景：}去除信号中的直流偏置或缓慢漂移。例如，如果你的加速度计有缓慢漂移的偏置，高通滤波器可以去除它，同时保留快速加速度数据。
+
+\textbf{实用提示：}互补滤波器（Complementary Filter，IMU 传感器融合中常用）其实就是对一个传感器做低通、对另一个传感器做高通，两者截止频率匹配使增益之和为 1。加速度计低通处理（信任它的慢速/静态姿态信息），陀螺仪高通处理（信任它的快速旋转数据）。简单、优雅，效果出奇地好。
+
+\subsubsection{陷波滤波器（带阻滤波器，Notch Filter）}
+
+陷波滤波器是带通滤波器的反面：它\emph{去除}一个窄频带，其余频率原样通过。它是你用来"精准狙杀"单个问题频率的手术刀——结构谐振、50/60 Hz 工频干扰、电机齿槽频率等。
+
+\textbf{二阶陷波滤波器：}
+\begin{equation}
+H(s) = \frac{s^2 + \omega_0^2}{s^2 + \frac{\omega_0}{Q}\,s + \omega_0^2}
+\end{equation}
+
+其中 $\omega_0$ 是要抑制的频率，$Q$ 是品质因数（$Q$ 越大，陷波越窄）。在 $s = j\omega_0$ 处，分子为零，增益降至零——精确消除该频率。分母保证滤波器稳定，并控制阻带宽度。
+
+\textbf{极零点解读：}分子在虚轴上放置一对\textit{零点} $s = \pm j\omega_0$——它们把该频率的增益打到零，制造"陷波"。分母在这对零点的稍左方放置一对\textit{极点}——保证稳定性，并决定两侧增益恢复的速度。这是极点和零点各司其职的教科书案例：零点杀死频率，极点塑造周围响应。
+
+\textbf{适用场景：}
+\begin{itemize}[nosep]
+    \item 结构谐振导致控制环振荡（参见本章前面的麦克纳姆轮案例）。
+    \item 工频干扰（50 或 60 Hz）污染传感器信号。
+    \item 电机齿槽转矩以已知频率出现在速度测量中。
+\end{itemize}
+
+\textbf{实用提示：}$\omega_0$ 偏差几赫兹就可能导致陷波完全打偏。设计滤波器之前，\textit{务必}先对传感器数据做 FFT 找出精确的谐振频率。如果谐振频率随工况（速度、负载等）变化，可以考虑\textbf{自适应陷波滤波器}来实时跟踪 $\omega_0$。
+
+\textbf{离散实现：}与本章其他滤波器一样，陷波滤波器实现为 biquad（二阶节）。在 $\omega_0$ 处做预翘曲的双线性变换将 $H(s)$ 转为 $H(z)$，不会偏移陷波频率：
+\[
+s = \frac{\omega_0}{\tan(\omega_0 T_s / 2)} \cdot \frac{z - 1}{z + 1}.
+\]
+
+\subsubsection{滤波器类型选择与参数整定}
+
+选对滤波器，就是回答三个问题：
+\begin{enumerate}
+    \item \textbf{我想保留哪些频率？}——决定滤波器类型（低通、高通、带通或陷波）。
+    \item \textbf{边界在哪里？}——决定截止频率 $f_c$（陷波器则是抑制频率 $f_0$）。
+    \item \textbf{过渡要多陡？}——决定滤波器阶数（陷波器则是 $Q$ 值）。
+\end{enumerate}
+
+\textbf{经验法则：}
+\begin{itemize}
+    \item 从一阶低通滤波器开始。简单、稳定，大多数场合够用。
+    \item 截止频率设为你感兴趣信号带宽的 5--10 倍。太低会损失信号，太高会保留噪声。
+    \item 如果一阶不够，试试二阶（通带平坦用巴特沃斯（Butterworth），滚降更陡用切比雪夫（Chebyshev））。
+    \item \textbf{绝对不要}在没看过实际数据频谱的情况下拍脑袋设截止频率。靠猜截止频率是挫败感的源泉。
+    \item 拿不定主意时，把滤波后的输出和原始信号画在一起，检查结果是否符合物理直觉。
+\end{itemize}
+
+\subsection{Z 变换}
+
+我们之前用拉普拉斯变换讨论的一切，都活在连续世界里。但你的单片机是数字的——它处理的是离散采样，而不是连续信号。\textbf{Z 变换（Z-Transform）}是拉普拉斯变换在离散时间中的对应物。
+
+离散序列 $x[n]$ 的 Z 变换是：
+\begin{equation}
+X(z) = \sum_{n=0}^{\infty} x[n] z^{-n}
+\end{equation}
+
+关键对应关系：
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{连续域（$s$ 域）} & \textbf{离散域（$z$ 域）} \\
+\midrule
+$s$（导数） & $\frac{z-1}{T_s}$（前向差分） \\
+$\frac{1}{s}$（积分） & $\frac{T_s}{z-1}$（累加器） \\
+稳定条件 $\text{Re}(s) < 0$ & 稳定条件 $|z| < 1$ \\
+$e^{-aT_s}$ 在 $s$ 域 & $z^{-1}$ 表示一个采样延迟 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{为什么要关心它？}在单片机上实现滤波器或控制器的那一刻，你就已经在 $z$ 域里了，不管你自己有没有意识到。那行简单的代码：
+\[
+\texttt{y = alpha * x + (1 - alpha) * y\_prev;}
+\]
+实际上是一个 $z$ 域传递函数：
+\[
+H(z) = \frac{\alpha}{1 - (1-\alpha)z^{-1}}
+\]
+
+理解 Z 变换能帮你：
+\begin{itemize}
+    \item 把连续时间滤波器/控制器转换成代码（见第 5 节）。
+    \item 分析你的离散时间系统的稳定性。
+    \item 理解为什么你的控制器在不同采样频率下表现不同。
+\end{itemize}
+
+现在，只要记住一件事：\textbf{$z^{-1}$ 表示"上一个时刻"。}这是 Z 变换中最重要的一个认知。
+
+\textbf{常用 Z 变换对：}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{离散信号} & \textbf{$z$ 域} & \textbf{出现场合} \\
+\midrule
+$\delta[n]$（单位冲激） & $1$ & 初始冲击 \\
+$u[n]$（单位阶跃） & $\frac{z}{z-1}$ & 阶跃指令 \\
+$a^n u[n]$（等比衰减） & $\frac{z}{z-a}$ & 离散一阶系统响应 \\
+$x[n-1]$（一步延迟） & $z^{-1}X(z)$ & 代码中的上一个采样值 \\
+$x[n] - x[n-1]$（一阶差分） & $(1 - z^{-1})X(z)$ & 离散导数 \\
+$\sum_{k=0}^{n} x[k]$（累加和） & $\frac{1}{1 - z^{-1}}X(z)$ & 离散积分 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{$s$ 与 $z$ 之间的联系：}精确的映射关系是 $z = e^{sT_s}$。推导很直观：连续时间指数信号 $x(t) = e^{st}$ 在间隔 $T_s$ 采样后变为序列 $x[n] = e^{snT_s} = (e^{sT_s})^n$。在 Z 变换中，$z^n$ 是离散指数信号。对比两者立得 $z = e^{sT_s}$。连续极点 $s = -a$ 映射到离散极点 $z = e^{-aT_s}$。这意味着：
+\begin{itemize}
+    \item 稳定的连续极点（$\text{Re}(s) < 0$）映射到 $|z| < 1$（单位圆内）。稳定性得以保持。
+    \item 更快的连续极点（$s$ 更负）映射到更小的 $|z|$（更靠近原点）。极快的极点映射到 $z \approx 0$ 附近。
+    \item 振荡的连续极点（$s = \sigma \pm j\omega$）映射到 $z = e^{\sigma T_s} e^{\pm j\omega T_s}$，在单位圆内（稳定）或单位圆外（不稳定）盘旋。
+\end{itemize}
+
+\textbf{读懂 $z$ 域传递函数：}任何 $z$ 域传递函数都可以直接转换成代码，只要把 $z^{-1}$ 替换成"上一个值"。例如：
+\[
+H(z) = \frac{b_0 + b_1 z^{-1}}{1 + a_1 z^{-1}}
+\]
+对应代码：
+\begin{verbatim}
+    y = b0 * x + b1 * x_prev - a1 * y_prev;
+    x_prev = x;  y_prev = y;
+\end{verbatim}
+这被称为\textbf{差分方程（Difference Equation）}，是任何数字滤波器或控制器的最终形式。

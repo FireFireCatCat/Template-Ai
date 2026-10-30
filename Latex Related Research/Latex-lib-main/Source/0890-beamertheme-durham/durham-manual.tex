@@ -1,0 +1,425 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{titlesec}
+\usepackage{graphicx}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue
+}
+
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{gray!5}
+}
+
+\title{\textbf{Durham Beamer Theme}\\User Manual}
+\author{Suhail Rizwan}
+% Keep the manual date aligned with the package release date.
+\date{23 February 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ==========================================================
+\section{Introduction}
+
+The \textbf{Durham Beamer Theme} is a minimalist, structured, and accessibility-aware presentation theme built from scratch. It is designed around the philosophy of:
+
+\begin{itemize}
+\item Clear structural navigation
+\item Calm visual hierarchy
+\item Cognitive restraint
+\item High contrast accessibility support
+\item API-stable user commands
+\end{itemize}
+
+The theme separates:
+\begin{itemize}
+\item Visual design (theme layer)
+\item Presentation content (your slides)
+\end{itemize}
+
+Users interact with a small, stable, and clearly defined set of commands.
+
+% ==========================================================
+\section{Installation}
+
+The Durham theme is distributed via \textbf{CTAN} and is included in \textbf{TeX Live}. 
+Users may install it automatically or manually.
+
+\subsection*{Option 1: Automatic Installation (Recommended)}
+
+If you are using TeX Live (or MiKTeX with package manager), the theme can be installed directly via your package manager.
+
+Then simply load it in your presentation:
+
+\begin{lstlisting}
+\documentclass{beamer}
+\usetheme{durham}
+\end{lstlisting}
+
+No manual file copying is required.
+
+\subsection*{Option 2: Download from CTAN}
+
+Download the official package archive (.zip) from CTAN.
+
+The archive contains:
+
+\begin{itemize}
+\item \texttt{beamerthemedurham.sty}
+\item Documentation
+\item Example files
+\end{itemize}
+
+\subsection*{Local Installation (Project-Level)}
+
+Place the file:
+
+\begin{lstlisting}
+beamerthemedurham.sty
+\end{lstlisting}
+
+in the same directory as your \texttt{.tex} presentation file.
+
+Then use:
+
+\begin{lstlisting}
+\usetheme{durham}
+\end{lstlisting}
+
+\subsection*{TDS Installation (Advanced)}
+
+For system-wide installation, place the file in your local TeX tree:
+
+\begin{lstlisting}
+tex/latex/durham/
+\end{lstlisting}
+
+Then refresh the TeX filename database (e.g., \texttt{texhash}).
+
+\subsection*{Overleaf Users}
+
+Upload \texttt{beamerthemedurham.sty} into your project directory, 
+or rely on TeX Live if the theme is already available.
+
+Then use:
+
+\begin{lstlisting}
+\usetheme{durham}
+\end{lstlisting}
+
+% ==========================================================
+
+% ==========================================================
+\section{Compilation Engine (LuaLaTeX Requirement)}
+
+The Durham Beamer Theme is designed to be compiled with:
+
+\begin{itemize}
+\item \textbf{LuaLaTeX} (recommended and expected)
+\item XeLaTeX (generally compatible)
+\end{itemize}
+
+The theme uses professional font settings and modern font packages.
+For consistent typography and correct font rendering, compile your
+presentation using \textbf{LuaLaTeX}.
+
+Compilation with pdfLaTeX may lead to missing fonts or unexpected font
+substitutions and is not officially supported.
+
+
+\section{Basic Usage}
+
+Minimal working example:
+
+\begin{lstlisting}
+\documentclass{beamer}
+\usetheme{durham}
+
+\title{My Presentation}
+\author{Author Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\makeoutline
+
+\section{Introduction}
+\begin{frame}{Slide Title}
+Content
+\end{frame}
+
+
+\makethankyou{Thank You!}{Questions • Feedback • Collaboration}
+\makereferences
+
+\end{document}
+\end{lstlisting}
+
+% ==========================================================
+\section{Core Commands}
+
+The theme provides four primary page commands.
+
+\subsection{\texttt{\textbackslash maketitle}}
+
+Standard Beamer title page, styled automatically.
+
+\subsection{\texttt{\textbackslash makeoutline}}
+
+Creates the Outline (Table of Contents) slide.
+
+Default usage:
+
+\begin{lstlisting}
+\makeoutline
+\end{lstlisting}
+
+Custom title:
+
+\begin{lstlisting}
+\makeoutline[Plan de la présentation]
+\end{lstlisting}
+
+Features:
+\begin{itemize}
+\item Top 20\% colored strap
+\item Title inside strap (auto wrapping)
+\item Bullet-based TOC (no numbering)
+\item Math-safe section handling
+\end{itemize}
+
+\subsection{\texttt{\textbackslash makereferences}}
+
+Creates a dedicated References slide using the theme's built-in layout.
+
+Usage:
+
+\begin{lstlisting}
+\makereferences
+\end{lstlisting}
+
+This command:
+
+\begin{itemize}
+\item Automatically generates a slide titled “References”
+\item Uses consistent Durham typography and spacing
+\item Preserves structural alignment with the rest of the deck
+\item Works with BibTeX or BibLaTeX workflows
+\end{itemize}
+
+Example with BibTeX:
+
+\begin{lstlisting}
+\bibliographystyle{apalike}
+\bibliography{references}
+\makereferences
+\end{lstlisting}
+
+Example with biblatex:
+
+\begin{lstlisting}
+\printbibliography
+\makereferences
+\end{lstlisting}
+
+The theme does not override citation styles — it controls layout only.
+
+\subsection{\texttt{\textbackslash makethankyou}}
+
+Creates the final slide with two customizable lines.
+
+Usage:
+
+\begin{lstlisting}
+\makethankyou{Thank You!}{Questions • Feedback • Collaboration}
+\end{lstlisting}
+
+First argument:
+\begin{itemize}
+\item Large primary line
+\end{itemize}
+
+Second argument:
+\begin{itemize}
+\item Subtitle line under separator rule
+\end{itemize}
+
+% ==========================================================
+\section{Theme Color Customization}
+
+The theme uses a central color variable:
+
+\begin{lstlisting}
+Theme_Color
+\end{lstlisting}
+
+Default:
+\begin{lstlisting}
+#68236D
+\end{lstlisting}
+
+Override:
+
+\begin{lstlisting}
+\definecolor{Theme_Color}{HTML}{1F4E79}
+\usetheme{durham}
+\end{lstlisting}
+
+All structural elements update automatically:
+\begin{itemize}
+\item Headline
+\item Outline strap
+\item Section bullets
+\item References page
+\item Thank you page
+\item Progress indicators
+\end{itemize}
+
+% ==========================================================
+\section{Theme Modes: Accessibility, Plain, and Invert}
+
+Durham provides optional theme modes that modify contrast and layout behavior.
+These modes are enabled when loading the theme via \texttt{\textbackslash usetheme}.
+
+The three supported configurations are:
+
+\begin{itemize}
+\item \texttt{accessibility}
+\item \texttt{plain}
+\item \texttt{plain,invert}
+\end{itemize}
+
+% ----------------------------------------------------------
+\subsection{1. Accessibility Mode (High-Contrast Palette, Same Layout)}
+
+Enable:
+
+\begin{lstlisting}
+\usetheme[accessibility]{durham}
+\end{lstlisting}
+
+Accessibility mode keeps the Durham layout unchanged, but switches the theme into a strict
+high-contrast black/white design.
+
+It:
+
+\begin{itemize}
+\item Forces \texttt{Theme\_Color} to \textbf{black}.
+\item Sets the theme's structural elements (headline/footline accents, rules, progress marks, etc.)
+      to use black/white contrast.
+\item Preserves the standard Durham layout (headline, footline, progress indicator, section pages,
+      outline page).
+\end{itemize}
+
+Accessibility mode may be combined with \texttt{plain}:
+
+\begin{lstlisting}
+\usetheme[accessibility,plain]{durham}
+\end{lstlisting}
+
+This produces a minimal layout with the same high-contrast palette.
+
+Note: In accessibility mode, any user-defined \texttt{Theme\_Color} is overridden to ensure
+reliable contrast.
+
+% ----------------------------------------------------------
+\subsection{2. Plain Mode (Minimal Layout)}
+
+Enable:
+
+\begin{lstlisting}
+\usetheme[plain]{durham}
+\end{lstlisting}
+
+Plain mode removes structural navigation elements to maximize usable slide space:
+
+\begin{itemize}
+\item Headline is removed.
+\item Footline is removed.
+\item The vertical progress indicator (attached to the footline) is not shown.
+\end{itemize}
+
+Plain mode affects layout only --- it does not change the color palette by itself.
+
+% ----------------------------------------------------------
+\subsection{3. Plain + Invert (Dark Minimal Mode)}
+
+Enable:
+
+\begin{lstlisting}
+\usetheme[plain,invert]{durham}
+\end{lstlisting}
+
+This configuration produces a dark minimal layout:
+
+\begin{itemize}
+\item Background becomes black.
+\item Text becomes white.
+\item Structural accents adjust for legibility on a dark canvas.
+\item The deck remains in the minimal (plain) layout without headline or footline.
+\end{itemize}
+
+\textbf{Note:} Your bibliography toolchain (BibTeX/Biber) depends on the citation package you choose. The Durham theme remains neutral and only provides the \texttt{\textbackslash makereferences} slide wrapper.
+
+\section{References and Bibliography}
+
+\subsection{Using \texttt{\textbackslash makereferences}}
+
+The theme provides a dedicated references slide command that does not count
+toward slide numbering or progress indicators.
+
+\begin{itemize}
+\item Choose your preferred citation package in the preamble (e.g., \texttt{natbib} or \texttt{biblatex}).
+\item Place \texttt{\textbackslash makereferences\{<bibfile>\}} near the end of the document.
+\end{itemize}
+
+Example with BibTeX:
+
+\begin{lstlisting}
+\usepackage{natbib}
+\bibliographystyle{apalike}
+
+...
+
+\makereferences{references} % uses references.bib
+\end{lstlisting}
+
+The references slide will automatically break across multiple frames if needed.
+
+\section{Conclusion}
+
+The Durham theme is designed for:
+
+\begin{itemize}
+\item Academic lectures
+\item Research seminars
+\item Conferences
+\item Professional presentations
+\end{itemize}
+
+It prioritizes structure, clarity, accessibility, and long-term maintainability.
+
+\vfill
+\begin{center}
+\textit{Beamer Atelier}
+\end{center}
+
+\end{document}

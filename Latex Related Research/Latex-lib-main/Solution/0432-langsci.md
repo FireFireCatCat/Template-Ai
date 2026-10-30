@@ -1,0 +1,96 @@
+yes
+
+# 0432-langsci: Language Science Press edited-volume skeleton (langscibook)
+
+- Unverified: read from the source, not compiled.
+- Source: Source/0432-langsci/ (origin: https://github.com/langsci/latex-skeletons/raw/gh-pages/editedskeleton.zip; licence: not established in the manifest; the class header states LPPL 1.3 or later, langscibook.cls:9-16)
+- Kind: book (edited volume with three paper chapters; the manifest hint "journal" is wrong)
+- Lib: v5
+- Engine: needs XeLaTeX (langscibook.cls:721-722 raises a ClassError otherwise; fontspec and unicode-math fonts at :753-794)
+- Look carried by: class (langscibook.cls sets page, fonts, cover and front pages, headings, heads, footnotes, floats, biblatex style and indexes; the sample adds class options, class-native metadata commands and helper packages)
+- Class origin: publisher-official
+- Main file: main.tex (other samples: chapters/01.tex, chapters/02.tex, chapters/03.tex, chapters/preface.tex, chapters/acknowledgments.tex; chapters/prefaceEd.tex is not included by main.tex)
+- Read: main yes, zip-local classes and styles partly (root langscibook.cls, langsci-affiliations.sty, langsci-optional.sty, langsci-basic.sty read in full; chapters/langscibook.cls, an older copy, read through a diff against the root copy and targeted reads, not top to bottom)
+
+## Verdict
+Yes, but only through the class ruling. `langscibook.cls` is the publisher's own kit (the zip is Language Science Press's `latex-skeletons` release; the class is not on CTAN, ctan.org/pkg/langscibook returned 404), so `class.langscibook` is one published way, and the sample only sets class options and class-native commands (main.tex:10-14, localmetadata.tex:1-9). The sample's own additions (localcommands.tex, the chapter preambles, the `Q` column type from langsci-optional.sty) reduce to lib ways. No ART or irreducible code is counted against the zip, because the TikZ cover pages, the expl3 helpers and the kernel-internal patches sit inside the published class (listed below, uncounted); if the class were treated as zip-local the verdict would be no (ART/class at langscibook.cls:977-1038, BESPOKE/class at :643-676, :1052-1094, :2212-2229 and langsci-affiliations.sty:48-510). Files the class and preamble load that the zip does not ship (`langsci-series.def`, the `langsci-unified` biblatex style, `langsci-lgr`, `langsci-gb4e`, `langsci-pod`, fonts) were not read.
+
+## Blockers
+none
+
+## Class setting
+- Class: `class.langscibook` options: `output=book`, `collection`, `colorlinks`, `citecolor=brown` (main.tex:10-14; `colorlinks` and `citecolor` are not declared by the class, langscibook.cls:162-277, so they are presumably left in the global option list for hyperref, :1807). Chapters use `output=paper,colorlinks,citecolor=brown` (chapters/01.tex:1). Class base: `class.scrbook` with `fontsize=11pt` (default, :96), `footnotes=multiple`, `numbers=noenddot`, `toc=bib`, `index=totoc`, `headings=optiontohead` (:309-317), plus `\KOMAoptions{chapterprefix=true}` for collection and paper (:319-330). Other options the class declares, unused here: `smallfont`, `draftmode`, `openreview`, `proofs`, `showindex`, `minimal`, `babelshorthands`, `oldstylenumbers`, `booklanguage=`, `copyright=`, `spinewidth=`, `chinesefont`... (:162-275).
+- Class-native vocabulary used: `\title` `\subtitle` `\author` with embedded `\orcid{}` and `\affiliation{}` (localmetadata.tex:1-3, chapters/01.tex:3), `\BackBody` (localmetadata.tex:4), `\renewcommand{\lsSeries}` `\lsSeriesNumber` `\newcommand{\lsSeriesTitle}` `\lsSeriesColor` (localmetadata.tex:6-9), `\abstract` (chapters/01.tex:5), `\papernote` (localcommands.tex:11), `\maketitle`, `\frontmatter`, `\mainmatter`, `\addchap` (chapters/preface.tex:1), `\lsAcknowledgementTitle` (chapters/acknowledgments.tex:1), `\includepaper` (main.tex:49-51), `\isi` (chapters/03.tex:24), `\citep` `\citet` (natbib=true), `\printbibliography[heading=subbibliography,notkeyword=this]` (chapters/01.tex:45), `refsection` (chapters/preface.tex:2), `\printindex[lan]` `[sbj]` and `\lsNameIndexTitle` `\lsLanguageIndexTitle` `\lsSubjectIndexTitle` (backmatter.tex:4-18).
+
+## Component map
+| Component | Evidence | Way | Parameters |
+|---|---|---|---|
+| class base | langscibook.cls:309-317 | `class.scrbook` | fontsize=\lsFontsize (11pt), footnotes=multiple, numbers=noenddot, toc=bib, index=totoc, headings=optiontohead; chapterprefix=true (:319-330) |
+| page geometry | langscibook.cls:707-714 | `page.geometry` | papersize={170mm,240mm}, top=27.4mm, inner=20.5mm, outer=24.5mm, marginparwidth=50pt (skipped for cover output types, :705) |
+| text font | langscibook.cls:780-794 | `font.fontspec` | main LibertinusSerif-Regular.otf, Ligatures={TeX,Common}, PunctuationSpace=0, Numbers=Proportional, Bold/Italic/BoldItalic files, SlantedFeatures={FakeSlant=0.25}; sans Arimo Scale=MatchLowercase (:765-771); mono DejaVuSansMono Scale=MatchLowercase (:757-763) |
+| math fonts | langscibook.cls:725-726, 753, 773-775 | `math.amsmath`, `math.amssymb`, `font.unicode-math` | `\setmathfont[AutoFakeBold]{LibertinusMath-Regular.otf}`, range={cal} and {bfcal} from XITSMath, StylisticSet=1 |
+| logo command | langscibook.cls:755 | `font.icons` | `metalogo` `\XeLaTeX` (logo by name, as `hologo`) |
+| table numerals | langscibook.cls:798-800 | `font.fontspec` | `\addfontfeatures{Numbers={Monospaced,Lining}}` through etoolbox `\AtBeginEnvironment` on tabular, tabularx, longtable; reduces to a wrapper in each table |
+| text shape | langscibook.cls:837-838, 341; localhyphenation.tex:7-9; main.tex:37 | `sp.frenchspacing`, `sp.microtype`, `sp.hyphenat` | `\frenchspacing`; microtype `final`; `hyphenat`; `\hyphenation{par-a-digm}`; `\sloppy` |
+| colour | langscibook.cls:863-914; localmetadata.tex:8 | `color.xcolor` | `\definecolor` cmyk palette lsLightBlue .. lsNightGreen, langscicol1-20, RED; series colour name `gray` |
+| front pages (output=book) | langscibook.cls:505-577, 977-1038, 1096-1111; main.tex:32 | `front.class-native` | `\maketitle` prints front cover page, series-history page, Schmutztitel, imprint, dedication, back page; values: title, subtitle, author, `\BackBody`, `\lsSeriesColor`, `\lsSeriesNumber`, ISBN, DOI, URL strings |
+| imprint | langscibook.cls:1208-1340 | `front.class-native`, `tbl.tabular`, `sp.ragged` | CC-BY text chosen by `\lsCopyright`; ISBN `tabular{@{}l@{~}l}` (:1248-1269) |
+| dedication | langscibook.cls:1346-1356 | `front.dedication` | `\dedication` (KOMA), `\lsDedicationFont` 15pt; not used by the sample |
+| draft date | langscibook.cls:1362, 993, 1375 | `front.datetime` | `datetime` for `\currenttime` in draft footers |
+| paper title block | langscibook.cls:1957-2010; chapters/01.tex:3-5, 18 | `front.class-native`, `abs.class-native` | `\maketitle` = `\chapter` + `\setchapterpreamble` with `\ResolveAffiliations` + `quote` with `\small` abstract + `\ifoot[\lsCollectionPaperCitation]` |
+| author and affiliation resolver | langsci-affiliations.sty:52-140; langscibook.cls:72 | `front.class-native` | keys: mark style (alphabetic, numeric, circled, none), output affiliation, output in groups, separator between two / multiple / final two, orcid placement, author affiliation skip (0.5ex) |
+| contents | main.tex:36-37; langscibook.cls:802-818, 821-836, 1893-1903 | `toc.kernel`, `toc.tocbasic`, `num.secnumdepth`, `meta.bookmark` | `\DeclareTOCStyleEntry(ies)` with entrynumberformat, pagenumberformat, raggedentrytext, linefill, dynnumwidth; `\@dotsep` 2.5; tocdepth 0 for collection (:1896); `\currentpdfbookmark{Contents}{name}` |
+| headings | langscibook.cls:856-857, 1397-1451, 1968-1970 | `head.kernel`, `head.koma-fonts`, `head.class-native` | `\setkomafont{sectioning}{\normalcolor\bfseries}`, secnumdepth 4, `\DeclareNewSectionCommand` appendixsection and appendixsubsection (beforeskip, afterskip, tocindent, tocnumwidth), `\RedeclareSectionCommand[afterskip=1.15\baselineskip plus .1\baselineskip minus .167\baselineskip]{chapter}` |
+| headings used | chapters/01.tex:20, 26, 37; chapters/preface.tex:1 | `head.kernel`, `class.scrbook` vocabulary | `\section`, `\section*`, `\addchap` |
+| numbering | langscibook.cls:1905-1912, 1967, 2042-2044 | `num.counters` | `\counterwithin{figure}{chapter}`, `\counterwithout` for papers, `\renewcommand{\thefigure}{\arabic{figure}}`, `\thesection` arabic |
+| appendix | langscibook.cls:1634-1657 | `num.appendix` | `\appto\appendix` chapter format `\chapapp~\thechapter\autodot:`; `paperappendix` environment |
+| page structure | main.tex:33, 43; backmatter.tex:7, 13; langscibook.cls:530, 1481, 1996 | `pgnum.pagenumbering`, `pg.break`, `pg.flush`, `pg.enlarge`, `class.scrbook` vocabulary | `\frontmatter` `\mainmatter`, `\pagenumbering{roman}`, `\cleardoublepage`, `\raggedbottom`, `\enlargethispage{-1\baselineskip}` |
+| header and footer | langscibook.cls:1363-1390, 1989-2006; backmatter.tex:5, 11, 17, 19 | `hf.scrlayer-scrpage` | autoenlargeheadfoot=off, draft=false; `\ohead{\headmark}`, `\ofoot[]{\pagemark}`, `\cfoot{}`, `\ihead{}`; `\AddToLayerPageStyleOptions{plain.scrheadings}{onselect=footheight 3\baselineskip}`; `\partpagestyle{empty}`; papers `\lehead` `\rohead` |
+| footnotes | langscibook.cls:1475, 1482 | `fn.kernel`, `class.scrbook` vocabulary | `\deffootnote[1.5em]{1.5em}{\normalparindent}{\textsuperscript{\thefootnotemark}}`, `\addtokomafont{footnote}{\addfontfeatures{Numbers=Lining}}` |
+| quotes | langscibook.cls:1491-1506 | `quote.kernel` | `quote` and `quotation` rebuilt on `\list` (leftmargin 8mm, listparindent 1.5em), `modquote[6mm]` |
+| epigraph | langscibook.cls:1463-1467, 1992-1994 | `quote.epigraph` | KOMA `\dictum`, `\setkomafont{dictum}`, `\dictumwidth` .618\textwidth; the older chapters copy loads `epigraph` (chapters/langscibook.cls:1454-1459) |
+| language | langscibook.cls:1526-1558, 2077-2204 | `lang.babel`, `lang.cjk`, `lang.bidi` | `babel` with `\lsBookLanguage` (english); `xeCJK` only for chinese; `langsci-bidi` only with `arabicfont` (:257) |
+| citations | langscibook.cls:1565-1587; chapters/01.tex:21, 38, 45; main.tex:25 | `bib.biblatex-biber` | biblatex natbib=true, style=langsci-unified, maxbibnames=99, uniquename=false, mincrossrefs=99, maxcitenames=2, isbn=false, autolang=hyphen, backend=biber, indexing=cite; `\defbibheading{references}`; `\addbibresource` |
+| bibliography penalties | langscibook.cls:1580-1587 | `sp.penalties` | `\clubpenalty\@M`, `\widowpenalty\@M`, `\emergencystretch=3em` |
+| floats and captions | langscibook.cls:1593-1627 | `fig.floatrow`, `fig.rotating`, `tbl.booktabs`, `fig.placement`, `cap.caption`, `sp.setspace`, `fig.graphicx` | `\floatsetup[table]{capposition=top}`, rotating `figuresright`, `\fps@figure` and `\fps@table` htbp, topfraction .9, bottomfraction .8, textfraction .07, floatpagefraction .7; `\captionsetup{font={stretch=.8,small},width=.8\textwidth}`, `\setcapindent{0pt}` |
+| table in sample | chapters/01.tex:27-34; langsci-optional.sty:137-149; localpackages.tex:1 | `tbl.tabularx`, `cols.multicol` | `tabularx{.45\textwidth}{lQ}`, `\newcolumntype{Q}{>{\raggedright\arraybackslash}X}`; `tabularx` and `multicol` loaded |
+| indexes | langscibook.cls:1663-1704, 1728-1792, 1765; backmatter.tex:1-19 | `idx.makeidx`, `cols.twocolumn-cmd` | `index` package `\newindex{lan}{ldx}{lnd}`, `\newindex{sbj}`, `\renewindex{default}`; `authorindex`; `theindex` rebuilt with `\twocolumn[...]`, `\columnsep 35\p@`; `\printindex`, `\printindex[lan]`, `\printindex[sbj]`; `\isi` `\ili` `\iai` markers |
+| links, urls, refs | langscibook.cls:347-348, 1807-1856; localpackages.tex:2-3 | `meta.hyperref`, `meta.url`, `xref.hyperref`, `xref.kernel` | hyperref bookmarks=true, bookmarksopen=true, bookmarksdepth=5, bookmarksnumbered, hyperindex, breaklinks, pdfborder={0 0 0}, pdfusetitle, pdfpagelayout=TwoPageRight, hyperfootnotes=false, unicode; `url[hyphens]` `\urlstyle{same}`; `\chapterautorefname` etc.; `\sectref` `\chapref` `\tabref` `\figref` |
+| bookmarks | langscibook.cls:1829-1837 | `meta.bookmark` | `\bookmarksetup{startatroot}` appended to `\backmatter` |
+| multi-file structure | main.tex:21-24, 40-41, 49-51, 58; langscibook.cls:1914-1932 | `struct.input` | `\input`, `\include`, class `\includepaper{path}` |
+| draft aids | langscibook.cls:183-186, 199-200, 1374-1379, 1771-1784 | `sp.draft-lineno`, `draft.todo` | `proofs` (lineno switch, pagewise), `showindex` (soul, todonotes), `draftmode`/`openreview` footers; not selected by the sample |
+| TikZ in class | langscibook.cls:343-345 | `art.tikz` | tikz, libraries positioning and calc (cover pages; see Bespoke code) |
+| ISBN barcode | langscibook.cls:934, 413-423 | `art.content-package` | `pst-barcode` `\psbarcode` of the ISBN string, drawn only in cover output types, loaded unconditionally |
+| glossed examples | localpackages.tex:7-8 | `art.content-package` | `langsci-lgr`, `langsci-gb4e` (not in the zip, not read; no `\ea` or `\gll` in any sample) |
+| helper packages | langsci-optional.sty:11, 44, 113, 155, 192, 217, 342 | `box.minipage`, `code.verbatim`, `mark.ulem`, `tbl.colortbl`, `draft.todo`, `font.icons`, `fig.graphicx` | pbox, fancyvrb, array, ulem[normalem], colortbl, todonotes, pifont (`\ding{51}`); `\resizebox` in `\oneline` `\fittable`; none used by the sample |
+| no-effect infrastructure | langscibook.cls:58, 70-71, 78, 160, 339, 677, 721 | none (not a component) | silence, etoolbox, xparse, xspace, kvoptions, xstring, calc, ifxetex |
+
+## Bespoke code
+| Item | Where | Reducible? | Reduction |
+|---|---|---|---|
+| `\newcommand*{\orcid}{}` | localcommands.tex:1 | yes | alias; the class already has a one-argument dummy `\orcid` (langscibook.cls:113), so drop it (a redefinition clash is possible, not compiled; the older chapters copy has no `\orcid`) |
+| `\let\thetitle\@title`, `\let\theauthor\@author` | localcommands.tex:4-7 | yes | `\let` aliases, used only inside `\togglepaper`; inline them |
+| `\togglepaper[n]` | localcommands.tex:9-22 | yes | `\bibliography` (`bib.biblatex-biber`) + class `\papernote{..}` (`front.class-native`) + `\pagenumbering{roman}` (`pgnum.pagenumbering`) + `\setcounter{chapter}{n-1}` (`num.counters`); it only serves compiling one chapter alone, and the book build does not call it |
+| `bookcompile` switch, `\bookorchapter` | localcommands.tex:24-26 | yes | etoolbox switch fixed to true for the book build; `\bookorchapter` is called nowhere in the zip (set false at chapters/01.tex:13, 02.tex:12, 03.tex:15) |
+| `\IfFileExists{../localcommands.tex}{..}{}` block in each chapter | chapters/01.tex:8-15, 02.tex:7-14, 03.tex:10-17 | yes | kernel conditional; false when built from the root (no `../localcommands.tex`), so the book build ignores it; standalone build = `struct.input` lines plus `\togglepaper` as above |
+| series and metadata values | localmetadata.tex:1-9 | yes | strings and a colour name given to class commands |
+| `\hyphenation`, `\sloppy`, `\phantomsection`, `\addcontentsline`, `\ohead` calls | localhyphenation.tex:7-9, backmatter.tex:1-19 | yes | `sp.hyphenat`, `toc.kernel`, `hf.scrlayer-scrpage` |
+| langsci-optional.sty macros (`\oneline`, `\centerfit`, `fitverb`, `\rotatehead`, `\langinfo`, `\ulp` `\soutp`, `\eabox` `\exbox`, `widetabular`, `indentquote`, `\rephrase`, `\hitie`, `\ibar`..., `\AffiliationsWithoutIndexing`) | langsci-optional.sty:14-401 | yes | compositions of `fig.graphicx` (`\resizebox`), `box.minipage`, `code.verbatim`, `mark.ulem`, `fig.rotating`, `sp.manual-space`, `draft.todo`, `quote.kernel`, `tbl.tabularx`; only the `Q` column type (:139) is used by the sample |
+| `\aeiou`, `\connect`, `\ConnectTail`, `\ConnectHead`, `\dline` | langsci-optional.sty:120-135, 232-275, 69-74 | content | TikZ and `picture` helpers for annotating example sentences (`art.tikz`, content when used); not called in the sample |
+| langsci-basic.sty | langsci-basic.sty:12 | yes | empty (content moved to other files) |
+| Inside the publisher-official class (recorded, not counted): TikZ cover, front, Schmutztitel and back pages; `\covergeometry` `\backcover` `\frontcovertoptext` | langscibook.cls:356-495, 977-1038 | not counted | would be ART/class if the class were zip-local; with the class as one way they are its declarative output (series colour, title, author, subtitle, series strings, logos) |
+| Inside the class: expl3 spine width from a PDF page count (`\XeTeXpdfpagecount`), cover output types only | langscibook.cls:643-676 | not counted | would be BESPOKE/class if zip-local; not run for `output=book` |
+| Inside the class: expl3 `\lsSeriesHistoryWheel` | langscibook.cls:1052-1094 | not counted | would be BESPOKE/class if zip-local; defined, not called by the class code read |
+| Inside the class: `\sloppybottom` patching `\@texttop`, `\@textbottom`, `\topskip` | langscibook.cls:2212-2229 | not counted | would be BESPOKE/class if zip-local (page-bottom flow, no lib way beyond `pg.flush`) |
+| Inside the class: `\includepaper` redefines `\documentclass`, `\usepackage`, `document`; writes `langscitmp.bib` and `collection_tmp.bib` with `\write` | langscibook.cls:1167-1186, 1885-1890, 1914-1941 | not counted | class-native chapter inclusion and citation-footer data; the stale `langscitmp.bib` in the zip is a build leftover from another volume |
+| Inside the class: `theindex` rebuilt on kernel internals, `\subsubsubsection` via `\@startsection`, `\genfrac` patch | langscibook.cls:731-751, 1399-1407, 1664-1693 | not counted | would need review if zip-local |
+| Inside the kit: `langsci-affiliations.sty` (expl3: regex split of `\affiliation{}` out of `\author`, prop lists, alph/numeric/circled marks) | langsci-affiliations.sty:48-510 | not counted | official package with its own repository (header :34-42); would be BESPOKE/class if zip-local |
+| Build tooling, not template: Makefile index `sed` filtering, `pdftk` stamping, ImageMagick cover, `curl`, `git` | Makefile:3-22, 26-33, 92-93, 62-72; makecover.sh:19-22 | outside scope | `makeindex` on three indexes and biber are `idx.makeidx` and `bib.biblatex-biber`; the `sed` lines only filter name-index entries (content), the others act on the finished PDF or repository |
+| Not shipped, not read | `\input{langsci-series.def}` langscibook.cls:925; `langsci-pod` :681-696; biblatex style `langsci-unified` :1567; `langsci-lgr`, `langsci-gb4e` localpackages.tex:7-8 | unknown | publisher files of the same kit; ship them with the class (note: `pst-barcode` needs PostScript handling under XeLaTeX only when `\psbarcode` runs, cover output types; its toolchain was not established) |
+
+## Content-opaque
+none in the sample bodies (no figure, table beyond the empty `tabularx`, equation or code appears in any chapter). `figures/samplefigure.png` and `data/dataset1.csv` are not referenced by any `.tex` file read. TikZ helpers `\aeiou`, `\ConnectHead` (langsci-optional.sty:120-135, 243-275) would be content when used.
+
+## Lib changes
+- New ways proposed: none. Considered: `langsci-affiliations` (class-internal author and affiliation resolver; kept under `front.class-native`), `langsci-gb4e` and `langsci-lgr` (linguistics example packages; kept under `art.content-package`), `pst-barcode` (same bucket), `metalogo` (kept under `font.icons`).
+- Existing ways used for the first time by the lib: none needed (the consolidator computes this)

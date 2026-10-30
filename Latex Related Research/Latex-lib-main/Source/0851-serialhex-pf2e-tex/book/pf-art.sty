@@ -1,0 +1,80 @@
+\RequirePackage{graphicx}
+\RequirePackage{dblfloatfix}
+\RequirePackage[strict]{changepage}
+
+\makeatletter
+\newenvironment{figurehere}
+  {\def\@captype{figure}}
+  {}
+\makeatother
+
+\newlength{\pfhmargin}
+\newcommand*{\pfBigArt}[2]{%
+  \checkoddpage
+  \ifoddpage
+    \setlength{\pfhmargin}{\dimexpr 1in+\hoffset+\oddsidemargin+4pt \relax}
+  \else
+    \setlength{\pfhmargin}{\dimexpr 1in+\hoffset+\evensidemargin+4pt \relax}
+
+  \fi
+  \begin{figure*}[#1!]
+    \centering
+    \if #1t
+      \vspace*{-\dimexpr1in+\voffset+\topmargin+\headheight+\headsep \relax}
+    \fi
+
+     \makebox[\paperwidth+1pt][l]{
+      \hskip-\pfhmargin \relax
+      \includegraphics[width=\paperwidth+1pt]{#2}
+    }
+    \if #1b
+      \vspace*{-\dimexpr\paperheight-\textheight-1in+13pt-\voffset-\topmargin-\headheight-\headsep\relax}
+    \fi
+
+  \end{figure*}
+}
+
+\newcommand{\pfArt}[2][0.8]{%
+  \begin{figurehere}%
+    \centering%
+    \includegraphics[width=#1\linewidth]{#2}%
+  \end{figurehere}%
+}
+
+\newcommand{\pfWrapArt}[2][0.8]{%
+  \setlength{\unitlength}{#1\linewidth}%
+  \setlength{\intextsep}{-1ex}%
+  \docolaction{% left if we're in the left column
+    \setlength{\columnsep}{0em}%
+    \begin{wrapfigure}{l}{\unitlength}%
+      \centering%
+      \includegraphics[width=\unitlength]{#2}%
+      % \vspace{-2ex}%
+    \end{wrapfigure}%
+  }{% left if we're in the middle column
+    \setlength{\columnsep}{0em}%
+    \begin{wrapfigure}{l}{\unitlength}%
+      \centering%
+      \includegraphics[width=\unitlength]{#2}%
+      % \vspace{-2ex}%
+    \end{wrapfigure}%
+  }{% right if we're in the right column
+    \setlength{\columnsep}{0em}%
+    \begin{wrapfigure}{r}{\unitlength}%
+      \centering%
+      \includegraphics[width=\unitlength]{#2}%
+      % \vspace{-2ex}%
+    \end{wrapfigure}%
+  }%
+}
+
+% There is also an \includesvg command from the svg package...
+% Black magic from StackOverflow
+\newcommand*\pfInlineArt[2][1.0]{%
+  \raisebox{-0.2\dimexpr#1\baselineskip}{%
+      \includegraphics[
+        height=#1\baselineskip,
+        keepaspectratio,
+      ]{#2}%
+  }
+}

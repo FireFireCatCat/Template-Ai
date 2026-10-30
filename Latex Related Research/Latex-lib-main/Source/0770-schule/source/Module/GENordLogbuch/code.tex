@@ -1,0 +1,808 @@
+\renewcommand{\maketitle}[1][top=6cm,bottom=4cm,inner=1.5cm,outer=1.5cm]{%
+	\begin{titlepage}
+		\newgeometry{#1}
+%		\begin{minipage}{0.5\textwidth}
+		\begin{flushright}
+			\includegraphics[width=0.33\textwidth]{\LogoFront}
+		\end{flushright}
+%		\end{minipage}
+%		\hfil
+%		\begin{minipage}{0.45\textwidth}
+%			\huge{\bfseries \GenordForm\linebreak \GenordName}
+%		\end{minipage}
+		
+		\vspace{2em}
+
+		\begin{center}
+			\Huge{\bfseries\Title}
+
+			\vspace{3em}
+
+			\begin{minipage}{0.7\textwidth}
+				\Large{Name:} \luecke{8cm}
+
+				\vspace{2em}
+
+				\Large{Klasse:} \luecke{4cm}
+			\end{minipage}
+
+			\vspace{2em}
+			
+			\Large{Schuljahr \Schuljahr}
+		\end{center}
+
+		%\vfil
+		%\hrule
+		%\vspace{2em}
+
+	\end{titlepage}
+	\restoregeometry
+}
+
+\renewcommand{\addchap}[2][]{%
+	\addcontentsline{toc}{chapter}{#2}
+	\huge{\bfseries #2}
+}
+
+\newcommand{\procOpts}{%
+	\ifthenelse{\boolean{printDraft}}{%
+		\setboolean{printKalendar}{false}
+		\setboolean{printWochen}{false}
+	}{
+		\setboolean{printKalendar}{true}
+		\setboolean{printWochen}{true}
+	}
+}
+
+\newcommand{\front}{%
+	\frontmatter
+	\chead{}
+	\ihead{\chaptermark}
+	\ohead{\normalfont\Title}
+	\cfoot{}
+}
+\newcommand{\hauptteil}{%
+	\clearpage
+	{
+		%\let\cleardoublepage\relax
+		%\let\clearpage\relax
+
+		\mainmatter 
+	}
+}
+\newcommand{\anhang}{%
+	\clearpage
+	\appendix
+}
+
+\newcommand{\wochen}[2][]{%
+	%\clearpage
+	%\addcontentsline{toc}{chapter}{Wochenübersichten}
+	\chapter{Wochenübersichten}
+	\, 
+	\clearpage
+	\input{#2}
+}
+
+\ProvideDocumentCommand{\mkUrl}{O{} m o}{%
+	\url{#1#2} \marginpar{%
+		\qrcode[height=4em,nolinks]{#1#2}
+		\IfNoValueF{#3}{
+			\tiny #3
+		}
+	}
+}
+
+\WithSuffix\newcommand\mkUrl*[2][]{%
+	\hyperlink{#1#2}{#2}
+}
+\ProvideDocumentCommand{\mkUrlCode}{O{} m o O{5em} O{4em}}{%
+	\begin{minipage}{#4}
+		\centering
+		\qrcode[height=#5,nolinks]{#1#2}
+		\IfNoValueF{#3}{
+			\tiny #3
+		}
+	\end{minipage}	
+}
+% **********************************************************************
+% Macros für Kontakt
+% **********************************************************************
+\newtcolorbox{kontaktbox}[2][]{%
+	left=2mm,
+	fonttitle=\bfseries,
+	title={#2},
+	#1
+}
+
+% **********************************************************************
+% Macros für Wochenübersicht
+% **********************************************************************
+\newcommand{\printWochenuebersicht}[3][Wochenübersicht]{%
+	\ifthenelse{\boolean{printWochen}}{%
+		\newgeometry{%includefoot,includehead,
+			top=0.75cm,
+			bottom=0.5cm,
+			inner=1.5cm,
+			outer=1cm,
+		}
+		\pagestyle{empty}
+
+		%\printLogbuchWoche{\jahrEins-09-04}{\jahrEins-09-09}
+		\pgfcalendar{}{#2}{#3}
+		{\ifdate{Monday}{\printLogbuchTagMo{%
+						\pgfcalendarweekdayname{\pgfcalendarcurrentweekday}, %
+						\pgfcalendarcurrentday.\pgfcalendarcurrentmonth%
+					}\hfil%
+			}{}%
+			\ifdate{Tuesday}{\printLogbuchTagDi{%
+							\pgfcalendarweekdayname{\pgfcalendarcurrentweekday}, %
+							\pgfcalendarcurrentday.\pgfcalendarcurrentmonth%
+						}\hfil%
+			}{}%
+			\ifdate{Wednesday}{\printLogbuchTagMi{%
+						\pgfcalendarweekdayname{\pgfcalendarcurrentweekday}, %
+						\pgfcalendarcurrentday.\pgfcalendarcurrentmonth%
+					}\pagebreak%
+			}{}%
+			\ifdate{Thursday}{\printLogbuchTagDo{%
+							\pgfcalendarweekdayname{\pgfcalendarcurrentweekday}, %
+							\pgfcalendarcurrentday.\pgfcalendarcurrentmonth%
+						}\hfil%
+			}{}%
+			\ifdate{Friday}{\printLogbuchTagFr{%
+							\pgfcalendarweekdayname{\pgfcalendarcurrentweekday}, %
+							\pgfcalendarcurrentday.\pgfcalendarcurrentmonth%
+						}%
+				}{}%
+		}
+
+		\clearpage
+		\pagestyle{scrheadings}
+		\restoregeometry
+	}{
+		\clearpage	
+		\begin{center}
+			\Huge{#1 1}
+		\end{center}
+			\clearpage
+		\begin{center}
+			\Huge{#1 2}
+		\end{center}
+			\clearpage
+	}
+}
+\newcommand{\printLogbuchTagMo}[2][]{%
+	\begin{minipage}{\textwidth}
+			\printLogbuchZiel
+		\end{minipage}\\[0.5em]
+		\begin{minipage}[t]{0.32\textwidth}
+			\centering
+			\begin{logbuchTag}{#2}
+				\faecher
+			\end{logbuchTag}
+		\end{minipage}
+}
+\newcommand{\printLogbuchTagDi}[2][]{%
+	\begin{minipage}[b]{0.32\textwidth}
+			\centering
+			\begin{logbuchTag}{#2}
+				\faecher[5]
+			\end{logbuchTag}
+			\begin{logbuchZusatz}{Notizen}
+				%something awesome will appear here
+				\vspace*{2.36cm}
+			\end{logbuchZusatz}
+		\end{minipage}
+}
+\newcommand{\printLogbuchTagMi}[2][]{%
+	\begin{minipage}[t]{0.32\textwidth}
+			\centering
+			\begin{logbuchTag}{#2}
+				\faecher
+			\end{logbuchTag}
+		\end{minipage}
+}
+\newcommand{\printLogbuchTagDo}[2][]{%
+	\begin{minipage}[b]{0.32\textwidth}
+			\centering
+			\begin{logbuchTag}{#2}
+				\faecher
+			\end{logbuchTag}
+			\begin{logbuchZusatz}[height=1.5cm,]{Kenntnissnahme}
+				\vspace{0.5cm}
+
+				\begin{minipage}[t]{0.31\textwidth}
+					\centering
+					\luecke{\linewidth}
+					
+					\footnotesize Schüler\_in
+				\end{minipage}\hfil
+				\begin{minipage}[t]{0.31\textwidth}
+					\centering
+					\luecke{\linewidth}
+
+					\footnotesize Lehrkraft
+				\end{minipage}\hfil
+				\begin{minipage}[t]{0.31\textwidth}
+					\centering
+					\luecke{\linewidth}
+					\footnotesize Eltern
+				\end{minipage}
+			\end{logbuchZusatz}
+		\end{minipage}
+}
+\newcommand{\printLogbuchTagFr}[2][]{%
+	\begin{minipage}[b]{0.32\textwidth}
+		\centering
+		\begin{logbuchTag}{#2}
+			\faecher[5]
+		\end{logbuchTag}
+		\begin{logbuchZusatz}[width=2.04\textwidth]{Wochenfeedback}
+			\feldLin[0.77cm]{6}
+		\end{logbuchZusatz}
+	\end{minipage}\hfil
+	\printLogbuchSpalte
+}
+\newcommand{\printLogbuchSpalte}{%
+	\begin{minipage}[b]{0.32\textwidth}
+			\centering
+				\begin{logbuchZusatz}{Mitteilungen Eltern}
+						\feldLin[0.8cm]{8}
+						\vspace{-0.4cm}
+						\chb\ Weitere Mitteilungen S.\,\pageref{mitteilungen}
+						\vspace{0.4cm}
+				\end{logbuchZusatz}
+
+				\vspace{0.2cm}
+
+				\begin{logbuchZusatz}{Vereinbarungen Logbuchgespräch}
+						\feldLin[0.8cm]{6}
+						\vspace{-0.5cm}
+				\end{logbuchZusatz}
+				
+				\vspace{0.25cm}
+				
+				\begin{logbuchZusatz}{Feedback}
+					\begin{smallitemize}
+						\item Arbeitshaltung
+							
+							\arbeitshaltungEmojis
+						\item Freundlich und fair
+							
+							\arbeitshaltungEmojis
+						\item Material
+							
+							\arbeitshaltungEmojis
+					%	\item Logbuch
+					%		
+					%		\arbeitshaltungEmojis
+					\end{smallitemize}
+				\end{logbuchZusatz}
+				\begin{logbuchZusatz}[upperbox=invisible,tikz={opacity=0,transparency group}]{Wochenfeedback}
+					\feldLin[0.77cm]{6}
+				\end{logbuchZusatz}
+		\end{minipage}
+}
+\newcommand{\arbeitshaltungEmojis}{%
+	\usym{1F603} \hspace{0.5em}	\usym{1F642} \hspace{0.5em} \usym{1F610} \hspace{0.5em} \usym{1F641}
+}
+\newcommand{\printLogbuchZiel}{%
+	\begin{center}
+		\tcbox[%
+			enhanced,
+			attach boxed title to top left = {xshift=2mm,yshift=-2mm},
+			colback=white!98!black,%
+			height=1.5cm,	
+			left=1mm,
+			right=1mm,
+			drop lifted shadow,
+			fonttitle=\bfseries,
+			title={Mein Wochenziel:},
+			width=0.95\linewidth,
+			valign=center,
+			]{%
+				\begin{minipage}{0.8\linewidth}
+					\
+				\end{minipage}
+				\begin{minipage}{0.15\linewidth}
+					\chb\ erreicht\\
+					\chb\ nicht erreicht
+				\end{minipage}
+				%\hspace*{0.9\linewidth}\chb\ erreicht}%
+			}%
+	\end{center}
+}
+\newtcolorbox{logbuchZusatz}[2][]{%
+	enhanced,
+	attach boxed title to top left = {xshift=2mm,yshift=-2mm},
+	colback=white!98!black,%
+	drop lifted shadow,
+	left=1mm,
+	right=1mm,
+	fonttitle=\bfseries,
+	center title,
+	minipage boxed title=3.5cm,
+	%colback=white!98!black,%	
+	title={#2},
+	#1
+}
+\newtcolorbox{logbuchTag}[1]{%
+	colback=white,%
+	drop shadow southeast,	
+	left=1mm,
+	right=1mm,
+	fonttitle=\bfseries\Large,
+	title={#1},
+}
+\newtcolorbox{logbuchFach}[1]{%
+	enhanced,
+	attach boxed title to top left = {xshift=2mm,yshift=-2mm},
+	sharp corners=downhill,
+	drop small lifted shadow,
+	colback=white!93!black,	
+	sidebyside=true,
+	righthand width=0.8cm,
+	sidebyside gap=3mm,
+	flushright lower,
+	left=1mm,
+	right=1mm,
+	top=4mm,
+	skin=bicolor,
+	colbacklower=white!85!black,
+	halign lower=center,
+	leftlower=4mm,
+	rightlower=4mm,
+	title=#1,
+	fonttitle=\bfseries,
+}
+\newcommand{\faecher}[1][6]{%
+	\foreach\n in {1,...,#1}{%
+		\begin{logbuchFach}{\n.\,Stunde}
+			\textbf{Fach:} 
+
+			\feldLin[0.6cm]{3}
+			\vspace{-0.5cm}
+			\tcblower
+			\usym{1F603}
+
+			\vspace{0.5em}
+			
+			\usym{1F642} 
+			
+			\vspace{0.5em}
+			
+			\usym{1F610} 
+			
+			\vspace{0.5em}
+
+			\usym{1F641}
+
+		\end{logbuchFach}
+	}
+}
+\newcommand{\logbuchWoche}[6][3]{%
+	\newcounter{logbuchTagNummer}
+	\setcounter{logbuchTagNummer}{0}
+	\foreach\name in {#2,#3,#4,#5,#6}{%
+		\refstepcounter{logbuchTagNummer}
+		\begin{minipage}{0.32\textwidth}
+			\centering
+			\begin{logbuchTag}{\name}
+				\faecher
+			\end{logbuchTag}
+		\end{minipage}
+		\ifthenelse{\value{logbuchTagNummer}<#1\OR\(\value{logbuchTagNummer}>#1\AND\value{logbuchTagNummer}<5\)}{%
+			\hfil
+		}{}
+	}
+}
+% **********************************************************************
+% Macros für Kompetenznachweis
+% **********************************************************************
+\newcommand{\reiheGross}[1][1.1cm]{%
+	\begin{minipage}{0.1cm}
+		\vspace*{#1}
+	\end{minipage}
+}
+\newcommand{\kompnachweisLB}[4][]{%
+	\renewcommand{\arraystretch}{1.35}
+	\begin{tabularx}{\linewidth}{cc|X|c|c|c|c}
+		\rowcolor{gray!40!white}
+		&
+		{\bfseries Datum} &
+		{\bfseries Thema} &
+		{\bfseries\footnotesize Note} &
+		{\bfseries\footnotesize E|G} &
+		\multicolumn{2}{|c}{\bfseries Unterschriften} \\
+		\rowcolor{gray!40!white}
+		 & & & & & {\tiny Fachlehrer\_in} & 
+		{\tiny Tutor\_in}\\
+		\hline
+		\rowcolor{white}
+		\multicolumn{7}{c}{\bfseries Lernbüro #2}\\\hline
+		\rowcolor{gray!20!white}
+		 1 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 2 & \reiheGross & & & & &\\
+		\rowcolor{gray!20!white}
+		 3 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 4 & \reiheGross & & & & &\\
+		\rowcolor{gray!20!white}
+		 5 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 6 & \reiheGross & & & & &\\\hline
+		\rowcolor{white}
+		\multicolumn{7}{c}{\bfseries Lernbüro #3}\\\hline
+		\rowcolor{gray!20!white}
+		 1 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 2 & \reiheGross & & & & &\\
+		\rowcolor{gray!20!white}
+		 3 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 4 & \reiheGross & & & & &\\
+		\rowcolor{gray!20!white}
+		 5 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 6 & \reiheGross & & & & &\\\hline
+		\rowcolor{white}
+		\multicolumn{7}{c}{\bfseries Lernbüro #4}\\\hline
+		\rowcolor{gray!20!white}
+		 1 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 2 & \reiheGross & & & & &\\
+		\rowcolor{gray!20!white}
+		 3 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 4 & \reiheGross & & & & &\\
+		\rowcolor{gray!20!white}
+		 5 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 6 & \reiheGross & & & & &\\
+	 \end{tabularx}
+	\renewcommand{\arraystretch}{1}
+}
+\newcommand{\kompnachweisProj}[3][\luecke{5cm}]{%
+	\renewcommand{\arraystretch}{1.35}
+	\begin{tabularx}{\linewidth}{cc|X|c|c|c|c}
+		\rowcolor{gray!40!white}
+		&
+		{\bfseries Datum} &
+		{\bfseries Thema} &
+		{\bfseries\footnotesize Note} &
+		{\bfseries\footnotesize E|G} &
+		\multicolumn{2}{|c}{\bfseries Unterschriften} \\
+		\rowcolor{gray!40!white}
+		 & & & & & {\tiny Fachlehrer\_in} & 
+		{\tiny Tutor\_in}\\
+		\hline
+		\rowcolor{white}
+		\multicolumn{7}{c}{\bfseries Wahlpflichtfach: #1}\\\hline
+		\rowcolor{gray!20!white}
+		 1 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 2 & \reiheGross & & & & &\\
+		\rowcolor{gray!20!white}
+		 3 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 4 & \reiheGross & & & & &\\
+		\rowcolor{gray!20!white}
+		 5 & \reiheGross & & & & &\\
+		\rowcolor{gray!10!white}
+		 6 & \reiheGross & & & & &\\\hline
+		\rowcolor{white}
+		\multicolumn{7}{c}{\bfseries Projekte (#2) }\\\hline
+		\rowcolor{gray!20!white}
+		 1 & \reiheGross[1.4cm] & & & & &\\
+		\rowcolor{gray!10!white}
+		 2 & \reiheGross[1.4cm] & & & & &\\
+		\rowcolor{gray!20!white}
+		 3 & \reiheGross[1.4cm] & & & & &\\ \hline
+		%\rowcolor{gray!10!white}
+		% 4 & \reiheGross[1.4cm] & & & & &\\\hline
+		\rowcolor{white}
+		\multicolumn{7}{c}{\bfseries Projekte (#3) }\\\hline
+		\rowcolor{gray!20!white}
+		 1 & \reiheGross[1.4cm] & & & & &\\
+		\rowcolor{gray!10!white}
+		 2 & \reiheGross[1.4cm] & & & & &\\
+		\rowcolor{gray!20!white}
+		 3 & \reiheGross[1.4cm] & & & & &\\ \hline
+		%\rowcolor{gray!10!white}
+		% 4 & \reiheGross[1.4cm] & & & & &\\\hline
+		%\rowcolor{gray!20!white}
+		%  & \reiheGross[1.4cm] & & & & &\\
+		%\rowcolor{gray!10!white}
+		%  & \reiheGross[1.4cm] & & & & &\\
+		\rowcolor{white}
+		\multicolumn{7}{c}{\bfseries #1 }\\\hline
+		\rowcolor{gray!20!white}
+		 1 & \reiheGross[1.4cm] & & & & &\\
+		\rowcolor{gray!10!white}
+		 2 & \reiheGross[1.4cm] & & & & &\\
+		\rowcolor{gray!20!white}
+		 3 & \reiheGross[1.4cm] & & & & &\\
+		\rowcolor{gray!10!white}
+		 4 & \reiheGross[1.4cm] & & & & &\\\hline
+	\end{tabularx}
+	\renewcommand{\arraystretch}{1}
+}
+% **********************************************************************
+% Macros für Mitteilungen
+% **********************************************************************
+\newcommand{\mitteilungen}[1][22cm]{%
+	\begin{center}
+		\renewcommand{\arraystretch}{1.75}
+		\begin{tabularx}{\linewidth}{p{3cm}|p{3cm}|X}
+			\textbf{Datum} & \textbf{Lehrkraft} & \textbf{Mitteilung}\\\hline
+			\begin{minipage}{2cm} \vspace{#1} \end{minipage} & & \\
+		\end{tabularx}
+		\renewcommand{\arraystretch}{1}
+	\end{center}
+}
+% **********************************************************************
+% Macros für Entschuldigungen
+% **********************************************************************
+\newcommand{\abwesenheitBox}[1][11]{%
+	\foreach\lauf in {1,...,#1}{%
+		\begin{tcolorbox}[%
+			%left=2mm,
+		]
+			\centering\doublespacing
+			Mein Kind war/wird vom \luecke{2.6cm} bis \luecke{2.6cm} aus folgendem Grund
+
+			\luecke{0.9\linewidth} 
+			
+			abwesend (sein).
+			\hfil
+					\begin{minipage}{0.5\textwidth}
+						\centering
+						\vspace{2.25em}
+						\luecke{\linewidth}
+						\footnotesize Unterschrift Erziehungsberechtigte(r), Datum
+					\end{minipage}
+		\end{tcolorbox}
+
+		\vfil	
+	}
+}
+% **********************************************************************
+% Macros für Beratung
+% **********************************************************************
+\newtcolorbox{beratungEintrag}[2][]{%
+	enhanced,attach boxed title to top left=
+		{xshift=2mm,yshift=-2mm},
+	boxrule=0.5pt,
+	colback=white!93!black,,
+	skin=bicolor,
+	colbacklower=white!85!black,
+	halign lower=flush right,
+	title={#2},
+	fonttitle=\bfseries,
+	#1
+}
+\newtcolorbox{beratungEintragZ}[2][]{%
+	enhanced,attach boxed title to top center=
+		{xshift=0mm,yshift=-3mm},
+	boxrule=0.5pt,
+	colback=white!94!black,
+	coltitle=black,
+	colbacktitle=white!80!black,
+	skin=bicolor,
+	colbacklower=white!85!black,
+	halign lower=flush right,
+	title={#2},
+	fonttitle=\bfseries,
+	#1
+}
+\newcommand{\beratung}[1][4]{%
+	%\addcontentsline{toc}{chapter}{Beratung}
+	\foreach\lauf in {1,...,#1}{%
+		\begin{tcolorbox}[%
+			fonttitle={\Large},
+			title={\textbf{Zielvereinbarung} -- Gespräch vom \luecke{3cm} mit \luecke{2.2cm}},%
+			colback=white!98!black,%
+		]
+			\begin{tcbraster}[raster columns=2,raster rows=2]
+				\begin{beratungEintrag}{\symDaumenHoch\hspace{0.2cm} Das kann ich schon}
+					\vspace{5cm}
+				\end{beratungEintrag}
+				\begin{beratungEintrag}{\symDaumenRunter\hspace{0.2cm} Das möchte ich verbessern}
+					\vspace{5cm}
+				\end{beratungEintrag}
+			\end{tcbraster}
+			\begin{beratungEintrag}{\symZielflagge\hspace{0.2cm} Mein Ziel}
+				\vspace{4cm}
+				\tcblower
+				bis zum: \luecke{4cm}
+			\end{beratungEintrag}
+			\begin{beratungEintrag}{\symZeigefinger\hspace{0.2cm} Unsere Unterstützung}
+				\vspace{0.2cm}
+				\begin{tcbraster}[raster columns=2,raster rows=2]
+					\begin{beratungEintragZ}{Schule}
+						\vspace{3cm}
+					\end{beratungEintragZ}
+					\begin{beratungEintragZ}{Zu Hause}
+						\vspace{3cm}
+					\end{beratungEintragZ}
+				\end{tcbraster}
+			\end{beratungEintrag}
+
+			\vspace{0.2cm}
+
+			\begin{beratungEintrag}{}
+				\vspace{1.25cm}
+
+				\begin{minipage}[t]{0.31\textwidth}
+					\centering
+					\luecke{\linewidth}
+					
+					\footnotesize Schüler\_in
+				\end{minipage}\hfil
+				\begin{minipage}[t]{0.31\textwidth}
+					\centering
+					\luecke{\linewidth}
+
+					\footnotesize Eltern
+				\end{minipage}\hfil
+				\begin{minipage}[t]{0.31\textwidth}
+					\centering
+					\luecke{\linewidth}
+					\footnotesize Lehrkraft
+				\end{minipage}
+			\end{beratungEintrag}
+		\end{tcolorbox}
+		\clearpage
+	}
+}
+% **********************************************************************
+% Macros für den Abspann
+% **********************************************************************
+\newcommand{\abspann}[1][]{%
+	\chapter{Notizen}
+	\feldLin[1.25cm]{18}	
+	\clearpage
+	\feldLin[1.25cm]{18}	
+
+%	\begin{center}
+%		\begin{tcolorbox}[
+%			bicolor,
+%			sidebyside=true,
+%			righthand width=1.6cm,
+%			sidebyside gap=4mm,
+%			leftlower=1mm,
+%			rightlower=1mm,
+%			width=0.9\linewidth,
+%		]	
+%			\centering
+%			\ccbyncsa\\[0.5em]
+%			Dieses Dokument steht unter einer CCbyncsa-Lizenz.
+
+%			Es darf zu nicht-kommerziellen Zwecken beliebig weiter verwendet werden, so lange auf die
+%			ursprünglichen Autoren verwiesen wird und eine ähnliche Lizenz verwendet wird.
+
+%			\url{https://creativecommons.org/licenses/by-nc-sa/4.0/}
+%			\tcblower
+%			\mkUrlCode[mailto:]{https://creativecommons.org/licenses/by-nc-sa/4.0/}[Lizenz][1.3cm][1.2cm]
+
+%		\end{tcolorbox}
+%	\end{center}
+	\clearpage
+	\thispagestyle{empty}
+	
+	%\vspace*{17cm}
+	\
+
+	\vfill
+
+	\begin{kontaktbox}[%
+		bicolor,
+		sidebyside=true,
+		righthand width=1.6cm,
+		sidebyside gap=4mm,
+		leftlower=1mm,
+		rightlower=1mm,
+		width=0.6\linewidth,
+		%colbacklower=black!95!white,
+	]{\GenordForm\ \GenordName}
+		\begin{itemize}
+			\item[\Letter] \GenordStr
+			
+				\GenordPlz\ \GenordOrt
+			\item[\Telefon] \GenordTel
+			\item[\Faxmachine] \GenordFax
+			\item[@] \mkUrl*[mailto:]{\GenordMail}
+			\item[\usym{1F30E}] \mkUrl*{\GenordUrl}
+		\end{itemize}
+		\tcblower
+		\begin{center}
+			\mkUrlCode[mailto:]{\GenordMail}[E-Mail][1.3cm][1.2cm]
+
+			\vspace{2em}
+
+			\mkUrlCode{\GenordUrl}[Website][1.3cm][1.2cm]
+		\end{center}
+	\end{kontaktbox}
+}
+% **********************************************************************
+% Macros für den Kalendar
+% **********************************************************************
+\newcommand{\ferien}{}
+\newcommand{\feiertage}{}
+\newcommand{\termine}{}
+\newenvironment{schulkalendar}[2][top=0.5cm,bottom=0.5cm,outer=1.5cm]{%
+	\newgeometry{#1}
+	\pagestyle{empty}
+	\addcontentsline{toc}{chapter}{#2}
+	\newboolean{schulkalendarSeiteOne}
+	\setboolean{schulkalendarSeiteOne}{true}
+	\newcommand{\calName}{}
+}{%
+	\restoregeometry
+	\pagestyle{scrheadings}
+}
+\newcommand{\schulkal}[3][0.96]{%
+		\rotatebox{90}{%
+			\scalebox{#1}{%
+				\begin{tikzpicture}[every day/.style={anchor = north}]
+					\ifthenelse{\boolean{schulkalendarSeiteOne}}{%
+						\renewcommand{\calName}{first}
+					}{%
+						\renewcommand{\calName}{scnd}
+					}
+					\calendar[%
+						dates=#2,
+						name=\calName,
+						day yshift = 3em,
+						day code=
+						{
+							\node[name=\pgfcalendarsuggestedname,every day,shape=rectangle,
+							minimum height= .53cm, text width = 4.4cm, draw = gray]{\tikzdaytext};
+							\draw (-1.8cm, -.1ex) node[anchor = west]{\footnotesize%
+								\pgfcalendarweekdayshortname{\pgfcalendarcurrentweekday}};
+						},
+						execute before day scope=
+						{
+							\ifdate{day of month=1}
+							{
+								% Shift right
+								\pgftransformxshift{4.8cm}
+								% Print month name 
+								\draw (0,0)node [shape=rectangle, minimum height= .53cm,
+									text width = 4.4cm, fill = red, text= white, draw = red, text centered]
+									{\textbf{\pgfcalendarmonthname{\pgfcalendarcurrentmonth}}};
+							}{}
+							\ifdate{workday}
+							{
+								\ferien
+							}{}
+							\ifdate{Saturday}{\tikzset{every day/.style={fill=red!10}}}{}
+							\ifdate{Sunday}{\tikzset{every day/.style={fill=red!20}}}{}
+							\feiertage
+						},
+					 execute at begin day scope=
+						{
+							% each day is shifted down according to the day of month
+							\pgftransformyshift{-.53*\pgfcalendarcurrentday cm}
+						}
+					];
+
+				\termine
+			\end{tikzpicture}
+		}
+	}
+	\setboolean{schulkalendarSeiteOne}{false}
+	\clearpage
+}
+% Names of Holidays are inserted by employing this macro
+\newcommand{\termin}[3][]{
+	\ifthenelse{\boolean{schulkalendarSeiteOne}}{%
+		\node [anchor=north west, text width= 3.4cm] at
+			($(first-#2.north west)+(3em, 0em)$) {\tiny{#3}};
+	}{%
+		\node [anchor=north west, text width= 3.4cm] at
+			($(scnd-#2.north west)+(3em, 0em)$) {\tiny{#3}};
+	}
+}

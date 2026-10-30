@@ -1,0 +1,1047 @@
+%\iffalse
+% !TEX encoding = UTF-8 Unicode
+% !TEX TS-program = pdflatex
+%<*internal>
+\begingroup
+%^^A Load the docstrip package (DO NOT USE \input{...})
+\input docstrip.tex
+\keepsilent
+%^^A\usedir{tex/latex/graphpaper}
+%^^A insert this text at the beginning of the generated file
+\preamble
+ ________________________________________
+ The graphpaper class for generating several types of graph paper
+ Copyright (C) 2020 - 2022 C. Beccari & F. Biccari
+ All rights reserved
+ 
+ License information appended
+ 
+\endpreamble
+%^^A insert this text at the end of the generated file
+\postamble
+Copyright (C) 2020 - 2022 Claudio Beccari & Francesco Biccari
+
+Distributable under the LaTeX Project Public License,
+version 1.3c or higher (your choice). The latest version of
+this license is at: http://www.latex-project.org/lppl.txt
+
+This work is "author-maintained".
+
+This work consists of this file graphpaper.dtx,
+and the derived files graphpaper.cls and graphpaper.pdf.
+
+\endpostamble
+%^^A
+%^^A DocStrip can silently overwrite an already existing cls file 
+\askforoverwritefalse
+%^^A
+%^^A Generates the cls file from the dtx file, stripping out all
+%^^A the documentation. The option "class" tells to DocStrip to 
+%^^A extract only the code marked with the "class" tag.
+\generate{\file{graphpaper.cls}{\from{graphpaper.dtx}{class}}}
+%
+\def\tmpa{plain}
+\ifx\tmpa\fmtname\endgroup\expandafter\bye\fi
+\endgroup
+%</internal>
+%\fi
+%^^A %
+%^^A ---------------------------------------------------------------------- 
+%^^A Here starts the second part
+%^^A ProvidesFile must be (more or less) the first command for a class dtx.
+%^^A It populates the variables \filename, \filedate, and \fileversion
+%^^A
+% \iffalse
+%<*driver>
+\ProvidesFile{graphpaper.dtx}
+%</driver>
+%<class>\NeedsTeXFormat{LaTeX2e}[2021-10-10]
+%<class>\ProvidesClass{graphpaper}%
+%<*class>
+   [2022-04-23 1.1 A LaTeX class to generate several types of graph papers]
+%</class> 
+%<*driver>
+\documentclass[11pt,a4paper]{ltxdoc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[a4paper,lines=50]{geometry}
+\usepackage{multicol}
+\hfuzz 10pt
+\let\originalmeta\meta
+\renewcommand\meta[1]{{\normalfont\originalmeta{#1}}}
+\renewcommand\marg[1]{\texttt{\{\meta{#1}\}}}
+\newcommand\Marg[1]{\texttt{\{#1\}}}
+\newcommand\opz[1]{\texttt{[\meta{#1}]}}
+\newcommand\Opz[1]{\texttt{[#1]}}
+\newcommand\amb[1]{\texttt{\slshape#1}}\let\env\amb
+\renewcommand\cs[1]{{\normalfont\ttfamily\char92#1}}
+\newcommand\Benv[1]{\texttt{\char92begin\{#1\}}}
+\newcommand\Eenv[1]{\texttt{\char92end\{#1\}}}
+\newcommand\eTeX{$\varepsilon$-\TeX}
+\providecommand\prog{}
+\renewcommand\prog[1]{\textsf{#1}}
+\newcommand\pack[1]{\texttt{\itshape#1}}
+\newcommand\class[1]{\texttt{#1}}
+%
+\newenvironment{ttsintassi}{\begin{lrbox}{0}
+\minipage{\dimexpr\linewidth-2\fboxrule-2\fboxsep}\ttfamily\obeylines}%
+{\endminipage\end{lrbox}\center\fbox{\box0}\endcenter}
+\let\ttsyntax\ttsintassi \let\endttsyntax\endttsintassi
+%
+\usepackage{color}
+\definecolor{sfondoblu}{rgb}{0.94,0.97,1}
+\usepackage{listings}
+\lstset{language=[LaTeX]TeX,
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{gray},
+	backgroundcolor=\color{sfondoblu},
+	frameround=tttt,
+	frame=tlrb,
+	escapechar=|,
+	morekeywords={bilinear, semilogx, semilogy, loglog, polar, logpolar, smith, setgridcolor, setmajorlinethickness, setmediumlinethickness, setminorlinethickness, setminimumdistance, setxside, setyside, customcode},
+	columns=flexible
+}
+\begin{document}
+\GetFileInfo{graphpaper.dtx}
+\title{Documentation of the \class{graphpaper} \LaTeX\ class}
+\author{Claudio Beccari \and Francesco Biccari\thanks{Corresponding author: biccari@gmail.com}}
+\date{Version number \fileversion; last revised on \filedate.}
+\maketitle
+\setcounter{tocdepth}{2}
+\renewcommand{\columnseprule}{0.4pt}
+\setlength{\columnsep}{1.5cm}
+
+\addtocontents{toc}{\protect\begin{multicols}{2}}
+{\small
+\tableofcontents}
+
+\DocInput{graphpaper.dtx}
+\addtocontents{toc}{\protect\end{multicols}}
+\end{document}
+%</driver>
+% \fi
+%^^A \CheckSum{100}
+%\begin{abstract}
+% This document describes how to use the \LaTeX\ document class \class{graphpaper}.
+% It allows to print several types of graph papers: bilinear,
+% semilogarithmic, bilogarithmic, polar, Smith charts.
+%\end{abstract}
+%
+%\section{Legal terms}
+% This file is part of the |graphpaper| bundle.
+% 
+% This work may be distributed and/or modified under the
+% conditions of the \LaTeX\ Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is at:
+%   http://www.latex-project.org/lppl.txt
+%
+% This work has the LPPL maintenance status ``maintained''.
+% 
+% This work consists of this file graphpaper.dtx,
+% and the derived files graphpaper.cls and graphpaper.pdf.
+%
+% The list of derived (unpacked) files belonging to the distribution 
+% and covered by the LPPL is contained in the README file.
+% 
+%\section{Installation}
+% The simplest way to install \class{graphpaper} is by the package manager of your \TeX\
+% distribution (\TeX\ Live or MiK\TeX). For manual installation see the README file.
+%
+%
+% \newpage
+% \section{How to use graphpaper}
+% \label{sec:howto}
+%
+% \class{Graphpaper} is a \LaTeX\ class and it is loaded as usual:
+%
+% \iffalse
+%<*example>
+% \fi
+\begin{lstlisting}
+\documentclass|\opz{options}|{graphpaper}
+\end{lstlisting}
+% \iffalse
+%</example>
+% \fi
+%
+% It has three class options to specify the paper format:
+% \texttt{a4paper} (default), \texttt{a3paper}, \texttt{letterpaper}.
+% The paper orientation cannot be changed and it is always set
+% to landscape.
+% 
+% \class{Graphpaper} provides the following commands (to be used 
+% inside the body of the document) in order to compose graph papers. 
+% At the end of the execution of these commands, a new page
+% is always started.
+% 
+% \iffalse
+%<*example>
+% \fi
+\begin{lstlisting}
+\bilinear
+
+\semilogx|\marg{decades along x}|
+
+\semilogy|\marg{decades along y}|
+
+\loglog|\opz{0/1}||\marg{decades along x}||\marg{decades along y}|
+
+\polar
+
+\logpolar|\marg{decades along radius}|
+
+\smith
+\end{lstlisting}
+% \iffalse
+%</example>
+% \fi
+% The commands \cs{bilinear}, \cs{semilogx}, and \cs{semilogy} are self
+% explanatory. 
+% The optional parameter in the \cs{loglog} command chooses wether the
+% decade length along the abscissa and ordinate axes must have the same
+% dimension. It can assume the value 0 (free dimensions) or 1 (same
+% dimensions), 0 being the default.
+% The commadns \cs{polar}, \cs{logpolar}, \cs{smith} are used to plot
+% polar, logpolar, and Smith chart graph papers. The mandatory argument
+% of \cs{logpolar} specifies the number of decades.
+%
+% There are several commands to change the appearance of the graph papers.
+% They must be inserted before the graph paper command which we want they
+% affect.
+% 
+% The following ones are specific to bilinear, semilog and loglog papers
+% only:
+% \iffalse
+%<*example>
+% \fi
+\begin{lstlisting}
+\setxside|\marg{length}|
+
+\setyside|\marg{length}|
+
+\setminimumdistance|\marg{length}|
+\end{lstlisting}
+% \iffalse
+%</example>
+% \fi
+% \cs{setxside} and \cs{setyside} allow to specify the dimensions of the
+% rectangle of the grid. The default values are (260\,mm, 180\,mm) for
+% A4 paper, (250\,mm, 190\,mm) for letter paper, and (380\,mm, 280\,mm)
+% for A3 paper.
+% 
+% \cs{setminimumdistance} specifies the minimal optical distance 
+% between two lines. Default is 1\,mm. In this way, the number of
+% subdivision is automatically composed.
+%
+% The following commands are instead general settings for all graph
+% papers:
+% \iffalse
+%<*example>
+% \fi
+\begin{lstlisting}
+\setgridcolor|\marg{color}|
+
+\setmajorlinethickness|\marg{length}|
+
+\setmediumlinethickness|\marg{length}|
+
+\setminorlinethickness|\marg{length}|
+
+\customcode|\opz{0/1}\marg{picture environment commands}|
+\end{lstlisting}
+% \iffalse
+%</example>
+% \fi
+%
+% \cs{setgridcolor} sets the color of the grid. The argument must be a
+% color defined or predefined by the color or |xcolor| package. The
+% default color is the typical red-orange color used in many graph papers,
+% Pantone 2011 U corresponding  to RGB (250,153,89).
+% 
+% \cs{setmajorlinethickness}, \cs{setmediumlinethickness},
+% \cs{setminorlinethickness} can be used to change the thickness of the
+% lines. The default values  are 1\,pt, 0.6\,pt, 0.25\,pt, respectively.
+%
+% \cs{customcode} accepts all the commands accepted by the picture
+% environment.  This snippet of code is inserted inside the picture
+% environment used to draw the subsequent graph paper.
+% The origin of the coordinate system in the case of rectangular graph
+% papers is the lower left vertex. The \cs{unitlength} is set to 1\,mm. 
+% For circular plots (both polar and Smith) the origin is in the center
+% of the circle and the \cs{unitlength} is set to 1/140 of the paper height
+% currently in use.
+%
+% The \cs{customcode} command can be used, for example, to add a logo
+% or to draw on the graph paper.
+% Its optional argument is by default set to 0. If it is set to 1, the
+% content of the \cs{customcode} is erased after its usage in a
+% graphpaper.
+% 
+%  
+%\StopEventually{}
+%
+%\iffalse
+%<*class>
+%\fi
+%\clearpage
+%\section{The implementation}
+% This class file has been already identified by the commands extracted
+% by the |DocStrip| package, during  the |.dtx| file compilation.
+% Therefore the commands \cs{NeedsTeXFormat} and \cs{ProvidesClass} are
+% already present in the |.cls| file.
+%
+% \subsection{Loaded packages, class options, and initial settings}
+% The |xkeyvalue| package is used in order to define the class options:
+%    \begin{macrocode}
+\RequirePackage{xkeyval}
+%    \end{macrocode}
+% Three class options are implemented and they allows only to change the 
+% paper format (A4, A3, letter). The orientation of the paper is fixed
+% to landscape.
+%
+%    \begin{macrocode}
+\def\GP@paper{1}
+\define@key[GRP]{}{a4paper}[]{\PassOptionsToPackage{a4paper}{geometry}}
+\define@key[GRP]{}{letterpaper}[]{\PassOptionsToPackage{letterpaper}{geometry}%
+  \def\GP@paper{2}}
+\define@key[GRP]{}{a3paper}[]{\PassOptionsToPackage{a3paper}{geometry}%
+  \def\GP@paper{3}}
+\DeclareOptionX*{\ClassError{graphpaper}{Option '\CurrentOption'%
+  \MessageBreak is not valid}{Remove '\CurrentOption' %
+  from class options}}
+\ProcessOptionsX[GRP]<>
+%    \end{macrocode}
+%
+% The class is based on the \class{article} class. The default paper
+% is A4.
+%    \begin{macrocode}
+\LoadClass[a4paper,11pt]{article}
+%    \end{macrocode}
+%
+% Some packages are loaded. \pack{euclideangeometry} loads \pack{curve2e} 
+% which in turns loads \pack{pict2e}; all of them are \env{picture}
+% environment extensions.
+%    \begin{macrocode}
+\RequirePackage[landscape]{geometry}
+\RequirePackage{euclideangeometry,graphicx,xcolor}
+%    \end{macrocode}
+%
+% Default line color (Pantone 2011~U).
+%    \begin{macrocode}
+\definecolor{gridcolor}{RGB}{250,153,89}
+%    \end{macrocode}
+%
+% Default thickness of the lines used for main divisions and subdivisions.
+% The ISO-UNI standards prescribe a geometric progression with $\sqrt{2}$
+% ratio, but it is not respected here.
+% It must be keep in mind also that a safe minimum thickness for an offset
+% monochromatic printer is about 0.25\,pt, whereas a safe minimum
+% thickness for a laser printer is about 0.5\,pt.
+%    \begin{macrocode}
+\newlength\lwa
+\setlength{\lwa}{1pt}
+\newlength\lwb
+\setlength{\lwb}{0.6pt}
+\newlength\lwc
+\setlength{\lwc}{0.25pt}
+%    \end{macrocode}
+%
+% Minimum distance between two subdivision lines. A necessary parameter
+% for automatic choice of number of subdivisions. Default 1\,mm.
+%    \begin{macrocode}
+\newlength\mindistanceunit
+\setlength{\mindistanceunit}{1mm}
+%    \end{macrocode}
+%
+% Definition of the width and height of the main rectangle within which
+% the bilinear, semilog and loglog grid is composed.
+%    \begin{macrocode}
+\newlength\xsideunit
+\newlength\ysideunit
+\if\GP@paper1 
+  \setlength{\xsideunit}{260mm}
+  \setlength{\ysideunit}{180mm}
+\fi
+\if\GP@paper2 
+  \setlength{\xsideunit}{250mm}
+  \setlength{\ysideunit}{190mm}
+\fi
+\if\GP@paper3 
+  \setlength{\xsideunit}{380mm}
+  \setlength{\ysideunit}{280mm}
+\fi
+%    \end{macrocode}
+%
+%\subsection{Rectangular graph papers}
+%
+% As we will see below, the commands to compose the bilinear, semilog
+% and loglog graph papers are just proper calls of the low-level command
+% \cs{carta}. 
+%
+%\subsubsection{Service macros for rectangular graph papers}
+% 
+% First of all, four macros are defined. They are used by the
+% \cs{carta} service command only. 
+%
+% Two of them are simply two identical classical |whiledo| commands:
+% the first cycles on the counter \cs{J} while the second one on the
+% counter \cs{K}.
+% They are two because in this way two nested |whiledo| commands can be
+% implemented.
+% These \cs{WhileDo} commands have four parameters: 
+% 1. the incremental step of the counter between cycles (default 1); 
+% 2. the initial value of the counter; 
+% 3. the final value of the counter; 
+% 4. the code to execute at each cycle.
+%    \begin{macrocode}
+\newcount\J
+\newcount\K
+
+\newcommand\WhileDoOne[4][1]{%
+	\J=#2 \fpdowhile{\J=<#3 }{#4\advance\J by #1\relax}}
+
+\newcommand\WhileDoTwo[4][1]{%
+	\K=#2 \fpdowhile{\K=<#3 }{#4\advance\K by #1\relax}}
+%    \end{macrocode}
+%
+%
+% The other two commands are used to draw a periodic set of equidistant
+% lines in log scale.
+% These two commands are practically identical, the only difference is
+% that they act on different axes. 
+% These commands have six parameters: 
+% 1. number of lines to draw (distance between these lines is the fifth
+% parameter);
+% 2. value at which the first line must be drawn (x-value for vertical
+% lines, y-value for horizontal lines);
+% 3. thickness;
+% 4. tick length;
+% 5. distance between two lines (typically the length of a decade:
+% y-decade for horizontal lines, x-decade for vertical lines);
+% 6. line length (typically the length of the graph paper sides:
+% x-side for horizontal lines and y-side for vertical lines).
+%
+%    \begin{macrocode}
+\newcommand\hlines[6]{%
+\multiput(-#4,\fpeval{ln(#2) * #5 / ln(10)})(0,#5){#1}%
+{\linethickness{#3}\line(1,0){\fpeval{#6 + 2*#4}}}%
+}
+
+\newcommand\vlines[6]{%
+\multiput(\fpeval{ln(#2) * #5 / ln(10)},-#4)(#5,0){#1}%
+{\linethickness{#3}\line(0,1){\fpeval{#6 + 2*#4}}}%
+}
+%    \end{macrocode}
+%
+%\subsubsection{Command for rectangular graph papers}
+% 
+% Here starts the definition of the \cs{carta} command. Its syntax is
+%\begin{ttsyntax}
+%\cs{carta}\opz{0 or1}\marg{no. x decades}\marg{no. of y decades}
+%\end{ttsyntax}
+% If an axis has zero decades, the scale is linear.
+% For example, \cs{carta}\Marg{0}\Marg{0} composes a bilinear graph
+% paper, \cs{carta}\Marg{2}\Marg{0} composes a semilog graph paper with
+% linear y-axis and two decades along x-axis, and so on.
+% Its optional argument can be 0 or 1. If it is set to 0, and both the
+% numbers of decades are greater than zero (which means the resulting
+% graph paper is loglog), then the length of x-axis and y-axis decades
+% are set to be equal.
+%
+% Declaration of the command and its arguments.
+%    \begin{macrocode}
+\NewDocumentCommand{\carta}{O{0} m m}{%
+%    \end{macrocode}
+%
+% Typographical settings and definition of the main features of the 
+% graphpaper. \cs{xlength} and \cs{ylength} represent the lengths,
+% expressed in mm, of the rectangle dimensions. \cs{minimumdistance}
+% is the minimum distance at which two subdivision lines can be drawn.
+%    \begin{macrocode}
+\newpage
+\parindent=0pt
+\pagestyle{empty}%
+\color{gridcolor}%
+\setlength{\unitlength}{1mm}%
+\def\ticklength{2}
+\def\minorticklength{1.2}
+\def\minimumdistance{\fpeval{(\mindistanceunit/1mm)}}
+\def\xlength{\fpeval{round(round(\xsideunit/1cm) * 10)}} 
+\def\ylength{\fpeval{round(round(\ysideunit/1cm) * 10)}}
+%    \end{macrocode}
+%
+% \cs{xlinsq} and \cs{ylinsq} represent the number of big divisions 
+% (cm) on horizontal and vertical axes for linear scales, respectively. 
+%    \begin{macrocode}
+\def\xlinsq{\inteval{\xlength/10}}
+\def\ylinsq{\inteval{\ylength/10}}
+%    \end{macrocode}
+%
+% Implementation of the same decade length between x-axis and y-axis
+% for loglog graph paper. This is obtained properly changing the 
+% values of \cs{xlength} and \cs{ylength}, making them equal.
+%    \begin{macrocode}
+\edef\decx{#2}% decades along x
+\edef\decy{#3}% decades along y
+\unless\ifnum#2=0 \unless\ifnum#3=0 \ifnum#1=1%
+\fptest{\decx/\decy < \xlength/\ylength}%
+{\def\xlength{\fpeval{\ylength*\decx/\decy}}}
+{\def\ylength{\fpeval{\xlength*\decy/\decx}}}
+\fi\fi\fi
+%    \end{macrocode}
+%
+% Using the values of the paper width and height together with the
+% length of the graph paper rectangle sides, the margins are calculated
+% and passed to the geometry package in order to center the grid with
+% respect to the page.
+%    \begin{macrocode}
+\ifcsname ml\endcsname\relax\else\newlength\ml\fi
+\ifcsname mr\endcsname\relax\else\newlength\mr\fi
+\ifcsname mt\endcsname\relax\else\newlength\mt\fi
+\ifcsname mb\endcsname\relax\else\newlength\mb\fi
+\unless\ifcsname mr\endcsname\newlength\mr\fi
+\unless\ifcsname mt\endcsname\newlength\mt\fi
+\unless\ifcsname mb\endcsname\newlength\mb\fi
+\setlength{\ml}{\fpeval{(\paperwidth/1mm - \xlength)/2}mm}
+\setlength{\mr}{\fpeval{(\paperwidth/1mm - \xlength)/2}mm}
+\setlength{\mt}{\fpeval{(\paperheight/1mm - \ylength)/2}mm}
+\setlength{\mb}{\fpeval{(\paperheight/1mm - \ylength)/2}mm}
+\newgeometry{left=\ml,right=\mr,top=\mt,bottom=\mb}
+%    \end{macrocode}
+%
+% Here starts the drawing of the graph paper by the |picture| environment.
+%    \begin{macrocode}
+\begin{picture}(\xlength,\ylength)
+%    \end{macrocode}
+%
+% If the horizontal axis is linear, vertical lines are drawn by
+% simple \cs{multiput} commands. Otherwise, if the scale is logarithmic,
+% the vertical lines are drawn by the \cs{vlines} command defined above.
+%    \begin{macrocode}
+\ifnum#2=0\relax
+% vertical lines on linear abscissa. Main lines every 10 mm.
+% Second level lines every 5 mm, Third level lines every 1 mm,
+% according to the \minimumdistance value
+  \multiput(0,0)(10,0){\inteval{\xlinsq + 1}}{%
+    \linethickness{\lwa}\squarecap\line(0,1){\ylength}}
+  \ifnum\fpeval{\minimumdistance <= 5}=1
+  \multiput(5,0)(10,0){\xlinsq}{%
+    \linethickness{\lwb}\line(0,1){\ylength}}\fi
+  \ifnum\fpeval{\minimumdistance <= 1}=1
+  \multiput(0,0)(1,0){\xlength}{%
+    \linethickness{\lwc}\line(0,1){\ylength}}\fi
+\else
+  % vertical lines on log abscissa
+  \edef\decxx{\fpeval{\decx + 1}}%
+  \edef\xstep{\fpeval{\xlength / \decx}}
+  % main lines: one for each decade (10) plus one at the end
+  \vlines{\decxx}{1}{\lwa}{\ticklength}{\xstep}{\ylength}
+  % second-level lines: one every unit (1), for each decade
+  \WhileDoOne{2}{9}{\vlines{\decx}{\J}{\lwb}{%
+    \minorticklength}{\xstep}{\ylength}}
+  % third-level lines: for each decade (10) and for each unit (1):
+  % 20, 10, 5, 2 are progressively tested and adopted if the distance
+  % between two subsequent nearest lines is less to \minimumdistance  
+  \WhileDoTwo{1}{9}{%
+    \edef\xmindivfloat{%
+      \fpeval{(\K+1)*(1-10^-(\minimumdistance/\xstep))}}
+    % xmindiv corresponds to 1/20 of unit
+    \def\xmindiv{20}
+    % xmindivfloat corresponds to the distance of two
+    % subdivision with respect to the unit
+    \ifnum\fpeval{\xmindivfloat <= 0.5}=1 \def\xmindiv{10}\fi
+    \ifnum\fpeval{\xmindivfloat <= 0.2}=1 \def\xmindiv{4}\fi
+    \ifnum\fpeval{\xmindivfloat <= 0.1}=1 \def\xmindiv{2}\fi
+    \ifnum\fpeval{\xmindivfloat <= 0.05}=1 \def\xmindiv{1}\fi
+    \ifnum\fpeval{\xmindiv == 20}=1\relax
+    \else\WhileDoOne[\xmindiv]{\xmindiv}{19}{%
+      \vlines{\decx}{(\K+\J/20)}{\lwc}{0}{\xstep}{\ylength}}\fi}
+\fi
+%    \end{macrocode}
+%
+% If the vertical axis is linear, horizontal lines are drawn by
+% simple \cs{multiput} commands. Otherwise, if the scale is logarithmic,
+% the horizontal lines are drawn by the \cs{hlines} command defined above.
+%    \begin{macrocode}
+\ifnum#3=0\relax
+% horizontal lines on linear ordinates. Main lines every 10 mm.
+% Second level lines every 5 mm, Third level lines every 1 mm,
+% according to the \minimumdistance value
+  \multiput(0,0)(0,10){\inteval{\ylinsq + 1}}{%
+    \linethickness{\lwa}\squarecap\line(1,0){\xlength}}
+  \ifnum\fpeval{\minimumdistance <= 5}=1
+  \multiput(0,5)(0,10){\ylinsq}{%
+   \linethickness{\lwb}\line(1,0){\xlength}}\fi
+  \ifnum\fpeval{\minimumdistance <= 1}=1
+  \multiput(0,0)(0,1){\ylength}{%
+    \linethickness{\lwc}\line(1,0){\xlength}}\fi
+\else
+  % horizontal lines on log ordinates
+  \edef\decyy{\fpeval{\decy + 1}}%
+  \edef\ystep{\fpeval{\ylength / \decy}}
+  % main lines: one for each decade (10) plus one at the end
+  \hlines{\decyy}{1}{\lwa}{\ticklength}{\ystep}{\xlength}
+  % second-level lines: one every unit (1), for each decade
+  \WhileDoOne{2}{9}{\hlines{\decy}{\J}{\lwb}{%
+    \minorticklength}{\ystep}{\xlength}}
+  % third-level lines: for each decade (10) and for each unit (1):
+  % 20, 10, 5, 2 are progressively tested and adopted if the distance
+  % between two subsequent nearest lines is less to \minimumdistance   
+  \WhileDoTwo{1}{9}{\edef\ymindivfloat{%
+   \fpeval{(\K+1)*(1-10^-(\minimumdistance/\ystep))}}
+	% ymindiv corresponds to 1/20 of unit
+	\def\ymindiv{20}
+	% ymindivfloat corresponds to the distance of two subdivisions
+	% with respect to the unit
+	\ifnum\fpeval{\ymindivfloat <= 0.5}=1 \def\ymindiv{10}\fi
+	\ifnum\fpeval{\ymindivfloat <= 0.2}=1 \def\ymindiv{4}\fi
+	\ifnum\fpeval{\ymindivfloat <= 0.1}=1 \def\ymindiv{2}\fi
+	\ifnum\fpeval{\ymindivfloat <= 0.05}=1 \def\ymindiv{1}\fi
+	\ifnum\fpeval{\ymindiv == 20}=1\relax
+	\else\WhileDoOne[\ymindiv]{\ymindiv}{19}{%
+	  \hlines{\decy}{(\K+\J/20)}{\lwc}{0}{\ystep}{\xlength}}\fi}
+\fi
+%    \end{macrocode}
+%
+% Custom code provided by the user. After executing the code to compose
+% the rectangular graph paper and the user custom code, the latter is
+% reset if the \cs{GP@customcodereset} is true.
+%    \begin{macrocode}
+\GP@custom
+\end{picture}
+\ifGP@customcodereset\def\GP@custom{}\fi}
+%    \end{macrocode}
+%
+%
+%
+%\subsection{Circular graph papers}
+%
+% The \class{Graphpaper} class provides commands to draw three different
+% circular graph papers: linear polar chart, log polar chart, Smith chart. 
+%
+%\subsubsection{Service macros for Smith charts}
+% 
+% Here follows a list of service macros used by circular graph papers.
+%
+% Definition of the counter \cs{I}, used both in polar paper and Smith chart.
+%    \begin{macrocode}
+\newcount\I
+%    \end{macrocode}
+%
+% |Rbox| composes a tick and a label in a rotated box. It is used to
+% compose the ticks and labels along the external circle of circular
+% graph papers. It accepts three arguments: The first one is
+% optional and represents
+% the angle of rotation (default 0); the second one is optional too,
+% it is inserted by round parentheses, and it represents the position of the
+% box which can be given in cartesian $(x,y)$ or polar coordinates $(\theta:\rho)$
+% (default 0:0); the third one is mandatory and
+% contains the label.
+%    \begin{macrocode}
+\NewDocumentCommand\Rbox{O{0} D(){0:0} m}{%
+    \fptest{#1>=0}{\edef\RotLab{\fpeval{#1-90}}}{\edef\RotLab{\fpeval{#1+90}}}%
+    \put(#2){\color{black}\segment(0,0)(#1:1)\put(#1:1){%
+            \rotatebox{\RotLab}{\makebox(0,0)[c]{%
+                    \fptest{#1>=0}{\Pbox[b]}{\Pbox[t]}{\scriptstyle#3}[0]}}%
+        }%
+    }\ignorespaces}
+%    \end{macrocode}
+%
+% |\Xcircle| macro (used only for Smith charts) assumes that the scale
+% factor |\Scala| ($s$) has already been defined and it takes only one
+% mandatory parameter ($x$). It draws a circle with
+% center $(sx/(x+1),0)$ and radius $s/(x+1)$. ($x$ represents the real
+% part (resistance) of the normalised impedance.)
+%    \begin{macrocode}	
+\NewDocumentCommand\Xcircle{m}{%
+	\edef\Czero{0,0}\edef\Rzero{\Scala}%
+	\edef\Rdue{\fpeval{1/(#1+1)*\Scala}}%
+	\edef\Cdue{\fpeval{\Rzero-\Rdue},0}%
+	\Circlewithcenter\Cdue radius\Rdue\ignorespaces}
+%    \end{macrocode}
+%
+% |\Ycircle| macro (used only for Smith charts) assumes that the scale 
+% factor |\Scala| ($s$) has already been defined.
+% It assumes that the circle diameter is 100|\unitlength|s long and it
+% takes only one
+% mandatory parameter ($y$). It draws an arc of a circle with
+% center $(s,s/y)$, starting point at $(s,0)$ (and therefore radius 
+% $s/y$) and with an angle calculated in order to have the end point on
+% the external circle. ($y$ represents the imaginary part (reactance) 
+% of the normalised impedance.) 
+%    \begin{macrocode}
+\NewDocumentCommand\Ycircle{m s}{%
+	\edef\Czero{0,0}\edef\Rzero{\Scala}% external circle center and radius 
+	\edef\Rdue{\fpeval{\Scala/abs(#1)}}% Small circle radius
+	\edef\Cdue{\Rzero,\fpeval{\Scala/#1}}% Small circle center
+	\edef\Cuno{\Rzero,0}% First intersection point
+	\ModAndAngleOfVect\Cdue to\Mod and\Alfa % Small circle center polar coordinates  
+	\IntersectionOfLines(\Czero)(\Cdue)and(\Cuno)(\fpeval{\Alfa+90}:1)to\Inter
+	\SymmetricalPointOf\Cuno respect\Inter to\Idue
+	\ModAndAngleOfVect\Idue to\Mdue and\Adue
+	\SubVect\Cdue from\Idue to\IIdue
+	\ModAndAngleOfVect\IIdue to\Mod and\Alfa
+	\fptest{#1>0}{\edef\Alfa{\fpeval{270-\Alfa}}\Arc(\Cdue)(\Idue){\Alfa}}%
+	{\edef\Alfa{\fpeval{270+\Alfa}}\Arc(\Cdue)(\Cuno){\Alfa}}%
+	\IfBooleanT{#2}{\Rbox[\Adue](\Idue){\color{black}#1}}\relax
+	\ignorespaces}
+%    \end{macrocode}
+%
+% The following two macros are used to compose the resistance axis 
+% below the Smith chart.
+%
+% |CalcRxx| macro (used only for Smith charts) assumes that the scale 
+% factor |Scala| ($s$) has already been defined. 
+% First, it calculates the reflection coefficient 
+% $\Gamma = s \frac{x-1}{x+1}$ from resistance $x$.
+% A tick and a label are inserted for this value of $x$. 
+%    \begin{macrocode}
+\newcommand\CalcRxx[1]{%
+	\edef\Rxx{\fpeval{\Scala*(#1 - 1)/(#1 + 1)}}%
+	\segment(\Rxx,\LowResZero)(\Rxx,\LowResUno)\relax
+	\Pbox(\Rxx,\LowResUno)[t]{$\color{black}\scriptsize#1$}[0]\ignorespaces}
+%    \end{macrocode}
+%
+% |GradResist| macro (used only for Smith charts) 
+% draws the graduated axis for resistance and executes the |CalcRxx|
+% for several values of resistance in order to compose the ticks and
+% the labels.
+%    \begin{macrocode}
+\newcommand\GradResist[1]{%
+    \color{black}
+	\edef\LowResZero{-#1}\edef\LowResUno{\fpeval{\LowResZero-1}}%
+	\I=0\edef\Auxx{0}\relax
+	\fpdowhile{\I<=10}{\CalcRxx{\Auxx}%
+		\advance\I by1\edef\Auxx{\fpeval{\Auxx+0.1}}\ignorespaces}
+	\CalcRxx{1.5}\I=2\edef\Auxx{2}\relax
+	\fpdowhile{\I<=9}{\CalcRxx{\Auxx}%
+		\advance\I by1\edef\Auxx{\fpeval{\Auxx+1}}\ignorespaces}
+	\CalcRxx{15}\CalcRxx{30}%
+	\edef\Rxx{\Scala}%
+	{\segment(-\Rxx,\LowResZero)(\Rxx,\LowResZero)%
+		\segment(\Rxx,\LowResZero)(\Rxx,\LowResUno)%
+		\Pbox(\Rxx,\LowResUno)[t]{\infty}[0]}}
+%    \end{macrocode}
+%
+% |GradPolar| macro (used only for polar charts) 
+% draws the graduated axis for log polar charts.
+%    \begin{macrocode}
+\newcommand{\GradPolar}[1]{%
+    \color{black}
+    \edef\yline{\fpeval{-1.2 * \Scala}}
+    \linethickness{\lwa}
+    \segment(-\Scala,\yline)(\Scala,\yline)
+    \edef\ytickstart{\yline}
+    \edef\ytickstop{\fpeval{\yline-2}}
+    \edef\yytickstop{\fpeval{\yline-1}}
+    \segment(\Scala,\ytickstart)(\Scala,\ytickstop)
+    \segment(-\Scala,\ytickstart)(-\Scala,\ytickstop)
+    \fptest{#1=0}{%
+        \segment(0,\ytickstart)(0,\ytickstop)
+        \edef\plstep{\fpeval{\Scala/10}}
+        \linethickness{\lwb}
+        \multiput(\plstep,\yline)(\plstep,0){9}{\line(0,-1){1}}
+        \multiput(-\plstep,\yline)(-\plstep,0){9}{\line(0,-1){1}}%
+    }{%
+    \I=0
+    \fpwhiledo{\I<#1}{%
+        \linethickness{\lwa}
+        \edef\xtick{\fpeval{\I*\Scala/#1}}
+        \segment(\xtick,\ytickstart)(\xtick,\ytickstop)
+        \segment(-\xtick,\ytickstart)(-\xtick,\ytickstop)
+        \J=2
+        \fpwhiledo{\J<=9}{%
+            \linethickness{\lwb}
+            \edef\xtick{\fpeval{\Scala/#1 * (\I + ln(\J)/ln(10))}}
+            \segment(\xtick,\ytickstart)(\xtick,\yytickstop)
+            \segment(-\xtick,\ytickstart)(-\xtick,\yytickstop)
+            \advance\J by1\relax}
+        \advance\I by1\relax}}
+}
+%    \end{macrocode}
+%
+%
+%\subsubsection{Polar graph papers}
+%
+% The polar graph papers are composed by the command \cs{PolarChart}.
+% The syntax is
+%\begin{ttsyntax}
+% \cs{PolarChart}\opz{diameter}\marg{decades}
+%\end{ttsyntax}
+% where \meta{diameter} is the dimension (plus some extra space for
+% labels and margins) of the polar chart. Its default value 
+% corresponds to the \cs{paperheight} (the minimum dimension of the
+% paper).
+% The mandatory parameter \meta{decades} must be an integer number.
+% Its value corresponds to the number of decades of the radial
+% coordinate for the log polar graph paper.
+% If its value is zero, the chart is linear.
+% The maximum number of allowed decades is set by the macro \cs{NDecMax}:
+% its default value is~2.
+%
+% Declaration of the command and its arguments.
+%    \begin{macrocode}
+\NewDocumentCommand\PolarChart{O{\paperheight} m}{%
+%    \end{macrocode}
+%
+% Typographical settings and definition of the main features of the graphpaper.
+% \cs{xlength} and \cs{ylength} represent the lengths of the rectangle 
+% dimensions in which the polar graph is plot. 
+% The origin of the coordinate system is in the center of the page.
+%    \begin{macrocode}
+	\newpage
+	\parindent=0pt
+	\pagestyle{empty}%
+	\ifcsname pmargin\endcsname\relax\else\newlength\pmargin\fi
+	\setlength{\pmargin}{20pt}
+	\newgeometry{left=\pmargin,right=\pmargin,top=\pmargin,bottom=\pmargin}
+	\def\factor{140}
+	\unitlength=\fpeval{#1/\factor}pt
+	\def\xlength{\fpeval{(\textwidth-0.01pt)/\unitlength}} 
+	\def\ylength{\fpeval{(\textheight-0.01pt)/\unitlength}}
+	\begin{picture}(\xlength,\ylength)%
+	    (\fpeval{-\xlength/2},\fpeval{-\ylength/2})%
+	\color{gridcolor}%
+	\edef\Scala{50}% The scale factor
+%    \end{macrocode}
+%
+%
+% Circle stroking. In linear scale 10 radial units are present,
+% therefore, 10 circles are drawn with tick lines, 
+% medium lines circles every 0.5 unit and thin lines circles every
+% 0.1 unit.
+%    \begin{macrocode}
+	\fptest{#2=0}{% start circle linear radius sequence.
+		\I=1
+		\fpdowhile{\I=<100}{\edef\R{\fpeval{0.01*\Scala*\I}}%
+			{\fptest{\fpeval{\I-10(round(\I/10,0))}=0}{\linethickness{\lwa}%
+				}%
+				{\fptest{\fpeval{\I-5(round(\I/5,0))}=0}{\linethickness{\lwb}}%
+					{\linethickness{\lwc}}%
+				}\Circlewithcenter0,0radius\R
+			}\advance\I by1\relax}%
+	}% end circle linear radius sequence
+	{%
+	\edef\LnDieci{\fpeval{ln(10)}}%
+    \edef\ScalaDecade{\fpeval{\Scala/#2}}%
+	\fptest{#2<3}{%
+        \newcount\Dec \Dec=1\relax
+		\fpdowhile{\Dec=<#2}{%
+            \linethickness{\lwa}%
+            \edef\R{\fpeval{\Dec*\ScalaDecade}}%
+            \Circlewithcenter0,0radius\R% Thick circles
+			% First band from 1 to 4 (excluded)
+			\edef\LPLA{1}%
+			\fpdowhile{\LPLA<4}{
+				\edef\Logaritmo{\fpeval{\Dec-1+(ln(\LPLA))/\LnDieci}}%
+				\edef\R{\fpeval{\ScalaDecade*\Logaritmo}}%
+				\fptest{\R>0}{\fptest{\LPLA=round(\LPLA,0)}%
+					{\linethickness{\lwb}}{\linethickness{\lwc}}%
+					\Circlewithcenter0,0radius\R}{}%
+				\edef\LPLA{\fpeval{\LPLA+0.2}}}%
+			% Second band from 4 to 10 included
+			\edef\LPLA{4}%
+			\fpdowhile{\LPLA=<10}{%
+				\edef\Logaritmo{\fpeval{\Dec-1+(ln(\LPLA))/\LnDieci}}%
+				\edef\R{\fpeval{\ScalaDecade*\Logaritmo}}%
+				\fptest{\R>0}{\fptest{\LPLA=round(\LPLA,0)}%
+					{\linethickness{\lwb}}{\linethickness{\lwc}}%
+					\Circlewithcenter0,0radius\R}{}%
+				\edef\LPLA{\fpeval{\LPLA+0.5}}}%
+			\advance\Dec by1\relax}%
+		}{%
+			\ClassWarning{GraphPaper}{Logarithmic polar graph paper:\MessageBreak
+				too many decades: \number#2\space\MessageBreak
+				Reduce their number}%
+		}}% End logarithmic circle radius sequence
+	\ignorespaces
+	%
+%    \end{macrocode}
+%
+% Radial lines. \cs{I} represents the angle in degrees and it runs
+% from 0 to 359. Tick lines every 10$^\circ$; medium lines every 5$^\circ$
+% for units 2, 7, 8, 9, 10; thin lines every 2$^\circ$ for units 3, 4, 5, 6;
+% thin lines every 1$^\circ$ for units 7, 8, 9, 10.
+%    \begin{macrocode}
+	\I=0\edef\R{\Scala}%
+	\fpdowhile{\I<360}{\edef\A{\fpeval{\I}}%
+		\fptest{\fpeval{\I-10(round(\I/10,0))}=0}%
+		{\linethickness{\lwa}\segment(0,0)(\A:\R)
+			\Rbox[\A](\A:\R){\color{black}\A}}% multiple of 10
+		{\fptest{\fpeval{\I-5(round(\I/5,0))}=0}%
+			{\linethickness{\lwb}%
+				\segment(\A:5)(\A:10)
+				\segment(\A:30)(\A:\R)}% multiple of 5
+			{\linethickness{\lwc}%
+				\fptest{\fpeval{\I-2(round(\I/2,0))}=0}%
+				{\segment(\A:10)(\A:\R)}% multiple of 2
+				{\segment(\A:30)(\A:\R)}% multiple of 1
+			}%
+		}%
+		\advance\I by 1\relax
+	}\ignorespaces
+%    \end{macrocode}
+%
+% Graduated axis.
+%    \begin{macrocode}
+    \GradPolar{#2}
+%    \end{macrocode}
+%
+% Custom code provided by the user. After executing the code to compose
+% the rectangular graph paper and the user custom code, the latter is
+% reset if the \cs{GP@customcodereset} is true.
+%    \begin{macrocode}
+	\GP@custom
+	\end{picture}
+\ifGP@customcodereset\def\GP@custom{}\fi}
+%    \end{macrocode}
+%
+%
+%\subsubsection{Smith chart graph paper}
+%
+% The Smith chart graph paper is composed by the command \cs{SmithChart}:
+%\begin{ttsyntax}
+% \cs{SmithChart}\oarg{diameter}
+%\end{ttsyntax}
+% where
+% \meta{diameter} is the dimension (plus some extra space for labels and
+% margins)  of the Smith chart. Its default value corresponds to the
+% \cs{paperheight} (the minimum dimension of the paper).
+%
+%    \begin{macrocode}
+\NewDocumentCommand\SmithChart{O{\paperheight}}{%
+    \newpage
+    \parindent=0pt
+    \pagestyle{empty}%
+    \ifcsname pmargin\endcsname\relax\else\newlength\pmargin\fi
+    \setlength{\pmargin}{20pt}
+    \newgeometry{left=\pmargin,right=\pmargin,top=\pmargin,bottom=\pmargin}
+    \def\factor{140}
+    \unitlength=\fpeval{#1/\factor}pt\relax
+    \def\xlength{\fpeval{(\textwidth-0.01pt)/\unitlength}} 
+    \def\ylength{\fpeval{(\textheight-0.01pt)/\unitlength}}
+    \begin{picture}(\xlength,\ylength)%
+                   (\fpeval{-\xlength/2},\fpeval{-\ylength/2})%
+	\color{gridcolor}%
+	\edef\Scala{50}% scale factor based on the main circle but valid
+	               % for everything inside the graph paper.
+	{\color{black}\Pbox(0,0){}[4]}% Black dot in the origin
+	% images of the vertical cartesian lines
+	\I=0\relax
+	\fpdowhile{\I=<6}{\edef\Aux{\fpeval{\I/20}}{%
+			\fptest{\I=0}{\color{black}}{\color{gridcolor}}\thicklines\Xcircle{\Aux}}%
+		\advance\I by1\edef\Aux{\fpeval{\I/20}}\Xcircle{\Aux}%
+		\advance\I by1\ignorespaces}%fino a 0.4
+	\fpdowhile{\I=<16}{\edef\Aux{\fpeval{\I/20}}\relax
+		{\thicklines\Xcircle{\Aux}}\advance\I by2\edef\Aux{\fpeval{\I/20}}\relax
+		\Xcircle{\Aux}\advance\I by2\ignorespaces}% fino a 1
+	\fpdowhile{\I=<36}{\edef\Aux{\fpeval{\I/20}}\relax
+		{\thicklines\Xcircle{\Aux}}\advance\I by4\edef\Aux{\fpeval{\I/20}}\relax
+		\Xcircle{\Aux}\advance\I by4\ignorespaces}% fino a 2
+	\fpdowhile{\I=<96}{\edef\Aux{\fpeval{\I/20}}\relax
+		{\thicklines\Xcircle{\Aux}}\advance\I by8\edef\Aux{\fpeval{\I/20}}\relax
+		\Xcircle{\Aux}\advance\I by8\ignorespaces}%fino a 5
+	\fpdowhile{\I=<296}{\edef\Aux{\fpeval{\I/20}}\relax
+		{\thicklines\Xcircle{\Aux}}\advance\I by16\edef\Aux{\fpeval{\I/20}}\relax
+		\Xcircle{\Aux}\advance\I by16\ignorespaces}% up to 15
+% Images of the horizontal cartesian semi-lines
+	\Ycircle{1}%
+	{\thicklines\segment(-\Rzero,0)(\Rzero,0)}% diameter
+	\Rbox[180](-\Rzero,0){0}\Rbox[0](\Rzero,0){\infty}
+	\Ycircle{0.05}\Ycircle{-0.05}\I=2% \I=2 is to avoid a division by 0
+	\fpdowhile{\I=<18}{\edef\Aux{\fpeval{\I/20}}\relax
+		{\thicklines\Ycircle{\Aux}*\Ycircle{-\Aux}*}%
+		\advance\I by1\edef\Aux{\fpeval{\I/20}}\relax
+		\Ycircle{\Aux}\Ycircle{-\Aux}\advance\I by 1\ignorespaces}% restarts from 1
+	\fpdowhile{\I<40}{\edef\Aux{\fpeval{\I/20}}\relax
+		{\thicklines\Ycircle{\Aux}*\Ycircle{-\Aux}*}%
+		\advance\I by 2\edef\Aux{\fpeval{\I/20}}\relax
+		\Ycircle{\Aux}\Ycircle{-\Aux}\advance\I by 2\ignorespaces}% restarts from 2
+	\fpdowhile{\I<80}{\edef\Aux{\fpeval{\I/20}}\relax
+		{\thicklines\Ycircle{\Aux}*\Ycircle{-\Aux}*}%
+		\advance\I by 4\edef\Aux{\fpeval{\I/20}}\relax
+		\Ycircle{\Aux}\Ycircle{-\Aux}\advance\I by 4\ignorespaces}% restarts from 4
+	\fpdowhile{\I=<140}{\edef\Aux{\fpeval{\I/20}}\relax
+		{\thicklines\Ycircle{\Aux}*\Ycircle{-\Aux}*}%
+		\advance\I by 10\edef\Aux{\fpeval{\I/20}}\relax
+		\Ycircle{\Aux}\Ycircle{-\Aux}\advance\I by 10\ignorespaces}% stops at 7.5
+	{\thicklines\Ycircle{8}*\Ycircle{-8}*}%
+	% non linear graduation for the abscissas 
+	\GradResist{62}%
+	% Polar graduation in normalised wave length percentages 
+	\edef\Rout{\fpeval{1.09*\Rzero}}%
+	\edef\RoutCifre{\fpeval{\Rout+2}}%
+	\edef\RoutTak{\fpeval{\Rout+1}}%
+	{\color{black}%
+		\Circlewithcenter 0,0radius\Rout
+		\I=0\fpdowhile{\I<10}%
+		{\edef\LAng{\fpeval{180-\I*36}}\edef\Cifre{\fpeval{\I*5}}%
+			\put(\LAng:\RoutCifre){%
+				\rotatebox{\fpeval{\LAng-90}}{\makebox(0,0)[b]{\scriptsize\Cifre}}}%
+			\advance\I by 1\ignorespaces}
+		\I=0\fpdowhile{\I<50}{%
+			\edef\LAng{\fpeval{180-\I*7.2}}\segment(\LAng:\Rout)(\LAng:\RoutTak)%
+			\advance\I by1\ignorespaces}
+	%
+	% Outside circle encloses everything except the abscissa graduation.
+	% Everything lays inside a square 
+		\Circlewithcenter0,0radius{\fpeval{\Scala+9}}}%
+	% Now the user supplied code is executed
+	\GP@custom
+	\end{picture}
+\ifGP@customcodereset\def\GP@custom{}\fi}%
+%    \end{macrocode}
+%
+%
+%\subsection{User interface}
+%
+% Here follows the user commands to draw the graph papers, as described in
+% section~\ref{sec:howto}:
+%    \begin{macrocode}
+\NewDocumentCommand{\bilinear}{}{\carta{0}{0}}
+\NewDocumentCommand{\semilogx}{m}{\carta{#1}{0}}
+\NewDocumentCommand{\semilogy}{m}{\carta{0}{#1}}
+\NewDocumentCommand{\loglog}{O{0}mm}{\carta[#1]{#2}{#3}}
+\NewDocumentCommand{\polar}{}{\PolarChart{0}}
+\NewDocumentCommand{\logpolar}{m}{\PolarChart{#1}}
+\NewDocumentCommand{\smith}{}{\SmithChart}
+%    \end{macrocode}
+%
+% The user commands to customise the appearance of the graph
+% papers is defined. Their syntax was previously described in
+% sectio~\ref{sec:howto}:
+%    \begin{macrocode}
+\NewDocumentCommand{\setgridcolor}{m}{\colorlet{gridcolor}{#1}}
+\NewDocumentCommand{\setmajorlinethickness}{m}{\setlength{\lwa}{#1}}
+\NewDocumentCommand{\setmediumlinethickness}{m}{\setlength{\lwb}{#1}}
+\NewDocumentCommand{\setminorlinethickness}{m}{\setlength{\lwc}{#1}}
+\NewDocumentCommand{\setminimumdistance}{m}{\setlength{\mindistanceunit}{#1}}
+\NewDocumentCommand{\setxside}{m}{%
+	\ifnum\fpeval{#1 > \paperwidth}=1 \ClassError{graphpaper}{X side too wide!} \fi
+	\setlength{\xsideunit}{#1}}
+\NewDocumentCommand{\setyside}{m}{%
+	\ifnum\fpeval{#1 > \paperheight}=1 \ClassError{graphpaper}{Y side too wide!} \fi
+	\setlength{\ysideunit}{#1}}
+\def\GP@custom{}
+\newif\ifGP@customcodereset \GP@customcoderesettrue
+\NewDocumentCommand{\customcode}{O{1} m}{%
+	\ifnum#1=\z@ \GP@customcoderesetfalse \fi%
+	\def\GP@custom{#2}}
+%    \end{macrocode}
+%
+%
+%\subsection{Class code end}
+%
+%    \begin{macrocode}
+%
+\endinput
+%    \end{macrocode}
+%
+%\iffalse
+%</class>
+%\fi
+%
+% \Finale
+%^^A

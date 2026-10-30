@@ -1,0 +1,30 @@
+% This file is embedded in flowfram-manual.pdf 
+% Example 1 Frame Page Lists
+% Label: "ex:twocolumnsidepanel"
+% arara: pdflatex
+\documentclass[11pt]{book}
+\pagestyle{plain}
+\usepackage[a4paper,outer=3in,marginparwidth=2cm,columnsep=4pt]{geometry}
+\usepackage[pages=absolute,draft]{flowfram}
+\usepackage{lipsum}% provide dummy text
+\onecolumn[1][single]% only use on page 1
+\setflowframe*{single}{margin=inner}
+\twocolumn[>1][left,right]% use on all pages except p.1
+\setflowframe*{left}{margin=left}
+\setflowframe*{right}{margin=right}
+\newdynamicframe{2in}{\typeblockheight}
+ {\typeblockwidth+\columnsep}{0pt}[sidepanel]
+\newcommand{\Hugebf}{\Huge\bfseries}
+\setdynamicframe*{sidepanel}
+ {evenx={-2in-\columnsep},
+ style=Hugebf
+} 
+
+\setdynamiccontents*{sidepanel}{Side Panel on Page~\thepage.} 
+\begin{document}
+First page.\marginpar{note1}
+\mainmatter
+Start sample.\marginpar{note2}
+\lipsum[3-5]
+End sample.\marginpar{note3} 
+\end{document}

@@ -1,0 +1,53 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=20mm,includeheadfoot]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs,tabularx,array,enumitem,xcolor,fancyhdr}
+\definecolor{labgreen}{HTML}{28604A}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small Laboratory notebook}
+\fancyhead[R]{\small Daily entry}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{14pt}
+\newcommand{\linefield}[2]{\textbf{#1}\ \rule{#2}{.4pt}}
+\begin{document}
+\begin{center}
+  {\color{labgreen}\LARGE\bfseries Laboratory Notebook}\par
+  \medskip{\large Daily entry / experiment record}\par
+\end{center}
+\noindent\linefield{Date}{35mm}\hfill\linefield{Entry no.}{18mm}\par\smallskip
+\noindent\linefield{Project}{63mm}\hfill\linefield{Operator}{35mm}
+\section*{Experiment identity}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}lX>{\bfseries}lX@{}}
+  Experiment & Sensor response check & Location & Bench 04\\
+  Objective & Compare reference and field readings & Version & 1.0\\
+  Equipment & Reference probe, logger, thermometer & Sample & Calibration fluid A
+\end{tabularx}
+\section*{Safety and setup}
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+  \item PPE and local handling instructions checked before beginning.
+  \item Equipment inspected; reference instrument zeroed at room temperature.
+  \item Deviations, incidents, and waste route: \rule{75mm}{.4pt}
+\end{itemize}
+\section*{Observations}
+The apparatus stabilised after approximately three minutes. The indicator
+remained steady during the comparison run; record unexpected changes in the
+space below.
+\vspace{18mm}\hrule\vspace{8mm}\hrule\vspace{8mm}\hrule
+\section*{Measurements}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Run & Time (min) & Reference & Instrument & Difference\\\midrule
+1 & 0 & 22.10 & 22.28 & +0.18\\
+2 & 3 & 22.12 & 22.29 & +0.17\\
+3 & 6 & 22.11 & 22.30 & +0.19\\
+\bottomrule
+\end{tabular}
+\section*{Next actions}
+\begin{enumerate}[leftmargin=8mm,itemsep=2pt]
+  \item Repeat at a second calibration point.
+  \item Record the uncertainty of both instruments.
+  \item Attach raw data before archiving this entry.
+\end{enumerate}
+\noindent\linefield{Reviewed by}{48mm}\hfill\linefield{Date}{25mm}
+\end{document}

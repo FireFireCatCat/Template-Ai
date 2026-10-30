@@ -1,0 +1,72 @@
+% Portable starter following the public Revista Brasileira de Economia layout.
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage[margin=2.6cm]{geometry}
+\usepackage{amsmath,booktabs,tabularx,xcolor,hyperref,microtype}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black}
+\title{Produtividade e adoção gradual de ferramentas digitais}
+\author{Camila Souza\thanks{Departamento de Economia, Universidade de Exemplo}\and
+  Bruno Almeida}
+\date{}
+
+\begin{document}
+\maketitle
+\begin{center}
+\small\textbf{Códigos JEL:} D24, O33, C23\quad
+\textbf{Palavras-chave:} produtividade; tecnologia; firmas
+\end{center}
+
+\begin{abstract}
+Este artigo apresenta um exemplo de como documentar uma análise empírica sobre
+a adoção de ferramentas digitais por firmas. A especificação separa o efeito
+de produtividade da tendência temporal e explicita as limitações dos dados.
+Os resultados numéricos são fictícios e servem apenas para demonstrar a
+estrutura do manuscrito.
+\end{abstract}
+
+\section{Introdução}
+A adoção de uma nova ferramenta pode reduzir custos, mas também exige tempo de
+aprendizagem. Uma análise econômica deve, portanto, registrar o período de
+implementação e as características das firmas comparadas.
+
+\section{Estratégia empírica}
+Considere a especificação de diferenças em diferenças
+\begin{equation}
+ y_{it}=\alpha_i+\gamma_t+\beta(Trat_i\times Pos_t)+\varepsilon_{it},
+ \label{eq:did}
+\end{equation}
+na qual $\beta$ mede a variação média associada à adoção após o período de
+implementação. Em uma aplicação real, a identificação exige uma discussão
+explícita da tendência paralela e das decisões de amostragem.
+
+\section{Resultados}
+\begin{table}[ht]
+\centering
+\caption{Efeito ilustrativo da adoção digital.}
+\label{tab:effect}
+\begin{tabular}{lrr}
+\toprule
+Especificação & Coeficiente & Erro-padrão\\
+\midrule
+Sem controles & 0.084 & 0.031\\
+Controles básicos & 0.067 & 0.029\\
+Efeitos fixos & 0.052 & 0.027\\
+\bottomrule
+\end{tabular}
+\end{table}
+Os valores da Tabela~\ref{tab:effect} não constituem evidência empírica; eles
+mostram como apresentar estimativas e incertezas de forma compacta.
+
+\section{Discussão}
+O resultado pode refletir seleção das firmas, mudanças de composição ou
+choques simultâneos. Um manuscrito completo deve incluir a fonte dos dados,
+limpeza, código de estimação e testes de robustez.
+
+\section{Conclusão}
+Uma apresentação transparente facilita a avaliação da hipótese econômica e
+permite que o leitor substitua o exemplo por seus próprios dados. Mantenha os
+metadados do artigo e as notas de replicação junto ao arquivo final.
+
+\end{document}

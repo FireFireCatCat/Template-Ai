@@ -1,0 +1,3847 @@
+%% \iffalse meta-comment
+%%
+%% SPDX-FileCopyrightText: 2026 Ichlasul Affan, et al.
+%% SPDX-License-Identifier: LPPL-1.3c
+%%
+%% This work consists of the files uithesis.dtx, uithesis-doc.dtx, uithesis.ins,
+%% and the derived file uithesis.cls.
+%%
+%% This file may be distributed and/or modified under the conditions of the
+%% LaTeX Project Public License, either version 1.3c of this license or
+%% (at your option) any later version.  The latest version of this license
+%% is in:
+%%
+%%   https://www.latex-project.org/lppl.txt
+%%
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2008 or later.
+%%
+%% \fi
+%%
+%% \iffalse
+%<*driver>
+\documentclass{l3doc}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\usepackage[indonesian,english]{babel}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{bookmark}
+\begin{document}
+  \setlength{\emergencystretch}{3em}
+  \tolerance=9999\relax
+  \DocInput{uithesis-doc.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+%% \fi
+%%
+%% \title{Universitas Indonesia Thesis (\textsf{uithesis}) Document Class\\
+%%        \large User and Maintainer Documentation / Dokumentasi Pengguna dan Maintainer}
+%% \author{Ichlasul Affan \and contributors}
+%% \date{Version 3.0.0, 2026/08/20}
+%%
+%% \maketitle
+%%
+%% \tableofcontents
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{How to Read This Documentation / Cara Membaca Dokumentasi Ini}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% This document has two explicit parts with different audiences:
+%%
+%% \begin{itemize}
+%%   \item \textbf{Part I - User Guide}: for students, lecturers, and
+%%         professors who need to write or supervise a thesis using
+%%         \textsf{uithesis}.
+%%   \item \textbf{Part II - Maintainer Guide}: for contributors who need
+%%         to modify class code, update internals, improve tests, and
+%%         submit merge requests.
+%% \end{itemize}
+%%
+%% The user part follows the thesis PDF lifecycle from installation,
+%% metadata setup, front matter generation, content formatting,
+%% appendices, glossary, and code listings.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Dokumen ini dibagi menjadi dua bagian utama dengan sasaran yang berbeda:
+%%
+%% \begin{itemize}
+%%   \item \textbf{Bagian I - Panduan Pengguna}: untuk mahasiswa,
+%%         dosen, dan pembimbing yang perlu menulis atau membimbing
+%%         tugas akhir dengan \textsf{uithesis}.
+%%   \item \textbf{Bagian II - Panduan Maintainer}: untuk kontributor
+%%         yang perlu mengubah kode kelas, memperbarui komponen internal,
+%%         meningkatkan pengujian, dan mengirim merge request.
+%% \end{itemize}
+%%
+%% Bagian pengguna mengikuti alur siklus PDF tugas akhir, dimulai dari
+%% instalasi, pengisian metadata, penyusunan halaman awal, pemformatan isi,
+%% lampiran, glosarium, hingga daftar kode program.
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \part{User Guide / Panduan Pengguna}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% Recommended reading path for first-time users:
+%%
+%% \begin{enumerate}
+%%   \item Installation
+%%   \item Required packages
+%%   \item Class options
+%%   \item Metadata commands
+%%   \item Front matter
+%%   \item Content layout and content commands
+%%   \item Appendices, glossary, and code listings
+%% \end{enumerate}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Alur baca yang direkomendasikan untuk pengguna baru:
+%%
+%% \begin{enumerate}
+%%   \item Instalasi
+%%   \item Paket yang dibutuhkan
+%%   \item Opsi kelas
+%%   \item Perintah metadata
+%%   \item Halaman awal
+%%   \item Tata letak isi dan perintah konten
+%%   \item Lampiran, glosarium, dan daftar kode program
+%% \end{enumerate}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Abstract / Abstrak}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The \textsf{uithesis} document class provides a configurable
+%% \LaTeX{} template for writing undergraduate theses (\emph{Skripsi}),
+%% master's theses (\emph{Tesis}), doctoral dissertations
+%% (\emph{Disertasi}), internship reports (\emph{Laporan Kerja Praktik}),
+%% and independent-study reports (\emph{Kampus Merdeka}) at Universitas
+%% Indonesia (UI).  Front matter, body layout, bilingual typesetting
+%% (Indonesian and English), citation styles, glossary integration, and
+%% code-listing support are all handled by the class.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Kelas dokumen \textsf{uithesis} menyediakan templat \LaTeX{} yang
+%% dapat dikonfigurasi untuk penulisan skripsi, tesis,
+%% disertasi, laporan kerja praktik, dan laporan Kampus Merdeka di
+%% Universitas Indonesia (UI).  Halaman awal, tata letak isi,
+%% pengetikan dwibahasa (Indonesia dan Inggris), gaya sitasi,
+%% integrasi glosarium, dan tampilan kode program ditangani oleh kelas.
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Installation / Instalasi}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection{From TeX Live / CTAN (Dari TeX Live / CTAN)}
+%%
+%% \subsubsection*{English}
+%%
+%% Once the package is available on CTAN, install via TeX Live:
+%%
+%% \begin{verbatim}
+%%   tlmgr install uithesis
+%% \end{verbatim}
+%%
+%% This places \texttt{uithesis.cls} and the companion Makara logo images
+%% on the TeX search path automatically.
+%%
+%% \subsubsection*{Bahasa Indonesia}
+%%
+%% Setelah paket tersedia di CTAN, instal melalui TeX Live:
+%%
+%% \begin{verbatim}
+%%   tlmgr install uithesis
+%% \end{verbatim}
+%%
+%% Perintah ini menempatkan \texttt{uithesis.cls} dan gambar logo
+%% Makara ke dalam \emph{search path} TeX secara otomatis.
+%%
+%% \subsection{Manual Installation from Source / Instalasi Manual dari Sumber}
+%%
+%% \subsubsection*{English}
+%%
+%% \begin{enumerate}
+%%   \item Clone the repository or download the source archive.
+%%   \item Run \texttt{tex uithesis.ins} in the repository root.
+%%         This extracts \texttt{uithesis.cls} from \texttt{uithesis.dtx}.
+%%   \item Copy \texttt{uithesis.cls} and companion Makara image files
+%%         to the same directory as your thesis \texttt{.tex} file,
+%%         or install them to your local \texttt{TEXMFHOME} tree.
+%% \end{enumerate}
+%%
+%% \subsubsection*{Bahasa Indonesia}
+%%
+%% \begin{enumerate}
+%%   \item Clone repositori atau unduh arsip sumber.
+%%   \item Jalankan \texttt{tex uithesis.ins} di direktori root repositori.
+%%         Perintah ini mengekstrak \texttt{uithesis.cls} dari
+%%         \texttt{uithesis.dtx}.
+%%   \item Salin \texttt{uithesis.cls} dan berkas gambar Makara pendamping
+%%         ke direktori yang sama dengan berkas
+%%         \texttt{.tex} tesis, atau instal ke pohon
+%%         \texttt{TEXMFHOME} lokal.
+%% \end{enumerate}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Required Packages / Paket yang Dibutuhkan}
+%% %-----------------------------------------------------------------------
+%%
+%% \textsf{uithesis} loads the packages in the table below.
+%% The third column is bilingual so English and Indonesian descriptions
+%% stay aligned.
+%%
+%% Jika diinstal melalui \texttt{tlmgr install uithesis}, TeX Live akan
+%% menyelesaikan dependensi secara otomatis. Pada MiKTeX, paket yang belum
+%% tersedia biasanya ditawarkan saat kompilasi.
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}l l p{\dimexpr\linewidth-6.2cm\relax}@{}}
+%%   \toprule
+%%   \textbf{Package (.sty)}  & \textbf{TeX Live package}  & \textbf{Role (EN) / Keterangan (ID)} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \texttt{xkeyval}         & \texttt{xkeyval}           & Class option parsing / parsing opsi kelas \\
+%%   \texttt{pslatex}         & \texttt{psnfss}            & Times New Roman font / font Times New Roman \\
+%%   \texttt{setspace}        & \texttt{setspace}          & Line spacing control / pengaturan spasi baris \\
+%%   \texttt{geometry}        & \texttt{geometry}          & Page margins and paper size / margin halaman dan ukuran kertas \\
+%%   \texttt{babel}           & \texttt{babel}             & Multilingual support (Indonesian + English) / dukungan multibahasa (Indonesia + Inggris) \\
+%%   \texttt{afterpage}       & \texttt{afterpage}         & Deferred commands after page break / penjadwalan perintah setelah pindah halaman \\
+%%   \texttt{changepage}      & \texttt{changepage}        & Per-page margin adjustment / penyesuaian margin per halaman \\
+%%   \texttt{tocbibind}       & \texttt{tocbibind}         & Adds bibliography to table of contents / menambahkan daftar pustaka ke daftar isi \\
+%%   \texttt{tocloft}         & \texttt{tocloft}           & Custom table of contents formatting / kustomisasi format daftar isi \\
+%%   \texttt{fancyhdr}        & \texttt{fancyhdr}          & Header and footer customisation / kustomisasi header dan footer \\
+%%   \texttt{pdfpages}        & \texttt{pdfpages}          & Inserting external PDF pages / menyisipkan halaman PDF eksternal \\
+%%   \texttt{hyperref}        & \texttt{hyperref}          & PDF hyperlinks and metadata / hyperlink dan metadata PDF \\
+%%   \texttt{url}             & \texttt{url}               & URL typesetting / penulisan URL \\
+%%   \texttt{booktabs}        & \texttt{booktabs}          & Publication-quality table rules / garis tabel kualitas publikasi \\
+%%   \texttt{multirow}        & \texttt{multirow}          & Multi-row table cells / sel tabel multi-baris \\
+%%   \texttt{longtable}       & \texttt{tools}             & Multi-page tables (monograph) / tabel multi-halaman (monograf) \\
+%%   \texttt{supertabular}    & \texttt{supertabular}      & Multi-column long tables (2-column journal) / tabel panjang lintas kolom (jurnal dua kolom) \\
+%%   \texttt{array}           & \texttt{tools}             & Extended column specifiers / spesifikasi kolom lanjutan \\
+%%   \texttt{tabularx}        & \texttt{tools}             & Auto-width table columns / kolom tabel dengan lebar otomatis \\
+%%   \texttt{multicol}        & \texttt{tools}             & Multi-column layout / tata letak multi-kolom \\
+%%   \texttt{colortbl}        & \texttt{colortbl}          & Coloured table cells / pewarnaan sel tabel \\
+%%   \texttt{tcolorbox}       & \texttt{tcolorbox}         & Coloured and framed boxes / kotak berwarna dan berbingkai \\
+%%   \texttt{graphicx}        & \texttt{graphics}          & Image inclusion / penyisipan gambar \\
+%%   \texttt{wrapfig}         & \texttt{wrapfig}           & Text-wrapped figures / gambar dengan teks mengalir \\
+%%   \texttt{float}           & \texttt{float}             & Float placement control / pengaturan peletakan float \\
+%%   \texttt{tikz}            & \texttt{pgf}               & Vector graphics (cover page layout) / grafik vektor (tata letak sampul) \\
+%%   \texttt{tikzpagenodes}   & \texttt{pgf}               & TikZ page node anchors / anchor node halaman TikZ \\
+%%   \texttt{amsmath}         & \texttt{amsmath}           & Mathematical environments / lingkungan matematika \\
+%%   \texttt{amsfonts}        & \texttt{amsfonts}          & AMS mathematical fonts / font matematika AMS \\
+%%   \texttt{amssymb}         & \texttt{amsfonts}          & AMS mathematical symbols / simbol matematika AMS \\
+%%   \texttt{bm}              & \texttt{tools}             & Bold mathematical symbols / simbol matematika tebal \\
+%%   \texttt{listings}        & \texttt{listings}          & Source code typesetting / penataan kode sumber \\
+%%   \texttt{xcolor}          & \texttt{xcolor}            & Colour support / dukungan warna \\
+%%   \texttt{xparse}          & \texttt{xparse}            & Advanced command definitions / definisi perintah lanjutan \\
+%%   \texttt{inputenc}        & (base)                     & UTF-8 input encoding / encoding masukan UTF-8 \\
+%%   \texttt{csquotes}        & \texttt{csquotes}          & Context-sensitive quotation marks (biblatex) / tanda kutip kontekstual (biblatex) \\
+%%   \texttt{biblatex}        & \texttt{biblatex}          & Bibliography management; requires \texttt{biber} / manajemen bibliografi; memerlukan \texttt{biber} \\
+%%   \texttt{enumitem}        & \texttt{enumitem}          & List customisation / kustomisasi daftar \\
+%%   \texttt{everyshi}        & \texttt{everyshi}          & Page-level processing on each shipout / pemrosesan tingkat halaman pada setiap shipout \\
+%%   \texttt{environ}         & \texttt{environ}           & Content-collecting environments / lingkungan pengumpul konten \\
+%%   \texttt{etoolbox}        & \texttt{etoolbox}          & LaTeX programming utilities / utilitas pemrograman LaTeX \\
+%%   \texttt{subcaption}      & \texttt{caption}           & Sub-figure and sub-table captions / caption sub-gambar dan sub-tabel \\
+%%   \texttt{glossaries-extra}& \texttt{glossaries-extra}  & Glossary and acronym management / manajemen glosarium dan akronim \\
+%%   \texttt{pdflscape}       & \texttt{pdflscape}         & Landscape pages in PDF output / halaman lanskap pada keluaran PDF \\
+%%   \texttt{CJKutf8}         & \texttt{CJK}               & CJK character support / dukungan karakter CJK \\
+%%   \texttt{indentfirst}     & \texttt{tools}             & Indents the first paragraph after headings / membuat paragraf pertama setelah judul masuk \\
+%%   \texttt{dblfloatfix}     & \texttt{dblfloatfix}       & Improves placement of \texttt{figure*}/\texttt{table*} / memperbaiki peletakan \texttt{figure*}/\texttt{table*} \\
+%%   \texttt{cuted}           & \texttt{sttools}           & Provides \env{strip} for full-width blocks / menyediakan \env{strip} untuk blok penuh-lebar \\
+%%   \texttt{flushend}        & \texttt{flushend}          & Balances the last-page columns / menyeimbangkan kolom pada halaman terakhir \\
+%% \end{longtable}
+%% }
+%%
+%% \bigskip
+%%
+%% \textbf{Two-column journal-only packages.}
+%% In \texttt{format=journal, columns=2}, the following packages are used
+%% for layout behavior:
+%% \begin{itemize}
+%%   \item \texttt{dblfloatfix}: improves placement rules for \texttt{figure*}/\texttt{table*}.
+%%   \item \texttt{cuted}: provides \env{strip}, used by \env{UIwideblock} for full-width non-float blocks.
+%%   \item \texttt{flushend}: balances the last-page column heights in two-column mode.
+%% \end{itemize}
+%%
+%% \textbf{Paket khusus jurnal dua kolom.}
+%% Pada \texttt{format=journal, columns=2}, paket berikut dipakai untuk
+%% perilaku tata letak:
+%% \begin{itemize}
+%%   \item \texttt{dblfloatfix}: memperbaiki peletakan \texttt{figure*}/\texttt{table*}.
+%%   \item \texttt{cuted}: menyediakan \env{strip} untuk blok penuh-lebar non-float.
+%%   \item \texttt{flushend}: menyeimbangkan kolom pada halaman terakhir.
+%% \end{itemize}
+%%
+%% \textbf{External engine:} \texttt{biber} must be available on the
+%% \texttt{PATH} for bibliography processing.  It is shipped with TeX Live
+%% (\texttt{tlmgr install biber}) and MiKTeX.
+%%
+%% \emph{\textbf{Engine eksternal:} \texttt{biber} harus tersedia di
+%% \texttt{PATH} untuk pemrosesan daftar pustaka.  Sudah disertakan dalam
+%% instalasi TeX Live dan MiKTeX.}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Class Options / Opsi Kelas}
+%% %-----------------------------------------------------------------------
+%%
+%% Load the class with the following pattern.
+%% Muat kelas dengan pola berikut.
+%% \begin{verbatim}
+%%   \documentclass[<options>]{uithesis}
+%% \end{verbatim}
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{2.55cm} p{3.1cm} p{1.65cm} p{\dimexpr\linewidth-7.3cm-6\tabcolsep\relax}@{}}
+%%   \toprule
+%%   \textbf{Option} & \textbf{Values} & \textbf{Default}
+%%     & \textbf{Description / Keterangan} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \texttt{format}  & \texttt{monograph}, \texttt{journal}
+%%     & \texttt{monograph}
+%%     & \textbf{EN}: Document layout format.
+%%       \emph{monograph}: standard thesis layout.
+%%       \emph{journal}: two-column journal-like layout. \newline
+%%       \textbf{ID}: Format tata letak dokumen.
+%%       \emph{monograph}: tata letak tugas akhir standar.
+%%       \emph{journal}: tata letak mirip jurnal dua kolom. \\[4pt]
+%%   \texttt{type}    & \texttt{Skripsi}, \texttt{Tesis},
+%%     \texttt{Disertasi}, \texttt{Laporan Kerja Praktik},
+%%     \texttt{Kampus Merdeka}
+%%     & \texttt{Skripsi}
+%%     & \textbf{EN}: Degree type shown on the cover and approval pages. \newline
+%%       \textbf{ID}: Jenis karya yang ditampilkan pada sampul dan halaman pengesahan. \\[4pt]
+%%   \texttt{jenjang} & \texttt{Sarjana}, \texttt{Magister},
+%%     \texttt{Doktor}
+%%     & \texttt{Sarjana}
+%%     & \textbf{EN}: Degree level. Must be consistent with \texttt{type}. \newline
+%%       \textbf{ID}: Jenjang pendidikan. Harus konsisten dengan \texttt{type}. \\[4pt]
+%%   \texttt{lang}    & \texttt{indonesian}, \texttt{english}
+%%     & \texttt{indonesian}
+%%     & \textbf{EN}: Primary document language. Affects front-matter labels and
+%%       hyphenation patterns. \newline
+%%       \textbf{ID}: Bahasa utama dokumen. Mempengaruhi label halaman awal dan
+%%       pola pemenggalan kata. \\[4pt]
+%%   \texttt{citation}& \texttt{apa}, \texttt{ieee}, \texttt{acm},
+%%     \texttt{vancouver}, \texttt{mla}, \texttt{harvard},
+%%     \texttt{chicago}, \texttt{turabian}, \texttt{acs},
+%%     \texttt{nature}, \texttt{science}, \texttt{aip},
+%%     \texttt{oscola}, \texttt{custom}
+%%     & \texttt{apa}
+%%     & \textbf{EN}: Bibliography and citation style preset for document output. \newline
+%%       \textbf{ID}: Preset gaya sitasi dan daftar pustaka untuk keluaran dokumen. \\[4pt]
+%%   \texttt{print}   & \texttt{twoside}, \texttt{oneside}
+%%     & \texttt{twoside}
+%%     & \textbf{EN}: Page binding layout. Only valid with \texttt{format=monograph}.
+%%       \emph{twoside}: alternating margins for book binding.
+%%       \emph{oneside}: uniform margins, suitable for digital submission. \newline
+%%       \textbf{ID}: Tata letak penjilidan halaman. Hanya valid dengan \texttt{format=monograph}.
+%%       \emph{twoside}: margin bergantian untuk penjilidan buku.
+%%       \emph{oneside}: margin seragam, cocok untuk pengumpulan digital. \\[4pt]
+%%   \texttt{spacing} & \texttt{calibrated}, \texttt{semantic}
+%%     & \texttt{calibrated}
+%%     & \textbf{EN}: Line spacing mode.
+%%       \emph{calibrated}: 1.4$\times$ baseline (matches UI regulation).
+%%       \emph{semantic}: 1.5$\times$ baseline (more readable on screen). \newline
+%%       \textbf{ID}: Mode spasi baris.
+%%       \emph{calibrated}: baseline 1.4$\times$ (sesuai ketentuan UI).
+%%       \emph{semantic}: baseline 1.5$\times$ (lebih nyaman dibaca di layar). \\[4pt]
+%%   \texttt{paragraph} & \texttt{noindent}, \texttt{indent}
+%%     & \texttt{noindent}
+%%     & \textbf{EN}: Paragraph style.
+%%       \emph{noindent}: no first-line indent with vertical paragraph spacing.
+%%       \emph{indent}: first-line indent with zero paragraph spacing. \newline
+%%       \textbf{ID}: Gaya paragraf.
+%%       \emph{noindent}: tanpa inden baris pertama dan memakai jarak antarparagraf.
+%%       \emph{indent}: dengan inden baris pertama dan tanpa jarak antarparagraf. \\[4pt]
+%%   \texttt{columns} & \texttt{1}, \texttt{2}
+%%     & \texttt{1}
+%%     & \textbf{EN}: Number of body columns. Only valid with \texttt{format=journal}. \newline
+%%       \textbf{ID}: Jumlah kolom isi dokumen. Hanya valid dengan \texttt{format=journal}. \\
+%%   \texttt{plagiarismcheck} & \texttt{false}, \texttt{true}
+%%     & \texttt{false}
+%%     & \textbf{EN}: If \texttt{true}, all headers and footers are disabled for plagiarism-check submission copies. \newline
+%%       \textbf{ID}: Jika \texttt{true}, seluruh header dan footer dimatikan untuk salinan pemeriksaan plagiarisme. \\
+%% \end{longtable}
+%% }
++
+%%
+%% \textbf{Advanced citation configuration.}
+%% When \texttt{citation=custom} is set, or when the preset requires
+%% fine-tuning, the following commands may be called in the preamble.
+%%
+%% \textbf{Konfigurasi sitasi lanjutan.}
+%% Saat \texttt{citation=custom} dipakai, atau saat preset perlu penyesuaian,
+%% perintah berikut dapat dipanggil di preamble.
+%%
+%% \begin{function}{\setuicitationpreset}
+%%   \begin{syntax}
+%%     \cs{setuicitationpreset}\marg{preset name}
+%%   \end{syntax}
+%%   Select a named citation preset (same values as the \texttt{citation}
+%%   class option).  Call after \cs{documentclass} to change the preset at
+%%   runtime without reloading the class.
+%%   Memilih preset sitasi bernama (nilainya sama dengan opsi kelas
+%%   \texttt{citation}). Panggil setelah \cs{documentclass} untuk mengubah
+%%   preset tanpa memuat ulang kelas.
+%% \end{function}
+%%
+%% \begin{function}{\setuicitestyle, \setuibibstyle, \setuibiblatexstyle}
+%%   \begin{syntax}
+%%     \cs{setuicitestyle}\marg{style}
+%%     \cs{setuibibstyle}\marg{style}
+%%     \cs{setuibiblatexstyle}\marg{style}
+%%   \end{syntax}
+%%   Override just the citation style (\cs{setuicitestyle}), bibliography
+%%   style (\cs{setuibibstyle}), or set both to the same value
+%%   (\cs{setuibiblatexstyle}).  These are applied on top of any preset.
+%%   Menimpa gaya sitasi saja (\cs{setuicitestyle}), gaya daftar pustaka saja
+%%   (\cs{setuibibstyle}), atau keduanya sekaligus
+%%   (\cs{setuibiblatexstyle}). Semua diterapkan di atas preset aktif.
+%% \end{function}
+%%
+%% \begin{function}{\setuicitationmapping, \setuibiblatexoptions}
+%%   \begin{syntax}
+%%     \cs{setuicitationmapping}\marg{mapping}
+%%     \cs{setuibiblatexoptions}\marg{key=value list}
+%%   \end{syntax}
+%%   Override the \pkg{biblatex} driver mapping (\cs{setuicitationmapping})
+%%   or pass extra options to the \pkg{biblatex} package load call
+%%   (\cs{setuibiblatexoptions}).
+%%   Menimpa \emph{driver mapping} \pkg{biblatex}
+%%   (\cs{setuicitationmapping}) atau menambahkan opsi saat pemanggilan
+%%   paket \pkg{biblatex} (\cs{setuibiblatexoptions}).
+%% \end{function}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Metadata Commands / Perintah Metadata}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% All metadata commands are declared in the preamble (before
+%% \cs{begin}\marg{document}) and are consumed by \cs{makefrontmatter}.
+%%
+%% \begin{function}{\judul}
+%%   \begin{syntax}
+%%     \cs{judul}\marg{Indonesian title}
+%%   \end{syntax}
+%%   Thesis title in Indonesian.
+%% \end{function}
+%%
+%% \begin{function}{\judulInggris}
+%%   \begin{syntax}
+%%     \cs{judulInggris}\marg{English title}
+%%   \end{syntax}
+%%   Thesis title in English.
+%% \end{function}
+%%
+%% \begin{function}{\penulis}
+%%   \begin{syntax}
+%%     \cs{penulis}\marg{Full name}
+%%   \end{syntax}
+%%   Author's full name.  Repeat for each co-author (group thesis).
+%% \end{function}
+%%
+%% \begin{function}{\npm}
+%%   \begin{syntax}
+%%     \cs{npm}\marg{Student ID}
+%%   \end{syntax}
+%%   Student identification number (NPM).  Repeat alongside each \cs{penulis}.
+%% \end{function}
+%%
+%% \begin{function}{\programStudi}
+%%   \begin{syntax}
+%%     \cs{programStudi}\marg{Indonesian name}\marg{English name}
+%%   \end{syntax}
+%%   Study programme name in both languages.  Repeat alongside each author.
+%% \end{function}
+%%
+%% \begin{function}{\fakultas}
+%%   \begin{syntax}
+%%     \cs{fakultas}\marg{Indonesian name}\marg{English name}
+%%   \end{syntax}
+%%   Faculty or school name in both languages.
+%% \end{function}
+%%
+%% \begin{function}{\gelar}
+%%   \begin{syntax}
+%%     \cs{gelar}\marg{degree}
+%%   \end{syntax}
+%%   Degree title (e.g., \emph{Sarjana Komputer (S.Kom.)}).
+%% \end{function}
+%%
+%% \begin{function}{\bulanTahun}
+%%   \begin{syntax}
+%%     \cs{bulanTahun}\marg{Month Year}
+%%   \end{syntax}
+%%   Publication month and year (e.g., \emph{Mei 2026}).
+%% \end{function}
+%%
+%% \begin{function}{\pembimbing}
+%%   \begin{syntax}
+%%     \cs{pembimbing}\marg{Name}
+%%   \end{syntax}
+%%   Supervisor's full name.  Repeat for each co-supervisor.
+%% \end{function}
+%%
+%% \begin{function}{\penguji}
+%%   \begin{syntax}
+%%     \cs{penguji}\marg{Name}
+%%   \end{syntax}
+%%   Examiner's full name.  Repeat for each examiner.
+%% \end{function}
+%%
+%% \begin{function}{\tanggalSiapSidang}
+%%   \begin{syntax}
+%%     \cs{tanggalSiapSidang}\marg{Date}
+%%   \end{syntax}
+%%   Date the document was submitted to examiners.
+%% \end{function}
+%%
+%% \begin{function}{\tanggalLulus}
+%%   \begin{syntax}
+%%     \cs{tanggalLulus}\marg{Date}
+%%   \end{syntax}
+%%   Graduation date from the defence.
+%% \end{function}
+%%
+%% \begin{function}{\kota}
+%%   \begin{syntax}
+%%     \cs{kota}\marg{kota}
+%%   \end{syntax}
+%%   City where you attended university (e.g., \emph{Depok}).
+%% \end{function}
+%%
+%% \begin{function}{\setmakaraimage}
+%%   \begin{syntax}
+%%     \cs{setmakaraimage}\marg{path}
+%%   \end{syntax}
+%%   Override the Makara UI logo path.  Useful when the class is installed
+%%   in a non-standard location.
+%% \end{function}
+%%
+%% \begin{function}{\kampusMerdekaType}
+%%   \begin{syntax}
+%%     \cs{kampusMerdekaType}\marg{activity type}
+%%   \end{syntax}
+%%   Name of the Kampus Merdeka activity (e.g., \emph{MSIB Batch 7}).
+%%   Used in the approval page when \texttt{type=Kampus Merdeka}.
+%% \end{function}
+%%
+%% \begin{function}{\mitra}
+%%   \begin{syntax}
+%%     \cs{mitra}\marg{position}\marg{institution}
+%%   \end{syntax}
+%%   Partner supervisor details for the Kampus Merdeka approval page.
+%%   \meta{position} is the supervisor's role (e.g., \emph{Cohort Manager})
+%%   and \meta{institution} is the partner institution name
+%%   (e.g., \emph{Bangkit Academy 2024}).
+%% \end{function}
+%%
+%% \begin{function}{\aiplatform}
+%%   \begin{syntax}
+%%     \cs{aiplatform}\marg{platform name}
+%%   \end{syntax}
+%%   AI platform used during the preparation of this work
+%%   (e.g., \emph{GitHub Copilot}).
+%%   The AI-use declaration page is always included in the front matter.
+%%   When \meta{platform name} is empty, the page contains a statement that
+%%   no Artificial Intelligence technology was used.
+%%   When non-empty, the page states that AI was used on the named platform
+%%   for the purpose given by \cs{tujuanai}.
+%% \end{function}
+%%
+%% \begin{function}{\tujuanai}
+%%   \begin{syntax}
+%%     \cs{tujuanai}\marg{purpose}
+%%   \end{syntax}
+%%   Purpose for which the AI platform was used
+%%   (e.g., \emph{membantu penulisan kode}).
+%%   Only rendered when \cs{aiplatform} is non-empty.
+%% \end{function}
+%%
+%% \begin{function}{\tahunAkademik}
+%%   \begin{syntax}
+%%     \cs{tahunAkademik}\marg{academic year}
+%%   \end{syntax}
+%%   Academic-year text shown on the declaration letter page
+%%   (\emph{Surat Pernyataan}).
+%% \end{function}
+%%
+%% \begin{function}{\pengesahanPDF}
+%%   \begin{syntax}
+%%     \cs{pengesahanPDF}\marg{filename}
+%%   \end{syntax}
+%%   Supply an externally-signed approval page as a PDF file
+%%   (filename without the \texttt{.pdf} extension).  When provided,
+%%   the class replaces the auto-generated approval page layout with
+%%   the given PDF.  Omit this command to use the generated layout.
+%% \end{function}
+%%
+%% \begin{function}{\namaTipeTesis}
+%%   \begin{syntax}
+%%     \cs{namaTipeTesis}\marg{Indonesian name}\marg{English name}
+%%   \end{syntax}
+%%   Override the display name for the thesis type on cover and front-matter
+%%   pages.  Use when the \texttt{type} option does not match the required
+%%   title; both language variants must be supplied.
+%% \end{function}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Semua perintah metadata dideklarasikan di preamble (sebelum
+%% \cs{begin}\marg{document}) dan diproses oleh \cs{makefrontmatter}.
+%%
+%% \begin{itemize}
+%%   \item \cs{judul}\marg{judul ID}: judul tesis dalam bahasa Indonesia.
+%%   \item \cs{judulInggris}\marg{judul EN}: judul dalam bahasa Inggris.
+%%   \item \cs{penulis}\marg{nama}: nama lengkap penulis; ulangi untuk
+%%         setiap anggota (tugas akhir kelompok).
+%%   \item \cs{npm}\marg{NPM}: nomor pokok mahasiswa; ulangi bersama
+%%         setiap \cs{penulis}.
+%%   \item \cs{programStudi}\marg{ID}\marg{EN}: nama program studi;
+%%         ulangi bersama setiap anggota.
+%%   \item \cs{fakultas}\marg{ID}\marg{EN}: nama fakultas/sekolah.
+%%   \item \cs{gelar}\marg{gelar}: gelar yang diperoleh.
+%%   \item \cs{bulanTahun}\marg{Bulan Tahun}: bulan dan tahun publikasi.
+%%   \item \cs{tahunAkademik}\marg{tahun akademik}: teks tahun akademik
+%%         untuk halaman surat pernyataan.
+%%   \item \cs{pembimbing}\marg{nama}: nama dosen pembimbing;
+%%         ulangi untuk ko-pembimbing.
+%%   \item \cs{penguji}\marg{nama}: nama dosen penguji;
+%%         ulangi untuk setiap penguji.
+%%   \item \cs{tanggalSiapSidang}\marg{tanggal}: tanggal penyerahan
+%%         ke penguji/sekretariat.
+%%   \item \cs{tanggalLulus}\marg{tanggal}: tanggal kelulusan sidang.
+%%   \item \cs{kota}\marg{kota}: kota tempat kuliah (contoh: \emph{Depok}).
+%%         (bawaan: \texttt{Depok}).
+%%   \item \cs{setmakaraimage}\marg{jalur}: mengganti jalur gambar
+%%         logo Makara UI.
+%%   \item \cs{pengesahanPDF}\marg{berkas}: lembar pengesahan dari PDF
+%%         eksternal; menggantikan tata letak bawaan jika diisi.
+%%   \item \cs{namaTipeTesis}\marg{ID}\marg{EN}: mengganti tampilan nama
+%%         tipe karya pada halaman sampul dan halaman awal.
+%%   \item \cs{kampusMerdekaType}\marg{nama kegiatan}: nama kegiatan Kampus Merdeka
+%%         (contoh: \emph{MSIB Batch 7}); dipakai di halaman pengesahan
+%%         saat \texttt{type=Kampus Merdeka}.
+%%   \item \cs{mitra}\marg{jabatan}\marg{instansi}: data penanggung jawab mitra
+%%         untuk halaman pengesahan Kampus Merdeka.
+%%         Contoh: \cs{mitra}\texttt{\{Cohort Manager\}\{Bangkit Academy 2024\}}.
+%%   \item \cs{aiplatform}\marg{nama platform}: nama platform AI yang dipakai
+%%         (contoh: \emph{GitHub Copilot}).
+%%         Halaman pernyataan AI selalu dicetak.
+%%         Jika kosong, halaman menyatakan bahwa tidak ada AI yang digunakan.
+%%         Jika berisi, halaman menyatakan penggunaan AI pada platform tersebut
+%%         untuk tujuan yang diberikan oleh \cs{tujuanai}.
+%%   \item \cs{tujuanai}\marg{tujuan}: tujuan penggunaan platform AI
+%%         (contoh: \emph{membantu penulisan kode}).
+%%         Hanya ditampilkan jika \cs{aiplatform} tidak kosong.
+%% \end{itemize}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Front Matter / Halaman Awal}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% Content for the front-matter pages is declared before
+%% \cs{begin}\marg{document} using the environments below, then rendered
+%% all at once by \cs{makefrontmatter}.
+%%
+%% \begin{function}{abstrakID}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{abstrakID} \ldots \cs{end}\marg{abstrakID}
+%%     \cs{katakunci}\marg{keywords}
+%%   \end{syntax}
+%%   Indonesian abstract text.  \cs{katakunci} supplies the comma-separated
+%%   keywords; it must follow immediately after \cs{end}\marg{abstrakID}.
+%% \end{function}
+%%
+%% \begin{function}{abstractEN}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{abstractEN} \ldots \cs{end}\marg{abstractEN}
+%%     \cs{keywords}\marg{keywords}
+%%   \end{syntax}
+%%   English abstract text, with \cs{keywords} for the keyword list.
+%% \end{function}
+%%
+%% \begin{function}{kataPengantar}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{kataPengantar} \ldots \cs{end}\marg{kataPengantar}
+%%   \end{syntax}
+%%   Preface text.  Optional; typically omitted for \texttt{Kampus Merdeka}
+%%   and internship reports.
+%% \end{function}
+
+%% \begin{function}{pernyataanOrisinalitas}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{pernyataanOrisinalitas} \ldots \cs{end}\marg{pernyataanOrisinalitas}
+%%   \end{syntax}
+%%   Optional override body for the originality statement page.
+%% \end{function}
+
+%% \begin{function}{persetujuanPublikasi}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{persetujuanPublikasi} \ldots \cs{end}\marg{persetujuanPublikasi}
+%%   \end{syntax}
+%%   Optional override body for the publication-consent page.
+%% \end{function}
+%%
+%% \begin{function}{\makefrontmatter}
+%%   Typesets all front-matter pages in the required order: cover, inner
+%%   title page, approval page, originality statement, AI-use declaration,
+%%   declaration letter, abstract pages, and list pages.
+%%   Preface and publication-consent pages are included for thesis/dissertation
+%%   flows (and omitted for internship and Kampus Merdeka flows).
+%%   The AI-use declaration
+%%   (states AI use if \cs{aiplatform} is set, otherwise states no AI was used),
+%%   and table/list pages are always handled by this command.
+%% \end{function}
+
+%% \begin{function}{pernyataanAI}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{pernyataanAI} \ldots \cs{end}\marg{pernyataanAI}
+%%   \end{syntax}
+%%   Optional override body for the AI-use declaration page.
+%%   If this environment is omitted, the class generates the statement
+%%   automatically from \cs{aiplatform} and \cs{tujuanai}.
+%% \end{function}
+
+%% \begin{function}{suratPernyataan}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{suratPernyataan} \ldots \cs{end}\marg{suratPernyataan}
+%%   \end{syntax}
+%%   Optional override body for the declaration letter page.
+%% \end{function}
+%%
+%% \begin{function}{\makebibliography}
+%%   Prints the bibliography.  Call after all body chapters.
+%% \end{function}
+%%
+%% \begin{function}{\makeglossarypage}
+%%   Prints the glossary (monograph format only).
+%%   Call after \cs{makebibliography}.
+%% \end{function}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Konten halaman awal dideklarasikan menggunakan lingkungan di bawah
+%% sebelum \cs{begin}\marg{document}, lalu dicetak sekaligus oleh
+%% \cs{makefrontmatter}.
+%%
+%% \begin{itemize}
+%%   \item Lingkungan \env{abstrakID}: teks abstrak bahasa Indonesia,
+%%         diikuti \cs{katakunci}\marg{kata kunci}.
+%%   \item Lingkungan \env{abstractEN}: teks abstrak bahasa Inggris,
+%%         diikuti \cs{keywords}\marg{keywords}.
+%%   \item Lingkungan \env{kataPengantar}: kata pengantar (opsional).
+%%   \item Lingkungan \env{pernyataanOrisinalitas}: isi kustom untuk halaman
+%%         pernyataan orisinalitas (opsional).
+%%   \item Lingkungan \env{persetujuanPublikasi}: isi kustom untuk halaman
+%%         persetujuan publikasi (opsional).
+%%   \item \cs{makefrontmatter}: mencetak seluruh halaman awal secara
+%%         berurutan: sampul, judul dalam, pengesahan, orisinalitas,
+%%         pernyataan AI, surat pernyataan,
+%%         abstrak, serta halaman daftar.
+%%         Kata pengantar dan persetujuan publikasi dicetak pada alur
+%%         Skripsi/Tesis/Disertasi, dan dilewati pada alur KP/MBKM.
+%%   \item Lingkungan \env{pernyataanAI}: isi kustom untuk halaman
+%%         pernyataan penggunaan AI (opsional).
+%%   \item Lingkungan \env{suratPernyataan}: isi kustom untuk halaman
+%%         surat pernyataan (opsional).
+%%   \item \cs{makebibliography}: mencetak daftar referensi.
+%%   \item \cs{makeglossarypage}: mencetak daftar istilah (hanya monograf).
+%% \end{itemize}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Content Layout / Tata Letak Isi}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection{Document Spacing Behavior / Perilaku Spasi Dokumen}
+%%
+%% \subsubsection*{English}
+%%
+%% Spacing behavior is controlled by the public class option
+%% \texttt{spacing=calibrated\textbar semantic}.
+%%
+%% \begin{itemize}
+%%   \item \texttt{spacing=calibrated}: uses the spacing profile tuned to
+%%         match current UI formatting expectations.
+%%   \item \texttt{spacing=semantic}: uses semantic one-and-a-half spacing
+%%         (more readable for iterative drafting).
+%% \end{itemize}
+%%
+%% In normal usage, no manual spacing constant tuning is required.
+%% Advanced spacing customisation is documented in Part II
+%% (Maintainer Guide).
+%%
+%% \subsubsection*{Bahasa Indonesia}
+%%
+%% Perilaku spasi dikendalikan oleh opsi kelas publik
+%% \texttt{spacing=calibrated\textbar semantic}.
+%%
+%% \begin{itemize}
+%%   \item \texttt{spacing=calibrated}: memakai profil spasi yang sudah
+%%         disetel agar sesuai ketentuan format UI saat ini.
+%%   \item \texttt{spacing=semantic}: memakai spasi satu-setengah untuk
+%%         kebutuhan penulisan dan telaah draf.
+%% \end{itemize}
+%%
+%% Untuk pemakaian normal, pengguna tidak perlu melakukan penyetelan
+%% konstanta spasi secara manual. Kustomisasi spasi lanjutan dijelaskan pada Bagian II
+%% (Panduan Maintainer).
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Content Commands / Perintah Konten}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% \subsubsection*{Label shorthand aliases.}
+%% Expand to the localised label word; combine with \cs{ref} for
+%% cross-references.
+%%
+%% \begin{function}{\bab, \sect, \pic, \tab, \equ, \lst, \apdx}
+%%   Label words for chapters, sections, figures, tables, equations,
+%%   code listings, and appendices, respectively.
+%%   Example: \cs{pic}~\cs{ref}\{fig:example\} produces \emph{Gambar~1.1}.
+%% \end{function}
+%%
+%% \subsubsection*{Text formatting.}
+%%
+%% \begin{function}{\f}
+%%   \begin{syntax}
+%%     \cs{f}\marg{term}
+%%   \end{syntax}
+%%   Foreign-language or domain-specific term in italic.
+%% \end{function}
+%%
+%% \begin{function}{\bo}
+%%   \begin{syntax}
+%%     \cs{bo}\marg{text}
+%%   \end{syntax}
+%%   Bold text.
+%% \end{function}
+%%
+%% \begin{function}{\bi}
+%%   \begin{syntax}
+%%     \cs{bi}\marg{text}
+%%   \end{syntax}
+%%   Bold italic text.
+%% \end{function}
+%%
+%% \begin{function}{\code}
+%%   \begin{syntax}
+%%     \cs{code}\marg{snippet}
+%%   \end{syntax}
+%%   Inline code in typewriter font.
+%% \end{function}
+%%
+%% \begin{function}{\m, \mc}
+%%   \begin{syntax}
+%%     \cs{m}\marg{expr}\quad \cs{mc}\marg{expr}
+%%   \end{syntax}
+%%   Bold-math inline (\cs{m}) and display (\cs{mc}).
+%% \end{function}
+%%
+%% \subsubsection*{Utility.}
+%%
+%% \begin{function}{\todo}
+%%   \begin{syntax}
+%%     \cs{todo}\marg{text}
+%%   \end{syntax}
+%%   Highlighted placeholder box.  Remove all \cs{todo} calls before
+%%   final submission.
+%% \end{function}
+%%
+%% \begin{function}{\captionsource, \captionsourcecont}
+%%   \begin{syntax}
+%%     \cs{captionsource}\marg{caption}\marg{source}
+%%     \cs{captionsourcecont}\marg{caption}\marg{source}
+%%   \end{syntax}
+%%   Caption with a source attribution line.  Use \cs{captionsourcecont}
+%%   on continuation pages of multi-page tables. Caption text is 12pt;
+%%   the source line is 10pt.
+%% \end{function}
+%%
+%% \begin{function}{\inpdf, \putpdf}
+%%   \begin{syntax}
+%%     \cs{inpdf}\marg{filename}\quad \cs{putpdf}\marg{filename}
+%%   \end{syntax}
+%%   Insert an external PDF (filename without the \texttt{.pdf} extension).
+%%   \cs{inpdf} preserves the running header; \cs{putpdf} inserts bare pages.
+%% \end{function}
+%%
+%% \begin{function}{\blankpage}
+%%   \begin{syntax}
+%%     \cs{blankpage}
+%%   \end{syntax}
+%%   Insert a blank page (no header, footer, or page number).
+%%   In \texttt{print=oneside} mode this is a no-op.
+%% \end{function}
+%%
+%% \begin{function}{\addequtotoc}
+%%   \begin{syntax}
+%%     \cs{addequtotoc}\marg{label}\marg{caption text}
+%%   \end{syntax}
+%%   Manually register a labelled equation in the List of Equations.
+%%   Call immediately after the equation environment, passing the
+%%   \cs{label} key and the equation description.
+%% \end{function}
+%%
+%% \begin{function}{\minimumListEntries}
+%%   \begin{syntax}
+%%     \cs{minimumListEntries}\marg{N}
+%%   \end{syntax}
+%%   Set the minimum number of entries a list must have before its page
+%%   is included in the front matter.  The default is \texttt{0}
+%%   (always include).  Call in the preamble.
+%% \end{function}
+%%
+%% \subsubsection*{Page control.}
+%%
+%% \begin{function}{\clearchapter}
+%%   Flush all floats, issue a page break, and advance to the correct
+%%   physical side for the next chapter (odd page in two-sided print,
+%%   accounting for intentionally unnumbered blank pages).  In journal
+%%   format this is a no-op.  Called automatically between chapters;
+%%   expose it explicitly only when the automatic call is insufficient.
+%% \end{function}
+%%
+%% \begin{function}{\forceclearchapter}
+%%   Like \cs{clearchapter} but always inserts a blank verso page in
+%%   two-sided print regardless of the current page parity.  Use this
+%%   when an unconditional physical blank page is required.  In journal
+%%   format this is a no-op.
+%% \end{function}
+%%
+%% \subsubsection*{Header and footer customization (monograph only).}
+%%
+%% The following three commands reconfigure the \pkg{fancyhdr} running
+%% styles for chapter body pages.  They are stubs (no-ops) in journal
+%% format.  Call them in the preamble or at the start of the body.
+%%
+%% \begin{function}{\setfirstheaderfooter}
+%%   Configure the header and footer for the first page of each chapter
+%%   (the page that uses the \texttt{plain} style).
+%% \end{function}
+%%
+%% \begin{function}{\setoddevenheader}
+%%   Configure the running header for chapter body pages.  In two-sided
+%%   print, the page number appears on the outer margin of each page.
+%% \end{function}
+%%
+%% \begin{function}{\setoddevenfooter}
+%%   Configure the running footer for chapter body pages (institutional
+%%   text placed on the outer margin in two-sided print).
+%% \end{function}
+%%
+%% \subsubsection*{Table-of-contents customisation.}
+%%
+%% \begin{function}{\enableboldchapterintoc, \disableboldchapterintoc}
+%%   Toggle bold formatting for chapter entries in the table of contents.
+%%   The class default is bold; call \cs{disableboldchapterintoc} to
+%%   revert to normal weight.
+%% \end{function}
+%%
+%% \begin{function}{\CAPinToC, \noCAPinToC}
+%%   Toggle all-caps rendering of chapter titles in the table of
+%%   contents.  \cs{CAPinToC} is the default for Indonesian-language
+%%   documents; \cs{noCAPinToC} is the default for English-language
+%%   documents.
+%% \end{function}
+%%
+%% \begin{function}{\enablechapterseparatorspaceinlists, \disablechapterseparatorspaceinlists}
+%%   Toggle chapter-separator vertical spacing in list pages.  The default is
+%%   enabled.  It applies to all list pages, including user-defined lists from
+%%   \cs{newUIlist}, and excludes the appendix list (Daftar Lampiran).
+%% \end{function}
+%%
+%% \subsubsection*{Custom lists.}
+%%
+%% \begin{function}{\newUIlist}
+%%   Declares a new list-of-objects with a custom caption type.
+%%   \begin{itemize}
+%%     \item \meta{ext}: file-extension stem (e.g., \texttt{lotr}).
+%%     \item \meta{type}: \cs{caption} type name
+%%           (e.g., \texttt{transformationrule}).
+%%     \item \meta{label}: label word used with \cs{ref}
+%%           (e.g., \texttt{Aturan Transformasi}).
+%%     \item \meta{list title}: list page heading
+%%           (e.g., \texttt{Daftar Aturan Transformasi}).
+%%   \end{itemize}
+%%   Declare in the preamble; the list automatically appears in the
+%%   front matter.
+%% \end{function}
+%%
+%% \subsubsection*{Long tables.}
+%%
+%% \begin{function}{UIlongtable}
+%%   \begin{syntax}
+%%     \cs{UIlongtablecaption}\marg{caption text}
+%%     \cs{UIlongtablelabel}\marg{label key}
+%%     \cs{UIlongtablecols}\marg{N}
+%%     \cs{UIlongtablefirsthead}\marg{header rows}
+%%     \cs{UIlongtablehead}\marg{continuation header rows}
+%%     \cs{UIlongtabletail}\marg{footer rows}
+%%     \cs{UIlongtablelasttail}\marg{last-section footer rows}
+%%     \cs{begin}\{UIlongtable\}\marg{column spec} \meta{rows} \cs{end}\{UIlongtable\}
+%%   \end{syntax}
+%%   Long table that can span pages or columns.
+%%   Call the seven setup commands \emph{before} \cs{begin}\{UIlongtable\}.
+%%   In one-column mode (\texttt{format=monograph}), behavior follows
+%%   standard multi-page table flow.
+%%   In two-column mode (\texttt{format=journal, columns=2}), the
+%%   environment keeps table chunks readable across column/page continuations.
+%%   \cs{UIlongtablecols}\marg{N} sets the total number of columns.
+%%   When set, the class prepends
+%%   \enquote{\tablename~N: caption~\textit{(sambungan)}}
+%%   to \cs{UIlongtablehead} for continuation parts.
+%%   If the caption is wider than the natural table width, continuation
+%%   columns can expand. Omit \cs{UIlongtablecols} and define
+%%   \cs{UIlongtablehead} manually to prevent this.
+%%   The column specification uses the same syntax as \env{tabular}.
+%% \end{function}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% \subsubsection*{Label pintasan.}
+%% Mengembang ke kata label yang sesuai bahasa dokumen;
+%% gabungkan dengan \cs{ref} untuk referensi silang.
+%%
+%% \begin{function}{\bab, \sect, \pic, \tab, \equ, \lst, \apdx}
+%%   Kata label untuk bab, subbab, gambar, tabel, persamaan,
+%%   kode program, dan lampiran.
+%%   Contoh: \cs{pic}~\cs{ref}\{fig:example\} menghasilkan
+%%   \emph{Gambar~1.1}.
+%% \end{function}
+%%
+%% \subsubsection*{Pemformatan teks.}
+%%
+%% \begin{function}{\f}
+%%   \begin{syntax}
+%%     \cs{f}\marg{istilah}
+%%   \end{syntax}
+%%   Istilah asing atau istilah domain dalam cetak miring.
+%% \end{function}
+%%
+%% \begin{function}{\bo}
+%%   \begin{syntax}
+%%     \cs{bo}\marg{teks}
+%%   \end{syntax}
+%%   Cetak tebal.
+%% \end{function}
+%%
+%% \begin{function}{\bi}
+%%   \begin{syntax}
+%%     \cs{bi}\marg{teks}
+%%   \end{syntax}
+%%   Cetak tebal-miring.
+%% \end{function}
+%%
+%% \begin{function}{\code}
+%%   \begin{syntax}
+%%     \cs{code}\marg{cuplikan}
+%%   \end{syntax}
+%%   Kode sebaris dengan huruf mesin tik.
+%% \end{function}
+%%
+%% \begin{function}{\m, \mc}
+%%   \begin{syntax}
+%%     \cs{m}\marg{ekspresi}\quad \cs{mc}\marg{ekspresi}
+%%   \end{syntax}
+%%   Persamaan matematika tebal untuk mode sebaris (\cs{m})
+%%   dan mode tampilan (\cs{mc}).
+%% \end{function}
+%%
+%% \subsubsection*{Utilitas.}
+%%
+%% \begin{function}{\todo}
+%%   \begin{syntax}
+%%     \cs{todo}\marg{teks}
+%%   \end{syntax}
+%%   Kotak placeholder berpenyorot. Semua \cs{todo} harus dihapus
+%%   sebelum pengumpulan akhir.
+%% \end{function}
+%%
+%% \begin{function}{\captionsource, \captionsourcecont}
+%%   \begin{syntax}
+%%     \cs{captionsource}\marg{judul}\marg{sumber}
+%%     \cs{captionsourcecont}\marg{judul}\marg{sumber}
+%%   \end{syntax}
+%%   Caption dengan baris atribusi sumber.
+%%   Gunakan \cs{captionsourcecont} pada halaman lanjutan tabel multi-halaman.
+%%   Teks caption berukuran 12pt, baris sumber berukuran 10pt.
+%% \end{function}
+%%
+%% \begin{function}{\inpdf, \putpdf}
+%%   \begin{syntax}
+%%     \cs{inpdf}\marg{berkas}\quad \cs{putpdf}\marg{berkas}
+%%   \end{syntax}
+%%   Menyisipkan PDF eksternal (nama berkas tanpa ekstensi \texttt{.pdf}).
+%%   \cs{inpdf} mempertahankan header berjalan, sedangkan \cs{putpdf}
+%%   menyisipkan halaman polos.
+%% \end{function}
+%%
+%% \begin{function}{\blankpage}
+%%   \begin{syntax}
+%%     \cs{blankpage}
+%%   \end{syntax}
+%%   Menyisipkan halaman kosong (tanpa header, footer, atau nomor halaman).
+%%   Pada mode \texttt{print=oneside}, perintah ini tidak melakukan apa pun.
+%% \end{function}
+%%
+%% \begin{function}{\addequtotoc}
+%%   \begin{syntax}
+%%     \cs{addequtotoc}\marg{label}\marg{teks caption}
+%%   \end{syntax}
+%%   Mendaftarkan persamaan berlabel secara manual ke Daftar Persamaan.
+%%   Panggil tepat setelah lingkungan persamaan, dengan memberikan
+%%   kunci \cs{label} dan deskripsi persamaan.
+%% \end{function}
+%%
+%% \begin{function}{\minimumListEntries}
+%%   \begin{syntax}
+%%     \cs{minimumListEntries}\marg{N}
+%%   \end{syntax}
+%%   Menetapkan jumlah minimum entri agar halaman daftar dimunculkan
+%%   pada halaman awal. Nilai bawaan \texttt{0} (selalu ditampilkan).
+%%   Panggil di preamble.
+%% \end{function}
+%%
+%% \subsubsection*{Kontrol halaman.}
+%%
+%% \begin{function}{\clearchapter}
+%%   Mengosongkan semua float, memutus halaman, lalu berpindah ke sisi
+%%   fisik yang benar untuk bab berikutnya (halaman ganjil pada cetak dua sisi,
+%%   dengan memperhitungkan halaman kosong tanpa nomor yang memang disisipkan).
+%%   Pada format jurnal, perintah ini tidak melakukan apa pun.
+%%   Dipanggil otomatis antar-bab, paparkan manual hanya jika pemanggilan
+%%   otomatis belum cukup.
+%% \end{function}
+%%
+%% \begin{function}{\forceclearchapter}
+%%   Mirip \cs{clearchapter}, tetapi selalu menyisipkan halaman verso kosong
+%%   pada cetak dua sisi tanpa melihat paritas halaman saat ini.
+%%   Gunakan saat halaman kosong fisik harus selalu ada.
+%%   Pada format jurnal, perintah ini tidak melakukan apa pun.
+%% \end{function}
+%%
+%% \subsubsection*{Kustomisasi header dan footer (khusus monograf).}
+%%
+%% Tiga perintah berikut mengatur ulang gaya halaman berjalan \pkg{fancyhdr}
+%% untuk halaman isi bab. Pada format jurnal, ketiganya adalah
+%% \emph{no-op}.
+%% Panggil di preamble atau di awal isi dokumen.
+%%
+%% \begin{function}{\setfirstheaderfooter}
+%%   Mengatur header dan footer untuk halaman pertama setiap bab
+%%   (halaman dengan gaya \texttt{plain}).
+%% \end{function}
+%%
+%% \begin{function}{\setoddevenheader}
+%%   Mengatur header berjalan untuk halaman isi bab.
+%%   Pada cetak dua sisi, nomor halaman ditempatkan di margin luar.
+%% \end{function}
+%%
+%% \begin{function}{\setoddevenfooter}
+%%   Mengatur footer berjalan untuk halaman isi bab
+%%   (teks institusi pada margin luar untuk cetak dua sisi).
+%% \end{function}
+%%
+%% \subsubsection*{Kustomisasi daftar isi.}
+%%
+%% \begin{function}{\enableboldchapterintoc, \disableboldchapterintoc}
+%%   Mengaktifkan/menonaktifkan format tebal untuk entri bab pada Daftar Isi.
+%%   Bawaan kelas adalah tebal; panggil \cs{disableboldchapterintoc}
+%%   untuk kembali ke bobot normal.
+%% \end{function}
+%%
+%% \begin{function}{\CAPinToC, \noCAPinToC}
+%%   Mengaktifkan/menonaktifkan kapital semua pada judul bab di Daftar Isi.
+%%   \cs{CAPinToC} menjadi bawaan untuk dokumen berbahasa Indonesia;
+%%   \cs{noCAPinToC} menjadi bawaan untuk dokumen berbahasa Inggris.
+%% \end{function}
+%%
+%% \begin{function}{\enablechapterseparatorspaceinlists, \disablechapterseparatorspaceinlists}
+%%   Mengaktifkan/menonaktifkan jarak vertikal pemisah antar-bab pada halaman
+%%   daftar. Bawaan kelas adalah aktif. Berlaku untuk semua halaman daftar,
+%%   termasuk daftar kustom dari \cs{newUIlist}, dan tetap mengecualikan
+%%   Daftar Lampiran.
+%% \end{function}
+%%
+%% \subsubsection*{Daftar kustom.}
+%%
+%% \begin{function}{\newUIlist}
+%%   Mendeklarasikan daftar objek baru dengan tipe caption kustom.
+%%   \begin{itemize}
+%%     \item \meta{ext}: stem ekstensi berkas (mis.\ \texttt{lotr}).
+%%     \item \meta{type}: nama tipe \cs{caption}
+%%           (mis.\ \texttt{transformationrule}).
+%%     \item \meta{label}: kata label untuk \cs{ref}
+%%           (mis.\ \texttt{Aturan Transformasi}).
+%%     \item \meta{list title}: judul halaman daftar
+%%           (mis.\ \texttt{Daftar Aturan Transformasi}).
+%%   \end{itemize}
+%%   Deklarasikan di preamble; daftar otomatis muncul di halaman awal.
+%% \end{function}
+%%
+%% \subsubsection*{Tabel panjang.}
+%%
+%% \begin{function}{UIlongtable}
+%%   \begin{syntax}
+%%     \cs{UIlongtablecaption}\marg{teks judul}
+%%     \cs{UIlongtablelabel}\marg{kunci label}
+%%     \cs{UIlongtablecols}\marg{N}
+%%     \cs{UIlongtablefirsthead}\marg{baris header}
+%%     \cs{UIlongtablehead}\marg{baris header lanjutan}
+%%     \cs{UIlongtabletail}\marg{baris footer}
+%%     \cs{UIlongtablelasttail}\marg{baris footer bagian akhir}
+%%     \cs{begin}\{UIlongtable\}\marg{spesifikasi kolom} \meta{baris} \cs{end}\{UIlongtable\}
+%%   \end{syntax}
+%%   Tabel panjang yang dapat melintasi halaman atau kolom.
+%%   Jalankan tujuh perintah setup \emph{sebelum}
+%%   \cs{begin}\{UIlongtable\}.
+%%   Pada mode satu kolom (\texttt{format=monograph}), perilaku mengikuti
+%%   alur tabel multi-halaman standar.
+%%   Pada mode dua kolom (\texttt{format=journal, columns=2}), lingkungan
+%%   ini menjaga keterbacaan potongan tabel saat tabel berlanjut
+%%   lintas kolom/halaman.
+%%   \cs{UIlongtablecols}\marg{N} menetapkan jumlah total kolom.
+%%   Jika diisi, kelas menambahkan otomatis
+%%   \enquote{\tablename~N: judul~\textit{(sambungan)}}
+%%   pada awal \cs{UIlongtablehead} untuk bagian lanjutan.
+%%   Jika judul lebih lebar dari lebar alami tabel, kolom lanjutan bisa melebar.
+%%   Hilangkan \cs{UIlongtablecols} dan definisikan \cs{UIlongtablehead}
+%%   secara manual untuk mencegah hal ini.
+%%   Spesifikasi kolom memakai sintaks yang sama dengan \env{tabular}.
+%% \end{function}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Appendices / Lampiran}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% \begin{function}{lampiranBab}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{lampiranBab}\marg{title}
+%%     \ldots
+%%     \cs{end}\marg{lampiranBab}
+%%   \end{syntax}
+%%   Numbered appendix environment.  Each \env{lampiranBab} increments the
+%%   appendix counter (A, B, C, \ldots), registers an entry in the Appendix
+%%   List, and (in monograph format) installs a two-line running header
+%%   showing the appendix number and title.  Continuation pages show
+%%   \emph{(lanjutan)} or \emph{(continued)} after the title.
+%% \end{function}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% \begin{itemize}
+%%   \item Lingkungan \env{lampiranBab}\marg{judul}: lampiran bernomor. Setiap
+%%         \env{lampiranBab} menambah penghitung lampiran (A, B, C, \ldots),
+%%         mendaftarkan entri ke Daftar Lampiran, dan (format monograf)
+%%         memasang \emph{header} berjalan dua baris berisi nomor dan judul
+%%         lampiran. Halaman lanjutan menampilkan sufiks \emph{(lanjutan)}.
+%% \end{itemize}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Table Column Types / Jenis Kolom Tabel}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The class defines nine shorthand column types for common alignments.
+%% All accept one argument specifying the column width.
+%%
+%% \begin{center}
+%% \begin{tabular}{l l l}
+%%   \toprule
+%%   \textbf{Type} & \textbf{Vertical} & \textbf{Horizontal alignment} \\
+%%   \midrule
+%%   \texttt{P\{w\}} & top    & left  \\
+%%   \texttt{L\{w\}} & middle & left  \\
+%%   \texttt{B\{w\}} & bottom & left  \\
+%%   \texttt{U\{w\}} & top    & centre \\
+%%   \texttt{C\{w\}} & middle & centre \\
+%%   \texttt{O\{w\}} & bottom & centre \\
+%%   \texttt{E\{w\}} & top    & right \\
+%%   \texttt{R\{w\}} & middle & right \\
+%%   \texttt{T\{w\}} & bottom & right \\
+%%   \bottomrule
+%% \end{tabular}
+%% \end{center}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Kelas mendefinisikan sembilan tipe kolom singkat untuk penyelarasan umum.
+%% Semua menerima satu argumen berupa lebar kolom.
+%%
+%% \begin{center}
+%% \begin{tabular}{l l l}
+%%   \toprule
+%%   \textbf{Tipe} & \textbf{Vertikal} & \textbf{Horizontal} \\
+%%   \midrule
+%%   \texttt{P\{l\}} & atas    & kiri \\
+%%   \texttt{L\{l\}} & tengah  & kiri \\
+%%   \texttt{B\{l\}} & bawah   & kiri \\
+%%   \texttt{U\{l\}} & atas    & tengah \\
+%%   \texttt{C\{l\}} & tengah  & tengah \\
+%%   \texttt{O\{l\}} & bawah   & tengah \\
+%%   \texttt{E\{l\}} & atas    & kanan \\
+%%   \texttt{R\{l\}} & tengah  & kanan \\
+%%   \texttt{T\{l\}} & bawah   & kanan \\
+%%   \bottomrule
+%% \end{tabular}
+%% \end{center}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Journal Format / Format Jurnal}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The following environments and switches are only relevant when
+%% \texttt{format=journal}.  In monograph format they degrade gracefully
+%% to standard \env{figure} and \env{table} wrappers.
+%%
+%% Journal layout rules applied by the class:
+%% \begin{itemize}
+%%   \item Front matter pages use 3cm margins on all sides.
+%%   \item Body pages use 3cm top/bottom and 2cm left/right margins.
+%%   \item Abstrak and Abstract pages use Arabic numbering starting from page 1.
+%%   \item Paragraphs are fully justified; default paragraph style is \texttt{paragraph=noindent}.
+%% \end{itemize}
+%%
+%% \begin{function}{UIwidetable, UIwidefigure}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{UIwidetable}\oarg{placement} \ldots \cs{end}\marg{UIwidetable}
+%%     \cs{begin}\marg{UIwidefigure}\oarg{placement} \ldots \cs{end}\marg{UIwidefigure}
+%%   \end{syntax}
+%%   Full-width float (\texttt{table*}/\texttt{figure*}) in two-column journal
+%%   mode; falls back to single-column \env{table}/\env{figure} in monograph.
+%% \end{function}
+%%
+%% \begin{function}{UIwideblock}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{UIwideblock}\oarg{width} \ldots \cs{end}\marg{UIwideblock}
+%%   \end{syntax}
+%%   Full-width non-float block spanning both columns in two-column mode,
+%%   using the \pkg{cuted}/\env{strip} mechanism.  The optional argument
+%%   overrides the block width (default: \cs{textwidth}).
+%% \end{function}
+%%
+%% \begin{function}{UIlandscape}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{UIlandscape} \ldots \cs{end}\marg{UIlandscape}
+%%   \end{syntax}
+%%   Landscape single-column pages in two-column journal mode.
+%% \end{function}
+%%
+%% \begin{function}{UIfullwidthpages}
+%%   \begin{syntax}
+%%     \cs{begin}\marg{UIfullwidthpages} \ldots \cs{end}\marg{UIfullwidthpages}
+%%   \end{syntax}
+%%   Temporarily switch to one-column mode so that enclosed content spans
+%%   the full text width.  When the environment ends, two-column mode is
+%%   restored.  \env{UIlandscape} is implemented on top of this environment.
+%%   In monograph mode this environment is a no-op.
+%% \end{function}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Lingkungan berikut hanya relevan pada \texttt{format=journal}.
+%% Pada format monograf, semuanya terdegradasi ke \env{figure}/\env{table} biasa.
+%%
+%% Aturan tata letak jurnal yang diterapkan kelas:
+%% \begin{itemize}
+%%   \item Halaman awal memakai margin 3cm pada semua sisi.
+%%   \item Halaman isi memakai margin atas/bawah 3cm dan kiri/kanan 2cm.
+%%   \item Halaman Abstrak dan Abstract memakai nomor Arab mulai dari halaman 1.
+%%   \item Paragraf rata kiri-kanan; default gaya paragraf adalah \texttt{paragraph=noindent}.
+%% \end{itemize}
+%%
+%% \begin{itemize}
+%%   \item Lingkungan \env{UIwidetable}\oarg{posisi} / \env{UIwidefigure}\oarg{posisi}
+%%         : \textit{float} penuh-lebar (\texttt{table*}/\texttt{figure*})
+%%         pada mode dua kolom. Pada monograf, kembali menjadi
+%%         \env{table}/\env{figure} biasa.
+%%   \item Lingkungan \env{UIwideblock}\oarg{lebar}: blok penuh-lebar non-\textit{float}
+%%         yang mencakup kedua kolom. Blok ini memakai mekanisme
+%%         \env{strip} dari \pkg{cuted}.
+%%   \item Lingkungan \env{UIlandscape}: halaman landscape satu kolom di mode dua kolom.
+%%   \item Lingkungan \env{UIfullwidthpages}: beralih sementara ke mode satu kolom
+%%         agar konten di dalamnya mencakup penuh lebar teks. Mode dua kolom
+%%         dipulihkan saat lingkungan ditutup. Pada mode monograf,
+%%         lingkungan ini tidak melakukan apa-apa.
+%% \end{itemize}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Glossary Integration / Integrasi Glosarium}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The class pre-configures \pkg{glossaries-extra}.
+%% Define entries in \texttt{config/glossary.tex} and load them in the
+%% preamble with:
+%% \begin{verbatim}
+%%   \input{config/glossary}
+%% \end{verbatim}
+%%
+%% A typical entry looks like:
+%% \begin{verbatim}
+%%   \newglossaryentry{ml}{
+%%     name={machine learning},
+%%     description={a field of AI that enables ...}}
+%%   \newacronym{ml}{ML}{machine learning}
+%% \end{verbatim}
+%%
+%% Use \cs{gls}\marg{key} to reference an entry: the first use expands
+%% to the full form with the acronym in parentheses; subsequent uses
+%% produce the short form.  \cs{Gls} capitalises the first letter;
+%% \cs{glspl} produces the plural.
+%%
+%% Print the glossary with \cs{makeglossarypage} in the back matter.
+%%
+%% \begin{quotation}\noindent
+%% \textbf{Note.}  Glossary entries are resolved by running
+%% \texttt{makeglossaries} between two \LaTeX{} passes.  The
+%% \texttt{latexmkrc} file included in \texttt{example/} configures
+%% this automatically.
+%% \end{quotation}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Kelas mengonfigurasi \pkg{glossaries-extra} secara otomatis.
+%% Definisikan entri di \texttt{config/glossary.tex} dan muat di preamble
+%% dengan \cs{input}\marg{config/glossary}.
+%%
+%% Contoh entri:
+%% \begin{verbatim}
+%%   \newglossaryentry{ml}{
+%%     name={machine learning},
+%%     description={bidang AI yang memungkinkan ...}}
+%%   \newacronym{ml}{ML}{machine learning}
+%% \end{verbatim}
+%%
+%% Gunakan \cs{gls}\marg{kunci} untuk merujuk entri; penggunaan pertama
+%% mencetak bentuk lengkap dengan singkatan dalam tanda kurung, penggunaan
+%% berikutnya hanya singkatan.  \cs{Gls} mengawali huruf kapital;
+%% \cs{glspl} menghasilkan bentuk jamak.
+%% Cetak daftar istilah di bagian belakang dengan \cs{makeglossarypage}.
+%%
+%% \begin{quotation}\noindent
+%% \textbf{Catatan.}  Entri glosarium diselesaikan dengan menjalankan
+%% \texttt{makeglossaries} di antara dua \textit{pass} \LaTeX{}.
+%% Berkas \texttt{latexmkrc} yang disertakan di \texttt{example/}
+%% mengonfigurasi ini secara otomatis.
+%% \end{quotation}
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Code Listings / Tampilan Kode Program}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The class loads \pkg{listings} and pre-defines language styles for
+%% Python, Java, C, C++, JavaScript, SQL, HTML, and Bash.  Additional
+%% definitions can be placed in \texttt{config/proglangdef.sty}.
+%%
+%% \textbf{Listing from a file.}  Include a source file with:
+%% \begin{verbatim}
+%%   \lstinputlisting[language=Python, numbers=left,
+%%     caption={My snippet}, label=code:snippet]
+%%     {assets/codes/my-snippet.py}
+%% \end{verbatim}
+%%
+%% \textbf{Inline listing.}  For a short snippet inside the text, use:
+%% \begin{verbatim}
+%%   \begin{lstlisting}[language=Java, caption={Hello World}]
+%%   public class Hello { ... }
+%%   \end{lstlisting}
+%% \end{verbatim}
+%%
+%% \textbf{Inline code.}  For a single identifier or keyword in running
+%% text, use \cs{code}\marg{text} (defined by the class as
+%% \cs{lstinline}\texttt{|...|}).
+%%
+%% Refer to a listing with \cs{lstlistingname}~\cs{ref}\{code:snippet\}
+%% or the shorter alias \cs{lst}~\cs{ref}\{code:snippet\}.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Kelas memuat \pkg{listings} dan mendefinisikan gaya untuk Python,
+%% Java, C, C++, JavaScript, SQL, HTML, dan Bash.  Definisi bahasa
+%% tambahan dapat diletakkan di \texttt{config/proglangdef.sty}.
+%%
+%% \textbf{Listing dari berkas.}  Sertakan berkas kode dengan:
+%% \begin{verbatim}
+%%   \lstinputlisting[language=Python, numbers=left,
+%%     caption={Cuplikan saya}, label=code:cuplikan]
+%%     {assets/codes/cuplikan.py}
+%% \end{verbatim}
+%%
+%% \textbf{Listing langsung.}  Untuk cuplikan singkat di dalam teks,
+%% gunakan lingkungan \texttt{lstlisting}.
+%%
+%% \textbf{Kode \textit{inline}.}  Gunakan \cs{code}\marg{teks} untuk
+%% menampilkan kode pendek dalam kalimat.
+%%
+%% Rujuk daftar kode dengan \cs{lst}~\cs{ref}\{...\}.
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Known Limitations / Keterbatasan}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% \begin{itemize}
+%%   \item \texttt{columns=2} is only valid with \texttt{format=journal}.
+%%   \item The Makara logo images (\texttt{uithesis-makara.png},
+%%         \texttt{uithesis-makara-kuning.png}) must be on the \TeX{} search path.
+%%         When installing from source, place those image files alongside
+%%         \texttt{uithesis.cls}, or set \texttt{TEXINPUTS} accordingly.
+%%   \item The class targets \texttt{pdflatex}.  Xe\LaTeX{} and
+%%         Lua\LaTeX{} are untested.
+%% \end{itemize}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% \begin{itemize}
+%%   \item Opsi \texttt{columns=2} hanya berlaku untuk
+%%         \texttt{format=journal}.
+%%   \item Gambar logo Makara (\texttt{uithesis-makara.png},
+%%         \texttt{uithesis-makara-kuning.png}) harus tersedia di \emph{search path}
+%%         \TeX{}. Jika diinstal dari sumber, tempatkan berkas gambar
+%%         tersebut di lokasi yang sama dengan \texttt{uithesis.cls},
+%%         atau atur variabel \texttt{TEXINPUTS}.
+%%   \item Kelas ini ditujukan untuk \texttt{pdflatex}.  Xe\LaTeX{} dan
+%%         Lua\LaTeX{} belum diuji.
+%% \end{itemize}
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \part{Maintainer Guide / Panduan Maintainer}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% This part explains how to maintain and extend \textsf{uithesis}
+%% safely.  It focuses on the source of truth files, internal code map,
+%% build workflow, testing expectations, and contribution flow.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Bagian ini menjelaskan cara memelihara dan mengembangkan
+%% \textsf{uithesis} secara aman. Fokus utamanya adalah berkas sumber
+%% utama, peta kode internal, alur build, ekspektasi pengujian,
+%% dan alur kontribusi.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Maintainer Source of Truth / Sumber Kebenaran untuk Maintainer}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The authoritative source for class behavior is \texttt{uithesis.dtx}
+%% (inside the \texttt{\%<*class>} and \texttt{\%</class>} guards).
+%%
+%% Do not edit \texttt{uithesis.cls} directly.  It is generated by
+%% \texttt{tex uithesis.ins} or \texttt{l3build unpack}.
+%%
+%% Documentation source is \texttt{uithesis-doc.dtx}.  Student template
+%% files live under \texttt{example/}.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Sumber utama perilaku kelas adalah \texttt{uithesis.dtx}
+%% (di dalam guard \texttt{\%<*class>} dan \texttt{\%</class>}).
+%%
+%% \texttt{uithesis.cls} tidak boleh diedit langsung karena merupakan
+%% berkas turunan yang dihasilkan oleh \texttt{tex uithesis.ins}
+%% atau \texttt{l3build unpack}.
+%%
+%% Sumber dokumentasi adalah \texttt{uithesis-doc.dtx}.  Berkas templat
+%% mahasiswa berada di subtree \texttt{example/}.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Private API Boundary / Batas API Privat}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% Maintainer-only symbols and topics are documented in this Part II.
+%% Scope boundary used in this project:
+%%
+%% \begin{itemize}
+%%   \item \textbf{Public API} (Part I): user commands/environments/options
+%%         intended for thesis authors and supervisors.
+%%   \item \textbf{Private API} (Part II): internal implementation symbols,
+%%         internal data flow, and maintenance workflow topics.
+%% \end{itemize}
+%%
+%% In \texttt{uithesis.dtx}, private implementation symbols follow
+%% internal naming conventions such as \texttt{\string\UI@...} and
+%% internal builder families (for example, page assembly helpers and
+%% collector/storage helpers). These symbols are maintainer-facing only.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Simbol dan topik maintainer didokumentasikan di Bagian II ini.
+%% Batas ruang lingkup yang dipakai pada proyek ini:
+%%
+%% \begin{itemize}
+%%   \item \textbf{API publik} (Bagian I): perintah/lingkungan/opsi untuk
+%%         penulis tugas akhir dan pembimbing.
+%%   \item \textbf{API privat} (Bagian II): simbol implementasi internal,
+%%         alur data internal, dan topik alur pemeliharaan.
+%% \end{itemize}
+%%
+%% Di \texttt{uithesis.dtx}, simbol implementasi privat mengikuti konvensi
+%% penamaan internal seperti \texttt{\string\UI@...} serta keluarga helper
+%% internal (misalnya helper perakitan halaman dan helper pengumpul/penyimpan
+%% konten). Simbol tersebut khusus untuk maintainer.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Code Map of \texttt{uithesis.dtx} / Peta Kode \texttt{uithesis.dtx}}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The class source is grouped by named comment headers.
+%% Maintainers should navigate by these section names:
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{5.1cm} p{7.8cm}@{}}
+%%   \toprule
+%%   \textbf{Header in \texttt{uithesis.dtx}} & \textbf{Maintainer role} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \texttt{IDENTIFIKASI KELAS} & Class identity and version metadata. \\
+%%   \texttt{KEBIJAKAN KELAS (policy surface)} & Global policy switches and style knobs (spacing, print mode, paragraph style). \\
+%%   \texttt{PEMROSESAN OPSI (xkeyval)} & Parsing of class options and default normalization. \\
+%%   \texttt{KONFIGURASI BIBLATEX} & Citation preset mapping, biblatex options, and language-specific bibliography behavior. \\
+%%   \texttt{IMPOR PAKET DEPENDENSI} / \texttt{KONFIGURASI PAKET} & Runtime dependencies and package-level setup. \\
+%%   \texttt{TATA LETAK ISI: *} & Page geometry, heading styles, journal helpers, page styles, chapter management, i18n labels. \\
+%%   \texttt{OBJEK ISI: *} & User content helpers (table column types, content commands, object handling). \\
+%%   \texttt{FRONT-MATTER LISTS: *} and \texttt{FRONT MATTER: *} & Front-matter data model, list registration, collector environments, and page assembly internals. \\
+%%   \texttt{METADATA API: *} & Public metadata commands consumed by front matter and headers. \\
+%%   \texttt{MATERI BELAKANG: *} & Appendix, bibliography, glossary, and separators for back matter. \\
+%%   \texttt{STYLING NON-ALUR: *} & Built-in code-listing language styles and color conventions. \\
+%%   \texttt{HOOK \textbackslash AtBeginDocument} / \texttt{HOOK \textbackslash AtEndDocument} & Lifecycle hooks executed before and after document processing. \\
+%% \end{longtable}
+%% }
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Sumber kelas dikelompokkan dengan header komentar bernama.
+%% Navigasi maintainer sebaiknya mengikuti nama section tersebut,
+%% bukan nomor baris.
+%%
+%% Ringkasnya, kelompok \texttt{TATA LETAK ISI:*} menangani aturan tata letak,
+%% kelompok \texttt{FRONT MATTER:*} menangani perakitan halaman awal,
+%% kelompok \texttt{METADATA API:*} menangani perintah publik,
+%% dan kelompok \texttt{MATERI BELAKANG:*} menangani lampiran,
+%% daftar pustaka, serta glosarium.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Internal Behaviors and Caveats / Perilaku Internal dan Catatan Penting}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% This section documents private behavior intentionally, for maintainers.
+%% Public users should rely on Part I only.
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{4.6cm}p{4.7cm}p{\dimexpr\linewidth-9.3cm-4\tabcolsep\relax}@{}}
+%%   \toprule
+%%   \textbf{Area} & \textbf{Private behavior and rationale} & \textbf{Caveat} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \texttt{KEBIJAKAN KELAS} & Policy toggles (e.g., internal booleans for spacing, print mode, paragraph mode) centralize defaults and reduce duplicated conditional checks. & Keep policy changes centralized; avoid local ad-hoc overrides in page macros. \\
+%%   \texttt{PEMROSESAN OPSI} & Option parsing normalizes values and fallback behavior before layout code runs. & Unknown options warn and fall back; ensure docs and fallback logic stay aligned. \\
+%%   \texttt{KONFIGURASI BIBLATEX} & Citation preset resolution maps high-level option values to biblatex profiles and optional-package fallbacks. & Any new preset must update both parser and fallback map, with bilingual docs. \\
+%%   \texttt{IMPOR/KONFIGURASI PAKET} & Runtime packages are grouped by responsibility (layout, references, tables, graphics, code, glossary). & When adding dependencies, update dependency tables and doc build deps. \\
+%%   \texttt{TATA LETAK ISI: HALAMAN \& TIPOGRAFI} & Physical page parity uses shipout-based counters for reliable odd/even decisions. & Shipout counters reflect shipped pages; transition logic can require buffered-page handling. \\
+%%   \texttt{TATA LETAK ISI: PENAMAAN \& I18N} & Label naming and language switching are centralized to keep bilingual output consistent. & Changing labels requires cross-checking list titles and refs in both languages. \\
+%%   \texttt{OBJEK ISI} & Content helpers wrap common patterns and keep user syntax stable while internals evolve. & Preserve public command contracts when refactoring helper internals. \\
+%%   \texttt{FRONT-MATTER LISTS} & Custom-list registration is data-driven so user-defined lists can be emitted uniformly. & Registration order affects output order; keep deterministic ordering rules. \\
+%%   \texttt{FRONT MATTER: ENV PENGUMPUL KONTEN} & Collector environments store user blocks before assembly, separating data capture from rendering. & Ensure collector defaults are safe when users omit optional environments. \\
+%%   \texttt{FRONT MATTER: PENYUSUNAN HALAMAN INTERNAL} & Typesetting internals compose mandatory pages with shared spacing and heading conventions. & Keep spacing/profile edits centralized to avoid drift among page builders. \\
+%%   \texttt{METADATA API} & Public metadata commands feed internal accumulators consumed by front matter and headers. & New metadata fields require updates in API, renderers, and docs simultaneously. \\
+%%   \texttt{MATERI BELAKANG} & Appendix/bibliography/glossary helpers enforce consistent separators and pagination behavior. & Verify twoside transitions and list entries after modifying appendix/page-style code. \\
+%%   \texttt{HOOK \textbackslash AtBeginDocument / \textbackslash AtEndDocument} & Lifecycle hooks finalize runtime defaults and persist list counters across runs. & Multi-pass behavior means stale auxiliary files can hide or delay regressions. \\
+%% \end{longtable}
+%% }
+%%
+%% Internal spacing profile note:
+%% low-level spacing lengths are grouped in the macro shown below.
+%% This grouping exists so maintainers can tune typography in one place
+%% without editing many page-rendering macros.
+%%
+%% \texttt{\string\UI@setDocumentSpacingDefaults}
+%%
+%% Internal pagination caveat note:
+%% The macro below increments physical-page counters after page shipout.
+%% For front-matter transitions where a page may still be buffered,
+%% parity checks can require offset logic as implemented in the
+%% class transition helpers.
+%%
+%% \texttt{\string\EveryShipout}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Section ini mendokumentasikan perilaku privat secara sengaja,
+%% khusus untuk maintainer. Pengguna umum tetap mengacu ke Bagian I.
+%%
+%% Ringkasan area internal dan catatan utama:
+%%
+%% \begin{itemize}
+%%   \item Pemrosesan opsi dan kebijakan kelas harus tetap terpusat,
+%%         agar fallback dan perilaku default konsisten.
+%%   \item Resolusi preset sitasi harus dijaga sinkron dengan fallback
+%%         paket opsional serta dokumentasi dwibahasa.
+%%   \item Perakitan front matter memakai pemisahan tahap:
+%%         pengumpulan konten (environment) lalu penyusunan halaman.
+%%   \item Kontrol spasi internal dipusatkan pada makro berikut
+%%         untuk mencegah penyetelan tersebar di banyak makro.
+%%
+%%         \texttt{\string\UI@setDocumentSpacingDefaults}
+%%
+%%   \item Penentuan paritas halaman fisik bergantung pada penghitung
+%%         berbasis shipout. Pada transisi tertentu, cek paritas dapat
+%%         memerlukan logika offset karena halaman terakhir bisa masih
+%%         berada di buffer TeX.
+%%   \item Hook awal/akhir dokumen memengaruhi perilaku multi-pass,
+%%         sehingga pembersihan berkas bantu dan validasi log tetap penting.
+%% \end{itemize}
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Policy Toggles and Style Knobs / Tombol Kebijakan dan Kenop Gaya}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The \texttt{KEBIJAKAN KELAS} section defines global policy booleans and
+%% style hook macros.  All booleans default to \texttt{false} and are set
+%% exclusively by option parsing.  Maintainers should not set them directly
+%% inside page-rendering macros; all policy-driven branching should test the
+%% boolean rather than re-implementing the condition.
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{5.2cm}p{3.0cm}p{\dimexpr\linewidth-8.2cm-4\tabcolsep\relax}@{}}
+%%   \toprule
+%%   \textbf{Boolean} & \textbf{Default} & \textbf{Effect when true} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \cs{ifUI@calibratedspacing}  & false & 1.4\texttimes{} line spacing via \cs{setstretch}; false uses \cs{onehalfspacing} \\
+%%   \cs{ifUI@twosideprint}       & false & Mirrors header/footer positions for twoside printing \\
+%%   \cs{ifUI@paragraphindent}    & false & 1.5\,em paragraph indent and zero \cs{parskip}; false: zero indent and 12\,pt skip \\
+%%   \cs{ifUI@plagiarismcheck}    & false & Clears all header and footer content from every named page style \\
+%% \end{longtable}
+%% }
+%%
+%% Style hook macros expose typographic choices as reassignable macros so
+%% maintainers or advanced users can override them without touching rendering code.
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{5.5cm}p{7.2cm}@{}}
+%%   \toprule
+%%   \textbf{Hook macro} & \textbf{Default value and purpose} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \cs{UI@chapterHeadingStyle}          & \texttt{\textbackslash singlespacing\textbackslash centering\textbackslash rm\textbackslash bfseries} (applies to ConnyRevised chapter heading blocks) \\
+%%   \cs{UI@sectionHeadingStyle}          & \texttt{\textbackslash normalfont\textbackslash fontsize\{12\}\{15\}\textbackslash bfseries} (monograph section headings at all levels) \\
+%%   \cs{UI@journalSectionHeadingStyle}   & same default as \cs{UI@sectionHeadingStyle} (journal section headings) \\
+%%   \cs{UI@applyFooterFont}              & no-op (override to change footer brand font) \\
+%%   \cs{UI@applyPageNumberFont}          & \texttt{12\,pt Times Roman} (override to change page number font) \\
+%% \end{longtable}
+%% }
+%%
+%% The composed text macros \cs{UI@footerText} and \cs{UI@pageNumberText} call the
+%% hooks at expansion time, so assigning \cs{UI@applyFooterFont} before
+%% \cs{makefrontmatter} is sufficient to affect all pages.
+%%
+%% Spacing control macros:
+%% \begin{itemize}
+%%   \item \cs{UI@applyMainSpacing}: applies the active spacing mode
+%%         (calibrated or one-half) as a side effect.
+%%         Call after any \pkg{setspace} environment that overrides spacing.
+%%   \item \cs{UI@restoreMainSpacing}: alias for \cs{UI@applyMainSpacing}.
+%%         Used throughout page assembly to restore spacing after \texttt{singlespace} blocks.
+%%   \item \cs{UI@applyParagraphLayout}: sets \cs{parindent}/\cs{parskip}
+%%         according to the active \texttt{paragraph} option.
+%%         Called once at class load; call again if you switch paragraph policy
+%%         after the class is loaded (unusual).
+%% \end{itemize}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Bagian \texttt{KEBIJAKAN KELAS} mendefinisikan boolean global dan makro kenop gaya.
+%% Semua boolean bernilai \texttt{false} secara bawaan dan hanya diubah oleh
+%% pemrosesan opsi.  Maintainer tidak boleh mengatur boolean ini secara langsung
+%% di dalam makro penyusunan halaman; semua percabangan berbasis kebijakan cukup
+%% dengan menguji kondisional yang sudah ada.
+%%
+%% Makro hook gaya mengekspos pilihan tipografi sebagai makro yang dapat
+%% ditetapkan ulang, sehingga maintainer atau pengguna lanjutan dapat
+%% mengganti gaya tanpa menyentuh kode rendering.
+%%
+%% Makro kontrol spasi: \cs{UI@applyMainSpacing} menerapkan mode spasi aktif;
+%% \cs{UI@restoreMainSpacing} adalah alias-nya dan digunakan di seluruh
+%% perakitan halaman untuk memulihkan spasi setelah blok \texttt{singlespace}.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Option Parsing Internals / Internal Pemrosesan Opsi}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% All keys belong to the \texttt{uithesis.cls} keyfamily, processed by
+%% \pkg{xkeyval}.  Every key is declared with
+%% \texttt{\string\define@choicekey*+}, which restricts values to an explicit
+%% list, calls a ClassWarning via \cs{UI@warnUnknownChoice} for unknown values,
+%% and falls back to the documented default.
+%%
+%% Available keys and their choices:
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{2.8cm}p{7.3cm}p{\dimexpr\linewidth-10.1cm-4\tabcolsep\relax}@{}}
+%%   \toprule
+%%   \textbf{Key} & \textbf{Accepted values} & \textbf{Default} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \texttt{format}        & \texttt{monograph}, \texttt{journal}                            & \texttt{monograph} \\
+%%   \texttt{type}          & \texttt{Skripsi}, \texttt{Tesis}, \texttt{Disertasi}, \texttt{Laporan Kerja Praktik}, \texttt{Kampus Merdeka} & \texttt{Skripsi} \\
+%%   \texttt{jenjang}       & \texttt{Sarjana}, \texttt{Magister}, \texttt{Doktor}             & \texttt{Sarjana} \\
+%%   \texttt{lang}          & \texttt{indonesian}, \texttt{english}                            & \texttt{indonesian} \\
+%%   \texttt{columns}       & \texttt{1}, \texttt{2}                                           & \texttt{1} \\
+%%   \texttt{spacing}       & \texttt{calibrated}, \texttt{standard}                           & \texttt{calibrated} \\
+%%   \texttt{paragraph}     & \texttt{indent}, \texttt{noindent}                               & \texttt{noindent} \\
+%%   \texttt{plagiarismcheck} & \texttt{false}, \texttt{true}                                  & \texttt{false} \\
+%%   \texttt{print}         & \texttt{oneside}, \texttt{twoside}                               & \texttt{twoside} \\
+%%   \texttt{citation}      & 14 preset names (see citation preset section)                    & \texttt{apa} \\
+%% \end{longtable}
+%% }
+%%
+%% Keyless shortcut options (\cs{DeclareOptionX}) forward directly to
+%% \texttt{\string\setkeys\{uithesis.cls\}\{...\}} so that, for example,
+%% \texttt{[Skripsi,english]} works equivalently to \texttt{[type=Skripsi,lang=english]}.
+%%
+%% \cs{DeclareOptionX*} passes any unrecognized option to the \texttt{report}
+%% base class.  This enables passing standard \texttt{report} options such as
+%% \texttt{draft} without explicit forwarding.
+%%
+%% The base class is always loaded with fixed arguments:
+%% \texttt{12pt,a4paper,onecolumn,twoside,final}.  Values for \texttt{columns}
+%% and \texttt{print} do not affect these arguments; they control internal
+%% class behavior instead.
+%%
+%% Adding a new class option:
+%% \begin{enumerate}
+%%   \item Add a \texttt{\string\define@choicekey*+} block with a
+%%         \cs{UI@warnUnknownChoice} fallback.  For boolean flags, also add a
+%%         corresponding \cs{newif}.
+%%   \item Optionally add a \cs{DeclareOptionX} keyless shortcut.
+%%   \item Add the option to the Class Options table in Part~I.
+%%   \item Add a \texttt{\string\changes} entry in the Changelog.
+%% \end{enumerate}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Semua kunci termasuk keyfamily \texttt{uithesis.cls} yang diproses oleh
+%% \pkg{xkeyval}.  Setiap kunci dideklarasikan dengan
+%% \texttt{\string\define@choicekey*+}, membatasi nilai ke daftar pilihan eksplisit,
+%% dan memanggil ClassWarning via \cs{UI@warnUnknownChoice} untuk nilai yang tidak dikenal.
+%%
+%% Pintasan tanpa nilai (\cs{DeclareOptionX}) meneruskan langsung ke
+%% \texttt{\string\setkeys}, sehingga \texttt{[Skripsi,english]} setara dengan
+%% \texttt{[type=Skripsi,lang=english]}.
+%%
+%% Kelas dasar selalu dimuat dengan argumen tetap:
+%% \texttt{12pt,a4paper,onecolumn,twoside,final}.  Nilai opsi \texttt{columns}
+%% dan \texttt{print} tidak memengaruhi argumen ini; keduanya mengontrol perilaku
+%% internal kelas.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Citation Preset System / Sistem Preset Sitasi}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% Citation configuration is resolved through a preset system before
+%% \pkg{biblatex} is loaded.  Three factory macros construct the preset
+%% commands:
+%%
+%% \begin{itemize}
+%%   \item \cs{UI@bibDefinePreset}\marg{name}\marg{citestyle}\marg{bibstyle}\marg{mapping}:
+%%         registers a simple preset that maps directly to a fixed
+%%         \pkg{biblatex} profile.
+%%   \item \cs{UI@bibDefinePresetWithFallback}\marg{name}\marg{.bbx-file}\marg{cs}\marg{bs}%
+%%         \marg{cs-fallback}\marg{bs-fallback}\marg{lang}\marg{pkg}\marg{fb-desc}:
+%%         tries to locate the \texttt{.bbx} file; if absent, attempts to
+%%         install the optional package via \cs{RequirePackage}, then either
+%%         uses the full profile or falls back to the provided \textit{cs-fallback}
+%%         and \textit{bs-fallback} values.
+%%   \item \cs{UI@bibDefineNumericFallbackPreset}\marg{name}\marg{.bbx}\marg{bsstyle}\marg{pkg}:
+%%         shorthand for presets whose fallback is always
+%%         \texttt{numeric-comp}/\texttt{numeric}.
+%% \end{itemize}
+%%
+%% Resolution: \cs{UI@bibResolveConfiguration} dispatches to the preset handler
+%% generated by the factory macro for the active \cs{UI@citationpreset}.
+%% Override fields (\cs{UI@citationstyleoverride}, \cs{UI@bibstyleoverride},
+%% \cs{UI@citationmappingoverride}) are applied after preset resolution if non-empty,
+%% allowing fine-grained overrides without replacing the entire preset.
+%%
+%% Public override API (called in document preamble, after \verb|\documentclass|):
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{5.0cm}p{7.7cm}@{}}
+%%   \toprule
+%%   \textbf{Command} & \textbf{Effect} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \cs{setuicitationpreset\{name\}}   & Select a named preset \\
+%%   \cs{setuicitestyle\{style\}}       & Override \texttt{citestyle} only \\
+%%   \cs{setuibibstyle\{style\}}        & Override \texttt{bibstyle} only \\
+%%   \cs{setuicitationmapping\{map\}}   & Override language mapping \\
+%%   \cs{setuibiblatexoptions\{opts\}}  & Append extra \pkg{biblatex} load-time options \\
+%%   \cs{setuibiblatexstyle\{style\}}   & Set both \texttt{citestyle} and \texttt{bibstyle} simultaneously \\
+%% \end{longtable}
+%% }
+%%
+%% The ACM preset receives special handling: it checks for both
+%% \texttt{acm.bbx} and \texttt{acm.cbx} independently, because some
+%% distributions ship only one file.  If the \texttt{cbx} is absent, the
+%% \texttt{citestyle} falls back to \texttt{numeric-comp} while the
+%% \texttt{bibstyle} remains \texttt{acm}.
+%%
+%% Adding a new preset:
+%% \begin{enumerate}
+%%   \item Add a \cs{UI@bibDefinePreset} or \cs{UI@bibDefinePresetWithFallback}
+%%         call before \cs{UI@bibResolveConfiguration}.
+%%   \item Add the preset name to the \texttt{citation} choice key list.
+%%   \item Add a row to the citation preset table in Part~I.
+%%   \item Document the required TeX Live package and fallback behavior.
+%% \end{enumerate}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Konfigurasi sitasi diselesaikan melalui sistem preset sebelum \pkg{biblatex}
+%% dimuat.  Tiga makro pabrik membuat perintah preset.  \cs{UI@bibDefinePreset}
+%% mendaftarkan preset sederhana; \cs{UI@bibDefinePresetWithFallback} mencoba
+%% menemukan berkas \texttt{.bbx} lalu menginstal paket opsional jika perlu,
+%% atau menggunakan fallback numerik; \cs{UI@bibDefineNumericFallbackPreset}
+%% adalah pintasan untuk fallback \texttt{numeric-comp}/\texttt{numeric}.
+%%
+%% Resolusi preset dipanggil oleh \cs{UI@bibResolveConfiguration}.  Bidang
+%% override (\cs{UI@citationstyleoverride} dll.) diterapkan setelah resolusi
+%% preset jika tidak kosong, memungkinkan penggantian sebagian tanpa mengubah
+%% seluruh preset.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Package Dependency Structure / Struktur Dependensi Paket}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% All runtime packages are loaded via \cs{RequirePackage} in the
+%% \texttt{IMPOR PAKET DEPENDENSI} section, organized by functional group.
+%% Load order is significant: \pkg{inputenc} must precede \pkg{biblatex};
+%% \pkg{babel} must precede \pkg{csquotes}; \pkg{hyperref} must follow
+%% most other packages.
+%%
+%% Format-specific branches:
+%% \begin{itemize}
+%%   \item Monograph: \pkg{glossaries-extra} with
+%%         \texttt{automake,acronyms,}\allowbreak\texttt{symbols,nonumberlist,nomain}, plus
+%%         \cs{makeglossaries} to enable automatic run.
+%%   \item Journal: \pkg{glossaries-extra} without \texttt{automake}; if
+%%         \texttt{paragraph=indent}: \pkg{indentfirst}; if
+%%         \texttt{columns=2}: \pkg{dblfloatfix}, \pkg{cuted},
+%%         \pkg{balance}, \pkg{flushend}.
+%% \end{itemize}
+%%
+%% \pkg{CJKutf8} is always loaded in both formats, enabling CJK text
+%% anywhere in the document without format-specific guards.
+%%
+%% The \cs{UI@maxwidth} guard (defined in the graphics group) prevents
+%% images wider than \cs{linewidth} from overflowing the text block:
+%% \begin{center}
+%% \texttt{\small\string\def\string\UI@maxwidth\{\string\ifdim\string\Gin@nat@width>\string\linewidth\string\linewidth\string\else\string\Gin@nat@width\string\fi\}}
+%% \end{center}
+%% This is applied globally via \texttt{\string\setkeys\{Gin\}\{width=\string\UI@maxwidth,keepaspectratio\}}.
+%% Individual \cs{includegraphics} calls benefit from this silently.
+%% Do not override it with a fixed width unless intentional.
+%%
+%% When adding a runtime dependency:
+%% \begin{enumerate}
+%%   \item Add \cs{RequirePackage\{pkgname\}} in the appropriate group.
+%%   \item Add a row to the Dependencies longtable in Part~I.
+%%   \item If the package is also needed to typeset the class documentation,
+%%         add it to \texttt{typesetdeps} in \texttt{build.lua}.
+%% \end{enumerate}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Semua paket runtime dimuat via \cs{RequirePackage} di bagian
+%% \texttt{IMPOR PAKET DEPENDENSI}, diorganisasi per kelompok fungsional.
+%% Urutan pemuatan penting: \pkg{inputenc} harus sebelum \pkg{biblatex},
+%% \pkg{babel} harus sebelum \pkg{csquotes}, \pkg{hyperref} harus setelah
+%% sebagian besar paket lain.
+%%
+%% Cabang spesifik format: monograf memuat \pkg{glossaries-extra} dengan
+%% \texttt{automake}; jurnal memuat versi tanpa \texttt{automake} dan
+%% tambahan paket dua-kolom jika \texttt{columns=2}.
+%%
+%% Penjaga \cs{UI@maxwidth} mencegah gambar yang lebih lebar dari
+%% \cs{linewidth} membanjiri kolom teks.  Jangan timpa dengan lebar
+%% tetap kecuali disengaja.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Package Configuration / Konfigurasi Paket}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% \textbf{Hyperref settings} (in \texttt{KONFIGURASI PAKET}):
+%% \begin{itemize}
+%%   \item \texttt{colorlinks=false}, \texttt{pdfborder=0 0 0}: no visible
+%%         link borders in print output; color contrast is not needed for print.
+%%   \item \texttt{pdfpagelabels=true}, \texttt{hypertexnames=false}: required
+%%         for correct PDF bookmarks when page numbering switches from roman to arabic.
+%%   \item \texttt{plainpages=false}: must accompany \texttt{pdfpagelabels}.
+%%   \item \texttt{pdfstartview=FitH}: opens PDF fit-to-width by default.
+%% \end{itemize}
+%%
+%% The \cs{contentsline} override patches the hyperref definition to ensure
+%% all ToC and list entries (including custom lists from \cs{newUIlist}) use
+%% \cs{hyper@linkstart}/\cs{hyper@linkend} for clickable links.  If
+%% \pkg{hyperref} changes its \cs{contentsline} interface, this override
+%% must be reviewed.
+%%
+%% \textbf{WCAG-compliant color palette} (all at contrast ratio~$\geq4.5{:}1$ on white):
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{2.5cm}p{3.6cm}p{2.2cm}p{\dimexpr\linewidth-8.3cm-6\tabcolsep\relax}@{}}
+%%   \toprule
+%%   \textbf{Macro} & \textbf{RGB value} & \textbf{Ratio} & \textbf{Used for} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \texttt{codegreen}    & (0, 0.50, 0)        & 5.1:1 & Comment color in \texttt{uistyle} \\
+%%   \texttt{codegray}     & (0.35, 0.35, 0.35)  & 9.3:1 & Line-number color \\
+%%   \texttt{codepurple}   & (0.58, 0, 0.82)     & 6.5:1 & String color in \texttt{uistyle} \\
+%%   \texttt{keywordcolor} & NavyBlue (alias)     & $\geq$5.1:1 & Keywords in language definitions \\
+%%   \texttt{typecolor}    & teal (alias)         & 4.5:1 & Type names (minimum AA) \\
+%%   \texttt{greencomments}& OliveGreen (alias)   & 4.8:1 & Comments in language definitions \\
+%% \end{longtable}
+%% }
+%%
+%% When adding new code colors, verify the contrast ratio against white
+%% (\texttt{\#FFFFFF}) before adding.  Tools such as the WebAIM Contrast
+%% Checker may be used.  Assign the color as a named \cs{colorlet} alias
+%% so language definitions can reference the semantic name rather than
+%% raw RGB values.
+%%
+%% \textbf{\texttt{\textbackslash lstdefinestyle\{uistyle\}} key choices}:
+%% \begin{itemize}
+%%   \item \texttt{basicstyle=\textbackslash ttfamily\textbackslash small} ---
+%%         one point smaller than body text for visual contrast.
+%%   \item \texttt{columns=fullflexible}: proportional horizontal spacing;
+%%         enables cleaner soft-wrapping in narrow columns.
+%%   \item \texttt{breaklines=true, breakindent=1em}: automatic wrapping
+%%         with a visual indent to distinguish continuation lines.
+%%   \item \texttt{numbers=left, numbersep=5pt}: left-side line numbers
+%%         at 5\,pt from the code column.
+%%   \item \texttt{tabsize=2}: 2-space tabs match the UI source conventions.
+%% \end{itemize}
+%%
+%% \textbf{Caption configuration}: the \texttt{uicaption} font is
+%% \texttt{\string\fontsize\{12\}\{15\}} to match the body text size.
+%% The \texttt{centering} justification is declared with
+%% \texttt{\string\parfillskip\string\z@skip} so the last line of a
+%% multi-line caption is also centred (standard \cs{centering} leaves the
+%% last line ragged).
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Pengaturan \pkg{hyperref}: \texttt{colorlinks=false} dan \texttt{pdfborder=0 0 0}
+%% tidak menghasilkan bingkai tautan pada output cetak.
+%% \texttt{pdfpagelabels=true} dan \texttt{plainpages=false} diperlukan agar
+%% penomoran PDF benar saat beralih dari romawi ke arab.
+%%
+%% Override \cs{contentsline} memastikan semua entri daftar (termasuk daftar
+%% kustom dari \cs{newUIlist}) menggunakan tautan PDF yang dapat diklik.
+%%
+%% Palet warna WCAG: semua warna memenuhi rasio kontras $\geq4.5{:}1$ pada
+%% latar putih.  Saat menambah warna baru, verifikasi rasio kontras terlebih dahulu.
+%%
+%% Konfigurasi caption: font \texttt{uicaption} menggunakan
+%% \texttt{\string\fontsize\{12\}\{15\}} agar sesuai ukuran teks tubuh.
+%% Justifikasi \texttt{centering} memakai \texttt{\string\parfillskip=0pt}
+%% agar baris terakhir caption panjang tetap rata tengah.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Chapter Heading System (ConnyRevised) / Sistem Judul Bab (ConnyRevised)}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The chapter heading style is derived from fncychap~v1.34 (LPPL).  Only the
+%% ConnyRevised configuration is retained; all other fncychap styles have been
+%% removed.  The UI-specific adjustments (v2.2.0) tighten the vertical rhythm
+%% to match the UI thesis style guide.
+%%
+%% \textbf{Conditionals} (defined before the \cs{if@UImonograph} block):
+%% \begin{itemize}
+%%   \item \cs{ifUCN}/\cs{ifLCN}: uppercase/lowercase mode for the chapter
+%%         name label (e.g., ``BAB'').  ConnyRevised activates \cs{UCNtrue}.
+%%   \item \cs{ifUCT}/\cs{ifLCT}: uppercase/lowercase mode for the chapter
+%%         title.  ConnyRevised activates \cs{UCTtrue}.
+%%   \item \cs{ifinapp}: true when inside the appendix; set by the patched
+%%         \cs{appendix} command.
+%%   \item \cs{if@mainmatter}: defined explicitly if not already present
+%%         (since \texttt{report.cls} does not define it, unlike \texttt{book.cls}).
+%% \end{itemize}
+%%
+%% \textbf{Style variant macros}:
+%% \begin{itemize}
+%%   \item \cs{CNV}/\cs{ChNameVar}: format for the chapter-name label.
+%%   \item \cs{CNoV}/\cs{ChNumVar}: format for the chapter number.
+%%   \item \cs{CTV}/\cs{ChTitleVar}: format for the chapter title text.
+%%   \item \cs{FmN}/\cs{FmTi}: apply the case-conversion modes.
+%% \end{itemize}
+%%
+%% \textbf{ConnyRevised vertical rhythm}:
+%% \begin{itemize}
+%%   \item \cs{DOCH}: \texttt{\small\string\vspace*\{-4.5em\}} pulls the entire
+%%         heading block upward toward the top margin, followed by
+%%         \texttt{\small\string\vspace*\{-1em\}} to compress the gap between the
+%%         label line and the chapter number.
+%%   \item \cs{DOTI}: chapter title line, ending with \texttt{\string\vskip 20pt}
+%%         of space before body text.
+%%   \item \cs{DOTIS}: unnumbered variant; compensates with
+%%         \texttt{\string\vspace*\{-4em\}} and \texttt{\string\vspace*\{-1em\}}
+%%         to match the numbered heading's visual rhythm.
+%%   \item \cs{@makeschapterhead}: centered, uppercase, \texttt{\string\vskip 20pt}.
+%% \end{itemize}
+%%
+%% Do not change the negative vspace values without recompiling
+%% \texttt{example/thesis.tex} and verifying the visual rhythm.  These
+%% values are calibrated to the UI~2025 formatting guidelines.
+%%
+%% \textbf{Journal chapter flow}: no \cs{clearpage}, uses
+%% \texttt{\small\textbackslash par\textbackslash addvspace\{\textbackslash UI@journal@chapterbeforeskip\}}
+%% to insert inline spacing.  \cs{section} and \cs{subsection} are redefined
+%% with \cs{RenewDocumentCommand} to support a starred form with optional short
+%% name for the ToC, enabling correct navigation entries without section numbering.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Gaya judul bab diturunkan dari fncychap~v1.34 (LPPL); hanya konfigurasi
+%% ConnyRevised yang dipertahankan.
+%%
+%% Kondisional \cs{ifUCN}/\cs{ifLCN} (huruf besar/kecil label bab) dan
+%% \cs{ifUCT}/\cs{ifLCT} (huruf besar/kecil judul bab) didefinisikan sebelum
+%% blok \cs{if@UImonograph} agar aman pada mode \emph{skip-mode} TeX.
+%%
+%% Ritme vertikal ConnyRevised: \cs{DOCH} menarik blok heading ke atas dengan
+%% \texttt{\string\vspace*\{-4.5em\}}, sedangkan \cs{DOTIS} mengompensasi header
+%% tak bernomor agar ritme visualnya sama dengan header bernomor.  Jangan ubah
+%% nilai vspace ini tanpa memverifikasi ulang visual pada \texttt{example/thesis.tex}.
+%%
+%% Pada format jurnal, alur bab bersifat \emph{inline} tanpa \cs{clearpage};
+%% \cs{section}/\cs{subsection} didefinisikan ulang dengan
+%% \cs{RenewDocumentCommand} untuk mendukung nama pendek opsional pada ToC.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Page Geometry and Typography Policies / Kebijakan Geometri Halaman dan Tipografi}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% \textbf{Margin policy}:
+%% \begin{itemize}
+%%   \item Monograph: 3\,cm on all four sides (UI~2025 guidelines).
+%%   \item Journal: 2\,cm left/right, 3\,cm top/bottom (wider text block for
+%%         two-column layout).
+%%   \item \texttt{\string\addtolength\{\string\topmargin\}\{-14.5pt\}} corrects for
+%%         \texttt{headheight=14.5pt} so the body area remains at the correct position.
+%% \end{itemize}
+%%
+%% \texttt{\string\setlength\{\string\emergencystretch\}\{1.5em\}} allows up to
+%% 1.5\,em of additional interword stretch before \TeX{} emits an overfull hbox.
+%% This silently prevents many overfull warnings in narrow columns without
+%% disabling hyphenation.
+%%
+%% \textbf{Typography hierarchy} (monograph):
+%% \begin{itemize}
+%%   \item \texttt{secnumdepth=3}: subsubsection numbered.
+%%   \item \texttt{tocdepth=3}: subsubsection appears in ToC.
+%%   \item All heading levels use \cs{@startsection} with zero before-skip
+%%         and minimal after-skip; vertical rhythm is controlled entirely by
+%%         body text leading rather than heading skip parameters.
+%% \end{itemize}
+%%
+%% \textbf{Physical page counters}:
+%% \begin{itemize}
+%%   \item \texttt{chapterpagecount[chapter]}: resets each chapter; used for
+%%         internal logic that needs per-chapter page counts.
+%%   \item \texttt{UI@physicalpage}: never resets; incremented by
+%%         \cs{EveryShipout} after every shipped page.  This provides reliable
+%%         odd/even parity regardless of \cs{pagenumbering} resets (roman \textrightarrow{} arabic).
+%% \end{itemize}
+%%
+%% \textbf{Utility macros and sentinels}:
+%% \begin{itemize}
+%%   \item \cs{blank}: empty sentinel macro; used in conditionals such as
+%%         \texttt{\textbackslash ifx\textbackslash blank\textbackslash npmDua} to test whether a
+%%         slot is unfilled.
+%%   \item \cs{strcompare}\marg{string}\marg{macro}\marg{same}\marg{diff}: pure
+%%         \LaTeX2e string equality: expands \textit{macro} with \cs{edef},
+%%         compares with \cs{def}, then uses \cs{ifx}.  Safe when
+%%         \textit{macro} contains only character tokens.
+%%   \item \cs{UI@IfSingleAuthor\{one\}\{multi\}}: tests
+%%         \cs{ifUI@allowmultiauthor} and \texttt{\textbackslash ifx\textbackslash blank\textbackslash npmDua}
+%%         to distinguish single-author from group theses.
+%%   \item \cs{UI@AppendIfPresent\{macro\}\{text\}}: appends \texttt{~/~text}
+%%         only if \textit{macro} is not \cs{blank}.  Used for optional
+%%         second/third author data in combined display strings.
+%%   \item \cs{UI@makaraimage}: defaults to \texttt{uithesis-makara.png}.
+%%         Override with \cs{setmakaraimage\{filename\}} in the document preamble.
+%% \end{itemize}
+%%
+%% For journal format, \cs{include} is silently aliased to \cs{input}
+%% (\texttt{\string\let\string\include\string\input}) so chapter files do not
+%% produce page breaks between inclusions in the journal flow.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Kebijakan margin: monograf 3\,cm semua sisi; jurnal 2\,cm kiri/kanan dan
+%% 3\,cm atas/bawah.  Koreksi \cs{topmargin} sebesar $-14{,}5\,\text{pt}$
+%% diperlukan karena \texttt{headheight=14.5pt} pada pengaturan \pkg{geometry}.
+%%
+%% \cs{emergencystretch} diatur ke 1.5\,em untuk mencegah \emph{overfull hbox}
+%% tanpa menonaktifkan \emph{hyphenation}.
+%%
+%% Hierarki tipografi monograf: \texttt{secnumdepth=3} dan \texttt{tocdepth=3};
+%% semua level heading menggunakan skip nol di atas headings.
+%%
+%% Penghitung halaman fisik \texttt{UI@physicalpage} tidak pernah direset dan
+%% diperbarui oleh \cs{EveryShipout}, memungkinkan deteksi paritas yang andal
+%% saat penomoran halaman berganti dari romawi ke arab.
+%%
+%% Sentinel \cs{blank} dan pembanding \cs{strcompare} dipakai di seluruh
+%% kelas untuk percabangan kondisional berdasarkan tipe dokumen dan jumlah penulis.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Journal Two-Column Helpers / Pembantu Jurnal Dua Kolom}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% Three modes are available for full-width content in the two-column journal
+%% format.  In the monograph format, all three modes degrade gracefully to
+%% standard float or text behavior.
+%%
+%% \textbf{Mode~A: wide floats} (\env{UIwidetable}, \env{UIwidefigure}):
+%% \begin{itemize}
+%%   \item Two-column: expands to \texttt{table*}/\texttt{figure*},
+%%         placed by \TeX{} at the top or bottom of a spread.
+%%   \item One-column: expands to \texttt{table}/\texttt{figure}.
+%%   \item Both accept an optional placement specifier (default \texttt{tbp}).
+%%   \item Use for content that is a true float and can be relocated by \TeX.
+%% \end{itemize}
+%%
+%% \textbf{Mode~B: wide non-float blocks} (\env{UIwideblock}):
+%% \begin{itemize}
+%%   \item Two-column: wraps content in the \pkg{cuted} \texttt{strip} environment,
+%%         inserting a full-width block at the inline position.
+%%   \item \cs{ifUI@instrip} guards against nested \texttt{strip} environments.
+%%   \item \pkg{cuted} is only loaded when \texttt{format=journal} and
+%%         \texttt{columns=2}; using \env{UIwideblock} in other configurations
+%%         silently degrades to a simple centered block.
+%%   \item Use when content must appear at a specific inline position in text order.
+%% \end{itemize}
+%%
+%% \textbf{Mode~C: full-width page sequences}
+%% (\env{UIfullwidthpages}, \env{UIlandscape}, \env{UIlongtable}):
+%% \begin{itemize}
+%%   \item \env{UIfullwidthpages} calls \cs{clearpage}, switches to
+%%         \cs{onecolumn}, typesets its body, then restores \cs{twocolumn}.
+%%   \item \env{UIlandscape} wraps \env{UIfullwidthpages} with \pkg{pdflscape}'s
+%%         \env{landscape} environment.
+%%   \item \env{UIlongtable} uses \texttt{longtable} in one-column mode
+%%         (monograph) and \texttt{mpsupertabular} in two-column mode (journal,
+%%         because \texttt{longtable} is restricted to single-column mode).
+%% \end{itemize}
+%%
+%% The seven setup commands for \env{UIlongtable} must be called before
+%% \verb|\begin{UIlongtable}|:
+%% \cs{UIlongtablecaption}, \cs{UIlongtablelabel}, \cs{UIlongtablecols},
+%% \cs{UIlongtablefirsthead}, \cs{UIlongtablehead}, \cs{UIlongtabletail},
+%% \cs{UIlongtablelasttail}.
+%% All seven macros are reset to \cs{@empty} after \verb|\end{UIlongtable}|.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Tiga mode tersedia untuk konten lebar-penuh di format jurnal dua kolom.
+%% Pada format monograf, semua mode tetap berfungsi secara wajar sebagai float
+%% atau teks biasa.
+%%
+%% Mode~A (\env{UIwidetable}, \env{UIwidefigure}): float penuh-halaman di
+%% atas/bawah halaman.  Mode~B (\env{UIwideblock}): blok non-float posisi-inline
+%% menggunakan \pkg{cuted}.  Mode~C (\env{UIfullwidthpages}, \env{UIlandscape},
+%% \env{UIlongtable}): urutan halaman lebar dengan peralihan kolom.
+%%
+%% Tujuh perintah setup \env{UIlongtable} harus dipanggil sebelum membuka
+%% environment; semuanya direset ke kosong setelah environment ditutup.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Page Style System / Sistem Gaya Halaman}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% All page styles are built with \pkg{fancyhdr}.  Page-style configuration
+%% follows a specific pattern:
+%% \begin{enumerate}
+%%   \item \cs{UI@syncPageStyleWidth} sets \cs{headwidth} equal to
+%%         \cs{textwidth}.  This must be called once at class load and again
+%%         after \cs{restoregeometry} in the journal flow (fancyhdr may retain
+%%         a stale headwidth after geometry resets).
+%%   \item Named styles are defined with \cs{fancypagestyle\{name\}\{...\}}.
+%%   \item The twoside physical-page parity helpers are installed last.
+%% \end{enumerate}
+%%
+%% \textbf{Physical parity helpers}:
+%% \begin{description}
+%%   \item[\cs{UI@showOnPhysOdd\{content\}}] renders \textit{content} only when
+%%         the current page lands on an odd physical sheet.  The check uses
+%%         \texttt{\string\numexpr\string\value\{UI@physicalpage\}+1\string\relax}
+%%         because \texttt{UI@physicalpage} holds the count of the \emph{last
+%%         shipped} page; the page being typeset has not yet been shipped.
+%%   \item[\cs{UI@showOnPhysEven\{content\}}] analogous for even pages.
+%% \end{description}
+%%
+%% \textbf{Named page styles and their use}:
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{2.8cm}p{4.3cm}p{\dimexpr\linewidth-7.1cm-4\tabcolsep\relax}@{}}
+%%   \toprule
+%%   \textbf{Style name} & \textbf{Format} & \textbf{Usage} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \texttt{onlypage}       & both    & Center page number only; no footer brand.  Used for mandatory front-matter pages in journal mode, and blank inserted pages. \\
+%%   \texttt{plain}          & both    & Chapter first pages.  Monograph: center number~+ right UI footer (oneside). Journal: right header number~+ right footer UI. \\
+%%   \texttt{standard}       & both    & Regular body pages.  Number~+ UI footer; twoside-aware in monograph. \\
+%%   \texttt{first-pages}    & both    & Front-matter list pages (ToC, LoF, etc.).  Monograph: center number~+ twoside UI footer.  Journal: center number~+ right UI footer. \\
+%%   \texttt{journal-front}  & journal & Roman-numbered journal mandatory pages (orisinalitas through publikasi); center number only. \\
+%%   \texttt{lampiran-first} & monograph & First page of each \env{lampiranBab}; right header with running title (no continuation suffix). \\
+%%   \texttt{lampiran}       & monograph & Continuation pages of an appendix; right header with running title plus ``(lanjutan)''. \\
+%% \end{longtable}
+%% }
+%%
+%% \cs{setfirstheaderfooter}, \cs{setoddevenheader}, \cs{setoddevenfooter}
+%% are imperative helpers that rebuild fancyhdr slots for the current page
+%% according to the active print mode.  They are called by \cs{clearchapter}
+%% after every chapter break to reset the running header correctly.
+%%
+%% \texttt{plagiarismcheck=true} overrides ALL named styles to \cs{fancyhf\{\}}
+%% with zero rule widths after all styles are defined, clearing every header
+%% and footer from the compiled PDF for plagiarism detection tools.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Semua gaya halaman dibangun dengan \pkg{fancyhdr}.  Pembantu paritas fisik
+%% \cs{UI@showOnPhysOdd} dan \cs{UI@showOnPhysEven} memeriksa \texttt{UI@physicalpage}+1
+%% karena penghitung tersebut menyimpan halaman terakhir yang sudah dikirim,
+%% bukan halaman yang sedang disusun.
+%%
+%% \cs{UI@syncPageStyleWidth} harus dipanggil ulang setelah \cs{restoregeometry}
+%% di alur jurnal untuk menghindari drift \cs{headwidth}.
+%%
+%% \texttt{plagiarismcheck=true} menimpa semua gaya yang sudah terdefinisi
+%% dengan \cs{fancyhf\{\}} kosong, membersihkan semua header/footer dari PDF
+%% untuk kebutuhan pengecekan plagiarisme.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Chapter and Page Management / Pengelolaan Bab dan Halaman}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% \cs{ifUI@chapterautoclearenabled} controls whether the redefined \cs{chapter}
+%% command automatically calls \cs{clearchapter} before each new chapter.  It
+%% defaults to \texttt{false} during front matter assembly and is set to
+%% \texttt{true} by \cs{makefrontmatter} immediately before switching to arabic
+%% page numbering.  The first chapter after \cs{makefrontmatter} is handled
+%% by \cs{ifUI@chapterstarted}, which suppresses the call on the very first
+%% chapter to avoid an extra blank page at the start of the body.
+%%
+%% \cs{clearchapter} (monograph only):
+%% \begin{enumerate}
+%%   \item \cs{clearpage}: flushes all pending floats.
+%%   \item If twoside and the current physical page is odd, inserts a blank
+%%         page (\cs{thispagestyle\{empty\}}, \texttt{\string\addtocounter\{page\}\{-1\}})
+%%         so the new chapter starts on a right-hand (odd) physical page.
+%%   \item \cs{setoddevenheader} and \cs{setoddevenfooter} reinstall the correct
+%%         running header and footer.
+%% \end{enumerate}
+%%
+%% \cs{forceclearchapter} always inserts a blank page in twoside mode regardless
+%% of current parity.  Use for structural gaps (e.g., the appendix separator).
+%%
+%% \cs{UI@insertdummyblank}: inserts a blank page only when the current physical
+%% page is odd.  Used in monograph front matter to maintain the odd-page-start
+%% invariant without consuming a logical page number.
+%%
+%% \cs{UI@insertdummyblankonlypage}: like \cs{UI@insertdummyblank} but also
+%% applies \texttt{\string\thispagestyle\{onlypage\}} to the blank page.
+%%
+%% \cs{blankpage}: clears, inserting an empty page (empty style, no page
+%% number), then clears again.  For explicit blank pages outside chapter context.
+%%
+%% \textbf{Journal \cs{clearpage} override}: when \texttt{columns=2}, \cs{clearpage}
+%% is wrapped to call \cs{balance} before the clear and \cs{nobalance} after,
+%% ensuring columns are balanced at all forced page breaks.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% \cs{ifUI@chapterautoclearenabled} mengendalikan apakah \cs{chapter} memanggil
+%% \cs{clearchapter} secara otomatis.  Nilai ini \texttt{false} selama perakitan
+%% front matter dan diaktifkan oleh \cs{makefrontmatter} tepat sebelum penomoran arab.
+%%
+%% \cs{clearchapter} (monograf): (1) flush float via \cs{clearpage}, (2) sisipkan
+%% halaman kosong jika halaman fisik saat ini ganjil sehingga bab baru mulai di
+%% halaman kanan, (3) pasang ulang header/footer.
+%%
+%% \cs{forceclearchapter} selalu menyisipkan halaman kosong di mode dua sisi,
+%% tanpa melihat paritas.  \cs{UI@insertdummyblank} dan
+%% \cs{UI@insertdummyblankonlypage} hanya menyisipkan jika halaman fisik saat ini ganjil.
+%%
+%% Override \cs{clearpage} pada jurnal dua kolom membungkus panggilan asli dengan
+%% \cs{balance}/\cs{nobalance} agar kolom selalu seimbang pada setiap \emph{page break} paksa.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Vertical Spacing System / Sistem Spasi Vertikal}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% All typography lengths are declared via \cs{newlength} and initialized in
+%% \cs{UI@setDocumentSpacingDefaults}.  To change any spacing, set the
+%% corresponding named length; do not inline \cs{setlength} calls inside
+%% page-rendering macros.
+%%
+%% \cs{UI@setDocumentSpacingDefaults} is called once at class load.  A
+%% document may call it again in the preamble to reset everything to defaults
+%% before making selective adjustments.
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{6.4cm}p{2.2cm}p{\dimexpr\linewidth-8.6cm-4\tabcolsep\relax}@{}}
+%%   \toprule
+%%   \textbf{Length macro} & \textbf{Default} & \textbf{Purpose} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \multicolumn{3}{@{}l}{\textit{Cover and title pages}} \\[\smallskipamount]
+%%   \cs{UI@title@metaRowGap}               & 0.3\,cm  & Gap between each metadata row on cover/title \\
+%%   \cs{UI@coverLogoToUniversityGap}        & $-0.25$\,cm & Pulls ``UNIVERSITAS INDONESIA'' upward toward logo \\
+%%   \cs{UI@coverUniversityToTitleGap}       & 0.5\,cm  & Between university name and thesis title \\
+%%   \cs{UI@coverTitleToSubtitleGap}         & 0.8\,cm  & Between thesis title and type label \\
+%%   \cs{UI@coverSubtitleToAuthorGap}        & 0.5\,cm  & Between type label and author block \\
+%%   \cs{UI@titleInsideSubtitleToBodyGap}    & 0.3\,cm  & After type label on judulDalam page \\[\smallskipamount]
+%%   \multicolumn{3}{@{}l}{\textit{Front page general rhythm}} \\[\smallskipamount]
+%%   \cs{UI@frontpage@topskip}               & 0\,pt    & Vertical compensation before mandatory-page heading \\
+%%   \cs{UI@frontpage@afterskip}             & 20\,pt   & Space after mandatory-page heading \\
+%%   \cs{UI@frontpage@sectionGapXS}          & 0.1\,cm  & Extra-small gap \\
+%%   \cs{UI@frontpage@sectionGapS}           & 0.2\,cm  & Small gap \\
+%%   \cs{UI@frontpage@sectionGapM}           & 0.4\,cm  & Medium gap \\
+%%   \cs{UI@frontpage@sectionGapL}           & 0.6\,cm  & Large gap \\[\smallskipamount]
+%%   \multicolumn{3}{@{}l}{\textit{Signature block}} \\[\smallskipamount]
+%%   \cs{UI@frontpage@bodyTopGap}            & 2.0\,cm  & Space above body text on pages with signature \\
+%%   \cs{UI@frontpage@bodyToSignatureGap}    & 2.6\,cm  & Space from body text to signature table \\
+%%   \cs{UI@frontpage@signatureDateGap}      & 1.8\,cm  & Space for handwritten signature above date \\[\smallskipamount]
+%%   \multicolumn{3}{@{}l}{\textit{Pengesahan board}} \\[\smallskipamount]
+%%   \cs{UI@approval@metaToStatementGap}     & 1.0\,cm  & Between metadata block and approval statement \\
+%%   \cs{UI@approval@statementToBoardGap}    & 1.0\,cm  & Between approval statement and board table \\
+%%   \cs{UI@approvalBoardRuleToNameGap}      & $-0.2$\,em & Pulls name upward under signature rule \\
+%%   \cs{UI@approvalBoardNameToRoleGap}      & 0.8\,em  & Between name and role label \\
+%%   \cs{UI@approvalBoardHeaderToRowsGap}    & 0.3\,cm  & Between "DEWAN PENGUJI" header and first row \\
+%%   \cs{UI@approvalBoardInterRowGap}        & $-0.5$\,em & Tightens spacing between board rows \\
+%%   \cs{UI@approvalMultiAuthorStudyGap}     & 0.2\,cm  & Between study program entries in multi-author Pengesahan \\
+%%   \cs{UI@approvalMBKMStatementToBoardGap} & 2.0\,cm  & MBKM variant: statement to board gap \\[\smallskipamount]
+%%   \multicolumn{3}{@{}l}{\textit{Surat Pernyataan}} \\[\smallskipamount]
+%%   \cs{UI@suratParagraphGap}               & $0.6{\times}$ \cs{baselineskip} & Between paragraphs in Surat Pernyataan \\
+%%   \cs{UI@suratHeadingTopskip}             & 0.15\,cm & Topskip override for Surat Pernyataan heading \\
+%%   \cs{UI@suratHeadingAfterSkip}           & 24\,pt   & Afterskip for Surat Pernyataan heading \\
+%%   \cs{UI@suratIdentityToMetaGap}          & 0.2\,cm  & Between body text and identity table \\[\smallskipamount]
+%%   \multicolumn{3}{@{}l}{\textit{Kata Pengantar, Publikasi, list pages, back matter}} \\[\smallskipamount]
+%%   \cs{UI@kataPengantarDateToNameGap}      & 0.1\,cm  & Between date and author name in Kata Pengantar \\
+%%   \cs{UI@kataPengantarSingleAuthorSignGap}& 1.5\,cm  & Signature space above author name (single author) \\
+%%   \cs{UI@publikasiHeadingAfterGap}        & 8\,pt    & After Publikasi double-rule heading \\
+%%   \cs{UI@publikasiRuleInnerGap}           & 1\,pt    & Between the two rules in Publikasi heading \\
+%%   \cs{UI@listChapterSeparatorSkip}        & 10\,pt   & Addvspace written to list files at each chapter \\
+%%   \cs{UI@frontmatterTocPreskip}           & $-1$\,em & Pre-skip for front-matter ToC entries (counters the separator) \\
+%%   \cs{UI@lt@continuedCaptionGap}          & 10\,pt   & Gap before continuation-caption row in UIlongtable \\
+%%   \cs{UI@lampiranHeaderLineGap}           & 1\,em    & Gap between page number and running title in appendix header \\
+%%   \cs{UI@appendixSeparatorTopGap}         & 6\,cm    & Top vspace on the "LAMPIRAN" separator page \\
+%% \end{longtable}
+%% }
+%%
+%% Journal-only abstract spacing lengths (\cs{UI@journalTitleToStudyGap},
+%% \cs{UI@journalStudyToAbstrakGap}, \cs{UI@journalAbstrakToKeywordsGap},
+%% \cs{UI@journalKeywordsToAbstractGap},
+%% \cs{UI@journalAbstractToKeywordsGap}) and
+%% monograph abstract spacing (\cs{UI@abstrakMonoMetaToBodyGap},
+%% \cs{UI@abstrakMonoBodyToKeywordsGap}, \cs{UI@abstrakMonoAfterKeywordsGap},
+%% and the EN variants) follow the same pattern but are omitted from the table
+%% for brevity; their defaults are documented inline in the source.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Semua panjang tipografi dideklarasikan via \cs{newlength} dan diinisialisasi
+%% dalam \cs{UI@setDocumentSpacingDefaults}.  Untuk mengubah spasi, tetapkan
+%% panjang bernama yang sesuai; jangan menyisipkan \cs{setlength} langsung di
+%% dalam makro penyusunan halaman.
+%%
+%% \cs{UI@setDocumentSpacingDefaults} dipanggil sekali saat kelas dimuat.
+%% Dokumen dapat memanggilnya lagi di preamble untuk mereset ke nilai default
+%% sebelum melakukan penyesuaian selektif.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Internationalization Layer / Lapisan Internasionalisasi}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The label system stores all language-dependent strings in
+%% \texttt{\string\def\string\UI@label@<name>\{...\}} macros.  Two parallel
+%% sets of definitions exist: one inside the \texttt{if@UIenglish} branch and
+%% one in the else branch.  Every label name must be defined in both branches;
+%% missing definitions silently inherit the previous run's string.
+%%
+%% \textbf{Display helpers}:
+%% \begin{itemize}
+%%   \item \cs{UI@jenjang@display}: maps the internal jenjang code to a
+%%         display string: English: Sarjana~$\to$ ``Bachelor's'',
+%%         Magister~$\to$ ``Master's'', else~$\to$ ``Doctoral'';
+%%         Indonesian: passthrough.
+%%   \item \cs{UI@typeNameID} / \cs{UI@typeNameEN}: map the internal type
+%%         code to display names.  \cs{namaTipeTesis\{ID\}\{EN\}} overrides both.
+%%   \item \cs{UI@type@display}: single active-language type name; set to
+%%         \cs{UI@typeNameID} or \cs{UI@typeNameEN} based on \cs{if@UIenglish}.
+%%   \item \cs{UI@facultyDisplay}: resolved to \cs{fakultasID} or
+%%         \cs{fakultasEN} based on active language.
+%% \end{itemize}
+%%
+%% \textbf{Sensitive labels} that reference runtime metadata at expansion:
+%% \begin{itemize}
+%%   \item \cs{UI@label@approvedBody}: references \cs{UI@jenjang@display},
+%%         \cs{studyProgramSatu}, and \cs{UI@facultyDisplay}.  This label must
+%%         be re-evaluated after the metadata commands execute.  Because it is a
+%%         \cs{def} (not \cs{edef}), it expands lazily and is safe.
+%%   \item \cs{UI@label@aiBodyUsed}: references \cs{UI@aiplatform} and
+%%         \cs{UI@tujuanai}.  Same lazy-expansion safety applies.
+%% \end{itemize}
+%%
+%% To add a new document type:
+%% \begin{enumerate}
+%%   \item Add a \texttt{\string\strcompare\{New Type\}\{\string\UI@type\}...} link
+%%         in the \cs{UI@typeNameEN} resolution chain.
+%%   \item Add corresponding \cs{UI@label@*} strings in both language branches.
+%%   \item Follow the \texttt{strcompare} pattern wherever conditionals dispatch
+%%         on \cs{UI@type} (e.g., in \cs{makefrontmatter} and
+%%         \cs{UI@typeset@pengesahan}).
+%% \end{enumerate}
+%%
+%% Adding a display language beyond Indonesian and English would require a
+%% third parallel branch of all label definitions.  The current architecture
+%% does not structurally support more than two languages without significant
+%% refactoring.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Sistem label menyimpan semua string berbahasa dalam makro
+%% \texttt{\string\def\string\UI@label@<name>}.  Dua set definisi paralel ada:
+%% satu di cabang \cs{if@UIenglish} dan satu di cabang else.  Setiap nama label
+%% harus terdefinisi di kedua cabang; definisi yang hilang secara diam-diam
+%% mewarisi string dari run sebelumnya.
+%%
+%% Label sensitif seperti \cs{UI@label@approvedBody} dan \cs{UI@label@aiBodyUsed}
+%% mereferens metadata run-time (\cs{UI@jenjang@display}, \cs{UI@aiplatform}, dll.)
+%% melalui \cs{def} (bukan \cs{edef}), sehingga evaluasinya ditunda hingga saat
+%% digunakan dan aman terhadap urutan inisialisasi.
+%%
+%% Untuk menambah tipe dokumen baru, tambahkan link \cs{strcompare} pada rantai
+%% resolusi \cs{UI@typeNameEN} dan label terkait di kedua cabang bahasa.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Custom Table Column Types / Jenis Kolom Tabel Kustom}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% Nine column types are defined via \cs{newcolumntype} with the \pkg{array}
+%% package prefix mechanism.  All accept a mandatory width argument.
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{1.0cm}p{2.5cm}p{2.0cm}p{\dimexpr\linewidth-5.5cm-6\tabcolsep\relax}@{}}
+%%   \toprule
+%%   \textbf{Code} & \textbf{Alignment} & \textbf{Position} & \textbf{Mnemonic and use} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \texttt{P} & raggedright & p (top)    & \textbf{P}aragraph; standard left-aligned column \\
+%%   \texttt{L} & raggedright & m (middle) & \textbf{L}eft, middle-anchored \\
+%%   \texttt{B} & raggedright & b (bottom) & \textbf{B}ottom-left \\
+%%   \texttt{U} & centering   & p (top)    & \textbf{U}pper-centered \\
+%%   \texttt{C} & centering   & m (middle) & \textbf{C}entered, middle-anchored \\
+%%   \texttt{O} & centering   & b (bottom) & l\textbf{O}wer-centered \\
+%%   \texttt{E} & raggedleft  & p (top)    & north-\textbf{E}ast (right top) \\
+%%   \texttt{R} & raggedleft  & m (middle) & \textbf{R}ight, middle-anchored \\
+%%   \texttt{T} & raggedleft  & b (bottom) & \textbf{T}enggara (SE); bottom-right \\
+%% \end{longtable}
+%% }
+%%
+%% The \textit{position} argument (p/m/b from the \pkg{array} package) controls
+%% vertical alignment in rows with mixed-height cells.  Use \texttt{m} variants
+%% when columns in the same row may have different heights and vertical centering
+%% is required.
+%%
+%% \cs{tabitem} expands to \texttt{\string~\string~\string\llap\{\string\textbullet\}\string~\string~},
+%% a bullet point indented within a table cell.  Use in \texttt{p}/\texttt{m}/\texttt{b}
+%% columns where nested \env{itemize} environments would not fit.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Sembilan jenis kolom tabel didefinisikan via \cs{newcolumntype} dengan mekanisme
+%% prefiks \pkg{array}.  Semua memerlukan argumen lebar.  Kode kolom mengikuti
+%% mnemonik: posisi vertikal (p/m/b dari \pkg{array}) dikombinasikan dengan
+%% perataan horizontal.  Gunakan varian \texttt{m} saat kolom-kolom dalam satu
+%% baris memiliki tinggi berbeda dan perataan vertikal tengah diperlukan.
+%%
+%% \cs{tabitem} menghasilkan item bergaya bullet yang terindentasi di dalam sel
+%% tabel, berguna di kolom p/m/b yang terlalu sempit untuk \env{itemize} bersarang.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{User Content Commands / Perintah Konten Pengguna}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% \textbf{Inline formatting}:
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{2.6cm}p{4.0cm}p{\dimexpr\linewidth-6.6cm-4\tabcolsep\relax}@{}}
+%%   \toprule
+%%   \textbf{Command} & \textbf{Expands to} & \textbf{Intended use} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \cs{f\{text\}}   & \cs{textit\{text\}}                               & Foreign terms, titles \\
+%%   \cs{bi\{text\}}  & \cs{textbf\{\cs{textit\{text\}}\}}                 & Bold-italic emphasis \\
+%%   \cs{bo\{text\}}  & \cs{textbf\{text\}}                               & Bold emphasis \\
+%%   \cs{m\{expr\}}   & \texttt{\string\boldmath\{\string\(expr\string\)\}} & Bold inline math \\
+%%   \cs{mc\{expr\}}  & \texttt{\string\boldmath\{\string\[expr\string\]\}} & Bold display math \\
+%%   \cs{code\{text\}}& \cs{texttt\{text\}}                               & Inline code \\
+%%   \cs{latex}       & \cs{LaTeX}                                        & Alias \\
+%%   \cs{glo\{key\}}  & \cs{gls\{key\}} or \cs{key}                       & Glossary entry; uses defined macro if available \\
+%% \end{longtable}
+%% }
+%%
+%% \textbf{Placeholder markers}:
+%% \begin{itemize}
+%%   \item \cs{todo\{text\}}: monograph: styled red-shaded box; journal: inline
+%%         colored text.  All \cs{todo} markers must be removed before final submission.
+%%   \item \cs{todoCite}: marks a missing citation; same format as \cs{todo}.
+%% \end{itemize}
+%%
+%% \textbf{PDF inclusion}:
+%% \begin{itemize}
+%%   \item \cs{inpdf\{filename\}}: includes all pages with \cs{thispagestyle\{fancy\}}.
+%%   \item \cs{putpdf\{filename\}}: includes all pages without page style override.
+%%   \item Both accept the filename without \texttt{.pdf} extension.
+%% \end{itemize}
+%%
+%% \textbf{User-defined variables}:
+%% \begin{itemize}
+%%   \item \cs{var\{cmd\}\{val\}}: defines \textit{cmd} as \cs{newcommand};
+%%         errors if already defined.
+%%   \item \cs{Var\{cmd\}\{val\}}: defines \textit{cmd} as
+%%         \texttt{\string\gdef} of the uppercase value.
+%% \end{itemize}
+%%
+%% \textbf{Caption helpers}:
+%% \begin{itemize}
+%%   \item \cs{captionsource\{title\}\{source\}}: \cs{caption} with a 10\,pt
+%%         source attribution line below the caption text.  Always uses centering
+%%         justification.
+%%   \item \cs{captionsourcecont\{title\}\{source\}}: continuation caption;
+%%         appends ``(sambungan)'' suffix; does not add a list entry.
+%%   \item \cs{captionsource\textit{cmd}} and
+%%         \cs{captionsource\textit{cmd}cont}: analogous helpers generated by
+%%         \cs{newUIlist} for user-defined list types.
+%% \end{itemize}
+%%
+%% \textbf{Semantic cross-reference aliases}:
+%% \cs{bab}, \cs{sect}, \cs{pic}, \cs{tab}, \cs{equ}, \cs{lst}, \cs{apdx} provide
+%% Indonesian nouns for cross-reference type labels.  Use as
+%% \texttt{\string\bab~\string\ref\{bab:1\}} rather than bare ``Bab~\ldots''.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Perintah pemformatan inline (\cs{f}, \cs{bi}, \cs{bo}, \cs{m}, \cs{mc},
+%% \cs{code}, \cs{latex}) adalah pembungkus tipis untuk perintah \LaTeX{} standar.
+%% \cs{glo\{key\}} adalah alias glossary ringkas yang mencoba memanggil makro
+%% \cs{key} bila terdefinisi, atau \cs{gls\{key\}} sebagai fallback.
+%%
+%% \cs{todo} dan \cs{todoCite} adalah penanda placeholder yang bersifat kondisional
+%% per format: monograf menggunakan kotak bergaya; jurnal menggunakan teks berwarna.
+%% Semua penanda ini harus dihapus sebelum pengajuan akhir.
+%%
+%% Pembantu caption \cs{captionsource} dan \cs{captionsourcecont} selalu menggunakan
+%% justifikasi centering dan memerlukan sumber dalam argumen kedua.  Varian
+%% \textit{cont} tidak menambah entri ke daftar konten.
+%%
+%% Alias referensi silang (\cs{bab}, \cs{sect}, dll.) menyediakan nama benda
+%% Indonesia untuk label tipe objek; gunakan bersama \cs{ref} untuk konsistensi.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Front-Matter List System / Sistem Daftar Front Matter}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The front-matter list system provides a data-driven mechanism for
+%% registering, counting, and conditionally generating list pages.  All
+%% built-in and user-defined list types participate through the same registry.
+%%
+%% \textbf{Registries}:
+%% \begin{itemize}
+%%   \item \cs{UI@listExtRegistry}: comma-separated extensions of all known
+%%         list files (lof, lot, lol, loe, lox, plus user-defined).  Used by
+%%         \cs{UI@addchapterlistseparatorspacing} and \cs{AtEndDocument} counter
+%%         persistence.  \cs{UI@registerListExt\{ext\}} appends to this.
+%%   \item \cs{UI@frontmatterListRegistry}: subset of \cs{UI@listExtRegistry}
+%%         holding only lists that receive a dedicated page in front matter.
+%%         \cs{newUIlist} enrolls to both registries automatically.
+%% \end{itemize}
+%%
+%% \textbf{Entry counting}: entries are counted at two independent sites ---
+%% the \cs{addcontentsline} call site (via the replaced \cs{addcontentsline})
+%% and the \cs{@writefile} call site (via the replaced \cs{@writefile}) ---
+%% to ensure accurate counts regardless of which path other packages take.
+%%
+%% \textbf{Previous-run counts}: \cs{UI@prev@count@\textit{ext}} macros hold
+%% entry totals from the prior run, written by \cs{AtEndDocument} to the
+%% \texttt{.aux} file.  These govern \cs{UI@condListPage}.  After structural
+%% edits, run \LaTeX{} at least twice to stabilize list-page decisions.
+%%
+%% \cs{minimumListEntries\{N\}} sets a threshold: list pages with fewer than
+%% $N$ entries are suppressed.  Default is~0 (always generate).
+%%
+%% \textbf{Appendix ToC suppression}: \cs{UI@withAddcontentslineFilter}
+%% drops appendix chapter entries from \texttt{toc} when \cs{ifinapp} is true,
+%% preventing duplicate appearance of appendix chapters in both the main ToC
+%% and the appendix list (Daftar Lampiran).
+%%
+%% \textbf{Chapter separator spacing}: \cs{ifUI@listchapterseparatorspacing}
+%% controls whether an \texttt{\string\addvspace} entry is written to all
+%% non-lox list files at each \cs{chapter} call.  This creates visual chapter
+%% grouping in LoF, LoT, LoL, and LoE pages.  Disable with
+%% \cs{disablechapterseparatorspaceinlists} if uniformity is preferred.
+%%
+%% \textbf{\cs{CAPinToC} / \cs{noCAPinToC}}: switch the active
+%% \cs{addcontentsline} between the uppercase and normal variants.
+%% CAP mode is active during front-matter page generation.
+%%
+%% \textbf{Bold chapter entries in ToC}: \cs{enableboldchapterintoc} and
+%% \cs{disableboldchapterintoc} write tocloft formatting commands to the
+%% \texttt{.toc} file at point of call, affecting only subsequent entries.
+%% They do not retroactively reformat already-written entries.
+%%
+%% \textbf{\cs{newUIlist}\marg{ext}\marg{cmdbase}\marg{singular}\marg{listtitle}}
+%% creates a complete list type in nine steps:
+%% \begin{enumerate}
+%%   \item Store list title in \texttt{\string\UI@UIlistname@ext}.
+%%   \item Create counter \texttt{UI@count@ext}, initialize
+%%         \cs{UI@prev@count@ext} to~0, enroll in both registries.
+%%   \item Define \cs{cmdbase} as the singular noun command.
+%%   \item Call \cs{newlistof}\marg{cmdbase}\marg{ext}\marg{listtitle} from \pkg{tocloft};
+%%         add \cs{counterwithin}\marg{cmdbase}\marg{chapter} in monograph mode.
+%%   \item Set tocloft formatting: indent=0\,pt, numwidth auto-calculated from
+%%         label width, aftersnum=\texttt{.}, presnum=\cs{cmdbase}~.
+%%   \item Define \cs{caption<cmdbase>}.
+%%   \item Define \cs{captionsource<cmdbase>}.
+%%   \item Define \cs{caption<cmdbase>cont} and \cs{captionsource<cmdbase>cont}.
+%%   \item Store print macro \cs{UI@UIlist@print@ext} for the rendering loop.
+%% \end{enumerate}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Sistem daftar front matter menyediakan mekanisme berbasis data untuk
+%% mendaftarkan, menghitung, dan menghasilkan halaman daftar secara kondisional.
+%%
+%% Dua registri digunakan: \cs{UI@listExtRegistry} untuk semua ekstensi daftar
+%% yang dikenal, dan \cs{UI@frontmatterListRegistry} untuk subset yang mendapat
+%% halaman tersendiri di front matter.  \cs{newUIlist} mendaftar ke keduanya
+%% secara otomatis.
+%%
+%% Penghitungan entri dilakukan di dua titik independen (situs \cs{addcontentsline}
+%% dan situs \cs{@writefile}), sehingga jumlah akurat meskipun paket lain
+%% menambal salah satu jalur.
+%%
+%% \cs{UI@prev@count@ext} menyimpan jumlah entri dari run sebelumnya dan
+%% ditulis ke \texttt{.aux} oleh \cs{AtEndDocument}.  Setelah perubahan
+%% struktural, jalankan \LaTeX{} minimal dua kali agar keputusan halaman daftar
+%% stabil.
+%%
+%% Penekanan entri bab lampiran di ToC dilakukan oleh
+%% \cs{UI@withAddcontentslineFilter} ketika \cs{ifinapp} bernilai benar.
+%%
+%% \cs{newUIlist} membuat jenis daftar lengkap dalam sembilan langkah,
+%% termasuk counter, pendaftaran, perintah noun, format tocloft, dan
+%% empat varian perintah caption.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Content Collector Environments / Environment Pengumpul Konten}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% All seven collector environments use \pkg{environ}'s \cs{NewEnviron}:
+%% the full environment body is captured to the \cs{BODY} token and globally
+%% stored in a designated macro.  Example:
+%% \begin{center}
+%%   \texttt{\small\string\NewEnviron\{abstrakID\}\{\string\global\string\let\string\UI@content@abstrakID\string\BODY\}}
+%% \end{center}
+%%
+%% \medskip\noindent
+%% {\footnotesize
+%% \begin{longtable}{@{}p{3.8cm}p{4.2cm}p{\dimexpr\linewidth-8.0cm-4\tabcolsep\relax}@{}}
+%%   \toprule
+%%   \textbf{Environment} & \textbf{Storage macro} & \textbf{Rendered by} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   \env{abstrakID}               & \cs{UI@content@abstrakID}    & \cs{UI@typeset@abstrak} \\
+%%   \env{abstractEN}              & \cs{UI@content@abstractEN}   & \cs{UI@typeset@abstract} \\
+%%   \env{kataPengantar}           & \cs{UI@content@kataPengantar}& \cs{UI@typeset@kataPengantar} \\
+%%   \env{pernyataanOrisinalitas}  & \cs{UI@content@orisinalitas} & \cs{UI@typeset@orisinalitas} \\
+%%   \env{persetujuanPublikasi}    & \cs{UI@content@publikasi}    & \cs{UI@typeset@publikasi} \\
+%%   \env{pernyataanAI}            & \cs{UI@content@AI}           & \cs{UI@typeset@pernyataanAI} \\
+%%   \env{suratPernyataan}         & \cs{UI@content@suratPernyataan} & \cs{UI@typeset@suratPernyataan} \\
+%% \end{longtable}
+%% }
+%%
+%% All collector environments are declared in the \emph{class} (not in
+%% \cs{AtBeginDocument}), so they are available in the preamble before
+%% \verb|\begin{document}|.
+%%
+%% \textbf{Safe-when-empty}: every \cs{UI@typeset@*} macro checks
+%% \texttt{\textbackslash ifx\textbackslash UI@content@X\textbackslash empty} and renders a default
+%% template when the user omits the corresponding environment.  Mandatory pages
+%% are always generated; optional environments add an override.
+%%
+%% \cs{katakunci\{text\}} and \cs{keywords\{text\}} store keyword strings in
+%% \cs{UI@keywords@ID} and \cs{UI@keywords@EN}.  If omitted, these macros remain
+%% empty and the keywords line renders blank.
+%%
+%% \cs{UI@frontpageHead\{title\}} renders the mandatory-page heading:
+%% \begin{itemize}
+%%   \item Monograph: calls \cs{@makeschapterhead} directly without \cs{clearpage}.
+%%         Sets \cs{thispagestyle\{onlypage\}}.
+%%   \item Journal: \cs{clearpage}, centered uppercase bold title with controlled
+%%         spacing, \cs{thispagestyle\{journal-front\}}.
+%% \end{itemize}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Ketujuh environment pengumpul konten menggunakan \cs{NewEnviron} dari \pkg{environ}:
+%% isi environment ditangkap ke \cs{BODY} dan disimpan secara global ke makro
+%% penyimpanan yang sesuai.  Environment dideklarasikan di dalam kelas (bukan di
+%% \cs{AtBeginDocument}), sehingga tersedia di preamble sebelum
+%% \verb|\begin{document}|.
+%%
+%% Mekanisme aman-saat-kosong: setiap \cs{UI@typeset@*} memeriksa apakah
+%% konten yang tersimpan kosong dan merender template default jika pengguna
+%% menghilangkan environment opsional.  Halaman wajib selalu dihasilkan.
+%%
+%% \cs{katakunci} dan \cs{keywords} menyimpan kata kunci.  Jika tidak diisi,
+%% baris kata kunci tetap dirender (kosong).
+%%
+%% \cs{UI@frontpageHead} merender heading halaman wajib secara berbeda per
+%% format: monograf memanggil \cs{@makeschapterhead} langsung; jurnal melakukan
+%% \cs{clearpage} lalu menampilkan judul tengah tebal.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Front Matter Page Typesetting / Penyusunan Halaman Front~Matter}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% \textbf{\cs{UI@sigTable}}: a three-column \texttt{tabular} with author Name,
+%% NPM, and Signature rows.  Single-author: one set of rows.  Multi-author:
+%% rows for authors~1 and~2 (and~3 if present, via \cs{UI@IfThirdAuthor}).
+%% Always ends with a Date row showing \cs{tanggalSiapSidang}.
+%%
+%% \textbf{Counselor renderer selection}: \cs{UI@setupAbstrakCounselorRenderers}
+%% selects the active renderer once during class load:
+%% \begin{itemize}
+%%   \item KP / MBKM: \cs{UI@abstrakCounselorRowsOne} (pembimbingSatu only).
+%%   \item Disertasi: \cs{UI@abstrakCounselorRowsThree} (up to pembimbingTiga).
+%%   \item All others: \cs{UI@abstrakCounselorRowsTwo} (pembimbingSatu + optional Dua).
+%% \end{itemize}
+%%
+%% \textbf{\cs{UI@typeset@sampul}}: \texttt{titlepage} + \texttt{singlespace*}
+%% + \texttt{center}; Makara logo (2.5\,cm), ``UNIVERSITAS INDONESIA'', thesis
+%% title (uppercase via \cs{Judul}/\cs{JudulInggris}), type label, author(s)
+%% with NPM, faculty block with combined study program, city, and date.
+%%
+%% \textbf{\cs{UI@typeset@judulDalam}}: identical structure to sampul but
+%% inserts degree requirement text (\cs{UI@label@gelarText} + \cs{gelar})
+%% between the type label and the author block.
+%%
+%% \textbf{\cs{UI@typeset@pengesahan}}, four variants:
+%% \begin{itemize}
+%%   \item KP: simplified metadata, single supervisor,
+%%         \cs{UI@label@kpSupervisorTitle}.
+%%   \item MBKM: one or two supervisors; if two, side-by-side \texttt{tabularx}
+%%         showing partner position and organization.
+%%   \item Doktor/S3: \texttt{longtable} board with Promotor~+
+%%         Kopromotor~+ up to~6 Penguji with chair/member roles.
+%%   \item S1/S2: \texttt{tabularx} board with up to~3 Penguji;
+%%         multi-author layout uses vertical stacking with
+%%         \cs{UI@approvalMultiAuthorStudyGap}.
+%% \end{itemize}
+%%
+%% \textbf{External pengesahan PDF}: if \cs{pengesahanPDF\{filename\}} is used,
+%% \cs{makefrontmatter} substitutes \cs{includepdf} for the built-in pengesahan
+%% renderer; page style is applied via the \texttt{pagecommand} key.
+%%
+%% \textbf{\cs{UI@typeset@pernyataanAI}}: auto-selects
+%% \cs{UI@label@aiBodyNone} or \cs{UI@label@aiBodyUsed} based on
+%% \texttt{\textbackslash ifx\textbackslash blank\textbackslash UI@aiplatform}.  The user
+%% \env{pernyataanAI} environment overrides both.
+%%
+%% \textbf{\cs{UI@typeset@suratPernyataan}}: renders identity block (name,
+%% NPM, study program, academic year), plagiarism statement with the typeset
+%% thesis title, sanction statement, and closing.  Override via
+%% \env{suratPernyataan}.
+%%
+%% \textbf{\cs{UI@typeset@publikasi}}: custom double-rule heading
+%% (two \cs{hrule}s with \cs{UI@publikasiRuleInnerGap} between), then the
+%% standard publication agreement text.  Override via
+%% \env{persetujuanPublikasi}.
+%%
+%% \textbf{\cs{UI@typeset@abstrak} / \cs{UI@typeset@abstract}}:
+%% \begin{itemize}
+%%   \item Monograph: \cs{chapter*} heading, single-spaced tabular metadata
+%%         block, abstract body, keywords line.
+%%   \item Journal: centered title (12\,pt bold), author list with counselors
+%%         inline (\cs{UI@abstrakCounselorInline}), study program + faculty, bold
+%%         heading, body, keywords.
+%% \end{itemize}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% \cs{UI@sigTable} merender tabel tanda tangan satu, dua, atau tiga penulis
+%% secara kondisional.  Selalu diakhiri dengan baris tanggal.
+%%
+%% Pemilih renderer pembimbing (\cs{UI@setupAbstrakCounselorRenderers}) dipanggil
+%% sekali saat kelas dimuat berdasarkan tipe dokumen.
+%%
+%% \cs{UI@typeset@pengesahan} memiliki empat varian tergantung tipe: KP
+%% (penyelia satu), MBKM (penyelia satu atau dua dengan kolom mitra), Doktor
+%% (longtable dengan promotor dan hingga enam penguji), S1/S2 (tabularx).
+%%
+%% \cs{pengesahanPDF} menggantikan renderer pengesahan bawaan dengan PDF
+%% eksternal menggunakan \cs{includepdf}.
+%%
+%% \cs{UI@typeset@pernyataanAI} memilih teks ``tidak menggunakan AI'' atau
+%% ``menggunakan AI'' secara otomatis berdasarkan apakah \cs{UI@aiplatform}
+%% tidak kosong.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{\cs{makefrontmatter} Assembly Logic / Logika Perakitan \cs{makefrontmatter}}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% \cs{makefrontmatter} is the single entry point that assembles and emits all
+%% front-matter pages.  Its logic branches on the active format.
+%%
+%% \textbf{Monograph flow} (12 structural steps):
+%% \begin{enumerate}
+%%   \item Sampul~+ \cs{UI@insertdummyblank} (ensures sampul ends on a right page).
+%%   \item \cs{pagenumbering\{roman\}}: roman numbering begins.
+%%   \item Judul Dalam with \cs{addChapter} ToC entry (skipped for MBKM).
+%%   \item Orisinalitas with \cs{addChapter} ToC entry (skipped for KP and MBKM).
+%%   \item Page counter set: 2~for KP/MBKM (skip steps~3 and~4), 3~otherwise.
+%%   \item Pengesahan: built-in renderer or \cs{includepdf} if
+%%         \cs{UI@pengesahanPDFfile} is non-empty.
+%%   \item PernyataanAI with \cs{addChapter}.
+%%   \item SuratPernyataan with \cs{addChapter}.
+%%   \item KataPengantar~+ Publikasi (skipped for KP and MBKM).
+%%   \item Abstrak~+ Abstract.
+%%   \item ToC~+ conditional LoF/LoT/LoL/LoE~+ always LoX~+ user-defined lists.
+%%   \item Parity page~+ \cs{pagenumbering\{arabic\}}~+ \texttt{standard} style~+
+%%         auto-clear enabled~+ running header install.
+%% \end{enumerate}
+%%
+%% Page counter reasoning: judul Dalam occupies page i, orisinalitas occupies
+%% page~ii, so pengesahan begins at counter~3.  KP and MBKM skip judulDalam and
+%% orisinalitas, so the counter is set to~2.
+%%
+%% List-page decisions (step~11) use previous-run counts, for example:
+%% \begin{center}
+%% {\small\ttfamily\string\UI@condListPage\{\string\UI@prev@count@lof\}%
+%% \{\string\addDefaultListPage\{\string\listoffigures\}\}}
+%% \end{center}
+%% After a clean build, all lists appear regardless of count.  On subsequent
+%% runs, the prior-run count suppresses empty lists.
+%%
+%% \textbf{Journal flow} (8 structural steps):
+%% \begin{enumerate}
+%%   \item \cs{pagenumbering\{roman\}}~+ counter~1~+ \texttt{journal-front} style.
+%%   \item \cs{newgeometry\{3cm~all\}}~+ sync page style width.
+%%   \item Sampul~+ Judul Dalam.
+%%   \item Orisinalitas (skipped for KP).
+%%   \item Pengesahan~+ PernyataanAI~+ SuratPernyataan~+ Publikasi.
+%%   \item \cs{restoregeometry}~+ arabic counter from~1~+ \texttt{first-pages} style.
+%%   \item Abstrak~+ Abstract~+ \texttt{standard} style.
+%%   \item If \texttt{columns=2}: set \texttt{columnsep=0.25in},
+%%         \texttt{tabcolsep=4pt}, \cs{twocolumn}.
+%% \end{enumerate}
+%%
+%% \cs{UI@chapterautoclearenabled} is set to \texttt{true} only at the end of
+%% the monograph flow; journal flow leaves it \texttt{false} (no auto-clearpage
+%% between chapters is needed in the inline journal layout).
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% \cs{makefrontmatter} adalah titik masuk tunggal untuk merakit semua halaman
+%% front matter.  Logikanya bercabang berdasarkan format aktif.
+%%
+%% Alur monograf terdiri dari 12 langkah struktural.  Alasan counter halaman:
+%% judulDalam menempati halaman~i, orisinalitas menempati halaman~ii, sehingga
+%% pengesahan dimulai di counter~3.  KP/MBKM melewati langkah~3 dan~4,
+%% sehingga counter diset ke~2.
+%%
+%% Keputusan halaman daftar menggunakan jumlah entri dari run sebelumnya; setelah
+%% build bersih, semua daftar ditampilkan terlepas dari jumlah entri.
+%%
+%% Alur jurnal: 8 langkah.  \cs{newgeometry} mempersempit margin untuk
+%% halaman front matter, kemudian \cs{restoregeometry} mengembalikan margin
+%% sebelum abstrak.  Jika dua kolom, \cs{twocolumn} diaktifkan terakhir.
+%%
+%% \cs{UI@chapterautoclearenabled} hanya diaktifkan di akhir alur monograf;
+%% jurnal membiarkannya \texttt{false} karena bab tidak memerlukan page break.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Metadata Accumulator API / API Akumulator Metadata}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% Metadata commands follow an accumulator pattern: counters track how many
+%% items have been registered and dispatch to the appropriate named slot.
+%%
+%% \textbf{Author chain}: \cs{penulis}, \cs{npm}, \cs{programStudi} must be
+%% called in this order for each author.  Each increments or reads
+%% \texttt{@UI@penuliscount} and stores data in the *Satu/*Dua/*Tiga slots.
+%% Maximum three authors.
+%%
+%% \textbf{Counselor chain}: \cs{pembimbing} stores up to three supervisors in
+%% pembimbingSatu/Dua/Tiga.
+%%
+%% \textbf{Examiner chain}: \cs{penguji} stores up to six examiners in
+%% pengujiSatu through pengujiEnam.
+%%
+%% \textbf{Combined, unique study program display}: \cs{UI@studyProgramUniqueDisplay}:
+%% renders study program 1 always; appends ``~/~program~2'' only if
+%% \cs{npmDua}~$\neq$~\cs{blank} \emph{and} \texttt{programDua}~$\neq$~\texttt{programSatu}
+%% (de-duplicates identical programs for single-study group theses);
+%% similarly for program~3.
+%%
+%% \textbf{Combined, non-unique study program display}: \cs{UI@studyProgramAllDisplay}:
+%% renders study programs of all authors, without de-duplication.
+%%
+%% \textbf{Language-aware helpers}:
+%% \begin{itemize}
+%%   \item \cs{UI@studyProgramLabel\{Satu\}}: returns \cs{studyProgramSatu}
+%%         (English) or \cs{programSatu} (Indonesian) based on \cs{if@UIenglish}.
+%%   \item \cs{UI@studyProgramSatuDisplay} through \cs{UI@studyProgramTigaDisplay}:
+%%         shorthand display macros.
+%%   \item \cs{UI@StudyProgramSatuDisplay} (capital~S): uppercase variant.
+%% \end{itemize}
+%%
+%% \textbf{Scalar commands}: \cs{judul}, \cs{judulInggris}, \cs{fakultas\{ID\}\{EN\}},
+%% \cs{gelar}, \cs{bulanTahun}, \cs{tanggalSiapSidang}, \cs{tanggalLulus}
+%% all use \cs{gdef} to self-redefine onto their storage macro.
+%%
+%% \cs{kota} defaults to ``Depok''.  Override with \cs{kota\{city\}} in the
+%% preamble.  After \cs{begin\{document\}}, \cs{kota} is aliased to
+%% \cs{UI@kota} (a plain string expansion rather than a setter).
+%%
+%% \cs{tahunAkademik\{text\}} stores the academic year string displayed in the
+%% Surat Pernyataan.
+%%
+%% \cs{mitra\{position\}\{instance\}} stores partner organization data for the
+%% MBKM approval page (two-supervisor variant showing partner details
+%% side-by-side with the academic supervisor).
+%%
+%% \cs{pengesahanPDF\{file\}} sets \cs{UI@pengesahanPDFfile}; when non-empty,
+%% \cs{makefrontmatter} substitutes \cs{includepdf} for the built-in pengesahan
+%% renderer.
+%%
+%% \textbf{Uppercase convenience macros} (defined in \cs{AtBeginDocument}):
+%% \cs{Judul}, \cs{JudulInggris}, \cs{Type}, \cs{PenulisSatu}, \cs{PenulisDua},
+%% \cs{PenulisTiga}, \cs{Fakultas}, \cs{ProgramSatu}, \cs{ProgramDua},
+%% \cs{ProgramTiga} are lazily evaluated wrappers that call \cs{MakeUppercase}
+%% at expansion time.  They are defined late (in \cs{AtBeginDocument}) so that
+%% any preceding setter commands are not masked.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Perintah metadata mengikuti pola akumulator: counter melacak berapa item yang
+%% telah didaftarkan dan mengirimkan ke slot bernama yang sesuai.
+%%
+%% Rantai penulis (\cs{penulis}, \cs{npm}, \cs{programStudi}) harus dipanggil
+%% berurutan untuk setiap penulis.  Maksimal tiga penulis.
+%%
+%% \cs{UI@studyProgramUniqueDisplay} menghapus duplikat program studi yang sama
+%% untuk tesis kelompok dengan satu program studi.
+%%
+%% \cs{UI@studyProgramAllDisplay} menampilkan semua program studi tanpa proses
+%% penghapusan duplikat.
+%%
+%% Makro huruf kapital (\cs{Judul}, \cs{PenulisSatu}, dll.) didefinisikan di
+%% \cs{AtBeginDocument} sebagai pembungkus \cs{MakeUppercase} yang dievaluasi
+%% saat digunakan.  Definisi terlambat ini mencegah perintah setter sebelumnya
+%% tertutup oleh definisi makro kapital.
+%%
+%% \cs{kota} default ke ``Depok''; setelah \verb|\begin{document}|, makro ini
+%% diubah menjadi ekspansi string biasa (bukan setter).
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Appendix and Back Matter / Lampiran dan Materi Belakang}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% \textbf{Appendix page style system}:
+%% \begin{itemize}
+%%   \item \cs{UI@lampiran@header} stores the running header text for the current
+%%         appendix (set by \env{lampiranBab}).
+%%   \item \texttt{lampiran-first}: first page of each appendix section;
+%%         twoside-aware header with the running title and no continuation suffix.
+%%   \item \texttt{lampiran}: continuation pages; same header with ``(lanjutan)''
+%%         appended via \cs{UI@label@lampiranCont}.
+%%   \item Both styles are blank when \texttt{plagiarismcheck=true}.
+%% \end{itemize}
+%%
+%% \textbf{\env{lampiranBab\{title\}} environment}:
+%% \begin{enumerate}
+%%   \item \cs{clearpage} (monograph only).
+%%   \item \cs{addappendix\{title\}} registers the entry and increments
+%%         the \texttt{appendix} counter.
+%%   \item Sets \cs{UI@lampiran@header} to
+%%         ``\textit{Lampiran}~\textit{n}: \textit{title}''.
+%%   \item Saves current \cs{headheight} and sets a taller value
+%%         ($2{\times}\text{baselineskip}+1\text{em}$) to accommodate the
+%%         two-line header (page number + running title).
+%%   \item Applies \texttt{lampiran-first} to the first page and
+%%         \texttt{lampiran} to subsequent pages.
+%%   \item On close: \cs{clearpage} and restore original \cs{headheight}.
+%% \end{enumerate}
+%% In journal format, \env{lampiranBab} renders the appendix heading via
+%% \cs{@makeschapterhead} instead of page-style manipulation.
+%%
+%% \textbf{\cs{makeappendixseparator}}: inserts a blank right-page gap
+%% (\cs{UI@insertdummyblank}), then a \texttt{titlepage} with centered
+%% ``LAMPIRAN'' (or ``APPENDIX'') at \cs{UI@appendixSeparatorTopGap} from the
+%% top.  The logical page counter is saved before and restored after the
+%% separator so the appendix body pages continue their sequence uninterrupted.
+%%
+%% \textbf{\cs{makebibliography}}:
+%% \begin{enumerate}
+%%   \item \cs{clearpage} (non-twocolumn only; journal two-column continues inline).
+%%   \item \cs{CAPinToC} activates uppercase ToC entry for the bibliography.
+%%   \item \cs{printbibliography} with \texttt{heading=bibintoc} and language-appropriate title.
+%%   \item \cs{clearchapter} ensures the next section starts on a right page.
+%% \end{enumerate}
+%%
+%% \textbf{\cs{makeglossarypage}} (monograph only):
+%% switches to single spacing, prints the
+%% glossary via \cs{printglossaries}, restores main spacing, and calls
+%% \cs{clearchapter}.  The built-in glossaries heading is used without a
+%% manual ToC entry to prevent duplicate entries.
+%%
+%% \textbf{\cs{appendix} is patched in \cs{AtBeginDocument}}:
+%% the patch prepends \cs{noCAPinToC} (so appendix entries are lowercase in
+%% ToC) and, for monograph, calls \cs{makeappendixseparator}.  The original
+%% \cs{appendix} then runs normally.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Sistem gaya halaman lampiran menggunakan dua gaya: \texttt{lampiran-first}
+%% untuk halaman pertama setiap \env{lampiranBab} (tanpa sufiks lanjutan), dan
+%% \texttt{lampiran} untuk halaman berikutnya (dengan suffix "lanjutan").
+%% Keduanya kosong jika \texttt{plagiarismcheck=true}.
+%%
+%% Environment \env{lampiranBab} menyimpan dan memulihkan \cs{headheight}
+%% karena header dua baris (nomor halaman + judul berjalan) membutuhkan tinggi
+%% header lebih besar dari default.
+%%
+%% \cs{makeappendixseparator} menyisipkan halaman pemisah "LAMPIRAN" sebelum
+%% lampiran pertama.  Counter halaman disimpan dan dipulihkan agar penomoran
+%% tidak terganggu oleh halaman pemisah.
+%%
+%% \cs{makebibliography} mengaktifkan \cs{CAPinToC} agar entri daftar referensi
+%% di ToC menggunakan huruf kapital, sesuai gaya UI.
+%%
+%% \cs{appendix} ditambal oleh \cs{AtBeginDocument} untuk memanggil
+%% \cs{noCAPinToC} dan, pada monograf, \cs{makeappendixseparator} secara
+%% otomatis.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Code Listing Style and Language Definitions / Gaya Kode Program dan Definisi Bahasa Pemrograman}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% All built-in language definitions follow a shared color convention using the
+%% semantic aliases \texttt{keywordcolor}, \texttt{typecolor}, and
+%% \texttt{greencomments}, defined in the \texttt{KONFIGURASI PAKET} section.
+%% Using semantic aliases rather than raw colors ensures that changing the
+%% palette in one place updates all language definitions simultaneously.
+%%
+%% Built-in languages are organized in six functional groups:
+%%
+%% \medskip\noindent
+%% {\small
+%% \begin{longtable}{@{}p{1.4cm}p{11.3cm}@{}}
+%%   \toprule
+%%   \textbf{Group} & \textbf{Languages} \\
+%%   \midrule
+%%   \endhead
+%%   \bottomrule
+%%   \endfoot
+%%   (1) & ABS (Abstract Behavioural Specification), Acceleo, CSS \\
+%%   (2) & D, Dart, Docker, F\#, GDScript, GLSL, HLSL \\
+%%   (3) & Java (v9, ContextJ, DeltaJ, FOP dialects), Groovy, Kotlin \\
+%%   (4) & JavaScript, ECMAScript2015, TypeScript, and aliases (TS, ES6, JS); Julia, Clojure, Scheme \\
+%%   (5) & Compiled and general-purpose languages \\
+%%   (6) & Configuration and data formats (YAML, TOML, etc.) \\
+%% \end{longtable}
+%% }
+%%
+%% To add a new language definition:
+%% \begin{enumerate}
+%%   \item Add a \cs{lstdefinelanguage}\marg{Name} block (or
+%%         \cs{lstdefinelanguage}\marg{Name}\oarg{dialect}\marg{base} for a dialect) in
+%%         the appropriate group within \texttt{STYLING NON-ALUR}.
+%%   \item Use \texttt{keywordcolor}, \texttt{typecolor}, and
+%%         \texttt{greencomments} for keyword, type, and comment colors.
+%%   \item Verify all color contrast ratios meet WCAG~AA ($\geq4.5{:}1$).
+%%   \item No changes to \pkg{listings} or \cs{lstset} are needed; all
+%%         languages inherit the \texttt{uistyle} default.
+%% \end{enumerate}
+%%
+%% Alias languages (e.g., \texttt{TypeScript}/\texttt{TS}, \texttt{ES6}/\texttt{JS})
+%% are defined as empty dialects of an existing language:
+%% \begin{center}
+%%   \texttt{\small\string\lstdefinelanguage\{TS\}[]{TypeScript}\{\}}
+%% \end{center}
+%% This avoids duplicating keyword lists while providing the expected
+%% language identifier to users.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Semua definisi bahasa bawaan menggunakan alias warna semantik
+%% (\texttt{keywordcolor}, \texttt{typecolor}, \texttt{greencomments})
+%% yang didefinisikan di bagian \texttt{KONFIGURASI PAKET}.  Menggunakan alias
+%% semantik memastikan perubahan palet warna di satu tempat memperbarui semua
+%% definisi bahasa secara serentak.
+%%
+%% Bahasa bawaan diorganisasi dalam enam kelompok fungsional: domain-spesifik dan
+%% \emph{markup}; sistem, game, dan \emph{shader}; ekosistem JVM; skrip dan
+%% fungsional; terkompilasi dan umum; konfigurasi dan data.
+%%
+%% Untuk menambah definisi bahasa baru, tambahkan blok \cs{lstdefinelanguage}
+%% di kelompok yang sesuai dalam \texttt{STYLING NON-ALUR}.  Gunakan alias warna
+%% semantik, verifikasi rasio kontras WCAG~AA, dan tidak ada perubahan pada
+%% \cs{lstset} yang diperlukan.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Document Lifecycle Hooks / Hook Siklus Hidup Dokumen}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% Two lifecycle hooks finalize class behavior after the preamble
+%% and after the document body.
+%%
+%% \textbf{\cs{AtBeginDocument}} performs:
+%% \begin{enumerate}
+%%   \item Installs \cs{UI@addtocontents} as \cs{addtocontents} so the
+%%         counting filter is active after all package-level patches.
+%%   \item Syncs \cs{cftbeforechapskip} to the active chapter-separator toggle.
+%%   \item Patches \cs{@chapter} to call \cs{UI@addchapterlistseparatorspacing}
+%%         before each numbered chapter, writing addvspace entries to all list files.
+%%   \item Patches \cs{appendix} to prepend \cs{noCAPinToC} and (monograph)
+%%         \cs{makeappendixseparator} before the original \cs{appendix} runs.
+%%   \item Renames built-in string macros per active language:
+%%         \cs{bibname}, \cs{contentsname}, \cs{listfigurename},
+%%         \cs{listtablename}, \cs{lstlistlistingname}.
+%%   \item Renames glossary strings (\cs{glossaryname}, \cs{acronymname}).
+%%   \item Redefines \cs{kota} from a setter to a plain string expansion.
+%%   \item Defines uppercase convenience macros: \cs{Judul}, \cs{JudulInggris},
+%%         \cs{Type}, \cs{PenulisSatu}--\cs{PenulisTiga}, \cs{Fakultas},
+%%         \cs{ProgramSatu}--\cs{ProgramTiga}, and study-program display helpers.
+%%   \item Sets tocloft chapter leader dots (\cs{cftchapleader},
+%%         \cs{cftchapaftersnum}).
+%%   \item Sets tocloft LoF formatting: indent=0\,pt, numwidth=70\,pt,
+%%         aftersnum=\texttt{.}, presnum=\cs{pic}~.
+%%   \item Sets tocloft LoT formatting: indent=0\,pt, numwidth=60\,pt,
+%%         aftersnum=\texttt{.}, presnum=\cs{tab}~.
+%% \end{enumerate}
+%%
+%% \textbf{\cs{AtEndDocument}} writes all registered list entry counts to the
+%% main \texttt{.aux} file for use on the next run:
+%% \begin{center}
+%% \texttt{\small\textbackslash immediate\textbackslash write\string\@mainaux\{\string\gdef\string\csname UI@prev@count@ext\string\endcsname\{n\}\}}
+%% \end{center}
+%% \texttt{\textbackslash immediate\textbackslash write} is used so the values are present even when build
+%% tools stop after this pass and re-run separately.  The glossary counter
+%% (\texttt{UI@count@glossary}) is written by separate logic.
+%%
+%% \textbf{Multi-pass implications}: list-page generation decisions depend on
+%% counts from the prior run.  On the very first build, all list pages are
+%% generated (threshold=0, count=0).  On subsequent builds, only lists with at
+%% least \cs{UI@minListEntries} entries are generated.  After structural edits
+%% that add or remove list entries, always run \LaTeX{} at least twice.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Hook \cs{AtBeginDocument} memfinalisasi perilaku kelas setelah semua paket
+%% dimuat.  Pemasangan \cs{UI@addtocontents} sebagai \cs{addtocontents} dilakukan
+%% di sini (bukan saat kelas dimuat) agar filter penghitung aktif setelah semua
+%% patch tingkat paket selesai.
+%%
+%% Patch \cs{@chapter} menulis entri \texttt{addvspace} ke semua berkas daftar
+%% saat setiap bab bernomor dimulai.  Patch \cs{appendix} menambahkan
+%% \cs{noCAPinToC} dan halaman pemisah lampiran secara otomatis.
+%%
+%% Makro huruf kapital (\cs{Judul}, \cs{PenulisSatu}, dll.) didefinisikan di
+%% sini agar tidak menimpa perintah setter dengan nama serupa di preamble.
+%%
+%% Hook \cs{AtEndDocument} menulis jumlah entri semua daftar ke \texttt{.aux}
+%% menggunakan \texttt{\textbackslash immediate\textbackslash write} agar tersedia pada run berikutnya.
+%% Karena keputusan halaman daftar bergantung pada jumlah dari run sebelumnya,
+%% selalu jalankan \LaTeX{} minimal dua kali setelah perubahan struktural.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Maintainer Workflow / Alur Kerja Maintainer}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% Standard workflow for code changes:
+%%
+%% \begin{enumerate}
+%%   \item Edit source files only: \texttt{uithesis.dtx},
+%%         \texttt{uithesis-doc.dtx}, \texttt{uithesis.ins}, \texttt{build.lua},
+%%         and \texttt{example/} when needed.
+%%   \item Regenerate class with \texttt{l3build unpack}.
+%%   \item Sync generated \texttt{uithesis.cls} to \texttt{example/uithesis.cls}.
+%%   \item Sync internal assets from \texttt{internals/} to \texttt{example/}.
+%%   \item Run sanity checks for leaked control-sequence text.
+%%   \item Build \texttt{example/thesis.tex} silently, then inspect
+%%         \texttt{example/thesis.log}.
+%%   \item Run \texttt{l3build check} and inspect any
+%%         \texttt{build/test/*.diff} files.
+%% \end{enumerate}
+%%
+%% For documentation-only updates, run at least \texttt{l3build doc}.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Alur standar untuk perubahan kode:
+%%
+%% \begin{enumerate}
+%%   \item Edit hanya berkas sumber: \texttt{uithesis.dtx},
+%%         \texttt{uithesis-doc.dtx}, \texttt{uithesis.ins}, \texttt{build.lua},
+%%         dan \texttt{example/} bila diperlukan.
+%%   \item Bangun ulang kelas dengan \texttt{l3build unpack}.
+%%   \item Sinkronkan \texttt{uithesis.cls} hasil build ke
+%%         \texttt{example/uithesis.cls}.
+%%   \item Sinkronkan aset internal dari \texttt{internals/} ke
+%%         \texttt{example/}.
+%%   \item Jalankan cek teks bocor untuk mendeteksi nama control sequence
+%%         yang tercetak sebagai teks biasa.
+%%   \item Kompilasi \texttt{example/thesis.tex} secara senyap,
+%%         lalu baca \texttt{example/thesis.log}.
+%%   \item Jalankan \texttt{l3build check} dan periksa berkas
+%%         \texttt{build/test/*.diff} bila ada kegagalan.
+%% \end{enumerate}
+%%
+%% Untuk pembaruan dokumentasi saja, minimal jalankan \texttt{l3build doc}.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Maintaining Public APIs / Pemeliharaan API Publik}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% When adding or changing public options/macros/environments:
+%%
+%% \begin{itemize}
+%%   \item Update user-facing sections in this document
+%%         (class options, metadata commands, content commands).
+%%   \item Update examples in \texttt{example/} when behavior changes.
+%%   \item Update tutorial snippets under
+%%         \texttt{example/assets/codes/tutorial/} if affected.
+%%   \item Avoid temporary compatibility aliases on active development branches.
+%% \end{itemize}
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Saat menambah atau mengubah opsi/makro/lingkungan publik:
+%%
+%% \begin{itemize}
+%%   \item Perbarui section dokumentasi pengguna pada dokumen ini
+%%         (opsi kelas, perintah metadata, perintah konten).
+%%   \item Perbarui contoh pada \texttt{example/} jika perilaku berubah.
+%%   \item Perbarui cuplikan tutorial pada
+%%         \texttt{example/assets/codes/tutorial/} jika terdampak.
+%%   \item Hindari alias kompatibilitas sementara pada branch pengembangan aktif.
+%% \end{itemize}
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Contribution Flow / Alur Kontribusi}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% Contribution flow in this project:
+%%
+%% \begin{enumerate}
+%%   \item Open an issue or discuss the planned change.
+%%   \item Create a feature branch from the active development branch.
+%%   \item Implement changes in source files, not generated files.
+%%   \item Run build and checks according to scope.
+%%   \item Update documentation and tutorial snippets when behavior changes.
+%%   \item Submit a merge request on GitLab with:
+%%         scope summary, test evidence, and migration notes if needed.
+%%   \item Address review comments and keep the branch rebased or merged
+%%         according to repository policy.
+%% \end{enumerate}
+%%
+%% The detailed policy document remains
+%% \texttt{\_attributions/CONTRIBUTING.md}.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Alur kontribusi pada proyek ini:
+%%
+%% \begin{enumerate}
+%%   \item Buka isu atau diskusikan perubahan yang direncanakan.
+%%   \item Buat branch fitur dari branch pengembangan aktif.
+%%   \item Implementasikan perubahan pada berkas sumber,
+%%         bukan berkas turunan.
+%%   \item Jalankan build dan pengujian sesuai ruang lingkup perubahan.
+%%   \item Perbarui dokumentasi dan cuplikan tutorial bila perilaku berubah.
+%%   \item Kirim merge request di GitLab dengan ringkasan ruang lingkup,
+%%         bukti pengujian, dan catatan migrasi bila diperlukan.
+%%   \item Tindak lanjuti komentar review dan sinkronkan branch
+%%         sesuai kebijakan repositori.
+%% \end{enumerate}
+%%
+%% Dokumen kebijakan rinci tetap berada pada
+%% \texttt{\_attributions/CONTRIBUTING.md}.
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Testing Infrastructure / Infrastruktur Pengujian}
+%% %-----------------------------------------------------------------------
+%%
+%% \subsection*{English}
+%%
+%% The package ships two complementary test systems: an automated
+%% \textit{l3build} regression suite that catches logical regressions in
+%% class options and public APIs, and a manual GitLab CI combination job
+%% that produces rendered PDFs for human inspection.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Paket ini dilengkapi dua sistem pengujian: rangkaian regresi \textit{l3build}
+%% otomatis yang mendeteksi regresi logis pada opsi kelas dan API publik,
+%% serta satu \textit{job} kombinasi GitLab CI manual yang menghasilkan PDF
+%% untuk diperiksa secara visual.
+%%
+%% %-----------------------------------------------------------------------
+%% \subsubsection*{l3build Unit Tests / Uji Unit l3build}
+%%
+%% \subsection*{English}
+%%
+%% Run all log-based unit tests with \texttt{l3build check}.  Run a single
+%% named test with \texttt{l3build check <testname>}.
+%%
+%% Test source files (\texttt{.lvt}) live in \texttt{tests/}.  Each file
+%% begins with \verb|\input{regression-test.tex}| to load the l3build test
+%% framework.  All unasserted output is suppressed with
+%% \verb|\OMIT|~\ldots~\verb|\TIMO| so that \texttt{.tlg} reference files
+%% contain only \verb|\TEST|/\verb|\ASSERTSTR| results.  This means package
+%% version updates never cause spurious failures.
+%%
+%% File naming convention: \texttt{NN-group-description.lvt}, where
+%% \texttt{NN} is a two-digit group number.  Current groups:
+%%
+%% \begin{description}
+%%   \item[01] Class loading smoke tests --- one file per option
+%%             combination of \texttt{format}, \texttt{type},
+%%             \texttt{jenjang}, \texttt{lang}, and \texttt{print}.
+%%   \item[02] Citation option smoke tests --- one file per
+%%             \texttt{citation=} value.
+%%   \item[03] Metadata command API tests --- \cs{ASSERTSTR} checks on
+%%             \cs{penulisSatu}, \cs{pembimbingSatu}, \cs{pengujiSatu},
+%%             and scalar fields.
+%%   \item[04] Text formatting command tests --- \cs{ASSERTSTR} checks on
+%%             \cs{f}, \cs{bo}, \cs{bi}, \cs{code}, and \cs{var}.
+%%   \item[05] Spacing and paragraph option smoke tests.
+%%   \item[06] \texttt{plagiarismcheck=true} smoke test.
+%%   \item[07] Journal-specific environment tests --- definition checks and
+%%             compilation of \env{UIwideblock}, \env{UIwidetable},
+%%             \env{UIwidefigure}, \env{UIfullwidthpages}, and
+%%             \env{UIlandscape}.
+%% \end{description}
+%%
+%% Support files shared by all tests live in \texttt{tests/support/}.
+%% After changing the class, regenerate a reference file with
+%% \texttt{l3build save <testname>} and verify
+%% \texttt{l3build check} passes before committing.
+%%
+%% High-maintenance patterns excluded from all tests: \cs{showbox},
+%% \cs{showoutput}, and bibliography-formatted output capture.  These
+%% break on unrelated package updates.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Jalankan seluruh uji unit dengan \texttt{l3build check}.  Jalankan
+%% satu uji tertentu dengan \texttt{l3build check <testname>}.
+%%
+%% Berkas sumber uji (\texttt{.lvt}) berada di \texttt{tests/}.  Setiap
+%% berkas diawali \verb|\input{regression-test.tex}| untuk memuat
+%% kerangka uji l3build.  Seluruh keluaran yang tidak diuji ditekan
+%% dengan \verb|\OMIT|~\ldots~\verb|\TIMO| agar berkas referensi
+%% \texttt{.tlg} hanya berisi hasil \verb|\TEST|/\verb|\ASSERTSTR|.
+%% Dengan demikian, pembaruan versi paket tidak menimbulkan kegagalan
+%% uji palsu.
+%%
+%% Konvensi penamaan berkas: \texttt{NN-grup-deskripsi.lvt}, di mana
+%% \texttt{NN} adalah nomor grup dua digit.  Setelah mengubah kelas,
+%% perbarui berkas referensi dengan \texttt{l3build save <testname>} dan
+%% pastikan \texttt{l3build check} lulus sebelum melakukan \textit{commit}.
+%%
+%% %-----------------------------------------------------------------------
+%% \subsubsection*{PDF Comparison Tests / Uji Perbandingan PDF}
+%%
+%% \subsection*{English}
+%%
+%% PDF comparison tests detect visual layout regressions on critical page
+%% types that log-based tests cannot verify.  Run them with
+%% \texttt{l3build check -ctest-pdf}.
+%%
+%% Source files (\texttt{.pvt}) live in \texttt{tests/pvt/}.  Reference
+%% files (\texttt{.tpf}) are committed to the repository after human
+%% visual review.  The dedicated configuration \texttt{test-pdf.lua}
+%% sets \texttt{testfiledir = "tests/pvt"} and
+%% \texttt{checkengines = \{"pdftex"\}}.
+%%
+%% Current PDF tests:
+%%
+%% \begin{description}
+%%   \item[\texttt{08-cover-monograph}] Monograph Skripsi cover and title
+%%         pages -- the most visually critical output.
+%%   \item[\texttt{08-cover-journal}] Journal article first page.
+%%   \item[\texttt{08-chapter-opening}] Monograph chapter-opening page
+%%         with margin, header, and footer.
+%%   \item[\texttt{08-twocol-spread}] Two-column journal body page.
+%% \end{description}
+%%
+%% To regenerate \texttt{.tpf} reference files locally:
+%% \begin{quote}
+%%   \texttt{l3build save -ctest-pdf <testname>}
+%% \end{quote}
+%% Inspect the rendered PDF in \texttt{build/test/}, confirm the visual
+%% output looks correct, then commit the updated \texttt{.tpf} file.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% Uji perbandingan PDF mendeteksi regresi tata letak visual pada
+%% halaman-halaman penting yang tidak dapat diverifikasi oleh uji berbasis
+%% log.  Jalankan dengan \texttt{l3build check -ctest-pdf}.
+%%
+%% Berkas sumber (\texttt{.pvt}) berada di \texttt{tests/pvt/}.  Berkas
+%% referensi (\texttt{.tpf}) dikompilasi ke dalam repositori setelah
+%% diperiksa secara visual.  Konfigurasi \texttt{test-pdf.lua}
+%% mengatur \texttt{testfiledir = "tests/pvt"} dan
+%% \texttt{checkengines = \{"pdftex"\}}.
+%%
+%% Untuk memperbarui berkas \texttt{.tpf} secara lokal:
+%% \begin{quote}
+%%   \texttt{l3build save -ctest-pdf <testname>}
+%% \end{quote}
+%% Periksa PDF yang dihasilkan di \texttt{build/test/}, pastikan tampilan
+%% visual sudah benar, lalu lakukan \textit{commit} pada berkas \texttt{.tpf}
+%% yang telah disetujui.
+%%
+%% %-----------------------------------------------------------------------
+%% \subsubsection*{GitLab CI l3build Job / Job l3build di GitLab CI}
+%%
+%% \subsection*{English}
+%%
+%% The single manual job \texttt{test:l3build} (defined in
+%% \texttt{.gitlab-ci/test-l3build.yml}) runs both log-based and PDF
+%% comparison tests in the same CI environment used to build the class.
+%%
+%% Trigger via GitLab \textbf{Run pipeline} with the following variable:
+%%
+%% \begin{description}
+%%   \item[\texttt{L3BUILD\_SAVE}] Set to \texttt{true} to also regenerate
+%%         \texttt{.tpf} reference files after the check steps.  Defaults
+%%         to \texttt{false}.
+%% \end{description}
+%%
+%% When \texttt{L3BUILD\_SAVE=true} the regenerated \texttt{.tpf} files
+%% and pre-normalization PDFs are uploaded as job artifacts (seven-day
+%% retention).  Download the artifact bundle, inspect the PDFs in
+%% \texttt{build/test/}, then commit the approved \texttt{.tpf} files to
+%% \texttt{tests/pvt/}.  Automatic commit back to the repository is
+%% intentionally not implemented: silently accepting a visual regression
+%% as the new reference defeats the purpose of the test.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% \textit{Job} manual \texttt{test:l3build} (didefinisikan di
+%% \texttt{.gitlab-ci/test-l3build.yml}) menjalankan uji berbasis log dan
+%% uji perbandingan PDF dalam satu lingkungan CI yang sama dengan yang
+%% digunakan untuk membangun kelas.
+%%
+%% Picu melalui GitLab \textbf{Run pipeline} dengan variabel berikut:
+%%
+%% \begin{description}
+%%   \item[\texttt{L3BUILD\_SAVE}] Diisi \texttt{true} untuk juga
+%%         meregenerasi berkas \texttt{.tpf} setelah langkah pengujian.
+%%         Nilai bawaan adalah \texttt{false}.
+%% \end{description}
+%%
+%% Jika \texttt{L3BUILD\_SAVE=true}, berkas \texttt{.tpf} yang dihasilkan
+%% dan PDF pra-normalisasi diunggah sebagai artefak \textit{job} (retensi tujuh
+%% hari).  Unduh bundel artefak, periksa PDF di \texttt{build/test/}, lalu
+%% lakukan \textit{commit} pada berkas \texttt{.tpf} yang telah disetujui ke
+%% \texttt{tests/pvt/}.
+%%
+%% %-----------------------------------------------------------------------
+%% \subsubsection*{GitLab CI Combination Tests / Uji Kombinasi di GitLab CI}
+%%
+%% \subsection*{English}
+%%
+%% The manual job \texttt{test:combinations:manual} (defined in
+%% \texttt{.gitlab-ci/test-combinations.yml}) compiles arbitrary option
+%% combinations and uploads the resulting PDFs as artifacts for human
+%% inspection.
+%%
+%% Trigger via GitLab \textbf{Run pipeline}, then fill in the
+%% \texttt{COMBINATION\_TESTS} variable.  One test case per line:
+%%
+%% \begin{quote}
+%%   \texttt{[path/to/file.tex] option1, option2=value, \ldots}
+%% \end{quote}
+%%
+%% Blank lines and lines starting with \verb|#| are ignored.  Example
+%% value:
+%%
+%% \begin{quote}\small
+%% \begin{verbatim}
+%% [tests/minimal.tex] monograph, type=Skripsi, jenjang=Sarjana, lang=indonesian
+%% [tests/minimal.tex] journal, columns=2, type=Tesis, jenjang=Magister, lang=english
+%% [example/thesis.tex] monograph, print=oneside, type=Disertasi, jenjang=Doktor, lang=indonesian
+%% \end{verbatim}
+%% \end{quote}
+%%
+%% Artifacts (\texttt{combo-artifacts/}) contain one PDF and one log per
+%% case, plus a summary \texttt{combination-results.zip}.
+%%
+%% \subsection*{Bahasa Indonesia}
+%%
+%% \textit{Job} manual \texttt{test:combinations:manual} (didefinisikan di
+%% \texttt{.gitlab-ci/test-combinations.yml}) mengompilasi kombinasi opsi
+%% sembarang dan mengunggah PDF yang dihasilkan sebagai artefak untuk
+%% diperiksa secara visual.
+%%
+%% Picu melalui GitLab \textbf{Run pipeline}, lalu isi variabel
+%% \texttt{COMBINATION\_TESTS}.  Satu kasus uji per baris:
+%%
+%% \begin{quote}
+%%   \texttt{[path/to/file.tex] opsi1, opsi2=nilai, \ldots}
+%% \end{quote}
+%%
+%% Baris kosong dan baris yang diawali \verb|#| diabaikan.  Artefak
+%% (\texttt{combo-artifacts/}) berisi satu PDF dan satu \textit{log} per kasus,
+%% serta ringkasan \texttt{combination-results.zip}.
+%%
+%% \newpage
+%%
+%% %-----------------------------------------------------------------------
+%% \section{Changelog}
+%% %-----------------------------------------------------------------------
+%%
+%% \changes{v1.0.3}{2010/12/03}{Initial public release by Andreas Febrian
+%%   et al.\ as a \LaTeX{} style file (\texttt{uithesis.sty}), conforming
+%%   to the 2008 Universitas Indonesia thesis formatting guidelines.}
+%%
+%% \changes{v2.0.0}{2020/01/29}{Major revision for the 2017 UI guidelines,
+%%   developed at the Reliable Software Engineering Lab, Fasilkom UI\@.
+%%   Switched citations to Bib\TeX{} with IEEE style.
+%%   Added \pkg{listings} syntax highlighting support.}
+%%
+%% \changes{v2.0.1}{2020/05/08}{Added tutorial content; updated contribution
+%%   guidelines.}
+%%
+%% \changes{v2.0.2}{2020/09/14}{Switched default citation style to APA\@.
+%%   Added \pkg{babel} Indonesian hyphenation.
+%%   Added \texttt{longtable} and Bib\TeX{} tutorials.}
+%%
+%% \changes{v2.0.3}{2020/09/15}{Added landscape orientation support.
+%%   Introduced a separate appendix list; appendix entries no longer appear
+%%   in the main table of contents.
+%%   Added a custom list-of-objects mechanism.}
+%%
+%% \changes{v2.1.0}{2021/09/08}{Experimental CJK multi-language support.
+%%   Added table cell alignment and word-wrapping.
+%%   Added continuation suffix for multi-page tables.}
+%%
+%% \changes{v2.1.1}{2022/02/07}{Added \pkg{amsfonts} mathematical symbol support.
+%%   Community contributions: GitLab CI improvements, attribution, and
+%%   APA Indonesian citation fixes.}
+%%
+%% \changes{v2.1.2}{2022/08/13}{Revised front matter pages.
+%%   Added non-standard approval page layouts for internship reports and
+%%   dissertations.}
+%%
+%% \changes{v2.1.3}{2023/02/22}{Added support for group thesis and
+%%   \emph{Kampus Merdeka} independent-study report formats.}
+%%
+%% \changes{v2.2.0}{2024/08/28}{Updated formatting to the latest UI thesis
+%%   guidelines (cover page, originality statement, header/footer, appendix).}
+%%
+%% \changes{v2.2.1}{2024/12/16}{Fixed header/footer on two-sided output.
+%%   Fixed \pkg{listings} auto-wrapping regression from v2.2.0.
+%%   Fixed custom object and chapter numbering in the table of contents.
+%%   Added \pkg{pdflscape} landscape support.
+%%   Added \pkg{glossaries} glossary support.}
+%%
+%% \changes{v2.2.2}{2026/05/08}{Added \pkg{amssymb} advanced mathematical
+%%   symbol support.
+%%   Added \texttt{\textbackslash subfigure} support.
+%%   Fixed automatic glossary generation with \texttt{makeglossaries}.}
+%%
+%% \changes{v3.0.0}{2026/08/20}{Rewritten as a \LaTeX{} document class
+%%   (\texttt{uithesis.cls}); complies with the 2025 Universitas Indonesia
+%%   thesis formatting guidelines.
+%%   Added journal format, English language support, and AI-use declaration
+%%   page.  Switched to \pkg{biblatex}/\pkg{biber}.  Published on CTAN.}
+%%

@@ -1,0 +1,60 @@
+\documentclass[11pt,a4paper]{book}
+
+\usepackage[margin=25mm]{geometry}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black}
+
+\newcommand{\abstractentry}[4]{%
+  \chapter*{#1}\addcontentsline{toc}{chapter}{#1}%
+  \textbf{#2}\hfill\textit{#3}\par\smallskip
+  \textit{Keywords:} #4\par\medskip
+}
+
+\title{Book of Abstracts}
+\author{Conference or Workshop Name}
+\date{\today}
+
+\begin{document}
+\frontmatter
+\maketitle
+\chapter*{Welcome}
+This starter is organised for a conference book of abstracts. Replace the
+sample entries with your programme data, or generate this section from a CSV
+file with a small script.
+\tableofcontents
+
+\mainmatter
+\abstractentry{A reproducible workflow}{Alex Morgan}{Department of Computing}
+  {open science, workflows, documentation}
+Abstracts can be kept short and consistent while still allowing mathematical
+notation such as $E=mc^2$ and references to the event programme.
+
+\abstractentry{Designing inclusive meetings}{Jordan Lee and Sam Patel}{Institute for Learning}
+  {accessibility, collaboration, teaching}
+Use one command per contribution so that names, affiliations, and keywords are
+easy to update when the programme changes.
+
+\chapter*{Author index}
+\addcontentsline{toc}{chapter}{Author index}
+\begin{description}[leftmargin=!,labelwidth=35mm]
+  \item[Morgan, Alex] A reproducible workflow
+  \item[Lee, Jordan] Designing inclusive meetings
+  \item[Patel, Sam] Designing inclusive meetings
+\end{description}
+
+\chapter*{Keyword index}
+\addcontentsline{toc}{chapter}{Keyword index}
+\begin{description}[leftmargin=!,labelwidth=35mm]
+  \item[accessibility] Designing inclusive meetings
+  \item[open science] A reproducible workflow
+  \item[workflows] A reproducible workflow
+\end{description}
+
+\backmatter
+\chapter*{Organiser notes}
+The source is deliberately plain: add a bibliography, logos, or a generated
+data import only when your event has cleared the relevant rights.
+\end{document}

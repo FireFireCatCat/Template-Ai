@@ -1,0 +1,86 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\definecolor{engineeringblue}{HTML}{1F4E79}
+\definecolor{givenfill}{HTML}{EEF5FB}
+\definecolor{solutionfill}{HTML}{FFF6D6}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{EE 204 — Engineering mathematics}
+\rhead{Homework 02}
+\cfoot{\thepage}
+\newcommand{\hwNumber}{02}
+\newcommand{\hwTitle}{Linear systems and uncertainty}
+\newtcolorbox{givenbox}{colback=givenfill,colframe=engineeringblue,title=Given,fonttitle=\bfseries}
+\newtcolorbox{solutionbox}{colback=solutionfill,colframe=orange!70!black,title=Solution,fonttitle=\bfseries}
+
+\begin{document}
+\begin{titlepage}
+\centering
+\vspace*{18mm}
+{\Large\bfseries Example University\\[3mm] School of Engineering}\par
+\vfill
+{\Huge\bfseries \hwTitle\\[5mm]}
+{\Large Homework \hwNumber}\par
+\vfill
+{\large Student: \rule{65mm}{0.4pt}\\[4mm]
+Instructor: Dr. A. Chen\\[4mm]
+Due: 12 September 2026}\par
+\vfill
+\textit{Keep this page, the problem statements, and the worked reasoning in
+one source file so the submission remains editable.}
+\end{titlepage}
+
+\section*{Instructions}
+State assumptions, show units, and label the final answer.  The solution boxes
+are included as worked examples; delete them or move them to a separate answer
+key when submitting a student-only sheet.
+
+\section*{Problem 1 — calibration line}
+\begin{givenbox}
+A load cell reads 2.4 mV at 0 N and 8.4 mV at 120 N.  Assume a linear response.
+Find the sensitivity in mV/N and the expected reading at 75 N.
+\end{givenbox}
+\begin{solutionbox}
+The slope is
+\[
+  s=\frac{8.4-2.4}{120-0}=0.05\;\mathrm{mV/N}.
+\]
+The model is $V=2.4+0.05F$, so $V(75)=6.15\;\mathrm{mV}$.
+\end{solutionbox}
+
+\section*{Problem 2 — a two-equation balance}
+\begin{givenbox}
+Solve $2x+y=11$ and $x-y=1$.  Interpret $x$ and $y$ as two component
+contributions and report both values.
+\end{givenbox}
+\begin{solutionbox}
+Adding the equations gives $3x=12$, hence $x=4$.  Substitution into the second
+equation gives $y=3$.  The pair $(x,y)=(4,3)$ satisfies both balances.
+\end{solutionbox}
+
+\section*{Problem 3 — uncertainty}
+\begin{givenbox}
+The measured length is $L=25.0\pm0.2$ mm and the width is
+$W=10.0\pm0.1$ mm.  Give a first-order estimate for the uncertainty in the
+area $A=LW$.
+\end{givenbox}
+\begin{solutionbox}
+For independent uncertainties, use
+\[
+  \Delta A \approx W\Delta L+L\Delta W
+  =10.0(0.2)+25.0(0.1)=4.5\;\mathrm{mm^2}.
+\]
+Thus $A=250.0\pm4.5\;\mathrm{mm^2}$ under this conservative estimate.
+\end{solutionbox}
+
+\section*{Reflection}
+Which assumption in one problem would you test first in a laboratory, and what
+measurement would provide evidence for or against it?\\[12mm]
+\rule{\linewidth}{0.4pt}\\[12mm]
+\rule{\linewidth}{0.4pt}
+\end{document}

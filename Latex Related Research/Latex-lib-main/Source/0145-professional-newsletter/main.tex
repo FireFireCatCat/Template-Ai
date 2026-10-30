@@ -1,0 +1,139 @@
+\documentclass[10pt]{article}
+
+\usepackage[a4paper,margin=1.6cm]{geometry}
+\usepackage{multicol}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{lettrine}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\definecolor{masthead}{HTML}{1F3B57}
+\definecolor{rule}{HTML}{C8A951}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\small\color{gray} Ridgeline Manufacturing --- Employee Newsletter --- Issue 14}
+\setlength{\columnsep}{1.4em}
+\setlength{\columnseprule}{0.4pt}
+
+\newtcolorbox{sidebox}[1]{
+  colback=masthead!6, colframe=masthead, boxrule=0.8pt,
+  fonttitle=\bfseries, title=#1, coltitle=white, colbacktitle=masthead,
+  left=6pt, right=6pt, top=4pt, bottom=4pt
+}
+
+\begin{document}
+
+% ------------------------------------------------------------------
+% Masthead
+% ------------------------------------------------------------------
+\begin{center}
+  {\color{masthead}\Huge\bfseries Ridgeline Quarterly}\\[2pt]
+  {\color{rule}\rule{\linewidth}{2pt}}\\[4pt]
+  {\small\color{gray} The employee newsletter of Ridgeline Manufacturing
+    \quad\textbullet\quad September 2026 \quad\textbullet\quad Issue 14}
+\end{center}
+
+\vspace{0.6em}
+
+% ------------------------------------------------------------------
+% Front-page table of contents (hyperlinked in a real build with hyperref;
+% left as plain page references here since the class stays dependency-light)
+% ------------------------------------------------------------------
+\noindent\textbf{In this issue:} New Safety Protocol Rollout (p.\,1)
+\quad\textbullet\quad Employee Spotlight: Maria Chen (p.\,1)
+\quad\textbullet\quad Q3 Production Numbers (p.\,2)
+\quad\textbullet\quad Upcoming Events (p.\,2)
+
+\vspace{0.8em}
+\hrule
+\vspace{0.8em}
+
+\begin{multicols}{2}
+
+\section*{New Safety Protocol Rollout}
+
+\lettrine[lines=2]{S}{tarting} 1 October, all floor staff will follow the
+updated lockout/tagout procedure for the stamping line, following last
+quarter's near-miss review. The revised checklist adds a second sign-off step
+before any guard is removed for maintenance.
+
+Training sessions run three times daily during the first week of October ---
+6:30am, 2:30pm and 10:30pm --- to cover all three shifts. Attendance is
+mandatory; supervisors will track sign-in sheets at each session.
+
+\begin{sidebox}{Quick Reference}
+  \begin{itemize}
+    \setlength\itemsep{2pt}
+    \item New checklist posted at every stamping station
+    \item Second sign-off required before guard removal
+    \item Questions: safety@ridgeline-mfg.example
+  \end{itemize}
+\end{sidebox}
+
+Floor supervisors received the full procedure document last week. If you
+have not seen it, ask your shift lead before the training session --- the
+updated forms will not be accepted until everyone has reviewed the changes.
+
+\section*{Employee Spotlight: Maria Chen}
+
+\begin{tcolorbox}[colback=gray!8, colframe=gray!40, boxrule=0.5pt,
+                   left=6pt, right=6pt, top=4pt, bottom=4pt]
+  \textit{``I started on the floor eight years ago and never expected to end
+  up running the whole night shift. The thing that's kept me here is that
+  people actually listen when you flag a problem.''}
+\end{tcolorbox}
+
+Maria Chen joined Ridgeline in 2018 as a line operator and was promoted to
+Night Shift Supervisor this spring. Under her watch, the night shift posted
+its lowest defect rate in company history last quarter --- a 2.1\% drop from
+the prior year.
+
+Maria credits the improvement to a simple change: a five-minute handoff
+huddle at the start of each shift where operators flag anything unusual from
+the shift before. ``It sounds too simple to matter,'' she says, ``but it
+means problems get caught in hour one instead of hour six.''
+
+Congratulations, Maria, on a well-earned promotion.
+
+\columnbreak
+
+\section*{Q3 Production Numbers}
+
+\begin{center}
+\begin{tabular}{lrr}
+  \hline
+  \textbf{Line} & \textbf{Units} & \textbf{vs.\ Q2} \\
+  \hline
+  Stamping   & 48{,}200 & +6\% \\
+  Assembly   & 41{,}900 & +3\% \\
+  Finishing  & 39{,}500 & +9\% \\
+  \hline
+\end{tabular}
+\end{center}
+
+All three lines beat their Q3 targets, with Finishing posting the strongest
+quarter-over-quarter gain following the new conveyor layout installed in
+July. Plant management thanks everyone for adapting to the new floor plan
+mid-quarter --- the early disruption clearly paid off.
+
+\section*{Upcoming Events}
+
+\begin{itemize}
+  \item \textbf{5 October} --- Safety training sessions (all shifts, see above)
+  \item \textbf{18 October} --- Quarterly town hall, cafeteria, 3:00pm
+  \item \textbf{31 October} --- Fall potluck, break room, all shifts welcome
+  \item \textbf{14 November} --- Open enrollment for benefits begins
+\end{itemize}
+
+\begin{sidebox}{Have News to Share?}
+  Submit items for the next issue to
+  \texttt{newsletter@ridgeline-mfg.example} by the 20th of the month.
+\end{sidebox}
+
+\end{multicols}
+
+\end{document}

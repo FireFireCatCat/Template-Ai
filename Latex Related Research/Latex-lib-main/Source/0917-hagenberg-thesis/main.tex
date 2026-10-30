@@ -1,0 +1,84 @@
+%% Hagenberg Thesis starter — hgbthesis class (Upper Austria University of
+%% Applied Sciences, Hagenberg campus). A condensed single-file starter, not
+%% the full upstream tutorial document (which spans ~15 \include'd chapter
+%% files) -- trimmed to a realistic minimal thesis, matching how other
+%% starters in this catalogue are built.
+%%
+%% BIBLIOGRAPHY: hgbthesis \RequirePackage{hgbbib} unconditionally, and
+%% hgbbib.sty loads biblatex hardcoded to backend=biber -- there is no
+%% bibtex fallback at all. An earlier packaging pass could not run biber and
+%% dropped this template for exactly that reason. The compile pipeline now
+%% runs biber automatically when a document's main.bcf is present, so this
+%% ships with a real \MakeBibliography section.
+%%
+%% Class documentation: texdoc hagenberg-thesis | https://ctan.org/pkg/hagenberg-thesis
+%% Licence: CC-BY-4.0, (c) Wilhelm Burger and Wolfgang Hochleitner --
+%% verified directly in the upstream repo's LICENSE.md (the full CC-BY-4.0
+%% legal text, not just a metadata tag). Attribution required -- see
+%% ATTRIBUTION.txt in this download.
+%% No hgbpdfa here (upstream's example loads it for optional PDF/A-2b
+%% output) -- PDF/A validation is a submission-time concern, skipped for
+%% this starter to keep it minimal.
+\RequirePackage[utf8]{inputenc}
+\documentclass[type=master,theme=default,language=english,titlelanguage=english,smartquotes=true,updatecheck=false]{hgbthesis}
+
+%% UPSTREAM BUG WORKAROUND: hgb.sty calls the LaTeX2e-kernel primitive
+%% \DocumentMetadata from inside \AtBeginDocument (hgb.sty's own comment
+%% even says "This may only be called in the document preamble!" while
+%% doing exactly that -- \AtBeginDocument code runs AFTER \begin{document},
+%% not in the preamble). \DocumentMetadata is only valid before
+%% \documentclass in the current LaTeX2e kernel, so calling it this late
+%% throws "should be used only before \documentclass" plus knock-on
+%% "already defined" errors from re-entering PDF-management setup. This
+%% document does not need PDF metadata/PDF-A support, so the safest fix is
+%% to no-op \DocumentMetadata for the one call the class makes internally,
+%% rather than patch the vendored class file itself.
+\makeatletter
+\let\DocumentMetadata\@gobble
+\makeatother
+
+\bibliography{references}
+
+\begin{document}
+
+\title{Partial Solutions to Reproducible Compilation}
+\subtitle{A Minimal Introduction}
+\author{Ada Lovelace}
+
+\programtype{Master's Degree Program}
+\programname{Digital Media}
+\institution{University of Applied Sciences Upper Austria}
+
+\placeofstudy{Hagenberg}
+\dateofsubmission{2026}{06}{01}
+
+\advisor{Prof.\ Alan Turing, PhD}
+
+\license{cc}
+
+\frontmatter
+\maketitle
+\tableofcontents
+
+\mainmatter
+
+\chapter{Introduction}
+Replace this with your introduction. State the problem, why it matters, and
+how the rest of the thesis is organised.
+
+\section{Motivation}
+A short discussion of prior work, cited like this~\autocite{knuth1984texbook}.
+
+\chapter{Method}
+Describe what you did.
+
+\chapter{Results}
+Present your results.
+
+\chapter{Conclusion}
+Say what it means.
+
+\backmatter
+\MakeBibliography
+
+\end{document}

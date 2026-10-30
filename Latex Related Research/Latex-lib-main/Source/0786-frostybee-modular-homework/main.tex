@@ -1,0 +1,127 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{booktabs,tabularx,array}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{navy}{HTML}{183153}
+\definecolor{teal}{HTML}{2A9D8F}
+\definecolor{paper}{HTML}{F4F7F8}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlist{itemsep=2pt,topsep=3pt}
+
+\newcommand{\student}{Your Name}
+\newcommand{\course}{Software Engineering}
+\newcommand{\term}{Autumn 2026}
+\newcommand{\assignment}{Sprint retrospective}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\color{navy}\textbf{\course}}
+\rhead{\color{teal}\student}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{teal}\leaders\hrule height \headrulewidth\hfill}}
+
+\newcounter{question}
+\newenvironment{question}[1]
+  {\refstepcounter{question}\par\vspace{10pt}\colorbox{navy}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{white}\textbf{Question \thequestion}\quad #1}}\par\smallskip\ignorespaces}
+  {\par}
+\newenvironment{answer}
+  {\begingroup\color{navy}\textbf{Answer.}\quad\ignorespaces}
+  {\endgroup\par}
+\newcommand{\note}[1]{\par\colorbox{paper}{\parbox{\dimexpr\linewidth-2\fboxsep}{\textbf{Note.} #1}}\par}
+
+\begin{document}
+
+\begin{center}
+  {\Huge\color{navy}\bfseries \assignment\par}
+  \vspace{4pt}
+  {\large \course\quad\textbullet\quad \term\quad\textbullet\quad \student\par}
+\end{center}
+\vspace{6pt}
+
+\begin{tabularx}{\linewidth}{@{}Y Y@{}}
+\toprule
+\textbf{Learning goals} & \textbf{Submission}\tabularnewline
+Translate observations into actionable engineering work; distinguish signal
+from process noise. & One PDF, with evidence for each conclusion and a short
+reflection on uncertainty.\\
+\bottomrule
+\end{tabularx}
+
+\section*{Revision history}
+\begin{tabularx}{\linewidth}{@{}l l Y@{}}
+\toprule
+Version & Date & Change\\
+\midrule
+0.1 & 02 Sep 2026 & Initial analysis and baseline metrics.\\
+0.2 & 09 Sep 2026 & Added experiment plan and risk notes.\\
+\bottomrule
+\end{tabularx}
+
+\note{Write in your own words, link conclusions to observations, and flag
+assumptions. The grading table is a planning aid, not a substitute for a
+rubric supplied by your instructor.}
+
+\section*{Grading scheme}
+\begin{tabularx}{\linewidth}{@{}Y r@{}}
+\toprule
+Criterion & Points\\
+Evidence and reproducibility & 30\\
+Technical reasoning & 35\\
+Communication and structure & 20\\
+Reflection and next steps & 15\\
+\midrule
+Total & 100\\
+\bottomrule
+\end{tabularx}
+
+\begin{question}{What changed during the sprint?}
+Compare the planned and observed cycle time. Give one plausible explanation
+for the difference and name a measurement that would distinguish it from an
+alternative explanation.
+\begin{answer}
+The median cycle time fell from 6.2 days to 4.8 days after the review queue
+was made visible. This correlation is not proof of causation: a change in
+ticket mix could produce the same result. Recording queue age and ticket size
+for the next two sprints would let us separate those effects.
+\end{answer}
+\end{question}
+
+\begin{question}{Design a small experiment}
+Propose a two-week experiment to test whether smaller pull requests reduce
+review delay. State the treatment, control, metric, and a practical threat to
+validity. Include the metric as a formula if helpful.
+\begin{answer}
+Use a target of at most 300 changed lines for the treatment group and compare
+review delay with the team's normal process. Report the median delay rather
+than only the mean, because one blocked review can dominate a small sample:
+\[
+  \operatorname{median}\{t_{\text{first review}}-t_{\text{opened}}\}.
+\]
+A threat is selection bias: volunteers who choose small changes may already
+work differently. Alternate the policy by week or compare matched work items.
+\end{answer}
+\end{question}
+
+\begin{question}{Reflection}
+What evidence would make you revise your recommendation? List two signals
+that should be monitored after the experiment.
+\vspace{22mm}
+\par\noindent\rule{\linewidth}{0.4pt}\par\vspace{8mm}
+\noindent\rule{\linewidth}{0.4pt}\par\vspace{8mm}
+\noindent\rule{\linewidth}{0.4pt}
+\end{question}
+
+\end{document}

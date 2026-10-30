@@ -1,0 +1,27 @@
+% Ring-binder spine labels -- ctan:flabels, LPPL-1.0 (verified in the shipped
+% flabels.sty header: "This program can be redistributed and/or modified
+% under the terms of the LaTeX Project Public License Distributed from CTAN
+% archives ... either version 1 of the License, or any later version").
+% Ships with TeX Live (tex/latex/flabels) -- starter does not bundle the
+% class. Uses only the native picture environment (\put, \line, \framebox) --
+% no pstricks, no fontspec -- genuinely pdflatex-safe (unlike jlabels, a
+% same-category CTAN package tried first for this batch and dropped: its
+% \rput-based positioning relies on raw PostScript \specials that pdflatex
+% silently drops, rendering every label stacked at one spot -- confirmed only
+% by looking at the compiled preview, not visible from the source).
+%
+% Starter is a real sheet of ring-binder spine labels for an invented small
+% office's paper filing system (five differently-labelled binders), the
+% class's stated purpose, rather than one label alone.
+\documentclass[a4paper]{article}
+\usepackage{flabels}
+\company{ROWAN \& VANCE LLP}
+
+\begin{document}
+\noindent
+\labeltext{\Large\bfseries Client Files\\[2mm]\normalsize A--F}
+\labeltext{\Large\bfseries Client Files\\[2mm]\normalsize G--M}
+\labeltext{\Large\bfseries Client Files\\[2mm]\normalsize N--S}
+\labeltext{\Large\bfseries Client Files\\[2mm]\normalsize T--Z}
+\labeltext{\Large\bfseries Accounts Payable\\[2mm]\normalsize 2026}
+\end{document}

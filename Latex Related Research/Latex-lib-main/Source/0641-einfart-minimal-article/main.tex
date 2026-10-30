@@ -1,0 +1,66 @@
+%% einfart minimal article starter — the plain face of Jinwen XU's
+%% "minimalist" class series (CTAN: einfart).
+%%
+%% The einfart class itself is NOT included in this download: it ships with
+%% every modern TeX distribution (and with latextemplates.com's compiler),
+%% so bundling a copy would only risk pinning you to an older version than
+%% your own system already has.
+%%
+%% Class documentation: texdoc einfart   |   https://ctan.org/pkg/einfart
+%% Licence: LPPL-1.3c, (c) 2021-2026 Jinwen XU -- verified directly in the
+%% shipped einfart.cls header.
+%%
+%% einfart is the PLAIN counterpart to the already-catalogued "Stylish
+%% Article" substitute (slug stylish-article), which uses lebhart -- the
+%% COLOURFUL face of the same class series (same author, same LPPL-1.3c).
+%% Where lebhart adds coloured section rules and theorem boxes, einfart is
+%% deliberately unstyled: a clean, minimal article face with careful
+%% typography and no colour.
+%%
+%% ENGINE: einfart requires XeLaTeX or LuaLaTeX (fontspec-based); see
+%% engine.txt. It also loads ctex unconditionally for CJK support -- real
+%% Chinese text renders correctly under this class (verified in the
+%% preview), resolved via kpathsea/Fandol, not tofu.
+\documentclass{einfart}
+
+\title{Your Title Here}
+\author{Ada Lovelace}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Replace this with your abstract. A good abstract states the problem, what
+you did, and what you found --- in that order, and without citations.
+\end{abstract}
+
+\section{Introduction}
+Start here. Cite things like this~\cite{knuth1984texbook}. This class's
+default typography uses TeX Gyre Pagella, a Palatino-like serif with wide
+Unicode coverage, resolved directly by fontspec rather than a bare
+fontconfig lookup.
+
+\section{CJK support}
+\label{sec:cjk}
+einfart loads \texttt{ctex} unconditionally, so Chinese text can appear
+directly inside an otherwise English document without any extra setup:
+这是一段中文示例文字，用来验证中日韩文字能够正确渲染。
+
+\section{Mathematics}
+\label{sec:math}
+Standard math environments work as usual:
+\begin{equation}
+  \label{eq:main}
+  e^{i\pi} + 1 = 0.
+\end{equation}
+Equation~\eqref{eq:main} is referenced like this.
+
+\section{Conclusion}
+Say what it means.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

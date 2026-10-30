@@ -1,0 +1,78 @@
+%% Electronic Journal of Probability article starter.
+\documentclass[EJP,preprint]{ejpecp}
+
+\TITLE{A coupling argument for a finite-state sampler}
+\SHORTTITLE{A coupling argument for a finite-state sampler}
+\AUTHORS{Ada Lovelace and Grace Hopper}
+\KEYWORDS{coupling; Markov chains; sampling}
+\AMSSUBJ{60J10}
+\ABSTRACT{We give a compact worked example of a coupling estimate for a
+finite-state Markov chain. The document demonstrates the metadata and
+theorem structure expected by the Electronic Journal of Probability while
+remaining short enough to adapt as a preprint.}
+\DOI{10.0000/example}
+\ARXIVID{2601.00001}
+
+\begin{document}
+
+\begin{equation}
+  \mathbb{P}(X_t\ne Y_t)\leq (1-\varepsilon)^t,
+  \label{eq:coupling}
+\end{equation}
+for a pair of chains that share a successful update with probability at least
+$\varepsilon$ at each step.
+
+\section{A finite-state example}
+Let $P$ be a transition matrix on a finite state space and suppose that two
+copies of the chain use the same random update whenever they are in distinct
+states. If one update coalesces them with probability at least
+$\varepsilon$, the failure probability after $t$ updates is bounded by the
+right-hand side of~\eqref{eq:coupling}.
+
+\begin{theorem}
+Under the uniform coalescence assumption, the coupled chains meet almost
+surely and their total-variation distance is at most
+$(1-\varepsilon)^t$ at time $t$.
+\end{theorem}
+
+\begin{proof}
+The probability that no coalescing update has occurred in the first $t$
+steps is at most $(1-\varepsilon)^t$. After the first meeting, use identical
+updates, so the chains remain together. The coupling inequality gives the
+claimed total-variation bound.
+\end{proof}
+
+\section{Practical checklist}
+For an applied manuscript, record the state space, update rule, coupling
+event, and the value of $\varepsilon$. Separate those assumptions from the
+numerical results so that a reader can reproduce the argument.
+
+\begin{table}[ht]
+  \centering
+  \caption{Illustrative convergence diagnostics.}
+  \begin{tabular}{lrr}
+    \hline
+    Steps $t$ & Bound & Measured distance \\
+    \hline
+    4  & 0.41 & 0.36 \\
+    12 & 0.08 & 0.06 \\
+    24 & 0.01 & 0.01 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\section{Conclusion}
+Replace this worked example with the statement, proof, and computational
+details of your own probability article.
+
+\begin{acks}
+The authors thank the probability seminar for a careful reading of the
+coupling argument.
+\end{acks}
+
+\begin{thebibliography}{9}
+\bibitem{lindvall2002lectures}
+Lindvall, T. (2002). \emph{Lectures on the Coupling Method}. Dover.
+\end{thebibliography}
+
+\end{document}

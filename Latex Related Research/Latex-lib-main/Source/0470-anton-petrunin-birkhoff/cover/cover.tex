@@ -1,0 +1,143 @@
+%Lualatex+needs P22UndergroundCYBookSC.tt and P22-Underground-Reg.ttf
+\documentclass[
+coverheight=9in,
+coverwidth=6in,
+spinewidth=0.53in,
+bleedwidth=.125in,
+marklength=0in,
+markcolor=black]{bookcover}
+
+\usepackage{xcolor}
+\usepackage{background}
+\usepackage{blindtext}
+\usepackage{fontspec}
+
+\newbookcoverpart{pfront}{
+\setpartposx{\marklength+\bleedwidth+\spinewidth+\coverwidth+10mm}
+\setpartposy{\marklength+\bleedwidth+10mm}
+\setpartheight{\coverheight-20mm}
+\setpartwidth{\coverwidth-20mm}
+\settrimmedpart{0mm}{0mm}{0pt}{0pt}
+}
+
+\newbookcoverpart{pback}{
+\setpartposx{\marklength+\bleedwidth+10mm}
+\setpartposy{\marklength+\bleedwidth+10mm}\setpartheight{\coverheight-20mm}
+\setpartwidth{\coverwidth-20mm}
+\settrimmedpart{0mm}{0mm}{0pt}{0pt}
+}
+
+\begin{document}
+
+\begin{bookcover}
+
+\definecolor{mycolor}{HTML}{41758A}%{92A42C}%{5E4BA4}%{3A73D5}%{250,205,25}
+\bookcovercomponent{color}{bg whole}{mycolor}
+%\bookcovercomponent{center}{bg whole}{\includegraphics{fon}}
+
+\setmainfont{P22-Underground-Reg}
+
+\bookcovercomponent{center}{spine}
+{\rotatebox[origin=c]{-90}{
+\color{white}
+\fontsize{18}{25}\selectfont\fontdimen2\font=1ex
+EUCLIDEAN PLANE AND ITS RELATIVES
+\hskip30mm
+ANTON PETRUNIN
+}}
+
+
+\bookcovercomponent{normal}{pfront}{
+\begin{flushright}
+{\color{white}\fontsize{42}{48}\selectfont
+Euclidean plane
+\\[3mm]
+}
+{\color{white}\fontsize{41.3}{48}\selectfont
+and its relatives}
+\\[5mm]
+\setmainfont{P22UndergroundCYBookSC}
+{\color{white}\fontsize{21.5}{48}\selectfont
+a minimalist introduction\hskip.2mm 
+}
+\\[4mm]
+{\color{white}\fontsize{15}{48}\selectfont
+Anton Petrunin\hskip.4mm
+}
+\\[120mm]
+\includegraphics{../mppics/pic-351}
+\end{flushright}
+}
+
+\setmainfont{P22UndergroundCYBookSC}
+
+\bookcovercomponent{normal}{pfront}{
+\begin{flushleft}
+\rotatebox[origin=c]{-90}
+{
+\includegraphics{../mppics/pic-187}
+}
+\vfill
+{\color{white}\fontsize{10}{48}\selectfont
+third edition\\
+tenth printing}
+\end{flushleft}
+
+}
+
+\setmainfont{P22-Underground-Reg}
+
+\bookcovercomponent{normal}{pback}{
+\begin{flushleft}
+\parbox{.35\textwidth}{
+\color{white}\fontsize{10}{14}\selectfont
+The book is designed for a semester-long course in Foundations of geometry and meant to be rigorous, conservative, elementary, and minimalist.
+\medskip
+\\
+Introduction\\
+\hbox{\ \phantom{1}}1. Preliminaries
+\medskip
+\\ 
+Euclidean geometry\\
+\hbox{\ \phantom{1}}2. The Axioms\\
+\hbox{\ \phantom{1}}3. Half-planes\\
+\hbox{\ \phantom{1}}4. Congruent triangles\\
+\hbox{\ \phantom{1}}5. Perpendicular lines\\
+\hbox{\ \phantom{1}}6. Similar triangles\\
+\hbox{\ \phantom{1}}7. Parallel lines\\
+\hbox{\ \phantom{1}}8. Triangle geometry
+\medskip
+\\
+Inversive geometry\\
+\hbox{\ \phantom{1}}9. Inscribed angles\\
+\hbox{\ }10. Inversion
+\medskip
+\\
+Non-Euclidean geometry\\
+\hbox{\ }11. Neutral plane\\
+\hbox{\ }12. Hyperbolic plane\\
+\hbox{\ }13. Geometry of h-plane
+\medskip
+\\
+Additional topics
+\\
+\hbox{\ }14. Affine geometry\\
+\hbox{\ }15. Projective geometry\\
+\hbox{\ }16. Spherical insights\\
+\hbox{\ }17. Projective model\\
+\hbox{\ }18. Complex coordinates\\
+\hbox{\ }19. Geometric constructions\\
+\hbox{\ }20. Area}
+\\[10mm]
+\includegraphics{../mppics/pic-277} 
+\\[3mm]
+\color{white}\fontsize{10}{14}\selectfont
+arXiv:1302.1630v25
+\\[1mm]
+anton-petrunin.github.io/birkhoff/
+\end{flushleft}
+}
+
+\end{bookcover}
+
+\end{document}

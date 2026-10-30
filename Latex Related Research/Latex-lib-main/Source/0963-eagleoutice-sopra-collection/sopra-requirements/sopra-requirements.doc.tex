@@ -1,0 +1,225 @@
+\documentclass{sopra-base}
+
+\usepackage{sopra-documentation}
+\usepackage{sopra-requirements}
+
+\title{The 'sopra-requirements' Package}
+\subtitle[Documentation for the 'sopra-requirements' package]{Documentation for the 'sopra-requirements' package | Version \thesorversion}
+
+\duedate{2019-12-2}
+
+\keywords{Documentation,sopra-requirements,sopra,uni ulm,uulm,package}
+\authors{Florian Sihler (florian.sihler@uni-ulm.de)}
+
+\group{Die Affenbande}
+\begin{document}
+
+    \maketitle%
+%
+    %\tableofcontents
+%
+
+\section{General}
+\subsection{Why, what for?}
+    This \LaTeXe\ package was written as part of the Sopra in the
+    winter semester 2019 and summer semester 2020 and serves as a
+    basis for the definition of requirements (functional, quality, \ldots)
+    of \imptext{Team 20}. This documentation was created together with the
+    \T{sopra-base.cls} as well as the \T{sopra-documentation.sty} package.\par
+    The \T{sopra-listings} package is used to visualize the individual code
+    excerpts.
+    The associated package should also be embedded in this document: \scalebox{0.65}{\attachfile[subject={sopra-requirements.sty}]{sopra-requirements.sty}}.
+\subsection{Dependencies}
+    This package includes the following packages:
+    \begin{multicols}{3}
+        \begin{itemize}
+            \def\pkgparse#1:#2\@nil{%
+                \T{#1}\ifx!#2!\else\textsuperscript{(#2)}\fi%
+            }
+            \foreach \pkg in {tabu:{\jmark[\T{usetabu}]{mrk:usetabu}},booktabs:{\jmark[\T{notabu}]{mrk:usetabu}},colortbl:{\jmark[\T{usetabu}]{mrk:usetabu}},makecell:,longtable:,xcolor:,environ:,amssymb:,etoolbox:,fontawesome:,hyperref:} {
+                \item \expandafter\pkgparse\pkg\@nil
+            }
+        \end{itemize}
+    \end{multicols}
+    All of these packages should be part of a common \LaTeX\ distribution.
+
+\subsection{Installation}
+    The package is not delivered as a \T{.dtx}, which is why the
+    following options arise:
+    \begin{itemize}
+        \item The package can be placed in the same directory as the
+                document. In this case the inclusion instruction reads:
+\begin{plainlatex}
+\usepackage{sopra-requirements}
+\end{plainlatex}
+        \item The package can be placed in a subdirectory/a directory
+                shipped with the document. In this case it is specified
+                via the (relative) path:
+\begin{plainlatex}
+\usepackage{./My/Path/to/sopra-requirements}
+\end{plainlatex}
+        \item The package can be placed (via a symlink or similar)
+              in one's own \emph{texmf} tree.
+              For example, on Linux using texlive,
+              the package can be placed here: \bvoid{\~/texmf/tex/latex/}.
+              The directory can be created and then updated using
+              \bbash{texhash \~/texmf}. Now
+              the package can be used like any other installed package:
+\begin{plainlatex}
+\usepackage{sopra-requirements}
+\end{plainlatex}
+    \end{itemize}
+
+\subsection{Further peculiarities}
+In version \thesorversion{} (\cmdref{thesorversion}) there are no further
+peculiarities.
+
+\section{Package Configuration}
+    \subsection{Accepted Parameters}
+
+\begin{argument}{usetabu}{notabu}
+    By default, for visual reasons, this package uses \T{tabu} to visualize the tables. Should the (bug) fixes contained in this package (no longer) work, or should one prefer the \T{booktabs} tables used in \T{notabu}, this option can be changed accordingly.
+\end{argument}
+
+\begin{argument}{intoc}{notoc}
+    By default, the \T{tabu} package includes the requirements in the table of contents (as a subsubsection, so by default it is only shown in the TOC of the PDF viewer). If this is not desired, it can be disabled with \T{notoc}.
+\end{argument}
+
+\begin{argument}{showtag}{noshowtag}
+    Shows, in addition to the ID, the (internal) identifier of the requirement. This is merely a visual option that can be freely modified as desired.
+\end{argument}
+
+\begin{argument}{noshowallfields}{showallfields}
+    If \T{showallfields} is set, fields in \envref{requirement} are also shown even if they have not been given a value.
+\end{argument}
+
+\subsection{Colors}
+
+With \jmark[\T{usetabu}]{mrk:usetabu}, the color \T{HeaderColor} defines the color of the title column and \T{NextHeaderColor} the color in the case of a page break. The colors can be changed like any other. Within \T{sopra-base}, a color adapted to the design is automatically chosen.
+
+
+\section{Commands and Environments}
+
+Note that the prefix \T{env@} only indicates the nature of an environment and is not part of the actual identifier!\par{}
+Also: For all titles and lengths to be resolved correctly, the document
+usually has to be compiled twice to produce a correct display.
+
+\subsection{Defining Requirements}
+
+\begin{environment}{requirements}{\optArg{Start-ID}\manArg{functional/quality}}
+    Starts a new block of requirements, within which \envref{requirement} is available. By default, the requirements
+    are numbered consecutively from $1$ for the whole document; however, should this starting value need to be changed (which, apart from testing purposes, should not actually make sense,
+    since this can cause some requirements to exist twice!), this is possible
+    by setting \T{Start-ID}. It must be specified whether these are
+    \emph{functional} (\T{functional}) or \emph{non-functional} (\T{quality})
+    requirements. All requirements nested within this are counted as such.
+    The two variants have their own counters!. \notetext{Developer note:
+    The required values are stored in \cmd{@sor@fnctl} and \cmd{@sor@qltl}.
+    The prefix accordingly in \cmd{sor@functional@requirementprefix} and \cmd{sor@quality@requirementprefix}.}
+\end{environment}
+% TODO: make example.
+
+\begin{environment}{requirement}{\optArg{ID}\manArg{identifier}}
+    \imptext{This environment is only available within \envref{requirements}!} This can be used to define a single requirement, where the \T{ID}
+    results either sensibly by incrementing the counter or by explicit specification. An \T{ID} must always be numeric. Furthermore, an \T{identifier} can be specified here, which by default represents the title of the requirement,
+    as long as it is not explicitly changed using \cmdref{setTitle}. An \T{identifier} must not contain umlauts or other special characters. Formatting and other
+    \LaTeXe/\TeX\ commands cannot be used here either. The \manArg{identifier} can also be used to reference this requirement
+    using \cmdref{preqref}. There must not be a duplicate \T{identifier}.
+\end{environment}
+
+\subsection{Setting Data in a Requirement}
+
+\imptext{The following commands can only be used within \envref{requirement}!} \notetext{It remains to work on a mechanism that
+allows one to define custom fields. It is planned to use \T{translate}
+in order to at least be able to translate the data fields, or in general define them freely!}
+
+\begin{command}{setDescription}{\manArg{description text}}
+    Sets an explanation for the respective requirement. In principle anything can be set here, from an \env{eagle-map} to \env{itemize} to completely normal LaTeX.
+\end{command}
+
+\begin{command}{setJustification}{\manArg{justification text}}
+    Sets the justification for the respective requirement. The same applies with regard to the content as for \cmdref{setDescription}.
+\end{command}
+
+\begin{command}{setDependencies}{\manArg{comma-separated list}}
+    Allows listing all dependencies using schemas accepted by \cmdref{preqref}. For example: \T{\cmd{setDependencies}\{FA1,QA42,main-menu\}}.
+\end{command}
+
+\begin{command}{setTitle}{\manArg{title}}
+    Allows changing the title of the requirement. This does not change the identifier set in \envref{requirement}! (This can be made clear by \jmark[\T{showtag}]{mrk:showtag}).
+\end{command}
+
+
+\begin{command}{setPriority}{\manArg{number}}
+    Allows defining the priority of the respective requirement. The number must be between (inclusive) \(0\) and \(5\).
+\end{command}
+
+% TODO make a normal ref command like reqref without showig the page number
+% TODO: make it possible to change description and-stuff-labels
+\subsection{General Commands}
+
+\begin{command}{thesorversion}{}
+    Returns the current version of the package. So \cmd{thesorversion} results in: \thesorversion\\
+    \notetext{Note: via \blatex{\\value\{sorversion\}} the
+    version can be obtained as a $4$-digit number: \arabic{sorversion}.}
+\end{command}
+
+\begin{command}{iskip}{}
+    Sets a \emph{negative spacing}, which can be used when a spacing has been set too large. This will only be necessary when introducing custom environments or similar, and is intended here merely as a kind of inspiration.
+\end{command}
+
+\begin{command}{preqref}{\optArg{Text}\manArg{requirement marker}}
+    This command sets a reference to a requirement set using \envref{requirement}. Two valid markers are generated for each: \begin{itemize}\setlength{\itemsep}{0pt}
+        \item The identifier can be used.
+        \item The abbreviation for the requirement type plus the respective number can be used (\T{FA13}, \T{QA9}, \ldots)
+    \end{itemize}
+    This command can also be used with an asterisk. In this case the
+    identifier of the requirement is not output, only the abbreviation (for example \T{FA42}) together with the page on which the requirement is defined. If \T{Text} is set,
+    it is displayed instead of the requirement name.
+\end{command}
+
+\begin{command}{pref}{\manArg{hyperlink marker}\manArg{text}}
+    Used by \cmdref{preqref} and simply outputs a link with a page number.
+    Can be modified (/overridden) to adapt the behavior of \cmdref{preqref}.
+\end{command}
+
+\begin{command}{sorSetPriority}{\manArg{number}}
+    Works analogously to \cmdref{setPriority}, but can also be used outside of \envref{requirement}.
+\end{command}
+
+\subsection{Examples}
+Let us define two requirements in the following:
+\begin{latex}
+\begin{requirements}{functional}
+    \begin{requirement}{a-duck}
+        \setTitle{Duck}
+        \setDescription{There must be ducks. So that they stay alive, there is \preqref{feed-ducks}}
+        \setJustification{Because they are cute}
+    \end{requirement}
+
+    \begin{requirement}{feed-ducks}
+        \setTitle{Feed duck}
+        \setDescription{It must be possible to feed the ducks from \preqref{FA1}.  We have: \preqref[Ducks]{FA1}.}
+        \setJustification{Ducks must (be allowed to) live!!}
+        \setDependencies{a-duck}
+        \setPriority{4}
+    \end{requirement}
+\end{requirements}
+\end{latex}
+The result is (with \T{tabu}) the following:
+\begin{requirements}{functional}
+    \begin{requirement}{a-duck}
+        \setTitle{Duck}
+        \setDescription{There must be ducks. So that they stay alive, there is \preqref{feed-ducks}}
+        \setJustification{Because they are cute}
+    \end{requirement}
+
+    \begin{requirement}{feed-ducks}
+        \setTitle{Feed duck}
+        \setDescription{It must be possible to feed the ducks from \preqref{FA1}. We have: \preqref[Ducks]{FA1}.}
+        \setJustification{Ducks must (be allowed to) live!!}
+        \setDependencies{a-duck}
+        \setPriority{4}
+    \end{requirement}
+\end{requirements}
+\end{document}

@@ -1,0 +1,62 @@
+%% Colourful Maths Assignment starter -- assignment.cls, originally by
+%% Jacob Strieb (per the class file's own header), collected in
+%% dev-aditya/LaTeX-template under a fresh MIT licence.
+%%
+%% assignment.cls IS BUNDLED here (not left to the system) because a
+%% DIFFERENT, unrelated CTAN class -- Madhusudan Singh's 2004
+%% assignment.cls -- already ships in every modern TeX distribution
+%% under the SAME filename. A bare \documentclass{assignment} on a
+%% stock TeX Live install silently resolves to that unrelated class
+%% instead -- confirmed by probing this pipeline's own pinned image,
+%% which has the CTAN one and not this one. Bundling here is the only
+%% way to guarantee this specific class is what actually compiles.
+%%
+%% Source: https://github.com/dev-aditya/LaTeX-template (Assignment/)
+%% Licence: MIT. The class file's own header credits Jacob Strieb as
+%% the original author; the collecting repository (dev-aditya) also
+%% licenses it MIT.
+%%
+%% Options are passed directly in \documentclass[...]{assignment}, not
+%% via separate metadata macros.
+\documentclass[name=Ada\ Lovelace, regnum=2027001, course=Real\ Analysis, num=6]{assignment}
+
+\usepackage{amsmath,amssymb}
+
+\begin{document}
+\maketitle
+
+\problem{1}
+Let $(a_n)$ be a sequence of real numbers. Prove that if $(a_n)$
+converges, then $(a_n)$ is bounded.
+
+\begin{proof}
+Suppose $a_n \to L$. Taking $\varepsilon = 1$ in the definition of
+convergence, there exists $N$ such that $|a_n - L| < 1$ for all $n > N$,
+so $|a_n| < |L| + 1$ for all $n > N$. Let
+\[
+  M = \max\{ |a_1|, |a_2|, \dots, |a_N|, |L| + 1 \}.
+\]
+Then $|a_n| \le M$ for every $n$, so $(a_n)$ is bounded.
+\end{proof}
+
+\separator
+
+\problem{2}
+Determine whether the series $\sum_{n=1}^{\infty} \dfrac{(-1)^n}{\sqrt{n}}$
+converges, and if so, whether it converges absolutely.
+
+\begin{claim}
+The series converges conditionally but not absolutely.
+\end{claim}
+
+\begin{proof}
+The terms $1/\sqrt{n}$ decrease to $0$, so the alternating series test
+gives convergence of $\sum (-1)^n / \sqrt{n}$. However,
+$\sum |(-1)^n/\sqrt{n}| = \sum 1/\sqrt{n}$ is a $p$-series with
+$p = 1/2 \le 1$, which diverges. Hence the original series converges
+conditionally but not absolutely.
+\end{proof}
+
+\separator
+
+\end{document}

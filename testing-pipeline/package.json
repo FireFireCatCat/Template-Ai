@@ -1,0 +1,17 @@
+{
+  "name": "testing-pipeline",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "core",
+    "host-flouest"
+  ],
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "check": "npm run check --workspaces --if-present",
+    "compat": "node host-flouest/compat.mjs"
+  }
+}

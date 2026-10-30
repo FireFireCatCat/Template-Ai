@@ -1,0 +1,228 @@
+\documentclass[a4paper]{scrartcl}
+\usepackage[left=3cm,right=2cm]{geometry}
+\usepackage[
+    fach=Informatik,
+    lerngruppe={GK EF},
+    typ=ab,
+    farbig,
+    loesungen=seite,
+    module={
+        Kuerzel,
+        Papiertypen,
+        Symbole,
+        Texte,
+        Bewertung
+    },
+]{schule}
+
+% Dieses Dokument gehört zu den Beispiel des LaTeX Paketes Schule und ist von den Autoren
+% des Pakets erstellt worden.
+%
+% Das Dokument steht unter der Lizenz: Creative Commons by-nc-sa Version 4.0
+% http://creativecommons.org/licenses/by-nc-sa/4.0/deed.de
+%
+% Nach dieser Lizenz darf das Dokument beliebig kopiert und bearbeitet werden,
+% sofern das Folgeprodukt wiederum unter gleichen Lizenzbedingungen vertrieben
+% und auf die ursprünglichen Urheber verwiesen wird.
+% Eine kommerzielle Nutzung ist ausdrücklich ausgeschlossen.
+
+\usepackage{weva}
+
+\title{Ein Arbeitsblatt}
+\author{Daniel Spittank}
+\date{12.08.2016}
+
+\begin{document}
+\section*{Text}
+\begin{zeilenNrMehrspaltig}{4}
+    Dies hier ist ein Blindtext \so{zum Testen von Textausgaben}. Wer diesen Text liest, ist natürlich
+    selbst schuld. Der Text gibt lediglich den Grauwert der Schrift an. Ist das wirklich so?
+    Ist es gleichgültig, ob ich schreibe: \enquote{Dies ist ein Blindtext} oder \enquote{Huardest gefburn}?
+    Kjift – mitnichten! Ein Blindtext liefert mir wichtige Hinweise. An ihm messe ich
+    die Lesbarkeit einer Schrift, ihre Anmutung, wie harmonisch die Figuren zueinander
+    stehen und prüfe, wie breit oder schmal sie läuft. Ein Blindtext sollte möglichst viele
+    verschiedene Buchstaben enthalten und in der Originalsprache gesetzt sein. Er muss
+    keinen Sinn ergeben, sollte aber lesbar sein. Fremdsprachige Texte wie \enquote{Lorem ipsum}
+    dienen nicht dem eigentlichen Zweck, da sie eine falsche Anmutung vermitteln. € \enquote{Ein Zitat}.  \SuS oder \KuK 😀 \symUhr
+\end{zeilenNrMehrspaltig}
+
+\section*{Aufgaben}Für alle Aufgaben zusammen gibt es \printtotalpoints
+
+    \begin{aufgabe}[points=2,bonus-points=1]
+        Eine einfache Aufgabe zum Einstieg.
+    \end{aufgabe}
+    \begin{aufgabe}
+        Hier steht eine Aufgabe. Die ist wirklich schwierig und hat auch noch Teilaufgaben.
+        \begin{teilaufgaben}
+            \teilaufgabe Checkboxen: \chb\chb\chb*\chb\chb*
+            \teilaufgabe Das ist eine feste Lücke: \luecke[style=\uwave{#1}]{2cm}
+            \teilaufgabe Das ist eine \textluecke[style=\dashuline{#1}]{Lücke für einen Text}.
+            \teilaufgabe Keine Aufgabe
+        \end{teilaufgaben}
+        \begin{loesung}
+            \begin{teilaufgaben}
+                \teilaufgabe Checkboxen: \chb\chb\chb*\chb\chb*
+                \teilaufgabe Das ist eine feste Lücke: \luecke[style=\uwave{#1}]{2cm}
+                \teilaufgabe Das ist eine \textluecke[style=\dashuline{#1}]{Lücke für einen Text}.
+                \teilaufgabe Keine Aufgabe
+            \end{teilaufgaben}
+        \end{loesung}
+        \erwartung{\weva gibt eine Lösung an.}{1}
+        \erwartung{erfüllt eine \so{ehrlich völlig überzogene} Erwartung.}{10}
+        \erwartung{gibt nicht auf.}{0}[10]
+        \begin{bearbeitungshinweis}
+            \begin{teilaufgaben}
+                \teilaufgabe Man kann auch Hinweise geben.
+                \teilaufgabe Sogar mehrere.
+                \teilaufgabeOhneLoesung
+                \teilaufgabe Wirklich viele.
+            \end{teilaufgaben}
+            Oder auch allgemeine Hinweise.
+        \end{bearbeitungshinweis}
+    \end{aufgabe}
+
+    \begin{aufgabe}
+        \setzeSymbol{\symZweiSprechblasen}
+        Hier steht eine Aufgabe. Die ist wirklich schwierig und hat auch noch Teilaufgaben.
+        \begin{teilaufgaben}
+            \teilaufgabe Erstens
+            \teilaufgabe Zweitens
+        \end{teilaufgaben}
+        \begin{loesung}
+            Eine Lösung.
+        \end{loesung}
+        \erwartung{hat den {\LARGE Text} \textcolor{red}{gelesen}.}{1}
+        \erwartung{gibt eine Lösung an.}{4}
+        \erwartung{erfüllt eine ehrlich völlig überzogene Erwartung.
+            \begin{tabular}{|c|c|}
+                \hline
+                a & b  \\
+                \hline
+                c & d \\
+                \hline
+            \end{tabular}
+        }{10}
+    \end{aufgabe}
+
+    \begin{aufgabe}
+        Aufgaben können auch Punkte erhalten.
+        \begin{teilaufgaben}
+            \teilaufgabe[5] erstens
+            \teilaufgabe[10] zweitens
+            \teilaufgabe[15] drittens
+        \end{teilaufgaben}
+        \begin{loesung}
+            Eine weitere Lösung.
+            \begin{teilaufgaben}
+                \teilaufgabe erstens
+                \teilaufgabe zweitens
+                \teilaufgabe drittens
+            \end{teilaufgaben}
+        \end{loesung}
+%         \erwartung{sollte eine weitere \symAuge Lösung angeben.}{30}
+        \begin{bearbeitungshinweis}
+            Man kann auch Hinweise geben.
+            \begin{itemize}
+                \item Sogar mehrere.
+                \item Wirklich viele.
+            \end{itemize}
+        \end{bearbeitungshinweis}
+    \end{aufgabe}
+
+    \begin{aufgabe}[subtitle=Eine Kreuzchenaufgabe,symbol=\symHaken]
+        \begin{mcumgebung} %Lösung wird automatisch ergänzt
+            \choice Erstens
+            \choice Zweitens
+            \choice Drittens
+            \choice[\mcrichtig] Viertens
+            \choice Fünftens
+            \choice[\mcrichtig] Sechstens
+            \choice Siebtens
+            \choice[\mcrichtig] Achtens
+        \end{mcumgebung}
+        \begin{loesung}
+            \mcloesung
+        \end{loesung}
+        \erwartung{kreuzt \textbf{alles} richtig an.}{10}
+    \end{aufgabe}
+
+    \begin{aufgabe}[symbol=\symBleistift,subtitle={Lückentext}]
+        Das ist ein total verrückter \textluecke{Lückentext}. Für alle \textluecke{Menschen}, die \textluecke{Lücken} lieben.
+        \begin{loesung}
+            Das ist ein total verrückter \textluecke{Lückentext}. Für alle \textluecke{Menschen}, die \textluecke{Lücken} lieben.
+        \end{loesung}
+        \erwartung{füllt die Lücken richtig aus.}{10}
+    \end{aufgabe}
+
+    \begin{aufgabe*}
+        Eine Zusatzaufgabe.
+        \begin{loesung*}
+            Eine weitere Lösung.
+        \end{loesung*}
+        \erwartung{sollte eine $7+4=11$ weitere Lösung angeben.}{}[2]
+        \begin{bearbeitungshinweis}
+            Noch ein Hinweis. Und noch einer.
+        \end{bearbeitungshinweis}
+    \end{aufgabe*}
+
+    \begin{aufgabe}
+        Ergänzen Sie den Quelltext unten so um Funktionsaufrufe, dass die Ausgabe des Programms danach lautet:\\
+        Goodbye Erde!\\
+        Hallo Mars!
+        \begin{lstlisting}[language=python,gobble=10]
+            # Ein Beispiel
+            def halloWelt (nutzeGoodbye, weltname):
+                if (nutzeGoodbye):
+                    tmp = "Goodbye "
+                else:
+                    tmp = "Hallo "
+                print(tmp + weltname + "!")
+        \end{lstlisting}
+        \erwartung{Ergänzt die Funktionsaufrufe korrekt.}{10}
+        \begin{bearbeitungshinweis}
+            Denke gut darüber nach wie man vorgeht.
+        \end{bearbeitungshinweis}
+        \begin{loesung}
+            \begin{lstlisting}[language=python,gobble=14]
+                # Ein Beispiel
+                def halloWelt (nutzeGoodbye, weltname):
+                    if (nutzeGoodbye):
+                        tmp = "Goodbye "
+                    else:
+                        tmp = "Hallo "
+                    print(tmp + weltname + "!")
+
+                halloWelt(True, "Erde")
+                halloWelt(False, "Mars")
+            \end{lstlisting}
+        \end{loesung}
+    \end{aufgabe}
+
+\section*{Bearbeitungshinweise}
+    \bearbeitungshinweisZuAufgabe{4}
+    \bearbeitungshinweisliste
+
+\section*{Punktübersicht}
+    \punktuebersicht
+
+\section*{Notenverteilung}
+    \notenverteilung
+
+\section*{Erwartungen}
+    \erwartungshorizont
+
+\section*{Papiertypen}
+    \subsection*{liniert}
+        \feldLin[1cm]{5}
+    \subsection*{kariert}
+        \feldKar[0.5cm]{5}
+    \subsection*{Millimeterpapier}
+        \feldMil{4}
+    \subsection*{Beispiel in Tabelle}
+        \begin{tabular}{|p{0.48\linewidth}|p{0.45\linewidth}|}
+            \hline Millimeterpapier & kariert \\
+            \hline \feldMil{2} & \feldKar[0.5cm]{4} \\
+            \hline
+        \end{tabular}
+
+\end{document}

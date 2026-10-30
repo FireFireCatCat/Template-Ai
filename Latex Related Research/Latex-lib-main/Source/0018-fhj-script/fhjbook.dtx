@@ -1,0 +1,522 @@
+% \iffalse meta-comment
+%
+% Copyright 2025-2026 Michael E. Hammer
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+% 
+% The Current Maintainer of this work is Michael E. Hammer.
+%
+% This file is part of the "fhj-script bundle" and all files in that
+% bundle must be distributed together.
+%
+% \fi
+% \iffalse
+%<*driver>
+\ProvidesFile{fhjbook.dtx}
+%</driver>
+%<class>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
+%<class>\ProvidesClass{fhjbook}
+%<*class>
+    [2026-10-05 v4.3d A class for formatting books/thesis in the FHJ style]
+%</class>
+%
+%<*driver>
+\documentclass[a4paper]{ltxdoc}
+\usepackage{fhjcommon}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\OnlyDescription % We only want the description
+\begin{document}
+    \DocInput{fhjbook.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \GetFileInfo{fhjbook.dtx}
+%
+% \changes{v4.0}{2025/08/03}{Initial package version}
+%
+% \title{The \textsf{fhjbook} class\thanks{This document
+% corresponds to \textsf{fhjbook}~\fileversion,
+% dated \filedate.}}
+% \author{Michael E. Hammer \\ \texttt{michael.hammer@fh-joanneum.at}}
+%
+% \maketitle
+% 
+% \begin{abstract}
+% This class is intended to be used for formatting books and thesis in the FHJ style.
+% It is based on the \textsf{scrbook} class and provides a set of
+% macros and commands to simplify the formatting of thesis and books.
+% \end{abstract}
+%
+% \tableofcontents
+% 
+% \section{Configuration and styling}
+%
+% It is important to note that this class is based on the \textsf{scrbook} class and we 
+% support forwarding options to it.
+%
+%    \begin{macrocode}
+\newcommand{\FHJ@ClassName}{fhjbook}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrbook}}
+\ProcessOptions\relax
+%    \end{macrocode}
+%
+% We load the \textsf{scrbook} class with the following options:
+%
+% \begin{itemize}
+%     \item \texttt{a4paper}: We want to use A4 paper size
+%     \item \texttt{DIV=14}: The DIV parameter should be set to 14 to ensure a good
+%           balance between text width and height
+%     \item \texttt{BCOR=10mm}: The binding correction should be set to 10mm to ensure
+%           proper binding of the printed document
+% \end{itemize}
+% 
+% \textit{Remark}: Feel free to switch to \verb|twoside| which we clearly recommend!
+%    
+%    \begin{macrocode}
+\LoadClass[a4paper,DIV=14,BCOR=10mm]{scrbook}
+%    \end{macrocode}
+%
+% For styling of the document headers we rely on the predefined stylings from 
+% KOMA-Script.
+% 
+%    \begin{macrocode}
+\pagestyle{headings}
+%    \end{macrocode}
+%  
+% \subsection{Used packages}
+% 
+% For the styling of the document we use the following packages and therefore they are 
+% preloaded and you might not load them again in your document:
+% 
+%    \begin{macrocode}
+\RequirePackage{fhjcommon}
+\PassOptionsToPackage{hidelinks}{hyperref}
+\RequirePackage{hyperref}
+\RequirePackage{array}
+\RequirePackage{supertabular}
+\RequirePackage{xstring}
+\RequirePackage{etoolbox}
+%    \end{macrocode}
+% 
+% \section{Preamble}
+% 
+% For using the class you need to define a few macros (preferably in your preamble).
+% To have the correct icon and name for the study program typeset on the title page and
+% some other locations in the document, you \textbf{need to} define the study program
+% with the macro from \texttt{fhjcommon} package:
+% 
+% \begin{quote}
+%  |\FHJProgram{DAT-25}|
+% \end{quote}
+% 
+% \textit{Remark:} The \texttt{fhjcommon} package documentation is listing which study
+% programs are currently defined.
+%
+% \subsection{Multilingual support}
+% 
+% This class supports multilingual documents and therefore we recommend to load the 
+% \texttt{babel} package and set one of two supported languages -- either \texttt{ngerman} 
+% or \texttt{english}. A possible boilerplate for the preamble could look like this:
+% 
+% \begin{quote}
+%   |\usepackage[T1]{fontenc}|\\
+%   |\usepackage|\oarg{language}|{babel}|\\
+% \end{quote}
+% 
+% \subsection{Title page}
+%
+% The class supports the creation of a standardized title page. For this purpose it is
+% \textbf{mandatory} to provide macro definitions to have all relevant facts.
+% 
+% \DescribeMacro{\title}
+% This macro defines the title of your master thesis and is placed on the title page
+% on the according position. It is supported to use line breaks in the title, so you can
+% have up to three lines in the title, e.g.:
+% 
+% \begin{quote}
+%  |\title{First line\\second line}|
+% \end{quote}
+% 
+% \DescribeMacro{\subtitle}
+% This command defines the subtitle of your master thesis and is placed on the title 
+% page on the according position. The subtitle is optional and it is expected to be a 
+% single line.
+%
+% \begin{quote}
+%  |\subtitle{An explanatory subtitle}|
+% \end{quote}
+% 
+% \DescribeMacro{\author} \DescribeMacro{\authorinfo}
+% On the title page it is mandatory to define the author of the thesis. The command
+% \cs{author} is used for this purpose and must be followed by the author's name in the
+% following format -- make sure to use first name first and the last name second in all
+% capital letters:
+% 
+% \begin{quote}
+%  |\author{Lisa MUSTERFRAU}|
+% \end{quote}
+%
+% Besides the name of the author, you need to provide some additional information with
+% the macro \cs{authorinfo}\marg{gender}\marg{mat-nr}\marg{year} which may look as 
+% follows:
+%
+% \begin{quote}
+%  |\authorinfo{f}{0130508}{2024}|
+% \end{quote}
+%
+% Currently we support the following values for the gender -- \texttt{m}, \texttt{f} and 
+% \texttt{o} (for other). The matrikel number is the student's ID number and the year 
+% is the cohort of the student. The option \marg{year} is the year of your cohort - not
+% the current your of writing the thesis.
+% 
+% \DescribeMacro{\supervisor}
+% Finally it is mandatory to define the supervisor of the thesis with the help of 
+% \cs{supervisor}\marg{name}\marg{gender} macro:
+%
+% \begin{quote}
+%   |\supervisor{MMMMag. DDr. Wolfgang GRANIGG}{m}|
+% \end{quote}
+%
+% \DescribeMacro{\cosupervisor}
+% It may be the case that you have a second supervisor, which is optional and can be 
+% defined with the help of \cs{cosupervisor}\marg{name}\marg{gender} macro in the same
+% way as for \cs{supervisor}.
+%
+% \DescribeMacro{\date}
+% The date of submission is defined with the \cs{date} macro and it is expected to be
+% a single line in the following format:
+%
+% \begin{quote}
+%   |\date{YYYY-MM-DD}|
+% \end{quote}
+% 
+% \vspace{1em}
+% \textit{Remark:} Most of above macros are safeguarded and you will get according 
+% warnings if macro definitions are missing and replacement text is set.
+% \vspace{1em}
+% 
+% \iffalse
+\renewcommand*{\title}[1]{\renewcommand*{\@title}{{#1}}}
+\newcommand{\FHJ@CheckTitle}{%
+  \@ifundefined{@author}{
+    \ClassWarningNoLine{fhjbook}{Author not defined}\author{first SECOND}
+  }{}
+  \@ifundefined{@title}{
+    \ClassWarningNoLine{fhjbook}{Title not defined}\title{Title}
+  }{}
+  \@ifundefined{FHJ@Supervisor}{
+    \ClassWarningNoLine{fhjbook}{Supervisor not defined}\supervisor{Supervisor}{m}
+  }{}
+}
+\newcommand{\FHJ@CheckAbstract}{%
+  \@ifundefined{FHJ@AbstractDE}{
+    \ClassWarningNoLine{fhjbook}{German ``Kurzfassung'' not defined!}\FHJAbstractDE{Eine Beispielkurzfassung...}{kw1,kw2}
+  }{}
+  \@ifundefined{FHJ@AbstractEN}{
+    \ClassWarningNoLine{fhjbook}{English abstract not defined!}\FHJAbstractEN{An example abstract...}{kw1,kw2}
+  }{}
+}
+%% Handhabung von Untertiteln:
+\newbool{FHJ@SubtitlePresent}
+\renewcommand{\subtitle}[1]
+{\setbool{FHJ@SubtitlePresent}{true}%
+  \newcommand{\FHJ@Subtitle}{#1}}
+%% Autoren- und Betreuerinformationen:
+\newbool{FHJ@AuthorMale}
+\newbool{FHJ@AuthorFemale}
+\newcommand{\authorinfo}[3]{
+  \ifstrequal{#1}{m}{\setbool{FHJ@AuthorMale}{true}}{}%
+  \ifstrequal{#1}{f}{\setbool{FHJ@AuthorFemale}{true}}{}%
+  \newcommand{\FHJ@MatNumber}{#2}
+  \newcommand{\FHJ@Cohort}{#3}
+}
+\newbool{FHJ@SupervisorMale}
+\newbool{FHJ@SupervisorFemale}
+\newcommand{\supervisor}[2]{
+  \newcommand{\FHJ@Supervisor}{#1}
+  \ifstrequal{#2}{m}{\setbool{FHJ@SupervisorMale}{true}}{}%
+  \ifstrequal{#2}{f}{\setbool{FHJ@SupervisorFemale}{true}}{}%
+}
+\newbool{FHJ@CosupervisorPresent}
+\newbool{FHJ@CosupervisorMale}
+\newbool{FHJ@CosupervisorFemale}
+\newcommand{\cosupervisor}[2]{
+  \setbool{FHJ@CosupervisorPresent}{true}%
+  \newcommand{\FHJ@Cosupervisor}{#1}%
+  \ifstrequal{#2}{m}{\setbool{FHJ@CosupervisorMale}{true}}{}%
+  \ifstrequal{#2}{f}{\setbool{FHJ@CosupervisorFemale}{true}}{}%
+}
+% \fi
+%
+% \DescribeMacro{\FHJLocation}
+% The location which is used on the titlepage is defined with the \cs{FHJLocation} macro
+% and it is expected to be a single line, e.g.
+%
+% \begin{quote}
+%   |\FHJLocation{Graz}|
+% \end{quote} 
+% 
+% \iffalse
+\newcommand{\FHJLocation}[1]{
+  \newcommand{\FHJ@Location}{#1}
+}
+% \fi
+% 
+% All this macros are part of the preamble and do \textbf{not} directly set text content
+% in the document. Look into \cs{FHJMakeTitlePage} macro.
+% 
+% \subsection{Abstract and keywords}
+% 
+% All master's theses must contain an abstract in both German \textbf{and} English. The 
+% abstract should provide a brief summary of the research question, methodology, and key 
+% findings. To support you in typesetting the abstract, we provide macros for defining
+% the abstract itself and the keywords.
+% 
+% \DescribeMacro{\FHJAbstractDE} \DescribeMacro{\FHJAbstractEN}
+% These macros are used to define the abstract in German and English respectively. Both
+% commands follow the same syntax:
+% 
+% \begin{quote}
+%  |\FHJAbstractDE|\marg{abstract text}\marg{keyword1,keyword2,$\dots$}\\
+%  |\FHJAbstractEN|\marg{abstract text}\marg{keyword1,keyword2,$\dots$}
+% \end{quote}
+% 
+% \textbf{Note:} The keywords are expected to be a comma-separated list of keywords
+% whithout spaces before or after the commas. Do not forget to define the abstract and 
+% keywords in both languages!
+%
+% \section{Thesis document}
+% 
+% \subsection{Front matter}
+% 
+% If you have defined all necessary macros in the preamble, you can start with the
+% document itself. In most cases you will want to use the following boilerplate at the
+% beginning:
+% 
+% \begin{quote}
+% |\begin{document}|\\
+% \hspace*{2em}|\frontmatter|\\
+% \hspace*{2em}|\FHJThesisFrontMatter|\\
+% \hspace*{2em}|\tableofcontents|\\
+% \hspace*{2em}|\listoftables|\\
+% \hspace*{2em}|\listoffigures|\\
+% \hspace*{2em}|\mainmatter|\\
+% \hspace*{2em}$\dots$\\
+% |\end{document}|
+% \end{quote}
+% 
+% The macros \cs{frontmatter}, \cs{mainmatter} are special macros from KOMA-Script which
+% seperate the front matter from the main content of the thesis -- one consequence for 
+% example is roman numbering of the pages in the front matter and arabic numbering in 
+% the main matter.
+% 
+% \DescribeMacro{\FHJMakeTitlePage}
+% The macro \cs{FHJMakeTitlePage} is used to typeset the title page of the thesis. 
+% It is expected to be
+% called in the document body and will take care of all necessary formatting for you. 
+% It generates an empty page and should be the first page of the document.
+% 
+% \iffalse
+\newcommand{\FHJMakeTitlePage}{%
+\FHJ@CheckTitle%
+\thispagestyle{empty}%
+\begin{center}
+\iflanguage{ngerman}{\includegraphics[width=70mm]{fhjInformaticsLogo.de.img.pdf}}{}
+\iflanguage{english}{\includegraphics[width=70mm]{fhjInformaticsLogo.en.img.pdf}}{}
+\\[10mm]
+% Masterarbeit, Titel, Untertitel
+\iflanguage{ngerman}{\textbf{MASTERARBEIT}}{}
+\iflanguage{english}{\textbf{MASTER'S THESIS}}{}
+\\[10mm]
+\begin{minipage}{\textwidth}\begin{center}
+  \fontsize{16}{20}\selectfont
+  \textbf{\@title}
+\end{center}\end{minipage}\\[5mm]
+\ifbool{FHJ@SubtitlePresent}{%
+  {\large\FHJ@Subtitle}\\[10mm]%
+}{%
+  \vspace*{15mm}%
+}
+\iflanguage{ngerman}{
+  {\footnotesize
+  Eingereicht bei
+  }\\[2mm]
+  \FHJ\\
+  Masterstudiengang\\
+  ``\FHJProgramLong''\\[10mm]
+}{}
+\iflanguage{english}{
+  { \footnotesize
+  Submitted at
+  }\\[2mm]
+  \FHJ\\
+  Master's Degree Programme\\
+  ``\FHJProgramLong''\\[10mm]
+}{}
+{ \footnotesize
+\iflanguage{ngerman}{\ifbool{FHJ@AuthorMale}{Autor }{\ifbool{FHJ@AuthorFemale}{Autorin }{Autor:in }}}{}
+\iflanguage{english}{Author}{}\\[2mm]
+}
+\@author\\
+\FHJ@MatNumber\\
+\iflanguage{english}{Cohort}{}\iflanguage{ngerman}{Jahrgang}{} \FHJProgramShort\ \FHJ@Cohort\\[10mm]
+{\footnotesize
+\iflanguage{ngerman}{\ifbool{FHJ@SupervisorMale}{Betreuer }{\ifbool{FHJ@SupervisorFemale}{Betreuerin }{Betreuer:in }}}{}
+\iflanguage{english}{Supervisor}{}\\[2mm]
+}
+\FHJ@Supervisor\\[10mm]
+\ifbool{FHJ@CosupervisorPresent}{%
+  {\footnotesize
+  \iflanguage{ngerman}{\ifbool{FHJ@CosupervisorMale}{Zweiter Betreuer }{\ifbool{FHJ@CosupervisorFemale}{Zweite Betreuerin }{Zweite:r Betreuer:in }}}{}%
+  \iflanguage{english}{Second Supervisor}{}\\[2mm]%
+  }%
+  \FHJ@Cosupervisor
+}{}
+\end{center}
+\vfill
+\FHJ@Location, \@date \hfill
+\iflanguage{ngerman}{Unterschrift}{}
+\iflanguage{english}{Signature}{}
+\par\vspace*{1cm}
+}
+% \fi
+% 
+% \DescribeMacro{\FHJMakeDeclaration}
+% The macro \cs{FHJDeclaration} is used to typeset the declaration page of the thesis.
+% It is actually contained in package \texttt{fhjcommon}.
+% 
+% \DescribeMacro{\FHJMakeAbstract}
+% The macro \cs{FHJMakeAbstract} is used to typeset the abstract of the thesis including
+% keywords in both languages.
+%
+% \iffalse
+\newcommand{\FHJAbstractDE}[2]{%
+  \newcommand{\FHJ@AbstractDE}{#1}
+  \newcommand*{\FHJ@KeywordsDE}{#2}
+}
+%%
+\newcommand{\FHJAbstractEN}[2]{%
+  \newcommand{\FHJ@AbstractEN}{#1}
+  \newcommand*{\FHJ@KeywordsEN}{#2}
+}
+%%
+\newcommand*{\FHJ@LastKeyword}{}%
+\newcommand*{\FHJ@KwSeparator}{\space$\vert$\space}%
+\newcommand{\FHJ@PrintKeyword}[1]{%
+  \expandafter\ifblank\expandafter{\FHJ@LastKeyword}{}%
+    {\FHJ@KwSeparator}%
+  {#1}%
+  \renewcommand*{\FHJ@LastKeyword}{#1}%
+}
+%%
+\newcommand{\FHJ@PrintKeywords}[2]{%
+  \renewcommand*{\FHJ@LastKeyword}{}%
+  \IfStrEq{#2}{de}{\textit{Schlüsselwörter: }}{}%
+  \IfStrEq{#2}{en}{\textit{Keywords: }}{}%
+  \expandafter\forcsvlist\expandafter\FHJ@PrintKeyword\expandafter{#1}%
+}
+%%
+\newcommand{\FHJMakeAbstract}{%
+\FHJ@CheckAbstract
+\cleardoublepage
+\begingroup % to make sure we change parindent only in this group
+  \setlength{\parindent}{0pt}
+  \textbf{\Large Kurzfassung:}\\[5mm]
+  \FHJ@AbstractDE
+  \vfill
+  \FHJ@PrintKeywords{\FHJ@KeywordsDE}{de}
+  \clearpage
+  \textbf{\Large Abstract:}\\[5mm]
+  \FHJ@AbstractEN
+  \vfill
+  \FHJ@PrintKeywords{\FHJ@KeywordsEN}{en}
+\endgroup
+\cleardoublepage
+}
+% \fi
+% 
+% \DescribeMacro{\FHJThesisFrontMatter}
+% The macro \cs{FHJThesisFrontMatter} is used to typeset the front matter of the thesis.
+% If you would like to typeset all the frontmatter pages in the default order it can 
+% take care of it for you (for title page, abstract and declarations). 
+% Nevertheless, we also export the individual macros for the title page, abstract and
+% declarations.
+% 
+%    \begin{macrocode}
+\newcommand{\FHJThesisFrontMatter}{%
+% Main title page
+\FHJMakeTitlePage%
+% Declaration
+\FHJMakeDeclaration%
+% Abstract
+\FHJMakeAbstract%
+}
+%    \end{macrocode}
+%  
+% \subsection{Appendix}
+%
+% The appendix is a section at the end of the thesis where you can include additional
+% material that is not essential to the main text but may be helpful for the reader. 
+% This can include supplementary data, detailed explanations of methods or source code,
+% or other relevant information.
+% 
+% We at least recommend to include the list of abbreviations.
+% 
+% \begin{quote}
+% |\appendix|\\
+% |\chapter{Appendix}|\\
+% |\section{Source Code}|\\
+% $\cdots$\\
+% |\section{|$\cdots$|}|\\
+% $\cdots$\\
+% |% Will create its own section in the table of contents|\\
+% |\printacronyms[template=supertabular,heading=section]|\\
+% \end{quote}
+% 
+% \subsection{Bibliography}
+% 
+% The bibliography is an essential part of any thesis, as it provides a list of all the
+% sources that were cited or consulted during the research process. It is important to
+% follow a consistent citation style throughout the thesis and to include all necessary
+% information for each source (see \verb|fhj_guide.pdf| for further information on 
+% writing a thesis in {\LaTeX}).
+% 
+% A possible boilerplate for printing the bibliography in the document could look like
+% this (|heading=bibnumbered| ensures that the bibliography is listed and numbered in 
+% the table of contents):
+% 
+% \begin{quote}
+% |\printbibliography[heading=bibnumbered]|
+% \end{quote}
+% 
+% \section{Acknowledgements}
+% 
+% The original work for creating a base class for the study program ``Data Science and
+% Artificial Intelligence'' was
+% done by \textbf{Klaus Lichtenegger}. All appreciation goes to him for creating the
+% first version of this class.
+% 
+% \MaybeStop{\PrintChanges}
+% 
+% \section{Implementation}
+% 
+%    \begin{macrocode}
+%%
+%% Maybe some future additional macros ...
+%%
+%    \end{macrocode}
+% 
+% \Finale
+%  
+\endinput

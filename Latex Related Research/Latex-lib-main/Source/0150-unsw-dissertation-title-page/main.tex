@@ -1,0 +1,88 @@
+%% UNSW dissertation title page starter — unswcover package.
+%%
+%% unswcover is NOT included in this download: it ships with every modern TeX
+%% distribution (and with latextemplates.com's compiler), so bundling a copy
+%% would only risk pinning you to an older version than your own system
+%% already has.
+%%
+%% Package documentation: texdoc unswcover  |  https://ctan.org/pkg/unswcover
+%% Licence: unswcover is LPPL-1.3, (c) Olivier Mehani.
+%%
+%% THE UNSW CREST IS NOT INCLUDED, AND CANNOT BE. The package's title page ends
+%% with \includegraphics{logo_unsw_short}, and that crest is a University of
+%% New South Wales trademark. TeX Live installs unswcover.sty and nothing else
+%% — no logo file — so an unmodified \makeunswfrontmatter fails outright with
+%% "File `logo_unsw_short' not found". This starter draws a neutral placeholder
+%% frame in its place; see the note above \makeunswfrontmatter for how to
+%% substitute the real crest once you are entitled to use it.
+%%
+%% unswcover is a PACKAGE, not a class. It supplies only the front matter, so
+%% you choose the class: `report' or `book' for a thesis. Everything after the
+%% front matter is an ordinary document.
+\documentclass[11pt,a4paper,oneside]{report}
+
+\usepackage[T1]{fontenc}
+%% Loaded explicitly even though unswcover requires it too, because the
+%% placeholder below uses it and a reader should not have to know that the
+%% package happened to pull it in.
+\usepackage{graphicx}
+
+\usepackage{unswcover}
+
+%% The three package settings. \unswschool is empty by default and prints
+%% nothing; \unswdegree defaults to "Doctor of Philosophy". \unswcotutelle is
+%% optional — uncomment it only for a joint-award (cotutelle) degree, and it
+%% adds an "in a cotutelle agreement with" line naming the partner institution.
+\unswschool{School of Computer Science and Engineering\\}
+\unswdegree{Doctor of Philosophy}
+%\unswcotutelle{Universit\'e de Lyon}
+
+%% \makeunswphdtitlepage reads the standard \title, \author and \date, so set
+%% them the ordinary way. \date is printed verbatim on the title page and again
+%% under each signature block, so give a submission month and year rather than
+%% leaving \today to change every time you build.
+\title{Difference Engines and the Mechanisation of Analysis}
+\author{Ada Lovelace}
+\date{March 2026}
+
+%% The placeholder standing in for the trademarked crest. Sized to the 3cm the
+%% package asks for so the page balances exactly as it will with a real crest.
+\newcommand{\crestplaceholder}{%
+  \framebox[3cm]{\parbox[c][3cm][c]{2.6cm}{\centering\sffamily\scriptsize
+    YOUR\\INSTITUTION\\CREST}}%
+}
+
+\begin{document}
+
+%% \makeunswfrontmatter emits FOUR pages: the title page, then the Originality,
+%% Copyright and Authenticity statements UNSW requires of a submitted thesis,
+%% each with a signature and date block filled from \author and \date.
+%%
+%% TO USE THE REAL CREST: delete this \begingroup...\endgroup wrapper and call
+%% \makeunswfrontmatter on its own, with a file named logo_unsw_short.pdf
+%% beside main.tex. The wrapper exists only to substitute the placeholder for
+%% the one \includegraphics inside the package, and it is SCOPED — \includegraphics
+%% behaves normally again after \endgroup, so figures in your chapters are
+%% unaffected.
+\begingroup
+\renewcommand{\includegraphics}[2][]{\crestplaceholder}
+\makeunswfrontmatter
+\endgroup
+
+%% \makeunswfrontmatter can also bind UNSW's own Thesis/Dissertation Sheet PDF
+%% in behind the title page. Declare it in the preamble with
+%%   \unswdissertationsheet{dissertation-sheet.pdf}
+%% and the package \includepdf's it for you. Left off here because that form is
+%% issued by the university and is not ours to ship.
+
+\tableofcontents
+
+\chapter{Introduction}
+Your thesis starts here. The front matter above is the only part unswcover is
+responsible for --- from this point the document is an ordinary \texttt{report},
+so chapters, figures, bibliography and appendices all work as usual.
+
+\chapter{Background}
+Replace these chapters with your own.
+
+\end{document}

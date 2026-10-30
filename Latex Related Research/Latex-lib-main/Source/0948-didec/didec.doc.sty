@@ -1,0 +1,160 @@
+% !TeX root = didec.tex
+% !TeX encoding=UTF-8
+%% The LaTeX package didec - version 1.2.1 (2026/06/01)
+%% didec.doc.sty: style file for the documentation
+%%
+%% -------------------------------------------------------------------------------------------
+%% Copyright (c) 2024-2026 by Prof. Dr. Dr. Thomas F. Sturm <thomas dot sturm at unibw dot de>
+%% -------------------------------------------------------------------------------------------
+%%
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2008 or later.
+%%
+%% This work has the LPPL maintenance status `author-maintained'.
+%%
+%% This work consists of all files listed in README.md
+%%
+% include file (style) of didec.tex (manual of the LaTeX package didec)
+
+\def\version{1.2.1}%
+\def\datum{2026/06/01}%
+
+\IfFileExists{didec.doc.cfg}{\input{didec.doc.cfg}}{}
+
+\renewcommand*\l@subsection{\@dottedtocline{2}{1.5em}{2.7em}}
+\renewcommand*\l@subsubsection{\@dottedtocline{3}{4.2em}{3.2em}}
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage[english]{babel}
+\RequirePackage{lmodern,parskip,array}
+\RequirePackage{microtype}
+\microtypesetup{nopatch=footnote}
+\RequirePackage[svgnames,table]{xcolor}
+\RequirePackage{tikz}
+\RequirePackage{varioref}
+\RequirePackage[makeindex]{imakeidx}
+\RequirePackage[bookmarks,raiselinks,pageanchor,hyperindex,colorlinks]{hyperref}
+\RequirePackage{cleveref}
+\RequirePackage{varwidth,incgraph}
+%\RequirePackage[official]{eurosym}
+
+\RequirePackage[a4paper,left=2.5cm,right=2.5cm,top=1.5cm,bottom=1.5cm,
+    marginparsep=3mm,marginparwidth=18mm,
+    headheight=0mm,headsep=0cm,
+    footskip=1.5cm,includeheadfoot%,showframe
+    ]{geometry}
+\RequirePackage{fancyhdr}
+\fancyhf{}
+\fancyfoot[C]{\thepage}%
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\pagestyle{fancy}
+\tolerance=2000%
+\setlength{\emergencystretch}{20pt}%
+
+\RequirePackage{array,tabularx,booktabs}
+\RequirePackage{lipsum}
+\RequirePackage[extendedchars,encoding,filenameencoding=utf-8]{grffile}
+\RequirePackage{siunitx,xfp}
+
+\RequirePackage{minted2}% minted currently broken with Python 3.14
+\RequirePackage{tcolorbox}
+\tcbuselibrary{skins,minted,breakable,documentation,raster}
+
+\ifdefined\didecpackageprefix
+  \RequirePackage{\didecpackageprefix didec}
+\else
+  \RequirePackage{didec}
+\fi
+
+\definecolor{Green_Dark}{rgb}{0.078431,0.407843,0.176471}
+\definecolor{Blue_Dark}{rgb}{0.090196,0.211765,0.364706}
+\definecolor{Blue_Bright}{rgb}{0.858824,0.898039,0.945098}
+
+\colorlet{Blue_Gray}{blue!50!gray}
+
+\tcbset{skin=enhanced,
+  doc head={colback=yellow!10!white,interior style=fill},
+  doc head key={colback=magenta!5!white,interior style=fill},
+  color key=DarkViolet,
+  color value=Teal,
+  color color=Teal,
+  color counter=Orange!85!black,
+  color length=Orange!85!black,
+  index colorize,
+  index annotate,
+  beforeafter example/.style={
+    before skip=4pt plus 2pt minus 1pt,
+    after skip=8pt plus 4pt minus 2pt
+  },
+  docexample/.style={bicolor,
+    beforeafter example,
+    arc=0.66mm,
+    boxrule=0.33mm,
+    fonttitle=\bfseries,
+    fontlower=\footnotesize,
+    colframe=Blue_Gray,
+    colback=Blue_Gray!5!white,
+    colbacklower=white,
+    drop small lifted shadow,
+    listing engine=minted,
+    documentation minted options={tabsize=2,fontsize=\small,breaklines,autogobble},
+    documentation minted style=colorful,
+    },
+}
+\urlstyle{sf}
+
+\newtcblisting{fullexample}[1]{docexample,minted style=colorful,
+  listing and comment,pdf comment,freeze pdf,compilable listing,#1}
+
+\DeclareTotalTCBox{\myverb}{ O{} v }{tile,fontupper=\ttfamily,nobeforeafter,
+  tcbox raise base,boxsep=0.5mm,top=0pt,bottom=0pt,left=0pt,right=0pt,boxrule=0.3mm,
+  colback=yellow!10,
+  borderline horizontal={0.3mm}{0pt}{red!50},
+  #1}{#2}
+
+\renewcommand*{\tcbdocnew}[1]{\textcolor{green!50!black}{\sffamily\bfseries N} #1}
+\renewcommand*{\tcbdocupdated}[1]{\textcolor{blue!75!black}{\sffamily\bfseries U} #1}
+
+\newcommand{\formatPackageOption}[1]{package option}
+\newcommand{\formatPackageOptions}[1]{Package options}
+
+\tcbmakedocSubKey[doc key prefix=]{docDidecKey}{didec}
+\tcbmakedocSubKeys[doc key prefix=]{docDidecKeys}{didec}
+\tcbmakedocSubKey[doc key prefix=,
+    index key formatter=\formatPackageOption,
+    index keys formatter=\formatPackageOptions
+]{docPackageOption}{didec}
+\tcbmakedocSubKeys[doc key prefix=,
+    index key formatter=\formatPackageOption,
+    index keys formatter=\formatPackageOptions
+]{docPackageOptions}{didec}
+
+
+\tcbset{
+  deprecated*/.style={%
+    doc head={colback=black!1!white,interior style=fill},
+    doc head key={colback=black!3!white,interior style=fill},
+    color command={black!80!white},
+    color option={black!60!white},
+  },
+  deprecated/.style={%
+    deprecated*,
+    before doc body command={\textcolor{black!80!white}{\textsc{Deprecated! }}}
+  },
+}
+
+\ExplSyntaxOn
+\NewDocumentCommand \docColorExample { m }
+  {
+    \color_group_begin:
+    \color_select:n { #1 }
+    \rule[-1mm]{5mm}{4mm}~\docColor{#1}
+    \color_group_end:
+  }
+\ExplSyntaxOff

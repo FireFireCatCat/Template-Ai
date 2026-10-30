@@ -1,0 +1,104 @@
+% Wireless Foundations poster — a clean PDF-compatible adaptation of the
+% original 40in x 30in manual-placement grid template.
+\documentclass[final]{beamer}
+\usepackage[size=custom,width=101.6,height=76.2,scale=1.0]{beamerposter}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,booktabs,tikz,textpos}
+\usetikzlibrary{arrows.meta,positioning}
+\definecolor{wirelessblue}{HTML}{123B63}
+\definecolor{signalblue}{HTML}{1976A8}
+\definecolor{paper}{HTML}{F6F9FB}
+\definecolor{warm}{HTML}{F2A900}
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{normal text}{fg=wirelessblue,bg=paper}
+\setbeamercolor{block title}{fg=white,bg=wirelessblue}
+\setbeamercolor{block body}{fg=wirelessblue,bg=white}
+\setbeamertemplate{block begin}{\begin{beamercolorbox}[wd=\linewidth,sep=0.45cm]{block title}\Large\bfseries\insertblocktitle\end{beamercolorbox}\nointerlineskip\begin{beamercolorbox}[wd=\linewidth,sep=0.55cm]{block body}}
+\setbeamertemplate{block end}{\end{beamercolorbox}\vspace{0.45cm}}
+\newtheorem{claim}{Claim}
+\begin{document}
+\begin{frame}[t]
+\begin{textblock*}{96cm}(2cm,1.6cm)
+  \centering\color{wirelessblue}{\fontsize{34}{40}\selectfont\bfseries A grid for communicating reliable wireless experiments}\par
+  \vspace{0.25cm}{\Large Anand D. Sarwate-style conference poster starter · replace with your authors and affiliation}\par
+  \vspace{0.45cm}\color{signalblue}\rule{92cm}{0.18cm}
+\end{textblock*}
+\begin{textblock*}{23cm}(2cm,12cm)\begin{block}{Introduction}
+  This starter preserves the defining idea of the Wireless Foundations
+  template: divide a non-standard US poster sheet into a simple grid, then
+  place readable text blocks at explicit coordinates. The grid is only a
+  convenience; move or resize each block after the research story is known.
+  \begin{itemize}\itemsep0.25em
+    \item decide the logical grouping before tuning coordinates;
+    \item keep equations and figures large enough to read at a distance;
+    \item preview often because text height is not known in advance.
+  \end{itemize}
+\end{block}\end{textblock*}
+\begin{textblock*}{23cm}(27cm,12cm)\begin{block}{Mathematics}
+  A communication system can be evaluated with a rate--reliability trade-off:
+  \[
+    E(R)=\sup_{\rho>0}\left[\max_Q E_0(\rho,Q)-\rho R\right].
+  \]
+  The visual hierarchy of this template leaves enough width for a displayed
+  equation, a short explanation, and the assumptions that make it meaningful.
+  \begin{claim}[Measurement]
+    A calibration interval must be reported with every comparison.
+  \end{claim}
+\end{block}\end{textblock*}
+\begin{textblock*}{23cm}(52cm,12cm)\begin{block}{Layout details}
+  Each `textblock*` below takes a width and a position in centimetres. The
+  source is intentionally explicit: physical placement is the feature, not a
+  hidden automatic flow algorithm. A finer grid gives more control when a
+  figure needs to span columns.
+  \begin{center}
+  \begin{tikzpicture}[x=0.75cm,y=0.75cm]
+    \draw[step=1,gray!35] (0,0) grid (12,7);
+    \draw[very thick,signalblue] (0,7)--(12,7)--(12,0);
+    \node at (6,3.5) {manual-placement grid};
+  \end{tikzpicture}
+  \end{center}
+\end{block}\end{textblock*}
+\begin{textblock*}{23cm}(77cm,12cm)\begin{block}{Getting started}
+  Use the source as a worksheet for your own poster. Put the strongest result
+  near the top, reserve a lower block for limitations, and keep the reference
+  list short. The original workflow used a DVI/PostScript route for EPS
+  artwork; this starter uses PDFLaTeX and vector TikZ so the catalogue build
+  is reproducible.
+\end{block}\end{textblock*}
+\begin{textblock*}{23cm}(2cm,39cm)\begin{block}{Theorem and proposition}
+  For any finite input alphabet and a discrete memoryless channel, a bound on
+  the probability of error gives a useful anchor for the discussion:
+  \[
+    P_e \geq \exp\bigl(-N(E(R)-\varepsilon_N)\bigr),\qquad \varepsilon_N\to0.
+  \]
+  Explain what the bound says in the application; equations should support
+  the story rather than replace it.
+\end{block}\end{textblock*}
+\begin{textblock*}{23cm}(27cm,39cm)\begin{block}{Results}
+  \centering\begin{tabular}{lrrr}\toprule
+  decoder & accuracy & latency & drop rate\\\midrule
+  baseline & 0.82 & 14.2 ms & 0.08\\
+  calibrated & 0.88 & 15.0 ms & 0.04\\
+  robust & 0.87 & 16.1 ms & 0.03\\\bottomrule
+  \end{tabular}
+  \vspace{0.5cm}\raggedright The calibrated decoder gains six points while
+  adding less than one millisecond. Report the evaluation window and its
+  uncertainty in the caption of the real figure.
+\end{block}\end{textblock*}
+\begin{textblock*}{23cm}(52cm,39cm)\begin{block}{Backup plan}
+  Because the document uses a logical grid, the same blocks can become a
+  backup slide deck. Prepare a small-font version only after checking the
+  full-size poster: line breaks, formula widths, and figure labels change at
+  every physical size.
+\end{block}\end{textblock*}
+\begin{textblock*}{23cm}(77cm,39cm)\begin{block}{References}
+  \begin{enumerate}\itemsep0.3em\small
+    \item R. G. Gallager, \textit{Information Theory and Reliable Communication}, 1968.
+    \item A. Author, ``A measured system,'' \textit{Journal of Examples}, 2024.
+    \item Add only the references a passer-by needs to verify the result.
+  \end{enumerate}
+\end{block}\end{textblock*}
+\begin{textblock*}{96cm}(2cm,70.2cm)\centering\color{wirelessblue}\large Contact, code, and acknowledgements · replace this footer with your own details\end{textblock*}
+\end{frame}
+\end{document}

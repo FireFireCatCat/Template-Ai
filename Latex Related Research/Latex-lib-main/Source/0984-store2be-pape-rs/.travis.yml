@@ -1,0 +1,19 @@
+language: rust
+rust:
+  # Disabled because async-await is not on these channels yet.
+  # - stable
+  # - beta
+  - nightly
+cache: cargo
+before_script:
+  - if [ "$TRAVIS_RUST_VERSION" = "nightly" ]; then (rustup component add clippy-preview) fi
+  - if [ "$TRAVIS_RUST_VERSION" = "stable" ]; then (rustup component add rustfmt-preview) fi
+  - sudo apt-get update && sudo apt-get install imagemagick poppler-utils
+script:
+  - if [ "$TRAVIS_RUST_VERSION" = "nightly" ]; then (cargo clippy) fi
+  - if [ "$TRAVIS_RUST_VERSION" = "stable" ]; then (cargo fmt --all -- --check) fi
+  - cargo build
+  - cargo test
+matrix:
+  allow_failures:
+    - rust: nightly

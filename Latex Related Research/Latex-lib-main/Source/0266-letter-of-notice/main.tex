@@ -1,0 +1,70 @@
+% Letter of Notice — KOMA-Script scrletter with a custom .lco letterhead
+%
+% Derived from jgehrcke/latex-briefvorlage's approach (scrartcl + scrletter
+% + a hand-written .lco for the sender block, plus \changepage to widen the
+% margins for a letterhead look), translated from German to English and
+% rewritten to a genuine notice-giving letter rather than the upstream's
+% placeholder/Lorem-Ipsum body.
+%
+% fontspec + polyglossia are loaded unconditionally by this design, so it is
+% genuinely XeLaTeX-only (no \iftutex/\ifxetex guard to fall back on) —
+% engine.txt declares xelatex. libertine is used as upstream did (available
+% as both a LaTeX package and, via fontspec, its OTF files in the pinned
+% image).
+\documentclass[paper=a4,fontsize=11pt]{scrartcl}
+\usepackage{fontspec}
+\usepackage{libertine}
+\usepackage{microtype}
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+
+\usepackage{changepage}
+\usepackage{csquotes}
+
+\usepackage{scrletter}
+\LoadLetterOption{letter-of-notice-sender}
+
+\changepage{+2cm}{}{}{}{}{}{}{}{-3cm}
+\renewcommand{\familydefault}{\sfdefault}
+
+\setkomavar{subject}{Notice to Vacate --- 14 Kirkland Terrace, Flat 3}
+\setkomavar{place}{Edinburgh}
+\setkomavar{date}{\today}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+\begin{letter}{%
+Ashgrove Lettings Ltd\\
+Property Management Department\\
+41 Grange Road\\
+Edinburgh EH9 2ND%
+}
+
+\opening{Dear Property Management Team,}
+
+I am writing to give formal notice that I will be vacating the property
+at 14 Kirkland Terrace, Flat 3, at the end of my current tenancy period.
+In accordance with clause 7 of my tenancy agreement, this letter is
+being sent with more than two months' notice; my last day of occupancy
+will be 31 October.
+
+\setlength{\parindent}{20pt}
+
+I confirm that the property will be left clean and in the same condition
+as at the start of the tenancy, save for fair wear and tear, and that
+all keys (front door, flat door and mailbox) will be returned to your
+office on the day I vacate. Please let me know if you would like to
+arrange a check-out inspection beforehand.
+
+Could you also confirm the process for returning my deposit, and the
+forwarding address you will need for any post-tenancy correspondence. I
+will provide a forwarding address separately once my move is confirmed.
+
+Thank you for your assistance during my tenancy, and please let me know
+if any further information is required to process this notice.
+
+\closing{Yours sincerely,}
+
+\end{letter}
+\end{document}

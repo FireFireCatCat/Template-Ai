@@ -1,0 +1,144 @@
+\documentclass{sopra-base}
+
+\usepackage{sopra-documentation}
+\usepackage{sopra-standard}
+
+\title{The 'sopra-standard' Package}
+\subtitle[Documentation for the 'sopra-standard' package]{Documentation for the 'sopra-standard' package | Version \thesosversion}
+
+\duedate{2019-12-2}
+
+\keywords{Documentation,sopra-standard,sopra,uni ulm,uulm,package}
+\authors{Florian Sihler (florian.sihler@uni-ulm.de)}
+
+\group{Die Affenbande}
+
+
+
+\begin{document}
+
+    \maketitle
+
+\section{General}
+\subsection{Why, what for?}
+    This \LaTeXe\ package was written as part of the Sopra in the
+    winter semester 2019 and summer semester 2020 and served for the design of the standard document. This documentation was created together with the
+    \T{sopra-base.cls} as well as the \T{sopra-documentation.sty} package.\par
+    The \T{sopra-listings} package is used to visualize the individual code
+    excerpts.
+    The associated package should also be embedded in this document: \scalebox{0.65}{\attachfile[subject={sopra-standard.sty}]{sopra-standard.sty}}.
+\subsection{Dependencies}
+    This package includes the following packages:
+    \begin{multicols}{4}
+        \begin{itemize}
+            \def\pkgparse#1:#2\@nil{%
+                \T{#1}\ifx!#2!\else\textsuperscript{(#2)}\fi%
+            }
+            \foreach \pkg in {fontawesome:,xstring:,array:,sopra-changelog:} {
+                \item \expandafter\pkgparse\pkg\@nil
+            }
+        \end{itemize}
+    \end{multicols}
+    All of these packages should be part of a common \LaTeX\ distribution, or be shipped together with this package.
+
+\subsection{Installation}
+    The package is not delivered as a \T{.dtx}, which is why the
+    following options arise:
+    \begin{itemize}
+        \item The package can be placed in the same directory as the
+                document. In this case the inclusion instruction reads:
+\begin{plainlatex}
+\usepackage{sopra-standard}
+\end{plainlatex}
+        \item The package can be placed in a subdirectory/a directory
+                shipped with the document. In this case it is specified
+                via the (relative) path:
+\begin{plainlatex}
+\usepackage{./My/Path/to/sopra-standard}
+\end{plainlatex}
+        \item The package can be placed (via a symlink or similar)
+              in one's own \emph{texmf} tree.
+              For example, on Linux using texlive,
+              the package can be placed here: \bvoid{\~/texmf/tex/latex/}.
+              The directory can be created and then updated using
+              \bbash{texhash \~/texmf}. Now
+              the package can be used like any other installed package:
+\begin{plainlatex}
+\usepackage{sopra-standard}
+\end{plainlatex}
+    \end{itemize}
+
+\subsection{Further peculiarities}
+In version \thesosversion{} (\cmdref{thesosversion}) there are no further
+peculiarities.
+
+\section{Package Configuration}
+    \subsection{Accepted Parameters}
+    In version \thesosversion{} no parameters are accepted.
+
+\section{Commands and Environments}
+
+Note that the prefix \T{env@} only indicates the nature of an environment and is not part of the actual identifier!\par{}
+The package defines underlying environments that it uses for styling.
+These are not presented in the documentation and should also not be
+used directly.
+
+\subsection{The Environments}
+\begin{command}{CreateNewStandardType}{\manArg{settings}\manArg{environment name}\manArg{counter name}}
+    Creates a new environment with the identifier \T{environment name}. The environment is versioned; the keys are to be passed as a comma-separated list of \say{key: value} pairs. As an example, here is the definition
+    of the comment:
+\begin{plainlatex}[morekeywords={[5]{\\CreateNewStandardType,\\footnotesize,\\faCommentsO}}]
+\CreateNewStandardType{symbol: \footnotesize!**!\faCommentsO,title: Comment}
+    {comment}{ctrcomment}
+\end{plainlatex}
+The following settings are possible: \begin{description}
+    \item[author:] Sets an author; can be specified multiple times to record several.
+    \item[bookmark:] Sets the bookmark depth up to which the environment should be recorded.
+    \item[symbol:] Sets the symbol that is displayed next to the text.
+    \item[title:] Sets the title of the environment.
+    \item[flags:] Allows flags to be additionally recorded next to the box to designate metadata.
+    \item[status:] Allows the status for the comment or the definition to be set (for example: \T{OK}).
+    \item[counter:] Sets the counter to be used.
+\end{description}
+All of these settings can also be manually overridden when specifying the environment (this is recommended, for example, in the case of the author tag).
+\end{command}
+
+The following environments are defined: \env{filedef}, \env{comment}, \env{datadef}, \env{messagedef}, \env{cmdlinedef} and \env{begdef}.
+
+\subsection{Cross-References in Code}
+
+\begin{command}{CreateCodeHyperLink}{\optArg{Sequence}\manArg{Target}}
+    Requires \blatex{sopra-listings} and ensures that the \say{sequence} now becomes a hyperlink pointing to the marker \say{\T{std:Target}} set via \blatex{\\label}. The \T{std:} is \emph{only ever} appended automatically when no \say{explicit} sequence is passed. In this case the command expects a list of terms that automatically jump to markers of the same name:
+\begin{plainlatex}[morekeywords={[5]{\\CreateCodeHyperLink}}]
+\CreateCodeHyperLink{CharacterDescription,GenderEnum,PropertyEnum,GadgetEnum,Gadget,NPCEnum,FieldStateEnum}
+\end{plainlatex}
+    As opposed to:
+\begin{plainlatex}[morekeywords={[5]{\\CreateCodeHyperLink}}]
+\CreateCodeHyperLink[RequestItemChoiceMessage]{std:Message: Character and Gadget Offer}
+\CreateCodeHyperLink[ItemChoiceMessage]{std:Message: Character or Gadget Selection}
+\end{plainlatex}
+\end{command}
+
+\begin{command}{setComment}{\manArg{comment}}
+    Sets the comment that is set in the table of contents together with the next \cmdref{Chapter} command.
+\end{command}
+
+\begin{command}{Chapter}{\manArg{identifier}}
+    Works like \cmd{chapter}, but incorporates \cmdref{setComment}:
+\begin{plainlatex}[morekeywords={[5]{\\setComment,\\Chapter}}]
+\setComment{Basic information on how to read this document.}
+\Chapter{General}
+\end{plainlatex}
+\end{command}
+
+\subsection{General Commands}
+
+\begin{command}{thesosversion}{}
+    Returns the current version of the package. So \cmd{thesosversion} results in: \thesosversion\\
+    \notetext{Note: via \blatex{\\value\{sosversion\}} the
+    version can be obtained as a $4$-digit number: \arabic{sosversion}.}
+\end{command}
+
+A few more shortcuts are also defined, such as \cmd{say} and \cmd{info}, which are to be documented here soon\ldots
+
+\end{document}

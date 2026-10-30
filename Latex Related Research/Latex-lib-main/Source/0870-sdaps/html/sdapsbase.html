@@ -1,0 +1,738 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sdapsbase package &#8212; sdaps-class 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/sdapstex.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="sdapsarray package" href="sdapsarray.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="sdapsarray.html" title="sdapsarray package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sdapsbase package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sdapsbase-package">
+<span id="sdapsbase"></span><h1>sdapsbase package<a class="headerlink" href="#sdapsbase-package" title="Permalink to this headline">¶</a></h1>
+<p>This base package handles many of the core functionalities to make the SDAPS
+class work (together with <a class="reference internal" href="sdapsarray.html#sdapsarray" title="sdapsarray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">sdapsarray</span></code></a>). It implements a number of features
+which should however not be relevant for many end users. It should not be
+neccessary to dive into the <a class="reference internal" href="#sdapsbase"><span class="std std-ref">sdapsbase</span></a> implementation unless you want to use
+some of the more advanced features or even create completely custom layouts.</p>
+<div class="section" id="the-context-subsystem">
+<h2>The context subsystem<a class="headerlink" href="#the-context-subsystem" title="Permalink to this headline">¶</a></h2>
+<p>SDAPS has a system to handle context for the questions. This context is managed
+in the global TeX scope. This means that modifications done for example inside
+a <cite>multicols</cite> environment will still be seen in the rest of the document. The
+context system itself is also hirarchical, so that it is possible to define
+different defaults for sections of the document. The most obvious use case for
+this might be prefixing all variables within parts of the document with a
+certain string. But one could also imagine changing the size of checkboxes
+for parts of the document.</p>
+<div class="section" id="handling-context-nesting">
+<h3>Handling context nesting<a class="headerlink" href="#handling-context-nesting" title="Permalink to this headline">¶</a></h3>
+<p>The following commands can be used to handle context nesting. Note that SDAPS
+makes a best effort to detect errors where begin/end was not used in a balanced
+fashion.</p>
+<dl class="tex macro">
+<dt id="\sdaps_context_begin:n">
+<code class="sig-name descname">\sdaps_context_begin:n</code><span class="sig"> <span class="sig-paren">{</span><em>context name</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_context_begin:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins a context with the given name</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_end:n">
+<code class="sig-name descname">\sdaps_context_end:n</code><span class="sig"> <span class="sig-paren">{</span><em>context name</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_context_end:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ends the context again, ensuring the name is correct</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_begin:">
+<code class="sig-name descname">\sdaps_context_begin:</code><a class="headerlink" href="#\sdaps_context_begin:" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins a context with an empty name</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_end:">
+<code class="sig-name descname">\sdaps_context_end:</code><a class="headerlink" href="#\sdaps_context_end:" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ends a context started with <a class="reference internal" href="#\sdaps_context_begin:" title="\sdaps_context_begin:"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\sdaps_context_begin:</span></code></a></p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_begin_local:">
+<code class="sig-name descname">\sdaps_context_begin_local:</code><a class="headerlink" href="#\sdaps_context_begin_local:" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins a context which automatically ends together with the current TeX group.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_enable_writing:">
+<code class="sig-name descname">\sdaps_context_enable_writing:</code><a class="headerlink" href="#\sdaps_context_enable_writing:" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable metadata writing for the remainder of the current context. Note that
+this package disables writing at start and you need to enable it before
+calling <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\sdaps_begin:</span></code> (and <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\sdaps_end:</span></code>). Classes such as
+the <a class="reference internal" href="sdapsclassic.html#sdapsclassic"><span class="std std-ref">sdapsclassic class</span></a> will enable metadata writing for you.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_disable_writing:">
+<code class="sig-name descname">\sdaps_context_disable_writing:</code><a class="headerlink" href="#\sdaps_context_disable_writing:" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable metadata writing for the remainder of the current context. Note that
+disabling metadata writing may have some side effects with regard to
+variables and automatic numbering of questions and answers. The exact
+behaviour is currently <em>not</em> well defined.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_hook_end:n">
+<code class="sig-name descname">\sdaps_context_hook_end:n</code><a class="headerlink" href="#\sdaps_context_hook_end:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a token list which will be executed at the end of the current
+context. This is primarily useful as a context might be ended implicitly
+in some circumstances.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_hook_post_end:n">
+<code class="sig-name descname">\sdaps_context_hook_post_end:n</code><a class="headerlink" href="#\sdaps_context_hook_post_end:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a token list which will be executed <em>after</em> the end of the current
+context has ended (i.e. in the parent context). This is primarily useful
+as a context might be ended implicitly in some circumstances.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="managing-context-variables">
+<h3>Managing context variables<a class="headerlink" href="#managing-context-variables" title="Permalink to this headline">¶</a></h3>
+<dl class="tex macro">
+<dt id="\sdaps_context_put:n">
+<code class="sig-name descname">\sdaps_context_put:n</code><span class="sig"> <span class="sig-paren">{</span><em>key</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_context_put:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the given variable (or key) to <code class="docutils literal notranslate"><span class="pre">\\undefined</span></code>.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_put:nn">
+<code class="sig-name descname">\sdaps_context_put:nn</code><span class="sig"> <span class="sig-paren">{</span><em>key</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>value</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_context_put:nn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the given variable to the given value (Variants: <code class="docutils literal notranslate"><span class="pre">nV</span></code>)</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_remove:n">
+<code class="sig-name descname">\sdaps_context_remove:n</code><span class="sig"> <span class="sig-paren">{</span><em>key</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_context_remove:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the given variable from the context.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_set:n">
+<code class="sig-name descname">\sdaps_context_set:n</code><span class="sig"> <em class="sig-param">{ key=value, key={a=b, c=d} }</em> </span><a class="headerlink" href="#\sdaps_context_set:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set context variables from the given <code class="docutils literal notranslate"><span class="pre">key=value</span></code> parameters</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_append:nn">
+<code class="sig-name descname">\sdaps_context_append:nn</code><span class="sig"> <span class="sig-paren">{</span><em>key</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>value</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_context_append:nn" title="Permalink to this definition">¶</a></dt>
+<dd><p>The first argument being a variable to modify, append the given value to the
+existing value. This can for example be used to change only one aspect of
+checkbox drawing (e.g. <code class="docutils literal notranslate"><span class="pre">form</span></code>) without affecting resetting another one
+that was defined earlier (e.g. <code class="docutils literal notranslate"><span class="pre">width</span></code> or <code class="docutils literal notranslate"><span class="pre">height</span></code>).</p>
+<p>Generally it is a good idea to use this macro as nested options are common.</p>
+<p>Identical to <a class="reference internal" href="#\sdaps_context_append:nnn" title="\sdaps_context_append:nnn"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\sdaps_context_append:nnn</span></code></a> with “<code class="docutils literal notranslate"><span class="pre">,</span></code>” as the separator.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_context_append:nnn">
+<code class="sig-name descname">\sdaps_context_append:nnn</code><span class="sig"> <span class="sig-paren">{</span><em>key</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>value</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>separator</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_context_append:nnn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append the value to the given <code class="docutils literal notranslate"><span class="pre">key</span></code> in the context. If <code class="docutils literal notranslate"><span class="pre">key</span></code> is set,
+inserts <code class="docutils literal notranslate"><span class="pre">separator</span></code> between them. If key is not set, simply sets the
+<code class="docutils literal notranslate"><span class="pre">key</span></code> to the given value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variants</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">nVn</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="defining-questions-and-headings">
+<h3>Defining questions and headings<a class="headerlink" href="#defining-questions-and-headings" title="Permalink to this headline">¶</a></h3>
+<dl class="tex macro">
+<dt id="\sdaps_qobject_begin:nnn">
+<code class="sig-name descname">\sdaps_qobject_begin:nnn</code><span class="sig"> <span class="sig-paren">{</span><em>name</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>type</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>title</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_qobject_begin:nnn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a new qobject, giving the following arguments:</p>
+<ul class="simple">
+<li><p>The name of the context group to start</p></li>
+<li><p>The type of the qobject (to be consumed by the SDAPS main program)</p></li>
+<li><p>The title for the metadata</p></li>
+</ul>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_qobject_end:n">
+<code class="sig-name descname">\sdaps_qobject_end:n</code><span class="sig"> <span class="sig-paren">{</span><em>name</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_qobject_end:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish a qobject again, must pass the correct name to verify correct nesting.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_qobject_begin:nn">
+<code class="sig-name descname">\sdaps_qobject_begin:nn</code><span class="sig"> <span class="sig-paren">{</span><em>type</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>title</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_qobject_begin:nn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">sdaps_qobject_begin:nnn</span></code>  but without giving a context name.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_qobject_begin_local:nn">
+<code class="sig-name descname">\sdaps_qobject_begin_local:nn</code><span class="sig"> <span class="sig-paren">{</span><em>type</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>title</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_qobject_begin_local:nn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">sdaps_qobject_begin:nnn</span></code>  but will automatically end with
+the current TeX group (using <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">sdaps_context_begin_local:</span></code>).</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_qobject_end:">
+<code class="sig-name descname">\sdaps_qobject_end:</code><a class="headerlink" href="#\sdaps_qobject_end:" title="Permalink to this definition">¶</a></dt>
+<dd><p>End a question which did not have a defined context name</p>
+</dd></dl>
+
+<p>You can write further metadata using the following macros:</p>
+<dl class="tex macro">
+<dt id="\sdaps_qobject_append_var:n">
+<code class="sig-name descname">\sdaps_qobject_append_var:n</code><span class="sig"> <span class="sig-paren">{</span><em>var</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_qobject_append_var:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends the given string to the variable name of the question. An <code class="docutils literal notranslate"><span class="pre">_</span></code>
+will be used to separate the new variable name with any piece that was
+defined earlier (either on the same question or on a surrounding question
+object).</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">var</span></code> starts with an underscore (<code class="docutils literal notranslate"><span class="pre">_</span></code>) then an implicit variable name
+for all surrounding question object (i.e. headings/sections) will be
+generated based on their automatic numbering. This is similar to the
+mechanism used by <a class="reference internal" href="sdapslayout.html#choicearray" title="choicearray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicearray</span></code></a> to ensure that the different questions
+can always be told appart, even if the user did not specify a variable name
+for all of them.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_answer:n">
+<code class="sig-name descname">\sdaps_answer:n</code><span class="sig"> <span class="sig-paren">{</span><em>answer text</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_answer:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write metadata for an answer which belongs to the current question (context)</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_range:nnn">
+<code class="sig-name descname">\sdaps_range:nnn</code><span class="sig"> <span class="sig-paren">{</span><em>lower|upper</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>ID</em><span class="sig-paren">}</span> <span class="sig-paren">{</span><em>answer text</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_range:nnn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes metadata for a range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lower|upper</strong> – Give either <code class="docutils literal notranslate"><span class="pre">lower</span></code> or <code class="docutils literal notranslate"><span class="pre">upper</span></code> for each end of the range.</p></li>
+<li><p><strong>ID</strong> – The ID of the checkbox which corresponds to the first/lower or
+last/upper box in the range. Other boxes are considered outside and need a
+separate answer. Boxes are counted zero based and the given range is inclusive.</p></li>
+<li><p><strong>answer text</strong> – The string for the metadata.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variants</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">nno</span></code>, <code class="docutils literal notranslate"><span class="pre">nnf</span></code>, <code class="docutils literal notranslate"><span class="pre">nnV</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Generic commands are also provided to write to</p>
+<dl class="tex macro">
+<dt id="\sdaps_info_write:n">
+<code class="sig-name descname">\sdaps_info_write:n</code><span class="sig"> <span class="sig-paren">{</span><em>text</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_info_write:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write given text to metadatafile at shipout. Some output may be reordered due
+to this, but all SDAPS classes ensure that the metadata can still be decoded
+correctly. As this macro leaves elements in the output stream it can affect
+layouting in a few cases (e.g. row headers of <a class="reference internal" href="sdapsarray.html#sdapsarray" title="sdapsarray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">sdapsarray</span></code></a>).</p>
+<p>The tokens <strong>will not be expanded</strong> again before writing. This implies that coordinates
+cannot be written using this macro.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>text</strong> – Text to write to the metadata file.</p>
+</dd>
+<dt class="field-even">Variants</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">x</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_info_write_x:n">
+<code class="sig-name descname">\sdaps_info_write_x:n</code><a class="headerlink" href="#\sdaps_info_write_x:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write given text to metadatafile at shipout. Some output may be reordered due
+to this, but all SDAPS classes ensure that the metadata can still be decoded
+correctly. As this macro leaves elements in the output stream it can affect
+layouting in a few cases (e.g. row headers of <a class="reference internal" href="sdapsarray.html#sdapsarray" title="sdapsarray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">sdapsarray</span></code></a>).</p>
+<p>The tokens <strong>will be expanded</strong> again before writing. This implies that coordinates
+can be written using this macro if one takes care not to protect them from
+being expanded at macro execution time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>text</strong> – Text to write to the metadata file.</p>
+</dd>
+<dt class="field-even">Variants</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">x</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="overrides">
+<h2>Overrides<a class="headerlink" href="#overrides" title="Permalink to this headline">¶</a></h2>
+<p>Overrides allow setting defaults based on the questionnaire ID or based on the
+variable name and value of items. Using this feature it would for example be
+possible to fill in names into text fields for printing.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Overrides are independent of the context itself.</p>
+</div>
+<p>Commands which adhere to overrides are currently:</p>
+<ul class="simple">
+<li><p>all <code class="docutils literal notranslate"><span class="pre">multichoice</span></code> or <code class="docutils literal notranslate"><span class="pre">singlechoice</span></code> checkboxes</p></li>
+<li><p>all <code class="docutils literal notranslate"><span class="pre">textboxes</span></code></p></li>
+</ul>
+<p>There is only one command to set the overrides string:</p>
+<dl class="tex macro">
+<dt id="\sdaps_set_questionnaire_id:n">
+<code class="sig-name descname">\sdaps_set_questionnaire_id:n</code><span class="sig"> <span class="sig-paren">{</span><em>ID</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_set_questionnaire_id:n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the current questionnaire ID. This should generally not change unless
+some sort of concatenation is done. It is only relevant for writing new
+environments.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_overrides_init:n">
+<code class="sig-name descname">\sdaps_overrides_init:n</code><span class="sig"> <span class="sig-paren">{</span><em>overrides</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdaps_overrides_init:n" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Arguments</dt>
+<dd class="field-odd"><p><strong>overrides</strong> – A key=value argument with all the override definitions.</p>
+</dd>
+</dl>
+<p>Each of the override definitions will be appened to the items keys if it is
+matching. Matching happens first based on the questionnaire ID with <code class="docutils literal notranslate"><span class="pre">*</span></code>
+being allowed as a wildcard, and then based on variable name and value. The
+second level (name and value) is either just the variable name or the variable
+name and value separated by an <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> character.</p>
+<p>This gives six matches with increasing priority:</p>
+<ul class="simple">
+<li><p>wildcard questionnaire ID, wildcard target</p></li>
+<li><p>wildcard questionnaire ID, matching variable</p></li>
+<li><p>wildcard questionnaire ID, matching variable, matching value</p></li>
+<li><p>matching questionnaire ID, wildcard target</p></li>
+<li><p>matching questionnaire ID, matching variable</p></li>
+<li><p>matching questionnaire ID, matching variable, matching value</p></li>
+</ul>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-13" class="tab-code" name="tab-group-13" ><label for="tab-code-13" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-13" class="tab-rendering" name="tab-group-13" checked><label for="tab-rendering-13" class="label-rendering">Result</label><input type="radio" id="tab-metadata-13" class="tab-metadata" name="tab-group-13"><label for="tab-metadata-13" class="label-metadata">Metadata</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}</span>[var=flower]<span class="nb">{</span>A group of questions with variable &quot;flower&quot;<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="na">[var=alice]</span><span class="nb">{</span>Choice &quot;alice&quot;<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="na">[var=eve]</span><span class="nb">{</span>Choice &quot;eve&quot;<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="na">[var=adam]</span><span class="nb">{</span>Question &quot;adam&quot;<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="na">[var=bob]</span><span class="nb">{</span>Question &quot;bob&quot;<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+
+<span class="c">% Force a different questionnaire ID (never do this in a real document!)</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\sdaps</span><span class="nb">_</span>set<span class="nb">_</span>questionnaire<span class="nb">_</span>id:n <span class="nb">{</span> testid <span class="nb">}</span>
+<span class="k">\ExplSyntaxOff</span>
+<span class="k">\begin</span><span class="nb">{</span>choicegroup<span class="nb">}</span>[var=flower]<span class="nb">{</span>A group of questions with variable &quot;flower&quot;<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="na">[var=alice]</span><span class="nb">{</span>Choice &quot;alice&quot;<span class="nb">}</span>
+  <span class="k">\groupaddchoice</span><span class="na">[var=eve]</span><span class="nb">{</span>Choice &quot;eve&quot;<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="na">[var=adam]</span><span class="nb">{</span>Question &quot;adam&quot;<span class="nb">}</span>
+  <span class="k">\choiceline</span><span class="na">[var=bob]</span><span class="nb">{</span>Question &quot;bob&quot;<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>choicegroup<span class="nb">}</span>
+</pre></div>
+Required code in preamble:<div class="highlight"><pre><span></span><span class="k">\ExplSyntaxOn</span>
+<span class="k">\sdaps</span><span class="nb">_</span>overrides<span class="nb">_</span>init:n<span class="nb">{</span>
+    <span class="c">% For all questoinnaires independent of their ID</span>
+    *=<span class="nb">{</span>
+      <span class="c">% For all elements which use the overrides</span>
+      *=<span class="nb">{</span>fill=green<span class="nb">}</span>,
+      <span class="c">% Specific element with that variable name</span>
+      flower<span class="nb">_</span>bob<span class="nb">_</span>alice=<span class="nb">{</span>draw<span class="nb">_</span>check=true<span class="nb">}</span>,
+      <span class="c">% Specific element with variable &quot;var&quot; and value 1</span>
+      var<span class="nb">&amp;</span>1=<span class="nb">{</span>draw<span class="nb">_</span>check=true<span class="nb">}</span>,
+    <span class="nb">}</span>,
+    <span class="c">% Specific questionnaire ID</span>
+    testid=<span class="nb">{</span>
+      <span class="c">% We need to explicitly unset it again!</span>
+      flower<span class="nb">_</span>bob<span class="nb">_</span>alice=<span class="nb">{</span>draw<span class="nb">_</span>check=false<span class="nb">}</span>,
+      flower<span class="nb">_</span>adam<span class="nb">_</span>alice=<span class="nb">{</span>draw<span class="nb">_</span>check=true<span class="nb">}</span>,
+    <span class="nb">}</span>,
+<span class="nb">}</span>
+<span class="k">\ExplSyntaxOff</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-82e64d3b5db11a81613e2242fc073ca0506aeec4.svg" alt="\begin{choicegroup}[var=flower]{A group of questions with variable &quot;flower&quot;}
+  \groupaddchoice[var=alice]{Choice &quot;alice&quot;}
+  \groupaddchoice[var=eve]{Choice &quot;eve&quot;}
+  \choiceline[var=adam]{Question &quot;adam&quot;}
+  \choiceline[var=bob]{Question &quot;bob&quot;}
+\end{choicegroup}
+
+% Force a different questionnaire ID (never do this in a real document!)
+\ExplSyntaxOn
+\sdaps_set_questionnaire_id:n { testid }
+\ExplSyntaxOff
+\begin{choicegroup}[var=flower]{A group of questions with variable &quot;flower&quot;}
+  \groupaddchoice[var=alice]{Choice &quot;alice&quot;}
+  \groupaddchoice[var=eve]{Choice &quot;eve&quot;}
+  \choiceline[var=adam]{Question &quot;adam&quot;}
+  \choiceline[var=bob]{Question &quot;bob&quot;}
+\end{choicegroup}" /></p>
+</div><div class="content-metadata">
+<pre>
+[1]Author=Author
+[2]Title=Title
+[3]SDAPSVersion=1.9.10
+[4]Duplex=true
+[5]PrintQuestionnaireId=0
+[6]PageSize=597.50793pt,845.04694pt
+[7]Style=qr
+[8]CheckMode=checkcorrect
+[9]GlobalID=
+[10]GlobalIDLabel=
+[11]CornerMarkMargin=28.45274pt,28.45274pt,34.1433pt,34.1433pt
+[12]QObject-Head=1. A group of questions with variable &quot;flower&quot;
+[13]QObject-Choice=1.1. Question &quot;adam&quot;
+[14]Answer[1.1]=Choice &quot;alice&quot;
+[15]Answer[1.1]=Choice &quot;eve&quot;
+[16]Box[1.1]=Checkbox,0,444.80862pt,699.3666pt,9.95845pt,9.95845pt,box,1.00374pt,flower_adam_alice,1
+[17]Box[1.1]=Checkbox,0,521.53519pt,699.3666pt,9.95845pt,9.95845pt,box,1.00374pt,flower_adam_eve,2
+[18]Variable[1.1]=flower_adam
+[19]QObject-Choice=1.2. Question &quot;bob&quot;
+[20]Answer[1.2]=Choice &quot;alice&quot;
+[21]Answer[1.2]=Choice &quot;eve&quot;
+[22]Box[1.2]=Checkbox,0,444.80862pt,685.76659pt,9.95845pt,9.95845pt,box,1.00374pt,flower_bob_alice,1
+[23]Box[1.2]=Checkbox,0,521.53519pt,685.76659pt,9.95845pt,9.95845pt,box,1.00374pt,flower_bob_eve,2
+[24]Variable[1.2]=flower_bob
+[25]Variable[1]=flower
+[26]QObject-Head=2. A group of questions with variable &quot;flower&quot;
+[27]QObject-Choice=2.1. Question &quot;adam&quot;
+[28]Answer[2.1]=Choice &quot;alice&quot;
+[29]Answer[2.1]=Choice &quot;eve&quot;
+[30]Box[2.1]=Checkbox,0,444.80862pt,637.89645pt,9.95845pt,9.95845pt,box,1.00374pt,flower_adam_alice,1
+[31]Box[2.1]=Checkbox,0,521.53519pt,637.89645pt,9.95845pt,9.95845pt,box,1.00374pt,flower_adam_eve,2
+[32]Variable[2.1]=flower_adam
+[33]QObject-Choice=2.2. Question &quot;bob&quot;
+[34]Answer[2.2]=Choice &quot;alice&quot;
+[35]Answer[2.2]=Choice &quot;eve&quot;
+[36]Box[2.2]=Checkbox,0,444.80862pt,624.29645pt,9.95845pt,9.95845pt,box,1.00374pt,flower_bob_alice,1
+[37]Box[2.2]=Checkbox,0,521.53519pt,624.29645pt,9.95845pt,9.95845pt,box,1.00374pt,flower_bob_eve,2
+[38]Variable[2.2]=flower_bob
+[39]Variable[2]=flower
+</pre></div></div><p class="caption">Overriding checkbox color and pre-filled value based on
+questionnaire ID and variables.</p></div></dd></dl>
+
+</div>
+<div class="section" id="the-rendering-subsystem">
+<h2>The rendering subsystem<a class="headerlink" href="#the-rendering-subsystem" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="checkbox">
+<h3>Checkbox<a class="headerlink" href="#checkbox" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 86%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>linewidth</p></td>
+<td><p>The width of the outline (default: 1bp)</p></td>
+</tr>
+<tr class="row-odd"><td><p>width</p></td>
+<td><p>The width of the checkbox (default 3.5mm)</p></td>
+</tr>
+<tr class="row-even"><td><p>height</p></td>
+<td><p>The height of the checkbox (default: 3.5mm)</p></td>
+</tr>
+<tr class="row-odd"><td><p>form</p></td>
+<td><p>The form, either <cite>box</cite> or <cite>ellipse</cite> (default: <cite>box</cite> for <cite>multichoice</cite> and <cite>ellipse</cite> for <cite>singlechoice</cite>)</p></td>
+</tr>
+<tr class="row-even"><td><p>value</p></td>
+<td><p>The value of the checkbox (for internal use)</p></td>
+</tr>
+<tr class="row-odd"><td><p>fill</p></td>
+<td><p>The colour to fill the checkbox with (default: <cite>white</cite>)</p></td>
+</tr>
+<tr class="row-even"><td><p>draw</p></td>
+<td><p>The colour to draw the checkbox frame with (default: <cite>.</cite>, i.e. current text colour)</p></td>
+</tr>
+<tr class="row-odd"><td><p>draw_check</p></td>
+<td><p>Whether to draw a checkmark on top of the box (default: <cite>false</cite>)</p></td>
+</tr>
+<tr class="row-even"><td><p>centered_text</p></td>
+<td><p>Text to overlay over the checkmark (default: <cite>none</cite>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>text</p></td>
+<td><p>Text to overlay over the checkmark using a minipage (default: <cite>none</cite>)</p></td>
+</tr>
+<tr class="row-even"><td><p>text_align</p></td>
+<td><p>The minipage alignment of the overlay (default: <cite>c</cite>, valid are <cite>c</cite>, <cite>t</cite>, <cite>b</cite>, <cite>s</cite> for center, top, bottom or spread)</p></td>
+</tr>
+<tr class="row-odd"><td><p>text_padding</p></td>
+<td><p>The minipages padding from the outside border of the box (default: <cite>2bp</cite>)</p></td>
+</tr>
+<tr class="row-even"><td><p>ellipse</p></td>
+<td><p>Pass as a short form for <cite>form=ellipse</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p>box</p></td>
+<td><p>Pass as a short form for <cite>form=box</cite></p></td>
+</tr>
+</tbody>
+</table>
+<p>There is only one user facing command to render a checkbox:</p>
+<ul class="simple">
+<li><p><cite>\sdaps_checkbox:nn</cite>
+The following arguments can be given:</p>
+<ul>
+<li><p>Variable name</p></li>
+<li><p>Value</p></li>
+</ul>
+</li>
+</ul>
+<p>The behaviour of the checkbox should be changed through the context. On a first
+level this works by using <cite>\sdaps_checkbox_set_type:n</cite> and setting either
+<cite>singlechoice</cite> or <cite>multichoice</cite>. Other than that you can also change the style
+for <cite>singlechoice</cite> and <cite>multichoice</cite> through the context and overrides. The
+following example demonstrates the use of context modification.</p>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-14" class="tab-code" name="tab-group-14" ><label for="tab-code-14" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-14" class="tab-rendering" name="tab-group-14" checked><label for="tab-rendering-14" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\noindent</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>append:nn <span class="nb">{</span> * <span class="nb">}</span> <span class="nb">{</span> linewidth=2bp <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>append:nn <span class="nb">{</span> multichoice <span class="nb">}</span> <span class="nb">{</span> fill=red <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>set:n <span class="nb">{</span> * = <span class="nb">{}</span> <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>set:n <span class="nb">{</span> multichoice=<span class="nb">{</span>ellipse<span class="nb">}</span> <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>append:nn <span class="nb">{</span> * <span class="nb">}</span> <span class="nb">{</span> linewidth=2bp <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>append:nn <span class="nb">{</span> multichoice <span class="nb">}</span> <span class="nb">{</span> fill=red <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>set:n <span class="nb">{</span> * = <span class="nb">{}</span> <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\newline</span>
+
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>set:n <span class="nb">{</span> * = <span class="nb">{</span> centered<span class="nb">_</span>text = X <span class="nb">}</span>, multichoice = <span class="nb">{</span> width=5mm, height=5mm<span class="nb">}</span> <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>append:nn <span class="nb">{</span> * <span class="nb">}</span> <span class="nb">{</span> linewidth=2bp <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>append:nn <span class="nb">{</span> checkbox <span class="nb">}</span> <span class="nb">{</span> fill=red <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>set:n <span class="nb">{</span> * = <span class="nb">{}</span> <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>set:n <span class="nb">{</span> multichoice=<span class="nb">{</span>draw<span class="nb">_</span>check<span class="nb">}</span> <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>append:nn <span class="nb">{</span> * <span class="nb">}</span> <span class="nb">{</span> linewidth=2bp <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>append:nn <span class="nb">{</span> multichoice <span class="nb">}</span> <span class="nb">{</span> fill=red <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\hspace</span><span class="nb">{</span>1em<span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>context<span class="nb">_</span>set:n <span class="nb">{</span> * = <span class="nb">{}</span> <span class="nb">}</span>
+<span class="k">\sdaps</span><span class="nb">_</span>checkbox:nn <span class="nb">{}</span> <span class="nb">{}</span>
+
+<span class="k">\ExplSyntaxOff</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-5ef726a659f638b38aabe9893a665cf541e4117b.svg" alt="\noindent
+\ExplSyntaxOn
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_append:nn { * } { linewidth=2bp }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_append:nn { multichoice } { fill=red }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_set:n { * = {} }
+\sdaps_checkbox:nn {} {}
+
+
+\hspace{1em}
+\sdaps_context_set:n { multichoice={ellipse} }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_append:nn { * } { linewidth=2bp }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_append:nn { multichoice } { fill=red }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_set:n { * = {} }
+\sdaps_checkbox:nn {} {}
+
+\newline
+
+\sdaps_context_set:n { * = { centered_text = X }, multichoice = { width=5mm, height=5mm} }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_append:nn { * } { linewidth=2bp }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_append:nn { checkbox } { fill=red }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_set:n { * = {} }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_set:n { multichoice={draw_check} }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_append:nn { * } { linewidth=2bp }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_append:nn { multichoice } { fill=red }
+\sdaps_checkbox:nn {} {}
+
+\hspace{1em}
+\sdaps_context_set:n { * = {} }
+\sdaps_checkbox:nn {} {}
+
+\ExplSyntaxOff" /></p>
+</div></div><p class="caption">Example showing modification of the context for checkbox rendering</p></div><div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>It appears the text is not centered correctly.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">sdapsbase package</a><ul>
+<li><a class="reference internal" href="#the-context-subsystem">The context subsystem</a><ul>
+<li><a class="reference internal" href="#handling-context-nesting">Handling context nesting</a></li>
+<li><a class="reference internal" href="#managing-context-variables">Managing context variables</a></li>
+<li><a class="reference internal" href="#defining-questions-and-headings">Defining questions and headings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#overrides">Overrides</a></li>
+<li><a class="reference internal" href="#the-rendering-subsystem">The rendering subsystem</a><ul>
+<li><a class="reference internal" href="#checkbox">Checkbox</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sdapsarray.html"
+                        title="previous chapter">sdapsarray package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/sdapsbase.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="sdapsarray.html" title="sdapsarray package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sdapsbase package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Benjamin Berg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

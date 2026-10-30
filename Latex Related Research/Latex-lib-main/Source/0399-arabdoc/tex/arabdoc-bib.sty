@@ -1,0 +1,64 @@
+%%
+%% arabdoc-bib.sty — Arabic bibliography support for biblatex
+%%
+%% Author: Dr Nibras Abo Alzahab <nibras.abo.alzahab@gmail.com>
+%% Version: 1.0.0
+%% Date: 2025/01/15
+%% License: LPPL 1.3c
+%%
+%% Usage:
+%%   \usepackage{arabdoc-bib}
+%%   \addbibresource{references.bib}
+%%   ...
+%%   \printbibliography[title={المراجع}]
+%%
+%% Features:
+%%   - Arabic bibliography title
+%%   - RTL bibliography layout
+%%   - Arabic-aware author formatting
+%%   - Works with biblatex (more flexible than .bst)
+%%
+
+\def\arabdocbibversion{1.0.0}
+\def\arabdocbibdate{2025/01/15}
+\ProvidesPackage{arabdoc-bib}[\arabdocbibdate\space v\arabdocbibversion\space Arabic bibliography support for biblatex]
+
+\RequirePackage[backend=biber,sorting=none,style=numeric]{biblatex}
+
+%% ============================================
+%% Arabic bibliography title
+%% ============================================
+
+% biblatex doesn't have built-in Arabic language support,
+% so we define the title directly
+\def\arabdocbib@title{المراجع}
+
+% User can override with \arabdocbibtitle{...}
+\newcommand{\arabdocbibtitle}[1]{\def\arabdocbib@title{#1}}
+
+% Default bibliography title
+\AtBeginDocument{%
+  \defbibheading{arabicbib}{\section*{\arabdocbib@title}}%
+}
+
+%% ============================================
+%% RTL bibliography environment
+%% ============================================
+
+\defbibenvironment{arabicbibliography}
+  {\list{}
+    {\setlength{\leftmargin}{\bibhang}%
+     \setlength{\rightmargin}{\bibhang}%
+     \setlength{\itemindent}{-\leftmargin}%
+     \setlength{\itemsep}{\bibitemsep}%
+     \setlength{\parsep}{\bibparsep}}}
+  {\endlist}
+  {\item}
+
+%% ============================================
+%% Use RTL environment by default
+%% ============================================
+
+\AtBeginBibliography{\setbibenvironment{arabicbibliography}}
+
+\endinput

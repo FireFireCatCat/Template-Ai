@@ -1,0 +1,282 @@
+% \iffalse 
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+___________________
+The beamertools package
+v0.1
+
+This package provides a collection of programming tools for beamer.
+
+If you want to report any bugs or typos and corrections in the
+documentation, or ask for any new features, or suggest any
+improvements, or ask any questions about the package, then
+please use the issue tracker:
+
+  <https://github.com/xepersian/beamertools/issues>
+  
+In doing so, please always explain your issue well enough, 
+and always include a minimal working example showing the 
+issue.
+
+You may also have conversations, ask questions and post answers
+without opening issues using the Discussions space:
+
+  <https://github.com/xepersian/beamertools/discussions>
+  
+The announcements for the new releases of the package will
+also appear in the Discussions space under the Announcements
+category.
+  
+Current version release date: 2025/01/09
+
+___________________________________________
+Vafa Khalighi
+  
+Copyright (c) Vafa Khalighi 2025
+
+It may be distributed and/or modified under the LaTeX Project Public License,
+version 1.3c or higher (your choice). The latest version of
+this license is at: http://www.latex-project.org/lppl.txt
+
+This work is “author-maintained” (as per LPPL maintenance status) 
+by Vafa Khalighi.
+%</readme>
+%<*internal>
+\fi
+\begingroup
+%</internal>
+%<*batchfile>
+\input docstrip.tex
+\keepsilent
+\preamble
+
+  __________________________________________________
+  Vafa Khalighi
+  
+  Copyright (c) 2025  Vafa Khalighi
+  
+  It may be distributed and/or modified under the LaTeX Project Public License,
+  version 1.3c or higher (your choice). The latest version of
+  this license is at: http://www.latex-project.org/lppl.txt
+
+  This work is “author-maintained” (as per LPPL maintenance status) 
+  by Vafa Khalighi.
+
+
+\endpreamble
+\askforoverwritefalse
+\generate{\file{beamertools.sty}{\from{\jobname.dtx}{table,beamertools.sty}}}
+%</batchfile>
+%<batchfile>\endbatchfile
+%<*internal>
+\generate{\file{\jobname.ins}{\from{\jobname.dtx}{batchfile}}}
+\nopreamble\nopostamble
+\generate{\file{README.txt}{\from{\jobname.dtx}{readme}}}
+\endgroup
+\immediate\write18{mv README.txt README}
+\immediate\write18{makeindex -s gind.ist -o \jobname.ind  \jobname.idx}
+\immediate\write18{makeindex -s gglo.ist -o \jobname.gls  \jobname.glo}
+%</internal>
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{bidicode}
+\usepackage{microtype}
+\definecolor{niceblue}{rgb}{0.2,0.4,0.8}
+\usepackage[numbered]{hypdoc}
+\hypersetup{%
+  pdfauthor={Vafa Khalighi},%
+  linkcolor=niceblue,%
+  urlcolor=niceblue,%
+  citecolor=niceblue%
+}
+\pdfstringdefDisableCommands{%
+\renewcommand\Lcs[1]{\textbackslash#1}
+}
+\EnableCrossrefs
+\CodelineIndex
+%\RecordChanges
+\begin{document}
+  \DocInput{\jobname.dtx}
+  \PrintIndex
+%  \PrintChanges
+\end{document}
+%</driver>
+%
+%
+% \fi
+%
+% \GetFileInfo{\jobname.dtx}
+% \title{The \textsf{beamertools} Package}
+% \author{Vafa Khalighi}
+%\date{Version 0.1\quad\today}
+%\maketitle
+%
+%\begingroup
+%\parindent 0pt
+%\vskip 0pt plus 3fill
+%{\color{red!85!black}\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule}
+%If you want to report any bugs or typos and corrections in the documentation,
+%or ask for any new features, or suggest any improvements, or ask any questions about the package, then please use the issue tracker:
+%
+%\medskip
+%  \centerline{\url{https://github.com/xepersian/beamertools/issues}}
+%
+%\medskip
+%In doing so, please always explain your issue well enough, and always include
+%a minimal working example showing the issue. 
+%
+%\bigskip
+%You may also have conversations, ask questions and post answers
+%without opening issues using the Discussions space:
+%
+%\medskip
+%  \centerline{\url{https://github.com/xepersian/beamertools/discussions}}
+%
+%\medskip
+%The announcements for the new releases of the package will
+%also appear in the Discussions space under the Announcements
+%category.
+%\end{minipage}
+%}}
+%
+%\vskip 0pt plus 3fill
+%
+%Copyright (c) 2025 Vafa Khalighi
+%
+%\medskip
+%Permission is granted to distribute and/or modify \emph{both the documentation and the code} under the conditions of the \LaTeX{} Project Public License, either version 1.3c of this license or (at your option) any later version.
+%\endgroup
+%
+%\clearpage
+% \tableofcontents
+% \section{Introduction}
+%If you want to redefine any predefined beamer template and try 
+%something like
+%\begin{lstlisting}[gobble=1,numbers=none]
+%\defbeamertemplate{itemize item}{square}{\hbox{\vrule width 2ex height 2ex}}
+%\end{lstlisting}
+%then beamer will give the following unhelpful
+%error message
+%\begin{lstlisting}[gobble=1,numbers=none,backgroundcolor=\color{blue!30},frame=none,framexleftmargin=1mm]
+%./test.tex:4: LaTeX Error: Command \beamer@@tmpop@itemize item@square already d
+%efined.
+%               Or name \end... illegal, see p.192 of the manual.
+%
+%See the LaTeX manual or LaTeX Companion for explanation.
+%Type  H <return>  for immediate help.
+% ...                                              
+%                                                  
+%l.4 \begin
+%          {document}
+%? 
+%\end{lstlisting}
+%and one is puzzled as what to do. 
+%
+%beamer does not provide a control sequence for redefining a 
+%predefined beamer template. One way to get around this issue
+%is to undefine the control sequence shown above and then to redefine 
+%the beamer template using the control sequence \Lcs{defbeamertemplate}. But this is 
+%really ugly and unpleasant.
+%
+%Of course, this is just a silly example for illustrating the issue. I found
+%myself redefining a lot of predefined beamer templates in my 
+%\textsf{bidi}\footnote{\url{https://ctan.org/pkg/bidi}} package and the 
+%workaround above is just ugly and painful.
+%
+%The \textsf{beamertools} package solves this exact issue. It provides a
+%control sequence for redefining a predefined beamer template and 
+%unlike beamer unhelpful error message, it provides an informative
+%error message if the beamer template you are trying to redefine is not
+%predefined.
+%
+%
+%\section{Using the package}
+%\subsection{Loading The Package}
+%You can load the package in the ordinary way:
+%\begin{BDef}
+%\Lcs{usepackage}\Largb{beamertools}
+%\end{BDef}
+%\subsection{The user interface}
+%The packages provides the control sequence \Lcs{redefbeamertemplate} for redefining a predefined beamer template and has exactly the same syntax as the control sequence
+%\Lcs{defbeamertemplate} that beamer provides.
+% \StopEventually{}
+% \section{Implementation}
+%\iffalse
+%<*table>
+%\fi
+%% \CheckSum{0}
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+%%
+% \iffalse
+%</table>
+%<*beamertools.sty>
+%\fi
+%
+%
+%
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamertools}[2025/01/09 v0.1 A collection of programming tools for beamer]
+\newcommand<>\redefbeamertemplate{
+  \ifblank{#1}
+  {\def\beamer@@oar{<presentation>}}
+  {\def\beamer@@oar{#1}}\beamer@redefbeamertemplate}
+  
+\def\beamer@redefbeamertemplate{\@ifstar{\beamer@sbttrue\beamer@redef@sbtoo}{\beamer@sbtfalse\beamer@redef@sbtoo}}
+
+\def\beamer@redef@sbtoo#1#2{\@ifnextchar[{\beamer@redef@sbto{#1}{#2}}{\beamer@redef@sbto{#1}{#2}[0]}}
+  
+\def\beamer@redef@sbto#1#2[#3]{\@ifnextchar[{\beamer@@redef@sbto{#1}{#2}[{#3}]}{\def\beamer@sbtotemp{}\beamer@@@redef@sbto{#1}{#2}[{#3}]}} 
+
+\long\def\beamer@@redef@sbto#1#2[#3][#4]{\long\def\beamer@sbtotemp{[{#4}]}\beamer@@@redef@sbto{#1}{#2}[{#3}]} 
+
+\long\def\beamer@@@redef@sbto#1#2[#3]#4{%
+  \beamer@sbttoks={\beamer@@@@redef@sbto{#1}{#2}[{#3}]{#4}}%
+  \@ifnextchar[{\the\beamer@sbttoks}{\the\beamer@sbttoks[action]{}}%
+}
+
+\long\def\beamer@@@@redef@sbto#1#2[#3]#4[#5]#6{%
+  \edef\beamer@@sbtoarg{\expandafter\noexpand\csname beamer@@tmpop@#1@#2\endcsname[{#3}]}%
+\@ifundefined{beamer@@tmpop@#1@#2}{%
+  \PackageError{beamertools}{beamer template with element name `#1' and predefined option `#2' undefined}\@ehc
+}
+\expandafter\expandafter\expandafter\renewcommand\expandafter\beamer@@sbtoarg\beamer@sbtotemp{%
+    \expandafter\long\expandafter\def\csname beamer@@tmpl@#1\endcsname{#4}#6}%
+  \let\beamer@@next=\beamer@resetsbtoarg%
+  \expandafter\mode\beamer@@oar{\let\beamer@@next=\relax}%
+  \beamer@@next%
+  \ifbeamer@sbt\setbeamertemplate{#1}[{#2}]\relax\relax\relax\relax\relax\relax\relax\relax\relax\fi%
+}
+%    \end{macrocode}
+% \iffalse
+%</beamertools.sty>
+%\fi
+%
+%
+% \Finale
+%
+%
+% \typeout{*************************************************************}
+% \typeout{*}
+% \typeout{* To finish the installation you have to move the file}
+% \typeout{* `beamertools.sty' into a directory searched by TeX.}
+% \typeout{*************************************************************}
+%
+\endinput

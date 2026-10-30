@@ -1,0 +1,338 @@
+%=============================================================================
+\section{Multi-Loop Architecture Design}
+%=============================================================================
+
+In the previous chapter, we designed individual PID controllers. But a real competition robot does not run on a single control loop. A gimbal has a current loop, a velocity loop, and a position loop. A balance robot has a tilt loop and a velocity loop. A chassis has per-wheel velocity loops and an overall trajectory-tracking loop. This chapter teaches you how to stack these loops into a coherent architecture.
+
+The difference between a robot that ``sort of works'' and one that wins matches often comes down to architecture. Two teams can use the exact same PID algorithm, the exact same motors, the exact same sensors---and one robot is rock-solid while the other oscillates and stutters. The winning team understood how loops fit together. That is what we cover here.
+
+We will start with the big picture---the full control stack from sensor to actuator---then zoom into cascade control and the bandwidth separation principle that makes it work. After that, we discuss task-level versus joint-level control, supervisor state machines, and the timing architecture that keeps everything running on schedule. A detailed gimbal case study ties it all together at the end.
+
+%-----------------------------------------------------------------------------
+\subsection{The Full Control Stack}
+%-----------------------------------------------------------------------------
+
+Every competition robot, whether you realize it or not, implements a layered pipeline:
+
+\[
+\text{Sensors} \;\longrightarrow\; \text{Perception} \;\longrightarrow\; \text{Planning} \;\longrightarrow\; \text{Control} \;\longrightarrow\; \text{Actuation}
+\]
+
+\textbf{Sensors} produce raw data: encoder counts, IMU accelerations, current-sense ADC values. \textbf{Perception} turns raw data into useful state estimates: an EKF fusing IMU and encoders to produce a tilt angle, or a vision pipeline extracting target coordinates. \textbf{Planning} decides what the robot should do next: track a trajectory, aim at a target, maintain balance. \textbf{Control} computes the commands that make the plan happen: PID outputs, torque commands, PWM duty cycles. \textbf{Actuation} applies those commands to the physical world: motor drivers switching H-bridges, solenoids firing.
+
+Consider a competition gimbal. The sensor layer reads a 6-axis IMU at 8~kHz and motor encoders at 10~kHz. The perception layer runs an EKF at 1~kHz to estimate yaw and pitch angles. The planning layer receives target coordinates from a vision co-processor at 120~Hz and computes desired gimbal angles. The control layer runs cascade PID (position $\to$ velocity $\to$ current) at various rates. The actuation layer is a three-phase motor driver switching at 20~kHz.
+
+The key insight is that \textit{each layer is a client of the layer below it}. The planning layer does not know or care how the motor driver works---it just says ``go to 30 degrees.'' The position PID does not know or care about field-oriented control---it just outputs a velocity command. This separation of concerns is what makes complex robots manageable.
+
+Where does each layer run? In a typical competition robot:
+
+\begin{center}
+\begin{tabular}{l l l}
+\hline
+\textbf{Layer} & \textbf{Typical Rate} & \textbf{Hardware} \\
+\hline
+Current control & 10--20~kHz & Motor driver MCU (e.g., C610/C620 ESC) \\
+Velocity / position control & 500~Hz--1~kHz & Main MCU (STM32F4/H7) \\
+Perception (EKF) & 500~Hz--1~kHz & Main MCU \\
+Planning / trajectory & 50--200~Hz & Main MCU or co-processor \\
+Vision / detection & 30--120~Hz & Co-processor (Jetson, RPi, etc.) \\
+\hline
+\end{tabular}
+\end{center}
+
+Notice the pattern: lower layers run faster, higher layers run slower. This is not a coincidence---it is a direct consequence of the physics, as we will see next.
+
+%-----------------------------------------------------------------------------
+\subsection{Cascade Control Architecture}
+%-----------------------------------------------------------------------------
+
+\subsubsection{Current $\to$ Velocity $\to$ Position}
+
+The three-loop cascade is the workhorse of brushless motor control. Let us understand \textit{why} the loops are ordered this way by examining the physics of a DC motor (the same argument applies to FOC-controlled BLDC motors with appropriate coordinate transforms).
+
+The electrical dynamics are:
+\begin{equation}
+L \frac{di}{dt} = V - Ri - K_e \omega
+\end{equation}
+where $L$ is the winding inductance, $R$ is resistance, $K_e$ is the back-EMF constant, and $\omega$ is angular velocity. The time constant is $\tau_e = L/R$, typically 0.1--1~ms for small motors. This is the \textit{fastest} dynamics in the system.
+
+The mechanical dynamics are:
+\begin{equation}
+J \frac{d\omega}{dt} = K_t i - b\omega - \tau_{\text{load}}
+\end{equation}
+where $J$ is the rotor inertia, $K_t$ is the torque constant, $b$ is viscous friction, and $\tau_{\text{load}}$ is the external load. The mechanical time constant $\tau_m = J/b$ is typically 10--100~ms---much slower than the electrical dynamics.
+
+Finally, the kinematic relationship is:
+\begin{equation}
+\frac{d\theta}{dt} = \omega
+\end{equation}
+
+This is pure integration, which has no natural time constant at all---it is the ``slowest'' dynamics (an integrator's gain rolls off at $-20$~dB/decade starting from DC).
+
+The cascade structure matches the physics: the \textbf{innermost} loop controls the \textbf{fastest} dynamics (current), the \textbf{middle} loop controls the next-fastest (velocity), and the \textbf{outermost} loop controls the slowest (position). Typical bandwidths:
+
+\begin{center}
+\begin{tabular}{l l l}
+\hline
+\textbf{Loop} & \textbf{Bandwidth} & \textbf{Controller Type} \\
+\hline
+Current & 5--10~kHz & PI (no D needed---plant is first-order) \\
+Velocity & 200~Hz--1~kHz & PID or PI \\
+Position & 50--200~Hz & PD or PID \\
+\hline
+\end{tabular}
+\end{center}
+
+The nested block diagram looks like this. The position controller outputs a velocity setpoint. The velocity controller outputs a current (torque) command. For CAN-based ESCs (C610/C620), this current command is sent over CAN to the ESC, which handles the internal current loop and FOC commutation. For simpler drivers, the current controller outputs a voltage (PWM duty). Either way, each inner loop ``wraps around'' its own plant dynamics, taming them before the outer loop ever sees them.
+
+\begin{equation}
+r_\theta \;\xrightarrow{C_\theta}\; r_\omega \;\xrightarrow{C_\omega}\; r_i \;\xrightarrow{C_i}\; V \;\xrightarrow{\text{motor}}\; i,\;\omega,\;\theta
+\end{equation}
+
+\subsubsection{The Bandwidth Separation Principle}
+
+The cascade architecture works because of a powerful simplification: if the inner loop is \textit{much} faster than the outer loop, the outer loop can pretend the inner loop does not exist.
+
+Let the inner closed-loop transfer function be:
+\begin{equation}
+T_{\text{inner}}(s) = \frac{C_{\text{inner}} G_{\text{inner}}}{1 + C_{\text{inner}} G_{\text{inner}}}
+\end{equation}
+
+If the inner loop bandwidth $\omega_{\text{inner}}$ is much larger than the outer loop bandwidth $\omega_{\text{outer}}$, then at all frequencies relevant to the outer loop ($\omega \ll \omega_{\text{inner}}$), we have $|T_{\text{inner}}(j\omega)| \approx 1$ and $\angle T_{\text{inner}}(j\omega) \approx 0$. In other words, $T_{\text{inner}}(s) \approx 1$ from the outer loop's perspective. The inner loop appears as a perfect, instantaneous actuator.
+
+The derivation is straightforward. For a well-tuned inner loop with bandwidth $\omega_{\text{inner}}$, the closed-loop behaves approximately as a first-order system:
+\begin{equation}
+T_{\text{inner}}(s) \approx \frac{1}{1 + s/\omega_{\text{inner}}}
+\end{equation}
+
+At a frequency $\omega \ll \omega_{\text{inner}}$, the magnitude is:
+\[
+|T_{\text{inner}}(j\omega)| = \frac{1}{\sqrt{1 + (\omega/\omega_{\text{inner}})^2}} \approx 1 - \frac{1}{2}\left(\frac{\omega}{\omega_{\text{inner}}}\right)^2
+\]
+
+and the phase is $\angle T_{\text{inner}} \approx -\arctan(\omega/\omega_{\text{inner}}) \approx -\omega/\omega_{\text{inner}}$ radians. For this approximation to hold with less than 5\% magnitude error and less than 10\textdegree{} phase lag, we need $\omega_{\text{outer}} < \omega_{\text{inner}} / 5$ roughly. This gives us the:
+
+\textbf{Rule of thumb:} The inner loop should be 5--10$\times$ faster than the outer loop.
+
+What happens when this separation is violated? Suppose your position loop runs at 200~Hz bandwidth and your velocity loop runs at 300~Hz bandwidth---a ratio of only 1.5$\times$. The position loop now ``sees'' significant phase lag from the velocity loop. At the position loop's crossover frequency, the velocity loop contributes perhaps 30--40\textdegree{} of additional phase lag. This eats into the position loop's phase margin, causing overshoot or outright oscillation. The two loops are \textit{coupled}---tuning one affects the other, and the nice separation-of-concerns story breaks down.
+
+This is a very common competition bug. The team tunes velocity and position loops separately, each looks fine alone, but together the robot oscillates. The fix is almost always to either speed up the inner loop or slow down the outer loop until the 5$\times$ separation is restored.
+
+\textbf{Worked example.} Suppose your velocity loop has a closed-loop bandwidth of 300~Hz, and you set up a position loop with bandwidth 200~Hz. The ratio is only $300/200 = 1.5\times$. At the position loop's crossover frequency (200~Hz), the velocity loop's closed-loop transfer function contributes:
+\[
+\angle T_{\text{vel}}(j \cdot 2\pi \cdot 200) \approx -\arctan\!\left(\frac{200}{300}\right) = -33.7°
+\]
+
+That is 34\textdegree{} of unexpected phase lag. If your position controller was designed with 45\textdegree{} of phase margin, you now have only $45 - 34 = 11$\textdegree{}---dangerously close to instability. The position loop overshoots violently and may oscillate. If instead you reduce the position loop bandwidth to 60~Hz (a $5\times$ separation), the velocity loop contributes only $-\arctan(60/300) = -11.3$\textdegree{} of phase lag. Your phase margin drops from 45\textdegree{} to a comfortable 34\textdegree{}, and the system is well-behaved.
+
+\subsubsection{Tuning Order: Inside Out}
+
+The bandwidth separation principle dictates a strict tuning protocol:
+
+\textbf{Step 1:} Disable all outer loops. Send current commands directly. Tune the current PI controller until the current response is fast and well-damped (overshoot $<5\%$, settling time $<1$~ms). This is usually done by the motor driver manufacturer, so you often skip this step.
+
+\textbf{Step 2:} Close the current loop. Now send velocity commands. The current loop is your ``fast actuator''---you do not need to think about it. Tune the velocity PID until the velocity response is satisfactory (overshoot $<10\%$, settling time $<20$~ms). Use derivative-on-measurement to avoid setpoint kick.
+
+\textbf{Step 3:} Close the velocity loop. Now send position commands. The velocity loop is your ``medium-speed actuator.'' Tune the position PD or PID for the desired position response.
+
+The critical rule: \textit{never retune inner loops after closing outer loops}, unless something is fundamentally wrong (like the motor winding resistance changed because you swapped motors). If you find yourself re-tuning the velocity loop to fix a position-loop oscillation, the real problem is almost certainly a bandwidth separation violation.
+
+A common mistake during competition crunch time: the position loop oscillates, so someone cranks down $K_p$ on the velocity loop to ``calm things down.'' This makes the velocity loop sluggish, which starves the position loop of bandwidth, which makes it even more oscillatory, which prompts someone to reduce position $K_p$ as well, and now the whole system is slow and mushy. The correct procedure is to check the bandwidth ratios, not to randomly detune.
+
+To verify your cascade is healthy, log the setpoints and measurements at each level simultaneously. Plot velocity setpoint vs actual velocity: the actual should track the setpoint with minimal delay and overshoot. If the velocity response is slow or ringy, fix it \textit{before} touching the position loop. Only after the velocity loop looks crisp should you proceed to tune position.
+
+%-----------------------------------------------------------------------------
+\subsection{Task-Level vs Joint-Level Control}
+%-----------------------------------------------------------------------------
+
+There are two philosophies for controlling a multi-actuator robot.
+
+\textbf{Joint-level control} gives each motor its own independent controller. Motor 1 has a PID that tracks its velocity setpoint. Motor 2 has its own PID. Motor 3 has its own PID. They do not talk to each other. This is simple, easy to debug, and works well when the motors are naturally decoupled---which is often the case for wheeled robots where each wheel has its own independent velocity setpoint.
+
+\textbf{Task-level control} works in the \textit{task space} (also called Cartesian space or operational space). The controller computes errors and commands in the space that matters for the task---for example, $(v_x, v_y, \omega)$ for a holonomic chassis---and then uses inverse kinematics or a Jacobian to map these commands to individual joint commands.
+
+When do you use which? For a differential-drive chassis, joint-level control is perfectly fine: left wheel velocity and right wheel velocity map trivially to $(v, \omega)$. But for a holonomic (omnidirectional) chassis with four mecanum wheels, task-level control is almost essential.
+
+\textbf{Example: holonomic chassis inverse kinematics.} Suppose you want the chassis to move with velocity $(v_x, v_y, \omega)$ in the body frame. With four mecanum wheels arranged in the standard X-configuration, each at distance $l$ from the center (measured along the diagonal), the wheel velocities are:
+
+\begin{equation}
+\begin{bmatrix} \omega_1 \\ \omega_2 \\ \omega_3 \\ \omega_4 \end{bmatrix}
+= \frac{1}{r}
+\begin{bmatrix}
+1 & -1 & -(l_x + l_y) \\
+1 &  1 &  (l_x + l_y) \\
+1 &  1 & -(l_x + l_y) \\
+1 & -1 &  (l_x + l_y)
+\end{bmatrix}
+\begin{bmatrix} v_x \\ v_y \\ \omega \end{bmatrix}
+\end{equation}
+
+where $r$ is the wheel radius, $l_x$ is the half-length (front-to-center), and $l_y$ is the half-width (side-to-center). This matrix is the \textit{inverse kinematics}---it maps task-space commands to joint-space commands. Each wheel then has its own velocity PID tracking the computed $\omega_i$. The trajectory-tracking controller operates entirely in task space, oblivious to individual wheels.
+
+The advantage of task-level control is that the trajectory planner thinks in the coordinates that matter: ``move forward at 2~m/s while rotating at 1~rad/s.'' The inverse kinematics handles the messy details of how four wheels must coordinate to achieve that.
+
+Note that the inverse kinematics matrix above is \textit{not square}---it maps 3 task-space DOFs to 4 wheel velocities. The system is kinematically redundant (more actuators than DOFs). This redundancy is actually beneficial: it means the chassis can achieve any $(v_x, v_y, \omega)$ combination, and slight differences in wheel speeds due to manufacturing tolerances are absorbed gracefully. For systems where the number of actuators equals the number of DOFs (e.g., a 3-wheel omnidirectional robot), the matrix is square and invertible in both directions---you can also do \textit{forward kinematics} to estimate the chassis velocity from measured wheel speeds, which is useful for odometry.
+
+For robot arms and multi-DOF mechanisms---turrets with elevation and traverse, or sample-collecting manipulators---the task-level approach becomes essential. The operator or autonomous planner thinks ``move the end-effector to $(x, y, z)$,'' and the inverse kinematics resolves this into joint angles. Attempting to control each joint independently in such systems leads to curved, unpredictable end-effector paths.
+
+%-----------------------------------------------------------------------------
+\subsection{Supervisor Patterns}
+%-----------------------------------------------------------------------------
+
+\subsubsection{State Machines for Autonomous Operation}
+
+Control loops compute torques and velocities. But \textit{who decides when the robot should be moving in the first place?} That is the job of the supervisor---a higher-level logic layer that manages the robot's operating mode.
+
+The simplest and most robust supervisor is a \textbf{finite state machine} (FSM). A typical competition robot has states like:
+
+\begin{center}
+\texttt{IDLE} $\to$ \texttt{INITIALIZE} $\to$ \texttt{RUN} $\to$ \{\texttt{FAULT}, \texttt{E\_STOP}\}
+\end{center}
+
+In \texttt{IDLE}, all actuators are disabled and the robot waits for a start signal (e.g., referee system command). In \texttt{INITIALIZE}, the robot performs self-checks: IMU calibration, encoder zeroing, CAN bus health check. Only after all checks pass does the robot transition to \texttt{RUN}, where the control loops are active. If any critical fault is detected (motor overtemperature, communication loss, low battery), the FSM transitions to \texttt{FAULT}, which disables actuators and logs the error. An emergency stop signal forces an immediate transition to \texttt{E\_STOP} from any state.
+
+Why does this matter? Without a state machine, a common competition disaster unfolds: the robot powers on, the PID loops start immediately, the IMU has not calibrated yet, so the ``tilt angle'' reads garbage, and the motors slam to full power. With a proper FSM, the robot cannot enter \texttt{RUN} until initialization is complete.
+
+A minimal implementation in C:
+
+\begin{verbatim}
+    typedef enum { IDLE, INIT, RUN, FAULT, ESTOP } State;
+    State state = IDLE;
+
+    void supervisor_update(void) {
+        switch (state) {
+            case IDLE:  if (start_signal()) state = INIT;  break;
+            case INIT:  if (all_checks_ok()) state = RUN;  break;
+            case RUN:   if (fault_detected()) state = FAULT; break;
+            case FAULT: motors_disable(); break;
+            case ESTOP: motors_disable(); break;
+        }
+        if (estop_pressed()) state = ESTOP;
+    }
+\end{verbatim}
+
+Ten lines. Saves your robot from destroying itself at power-on.
+
+\subsubsection{Mode Switching and Bumpless Transfer}
+
+Competition robots often need to switch between control modes on the fly. A gimbal might switch from manual (operator stick input) to autonomous (vision tracking). A chassis might switch from teleoperation to autonomous navigation. The problem is that at the moment of switching, the new controller's output may differ from the old controller's output, causing a sudden ``bump'' (discontinuity) in the control signal. The motor jerks. The gimbal whips. The audience gasps.
+
+The fix is called \textbf{bumpless transfer}. The idea is simple: when switching to a new controller, initialize its internal state so that its first output matches the last output of the old controller. For a PID controller, this means setting the integrator:
+
+\begin{equation}
+I_{\text{new}} = u_{\text{current}} - K_{p,\text{new}} \cdot e_{\text{current}}
+\end{equation}
+
+where $u_{\text{current}}$ is the control output at the moment of switching and $e_{\text{current}}$ is the current error as seen by the new controller. This ensures that $u_{\text{new}} = K_{p,\text{new}} e + I_{\text{new}} = u_{\text{current}}$ at the first sample after switching. The new controller then smoothly takes over.
+
+If the new controller also has a derivative term, you should also initialize the ``previous measurement'' variable to the current measurement, so the derivative does not produce a spike.
+
+In competition, the most common mode switch is between operator control and autonomous aiming. During operator control, the gimbal tracks joystick input. When the vision system detects a target and the operator presses the ``auto-aim'' button, the controller switches to vision-guided position control. Without bumpless transfer, the gimbal jerks to wherever the vision controller's integrator happens to be initialized (usually zero). With bumpless transfer, the transition is seamless---the vision controller picks up exactly where the operator controller left off and smoothly steers toward the target.
+
+%-----------------------------------------------------------------------------
+\subsection{Timing Architecture}
+%-----------------------------------------------------------------------------
+
+All the loop-stacking theory is useless if your code does not execute at the right time. Timing is the skeleton that holds the architecture together.
+
+\begin{center}
+\begin{tabular}{l l l l}
+\hline
+\textbf{Loop} & \textbf{Frequency} & \textbf{Priority} & \textbf{Timer / Trigger} \\
+\hline
+Current PI & 10~kHz & Highest & ADC end-of-conversion interrupt \\
+Velocity PID & 1~kHz & High & TIM6 (1~ms period) \\
+Position PID & 500~Hz & Medium & Every 2nd velocity tick \\
+EKF update & 1~kHz & Medium & Synchronized with velocity loop \\
+Trajectory planning & 100~Hz & Low & Every 10th velocity tick \\
+Supervisor FSM & 100~Hz & Low & Same tick as trajectory \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Priority scheduling.} When the current loop runs on your MCU (simple H-bridge drivers), it is the highest priority. When using CAN-based ESCs (C610/C620), the current loop runs inside the ESC --- so on your MCU, the CAN TX/RX and velocity loop become the highest-priority tasks. The position loop and planner are lowest priority because they change slowly and can tolerate occasional jitter.
+
+\textbf{Why jitter matters.} Recall the PID derivative term: $D = K_d \cdot (y_{\text{prev}} - y) / \Delta t$. If $\Delta t$ fluctuates because a higher-priority interrupt delayed your loop, the derivative output fluctuates too---even if the measurement is perfectly smooth. For a loop running at 1~kHz, a 10\% jitter ($\pm 0.1$~ms) introduces 10\% noise on the derivative. This is why deterministic timing is not optional---it is a correctness requirement.
+
+There are two common approaches on microcontrollers:
+
+\textbf{Bare-metal (nested interrupts):} Each loop runs in a timer interrupt. The current loop interrupt has the highest NVIC priority, the velocity loop has a lower priority, and so on. The hardware ensures that a high-priority interrupt can preempt a lower-priority one. This is simple and has minimal overhead, but gets messy when you have many loops with complex interactions.
+
+\textbf{RTOS (FreeRTOS, RT-Thread):} Each loop is a task with an assigned priority. The RTOS scheduler handles preemption. This is cleaner for complex robots with many subsystems.
+
+A minimal FreeRTOS setup:
+
+\begin{verbatim}
+    void vel_loop_task(void *arg) {
+        TickType_t last = xTaskGetTickCount();
+        for (;;) {
+            vTaskDelayUntil(&last, pdMS_TO_TICKS(1));  // 1 kHz
+            float omega = read_encoder_velocity();
+            float cmd = pid_update(&vel_pid, vel_setpoint, omega);
+            set_current_setpoint(cmd);
+        }
+    }
+    // In main(): xTaskCreate(vel_loop_task, "vel", 256, NULL, 3, NULL);
+\end{verbatim}
+
+The \texttt{vTaskDelayUntil} function is critical: it ensures the task runs at a fixed period regardless of how long the computation takes (as long as it finishes within the period). Using \texttt{vTaskDelay} instead would accumulate drift---each iteration would be ``computation time + 1~ms'' instead of exactly 1~ms, and over thousands of iterations the phase shifts noticeably.
+
+One last practical note on timing: be careful with CAN bus communication timing. If your main MCU sends current commands to motor ESCs over CAN at 1~kHz, and the CAN bus is also carrying IMU data, encoder data, and referee system packets, bus contention can cause unpredictable delays. Assign higher CAN priority (lower CAN ID) to time-critical messages like current commands, and consider staggering transmissions so that multiple high-rate messages do not collide on the same millisecond boundary.
+
+%-----------------------------------------------------------------------------
+\subsection*{}
+%-----------------------------------------------------------------------------
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Case Study: Complete Gimbal Control Stack---From Sensor to Actuator}
+
+\vspace{0.3em}
+Let us trace the full data flow of a competition gimbal pitch axis, from sensor to motor. This is the architecture running on many winning robots, and understanding it end-to-end is the goal of this chapter.
+
+\textbf{The pipeline:}
+
+\begin{enumerate}[nosep]
+    \item \textbf{IMU} (BMI088) samples at 8~kHz. The raw gyroscope reading $\omega_{\text{raw}}$ passes through a first-order low-pass filter ($f_c = 200$~Hz) to remove high-frequency vibration.
+    \item \textbf{EKF} runs at 1~kHz. It fuses the filtered gyroscope with the accelerometer (corrected for centripetal acceleration) to produce an attitude estimate $\hat{\theta}$ (pitch angle) and a bias-corrected angular velocity $\hat{\omega}$.
+    \item \textbf{Position PID} runs at 500~Hz. It computes $e_\theta = \theta_{\text{cmd}} - \hat{\theta}$ and outputs a velocity command $\omega_{\text{cmd}}$. This is typically a PD controller (or PID with a very small $K_i$), because the position plant already contains an integrator ($\dot{\theta} = \omega$).
+    \item \textbf{Velocity PID} runs at 1~kHz. It computes $e_\omega = \omega_{\text{cmd}} - \hat{\omega}$ and outputs a current command $i_{\text{cmd}}$. This uses derivative-on-measurement to avoid setpoint kick when the position controller changes $\omega_{\text{cmd}}$ abruptly.
+    \item \textbf{Current PI + FOC} runs at $\sim$10~kHz inside the C620 ESC. Your MCU sends $i_{\text{cmd}}$ as a 16-bit signed value over CAN; the ESC handles the current loop, field-oriented control, and three-phase commutation internally. It reports back the actual current, rotor angle, and velocity over CAN.
+\end{enumerate}
+
+\textbf{Timing summary:}
+\begin{center}
+\begin{tabular}{l l l}
+\hline
+\textbf{Block} & \textbf{Rate} & \textbf{Bandwidth} \\
+\hline
+Current PI & 10~kHz & $\sim$5~kHz \\
+Velocity PID & 1~kHz & $\sim$200--500~Hz \\
+Position PID & 500~Hz & $\sim$50--100~Hz \\
+EKF & 1~kHz & (not a controller, but updates state) \\
+\hline
+\end{tabular}
+\end{center}
+
+The bandwidth separation is clear: current is $10\times$--$25\times$ faster than velocity, and velocity is $4\times$--$10\times$ faster than position. Each outer loop safely treats its inner loop as approximately unity gain.
+
+\textbf{Key design decisions:}
+
+\textit{Why PI for current, not PID?} The current plant is first-order ($L/R$ dynamics). A PI controller gives zero steady-state error for a step input and adds at most 90\textdegree{} of phase---which is enough. Adding a D term would amplify current-sensor noise (current sensors are noisy) with no benefit.
+
+\textit{Why derivative-on-measurement in the velocity loop?} The velocity setpoint $\omega_{\text{cmd}}$ changes in discrete jumps every time the position controller runs (every 2~ms). Differentiating the error would create a spike at every jump. Differentiating the measurement avoids this.
+
+\textit{Why is the position loop the slowest?} Because position is the integral of velocity, and the position controller's job is to generate \textit{smooth} velocity commands. Running it faster than necessary would mean it reacts to every tiny noise blip in the attitude estimate, creating jittery velocity commands.
+
+\textbf{What happens when you skip the current loop?} Some teams send PWM duty directly from the velocity PID, bypassing current control. This ``works'' in the sense that the motor spins, but you lose \textit{torque linearity}. Without current control, the relationship between your command (duty cycle) and the actual torque ($\tau = K_t i$) depends on back-EMF, supply voltage, temperature, and load. Your velocity PID must compensate for all of these nonlinearities. The gain margin drops, robustness to load changes decreases, and you end up needing to retune whenever the battery voltage drifts. With a proper current loop, the velocity PID sees a nice linear actuator: ``I asked for 2~A, I got 2~A.'' The inner loop absorbs the mess.
+
+\textbf{Practical tip:} When debugging a cascade system, start from the inside out. First verify the current loop with a step response (oscilloscope on the current sensor). Then verify the velocity loop. Then the position loop. If the outer loop misbehaves, the problem is almost never in the outer loop itself---it is usually a poorly tuned inner loop or a bandwidth separation violation.
+
+\textbf{Numbers from a real system.} On a well-tuned competition gimbal pitch axis, typical parameters are: position PD with $K_p = 20$, $K_d = 0.5$ (output in deg/s per deg error); velocity PID with $K_p = 30$, $K_i = 5$, $K_d = 0$ (output in mA per deg/s error); current PI handled by the C620 ESC internally. The position step response (10\textdegree{} step) shows $<5\%$ overshoot and $\sim$80~ms settling time. The velocity step response (100~deg/s step) shows $<10\%$ overshoot and $\sim$8~ms settling time. These numbers give a bandwidth ratio of roughly $1/(0.08) : 1/(0.008) \approx 12.5 : 125 = 1 : 10$---right in the sweet spot for bandwidth separation.
+\end{mdframed}
+
+\vspace{0.5em}
+
+The architecture patterns in this chapter---cascade control, bandwidth separation, task-level vs joint-level, state machines, bumpless transfer, and timing discipline---are not exotic theory. They are the standard toolkit of every well-designed competition robot. Master them, and the ``integration'' phase of your project---where individually working subsystems come together into a single robot---will be smooth instead of catastrophic.
+
+In the next chapter, we will move from continuous-domain design to discrete-time implementation: how to turn these beautiful transfer functions into code that runs on a microcontroller with finite word length and fixed sample rates.

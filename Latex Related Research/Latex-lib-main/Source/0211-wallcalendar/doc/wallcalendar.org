@@ -1,0 +1,1799 @@
+#+TITLE: Wallcalendar User Manual
+#+SETUPFILE: doc-setup.org
+
+#+latex: \input{frontpage.tex}
+
+* Tasks :noexport:
+* Tutorial: Forest Calendar
+
+In this tutorial we will produce the three example pages seen in the summary.
+
+Set the parameters of the month pages in advance, either in the preamble or in
+the document body, but before calling =\MonthPage{ month }= to typeset it.
+
+A month page can have four areas:
+
+- Photo
+- Quote
+- Calendar
+- Events
+
+Their parameters are set separately for each month:
+
+: \SetPhoto[ options ]{ month }
+: \SetQuote[ options ]{ month }{ quote text }
+: \SetCalendar[ options ]{ month }
+: \SetEvents[ options ]{ month }{ calendar tikz marks }{ events text }
+
+The month page will be typeset with:
+
+: \MonthPage[ options ]{ month }
+
+** Documentclass
+
+To start, load the documentclass and set =year=, =language= and the =imageFolder=:
+
+#+begin_src tex
+\documentclass[
+  year=2018,
+  language=english,
+  imageFolder=./photos/,
+]{wallcalendar}
+#+end_src
+
+Let's start the preamble with =\makeatletter= to be safe.
+
+#+begin_src tex :tangle ./examples/forest.tex
+\makeatletter
+#+end_src
+
+** Font settings
+
+For this example we'll use TeX Gyre Pagella as the main typeface. We also load
+DejaVu Sans to use a particular glyph as a mark in the calendar (=U+263C= white
+sun with rays).
+
+#+begin_src tex :tangle ./examples/forest.tex
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures={TeX}}
+\setmainfont{TeX Gyre Pagella}
+\newfontfamily\dejaVuSans{DejaVu Sans}
+#+end_src
+
+#+latex: \clearpage
+
+** June
+
+#+begin_export latex
+\twocol{%
+  \frame{\includegraphics[width=5cm]{cal-plain-01}}%
+}{%
+  \includegraphics[width=6.12cm]{cal-showframe-01}%
+}
+
+\twocolcaption{\mbox{}}{%
+  \raggedright
+  \texttt{showtrims} and \texttt{showframe} class options show the page structure.
+}
+
+\bigskip
+#+end_export
+
+It will be a full page photo, with 3mm bleed on all four sides. You can see the
+bleed if you enable the =showtrims= class option. We also specify the file name
+of the photo (no extension), this will be the argument of =\includegraphics=.
+
+#+begin_src tex :tangle ./examples/forest.tex
+\SetPhoto[bleed=3mm, file={obscure-crop}]{June}
+#+end_src
+
+A quote will be positioned over the photo. The quote is in a =\linewidth= wide
+minipage, attached to the top left corner of the page. Use =\raggedleft=,
+=\raggedright=, or =\centering= for alignment, and the =xOffset= and =yOffset=
+options to move the quote's minipage to the exact position.
+
+#+begin_src tex :tangle ./examples/forest.tex
+\SetQuote[xOffset=-5mm, yOffset=-20mm]{June}{%
+\raggedright
+\setlength{\parskip}{10pt}%
+\Large
+\color{white}
+
+I shall set forth for somewhere,\\
+I shall make the reckless choice\\
+Some day when they are in voice\\
+And tossing so as to scare\\
+The white clouds over them on.\\
+I shall have less to say,\\
+But I shall be gone.
+
+\textit{The Sound of the Trees} by Robert Frost
+}
+#+end_src
+
+The layout macro will place the calendar at the bottom, dates in a single line.
+
+Here we use a conditional to use a different calendar style when =showframe= is
+turned on, this helps with debugging or tuning the position.
+
+#+begin_src tex :tangle ./examples/forest.tex
+\ifshowframe
+  \SetCalendar[bg/.style={opacity=0.5, fill=white}]{June}
+\else
+  \SetCalendar[bg/.style={opacity=0.8}]{June}
+\fi
+#+end_src
+
+Events for particular days are printed under the calendar.
+
+#+begin_src tex :tangle ./examples/forest.tex
+\SetEvents{June}{%
+  if (equals=2018-06-21)
+    [day text={\dejaVuSans\char"263C}];% U+263C white sun with rays
+}{%
+\raggedleft
+{\dejaVuSans\char"263C} June 21: Summer Solstice
+}
+#+end_src
+
+** July
+
+#+begin_export latex
+\twocol{%
+  \frame{\includegraphics[width=5cm]{cal-plain-02}}%
+}{%
+  \includegraphics[width=6.12cm]{cal-showframe-02}%
+}
+#+end_export
+
+Same as June, but we will set the image to be placed above the calendar, and we
+add a transparent background for the quote.
+
+This layout is a good option when the top or the bottom of the photo has to be
+cropped, and you can't use the full page aspect ratio for the photo.
+
+\clearpage
+
+#+begin_src tex :tangle ./examples/forest.tex
+\SetPhoto[bleed=3mm, file={obscure-crop}]{July}
+
+\SetQuote[%
+  xOffset=0.5\linewidth - 0.5\paperwidth -3mm,
+  yOffset=-20mm,
+]{July}{%
+\begin{tikzpicture}%
+\node [
+  fill=white, opacity=0.6, minimum width={\paperwidth + 3mm},
+  minimum height=30mm] {};%
+\node [] {%
+\begin{minipage}{\paperwidth + 3mm}%
+\centering
+\Large
+\color{white}
+
+I shall have less to say,\\
+But I shall be gone.
+
+\textit{The Sound of the Trees} by Robert Frost
+\end{minipage}%
+};
+\end{tikzpicture}%
+}
+
+\ifshowframe
+  \SetCalendar[bg/.style={opacity=0.5}]{July}
+\else
+  \SetCalendar[bg/.style={opacity=1}]{July}
+\fi
+
+\SetEvents{July}{
+  if (equals=2018-07-27) [day text={\dejaVuSans\char"263C}];
+}{%
+\raggedleft
+{\dejaVuSans\char"263C} July 27: Mars at Opposition
+}
+#+end_src
+
+\clearpage
+
+** August
+
+#+begin_export latex
+\twocol{%
+  \frame{\includegraphics[width=5cm]{cal-plain-03}}%
+}{%
+  \includegraphics[width=6.12cm]{cal-showframe-03}%
+}
+#+end_export
+
+This layout works for photos that are horizontal (landscape orientation), scaled
+into the bleed margin on three sides.
+
+#+begin_src tex :tangle ./examples/forest.tex
+\SetPhoto[bleed=3mm, file={obscure-crop}, yOffset=-150mm]{August}
+
+\SetQuote[yOffset=-3mm]{August}{%
+\centering
+\setlength{\parskip}{10pt}%
+\Large
+\color{black!80}
+
+I shall have less to say,\\
+But I shall be gone.
+
+\textit{The Sound of the Trees} by Robert Frost
+}
+
+\ifshowframe
+  \SetCalendar[bg/.style={opacity=0.5}]{August}
+\else
+  \SetCalendar[bg/.style={opacity=1}]{August}
+\fi
+
+\SetEvents{August}{
+  if (equals=2018-08-12) [day text={\dejaVuSans\char"263C}];
+}{%
+\raggedleft
+{\dejaVuSans\char"263C} August 12, 13: Perseids Meteor Shower
+}
+#+end_src
+
+End of the preamble.
+
+#+begin_src tex :tangle ./examples/forest.tex
+\makeatother
+#+end_src
+
+** The document
+
+Typesetting the month pages in the document is now just this much:
+
+#+begin_src tex :tangle ./examples/forest.tex
+\begin{document}
+
+\MonthPage[layout=full page, put photo=full page]{June}
+
+\MonthPage[layout=full page, put photo=full width above calendar]{July}
+
+\MonthPage[layout=small landscape, put photo=full width]{August}
+
+\end{document}
+#+end_src
+
+#+latex: \clearpage
+
+* Tutorial: Translations
+#+latex: \label{sec:translations-tutorial}
+
+In this tutorial we will produce the same calendar in three languages: Japanese,
+English and Hungarian.
+
+We are going to use =IPAPMincho= font for the Japanese.
+
+#+begin_export latex
+\begin{extrafullwidth}
+
+\hfill
+\begin{minipage}{0.31\linewidth}
+\centering
+
+\frame{\includegraphics[width=5cm]{./examples/cal-translations-japanese.pdf}}
+
+\end{minipage}%
+\begin{minipage}{0.31\linewidth}
+\centering
+
+\frame{\includegraphics[width=5cm]{./examples/cal-translations-english.pdf}}
+
+\end{minipage}%
+\begin{minipage}{0.31\linewidth}
+\centering
+
+\frame{\includegraphics[width=5cm]{./examples/cal-translations-hungarian.pdf}}
+
+\end{minipage}
+\hfill\mbox{}
+
+\end{extrafullwidth}
+#+end_export
+
+** Files
+
+The main document files:
+
+: cal-translations-japanese.tex
+: cal-translations-english.tex
+: cal-translations-hungarian.tex
+
+Fonts, formatting settings, etc.:
+
+: local-japanese.sty
+: local-english.sty
+: local-hungarian.sty
+
+Translation text input:
+
+: frog-japanese.tex
+: frog-english.tex
+: frog-hungarian.tex
+
+Setup month pages (same across translations):
+
+: frog.tex
+
+** Translations setup
+
+Create the =frog-english.tex= file and use the =\SetTxt{ key }{ content }=
+command to set text content for translation keys.
+
+=frog-japanese.tex=
+
+#+begin_src tex :tangle ./examples/frog-japanese.tex
+\SetTxt{September Quote}{%
+{\mincho 新池や蛙とびこむ音もなし}
+
+{\Large\textit{araike ya / kawazu tobikomu / oto mo nashi}}
+
+{\mincho 良寛}%
+}
+
+\newcommand\SeptMarks{%
+  if (equals=2018-09-21)
+    [day text={\dejaVuSans\char"263C}];% U+263C white sun with rays
+}
+
+\SetTxt{Sept Events}{%
+{\dejaVuSans\char"263C} {\mincho ９月 21日: まことに ９月 21日}
+}
+#+end_src
+
+=frog-english.tex=
+
+#+begin_src tex :tangle ./examples/frog-english.tex
+\SetTxt{September Quote}{%
+silent new lake\\
+let the frog jump\\
+not even a sound
+
+\textit{-- Ryokan}%
+}
+
+\newcommand\SeptMarks{%
+  if (equals=2018-09-21)
+    [day text={\dejaVuSans\char"263C}];% U+263C white sun with rays
+}
+
+\SetTxt{Sept Events}{%
+{\dejaVuSans\char"263C} Sept 21: September 21
+}
+#+end_src
+
+=frog-hungarian.tex=
+
+#+begin_src tex :tangle ./examples/frog-hungarian.tex
+\SetTxt{September Quote}{%
+hallgat az új tó\\
+ugorhat béka belé\\
+vize se csobban
+
+\textit{-- Rjókan}%
+}
+
+\newcommand\SeptMarks{%
+  if (equals=2018-09-21)
+    [day text={\dejaVuSans\char"263C}];% U+263C white sun with rays
+}
+
+\SetTxt{Sept Events}{%
+{\dejaVuSans\char"263C} Szept 21: Szeptember 21
+}
+#+end_src
+
+*NOTE:* Using =\SetTxt{}= to store values intended as tikz marks on the calendar
+will not work. The =\txt{}= command will be the value of =\@eventmarks= and tikz
+can't resolve it there.
+
+Put the calendar marks in a command instead, as above with =\SeptMarks=.
+
+#+begin_src tex
+\calendar (cal#1)
+  [alnitak, dates=\CalendarYear-#1-01 to \CalendarYear-#1-last]
+  \@eventmarks;%
+#+end_src
+
+#+begin_src tex
+% NOTE This code below will not work.
+% Put the calendar marks in a command instead.
+
+\SetTxt{Sept Marks}{%
+  if (equals=2018-09-21)
+    [day text={\dejaVuSans\char"263C}];% U+263C white sun with rays
+}
+
+% ...
+
+\SetEvents{September}{%
+\txt{Sept Marks}
+}{%
+\raggedleft
+\txt{Sept Events}
+}
+#+end_src
+
+** Document setup
+
+Load the documentclass. We are setting the =translations= option to define the
+file where translation keys are set. This file is loaded by the documentclass as
+an =\input=.
+
+=cal-translations-japanese.tex=
+
+#+begin_src tex :tangle ./examples/cal-translations-japanese.tex
+\documentclass[
+  year = 2018,
+  language = japanese,
+  translationsInputFile = frog-japanese.tex,
+  imageFolder = ./photos/,
+]{wallcalendar}
+
+\usepackage{local-japanese}
+
+% Content is the same across translations
+\input{./frog.tex}
+
+\begin{document}
+
+% Just one month
+\MonthPage[layout=full page, put photo=full page]{September}
+
+\end{document}
+#+end_src
+
+=local-japanese.sty=
+
+#+begin_src tex :tangle ./examples/local-japanese.sty
+\ProvidesPackage{local-japanese}
+
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures={TeX}}
+\setmainfont{TeX Gyre Pagella}
+\newfontfamily\dejaVuSans{DejaVu Sans}
+% Japanese font
+\newfontfamily\mincho{IPAPMincho}
+
+% Renew formatting hooks to use the \mincho font
+\renewcommand\fullPageFmt{%
+  \renewcommand*\monthFmt{\LARGE\mincho}%
+  \renewcommand*\yearFmt{\LARGE\mincho}%
+  \renewcommand*\dayLetterColor{}%
+  \renewcommand*\dayLetterFmt{\tiny\mincho}%
+  \renewcommand*\dayTextFmt{\small}%
+  \renewcommand*\quoteFmt{}%
+  \renewcommand*\headingFmt{\centering}%
+  \renewcommand*\calendarFmt{\centering}%
+  \renewcommand*\eventsFmt{%
+   \setlength{\parindent}{0pt}\raggedleft\footnotesize%
+  }%
+}
+#+end_src
+
+=cal-translations-english.tex=
+
+#+begin_src tex :tangle ./examples/cal-translations-english.tex
+\documentclass[
+  year = 2018,
+  language = english,
+  translationsInputFile = frog-english.tex,
+  imageFolder = ./photos/,
+]{wallcalendar}
+
+\usepackage{local-english}
+
+\input{./frog.tex}
+
+\begin{document}
+
+\MonthPage[layout=full page, put photo=full page]{September}
+
+\end{document}
+#+end_src
+
+=local-english.sty=
+
+#+begin_src tex :tangle ./examples/local-english.sty
+\ProvidesPackage{local-english}
+
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures={TeX}}
+\setmainfont{TeX Gyre Pagella}
+\newfontfamily\dejaVuSans{DejaVu Sans}
+#+end_src
+
+\clearpage
+
+=cal-translations-hungarian.tex=
+
+#+begin_src tex :tangle ./examples/cal-translations-hungarian.tex
+\documentclass[
+  year = 2018,
+  language = hungarian,
+  translationsInputFile = frog-hungarian.tex,
+  imageFolder = ./photos/,
+]{wallcalendar}
+
+\usepackage{local-hungarian}
+
+\input{./frog.tex}
+
+\begin{document}
+
+\MonthPage[layout=full page, put photo=full page]{September}
+
+\end{document}
+#+end_src
+
+=local-hungarian.sty=
+
+#+begin_src tex :tangle ./examples/local-hungarian.sty
+\ProvidesPackage{local-hungarian}
+
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures={TeX}}
+\setmainfont{TeX Gyre Pagella}
+\newfontfamily\dejaVuSans{DejaVu Sans}
+#+end_src
+
+=frog.tex=
+
+#+begin_src tex :tangle ./examples/frog.tex
+\makeatletter
+
+\SetPhoto[bleed=3mm, file={frog-crop}]{September}
+#+end_src
+
+Use the =\txt{ key }= command to load text from translation keys:
+
+#+begin_src tex :tangle ./examples/frog.tex
+
+\SetQuote[xOffset=0pt, yOffset=-140mm]{September}{%
+\raggedleft\setlength{\parskip}{10pt}\HUGE\color{white}%
+\txt{September Quote}%
+}
+#+end_src
+
+Calendar settings for the month, using =\txt= to access translated parts.
+
+#+begin_src tex :tangle ./examples/frog.tex
+\SetCalendar[bg/.style={opacity=0.4}]{September}
+
+\SetEvents{September}{%
+\SeptMarks%
+}{%
+\raggedleft
+\txt{Sept Events}
+}
+
+\makeatother
+#+end_src
+
+#+latex: \clearpage
+
+* Tutorial: Load Events from CSV
+
+#+begin_export latex
+\begin{fullwidth}
+\begin{minipage}{\linewidth}
+\centering
+
+\frame{\includegraphics[width=\linewidth, clip, trim=0pt 0pt 0pt 22cm]{./examples/cal-marks.pdf}}
+
+\end{minipage}%
+\end{fullwidth}
+#+end_export
+
+** CSV files
+
+Events in the CSV should be already sorted by date.
+
+If you are using more than one CSV, put all events with notes (i.e. indexed
+entries) in the same CSV. The index number of the mark is taken from the row
+number in the CSV, so a second CSV with notes would start the count from 1
+again.
+
+We're going to use the following csv files, see in the =./doc/examples/data/= folder.
+
+=holidays.csv=
+
+=moonphases.csv=
+
+=mark_defaults.csv=
+
+** Event formatting
+
+You can format the event output by setting the =format cmd= key:
+
+#+begin_src tex
+\parseMonthEvents[%
+  format cmd = {%
+    \textsuperscript{\eMark}~\eMonthShort~\eDay:\space%
+    \eNote\ifnumless{\eIdx}{\eMaxIdx}{,\space}{.}%
+  },
+]%
+#+end_src
+
+Or define a Lua formatting function and set it with the =format func= key:
+
+=helpers.lua=
+
+#+begin_src lua
+function eventFmtCustom(idx, max_idx, event, event_date, mark)
+  local d = event_date
+  tex.sprint(string.format(
+    "\\textsuperscript{%s} & %s %s: & %s \\\\",
+    mark.symbol, d:fmt("%b"), d:getday(), event.note
+  ))
+end
+#+end_src
+
+#+begin_src tex
+\parseMonthEvents[format func = eventFmtCustom]%
+#+end_src
+
+** Document setup
+
+=cal-marks.tex=
+
+#+begin_src tex :tangle ./examples/cal-marks.tex
+\documentclass[
+  year = 2018,
+  eventsCsv = ./data/holidays.csv,
+  markDefaultsCsv = ./data/mark_defaults.csv,
+  imageFolder = ./photos/,
+]{wallcalendar}
+
+\makeatletter
+
+\colorlet{mooncolor}{darkgold}
+
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures={TeX}}
+\setmainfont{TeX Gyre Pagella}
+\newfontfamily\dejaVuSans{DejaVu Sans}
+
+\SetPhoto[bleed=3mm, file={frog-crop}]{September}
+
+\SetQuote[xOffset=0pt, yOffset=-140mm]{September}{%
+\raggedleft\setlength{\parskip}{10pt}\HUGE\color{white}%
+silent new lake\\
+let the frog jump\\
+not even a sound
+
+\textit{-- Ryokan}%
+}
+
+\SetCalendar[bg/.style={opacity=0.4}]{September}
+
+\SetEvents{September}{%
+\parseMonthMarksDayTextUsing{./data/moonphases.csv}%
+\parseMonthMarksDayText%
+\parseMonthMarksNote%
+}{%
+\raggedright
+\parseMonthEvents[%
+  format cmd = {%
+    \textsuperscript{\eMark}~\eMonthShort~\eDay:\space%
+    \eNote\ifnumless{\eIdx}{\eMaxIdx}{,\space}{.}%
+   },
+]%
+}
+
+\makeatother
+
+\begin{document}
+
+\MonthPage[layout=full page, put photo=full page]{September}
+
+\end{document}
+#+end_src
+
+#+latex: \clearpage
+
+* Example: Photo and Notes with Title page
+#+latex: \label{sec:photo-and-notes-title-page}
+ 
+#+begin_export latex
+\begin{extrafullwidth}
+
+\hfill
+\begin{minipage}[b][36mm][t]{0.31\linewidth}
+\centering
+
+\frame{\includegraphics[width=\exampleWidth]{./examples/cal-photo-and-notes-titlepage.pdf}}
+
+\end{minipage}%
+\begin{minipage}{0.31\linewidth}
+\centering
+
+\frame{\includegraphics[width=\exampleWidth]{./examples/cal-photo-and-notes-photo.pdf}}
+
+\smallskip
+
+\frame{\includegraphics[width=\exampleWidth]{./examples/cal-photo-and-notes-calendar.pdf}}
+
+\end{minipage}%
+\hfill\mbox{}
+
+\end{extrafullwidth}
+#+end_export
+
+See =doc/examples/cal-photo-and-notes.tex=.
+
+** Title page
+
+A title page with a full page photo can be produced with:
+
+=\TitlePage{photo path}{overlay height}{title text}=
+
+Crop the photo to the aspect ratio of the trimmed paper size.
+
+Open the image in GIMP, and set "Fixed aspect ratio" on the Rectangle Select
+tool. It takes integers, so you can use the page dimensions multiplied up. For
+US Letter (11 x 8.5 inch), this would be =110:85=. Then select the area and
+crop.
+
+It also helps to put guides on the edges by selecting all (Ctrl + A) and using
+Image > Guides > New Guides from Selection.
+
+** Adding background photos to the calendar days
+
+This can be done by positioning a =\node= over the day.
+
+The background photo has to be cropped to the aspect ratio of a grid cell in the
+calendar.
+
+You can determine the aspect by first creating a calendar PDF with the intended
+page size, then open the PDF in GIMP. Import the calendar page at 300dpi, and
+use the selection tool to draw a rectangle over a grid cell.
+
+The pixel width and height of this cell can be used directly to crop the photo
+with the Rectangle Select tool. Use the cell width and height to set a fixed
+aspect ratio of the selection area (the aspect matters, not the specific pixel
+dimensions).
+
+The spacing has to be adjusted for precise positioning, see below.
+
+#+BEGIN_SRC tex
+\SetEvents{September}{%
+% All this will be in tikzpicture environment, after drawing the calendar.
+%
+% This adds a semicolon to end the \calendar command so we can start adding nodes.
+\semicolonEndTikzCalendar%
+%
+% Overlaying a photo with text on a specific date in this month
+%
+% photo node
+\node (day-photo) [
+  above right=3.2pt and 0.1pt of cal09-2018-09-18.north west,
+  inner sep=0pt,
+  anchor=north west,
+] {%
+  \includegraphics[width={\@t@calendar@dayXshift - 0.25pt}]{TomBombadil-crop}%
+};%
+%
+% the photo is dark, add a white background for the day number
+\node (top-whitecircle) [
+  below right=0.3pt and 0.1pt of cal09-2018-09-18-daynumber.center,
+  anchor=center,
+  circle,
+  minimum width=15pt,
+  inner sep=0pt,
+  fill=white,
+  opacity=0.6,
+] {};%
+%
+% the photo is dark, add a white background for the day's event text
+\node (bottom-whitebox) [
+  above left=0pt and 0pt of day-photo.south west,
+  anchor=south west,
+  minimum width={\@t@calendar@dayXshift - 0.25pt},
+  minimum height=18pt,
+  inner sep=0pt,
+  fill=white,
+  opacity=0.6,
+] {};%
+%
+% repeat the day number (the photo has covered it)
+\calDayNumberNode{cal09-2018-09-18}{-redo}{\dayTextFmt 18}%
+%
+% print the day's marks (moon phases in this case) next to the day number
+\parseMonthMarksDayTextInlineUsing{./data/moonphases-2018.csv}%
+%
+% print the day's event text
+\parseMonthInlineNotes%
+}{}
+#+END_SRC
+
+** Disabling the notepad area
+
+Formatting commands and sizes have to renewed in =\photoAndNotesFmt= (add it to
+the preamble), because every month page first runs a command which resets them
+to default values, and then runs the above formatting command to change the
+defaults.
+
+Disable the notepad area by renewing =\notepadContent= to empty.
+
+In this case the calendar can be taller. Find a month with six rows to
+experiment by changing =\@t@calendar@minimumHeight= and
+=\@t@calendar@verticalSpacing=.
+
+#+BEGIN_SRC tex
+\renewcommand\photoAndNotesFmt{%
+  \renewcommand\notepadContent{}%
+  \setlength{\@t@calendar@minimumHeight}{\calPaperHeight - 20mm}%
+  \setlength{\@t@calendar@verticalSpacing}{30mm}%
+}
+#+END_SRC
+
+#+latex: \clearpage
+
+* Example: Year Planner Page
+
+#+begin_export latex
+\begin{fullwidth}
+\begin{minipage}{0.31\linewidth}
+\centering
+
+\frame{\includegraphics[width=5cm]{./examples/cal-year-planner.pdf}}
+
+\end{minipage}%
+\end{fullwidth}
+#+end_export
+
+** Document setup
+
+=cal-year-planner.tex=
+
+#+begin_src tex :tangle ./examples/cal-year-planner.tex
+\documentclass[
+  year = 2018,
+  eventsCsv = ./data/holidays.csv,
+  markDefaultsCsv = ./data/mark_defaults.csv,
+  imageFolder = ./photos/,
+]{wallcalendar}
+
+\makeatletter
+
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures={TeX}}
+\setmainfont{TeX Gyre Pagella}
+\newfontfamily\dejaVuSans{DejaVu Sans}
+
+% Use two CSV files for day text input to include the moon phases
+\renewcommand\@wall@plm[1]{%
+\luadirect{
+require("wallcalendar-helpers.lua")
+monthMarksDayText(\luastring{#1}, nil, \luastring{\plannerMarksDayTextCSV})
+monthMarksDayText(\luastring{#1}, nil, \luastring{./data/moonphases.csv})
+tex.sprint(';')
+}}
+#+end_src
+
+** \textbackslash YearPlannerPage
+
+#+begin_src tex :tangle ./examples/cal-year-planner.tex
+\newcommand\plannerYearFmt{\fontsize{26}{26}\selectfont\color{orangegold}}
+
+\newlength\plannerNotesSep
+\setlength{\plannerNotesSep}{3mm}
+
+\newcommand\preYearPlannerPageHook{%
+  \setlength{\markNumberAbove}{-9pt}%
+  \setlength{\markNumberRight}{-6pt}%
+  \setlength{\markDayTextAbove}{-11pt}%
+  \setlength{\markDayTextRight}{-6pt}%
+}
+
+\newcommand\postYearPlannerPageHook{%
+  \setlength{\markNumberAbove}{-10pt}%
+  \setlength{\markNumberRight}{-3pt}%
+  \setlength{\markDayTextAbove}{-10pt}%
+  \setlength{\markDayTextRight}{-3pt}%
+}
+
+\newcommand\printPlannerTitle{\plannerYearFmt \CalendarYear}
+
+\newcommand\YearPlannerPage{%
+\newpage
+\ifvarnishmask
+\mbox{}
+\else
+\preYearPlannerPageHook
+{\centering
+
+{\printPlannerTitle}
+
+\vspace*{7mm}
+
+\YearPlannerPortrait
+
+\vspace*{\plannerNotesSep}
+
+\plannerEvents
+
+}
+\postYearPlannerPageHook
+
+\fi
+}
+
+\makeatother
+#+end_src
+
+** Use it
+
+#+begin_src tex :tangle ./examples/cal-year-planner.tex
+\begin{document}
+
+\YearPlannerPage
+
+\end{document}
+#+end_src
+
+#+latex: \clearpage
+
+* Example: Photo Thumbnails Page
+#+latex: \label{sec:photo-thumbnails-page}
+
+#+begin_export latex
+\begin{fullwidth}
+\begin{minipage}{0.31\linewidth}
+\centering
+
+\frame{\includegraphics[width=5cm]{./examples/cal-thumbnails.pdf}}
+
+\end{minipage}%
+\end{fullwidth}
+#+end_export
+
+** Document setup
+
+=cal-thumbnails.tex=
+
+#+begin_src tex :tangle ./examples/cal-thumbnails.tex
+\documentclass[
+  year = 2018,
+  imageFolder = ./photos/,
+]{wallcalendar}
+
+\makeatletter
+
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures={TeX}}
+\setmainfont{TeX Gyre Pagella}
+\newfontfamily\dejaVuSans{DejaVu Sans}
+
+\newlength\@wall@tmp@a
+\newlength\@wall@tmp@b
+#+end_src
+
+** \textbackslash ThumbWithCaptionLeftSide
+
+Typesets the photo thumb image with its caption text on the left side.
+
+#+latex: \enlargethispage{\baselineskip}
+
+: \ThumbWithCaptionLeftSide{January}
+
+#+begin_src tex :tangle ./examples/cal-thumbnails.tex
+\newlength\@wall@thumbWidth
+\newlength\@wall@thumbHeight
+\newlength\@wall@thumbCaptionWidth
+\setlength{\@wall@thumbWidth}{0.1749\calPaperWidth}% 30mm at the 6.75in page width, 0.1749 = 1/5.715
+\setlength{\@wall@thumbHeight}{\@wall@thumbWidth}
+\setlength{\@wall@thumbCaptionWidth}{0.2333\calPaperWidth}% 40mm at 6.75in page width
+
+\newcommand\thumbFmt{}
+\newcommand\thumbMonthFmt{\fontsize{10}{13}\selectfont\bfseries}
+\newcommand\thumbCaptionFmt{\fontsize{10}{13}\selectfont}
+
+\def\@wall@thumbFile{}
+\def\@wall@photoCaption{}
+
+\newcommand\ThumbWithCaptionLeftSide[1]{%
+\pgfkeys{/Photo/#1/thumbFile/.get=\@wall@thumbFile}%
+\ifx\@wall@thumbFile\empty
+  \pgfkeys{/Photo/#1/file/.get=\@wall@thumbFile}%
+\fi
+\pgfkeys{/Photo/#1/caption/.get=\@wall@photoCaption}%
+% Thumbnail caption
+\ifvarnishmask%
+\hspace*{\@wall@thumbWidth}
+\else%
+\begin{minipage}[b][\@wall@thumbHeight][t]{\@wall@thumbCaptionWidth}%
+\raggedleft
+\thumbFmt
+{\thumbMonthFmt \@tr@monthNumName{\monthToNum{#1}}}\par
+{\thumbCaptionFmt \@wall@photoCaption}%
+\end{minipage}%
+\fi%
+\hspace*{3mm}
+% Thumbnail photo
+\begin{minipage}[b][\@wall@thumbHeight]{\@wall@thumbWidth}%
+% FIXME placeholder
+%\placeholder{%
+\includegraphics[ keepaspectratio, height=\@wall@thumbHeight ]{\@wall@thumbFile}%
+%}%
+\end{minipage}%
+}
+#+end_src
+
+** \textbackslash ThumbWithCaptionRightSide
+
+Typesets the photo thumb image with its caption text on the right side.
+
+#+latex: \enlargethispage{\baselineskip}
+
+: \ThumbWithCaptionRightSide{January}
+
+#+begin_src tex :tangle ./examples/cal-thumbnails.tex
+\newcommand\ThumbWithCaptionRightSide[1]{%
+\pgfkeys{/Photo/#1/thumbFile/.get=\@wall@thumbFile}%
+\ifx\@wall@thumbFile\empty
+  \pgfkeys{/Photo/#1/file/.get=\@wall@thumbFile}%
+\fi
+\pgfkeys{/Photo/#1/caption/.get=\@wall@photoCaption}%
+% Thumbnail photo
+\begin{minipage}[b][\@wall@thumbHeight]{\@wall@thumbWidth}%
+% FIXME placeholder
+%\placeholder{%
+\includegraphics[ keepaspectratio, height=\@wall@thumbHeight ]{\@wall@thumbFile}%
+%}%
+\end{minipage}%
+\hspace*{3mm}
+% Thumbnail caption
+\ifvarnishmask%
+\hspace*{\@wall@thumbWidth}
+\else%
+\begin{minipage}[b][\@wall@thumbHeight][t]{\@wall@thumbCaptionWidth}%
+\raggedright
+\thumbFmt
+{\thumbMonthFmt \@tr@monthNumName{\monthToNum{#1}}}\par
+{\thumbCaptionFmt \@wall@photoCaption}%
+\end{minipage}%
+\fi%
+}
+#+end_src
+
+** \textbackslash ThumbsPage
+
+#+begin_src tex :tangle ./examples/cal-thumbnails.tex
+\newlength{\thumbColumnWidth}
+\newlength{\thumbColumnHeight}
+\newlength{\thumbSep}
+\newlength{\@t@a}
+\newlength{\@t@b}
+
+% vertical spacing
+\setlength{\@t@a}{0.2\textheight}
+
+% horizontal spacing
+\setlength{\@t@b}{0.2\@wall@thumbCaptionWidth}% 8mm at 40mm caption width
+
+\ifdimcomp{\@t@a}{<}{\@t@b}{
+  \setlength{\thumbSep}{\@t@a}
+}{
+  \setlength{\thumbSep}{\@t@b}
+}
+
+\setlength{\thumbColumnWidth}{0.5\calPaperWidth - \thumbSep}
+\setlength{\thumbColumnHeight}{\textheight}
+
+\newcommand\ThumbsPage{%
+\clearpage
+
+\hspace*{-\@wall@leftMargin}%
+\hspace*{-1pt}% small correction, space gets in somewhere
+% Wrap
+\begin{minipage}[t][\thumbColumnHeight]{\calPaperWidth}%
+\centering%
+\setlength{\parindent}{0pt}%
+\setlength{\parskip}{0pt}%
+
+% NOTE: multicols will not \vfill
+% Left Column
+\begin{minipage}[t][\thumbColumnHeight]{\thumbColumnWidth}%
+\raggedleft
+
+\ThumbWithCaptionLeftSide{January}
+
+\vspace*{\thumbSep}
+
+\ThumbWithCaptionLeftSide{March}
+
+\vspace*{\thumbSep}
+
+\ThumbWithCaptionLeftSide{May}
+
+\vspace*{\thumbSep}
+
+\ThumbWithCaptionLeftSide{July}
+
+\vspace*{\thumbSep}
+
+\ThumbWithCaptionLeftSide{September}
+
+\vspace*{\thumbSep}
+
+\ThumbWithCaptionLeftSide{November}
+
+% End of left column
+\end{minipage}%
+%
+\hspace*{\thumbSep}%
+%
+% Right column
+\begin{minipage}[t][\thumbColumnHeight]{\thumbColumnWidth}%
+\raggedright
+
+\ThumbWithCaptionRightSide{February}
+
+\vspace*{\thumbSep}
+
+\ThumbWithCaptionRightSide{April}
+
+\vspace*{\thumbSep}
+
+\ThumbWithCaptionRightSide{June}
+
+\vspace*{\thumbSep}
+
+\ThumbWithCaptionRightSide{August}
+
+\vspace*{\thumbSep}
+
+\ThumbWithCaptionRightSide{October}
+
+\vspace*{\thumbSep}
+
+\ThumbWithCaptionRightSide{December}
+
+% End of right column
+\end{minipage}%
+
+% End of wrap
+\end{minipage}%
+}
+#+end_src
+
+** Setup the photo keys
+
+#+begin_src tex :tangle ./examples/cal-thumbnails.tex
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{January}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{February}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{March}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{April}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{May}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{June}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{July}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{August}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{September}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{October}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{November}
+\SetPhoto[file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{December}
+
+\makeatother
+#+end_src
+
+** Use it
+
+#+latex: \enlargethispage{\baselineskip}
+
+#+begin_src tex :tangle ./examples/cal-thumbnails.tex
+\begin{document}
+
+\ThumbsPage
+
+\end{document}
+#+end_src
+
+* Examples from doc/examples folder
+** Portrait page layouts
+
+=doc/examples/cal-plain.tex= demonstrates three different =\MonthPage= layouts
+using portrait-oriented pages. Each month in the example uses a different layout
+and photo placement option.
+
+*** Full page photo, calendar days overlaid with opacity
+
+=\MonthPage[layout=full page, put photo=full page]{June}=
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-burst/cal-plain-01.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+The photo covers the entire page (with bleed). Calendar days are overlaid at the
+bottom with a semi-transparent background.
+
+#+latex: \end{multicols}
+
+*** Full page photo, photo above the calendar days
+
+#+latex: \begin{fullwidth}
+
+=\MonthPage[layout=full page, put photo=full width above calendar]{July}=
+
+#+latex: \end{fullwidth}
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-burst/cal-plain-02.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+The photo fills the width of the page and sits above the calendar row. The
+calendar days are drawn on a solid (opaque) background below the photo.
+
+#+latex: \end{multicols}
+
+\clearpage
+
+*** Small landscape photo, with a calendar grid
+
+=\MonthPage[layout=small landscape, put photo=full width]{August}=
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-burst/cal-plain-03.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+A landscape-oriented photo is placed at the top, scaled to the full page width.
+Below it, a calendar grid shows the month with day-of-week headers and room for
+events.
+
+#+latex: \end{multicols}
+
+*** Thumbnails and captions page
+
+=doc/examples/cal-thumbnails.tex= 
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-thumbnails.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+A standalone page showing thumbnail images
+for all twelve months arranged in two columns, with captions alongside each
+thumbnail. See the \hyperref[sec:photo-thumbnails-page]{Example: Photo Thumbnails Page} section for details.
+
+#+latex: \end{multicols}
+
+\clearpage
+
+** Landscape photo and notes on two pages
+
+=doc/examples/cal-photo-and-notes.tex=
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-photo-and-notes-titlepage.pdf}}
+
+\frame{\includegraphics[width=5cm]{./examples/cal-photo-and-notes-photo.pdf}}
+
+\frame{\includegraphics[width=5cm]{./examples/cal-photo-and-notes-calendar.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+This layout uses the =layout=photo and notes= option.
+Each month produces two pages: a landscape photo page and a facing calendar page
+with a grid, event marks, and a notepad area. The example also includes a title
+page using =\TitlePage=.
+
+#+latex: \end{multicols}
+
+*** Sunday-first week layout
+
+=doc/examples/cal-photo-and-notes-sunday.tex=
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-burst/cal-photo-and-notes-sunday-02.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+The =sundayFirst= class option shifts the week to start on Sunday instead of
+Monday. All layouts (monthly grids, year planners, compact planners) respect this
+option. The day-of-week headings automatically reorder to show Sunday in the
+first column.
+
+This example is based on the Photo and Notes layout, showing September with
+Sunday as the first day of the week.
+
+#+begin_src tex
+\documentclass[
+  year = 2018,
+  language = english,
+  imageFolder = ./photos/,
+  sundayFirst,
+]{wallcalendar}
+#+end_src
+
+#+latex: \end{multicols}
+
+*** No photos, with notes area
+
+=doc/examples/cal-no-photos.tex=
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-burst/cal-no-photos-01.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+This uses the same =photo and notes= layout but with
+=disabled = true= on all photos. This produces calendar-only pages with a grid,
+event marks and notepad area -- suitable for a desk planner or scheduling tool.
+
+#+latex: \end{multicols}
+
+\clearpage
+
+** Year planners
+
+The planners support event marks from CSV files and moon phase symbols via the
+=eventsCsv=, =moonsCsv= and =markDefaultsCsv= class options.
+
+*** Portrait year planner
+
+=doc/examples/cal-year-planner.tex=
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-year-planner.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+Uses =\YearPlannerPortrait= to render a 3-column, 4-row grid of monthly
+calendars in portrait orientation. This example defines a custom
+=\YearPlannerPage= command that wraps =\YearPlannerPortrait= with a title and
+=\plannerEvents= footer. The =\plannerEvents= command prints all events from the
+CSV that have a footnote marker.
+
+#+latex: \end{multicols}
+
+*** Landscape year planner with dates in rows
+
+=doc/examples/cal-year-planner-rows.tex=
+
+#+begin_export latex
+\frame{\includegraphics[width=\linewidth]{./examples/cal-year-planner-rows.pdf}}
+#+end_export
+
+Uses =\YearPlannerLandscape= to render the entire year as a continuous row-based
+layout in landscape orientation. Event footnotes are printed below in a
+=multicols= environment using =\parseYearEvents=.
+
+\clearpage
+
+*** Landscape year planner with grid
+
+=doc/examples/cal-year-planner-grid.tex=
+
+#+begin_export latex
+\frame{\includegraphics[width=\linewidth]{./examples/cal-year-planner-grid.pdf}}
+#+end_export
+
+Uses =\YearPlannerLandscapeGridPage= which renders a grid-style planner in
+landscape orientation. The layout includes event footnotes at the bottom.
+
+Uses the =a4PaperLandscape= page preset with the =dateAnnotations = false=
+option to disable annotation superscripts on dates (event footnotes are shown
+separately).
+
+*** Compact year planner with weekly notes
+
+=doc/examples/cal-year-planner-compact.tex=
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=\linewidth]{./examples/cal-year-planner-compact.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+Uses =\YearPlannerCompact= to render a compact year planner in portrait (A4)
+orientation with the calendar dates on the left side of the page and annotated
+weekly notes alongside. This layout also supports weekly images positioned next
+to the notes using =\plannerWeeklyNotes= and =\plannerWeeklyImages=.
+
+Uses the =a4Paper= page preset. The =\plannerMoonFormat= and =\monthMarkFmt=
+commands can be renewed to customize moon phase symbol size and event mark
+formatting.
+
+#+latex: \end{multicols}
+
+\clearpage
+
+** Generating moon phase data
+<<sec:generating-moon-phases>>
+
+The year planner examples include pre-generated moon phase CSV files (e.g.
+=data/moonphases-2018.csv=). To generate moon phases for an arbitrary year, use
+the =generate_moon_phases.py= script in =doc/examples/scripts/=.
+
+The script uses [[https://rhodesmill.org/pyephem/][PyEphem]] for astronomically accurate moon phase calculations
+and outputs a CSV file in the =moonsCsv= format expected by wallcalendar (with
+=date=, =day_text=, and =footnote= columns).
+
+*** Setup
+
+The script uses [[https://python-poetry.org/][Poetry]] for dependency management. From the =scripts= directory:
+
+#+begin_example
+cd doc/examples/scripts
+poetry install
+#+end_example
+
+The =poetry.toml= file has =virtualenvs.in-project = true= so the virtual
+environment is created as =scripts/.venv/=.
+
+*** Usage
+
+#+begin_example
+poetry run python generate_moon_phases.py YEAR [OUTPUT_FILE]
+#+end_example
+
+To generate moon phases for use with the year planner examples:
+
+#+begin_example
+cd doc/examples/scripts
+poetry run python generate_moon_phases.py 2026 ../data/moonphases-2026.csv
+#+end_example
+
+Then reference the generated file in your =.tex= document:
+
+#+begin_example
+\documentclass[
+  year = 2026,
+  eventsCsv = ./data/holidays-compact.csv,
+  moonsCsv = ./data/moonphases-2026.csv,
+  markDefaultsCsv = ./data/mark_defaults.csv,
+]{wallcalendar}
+#+end_example
+
+If no output file is specified, the script writes to =moonphases-YEAR.csv= in the
+current directory.
+
+\clearpage
+
+** Class options for printing and debugging
+*** Showtrims
+
+=doc/examples/cal-showtrims.tex=
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-burst/cal-showtrims-01.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+The =showtrims= class option adds cropmarks around the page, showing where the
+paper should be trimmed after printing. This is essential when using bleeded images that extend beyond the trim area.
+
+#+latex: \end{multicols}
+
+*** Varnishmask
+
+=doc/examples/cal-varnishmask.tex=
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-burst/cal-varnishmask-03.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+The =varnishmask= class option generates a UV mask (varnish mask) file. This
+produces black shapes where the photos are, on a white background. The mask file
+is used by the print shop to apply selective gloss varnish on the photo areas.
+
+#+latex: \end{multicols}
+
+\clearpage
+
+*** Showframe
+
+=doc/examples/cal-showframe.tex=
+
+#+latex: \begin{multicols}{2}
+
+#+begin_export latex
+\frame{\includegraphics[width=5cm]{./examples/cal-burst/cal-showframe-01.pdf}}
+#+end_export
+
+#+latex: \columnbreak
+
+The =showframe= class option draws the page structure: margins, text area, and
+content box boundaries. Useful for debugging layout positioning when designing
+custom formatting or adjusting element placement.
+
+#+latex: \end{multicols}
+
+\clearpage
+
+* Documentclass Options
+
+Options are set as key-value pairs in the =\documentclass= call:
+
+#+begin_src tex
+\documentclass[
+  year = 2018,
+  language = english,
+  imageFolder = ./photos/,
+  eventsCsv = ./data/holidays.csv,
+  moonsCsv = ./data/moonphases-2018.csv,
+  markDefaultsCsv = ./data/mark_defaults.csv,
+  a4Paper,
+  hMargin = 7mm,
+  topMargin = 7mm,
+  bottomMargin = 7mm,
+]{wallcalendar}
+#+end_src
+
+#+latex: \begin{fullwidth}
+#+latex: \raggedright
+
+- =year = 2018= :: The calendar year (e.g. 2018)
+- =language = english= :: Language for translations (e.g. english, japanese, hungarian)
+- =imageFolder = ./photos/= :: Path to the folder containing photo images
+- =eventsCsv = ./data/holidays.csv= :: Path to the CSV file with calendar events
+- =moonsCsv = ./data/moonphases-2018.csv= :: Path to the CSV file with moon phase data
+- =markDefaultsCsv = ./data/mark_defaults.csv= :: Path to the CSV file with default mark styles
+- =translationsInputFile = frog-english.tex= :: Path to a file with =\SetTxt{}= translation keys
+- =paperWidth = 11in - 15mm= :: Custom paper width (default: US Letter landscape width)
+- =paperHeight = 8.5in - 15mm= :: Custom paper height (default: US Letter landscape height)
+- =hMargin = 7mm= :: Horizontal margin on both sides (default: 17mm)
+- =topMargin = 15mm= :: Top margin (default: 20.5mm)
+- =bottomMargin = 7mm= :: Bottom margin (default: 10mm)
+- =trimSpace = 15mm= :: Extra stock size for trim marks (default: 35mm)
+- =a4Paper= :: Preset for A4 portrait (210mm x 297mm)
+- =a4PaperLandscape= :: Preset for A4 landscape (297mm x 210mm)
+- =showframe= :: Show page structure for debugging layout (boolean, default: false)
+- =showtrims= :: Show crop marks for printing (memoir class option, omit to disable)
+- =varnishmask= :: Generate UV varnish mask pages (boolean, default: false)
+- =gridSurround= :: Draw grid lines around calendar day cells (boolean, default: false)
+- =sundayFirst= :: Start the week on Sunday instead of Monday (boolean, default: false)
+- =dateAnnotations = true= :: Enable/disable date annotation superscripts (string, default: true)
+
+Note: =dateAnnotations= is stored as a string (not a TeX boolean) because its
+value is passed to Lua code via =\luadirect= where it is compared as
+=isEqual(..., "true")=. This means it only recognizes the literal string ="true"=
+to enable annotations; any other value (including ="false"=) disables them.
+
+#+latex: \end{fullwidth}
+
+#+latex: \clearpage
+
+* User Commands
+
+: \SetPhoto[ options ]{ month }
+
+Set the photo for a given month. Options include =file= (image filename without
+extension), =bleed= (bleed amount), =thumbFile= (thumbnail image for the
+thumbnails page), =caption= (caption text), =disabled= (skip the photo), and
+=yOffset= (vertical offset).
+
+#+begin_src tex
+\SetPhoto[bleed=3mm, file={obscure-crop}]{June}
+\SetPhoto[bleed=3mm, file={frog-crop}, thumbFile={frog-crop-thumb}, caption={Let the frog jump}]{January}
+\SetPhoto[disabled = true]{September}
+#+end_src
+
+: \SetQuote[ options ]{ month }{ quote text }
+
+Set a quote overlay for a given month. Options include =xOffset= and =yOffset=
+to position the quote minipage relative to the top-left corner of the page.
+
+#+begin_src tex
+\SetQuote[xOffset=-5mm, yOffset=-20mm]{June}{%
+  \raggedright\Large\color{white}%
+  I shall be gone.%
+}
+#+end_src
+
+: \SetCalendar[ options ]{ month }
+
+Set calendar rendering options for a given month. The main option is =bg/.style=
+which controls the TikZ style of the calendar background.
+
+#+begin_src tex
+\SetCalendar[bg/.style={opacity=0.8}]{June}
+\SetCalendar[]{September}
+#+end_src
+
+: \SetEvents[ options ]{ month }{ calendar tikz marks }{ events text }
+
+Set event marks and event text for a given month. The second argument contains
+TikZ calendar mark expressions. The third argument contains the text to display
+in the events area.
+
+#+begin_src tex
+\SetEvents{June}{%
+  if (equals=2018-06-21)
+    [day text={\dejaVuSans\char"263C}];% U+263C white sun with rays
+}{%
+  \raggedleft
+  {\dejaVuSans\char"263C} June 21: Summer Solstice
+}
+#+end_src
+
+\clearpage
+
+: \MonthPage[ options ]{ month }
+
+Typeset a month page. The =layout= option selects the layout handler (=full
+page=, =small landscape=, or =photo and notes=). The =put photo= option controls
+photo placement (=full page=, =full width above calendar=, or =full width=).
+
+#+begin_src tex
+\MonthPage[layout=full page, put photo=full page]{June}
+\MonthPage[layout=full page, put photo=full width above calendar]{July}
+\MonthPage[layout=small landscape, put photo=full width]{August}
+\MonthPage[layout=photo and notes, put photo=full page]{September}
+#+end_src
+
+#+latex: \clearpage
+
+* Page Layout
+
+We will review how the page layout happens when we call =\MonthPage=.
+
+Before calling =\MonthPage= to typeset a particular month, be sure that the
+content for the given month has been already set with =\SetPhoto=, =\SetQuote=,
+=\SetCalendar= and =\SetEvents=.
+
+Then we can typeset that month, for example:
+
+: \MonthPage[layout=full page, put photo=full page]{June}
+
+This will be a full page portrait month with the photo scaled to cover the
+entire page with additional bleed on all four sides.
+
+#+begin_export latex
+\twocol{%
+  \frame{\includegraphics[width=5cm]{cal-plain-01}}%
+}{%
+  \includegraphics[width=6.12cm]{cal-showframe-01}%
+}
+#+end_export
+
+The above =showframe= figure shows the structural elements of the page.
+
+Every layout is implemented by a single handler macro which will deal with all
+the typesetting of the given page. The =full page= key is set to the
+=\@wall@fullPageLayout= macro by default, and so this gets called.
+
+The layout macro is just a free-style placeholder. It can access the photo,
+quote, calendar and events as set earlier, but it is up to the macro to
+implement what to do with them.
+
+This is for the convenience of setting the page elements using the same
+interface, but being able to execute different layouts for different pages.
+
+The class contains two layout examples. The =full page= layout is best for
+portrait photos that can be scaled to cover the entire page. The =small
+landscape= layout is for landscape photos which can be scaled horizontally,
+possibly bleeding into the side margins.
+
+\clearpage
+
+** Formatting Hooks: =\fullPageFmt=
+
+Each layout runs a formatting command before typesetting the page. The =full
+page= layout calls =\fullPageFmt=, which sets hooks for fonts, sizes, colors
+and alignment. You can =\renewcommand= it in your preamble to customize
+the appearance.
+
+The default definition is:
+
+#+begin_src tex
+\newcommand\fullPageFmt{%
+  \renewcommand*\monthFmt{\LARGE}%
+  \renewcommand*\yearFmt{\LARGE}%
+  \renewcommand*\dayLetterColor{}%
+  \renewcommand*\dayLetterFmt{\tiny}%
+  \renewcommand*\dayTextFmt{\small}%
+  \renewcommand*\quoteFmt{}%
+  \renewcommand*\headingFmt{\centering}%
+  \renewcommand*\calendarFmt{\centering}%
+  \renewcommand*\eventsFmt{%
+    \setlength{\parindent}{0pt}\raggedleft\footnotesize%
+  }%
+}
+#+end_src
+
+The hooks control the following elements:
+
+- =\monthFmt= -- Font and size for the month name
+- =\yearFmt= -- Font and size for the year number
+- =\dayLetterColor= -- Color applied to the day-of-week letter row
+- =\dayLetterFmt= -- Font and size for day-of-week letters (M, T, W...)
+- =\dayTextFmt= -- Font and size for the day numbers in the calendar
+- =\quoteFmt= -- Formatting applied to the quote area
+- =\headingFmt= -- Alignment for the month/year heading (e.g. =\centering=)
+- =\calendarFmt= -- Alignment for the calendar area
+- =\eventsFmt= -- Formatting for the events text below the calendar
+
+See the \hyperref[sec:translations-tutorial]{Translations tutorial} for an example of renewing =\fullPageFmt= to use a
+Japanese font.
+
+\clearpage
+
+** Formatting Hooks: =\smallLandscapeFmt=
+
+The =small landscape= layout calls =\smallLandscapeFmt=. In addition to the
+same hooks as =\fullPageFmt=, it also sets lengths that control the calendar
+grid dimensions.
+
+The default definition is:
+
+#+begin_src tex
+\newcommand\smallLandscapeFmt{%
+  \renewcommand*\monthFmt{\LARGE}%
+  \renewcommand*\yearFmt{\LARGE}%
+  \renewcommand*\dayLetterColor{}%
+  \renewcommand*\dayLetterFmt{\tiny}%
+  \renewcommand*\dayTextFmt{\small}%
+  \renewcommand*\quoteFmt{\centering}%
+  \renewcommand*\headingFmt{\centering}%
+  \renewcommand*\calendarFmt{\centering}%
+  \renewcommand*\eventsFmt{%
+    \setlength{\parindent}{0pt}\raggedright\footnotesize%
+  }%
+  \setlength{\@t@calendar@minimumHeight}{85mm}%
+  \setlength{\@t@calendar@hmargin}{20pt}%
+  \setlength{\@t@calendar@verticalSpacing}{20mm + 5mm + 6.5mm}%
+}
+#+end_src
+
+The additional lengths are:
+
+- =\@t@calendar@minimumHeight= -- Minimum height of the calendar grid area
+- =\@t@calendar@hmargin= -- Horizontal margin inside the calendar grid
+- =\@t@calendar@verticalSpacing= -- Vertical space reserved for the day headings, events area, and white space below the grid
+
+** Formatting Hooks: =\photoAndNotesFmt=
+
+The =photo and notes= layout calls =\photoAndNotesFmt=. See the \hyperref[sec:photo-and-notes-title-page]{Example: Photo and Notes with Title page} section for details on customizing this layout,
+including how to disable the notepad area.
+
+#+latex: \clearpage
+
+* Contact
+
+Github: <https://github.com/profound-labs/wallcalendar/>
+
+Contact: <https://gambhiro.github.io>

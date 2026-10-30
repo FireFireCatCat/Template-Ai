@@ -1,0 +1,98 @@
+% SUBSTITUTE for the "Stylish Article" template (originally Vel's
+% SelfArx.cls, CC-BY-NC-SA — non-commercial, so it cannot be
+% redistributed here).
+%
+% This starter uses the upstream `lebhart` document class (CTAN, part of
+% the `colorist` class series by Jinwen XU, LPPL-1.3c) — a colourful
+% article class with native theorem environments and multilingual
+% support. See README.md for the full disclosure.
+%
+% ENGINE: lebhart requires XeLaTeX or LuaLaTeX (fontspec-based); see
+% engine.txt. Its default font setup (TeXGyrePagellaX, texgyreheros) is
+% resolved by fontspec's own .fontspec configuration files, which point
+% at real OTF filenames via kpathsea — NOT a bare fontconfig family
+% lookup — so it renders correctly on this image without any font
+% substitution.
+%
+% lebhart is not bundled: it ships in TeX Live via its own CTAN package.
+\documentclass{lebhart}
+\usepackage{ProjLib}
+
+\UseLanguage{English}
+
+% WORKAROUND: this version of colorist-fancy.sty's `keyword` environment
+% references \keywordname, but projlib-author only ever defines the
+% plural \keywordsname -- a genuine mismatch in the upstream package
+% (TeX Live 2025), not something introduced here. Define the missing
+% singular so the environment does not error out.
+\providecommand{\keywordname}{Keywords}
+
+\title{Notes on Caching Strategies for Read-Heavy Web Services}
+\author{Sam Okafor}
+\date{\TheDate{2026-01-15}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We summarise three caching strategies commonly used in read-heavy web
+services --- cache-aside, read-through, and write-behind --- and give
+simple guidance for choosing between them based on consistency
+requirements and write volume.
+\end{abstract}
+\begin{keyword}
+caching, web services, cache invalidation, read-through, write-behind
+\end{keyword}
+
+\section{Introduction}
+
+Most web services read far more often than they write. When a
+database query becomes a bottleneck, an in-memory cache in front of it
+is usually the cheapest fix available, but the strategy used to keep
+that cache populated and correct has real consequences for both
+latency and data freshness.
+
+\section{Three strategies}
+
+\subsection{Cache-aside}
+
+The application checks the cache first; on a miss, it reads from the
+database and populates the cache itself.
+
+\begin{theorem}[Cache-aside invariant]\label{thm:aside}
+Under cache-aside, a stale read is only possible in the window between
+a database write and the corresponding cache invalidation.
+\end{theorem}
+
+\Cref{thm:aside} is the reason cache-aside implementations must treat
+invalidation as part of the write path, not an afterthought.
+
+\subsection{Read-through}
+
+The cache itself is responsible for loading missing values from the
+database, so the application only ever talks to the cache.
+
+\subsection{Write-behind}
+
+Writes land in the cache first and are flushed to the database
+asynchronously. This gives the lowest write latency but risks losing
+recent writes on a cache failure.
+
+\section{Choosing a strategy}
+
+\begin{itemize}
+\item If reads vastly outnumber writes and brief staleness is
+  acceptable, cache-aside is simplest to reason about.
+\item If most access already goes through a single service layer,
+  read-through centralises the loading logic.
+\item Write-behind should be reserved for cases where write latency
+  dominates and some data loss on failure is tolerable.
+\end{itemize}
+
+\section{Conclusion}
+
+None of these strategies is universally correct; the right choice
+follows from the read/write ratio and how much staleness or data loss
+a given endpoint can tolerate.
+
+\end{document}

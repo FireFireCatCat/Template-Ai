@@ -1,0 +1,143 @@
+% sopra-tables.sty
+% Version: 1.0
+% Author:  Florian Sihler, 03.12.2019
+% Will contain all the definitions to easily typeset and reference
+% Tables with tabu or booktabs. The design might be a reminiscence
+% to sopra-requirements but won't need the package to be happy :D
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sopra-tables}[2019/12/03 EagleoutIce - tables for the sopra-team-020]
+
+% Lengths and Registers
+\newcounter{sotversion} \setcounter{sotversion}{1004}
+
+\newif\ifsot@usetabu@ % we can use regular tabular - if tabu won't work.
+\newif\ifsot@cpalette@ % if enabled, tables will adapt to color-palettes
+\newif\ifsot@invert@ % if enabled invert color definitions
+
+% Package-Args
+% allow debug-options :D
+\DeclareOption{usetabu}{\sot@usetabu@true}
+\DeclareOption{notabu}{\sot@usetabu@false}
+
+% Color-Palettes
+\DeclareOption{cpalette}{\sot@cpalette@true}
+\DeclareOption{nocpalette}{\sot@cpalette@false}
+
+\DeclareOption{invert}{\sot@invert@true}
+\DeclareOption{noinvert}{\sot@invert@false}
+
+\ExecuteOptions{usetabu}% set it explicitly
+\ProcessOptions\relax
+
+% Basic Packages
+\ifsot@usetabu@ \RequirePackage{tabu} \RequirePackage{colortbl} \else \RequirePackage{booktabs} \fi
+\RequirePackage{makecell,longtable,amssymb,xcolor,etoolbox}
+
+% Color Definitions
+\def\sot@table@headerstyle@inv{\color{MaterialHeaderColor}}
+\def\sot@table@headerstyle@norm{\color{white}}
+\ifsot@invert@\let\sot@table@headerstyle\sot@table@headerstyle@inv
+\else\let\sot@table@headerstyle\sot@table@headerstyle@norm\fi
+
+\@ifundefined{thesobversion}{% not called from sopra-base-class
+    \colorlet{MaterialHeaderColor}{purple}
+    \colorlet{NextMaterialHeaderColor}{purple!75!white}
+}{% we will use the secondary/akzent color as default
+    \colorlet{MaterialHeaderColor}{sob@col@uulm@akzent}
+    \colorlet{NextMaterialHeaderColor}{sob@col@uulm@akzent!75!white}
+}
+
+
+% Fixes for the tabu-package
+\ifsot@usetabu@
+\def\tabu@classz{\tabu@classzORI}
+\def\tabu@ignorehfil{\tabu@nohfil}
+\fi
+
+% Define the Header and next-header commands
+\def\sot@init{%
+\ifsot@usetabu@
+    \def\sot@table@headerrow{%
+        \rowfont{\normalfont\bfseries\leavevmode\sot@table@headerstyle}%
+        \ifsot@invert@\rowcolor{white}\else\rowcolor{MaterialHeaderColor}\fi\@ifstar{}{\Gape[.5mm][.25mm]{}}%
+    }
+    \def\sot@table@headerrow@next{% maybe use llap for the symbol?
+        \rowfont{\normalfont\bfseries\leavevmode\sot@table@headerstyle}%
+        \ifsot@invert@\rowcolor{white}\else\rowcolor{NextMaterialHeaderColor}\fi\@ifstar{}{\Gape[.5mm][.25mm]{}}{%
+            \hspace*{-6mm}%
+            \llap{\textcolor{NextMaterialHeaderColor!40!white}{$\blacktriangledown$}}%
+        }\hspace*{6mm}%
+    }
+\else
+    \def\sot@table@headerrow{\bfseries\@ifstar{}{}}
+    \def\sot@table@headerrow@next{\bfseries\@ifstar{}{}} % maybe use llap for the symbol?
+\fi
+}
+\sot@init
+
+% Helper Functions
+\def\sot@thesotversion#1#2#3#4\@nil{{v#1.#2.#3#4}}
+\edef\sot@version@str{\noexpand\sot@thesotversion\arabic{sotversion}\noexpand\@nil}
+\edef\thesotversion{\sot@version@str}
+
+% Create the basic environments
+\ifsot@usetabu@
+    % Material styled table. Works similar to tabular
+    \newenvironment{mtabular}[1]{\begingroup
+        \ifsot@invert@\else\taburowcolors[1] 2{lightgray!25 .. lightgray!5}\fi
+        \everyrow{\tabucline[.4mm  white]{}}
+        \tabulinesep = ^2mm_2mm
+        \let\midrule\relax
+        \begin{tabu}{>{~}#1<{~}}
+            \sot@table@headerrow*\ignorespaces% style the first row :D
+    }{
+        \end{tabu}\endgroup
+    }
+
+    % Matieal styled long table.
+    \newenvironment{mltabular}[2][]{%
+        \ifsot@invert@\else\taburowcolors[1] 2{lightgray!5 .. lightgray!25}\fi
+        \everyrow{\tabucline[.4mm  white]{}}
+        \tabulinesep = ^2mm_2mm
+        \begin{longtabu}{>{~}#2<{~}}
+            \ifx!#1!\sot@table@headerrow*\else% style the first row :D
+            \sot@table@headerrow*#1\vspace*{-.1\baselineskip}\\\endfirsthead
+            \sot@table@headerrow@next#1\vspace*{-.1\baselineskip}\\\endhead\fi
+    }{
+        \end{longtabu}
+    }
+\else
+    % Material styled table. Works similar to tabular
+    \newenvironment{mtabular}[1]{%
+        \begin{tabular}{>{~}#1<{~}}
+            \toprule
+            \sot@table@headerrow*% style the first row :D
+    }{\bottomrule\end{tabular}}
+
+    % Matieal styled long table.
+    \newenvironment{mltabular}[2][]{%
+        \begin{longtable}{>{~}#2<{~}}
+            \toprule
+            \ifx!#1!\sot@table@headerrow*\else% style the first row :D
+            \sot@table@headerrow*#1\vspace*{-.1\baselineskip}\\\midrule\endfirsthead
+            \sot@table@headerrow@next#1\vspace*{-.1\baselineskip}\\\midrule\endhead\fi
+    }{\bottomrule\end{longtable}}
+\fi
+
+% Cp-Palette support
+\AtEndPreamble{%
+\ifsot@cpalette@
+\@ifundefined{cpl@registered@palettes}{%
+    \PackageError{sopra-tables}{cpalette requested, but package not loaded}
+    {You have to load the 'color-palettes' package yourself if you use the 'cpalette'-Option.}%
+}{% Add to the hook..
+}
+\appto\cpl@hooks{\sot@cpalette@hook}
+% TODO: maybe change later?
+\def\sot@cpalette@hook{%
+    \colorlet{MaterialHeaderColor}{paletteA}%
+    \colorlet{NextMaterialHeaderColor}{paletteA!75!white}%
+}
+\fi
+}
+\endinput

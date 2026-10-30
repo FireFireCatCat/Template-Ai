@@ -1,0 +1,252 @@
+\section{Prädikatenlogik}
+Die Prädikatenlogik erweitert die Aussagenlogik. Neben den neuen Mengen der Variablen \f{V}, der Konstanten \f{C}, der Funktionen \f{F} und Prädikate \f{P} kommen der Allquantor $\forall$ und der Existenzquantor $\exists$ hinzu. Semantisch nutzen wir Interpretationen, um für Formeln Modelle zu finden (d.h. Variablenbelegungen zu finden, für welche die Formel nach wahr ausgewertet wird). \\
+Formeln können mit Hilfe von syntaktischen Umformungen umgeformt und vereinfacht werden. Dazu nutzen wir Algorithmen zum logischen Schließen, z.b. die Unifikation und Resolution. \vl{TIL 13}
+
+\subsection{Syntax}
+    Im Gegensatz zu der unendlichen Menge von Atomen in der Aussagenlogik gibt es in der Prädikatenlogik die vier betrachteten Mengen V, C, F und P. Diese Mengen sind abzählbar unendlich und die Elemente disjunkt. Formeln sind, ausgenommen genannter Ausnahmen, eindeutig zu klammern. Die Mengen V, C und F arbeiten mit beliebigen Werten, die Prädikate hingegen werten bei Interpretation immer nach $true$ oder $false$ aus. \vl{TIL 13}
+    \begin{description}
+        \item[Variablen] Die Menge \f{V}, bestehend aus $x, y, z\dots$. \\
+            Variablen können frei oder gebunden vorkommen (oder bei mehrfachem Auftreten einer Variable in einer Formel auch beides).
+
+            \f{Freie} Variablen sind durch keinen Quantor gebunden. \\
+            \f{Gebundene} Variablen befinden sich innerhalb des „Scope“ eines Quantors.
+
+            Beispiel: in der Formel $p(x) \land \exists x.q(x)$ kommt $x$ sowohl frei ($p(x)$) als auch gebunden ($q(x)$) vor.
+
+        \item[Konstanten] Die Menge \f{C}, bestehend aus $a,b,c,\dots$
+
+        \item[Funktionen] Die Menge \f{F}, bestehend aus $f, g, h, \dots$. Stelligkeit (Arität) $\geq 0$.
+
+        \item[Prädiktensymbole] Die Menge \f{P}, bestehend aus $p,q,r,\dots$. Stelligkeit $\geq 0$. Bei nullstelligen Prädiktensymbolen lassen wir die leeren Klammern weg.
+
+        \item[Quantoren] Der Allquantor $\forall$ beschreibt, dass die betreffende Formel für alle möglichen Interpretationen der Variable gelten muss. Der Existenzquantor $\exists$ beschreibt, dass es mindestens eine gültige Interpretation der Variable geben muss. Wenn ein Quantor vor einer Formel mehrere Variablen betrifft, schreiben wir diese als Liste ($\forall x,y.F$ statt $\forall x.\forall y.F$).
+
+        \item[Atom] Ein prädikatenlogisches Atom ist ein Ausdruck $p(t_{1},\dots,t_{n})$ für ein $n$-stelliges Prädiktensymbol $p \in \mathbf{P}$ und \f{Terme} $t_{1},\dots,t_{n}$. Hierbei gilt entweder $t_{1},\dots,t_{n} \in \mathbf{V} \cup \mathbf{C}$ oder $t_{n} = f(t_{1},\dots,t_{i})$ mit $f \in F$ $i$-stelliges Funktionssymbol und $t_{1},\dots,t_{i}$ wieder Terme.
+
+        \item[Formel] Jedes Atom ist eine Formel. Wenn nun $x\in\f{V}$ und $F$ und $G$ Formeln, dann sind auch $\neg F$, $(F\land G)$, $(F\lor G)$, $(F\to G)$, $(F\leftrightarrow G)$, $\exists x.F$ und $\forall x.F$ Formeln. Die äußersten Klammern von Formeln dürfen weggelassen werden. Klammern innerhalb von mehrfachen Konjunktionen oder Disjunktionen dürfen weggelassen werden. Hat eine Formel keine freie Variablen ist sie \f{geschlossen} und wird \f{Satz} genannt, ansonsten ist sie eine \f{offene} Formel.
+
+        \item[Teilformel] Teilformeln einer Formel sind alle Teilausdrücke einer Formel, welche selbst Formeln sind.
+    \end{description}
+
+
+\subsection{Semantik}
+    Der Wahrheitswert von Formeln ergibt sich aus den Wahrheitswerten der Atome in dieser Formel. \vl{TIL 13}
+    \begin{description}
+        \item[Interpretation] Interpretation $\INT$  ist ein Paar $\langle\Delta^{\INT}, \cdot^{\INT}\rangle$.\\
+            Die nichtleere Menge $\Delta^{\INT}$ wird auch \f{Domäne} genannt. \\
+            Die Funktion $\cdot^{\INT}$ heißt \f{Interpretationsfunktion}. Diese bildet
+            \begin{itemize}
+                \item jede Konstante $a \in \f{C}$ auf ein Element $a^{\INT} \in \Delta^{\INT}$,
+                \item jedes $n$-stellige Funktionssymbol $f \in F$ auf eine $n$-stellige Funktion $f^{\INT}: (\Delta^{\INT})^{n} \to \Delta^{\INT}$ und
+                \item jedes $n$-stellige Prädiktensymbol $p \in \f{P}$ auf eine Relation $p^{\INT} \in (\Delta^{\INT})^{n}$ ab.
+            \end{itemize}
+
+        \item[Zuweisung] Zuweisung $\ZUW$ für eine Interpretation $\INT$ ist eine Funktion $\ZUW: \f{V} \to \Delta^{\INT}$, sie bildet also Variablen auf Elemente der Domäne ab.
+            Bei $x \in \f{V}$ und $\delta \in \Delta^{\INT}$ schreiben wir für die Zuweisung von $x$ auf $\delta$ und für alle $y \neq x$ auf $\ZUW (y)$: $\ZUW[x \mapsto \delta]$.{}
+
+        \item[Wahrheitsbestimmung] Die Wahrheitsbestimmung von Atomen und Formeln unter einer Interpretation und einer Zuweisung werden rekursiv aufgelöst.
+            \begin{itemize}
+                \item Für Konstanten $c$ benötigen wir nur die Interpretation: $c^{\INT,\ZUW} = c^{\INT}$
+                \item Für Variablen $x$ benötigen wir nur die Zuweisung: $x^{\INT,\ZUW} = \ZUW(x)$
+                \item Für einen Funktionsterm $t = f(t_{1},\dots,t_{n})$ definieren wir: $t^{\INT, \ZUW} = f^{\INT}(t_{1}^{\INT, \ZUW}, \dots, t_{n}^{\INT, \ZUW})$
+                \item Für Prädikate/Atome $p(t_{1},\dots,t_{n})$ setzen wir nun rekursiv: \\
+                    $p(t_{1},\dots,t_{n})^{\INT,\ZUW} = 1$ wenn $\langle t_{1}^{\INT,\ZUW},\dots,t_{n}^{\INT,\ZUW} \rangle \in p^{\INT}$ bzw. \\
+                    $p(t_{1},\dots,t_{n})^{\INT,\ZUW} = 0$ wenn $\langle t_{1}^{\INT,\ZUW},\dots,t_{n}^{\INT,\ZUW} \rangle \notin p^{\INT}$
+            \end{itemize}
+
+            Für eine Formel gilt nun: \\
+            eine Interpretation $\INT$ und eine Zuweisung $\ZUW$ \f{erfüllen} eine Formel $F$, geschrieben „$\INT, \ZUW \models F$“, wenn die Rekursion mit Atomen, Operationen und Quantoren zu Wahr auflöst.
+    \end{description}
+
+
+\subsection{Semantische Grundbegriffe}
+    Wir wollen in der Prädikatenlogik wenn möglich nur mit Sätzen arbeiten, d.h. mit geschlossenen Formeln ohne ungebundene Variablen. \vl{TIL 14}
+    \begin{description}
+        \item[Modelltheorie] Wir unterscheiden grob zwischen der Prädikatenlogik mit und ohne offenen Formeln. Bei der Prädikatenlogik mit Sätzen können wir auf Zuweisungen verzichten. Formeln sind Behauptungen, die wahr oder falsch sein können. Modelle sind mögliche Welten (prädikatenlogische Interpretationen und ggf. Zuweisungen), in denen manche Behauptungen gelten und andere nicht. (\f{Intuition})
+
+        \item[Typen von Formeln]
+            Siehe hierzu auch die Graphen „Modelle $\models$ Formeln“ in \vl{TIL 14}
+            \begin{itemize}
+                \item allgemeingültig (tautologisch): Eine Formel, die in allen Modellen wahr ist
+                \item widersprüchlich (inkonsistent): Eine Formel, die in keinem Modell wahr ist
+                \item erfüllbar: Eine Formel, die in einem Modell wahr ist
+                \item widerlegbar: Eine Formel, die in einem Modell falsch ist
+            \end{itemize}
+
+        \item[Logisches Schließen] Bei der Analyse von Modellen für Formeln und andersherum können in Wechselwirkung Konsequenzen hergestellt werden.
+            \begin{enumerate}
+                \item Wenn $\INT$ die Formel $F$ erfüllt, also $\INT \models F$, dann ist $\INT$ ein Modell für $F$.
+                \item $\INT$ kann mehrere Formeln erfüllen, d.h. sie kann Modell für eine Formelmenge $\FM$ sein, wenn $\INT$ alle Formen in $\FM$ erfüllt.
+
+                \item Eine Formel $F$ ist nun eine \f{logische Konsequenz} aus einer Formel bzw. Formelmenge $G$, d.h. $G \models F$, wenn jedes Modell $\INT$ von $G$ auch ein Modell von $F$ ist, d.h. $\INT \models G \implies \INT \models F$. \\
+                Sonderfall: Ist $F$ eine Tautologie, dann schreiben wir nur $\models F$. \\
+
+                Beispiel 1: Gegeben sind vier Modelle $\INT_{i}$ und vier Formeln $F_{j}$. $\INT_{2}$ und $\INT_{3}$ sind alle erfüllenden Modelle für $F_{3}$. $\INT_{2}$ und $\INT_{3}$ sind aber u.a. auch Modelle für $F_{2}$. Das bedeutet, wenn $F_{3}$ erfüllt ist, ist auch immer $F_{2}$ erfüllt. Es gilt $F_{3} \models F_{2}$. \\
+
+                Beispiel 2: Im Beispiel der Logelei „Wir sind alle vom gleichen Typ“ haben wir fünf Formeln gegeben. Drei davon ergeben sich aus den gegebenen Aussagen („gegebene Theorie“) und die anderen beiden sind Allquantor-Behauptungen für „alle sagen die Wahrheit“ bzw. „alle lügen.“. Wir können anhand der Modelle „LL“, „WL“ und „WW“ und der Theorie Konsequenzen erstellen und somit über das Modell „WW“ die Behauptung „$\forall x.W(x)$“ als logische Konsequenz für unsere Theorie identifizieren.
+
+                \item Zwei Formelmengen $F$ und $G$ können auch semantisch äquivalent sein, d.h. $F \equiv G$, wenn sie genau die gleichen Modelle haben ($\INT \models F$ gdw. $\INT \models G$ für alle Modelle $\INT$).
+            \end{enumerate}
+        \item[Semantische Äquivalenz] Eine Äquivalenzrelation $\equiv$ ist reflexiv, symmetrisch und transitiv. Alle Tautologien sind semantisch äquivalent. Alle unerfüllbaren Formeln sind semantisch äquivalent. \\ Äquivalenz $F \equiv G$ gdw. $F\models G$ und $G \models F$.
+        \item[Problem logischen Schließens in der Prädikatenlogik] Die zwei Fragen „Model checking“ (Überprüfung eines Modells auf Erfüllung einer Formel) und „Logische Folgerung (Entailment)“ (Überprüfung ob zwei Formeln oder Formelmengen eine logische Konsequenz sind) sind in der Prädikatenlogik schwerer zu lösen als in der Aussagenlogik.
+        \item[Monotonie und Tautologie] Aus der Definition von $\models$ folgt die Monotonie: je mehr Sätze in einer logischen Theorie gegeben sind, desto weniger Modelle können die gesamte Theorie erfüllen und desto mehr Schlussfolgerungen kann man aus der logischen Theorie ziehen. D.h. mehr Annahmen führen zu mehr Schlussfolgerungen. Extremfälle sind hierbei Tautologien (sind in jedem Modell wahr und daher logische Konsequenz jeder Theorie) und unerfüllbare Formeln (sind in keinem Modell wahr und haben daher alle anderen Sätze als Konsequenz).
+
+        %\item[Beziehung zur Aussagenlogik] In der Semantik wird nur die Wertzuweisung ersetzt. Hier gibt es nun Interpretationen und Zuweisungen.
+
+        \item[Gleichheit] Es gibt ein spezielles Gleichheitsprädikat $\approx$. In Interpretationen $\INT$ gilt $\approx^{\INT} = \{\langle\delta,\delta\rangle|\delta\in\Delta^{\INT}\}$.
+        Dies kann z.B. zum Erzwingen von gleicher Interpretation von Konstanten verwendet werden. Auch gibt es $\not\approx$, Definition $\forall x,y.(x\not\approx y \leftrightarrow \neg x\approx y)$. Man kann aber mit Hilfe anderer Definitionen der Prädikatenlogik sowohl Gleichheit als auch Ungleichheit einsparen. \vl{TIL 14} \vl{TIL 15}
+    \end{description}
+
+
+\subsection{Prädikatenlogik als Universalsprache}
+    Die Entwicklung der Logik hat ein zentrales Motiv: Logik als eine universelle, präzise Sprache. Die Entwicklung begann bei Aristoteles als Grundlage der philosophischen Argumentation, ging in Leibniz Sinne in Richtung „rechnen“ und wurde von Hilbert und Russell schließlich zusammen mit der Mathematik formalisiert. Wenn nun die Mathematik in logischen Formeln formuliert wird, wird logisches Schließen zur Kernaufgabe der Mathematik. Eine zentrale Frage des Schließens ist hierbei die Überprüfung auf Erfüllbarkeit einer Formel bzw. einer Formelmenge. \vl{TIL 15}
+    \begin{description}
+        \item[Strukturelle Induktion] Diese Induktion kann man über jede induktiv definierte syntaktische Struktur durchführen (z.B. Formeln, Terme, Programme,\dots).
+            \begin{itemize}
+                \item In der „klassischen Induktion“ wird eine Eigenschaft $E$ untersucht, wobei (1) „0 hat $E$“ geprüft und darauf aufbauend (2) für alle $n>0$ im Falle von „$n-1$ hat $E$“ geprüft wird.
+                \item In der \f{strukturellen Induktion auf Formeln} prüfen wir nun ob (1) alle atomaren Formeln $E$ haben und (2) alle nicht-atomaren Formeln $F$ ebenfalls $E$ haben, wenn alle ihre echten Teilformeln $E$ haben.
+            \end{itemize}
+
+        Im Beispiel „Induktion auf der Insel der Wahrheitssager und Lügner. Ein Einwohner verkündet: 'Was ich jetzt sage, das habe ich schon einmal gesagt.' Welchen Typ hat er?“ muss der Einwohner ein Lügner sein, da er mindestens beim ersten Mal lügt.
+    \end{description}
+
+
+\subsection{Unentscheidbarkeit des logischen Schließens}
+    Erinnerung: $F$ ist logische Konsequenz von $G$ ($F\models G$), wenn alle Modelle von $F$ auch Modelle von $G$ sind. (1) Es ist nicht offensichtlich, wie man das überprüfen sollte, denn es gibt unendliche viele Modelle. (2) Ebenso schwer erscheinen die gleichwertigen Probleme der Erfüllbarkeit und Allgemeingültigkeit. \\
+
+    Intuition: prädikatenlogisches Schließen ist unentscheidbar. Beweis durch Reduktion eines bekannten unentscheidbaren Problems, z.B. Halteproblem, PCP, Äquivalenz kontextfreier Sprachen u.a. \\
+
+    Der Beweis in der Vorlesung zeigt die Reduktion vom CFG-Schnittproblem. Hierfür werden Wörter $\omega$ aus der Modellmenge (Modellstruktur) $\INT$ als Ketten von binären Relationen kodiert und untersucht, ob das Wort $\omega$ in der Schnittmenge zweier kontextfreier Grammatiken $G_{1}$ und $G_{2}$ vorkommt. \\
+    Beispiel: wir haben auf der Insel z.B. das Modell mit Kombination „LLWWW“ (drei sagen die Wahrheit, zwei lügen), und wir wollen wissen ob $F \models G$. Wir kodieren die erfüllenden Modelle der Formeln $F$ und $G$ wie o.g. und erhalten $G_{1}$ und $G_{2}$. Nach Kodierung müssten also in beiden Grammatiken die Übergänge $\langle L_{1},L_{2} \rangle, \langle L_{2},W_{1} \rangle, \langle W_{1},W_{2} \rangle, \langle W_{2},W_{3} \rangle$ vorkommen. Ist dies der Fall, dann erfüllt dieses Modell beide Formeln.  (\textit{Vergleich und Notation nicht nach VL!}) \\
+    Zusammenfassend lassen sich demnach logische Konsequenzen auf diese Probleme reduzieren und da CFG unentscheidbar gilt auch: Logisches Schließen (Erfüllbarkeit, Allgemeingültigkeit, logische Konsequenz) in der Prädikatenlogik ist unentscheidbar. \vl{TIL 15}
+
+\subsection{Gödel}
+    Gödelscher Vollständigkeitssatz und Unvollständigkeitssätze. \vl{TIL 15} \vl{TIL 21}
+    \begin{description}
+        \item[Gödelscher Vollständigkeitssatz] „Es gibt ein konsistentes Verfahren, das alle Konsequenzen einer prädikatenlogischen Theorie effektiv beweisen kann.“ (1) Alle wahren Sätze können endlich bewiesen werden. (2) Prädikatenlogisches Schließen ist semi-entscheidbar.
+        \item[1. Gödelscher Unvollständigkeitssatz] „Es gibt kein konsistentes Verfahren, das alle Konsequenzen der elementaren Arithmetik effektiv beweisen kann.“ (1) Für jedes Verfahren gibt es Sätze über elementare arithmetische Zusammenhänge, die weder bewiesen noch widerlegt werden können. (2) Die Wahrheit elementarer arithmetischer Zusammenhänge ist nicht semi-entscheidbar.
+        %~ \item[2. Gödelscher Unvollständigkeitssatz]
+    \end{description}
+
+\subsection{Syntaktische Umformungen}
+    \begin{description}
+        \item[Äquivalenzen mit Quantoren] Es gelten die folgenen Beziehungen: \vl{TIL 16}
+            \begin{itemize}
+                \item Negation von Quantoren: $\neg\exists.F \equiv \forall x.\neg F$ und $\neg\forall x.F \equiv \exists x.\neg F$
+                \item Kommutativität: $\exists x. \exists y.F \equiv \exists y. \exists x.F$, selbiges für $\forall${}
+                \item Distributivität: $\exists x.(F \lor G) \equiv (\exists x.F \lor \exists x.G)$, selbiges für $\forall / \land$
+            \end{itemize}
+            Wichtig: andere Kombinationen funktionieren \f{nicht} ohne dass die Semantik verändert wird.
+
+        \item[Negationsnormalform (NNF)] Enthält nur Quantoren und die Junktoren $\land$, $\lor$ und $\neg$. \\
+            Der Negator $\neg$ befindet sich nur noch direkt vor Atomen (Literalen). \\
+            Zum Umformeln beginnen wir zuerst mit der Ersetzung von $\to$ und $\leftrightarrow$: \\
+            $(F \to G) \equiv (\neg F \lor G)$ und $(F \leftrightarrow G) \equiv (\neg F \lor G) \land (\neg G \lor F)$. \\
+            Folgend wird NNF($F$) rekursiv umgeformelt. Hierbei können z.B. Quantoren, die in ihrem Scope keine freie Variable binden, entfernt werden.
+
+        \item[Bereinigte Formel, Variablenumbenennung] Gebundene und freie Variablen in Formeln können umbenannt werden, so lange die neue Bezeichnung nicht bereits in der Formel vorkommt. Eine Formel ist \f{bereinigt}, wenn in ihr (1) keine Variable sowohl ungebunden als auch gebunden vorkommt und (2) keine Variable von mehr als einem Quantor gebunden wird. Beispiel: \\
+            Die Formel $\forall y.p(x,y) \to \exists x.(r(y,x) \land \forall y.q(x,y))$ wird zu $\forall y.p(x,y) \to \exists z.(r(y,z) \land \forall v.q(z,v))$.
+
+        \item[Pränexform] In der Pränexform stehen alle Quantoren am Anfang einer Formel, d.h. $Q_{1}x_{1}.Q_{2}x_{2}.\dots Q_{n}x_{n}.F$, wobei $Q_{n}x_{n}$ Quantor mit Variable. Die Umformung einer Formel in Pränexform geschieht nach NNF und Bereinigung, da wir dann ohne Komplikationen alle Quantoren aus der Formel herausziehen können (da jede Variable nur an maximal einem Quantor gebunden ist). \vl{TIL 17}
+
+        \item[Skolemisierung] Die Skolemisierung baut auf der Pränexform auf. Nach erfolgreicher Umformung sind alle Existenzquantoren eliminiert und das Vorkommen der entsprechenden Variable durch einen Funktionsterm (Skolemterm) ersetzt. \\
+            Sei $\forall x_{1}\dots \forall x_{n}. \exists y.F$ eine Formel in Pränexform.
+            Dann erstellen wir die neue Formel $\forall x_{1} \dots \forall x_{n}.F'$ mit $F' = F\{y \mapsto f(x_{1},\dots,x_{n})\}$. Die Variable $y$ wird also durch den Skolemterm $f$, eine $n$-stellige Skolemfunktion mit bisher unverwendetem Bezeichner, ersetzt.
+            Die Parameter der Funktion sind die Variablen der Allquantoren vor dem eliminierten Existenzquantor.
+            Mehrere Existenzquantoren werden von links nach rechts aufgelöst.
+
+            Beispiel: $\forall x. \exists y. \forall z. \exists v.p(x,y,z,v)$ $\longrightarrow$
+            $\forall x. \forall z. \exists v.p(x, f(x), z, v)$ $\longrightarrow$
+            $\forall x. \forall z.p(x, f(x), z, g(x,z))$
+
+            Skolemisierung kann die Semantik einer Formel verändern, jedoch bleibt die Erfüllbarkeit erhalten.
+
+        \item[Konjunktive Normalform (KNF)] Eine Formel ist in konjunktiver Normalform, wenn sie eine Konjunktion von Diskunktionen von Literalen ist:
+            $(L_{1,1} \lor L_{1,2} \lor \dots) \land \dots \land (L_{n,1}, L_{n,2}, \dots)$. \\
+            Zum Umformeln muss eine Formel (1) bereinigt, (2) in NNF umgeformt, (3) in Pränexform gebracht und (4) skolemisiert werden. \\
+            Zum Abschluss wird noch die Ersetzung $F \lor (G \land H) \mapsto (F \lor G) \land (F \lor H)$ angewandt.
+
+        \item[Klauselform] Hierfür wird die KNF nochmals vereinfacht.
+            \begin{itemize}
+                \item Allquantoren werden weggelassen.
+                \item Klauseln werden als Mengen von Literalen geschrieben.
+                \item Konjunktionen von Klauseln werden als Mengen von Mengen von Literalen geschrieben.
+            \end{itemize}
+
+    \end{description}
+
+\subsection{Algorithmen zum logischen Schließen}
+    \begin{description}
+        \item[Substitution] In der Substitution werden freie Variablen $x \in V$ durch Terme $t \in T$ ersetzt.
+            Eine Substitution wird durch $\sigma$ o.ä. definiert, z.B. $\sigma = \{x_{1} \mapsto t_{1}, \dots \}$. Wird diese Substitution dann auf eine Formel $A$ angewandt, d.h. $A\sigma$, nennt man dies \f{Instanz} von $A$ unter $\sigma$. Man kann mehrere Substitutionen hintereinander ausführen. Dann gilt $A(\sigma\circ\theta) = (A\sigma)\theta$.{}
+
+        \item[Unifikation] Ein Unifikationsproblem ist eine endliche Menge von Gleichungen der Form \\ $G = \{s_{1} \doteq t_{1}, \dots , s_{n} \doteq t_{n} \}$.
+            Eine Substitution $\sigma$ ist ein Unifikator für $G$ falls $s_{i}\sigma = t_{i}\sigma$ für alle $i \in \{ 1, \dots , n \}$ gilt. \vl{TIL 18}
+
+            Es kann mehrere Substitutionen geben, die diese Anforderung erfüllen. Dann kann durch Vergleich ein \f{allgemeinster Unifikator} gefunden werden.
+
+            Eine Substitution $\sigma$ ist \f{allgemeiner} als eine Substitution $\theta$, in Symbolen $\sigma \preceq \theta$, wenn es eine Substitution $\lambda$ gibt, so dass $\sigma \circ \lambda = \theta$. Der allgemeinste Unifikator für ein Unifikationsproblem $G$ ist ein Unifikator $\sigma$ für $G$, so dass $\sigma \circ \theta$ für alle Unifikatoren $\theta$ für $G$. Die englische Bezeichnung des allgemeinsten Unifikators ist \f{most general unifier (mgu)}.
+
+            Ein Unifikationsproblem $G = \{x_{1} \doteq t_{1}, \dots , x_{n} \doteq t_{n} \}$ ist in \f{gelöster Form}, wenn $x_{1}, \dots, x_{n}$ paarweise verschiedene Variablen sind, die nicht in den Termen $t_{1}, \dots, t_{n}$ vorkommen. In diesem Fall definieren wir eine Substitution $\sigma_{G} := \{ x_{1} \mapsto t_{1}, \dots , x_{n}\mapsto t_{n} \}$. Dann ist $\sigma_{G}$ ein allgemeinster Unifikator für $G$.
+
+            \f{Algorithmus:}
+            \begin{itemize}
+                \item Löschen (überflüssige $\doteq$ löschen, z.B. $\{ f(x) \doteq f(x) \}$)
+                \item Zerlegung (Parameter gleicher Funktionen auflösen, \\
+                    z.B. $\{g(a, f(x)) \doteq g(b, f(x))\}$ wird $\{a \doteq b, f(x) \doteq f(x) \}$)
+                \item Orientierung (Variablen auf die linke Seite)
+                \item Eliminierung (gegebene Variablen durch Wert ersetzen, \\
+                    z.B. $\{ x \doteq f(a), g(x) \doteq g(y) \}$ wird $\{ x \doteq f(a), g(f(a)) \doteq g(y)\}$).
+            \end{itemize}
+
+        \item[Resolution]
+            Mit dem Resolutionsalgorithmus versuchen wir aus einer gegebenen Klauselmenge (d.h. eine Formel in Klauselform) eine leere Klausel zu erzeugen (abzuleiten). Diese leere Klausel wäre eine unerfüllbare Behauptung, d.h. sobald wir eine solche leere Klausel finden haben wir die Unerfüllbarkeit der Formel bewiesen. Die Erfüllbarkeit ist hierbei eine „zentrale Frage des Schließens“.
+
+            \f{Algorithmus:} gegeben eine Klauselmenge, welche nummeriert angeordnet sind.
+            Nachfolgend nehmen wir immer zwei Klauseln, welche in Kombination wahre und falsche Aussagen resolvieren. Hierbei müssen die Variablen der neu erzeugten Klauseln umbenannt werden, es entstehen \f{Varianten}. \vl{TIL 15} \vl{TIL 16} \vl{TIL 19}
+
+            Beispiel: gegeben sind (1) und (2), neu erzeugt wird (3) \\
+            (1) $\{ W(x_{1}), L(x_{2}) \}$ \hspace{1cm}
+            (2) $\{ \neg W(a)\}$ \hspace{1cm}
+            (3) $\{ L(x_{2}')\}$ \textcolor{blue}{(1) + (2), $\{ x_{1} \mapsto a \}$} \\
+            %~ \textit{(Dieses Beispiel zeigt nicht die vollständige Resolution mit einer leeren Klausel)}
+
+        \item[Herbrand] Herbrand-Universum, Herbrandinterpretationen und Herbrandmodelle. \vl{TIL 19} \\
+            Das Herbranduniversum ist eine Erzeugung einer „Semantik aus Syntax“, einer Konstruktion von Modellen direkt aus Formeln.
+
+            Sei $a$ eine beliebige Konstante. Das Herbranduniversum $\HU$ für eine Formel $F$ ist die Menge aller variablenfreien Terme, die man mit Konstanten und Funktionssymbolen in $F$ und der zusätzlichen Konstante $a$ bilden kann:
+            \begin{itemize}
+                \item $a \in \HU$
+                \item $c \in \HU$ für jede Konstante aus F
+                \item $f(t_{1}, \dots, t_{n}) \in \HU$ für jedes $n$-stellige Funktionssymbol aus $F$ und alle Terme $t_{1}, \dots, t_{n} \in \HU$
+            \end{itemize}
+            Anmerkung: Das Herbrand-Universum ist immer abzählbar, manchmal endlich und niemals leer. \\
+            Beispiel: Für die Formel $F = p(f(x), y, g(z))$ ergibt sich $\HU = \{a, f(a), g(a), f(f(a)), f(g(a)), \dots \}$.
+
+\newpage
+            Eine Herbrandinterpretation für eine Formel $F$ ist eine Interpretation $\INT$ für die gilt:
+            \begin{itemize}
+                \item $\Delta^{\INT} = \HU$ ist das Herbrand-Universum von $F$
+                \item Für jeden Term $t \in \HU$ gilt $t^{\INT} = t$
+            \end{itemize}
+            D.h. Prädikate können wie in einer üblichen Interpretation unterschiedliche Werte erhalten.
+
+            $\INT$ ist ein Herbrandmodell für $F$ wenn zudem gilt $\INT \models F$.
+
+            Die \f{Herbrand-Expansion} $\HE(F)$ einer Formel $F = \forall x_{1}, \dots, x_{n}.G$ in Skolemform ist die Menge:
+                $\HE(F) := \{ G\{x_{1} \mapsto t_{1}, \dots, x_{n} \mapsto t_{n} \}\ |\ t_{1},\dots,t_{n} \in \Delta_{F}\ \}$
+
+            Satz von Gödel, Herbrand und Skolem: Eine Formel $F$ in Skolemform ist genau dann erfüllbar, wenn $\HE(F)$ aussagenlogisch erfüllbar ist.
+
+        \item[Lifting-Lemma] Seien $K_{1}$ und $K_{2}$ prädikatenlogische Klauseln mit Grundinstanzen $K_{1}' = K_{1} \sigma$ und $K_{2}' = K_{2} \sigma$. Wenn $R'$ eine (aussagenlogische) Resolvente von $K_{1}'$ und $K_{2}'$ ist, dann gibt es eine prädikatenlogische Resolvente $R$, welche $R'$ als Grundinstanz hat. \vl{TIL 20}
+
+        \item[Kompaktheit] Satz (Endlichkeitssatz, Kompaktheitssatz): Falls eine unendliche Menge prädikatenlogischer Sätze $\mathcal{T}$ eine logische Konsequenz $F$ hat, so ist $F$ auch Konsequenz einer endlichen Teilmenge von $\mathcal{T}$.
+
+        \item[Endliche Modelle] Satz von \f{Löwenheim und Skolem}: „Jede erfüllbare prädiktenlogische Formel hat ein abzählbares Modell (d.h. eines mit abzählbarer Domäne).“ (aber: nicht jede Formel hat ein endliches Modell!). \vl{TIL 20}
+
+            Beispiel anhand von relationalen Datenbanken in \vl{TIL 20}
+
+        \item[Model Checking] Das Auswertungsproblem (Model Checking) der Prädikatenlogik lautet wie folgt: \\
+            Gegeben: Eine Formel $Q$ mit freien Variablen $x_{1}, \dots, x_{n}$; eine endliche Interpretation $\INT$; Elemente $\delta_{1}, \dots, \delta_{n} \in \Delta^{\INT}$. Frage: Gilt $\INT$, $\{x_{1} \mapsto \delta_{1}, \dots, x_{n} \mapsto \delta_{n} \} \models Q$?
+
+    \end{description}

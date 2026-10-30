@@ -1,0 +1,86 @@
+\documentclass{getwriting}
+\usepackage{amsmath}
+
+\title{A practical guide to reproducible field studies}
+\author[1]{Maya Rivera\thanks{maya.rivera@example.edu}\,\orcidlink{0000-0002-1825-0097}}
+\author[2]{Jon Bell\thanks{jon.bell@example.org}}
+\affil[1]{Centre for Environmental Data, Northbridge University}
+\affil[2]{Open Methods Lab, Example Institute}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This starter shows a readable, double-spaced article workflow for a
+format-free submission.  It includes an abstract, keywords, a methods
+checklist, an editable equation, a native table, a code listing, and a
+plain BibTeX bibliography without depending on external figures.
+\end{abstract}
+
+\noindent\textbf{Keywords:} reproducibility, field studies, data quality,
+open methods, article template
+
+\section{Introduction}
+Field studies often produce useful measurements before a team has settled on
+a permanent data model.  A small, explicit record of the sampling plan makes
+those measurements easier to audit and reuse.  This article uses a fictional
+coastal survey to demonstrate the structure of a manuscript without carrying
+over a real author's data or prose.
+
+\section{Study design}
+The survey visits three sites at two times of day.  Each observation records
+the site identifier, the instrument configuration, and a quality flag.  The
+design follows the simple principle that a result should retain enough context
+for another researcher to reproduce its collection~\cite{wilkinson2016}.
+
+\begin{table}[H]
+  \centering
+  \caption{A compact sampling register.}
+  \label{tab:register}
+  \begin{tabular}{llll}
+    \toprule
+    Site & Morning & Afternoon & Quality rule \\
+    \midrule
+    North inlet & 12 & 12 & sensor check \\
+    Estuary bend & 10 & 10 & duplicate 10\% \\
+    South marsh & 8 & 8 & field blank \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Analysis plan}
+Let $x_i$ be an observation and $q_i$ its quality weight.  The weighted mean
+reported for a site is
+\begin{equation}
+  \bar{x}_q = \frac{\sum_i q_i x_i}{\sum_i q_i},
+  \label{eq:weighted-mean}
+\end{equation}
+which keeps the calculation visible and makes the unit of analysis explicit.
+The uncertainty interval can then be reported alongside the point estimate
+rather than hidden in a downstream spreadsheet.
+
+The analysis record is intentionally small:
+\begin{enumerate}
+  \item freeze the raw observation file and record its checksum;
+  \item apply the quality rule in Table~\ref{tab:register};
+  \item calculate Eq.~\eqref{eq:weighted-mean};
+  \item publish the code and a machine-readable result table.
+\end{enumerate}
+
+\section{Reproducibility notes}
+The following command is a placeholder for the project-specific analysis
+entry point; replace it with the command that recreates the figures and
+tables from the frozen data.
+\begin{verbatim}
+make report DATA=data/observations.csv OUTPUT=build/results.csv
+\end{verbatim}
+Keeping a short command block in the manuscript helps a reader distinguish
+the analytical recipe from the surrounding narrative.
+
+\section{Conclusion}
+The \texttt{getwriting} class is deliberately close to the standard article
+class.  Start by replacing the fictional study, then keep or remove the
+table, equation, and code block as the paper requires.
+
+\bibliography{references}
+\end{document}

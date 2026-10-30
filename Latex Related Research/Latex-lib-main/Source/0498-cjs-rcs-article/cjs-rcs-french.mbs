@@ -1,0 +1,376 @@
+% \iffalse meta-comment -*- mode: doctex -*-
+%
+% French language definition file of the master bibliography style for
+% The Canadian Journal of Statistics | La revue canadienne de
+% statistique
+%
+% Copyright (C) 2023-2026 Statistical Society of Canada | Société
+% canadienne de statistique
+%
+% This file may be distributed and/or modified under the conditions
+% of the LaTeX Project Public License, either version 1.3c of this
+% license or (at your option) any later version. The latest version
+% of this license is in:
+%
+%   https://www.latex-project.org/lppl.txt
+%
+% The documentation is also licensed under CC BY-SA 4.0 International.
+% To view a copy of this license, visit:
+%
+%   https://creativecommons.org/licenses/by-sa/4.0/
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Vincent Goulet
+% <vincent.goulet@act.ulaval.ca>.
+%
+% This work derives from french.mbs, part of the custom-bib
+% collection, a contribution to the LaTeX2e system.
+% Copyright 1994-2002 Patrick W Daly
+% Max-Planck-Institut f\"ur Sonnensystemforschung
+% Max-Planck-Str. 2
+% D-37191 Katlenburg-Lindau
+% Germany
+% E-mail: daly@mps.mpg.de
+%
+ %-------------------------------------------------------------------
+ % Begin module:
+%\fi
+ % \ProvidesFile{cjs-rcs-french.mbs}[2026/03/05 v2.0 (VG, PWD)]
+%\iffalse
+%<*a&!a>
+% The following ensures that the driver part is not seen by makebst
+% The driver part must not contain any \end other than \end{document} !
+\ifx\endoptions\undefined\let\tempx=\relax\else
+  \long\def\tempx#1\end#2{}\fi\tempx
+%</a&!a>
+%<*driver>
+\NeedsTeXFormat{LaTeX2e}%
+\documentclass[nocjs,x11names,french,english]{cjs-rcs-article}
+
+  %% Loading doc.sty creates some conflicts with the class and memoir. We
+  %% need to:
+  %%
+  %% - keep a copy of the class' \maketitle command;
+  %% - undefine the 'glossary' environment created by memoir;
+  %% - restore the standard LaTeX commands for the glossary that
+  %%   doc.sty relies upon.
+  \let\makeCJStitle\maketitle   % keep class definition
+  \let\theglossary\relax        % avoid conflict with doc.sty
+  \let\endtheglossary\relax     % avoid conflict with doc.sty
+  \makeatletter
+  \def\makeglossary{%
+    \newwrite\@glossaryfile
+    \immediate\openout\@glossaryfile=\jobname.glo
+    \def\glossary{\@bsphack\begingroup
+                  \@sanitize
+                  \@wrglossary}\typeout
+      {Writing glossary file \jobname.glo }%
+    \let\makeglossary\@empty
+  }
+  \@onlypreamble\makeglossary
+  \def\@wrglossary#1{%
+     \protected@write\@glossaryfile{}%
+        {\string\glossaryentry{#1}{\thepage}}%
+   \endgroup
+   \@esphack}
+  \def\glossary{\@bsphack\begingroup\@sanitize\@index}
+  \@twosidefalse\@mparswitchfalse % turn off twoside option
+  \makeatother
+  \usepackage{doc}
+  \def\changes#1#2#3{\glossary{#1>#3}} % simplified
+  \DisableCrossrefs
+  \CodelineNumbered
+  \RecordChanges
+  \OnlyDescription
+  \DontCheckModules
+
+  \AtEndPreamble{%
+    \hypersetup{%
+      pdfauthor = {Statistical Society of Canada},
+      pdftitle = {French language definition file cjs-rcs-french.mbs}}}
+
+  %% Configuration of the glossary
+  \addto\extrasenglish{%
+    \def\glossaryname{History of changes}}
+  \GlossaryPrologue{\section*{\glossaryname}%
+    \addcontentsline{toc}{section}{\glossaryname}}
+  \setlength{\GlossaryMin}{5cm}
+
+  %% Additional semantic typesetting
+  \let\class\textsf
+  \newcommand*\dtx{\textsf{docstrip}}
+
+  %% Name of the journal
+  \makeatletter
+  \newcommand*\TheCJS{\@ifstar{\emph{The Journal}}{\emph{\CJS@journalname@en}}}
+  \newcommand*\LaRevue{\@ifstar{\emph{La revue}}{\emph{\CJS@journalname@fr}}}
+  \newcommand*\CJSclass{\class{cjs-rcs-article}}
+  \newcommand*\CJSbsten{\texttt{cjs-rcs-en.bst}}
+  \newcommand*\CJSbstfr{\texttt{cjs-rcs-fr.bst}}
+  \newcommand*\SSCen{Statistical Society of Canada}
+  \newcommand*\SSCfr{Société statistique du Canada}
+  \makeatother
+
+  %% Redefine \year using information from \filedate instead of using
+  %% compilation time
+  \def\parsedate#1/#2/#3\relax{\def\year{#1}}
+
+  \MakeShortVerb{\|}
+
+\begin{document}
+  \DocInput{cjs-rcs-french.mbs}
+\end{document}
+%</driver>
+% end of meta-comment \fi
+% \GetFileInfo{cjs-rcs-french.mbs}
+% \expandafter\parsedate\filedate\relax
+%
+% \changes{1.0}{2023-11-29}{First official release distributed through
+% CTAN.}
+% \changes{0.93}{2023-11-06}{Add a prefix v in the version number like
+% the main file.}
+% \changes{0.9}{2023-10-14}{Initial version based on version 4.2 of
+% \texttt{french.mbs} from \textbf{custom-bib}.}
+%
+% \title[French language definition file \filename]{%
+%   French language definition file \\
+%   of the master bibliographic style file \\
+%   for \TheCJS}
+% \author{Statistical Society of Canada}
+% \affil{Developed by Vincent Goulet, Université Laval}
+%
+% \begin{englishabstract}
+%   The list of references in {\TheCJS} is typeset using the
+%   bibliographic styles {\CJSbsten} for articles in English and
+%   {\CJSbstfr} for articles in French. These styles are created using
+%   the program \texttt{makebst} from the master bibliographic file
+%   \texttt{cjs-rcs-merlin.mbs}, and the language definition files
+%   \texttt{cjs-rcs-english.mbs} and \texttt{cjs-rcs-french.mbs}.
+% \end{englishabstract}
+% \begin{frenchabstract}
+%   La liste des références dans {\LaRevue} est composée avec les
+%   style de bibliographie {\CJSbstfr} pour les articles en français
+%   et {\CJSbsten} pour les articles en anglais. Ceux-ci sont générés
+%   par le programme \texttt{makebst} à partir du fichier maitre
+%   \texttt{cjs-rcs-merlin.mbs} et des fichiers de localisation
+%   \texttt{cjs-rcs-english.mbs} et \texttt{cjs-rcs-french.mbs}.
+% \end{frenchabstract}
+%
+% ^^A abusing the 'classification' environment. The final period is
+% ^^A added by the environment.
+% \begin{classification}[Version]
+% \item[] This is the documentation for the file \code{\filename}
+%   {\fileversion}, dated {\filedate}
+% \end{classification}
+%
+% \licence{{\ccbysa*} 2023--{\year}, {\SSCen}~{\textbar}~{\SSCfr}}
+%
+% \makeCJStitle
+%
+% \section{Introduction}
+%
+% This file is to be used as a language definition file with the
+% master bibliographic file for {\TheCJS}. The language it defines is
+% French.
+%
+% This is not a self-sufficient \texttt{.mbs} file, but rather may
+% be used together with one that contains language support via
+% external definition files.
+%
+% See the documentation for \texttt{makebst} for formatting details.
+%
+% \section{The Menu Information}
+%
+% All the menu information is nested between \dtx{} guard options
+% |%<*options>| \dots\ |%</options>|, and the last command is
+% |\endoptions|. The rest of the file is nested between |%<*!options&!driver>|
+% \dots\ |%</!options&!driver>| in order to exclude it if \dtx{} is used to
+% extract only the menu information or the documentation driver.
+%
+%    \begin{macrocode}
+%<*options>
+\mes{^^JOptions for FRENCH}
+\wr{\spsp\spsp french,\pc: French language}
+
+\beginoptiongroup{ABBREVIATE WORD `PAGES':}{}
+\optdef{*}{}{`Page(s)'}{(no abbreviation)}
+\optdef{a}{pp}{`Page' abbreviated}{as p. or pp.}
+\optdef{x}{ppx}{`Page' omitted}{}
+\getans
+\endoptiongroup
+\beginoptiongroup{ABBREVIATE WORD `EDITEUR:}{}
+\optdef{*}{}{`\string\'Editeur(s)'}{(no abbreviation)}
+\optdef{a}{ed}{`\string\'Editeur' abbreviated}{as \string\'Ed.}
+\getans
+\endoptiongroup
+\beginoptiongroup{OTHER ABBREVIATIONS:}{}
+\optdef{*}{}{No abbreviations}{of Tome, \string\'edition, chapitre}
+\optdef{a}{abr}{Abbreviations}{of such words}
+\getans
+\endoptiongroup
+\beginoptiongroup{EDITION NUMBERS:}{}
+\optdef{*}{xedn}{Editions as in database}{saving much processing memory}
+\optdef{w}{}{Write out editions}{as premi\string\`ere, deuxi\string\`eme,...}
+\optdef{n}{ord}{Numerical editions}{as 1re, 2e, 3e, etc}
+\getans
+\endoptiongroup
+\endoptions
+%</options>
+%    \end{macrocode}
+%
+% \StopEventually{\PrintChanges}
+%
+% \section{The Coding}
+%    \begin{macrocode}
+%<*!options&!driver>
+
+ % The language selected here is FRENCH
+FUNCTION {bbl.and}
+{ "et"}
+
+FUNCTION {bbl.etal}
+{ "et~collab." }
+
+FUNCTION {bbl.editors}
+%<!ed>{ "directeurs" }
+%<ed>{ "dir." }
+
+FUNCTION {bbl.editor}
+%<!ed>{ "directeur" }
+%<ed>{ "dir." }
+
+FUNCTION {bbl.edby}
+{ "sous la direction de" }
+
+FUNCTION {bbl.edition}
+%<!abr>{ "\'edition" }
+%<abr>{ "\'ed." }
+
+FUNCTION {bbl.volume}
+%<!abr>{ "volume" }
+%<abr>{ "vol." }
+
+FUNCTION {bbl.of}
+{ "de" }
+
+FUNCTION {bbl.number}
+%<!abr>{ "num\'ero" }
+%<abr>{ "{\no}" }
+
+FUNCTION {bbl.nr}
+{ "{\no}" }
+
+FUNCTION {bbl.in}
+{ "dans" }
+
+FUNCTION {bbl.pages}
+%<!pp&!ppx>{ "pages" }
+%<pp>{ "p." }
+%<!pp&ppx>{ "" }
+
+FUNCTION {bbl.page}
+%<!pp&!ppx>{ "page" }
+%<pp>{ "p." }
+%<!pp&ppx>{ "" }
+
+%<*revdata>
+FUNCTION {bbl.eidpp}
+{ "pages" }
+
+%</revdata>
+FUNCTION {bbl.chapter}
+%<!abr>{ "chapitre" }
+%<abr>{ "chap." }
+
+FUNCTION {bbl.techrep}
+%<!abr>{ "rapport technique" }
+%<abr>{ "rapport technique" }
+
+FUNCTION {bbl.mthesis}
+{ "m\'emoire de ma\^itrise" }
+
+FUNCTION {bbl.phdthesis}
+{ "th\`ese de doctorat" }
+
+%<*!xedn>
+FUNCTION {bbl.first}
+%<!ord>{ "Premi\`ere" }
+%<ord>{ "1{\iere}" }
+
+FUNCTION {bbl.second}
+%<!ord>{ "Deuxi\`eme" }
+%<ord>{ "2{\ieme}" }
+
+FUNCTION {bbl.third}
+%<!ord>{ "Troisi\`eme" }
+%<ord>{ "3{\ieme}" }
+
+FUNCTION {bbl.fourth}
+%<!ord>{ "Quatri\`eme" }
+%<ord>{ "4{\ieme}" }
+
+FUNCTION {bbl.fifth}
+%<!ord>{ "Cinqui\`eme" }
+%<ord>{ "5{\ieme}" }
+
+FUNCTION {bbl.th}
+{ "{\ieme}" }
+
+%</!xedn>
+%<*!abr>
+MACRO {jan} {"janvier"}
+
+MACRO {feb} {"f\'evrier"}
+
+MACRO {mar} {"mars"}
+
+MACRO {apr} {"avril"}
+
+MACRO {may} {"mai"}
+
+MACRO {jun} {"juin"}
+
+MACRO {jul} {"juillet"}
+
+MACRO {aug} {"ao\^ut"}
+
+MACRO {sep} {"septembre"}
+
+MACRO {oct} {"octobre"}
+
+MACRO {nov} {"novembre"}
+
+MACRO {dec} {"d\'ecembre"}
+
+%</!abr>
+%<*abr>
+MACRO {jan} {"jan."}
+
+MACRO {feb} {"f\'ev."}
+
+MACRO {mar} {"mars"}
+
+MACRO {apr} {"avr."}
+
+MACRO {may} {"mai"}
+
+MACRO {jun} {"juin"}
+
+MACRO {jul} {"juil."}
+
+MACRO {aug} {"ao\^ut"}
+
+MACRO {sep} {"sept."}
+
+MACRO {oct} {"oct."}
+
+MACRO {nov} {"nov."}
+
+MACRO {dec} {"d\'ec."}
+
+%</abr>
+%</!options&!driver>
+ % End module: cjs-rcs-french.mbs
+%    \end{macrocode}
+% \Finale

@@ -1,0 +1,71 @@
+\documentclass[11pt,oneside]{book}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{makeidx}
+\usepackage[hidelinks]{hyperref}
+\makeindex
+\definecolor{scienceblue}{HTML}{2C5F85}
+\newcommand{\booksubtitle}{A practical science textbook starter}
+\newcommand{\keyterm}[1]{\textbf{\color{scienceblue}#1}\index{#1}}
+\newtheorem{principle}{Principle}[chapter]
+\begin{document}
+\begin{titlepage}
+\centering
+\vspace*{1.0in}
+{\fontsize{34}{40}\selectfont\bfseries Science\\Textbook\par}
+\vspace{14pt}\rule{0.75\textwidth}{3pt}\par
+\vspace{18pt}{\Large\booksubtitle\par}
+\vfill
+{\Large Author Name\par}\vspace{6pt}{\large Department or School\par}
+\vspace{0.4in}{\small First edition \textbullet{} \the\year\par}
+\end{titlepage}
+\chapter*{Preface}
+This minimal textbook structure is intended for a large, navigable science
+book. Replace the chapters, examples, and exercises with your own curriculum.
+\tableofcontents
+\mainmatter
+\chapter{Measurement and models}
+\section{A model is a useful promise}
+A \keyterm{scientific model} is a compact description that lets us make and
+test predictions. A good model states its assumptions and makes its limits
+visible.
+\begin{principle}
+Separate the quantity being measured from the method used to measure it.
+\end{principle}
+For a moving object with constant acceleration, the position is
+\begin{equation}
+  x(t)=x_0+v_0t+\frac{1}{2}at^2.
+\end{equation}
+\section{Worked example}
+Suppose $x_0=2\,\mathrm{m}$, $v_0=3\,\mathrm{m/s}$, and
+$a=1\,\mathrm{m/s^2}$. At $t=4\,\mathrm{s}$,
+\begin{equation*}
+  x(4)=2+3(4)+\tfrac12(1)(4^2)=22\,\mathrm{m}.
+\end{equation*}
+\chapter{Evidence and uncertainty}
+\section{Report what the data can support}
+Measurements should include units and a sensible estimate of uncertainty.
+\begin{center}
+\begin{tabular}{lrr}
+\toprule Trial & Time (s) & Distance (m)\\\midrule
+1 & 1.02 & 2.1\\ 2 & 1.00 & 2.0\\ 3 & 0.98 & 2.0\\
+\bottomrule
+\end{tabular}
+\end{center}
+\chapter{Exercises}
+\begin{enumerate}
+  \item State the assumptions behind the model in Chapter 1.
+  \item Design a measurement that could test one of those assumptions.
+  \item Explain how the table would change if the instrument resolution doubled.
+\end{enumerate}
+\backmatter
+\chapter*{Further reading}
+Add citations, links, and instructor notes here.
+\printindex
+\end{document}

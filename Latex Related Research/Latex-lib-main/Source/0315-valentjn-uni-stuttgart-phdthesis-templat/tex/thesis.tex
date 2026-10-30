@@ -1,0 +1,66 @@
+% create and set switches
+\input{preamble/switches}
+
+% set main document class (KOMA-Script's scrbook)
+\documentclass[
+  % align equation numbers left to the equation
+  leqno,
+]{scrbook}
+
+% include packages
+\input{preamble/packages}
+
+% set packages options
+\input{preamble/settings}
+
+% define notation
+\input{preamble/notation}
+
+% define acronyms
+\input{preamble/acronyms}
+
+\begin{document}
+  \iftoggle{partialCompileMode}{}{
+    % title page
+    \input{document/titlepage}
+    
+    % dedication
+    \input{document/dedication}
+  }
+  
+  % progress page
+  \iftoggle{draftMode}{
+    \input{document/progress}
+  }{}
+  
+  \iftoggle{partialCompileMode}{}{
+    % table of contents, create bookmark
+    \input{document/contents}
+    
+    % lists of floats and theorems
+    \input{document/floats}
+    
+    % list of symbols and acronyms
+    \input{document/glossary}
+    
+    % abstract
+    \input{document/abstract}
+    
+    % preface
+    \input{document/preface}
+  }
+  
+  % chapters
+  \include{document/1_introduction}
+  \include{document/2_flux_capacitor}
+  \include{document/3_conclusion}
+  
+  % start appendix
+  \appendix
+  
+  % appendix chapters
+  \include{document/app1_proofs}
+  
+  % bibliography
+  \input{document/bibliography}
+\end{document}

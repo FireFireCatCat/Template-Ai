@@ -1,0 +1,31 @@
+# Rolling Animation in Slides
+
+[![l3build](https://github.com/yegor256/clicks/actions/workflows/l3build.yml/badge.svg)](https://github.com/yegor256/clicks/actions/workflows/l3build.yml)
+[![CTAN](https://img.shields.io/ctan/v/clicks)](https://ctan.org/pkg/clicks)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/yegor256/clicks/blob/master/LICENSE.txt)
+
+This LaTeX package simulates animation in a slide deck,
+similar to what PowerPoint can do.
+
+First,
+[install it](https://en.wikibooks.org/wiki/LaTeX/Installing_Extra_Packages)
+from [CTAN](https://ctan.org/pkg/clicks)
+and then use in the preamble:
+
+```tex
+\documentclass{article}
+\usepackage{clicks}
+\begin{document}
+\plick{Here is your wedding plan:}
+\plick{1. Buy a ring}
+\plick{2. Propose}
+\plush{3. Get married}
+And then live happily ever after.
+\end{document}
+```
+
+If you want to contribute yourself, make a fork, then create a branch,
+then run `l3build ctan` in the root directory.
+It should compile everything without errors. If not, submit an issue and wait.
+Otherwise, make your changes and then run `l3build ctan` again. If the build is
+still clean, submit a pull request.

@@ -1,0 +1,436 @@
+\documentclass[arabic,english]{beamer-rl}
+\usepackage{hologo} % pdflatex, xelatex, lualatex logos
+\usepackage{verbatim}
+\usepackage{listings} 
+\usepackage{multicol}
+
+% Themes without Navigation Bars
+%\mode<presentation>{\usetheme{default}}
+%\mode<presentation>{\usetheme{boxes}}
+%\mode<presentation>{\usetheme{Bergen}}
+%\mode<presentation>{\usetheme{Boadilla}}
+\mode<presentation>{\usetheme{Madrid}}
+%\mode<presentation>{\usetheme{AnnArbor}}
+%\mode<presentation>{\usetheme{CambridgeUS}}
+%\mode<presentation>{\usetheme{EastLansing}}
+%\mode<presentation>{\usetheme{Pittsburgh}}
+%\mode<presentation>{\usetheme{Rochester}}
+
+% Themes with a Tree-Like Navigation Bar
+%\mode<presentation>{\usetheme{Antibes}}
+%\mode<presentation>{\usetheme{JuanLesPins}}
+%\mode<presentation>{\usetheme{Montpellier}}
+
+% Themes with a Table of Contents Sidebar
+%\mode<presentation>{\usetheme{Berkeley}}
+%\mode<presentation>{\usetheme{PaloAlto}}
+%\mode<presentation>{\usetheme{Goettingen}}
+%\mode<presentation>{\usetheme{Hannover}}
+
+% Themes with a Mini Frame Navigation
+%\mode<presentation>{\usetheme{Berlin}}
+%\mode<presentation>{\usetheme{Ilmenau}}
+%\mode<presentation>{\usetheme{Dresden}}
+%\mode<presentation>{\usetheme{Darmstadt}}
+%\mode<presentation>{\usetheme{Frankfurt}}
+%\mode<presentation>{\usetheme{Singapore}}
+%\mode<presentation>{\usetheme{Szeged}}
+
+% Themes with Section and Subsection Tables
+%\mode<presentation>{\usetheme{Copenhagen}}
+%\mode<presentation>{\usetheme{Luebeck}}
+%\mode<presentation>{\usetheme{Malmoe}}
+%\mode<presentation>{\usetheme{Warsaw}}
+%\usetheme{Cuerna}\usecolortheme{default}
+
+\title{\textdir TLT {\bfseries beamer-rl} class}
+
+\author{\textdir TLT Salim Bou}
+
+\institute[]{%
+{\color{blue} Repository: } https://github.com/seloumi/beamer-rl \par 
+{\color{blue} Bug tracker: } https://github.com/seloumi/beamer-rl/issues
+}
+
+\date{{\selectlanguage{english}v2.1 - 22/07/2026}}
+
+\setbeamercovered{transparent=10}
+
+% reduce space above and below verbatim env
+\makeatletter
+\preto{\@verbatim}{\topsep=0pt \partopsep=0pt }
+\makeatother
+
+\newenvironment{codeblock}{%
+\selectlanguage{nil}
+\smallskip\hfill%
+\beamercolorbox[wd=\linewidth,sep=.3ex,dp=1ex]{block body}
+\endgraf
+\verbatim
+}{%
+\endverbatim
+\endbeamercolorbox
+\hfill
+\smallskip
+%\end{verbatim}
+}
+
+
+\begin{document}
+
+\selectlanguage{english}
+
+\parskip=6pt
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{\selectlanguage{english}\contentsname}
+\tableofcontents
+\end{frame}
+
+
+\section{Introduction}
+
+\begin{frame}[fragile]
+\frametitle{Introduction}
+Creating beamer presentation for languages with script from right to left   (like arabic) using \hologo{pdfLaTeX} or \hologo{XeLaTeX} still poses many problems due to bugs not currently resolved especially for colors.
+
+The \hologo{LuaTeX} team set solutions for  these issues thanks to them and to \textit{Javier~Bezos} for  his works on the package \verb|babel| and \verb|bidi| writing    
+
+This class provides patchs for some beamer templates and commands to create  
+ right to left beamer presentation, the class call babel with \verb|bidi=basic| option and require \hologo{LuaLaTeX} engine
+
+\end{frame}
+
+\section{How to use beamer-rl}
+
+\begin{frame}[fragile,allowframebreaks]
+\frametitle{How to use beamer-rl}
+
+\begin{codeblock}
+\documentclass{beamer-rl}
+
+% import language
+\babelprovide[import=ar-DZ, main]{arabic} 
+
+\usetheme{Madrid}
+
+\begin{document}
+...
+\end{document}
+\end{codeblock}
+
+We get a similar result by adding the main language of the presentation (language with right-to-left script)
+  as option of class as follows:
+
+\begin{codeblock}
+\documentclass[arabic]{beamer-rl}
+
+\usetheme{CambridgeUS}
+
+\begin{document}
+...
+\end{document}
+\end{codeblock}
+
+We can also add more language options that the command \verb|\babelprovide|  provides as follows:
+
+\begin{codeblock}
+\documentclass[arabic={mapdigits}]{beamer-rl}
+
+% equivalent to
+% \babelprovide[import,main,mapdigits]{arabic}
+
+\end{codeblock}
+
+The class  define in the same way as  options (languages supported by the package \verb|babel| with script from right to left) 
+
+\begin{multicols}{3}
+\verb|arabic|\\
+\verb|arabic-dz|\\
+\verb|arabic-tn|\\
+\verb|arabic-ma|\\
+\verb|arabic-eg|\\
+\verb|arabic-sa|\\
+\verb|arabic-iq|\\
+\verb|arabic-sy|\\
+\verb|arabic-lb|\\
+\verb|arabic-ps|\\
+\verb|arabic-jo|\\
+\verb|centralkurdish|\\
+\verb|hebrew|\\
+\verb|kashmiri|\\
+\verb|mazanderani|\\
+\verb|malayalam|\\
+\verb|northernkurdish-arab|\\
+\verb|pashto|\\
+\verb|persian|\\
+\verb|punjabi-arab|\\
+\verb|syriac|\\
+\verb|urdu|\\
+\verb|uyghur|\\
+\verb|uzbek-arab|\\
+\verb|yiddish|\\
+\end{multicols}
+
+
+\end{frame}
+
+\section{Some notes}
+
+\begin{frame}[fragile,allowframebreaks]
+\frametitle{Some notes}
+
+\begin{itemize}
+
+\item
+The class define \verb:Amiri: as default sans serif font, we can 
+modify this in the preambule  with   
+
+\begin{codeblock}
+\babelfont{sf}{<font name>}
+\end{codeblock}
+
+\item
+The class defines  option \verb|layout| which passes its content to \verb|babel| 
+
+\medskip 
+ 
+\begin{codeblock}
+\documentclass[layout={<babel layout>}]{beamer-rl}
+\end{codeblock}
+
+More on the subject can be found in the manual of  \verb|babel| package 
+\href{http://mirrors.ctan.org/macros/latex/required/babel/base/babel.pdf}{\beamergotobutton{link}}
+
+
+\bigskip
+
+\item
+In some cases you  need to use \verb:\babelsublr: command from \verb:bebel: 
+package to insert a left to right text within your right to left text, e.g if you need to insert a \verb:pspicture: drawing in RTL context 
+
+\begin{codeblock}
+\bebelsublr{LTR context ... }
+\end{codeblock}
+
+\end{itemize}
+
+\end{frame}
+
+\section{pgfpages-rl package}
+
+\begin{frame}[fragile]
+\frametitle{pgfpages-rl package}
+
+\verb:pgfpages-rl: adds to \verb:pgfpages: the ability to support TRT pagedir, the package requires \hologo{LuaLaTeX} engine. 
+It can also be used with other document classes besides \verb:beamer-rl: 
+
+\begin{codeblock}
+\documentclass{beamer-rl}
+\babelprovide[import=ar-DZ, main]{arabic}
+\usetheme{Warsaw}
+\usepackage{pgfpages-rl} % adapt pgfpages to TRT pagedir
+\setbeamertemplate{note page}[]
+\setbeameroption{show notes on second screen=right}
+\begin{document}
+...
+\end{document}
+
+\end{codeblock}
+
+
+\end{frame}
+
+\section{Examples}
+
+\begin{frame}[plain]{}
+
+\fontsize{70}{60}\selectfont\centerline{Examples}
+
+\end{frame}
+
+\subsection{Blocks}
+
+\begin{frame}[fragile]
+\frametitle{Blocks}
+
+\begin{codeblock}
+\setbeamertemplate{blocks}[default]
+\end{codeblock}
+
+\setbeamertemplate{blocks}[default]
+
+\begin{block}{Lorem}
+  \selectlanguage{nil} 
+  On 21 April 1820, during a lecture, Ørsted
+  noticed a compass needle deflected from magnetic north when an
+  electric current from a battery was switched on and off.
+\end{block}
+
+\begin{codeblock}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\end{codeblock}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+
+\begin{block}{Lorem}
+  \selectlanguage{nil} 
+  On 21 April 1820, during a lecture, Ørsted
+  noticed a compass needle deflected from magnetic north when an
+  electric current from a battery was switched on and off.
+\end{block}
+
+\end{frame}
+
+\subsection{Lists}
+
+\begin{frame}[fragile,allowframebreaks]
+\frametitle{enumerate, itemize}
+
+\selectlanguage{arabic}
+\begin{columns}[t,onlytextwidth]
+
+\begin{column}{2cm}
+\begin{enumerate}
+\item First 
+\item Second 
+\end{enumerate}
+\end{column}
+\begin{column}{8.8cm}
+\begin{codeblock}
+\setbeamertemplate{enumerate item}[ball]
+\begin{enumerate}
+\item First 
+\item Second 
+\end{enumerate}
+\end{codeblock}
+\end{column}
+
+\end{columns}
+
+\vfill
+\setbeamertemplate{itemize item}[triangle]
+
+\begin{columns}[t,onlytextwidth]
+
+\begin{column}{2cm}
+\begin{itemize}
+\item First
+\item Second 
+\end{itemize}
+\end{column}
+\begin{column}{8.8cm}
+\begin{codeblock}
+% in RTL context
+\setbeamertemplate{itemize item}[triangle]
+\begin{itemize}
+\item First
+\item Second 
+\end{itemize}
+\end{codeblock}
+\end{column}
+
+\end{columns}
+
+\framebreak
+
+\selectlanguage{nil}
+
+\begin{columns}[t]
+\begin{column}{2cm}
+\begin{itemize}
+\item First
+\item Second 
+\end{itemize}
+\end{column}
+\begin{column}{8.5cm}
+\begin{codeblock}
+% in LTR context 
+\setbeamertemplate{itemize item}[triangle]
+\begin{itemize}
+\item First
+\item Second 
+\end{itemize}
+\end{codeblock}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\subsection{Hyperlinks}
+
+\begin{frame}[fragile]
+\frametitle{Hyperlinks}
+
+\selectlanguage{arabic}
+
+\begin{itemize}\shapemode2
+\item<1-> First.
+\item<2-> Second.
+\end{itemize}
+
+\hyperlink{jumptofirst}{\beamergotobutton{return to first slide}}
+\hypertarget<1>{jumptofirst}{}
+
+\pause
+
+\begin{codeblock}
+\hyperlink{jumptofirst}
+{\beamergotobutton{return to first slide}}
+\hypertarget<1>{jumptofirst}{}
+\end{codeblock}
+
+\end{frame}
+
+
+\subsection{Theorems}
+
+\begin{frame}
+\frametitle{Theorems}
+
+\framesubtitle{The proof uses \textit{reductio ad absurdum}.}
+
+\selectlanguage{arabic}
+
+\begin{theorem}
+There is no largest prime number.
+\end{theorem}
+\begin{proof}
+\begin{enumerate}[<+-| alert@+>]
+\item Suppose $p$ were the largest prime number.
+\item Let $q$ be the product of the first $p$ numbers.
+\item Then $q+1$ is not divisible by any of them.
+\item But $q + 1$ is greater than $1$, thus divisible by some prime
+number not in the first $p$ numbers.\qedhere
+\end{enumerate}
+\end{proof}
+
+\end{frame}
+
+\subsection{Zooming}
+
+\selectlanguage{arabic}
+
+\setbeamertemplate{frametitle}[default][right]
+
+\begin{frame}[fragile]
+\frametitle{Zooming}
+
+
+\framezoom<1><2>[border=2](1cm,1cm)(2cm,2cm)
+\pgfimage[height=4cm]{example-image}
+
+\begin{codeblock}
+\framezoom<1><2>[border=2](1cm,1cm)(2cm,2cm)
+% (1cm,1cm)=(<upper right x>,<upper right y>)
+% (2cm,2cm)=(<zoom area width>,<zoom area depth>)
+\pgfimage[height=5cm]{example-image}
+\end{codeblock}
+
+\end{frame}
+
+\end{document}

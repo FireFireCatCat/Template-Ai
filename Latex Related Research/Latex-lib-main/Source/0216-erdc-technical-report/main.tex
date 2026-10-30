@@ -1,0 +1,121 @@
+\documentclass{erdc}
+
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+% The pinned TeX image does not ship ERDC's historical mathgifg font package.
+% A local compatibility shim keeps the class's documented interface while
+% allowing the report to use the standard Computer Modern math fonts.
+
+\reportnum{NRU-TR-26-014}
+\program{Urban Systems and Service Reliability}
+\title{A Field Guide to Reliable Public-Service Pilots}
+\subtitle{Measurement, handover, and lessons from a six-month trial}
+\date{August 2026}
+\author{Maya Chen \and Idris Okafor}
+\affiliation{Northbridge Research Unit\\
+  14 Meridian Square\\
+  Northbridge NB4 2QJ}
+\reporttype{Technical Information Report}
+\additionalinfo{Prepared for the Public Service Reliability Programme}
+\contractnum{NRU-26-C-014}
+\monitoredby{Northbridge Research Unit\\
+  Programme Evaluation Office}
+
+\begin{document}
+\frontmatter
+% The historical ERDC cover always requests the USACE castle artwork.  Keep
+% this generic starter independent of that institutional mark while retaining
+% the cover-art slot's proportions.
+\let\erdcOriginalIncludegraphics\includegraphics
+\renewcommand{\includegraphics}[2][]{\rule{65pt}{40pt}}
+\maketitle
+\let\includegraphics\erdcOriginalIncludegraphics
+\tableofcontents
+\listoffiguresandtables
+
+\chapter{Executive Summary}
+
+This report records a six-month pilot for improving the reliability of a public
+service that is delivered through several local teams. The design is intentionally
+modular: each team can adopt the measurement sheet, weekly review, and handover
+checklist without changing its operating system.
+
+The pilot reduced the median time from a reported fault to a confirmed owner from
+31 hours to 9 hours. The result depended less on new equipment than on making
+ownership visible and closing the loop with the person who raised the issue.
+
+\begin{table}[ht]
+  \centering
+  \caption{Pilot measures}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Measure & Baseline & Pilot & Change \\
+    \midrule
+    Median ownership time (hours) & 31 & 9 & $-71\%$ \\
+    Items closed within target & 54\% & 82\% & $+28$ pp \\
+    Repeat reports within 30 days & 19\% & 12\% & $-7$ pp \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\chapter{Pilot Design}
+\section{Operating model}
+
+Every report entered a shared queue with three mandatory fields: location,
+severity, and named owner. A short morning review handled new high-severity
+items; a weekly review looked for repeat failures and work that had crossed its
+target date.
+
+\section{Measurement}
+
+For each item $i$, the pilot measured the elapsed ownership time
+\begin{equation}
+  T_i = t_{\mathrm{owner},i} - t_{\mathrm{report},i}.
+\end{equation}
+The headline result is the median of $T_i$, not the mean, because a small number
+of unusually complex items would otherwise dominate the operational signal.
+
+\chapter{Results}
+
+The largest improvement occurred in the first eight weeks, when the team adopted
+a visible queue and assigned a duty manager for each shift. Improvement slowed
+after the queue became routine, suggesting that the next phase should focus on
+preventing repeat reports rather than reducing ownership time still further.
+
+\begin{table}[ht]
+  \centering
+  \caption{Weekly pilot summary}
+  \begin{tabularx}{0.9\textwidth}{@{}l r r X@{}}
+    \toprule
+    Week & New items & Closed & Observation \\
+    \midrule
+    1--2 & 38 & 29 & Establish baseline and duty-manager rotation \\
+    3--4 & 41 & 38 & Queue ownership becomes visible \\
+    5--8 & 73 & 67 & Repeat faults become the main review topic \\
+    9--12 & 64 & 61 & Handover checklist adopted by all teams \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\chapter{Handover Checklist}
+
+Before the pilot closes, the receiving team should confirm that it has:
+\begin{itemize}
+  \item an owner and deputy for each service area;
+  \item the baseline and target measures, with definitions attached;
+  \item an escalation route for overdue and high-severity items; and
+  \item a monthly review date for repeat failures and unresolved risks.
+\end{itemize}
+
+\chapter{Limitations}
+
+The pilot was not a randomised experiment and the reporting process changed during
+the first two weeks. Results should therefore be treated as operational evidence,
+not as a causal estimate that can be transferred unchanged to another service.
+
+\chapter*{Document control}
+Version 1.0; prepared as an editable technical-report starter. Replace the
+identifiers, programme names, measurements, and contacts before publication.
+\end{document}

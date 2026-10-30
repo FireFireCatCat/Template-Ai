@@ -1,0 +1,55 @@
+%% main.tex — Universite Laval master's thesis (ulthese), English mode
+%%
+%% Universite Laval requires a French abstract (Resume) alongside the main
+%% thesis text regardless of the thesis's own language, per the Faculte des
+%% etudes superieures et postdoctorales (FESP) requirements -- both are
+%% present below, that is institutional policy, not a mistake.
+%%
+%% Compile: pdflatex main, bibtex main, pdflatex main, pdflatex main.
+
+\documentclass[MSc,french,english]{ulthese}
+
+\frenchsetup{%
+  StandardItemizeEnv=true,
+  ThinSpaceInFrenchNumbers=true,
+  og=«, fg=»
+}
+
+\bibliographystyle{apalike}
+
+\titre{Adaptive Sampling Strategies for Environmental Sensor Networks}
+\auteur{Alexandre Bouchard}
+\programme{Ma\^itrise en g\'enie \'electrique}
+\direction{Prof. Marie Tremblay, directrice de recherche}
+
+\begin{document}
+
+\frontmatter
+
+\frontispice
+
+\include{resume}
+\include{abstract}
+\cleardoublepage
+
+\tableofcontents
+\cleardoublepage
+
+\listoftables
+\cleardoublepage
+
+\listoffigures
+\cleardoublepage
+
+\include{remerciements}
+\include{avant-propos}
+
+\mainmatter
+
+\include{introduction}
+\include{chapitre1}
+\include{chapitre2}
+\include{conclusion}
+
+\bibliography{references}
+\end{document}

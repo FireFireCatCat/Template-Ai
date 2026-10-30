@@ -1,0 +1,151 @@
+%% Harbin Institute of Technology thesis starter — hithesis document class.
+%%
+%% hithesis is NOT included in this download: it ships with TeX Live (and with
+%% latextemplates.com's compiler), so bundling a copy would only pin you to an
+%% older class than your own distribution already has.
+%%
+%% Class documentation: texdoc hithesis  |  https://ctan.org/pkg/hithesis
+%% Licence: hithesis.cls is LPPL-1.3a, (c) 2017-2022 Chu Yanshuo.
+%%
+%% XELATEX IS REQUIRED, not a preference. hithesis loads ctexbook, which loads
+%% xeCJK; neither works under pdflatex, so a pdflatex run dies at the class
+%% rather than producing a worse-looking PDF. See engine.txt.
+%%
+%% `fontset=fandol' is passed EXPLICITLY. Left unset, ctex probes the system
+%% for a CJK font family and prefers Windows fonts (SimSun/SimHei) that exist
+%% on almost no Linux box or CI runner; the failure is a font-not-found abort
+%% at load time, on a machine where the class itself is installed correctly.
+%% Fandol ships with TeX Live itself, so naming it is what makes this starter
+%% compile the same way everywhere. Drop the option on a machine with the
+%% official Chinese fonts if you want the exact submission typefaces.
+%%
+%% `type=master' selects the master's-degree title pages and single-sided
+%% layout. The class also accepts type=bachelor and type=doctor, which change
+%% the cover sheets, the page-numbering rules, and (for doctor) switch to
+%% two-sided printing — so this is the first option to check against your own
+%% degree, not a cosmetic default.
+%%
+%% `newtxmath=false' works around a genuine clash INSIDE the class, not a
+%% preference. hithesis loads newtxmath and then, ~80 lines later, amssymb;
+%% both define \Bbbk, so the default settings abort with
+%%   ! LaTeX Error: Command `\Bbbk' already defined.
+%% before a single page is typeset. The class ships this boolean as its own
+%% escape hatch. Turning it off gives you the Times math from newtxtext
+%% rather than newtxmath's; if you need newtxmath specifically, load amssymb
+%% yourself before the class instead.
+\documentclass[type=master,fontset=fandol,newtxmath=false]{hithesis}
+
+%% Every cover-sheet field is a key of \hitsetup. They are separate Chinese and
+%% English keys rather than one bilingual field because hithesis typesets TWO
+%% covers: the Chinese title pages and, for master's/doctoral theses, a
+%% separate English cover. Leaving an e... key empty does not fall back to the
+%% Chinese one; it prints blank on the English cover.
+\hitsetup{
+  ctitle       = {哈尔滨工业大学学位论文模板},
+  etitle       = {A Thesis Template for Harbin Institute of Technology},
+  cauthor      = {张三},
+  eauthor      = {Zhang San},
+  cstudentid   = {21S000000},
+  cdate        = {2026年8月},
+  edate        = {August, 2026},
+  cxueke       = {工学},
+  exueke       = {Engineering},
+  csubject     = {计算机科学与技术},
+  esubject     = {Computer Science and Technology},
+  caffil       = {计算机科学与技术学院},
+  eaffil       = {School of Computer Science and Technology},
+  csupervisor  = {李四教授},
+  esupervisor  = {Prof. Li Si},
+  %% Keywords are COMMA-SEPARATED LISTS, not free text: the class splits on the
+  %% comma and re-joins with its own separator (a Chinese enumeration comma for
+  %% ckeywords, "; " for ekeywords). Typing your own separator here gets it
+  %% printed literally alongside the class's.
+  ckeywords    = {学位论文, 模板, 排版},
+  ekeywords    = {thesis, template, typesetting},
+}
+
+\begin{document}
+
+%% The two abstracts are declared BEFORE \makecover and stored, not typeset in
+%% place: \makecover emits the covers and then the abstract pages in the order
+%% the university requires. Moving these below \makecover silently produces a
+%% thesis with empty abstract pages, because the macro has already expanded.
+\begin{cabstract}
+  中文摘要应当概括论文的研究背景、所采用的方法、主要结果与结论。摘要是独立
+  成篇的短文，不应出现图表、公式编号或参考文献引用。
+\end{cabstract}
+
+\begin{eabstract}
+  The English abstract states the problem, the method, the principal results
+  and the conclusions. It is self-contained: no citations, no numbered
+  equations, and no references to figures or tables in the body.
+\end{eabstract}
+
+%% \makecover, NOT \maketitle. hithesis does `\let\title\@gobble' and never
+%% redefines \maketitle, so calling \maketitle here reaches LaTeX's stock one,
+%% which has no title to print and stops with "! LaTeX Error: No \title given."
+%% \makecover is what emits the Chinese covers, the English cover, and then
+%% both abstract pages.
+\makecover
+
+\frontmatter
+\tableofcontents
+
+\mainmatter
+
+\chapter{绪论}
+\label{chap:intro}
+介绍研究背景与意义，说明国内外研究现状，并给出本文的主要工作与组织结构。
+
+\section{研究背景}
+在这里展开背景论述。
+
+\section{本文主要工作}
+概述各章内容。
+
+\chapter{相关理论与方法}
+\label{chap:method}
+阐述论文所依据的理论基础与所采用的方法。
+
+\section{表格示例}
+表~\ref{tab:example} 给出了一个三线表示例。
+
+\begin{table}[htbp]
+  \centering
+  \caption{实验结果对比}
+  \label{tab:example}
+  \begin{tabular}{lrr}
+    \hline
+    方法 & 准确率 & 耗时/ms \\
+    \hline
+    基线方法 & 0.912 & 24 \\
+    本文方法 & 0.947 & 18 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\section{公式示例}
+\begin{equation}
+  \label{eq:example}
+  y = \sum_{i=1}^{n} w_i x_i + b
+\end{equation}
+
+式~\eqref{eq:example} 定义了模型的线性部分。
+
+\chapter{实验与分析}
+\label{chap:exp}
+给出实验设置、评价指标与结果分析，并与第~\ref{chap:method} 章的方法相对应。
+
+%% \conclusions is an ENVIRONMENT, not a \chapter: it emits the unnumbered
+%% "结论" heading the university mandates, with the matching English entry in
+%% the bilingual table of contents. A \chapter*{结论} would look identical on
+%% the page and be missing from both contents lists.
+\begin{conclusions}
+  总结全文的主要结论，说明工作的创新点与不足，并展望后续研究方向。
+\end{conclusions}
+
+\begin{acknowledgements}
+  感谢导师的悉心指导，感谢课题组同学与家人的支持。
+\end{acknowledgements}
+
+\end{document}

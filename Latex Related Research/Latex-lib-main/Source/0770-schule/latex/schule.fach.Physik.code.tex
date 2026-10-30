@@ -1,0 +1,33 @@
+% ********************************************************************
+% Physik                                                             *
+% ********************************************************************
+\sisetup{exponent-product = \cdot, output-decimal-marker = {,}}
+
+% Alte Units-Funktion übernehmen (damit siunits überschreiben)
+% ********************************************************************
+
+\RenewDocumentCommand{\unit}{om}{
+    \IfValueT{#1}{#1\,}%
+    \ifthenelse{\boolean{mmode}}{\mathrm{#2}}{#2}
+}
+\NewDocumentCommand{\unitfrac}{omm}{
+    \IfValueT{#1}{#1\,}%
+    \ifthenelse{\boolean{mmode}}{%
+        \nicefrac[\mathrm]{#2}{#3}%
+    }%
+    {%
+        \nicefrac{#2}{#3}%
+    }%
+}
+
+
+% Konstanten
+% ********************************************************************
+
+\newcommand{\elementarladung}{\unit[1,602 \cdot 10^{-19}]{C}}
+\newcommand{\planckscheEV}{\unit[4,1357 \cdot 10^{-15}]{eVs}}
+\newcommand{\planckscheJ}{\unit[6,626 \cdot 10^{-34}]{Js}}
+\newcommand{\elektronenmasse}{\unit[9,109 \cdot 10^{-31}]{kg}}
+\newcommand{\protonenmasse}{\unit[1,673 \cdot 10^{-27}]{kg}}
+\newcommand{\lichtgeschwindigkeit}{\unitfrac[\num{2,9979e8}]{m}{s}}
+\newcommand{\rydbergfrequenz}{\unit[3,28984 \cdot 10^{15}]{Hz}}

@@ -1,0 +1,1096 @@
+% ==========================================================
+% fariscovernew.sty — دليل الاستخدام الكامل
+% Compile: xelatex
+% ==========================================================
+\documentclass[a4paper,12pt]{report}
+\usepackage[margin=1.5cm]{geometry}
+
+% 1-part-Languages and Fonts
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage[numerals=eastern]{arabic}
+\setotherlanguage{english}
+\newfontfamily\arabicfont[Script=Arabic]{Amiri}
+\newfontfamily\englishfont{Latin Modern Roman}
+
+% 2-part-Mono font
+\setmonofont{DejaVu Sans Mono}[Scale=MatchLowercase]
+
+% 3-part-amsmath
+\usepackage{amsmath}
+
+\usepackage{xcolor}
+\usepackage{listings}
+
+% 4-part-Safe Arabic macro inside code
+\newcommand{\AR}[1]{\(\text{\beginR\arabicfont #1\endR}\)}
+\newcommand{\en}[1]{\textenglish{ #1}}
+% 5-part-Listing style
+\lstdefinestyle{fariscode}{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{gray!60},
+  backgroundcolor=\color{gray!3},
+  columns=fullflexible,
+  keepspaces=true,
+  language={[LaTeX]TeX},
+  showstringspaces=false,
+  escapeinside={@}{@}
+}
+
+% 6-part-Package
+\usepackage{fariscovernew}
+
+% 7-part-Helpers
+\usepackage{adjustbox}
+\usepackage{fancybox}
+
+\title{دليل استعمال الحزمة (\textenglish{fariscovernew - v1.1}) باللغة العربية\\
+مع إمكانية عرض الأوامر المختلفة والكود}
+\author{تأليف الأستاذ فارس الحيدري}
+\date{\en{2026/03/21}}
+
+\makeatletter
+\def\@seccntformat#1{\csname the#1\endcsname\quad}
+\makeatother
+
+\usepackage[unicode,colorlinks=true,linkcolor=blue,bookmarks=false]{hyperref}
+
+\pdfstringdefDisableCommands{%
+  \def\textarabic#1{#1}%
+  \def\textenglish#1{#1}%
+}
+
+\usepackage{chngcntr}
+
+\AtBeginDocument{%
+  \counterwithout{section}{chapter}%
+  \counterwithin{subsection}{section}%
+  \counterwithin{subsubsection}{subsection}%
+  \setcounter{secnumdepth}{3}%
+  \setcounter{tocdepth}{3}%
+  \makeatletter
+  \renewcommand\thesection{\arabic{section}}%
+  \renewcommand\thesubsection{\arabic{section}-\arabic{subsection}}%
+  \renewcommand\thesubsubsection{\arabic{section}-\arabic{subsection}-\arabic{subsubsection}}%
+  \makeatother
+}
+
+% ====================================
+
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+
+\clearpage
+
+% ============================ section= one ==========================
+\section{سطر واحد بسيط لتصميم صفحة عنوان مميزة}
+% ==================================================================
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisTitlePage[A][90][45][RoyalBlue][Amiri][Amiri]{ @\AR{العنوان الرئيسي}@ }{ @\AR{العنوان الفرعي}@ }
+\end{lstlisting}
+\end{english}
+
+\vspace{0.5cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisTitlePage[A][90][60][RoyalBlue][Amiri][Amiri]{العنوان الرئيسي}{العنوان الفرعي}
+\end{minipage}
+}
+
+\vspace{6cm}
+
+% ============================ section= second ========================
+\section{الأنماط الأساسية التي تحتويها الحزمة}
+% ==================================================================
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{minimal}   % @\AR{النمط البسيط}@
+\FarisSetStyle{triple}    % @\AR{نمط ثلاثي}@
+\FarisSetStyle{diamond}   % @\AR{النمط الماسي البسيط}@
+\FarisSetStyle{diamondx}  % @\AR{النمط الماسي المتقدم}@
+\FarisSetStyle{wave}      % @\AR{نمط متموج}@
+\FarisSetStyle{sidebar}   % @\AR{شريط جانبي}@
+\FarisSetStyle{diagonal}  % @\AR{النمط القطري}@
+\FarisSetStyle{badge}     % @\AR{نمط الشارة}@
+\FarisSetStyle{ribbon}    % @\AR{النمط الشريطي}@
+\end{lstlisting}
+\end{english}
+
+\subsection{أوامر تخصيص خاصة بـ \textenglish{diamondx}}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{الألوان المتممة}@
+\FarisDiamondBackComplementOn
+\FarisDiamondBackComplementOff
+
+% @\AR{التينتات}@
+\FarisSetDiamondTints{front}{backA}
+\FarisSetDiamondBackTintII{backB}
+
+% @\AR{الزوايا}@
+\FarisSetDiamondAnglePair{angle}
+\FarisSetDiamondAngles{backAngle}{frontAngle}
+\FarisSetDiamondBackDelta{delta}
+
+% @\AR{الألوان الثلاثية}@
+\FarisSetDiamondTriadOffset{offset}
+\end{lstlisting}
+\end{english}
+
+\newpage
+
+% ============================ section= Three =========================
+\section{أمثلة سريعة لكل نمط}
+% ==================================================================
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{ثلاثي}@
+\FarisSetStyle{triple}
+\FarisTitlePage[A][70][-][Blue][Amiri][Amiri]{@\AR{العنوان}@}{@\AR{الفرعي}@}
+
+% @\AR{قطري}@
+\FarisSetStyle{diagonal}
+\FarisTitlePage[A][70][-][Red][Amiri][Amiri]{@\AR{العنوان}@}{@\AR{الفرعي}@}
+
+% @\AR{موجي}@
+\FarisSetStyle{wave}
+\FarisTitlePage[A][70][-][Green][Amiri][Amiri]{@\AR{العنوان}@}{@\AR{الفرعي}@}
+
+% @\AR{شارة}@
+\FarisSetStyle{badge}
+\FarisTitlePage[A][70][-][Purple][Amiri][Amiri]{@\AR{العنوان}@}{@\AR{الفرعي}@}
+
+% @\AR{ماسي بسيط}@
+\FarisSetStyle{diamond}
+\FarisTitlePage[A][70][-][Orange][Amiri][Amiri]{@\AR{العنوان}@}{@\AR{الفرعي}@}
+
+% @\AR{بسيط}@
+\FarisSetStyle{minimal}
+\FarisTitlePage[A][70][-][Gray][Amiri][Amiri]{@\AR{العنوان}@}{@\AR{الفرعي}@}
+
+% @\AR{شريطي}@
+\FarisSetStyle{ribbon}
+\FarisTitlePage[A][70][-][Maroon][Amiri][Amiri]{@\AR{العنوان}@}{@\AR{الفرعي}@}
+
+% @\AR{جانبي}@
+\FarisSetStyle{sidebar}
+\FarisTitlePage[A][70][-][Navy][Amiri][Amiri]{@\AR{العنوان}@}{@\AR{الفرعي}@}
+
+% @\AR{ماسي متقدم}@
+\FarisSetStyle{diamondx}
+\FarisSetColor{SlateBlue}
+\FarisDiamondBackComplementOn
+\FarisSetDiamondTints{30}{40}
+\FarisTitlePage[A][70][-][SlateBlue][Amiri][Amiri]{@\AR{العنوان}@}{@\AR{الفرعي}@}
+\end{lstlisting}
+\end{english}
+
+\newpage
+
+% ============================ section= Four ==========================
+\section{مثال كامل لاستخدام \textenglish{diamondx}}
+% ==================================================================
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{diamondx}
+\FarisSetColor{SlateBlue}
+\FarisDiamondBackComplementOn
+\FarisSetDiamondTints{30}{30}      % @\AR{تينت الأمامي و(A)}@
+\FarisSetDiamondBackTintII{40}     % @\AR{تينت (B)}@
+\FarisSetDiamondAnglePair{45}      % @\AR{زوايا ±45°}@
+\FarisSetDiamondBackDelta{15}      % @\AR{B = A + 15°}@
+\FarisSetDiamondTriadOffset{75}    % @\AR{لون B بين الأساس والمتمّم}@
+\FarisTitlePage[A][90][-][SlateBlue][Amiri][Amiri][0.8]{@\AR{عنوان متقدم}@}{@\AR{عنوان فرعي}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{2cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{diamondx}
+\FarisSetColor{SlateBlue}
+\FarisDiamondBackComplementOn
+\FarisSetDiamondTints{30}{30}
+\FarisSetDiamondBackTintII{40}
+\FarisSetDiamondAnglePair{45}
+\FarisSetDiamondBackDelta{15}
+\FarisSetDiamondTriadOffset{75}
+\FarisTitlePage[A][90][-][SlateBlue][Amiri][Amiri][0.8]{عنوان متقدم}{عنوان فرعي}
+\end{minipage}
+}
+
+\newpage
+
+% ============================ section = Five ==========================
+\section{تحديد حجم النصوص}
+% ==================================================================
+
+\subsection{تحديد حجم النص الأساسي \textenglish{90pt} فقط}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{العنوان الفرعي يأخذ الحجم التلقائي 4/5 من الرئيسي}@
+\FarisTitlePage[A][90][-][DarkOrange1][Diwani Simple Striped][Amiri]{@\AR{الفصل الأول}@}{@\AR{العنوان الفرعي}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{2cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisTitlePage[A][90][-][DarkOrange1][Diwani Simple Striped][Amiri]{الفصل الأول}{العنوان الفرعي}
+\end{minipage}
+}
+
+\vspace{6cm}
+
+\subsection{تحديد الرئيسي \textenglish{90pt} والفرعي \textenglish{45pt}}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{تحديد حجم النص الأساسي والعنوان الفرعي}@
+% @\AR{ملاحظة: إذا كان الفرعي أكبر من الرئيسي يُعاد تلقائياً لـ 4/5 من الرئيسي}@
+\FarisTitlePage[A][90][45][DarkOrange1][Diwani Simple Striped][Amiri]{@\AR{الفصل الأول}@}{@\AR{العنوان الفرعي}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{6.5cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisTitlePage[A][90][45][DarkOrange1][Diwani Simple Striped][Amiri]{الفصل الأول}{العنوان الفرعي}
+\end{minipage}
+}
+
+\newpage
+
+\subsection{تحديد الرئيسي \textenglish{90pt} والفرعي بالنسبة \textenglish{0.5}}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{حجم الفرعي = 0.5 × حجم الرئيسي = 45pt}@
+\FarisTitlePage[A][90][-][Crimson][Amiri][Amiri][0.5]{@\AR{الفصل الثاني}@}{@\AR{العنوان الفرعي}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{1cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisTitlePage[A][90][-][Crimson][Diwani Simple Striped][Amiri][0.5]{الفصل الثاني}{العنوان الفرعي}
+\end{minipage}
+}
+
+\vspace{8cm}
+
+\subsection{قواعد حجم النص — جدول مرجعي}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{TitlePt} & \textbf{SubtitlePt} & \textbf{SubRatio} & \AR{النتيجة} \\
+\hline
+90 & - & - & \AR{رئيسي 90 · فرعي
+\en{ 72 (4/5)}} \\
+\hline
+90 & 45 & - & \AR{رئيسي 90 · فرعي 45} \\
+\hline
+90 & - & 0.5 & \AR{رئيسي 90 · فرعي 45} \\
+\hline
+0 & 45 & - & \AR{رئيسي \en{56.25 (5/4×45)} · فرعي 45} \\
+\hline
+- & 45 & - & \AR{رئيسي
+\en{56.25 (5/4×45)} · فرعي 45} \\
+\hline
+90 & 0 & 0.5 & \AR{رئيسي 90 · فرعي 45 (
+\en{SubRatio} يأخذ الأولوية)} \\
+\hline
+90 & 90 & - & \AR{رئيسي 90 · فرعي 72 (حارس التراتبية)} \\
+\hline
+\end{tabular}
+\end{center}
+
+\newpage
+
+% ============================ section = Sex ==========================
+\section{تلوين النصوص — الجديد في الإصدار \textenglish{v1.1}}
+% ==================================================================
+
+تتيح الحزمة تخصيص لون العنوان الرئيسي والفرعي بشكل مستقل عن لون التصميم العام.
+الألوان اختيارية، إذا لم تُحدَّد تُشتق تلقائياً من اللون الأساسي.
+
+\subsection{الأوامر المتاحة}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{تخصيص لون العنوان الرئيسي}@
+\FarisSetTitleTextColor{color}
+
+% @\AR{تخصيص لون العنوان الفرعي}@
+\FarisSetSubtitleTextColor{color}
+
+% @\AR{إعادة ضبط لون العنوان الرئيسي للافتراضي}@
+\FarisResetTitleTextColor
+
+% @\AR{إعادة ضبط لون العنوان الفرعي للافتراضي}@
+\FarisResetSubtitleTextColor
+
+% @\AR{إعادة ضبط كليهما معاً}@
+\FarisResetTextColors
+\end{lstlisting}
+\end{english}
+
+\vspace{0.5cm}
+
+\subsection{قاعدة الأولوية}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{إذا حُدِّد اللون يدوياً  يأخذ الأولوية دائماً}@
+\FarisSetTitleTextColor{orange}    % @\AR{ يُطبَّق}@
+
+% @\AR{إذا كان فارغاً  يُشتق من BaseColor!85!black}@
+\FarisResetTitleTextColor         % @\AR{ يعود للافتراضي}@
+\end{lstlisting}
+\end{english}
+
+\newpage 
+
+\subsection{مثال: عنوان برتقالي على خلفية داكنة}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetTitleTextColor{orange}
+\FarisSetSubtitleTextColor{orange}
+\FarisTitlePage[A][90][-][DarkOrange1][Diwani Simple Striped][Amiri]{@\AR{الفصل السادس}@}{@\AR{الكيمياء التحليلية}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{1cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetTitleTextColor{orange}
+\FarisSetSubtitleTextColor{orange}
+\FarisTitlePage[A][90][-][DarkOrange1][Diwani Simple Striped][Amiri]{الفصل السادس}{الكيمياء التحليلية}
+\end{minipage}
+}
+
+\vspace{6cm}
+
+\subsection{مثال: لون مختلف لكل عنوان}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetTitleTextColor{NavyBlue}
+\FarisSetSubtitleTextColor{DarkOrange1}
+\FarisTitlePage[A][90][-][ForestGreen][Amiri][Amiri]{@\AR{الفصل السابع}@}{@\AR{الكيمياء العضوية}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{6cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetTitleTextColor{NavyBlue}
+\FarisSetSubtitleTextColor{DarkOrange1}
+\FarisTitlePage[A][90][-][ForestGreen][Amiri][Amiri]{الفصل السابع}{الكيمياء العضوية}
+\end{minipage}
+}
+
+\newpage
+
+\subsection{مثال: إعادة الضبط بعد التخصيص}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{غلاف 1: ألوان مخصصة}@
+\FarisSetTitleTextColor{white}
+\FarisSetSubtitleTextColor{black}
+\FarisTitlePage[A][90][-][DarkOrange1][Amiri][Amiri]{@\AR{الفصل الأول}@}{@\AR{المقدمة}@}
+
+% @\AR{غلاف 2: العودة للافتراضي (مشتق من BaseColor)}@
+\FarisResetTextColors
+\FarisTitlePage[A][90][-][NavyBlue][Amiri][Amiri]{@\AR{الفصل الثاني}@}{@\AR{الفيزياء}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{0.5cm}
+
+\subsection{جدول الألوان المدعومة}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{أسماء xcolor الجاهزة}@
+\FarisSetTitleTextColor{white}
+\FarisSetTitleTextColor{black}
+\FarisSetTitleTextColor{NavyBlue}
+\FarisSetTitleTextColor{DarkOrange1}
+\FarisSetTitleTextColor{ForestGreen}
+\FarisSetTitleTextColor{Crimson}
+\FarisSetTitleTextColor{RoyalBlue}
+\FarisSetTitleTextColor{Gold1}
+
+% @\AR{ألوان مخلوطة}@
+\FarisSetTitleTextColor{blue!70!black}
+\FarisSetTitleTextColor{red!80!white}
+\FarisSetTitleTextColor{DarkOrange1!60!black}
+
+% @\AR{ألوان RGB مخصصة}@
+\definecolor{MyColor}{RGB}{25,118,210}
+\FarisSetTitleTextColor{MyColor}
+\end{lstlisting}
+\end{english}
+
+\newpage
+
+% ============================ section = Seven ========================
+\section{الأنماط المتوفرة في الحزمة}
+% ==================================================================
+
+\subsection{نمط \textenglish{triple} (النمط الافتراضي)}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{triple}
+\FarisSetColor{ForestGreen}
+\FarisTitlePage[A][80][-][ForestGreen][Amiri][Amiri][0.6]{@\AR{نمط ثلاثي الطبقات}@}{@\AR{النمط الافتراضي للحزمة}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{6cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisResetTextColors
+\FarisSetStyle{triple}
+\FarisSetColor{ForestGreen}
+\FarisTitlePage[A][75][-][ForestGreen][Amiri][Amiri][0.6]{نمط ثلاثي الطبقات}{النمط الافتراضي للحزمة}
+\end{minipage}
+}
+
+\newpage
+
+\subsection{نمط \textenglish{diagonal} (القطري)}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{diagonal}
+\FarisSetColor{RoyalBlue}
+\FarisTitlePage[A][70][-][RoyalBlue][Amiri][Amiri][0.7]{@\AR{نمط قطري}@}{@\AR{تصميم بخطوط مائلة}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{1cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{diagonal}
+\FarisSetColor{RoyalBlue}
+\FarisTitlePage[A][70][-][RoyalBlue][Amiri][Amiri][0.7]{نمط قطري}{تصميم بخطوط مائلة}
+\end{minipage}
+}
+
+\vspace{6cm}
+
+\subsection{نمط \textenglish{wave} (الموجي)}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{wave}
+\FarisSetColor{Teal}
+\FarisTitlePage[A][75][-][Teal][Amiri][Amiri][0.65]{@\AR{نمط موجي}@}{@\AR{تصميم بموجات منحنية}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{7cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{wave}
+\FarisSetColor{Teal}
+\FarisTitlePage[A][75][-][Teal][Amiri][Amiri][0.65]{نمط موجي}{تصميم بموجات منحنية}
+\end{minipage}
+}
+
+\newpage
+
+\subsection{نمط \textenglish{badge} (الشارة)}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{badge}
+\FarisSetColor{Purple}
+\FarisTitlePage[A][65][-][Purple][Amiri][Amiri][0.8]{@\AR{نمط الشارة}@}{@\AR{تصميم دائري متداخل}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{1cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{badge}
+\FarisSetColor{Purple}
+\FarisTitlePage[A][65][-][Purple][Amiri][Amiri][0.8]{نمط الشارة}{تصميم دائري متداخل}
+\end{minipage}
+}
+
+\vspace{6cm}
+
+\subsection{نمط \textenglish{diamond} (الماسي البسيط)}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{diamond}
+\FarisSetColor{OrangeRed}
+\FarisTitlePage[A][60][-][OrangeRed][Amiri][Amiri][0.75]{@\AR{نمط ماسي}@}{@\AR{تصميم مربع مدور}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{6cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{diamond}
+\FarisSetColor{OrangeRed}
+\FarisTitlePage[A][60][-][OrangeRed][Amiri][Amiri][0.75]{نمط ماسي}{تصميم مربع مدور}
+\end{minipage}
+}
+
+\newpage
+
+\subsection{نمط \textenglish{minimal} (البسيط)}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{minimal}
+\FarisSetColor{DarkSlateGray}
+\FarisTitlePage[A][55][-][DarkSlateGray][Amiri][Amiri][0.9]{@\AR{نمط بسيط}@}{@\AR{تصميم بحد أدنى من العناصر}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{1cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{minimal}
+\FarisSetColor{DarkSlateGray}
+\FarisTitlePage[A][55][-][DarkSlateGray][Amiri][Amiri][0.9]{نمط بسيط}{تصميم بحد أدنى من العناصر}
+\end{minipage}
+}
+
+\vspace{6cm}
+
+\subsection{نمط \textenglish{ribbon} (الشريط)}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{ribbon}
+\FarisSetColor{Maroon}
+\FarisTitlePage[A][70][-][Maroon][Amiri][Amiri][0.6]{@\AR{نمط الشريط}@}{@\AR{تصميم بأشرطة متقاطعة}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{6cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{ribbon}
+\FarisSetColor{Maroon}
+\FarisTitlePage[A][70][-][Maroon][Amiri][Amiri][0.6]{نمط الشريط}{تصميم بأشرطة متقاطعة}
+\end{minipage}
+}
+
+\newpage
+
+\subsection{نمط \textenglish{sidebar} (الشريط الجانبي)}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{sidebar}
+\FarisSetColor{Navy}
+\FarisTitlePage[A][65][-][Navy][Amiri][Amiri][0.7]{@\AR{نمط الشريط الجانبي}@}{@\AR{تصميم بشريط يساري}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{1cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{sidebar}
+\FarisSetColor{Navy}
+\FarisTitlePage[A][65][-][Navy][Amiri][Amiri][0.7]{نمط الشريط الجانبي}{تصميم بشريط يساري}
+\end{minipage}
+}
+
+\vspace{6cm}
+
+\subsection{نمط \textenglish{diamondx} المتقدم — أساسي}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{diamondx}
+\FarisSetColor{DeepSkyBlue}
+\FarisTitlePage[A][75][-][DeepSkyBlue][Amiri][Amiri][0.6]{@\AR{النمط الماسي المتقدم}@}{@\AR{إصدار محسّن من النمط الماسي}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{6cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{diamondx}
+\FarisSetColor{DeepSkyBlue}
+\FarisTitlePage[A][75][-][DeepSkyBlue][Amiri][Amiri][0.6]{النمط الماسي المتقدم}{إصدار محسّن من النمط الماسي}
+\end{minipage}
+}
+
+\newpage
+
+\subsection{نمط \textenglish{diamondx} مع الألوان المتممة}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{diamondx}
+\FarisSetColor{Red}
+\FarisDiamondBackComplementOn    % @\AR{تفعيل الألوان المتممة}@
+\FarisTitlePage[A][70][-][Red][Amiri][Amiri][0.65]{@\AR{النمط مع ألوان متممة}@}{@\AR{استخدام الألوان المعاكسة}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{1cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{diamondx}
+\FarisSetColor{Red}
+\FarisDiamondBackComplementOn
+\FarisTitlePage[A][70][-][Red][Amiri][Amiri][0.65]{النمط مع ألوان متممة}{استخدام الألوان المعاكسة}
+\end{minipage}
+}
+
+\vspace{6cm}
+
+\subsubsection{نمط \textenglish{diamondx} مع تخصيص التينتات}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{diamondx}
+\FarisSetColor{Green}
+\FarisDiamondBackComplementOff   % @\AR{إلغاء الألوان المتممة}@
+\FarisSetDiamondTints{40}{25}    % @\AR{تينت الأمامي 40 والخلفي A بـ25}@
+\FarisSetDiamondBackTintII{35}   % @\AR{تينت الخلفي B بـ35}@
+\FarisTitlePage[A][68][-][Green][Amiri][Amiri][0.7]{@\AR{نمط بتينتات مخصصة}@}{@\AR{تحكم في شدة الألوان}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{7cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{diamondx}
+\FarisSetColor{Green}
+\FarisDiamondBackComplementOff
+\FarisSetDiamondTints{40}{25}
+\FarisSetDiamondBackTintII{35}
+\FarisTitlePage[A][68][-][Green][Amiri][Amiri][0.7]{نمط بتينتات مخصصة}{تحكم في شدة الألوان}
+\end{minipage}
+}
+
+\newpage
+
+\subsubsection{نمط \textenglish{diamondx} مع تخصيص الزوايا}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{diamondx}
+\FarisSetColor{Violet}
+\FarisSetDiamondAnglePair{30}    % @\AR{زوايا ±30°}@
+\FarisSetDiamondBackDelta{20}    % @\AR{فرق 20° بين الخلفيين}@
+\FarisTitlePage[A][72][-][Violet][Amiri][Amiri][0.6]{@\AR{نمط بزوايا مخصصة}@}{@\AR{تدوير المربعات بزوايا مختلفة}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{1cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{diamondx}
+\FarisSetColor{Violet}
+\FarisSetDiamondAnglePair{30}
+\FarisSetDiamondBackDelta{20}
+\FarisTitlePage[A][72][-][Violet][Amiri][Amiri][0.6]{نمط بزوايا مخصصة}{تدوير المربعات بزوايا مختلفة}
+\end{minipage}
+}
+
+\vspace{6cm}
+
+\subsubsection{نمط \textenglish{diamondx} مع الألوان الثلاثية}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{diamondx}
+\FarisSetColor{Orange}
+\FarisSetDiamondTriadOffset{120} % @\AR{إزاحة ثلاثية 120°}@
+\FarisSetDiamondTints{30}{30}
+\FarisSetDiamondBackTintII{40}
+\FarisTitlePage[A][66][-][Orange][Amiri][Amiri][0.75]{@\AR{نمط بألوان ثلاثية}@}{@\AR{استخدام عجلة الألوان}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{6.5cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{diamondx}
+\FarisSetColor{Orange}
+\FarisSetDiamondTriadOffset{120}
+\FarisSetDiamondTints{30}{30}
+\FarisSetDiamondBackTintII{40}
+\FarisTitlePage[A][66][-][Orange][Amiri][Amiri][0.75]{نمط بألوان ثلاثية}{استخدام عجلة الألوان}
+\end{minipage}
+}
+
+\newpage
+
+\subsubsection{تخصيص كامل للنمط \textenglish{diamondx}}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{diamondx}
+\FarisSetColor{DarkMagenta}
+\FarisDiamondBackComplementOn
+\FarisSetDiamondTints{25}{35}
+\FarisSetDiamondBackTintII{45}
+\FarisSetDiamondAnglePair{60}
+\FarisSetDiamondBackDelta{25}
+\FarisSetDiamondTriadOffset{90}
+\FarisTitlePage[A][64][-][DarkMagenta][Amiri][Amiri][0.8]{@\AR{تخصيص شامل}@}{@\AR{جميع الإعدادات مجتمعة}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{1.5cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{diamondx}
+\FarisSetColor{DarkMagenta}
+\FarisDiamondBackComplementOn
+\FarisSetDiamondTints{25}{35}
+\FarisSetDiamondBackTintII{45}
+\FarisSetDiamondAnglePair{60}
+\FarisSetDiamondBackDelta{25}
+\FarisSetDiamondTriadOffset{90}
+\FarisTitlePage[A][64][-][DarkMagenta][Amiri][Amiri][0.8]{تخصيص شامل}{جميع الإعدادات مجتمعة}
+\end{minipage}
+}
+
+\vspace{5cm}
+
+% ==========================  section = eight  =========================
+\section{استخدام خطوط إنجليزية}
+% ==================================================================
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{badge}
+\FarisSetColor{SteelBlue}
+\FarisTitlePage[E][80][-][SteelBlue][Times New Roman][Georgia][0.7]{Advanced LaTeX Package}{For Beautiful Title Pages}
+\end{lstlisting}
+\end{english}
+
+\vspace{6.5cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{badge}
+\FarisSetColor{SteelBlue}
+\FarisTitlePage[E][70][-][SteelBlue][Times New Roman][Georgia][0.7]{Advanced LaTeX Package}{For Beautiful Title Pages}
+\end{minipage}
+}
+
+\newpage
+
+% ==========================  section = nine  =========================
+\section{مثال مختلط: عربي وإنجليزي}
+% ==================================================================
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{wave}
+\FarisSetColor{Chocolate}
+\FarisTitlePage[A][85][-][Chocolate][Amiri][Amiri][0.5]{@\AR{دليل المستخدم}@}{User Manual - @\AR{الإصدار الثاني}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{1cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisSetStyle{wave}
+\FarisSetColor{Chocolate}
+\FarisTitlePage[A][85][-][Chocolate][Amiri][Amiri][0.5]{دليل المستخدم}{User Manual - الإصدار الثاني}
+\end{minipage}
+}
+
+\vspace{6cm}
+
+% ==========================  section = ten  ===========================
+\section{استخدام لون مخصص بصيغة \textenglish{RGB}}
+% ==================================================================
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\definecolor{CustomBlue}{RGB}{25,118,210}
+\FarisSetStyle{diagonal}
+\FarisSetColor{CustomBlue}
+\FarisTitlePage[A][78][-][CustomBlue][Amiri][Amiri][0.65]{@\AR{لون مخصص}@}{@\AR{استخدام صيغة RGB}@}
+\end{lstlisting}
+\end{english}
+
+\vspace{6cm}
+
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\definecolor{CustomBlue}{RGB}{25,118,210}
+\FarisSetStyle{diagonal}
+\FarisSetColor{CustomBlue}
+\FarisTitlePage[A][78][-][CustomBlue][Amiri][Amiri][0.65]{لون مخصص}{استخدام صيغة RGB}
+\end{minipage}
+}
+
+\newpage
+
+% ==========================  section = eleven ========================
+\section{ملخص الأوامر والمعاملات}
+% ==================================================================
+
+\subsection{بناء الأمر الأساسي}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisTitlePage[Lang][TitlePt][SubtitlePt][Color][MainFont][SubFont][SubRatio]{Title}{Subtitle}
+\end{lstlisting}
+\end{english}
+
+\subsection{المعاملات الاختيارية}
+
+\begin{itemize}
+  \item \textbf{Lang}: \AR{اللغة —} A \AR{للعربية،} E \AR{للإنجليزية}
+  \item \textbf{TitlePt}: \AR{حجم العنوان الرئيسي بالنقاط (0 أو - = افتراضي)}
+  \item \textbf{SubtitlePt}: \AR{حجم العنوان الفرعي بالنقاط (0 أو - = تلقائي)}
+  \item \textbf{Color}: \AR{لون التصميم العام}
+  \item \textbf{MainFont}: \AR{خط العنوان الرئيسي}
+  \item \textbf{SubFont}: \AR{خط العنوان الفرعي}
+  \item \textbf{SubRatio}: \AR{ نسبة حجم الفرعي من الرئيسي \en{ (1.0 — 0.1)}}
+\end{itemize}
+
+\subsection{أوامر التخصيص العامة}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetStyle{style}                    % @\AR{تحديد النمط}@
+\FarisSetColor{color}                    % @\AR{تحديد اللون الأساسي}@
+\FarisSetAccentColor{color}              % @\AR{تحديد لون الإبراز}@
+\FarisSetDims{width}{height}{corner}     % @\AR{تخصيص الأبعاد}@
+\end{lstlisting}
+\end{english}
+
+\subsection{أوامر تلوين النصوص — \textenglish{v1.1}}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisSetTitleTextColor{color}     % @\AR{لون العنوان الرئيسي}@
+\FarisSetSubtitleTextColor{color}  % @\AR{لون العنوان الفرعي}@
+\FarisResetTitleTextColor          % @\AR{إعادة لون الرئيسي للافتراضي}@
+\FarisResetSubtitleTextColor       % @\AR{إعادة لون الفرعي للافتراضي}@
+\FarisResetTextColors              % @\AR{إعادة كليهما للافتراضي}@
+\end{lstlisting}
+\end{english}
+
+\subsection{أوامر خاصة بالنمط \textenglish{diamondx}}
+
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisDiamondBackComplementOn              % @\AR{تفعيل الألوان المتممة}@
+\FarisDiamondBackComplementOff             % @\AR{إلغاء الألوان المتممة}@
+\FarisSetDiamondTints{front}{backA}        % @\AR{تينت الأمامي والخلفي A}@
+\FarisSetDiamondBackTintII{backB}          % @\AR{تينت الخلفي B}@
+\FarisSetDiamondAnglePair{angle}           % @\AR{زوايا متقابلة ±angle}@
+\FarisSetDiamondAngles{backAngle}{frontAngle} % @\AR{زوايا منفصلة}@
+\FarisSetDiamondBackDelta{delta}           % @\AR{فرق الزاوية بين الخلفيين}@
+\FarisSetDiamondTriadOffset{offset}        % @\AR{إزاحة الألوان الثلاثية}@
+\end{lstlisting}
+\end{english}
+
+\newpage
+ 
+% ==========================  section = twelve =========================
+\section{تعدد الأسطر في العناوين}
+% ==================================================================
+ 
+\AR{تدعم الحزمة الكسر التلقائي والكسر اليدوي للعناوين الطويلة، مع الحفاظ
+على اتجاه النص العربي من اليمين إلى اليسار في جميع الأسطر.}
+ 
+\subsection{الكسر اليدوي بـ \textenglish{\textbackslash\textbackslash}}
+ 
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{كسر السطر يدوياً في العنوان الفرعي}@
+\FarisTitlePage[A][90][-][Chocolate][Diwani Simple Striped][Amiri][0.7]%
+  {@\AR{الفصل السابع}@}{@\AR{الكيمياء العضوية \textbackslash\textbackslash \, الهيدروكاربونات المعوضة}@}
+\end{lstlisting}
+\end{english}
+ 
+\vspace{1.5cm}
+ 
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisResetTextColors
+\FarisTitlePage[A][90][-][Chocolate][Diwani Simple Striped][Amiri][0.7]%
+  {الفصل السابع}{الكيمياء العضوية \\ الهيدروكاربونات المعوضة}
+\end{minipage}
+}
+ 
+\vspace{5cm}
+ 
+\subsection{الكسر التلقائي للنص الطويل}
+ 
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+% @\AR{النص الطويل يُكسر تلقائياً عند امتلاء السطر (82\% من عرض الصفحة)}@
+\FarisTitlePage[A][90][-][NavyBlue][Amiri][Amiri][0.6]%
+  {@\AR{الفصل الثامن}@}{@\AR{الميكانيكا الكلاسيكية وقوانين نيوتن في الحركة والقوى}@}
+\end{lstlisting}
+\end{english}
+ 
+\vspace{6.5cm}
+ 
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisResetTextColors
+\FarisTitlePage[A][90][-][NavyBlue][Amiri][Amiri][0.6]%
+  {الفصل الثامن}{الميكانيكا الكلاسيكية وقوانين نيوتن في الحركة والقوى}
+\end{minipage}
+}
+ 
+\vspace{4cm}
+ 
+\subsection{كسر السطر في العنوان الرئيسي والفرعي معاً}
+ 
+\begin{english}
+\begin{lstlisting}[style=fariscode]
+\FarisTitlePage[A][90][-][DarkOrange1][Diwani Simple Striped][Amiri][0.6]%
+  {@\AR{الفصل التاسع \textbackslash\textbackslash \, مقدمة في الحركيات}@}{@\AR{الكيمياء الفيزيائية \textbackslash\textbackslash \, سرعة التفاعلات}@}
+\end{lstlisting}
+\end{english}
+ 
+\vspace{1cm}
+ 
+\noindent\textbf{\AR{النتيجة}:}\\[0.3cm]
+\adjustbox{scale=0.3,center}{%
+\begin{minipage}{\textwidth}
+\FarisResetTextColors
+\FarisTitlePage[A][90][-][DarkOrange1][Diwani Simple Striped][Amiri][0.6]%
+  {الفصل التاسع \\ مقدمة في الحركيات}{الكيمياء الفيزيائية \\ سرعة التفاعلات}
+\end{minipage}
+}
+
+\vspace{7cm}
+
+% ==================================================================
+\section{الأنماط المتاحة}
+% ==================================================================
+
+\begin{itemize}
+  \item \textbf{triple}: \AR{ثلاثي الطبقات (افتراضي)}
+  \item \textbf{diagonal}: \AR{قطري}
+  \item \textbf{wave}: \AR{موجي}
+  \item \textbf{badge}: \AR{شارة دائرية}
+  \item \textbf{diamond}: \AR{ماسي بسيط}
+  \item \textbf{minimal}: \AR{بسيط}
+  \item \textbf{ribbon}: \AR{شريطي}
+  \item \textbf{sidebar}: \AR{شريط جانبي}
+  \item \textbf{diamondx}: \AR{ماسي متقدم}
+\end{itemize}
+
+\newpage
+
+% ==================================================================
+\section{نصائح الاستخدام}
+% ==================================================================
+
+\begin{itemize}
+  \item \AR{استخدم XeLaTeX أو LuaLaTeX للتجميع}
+  \item \AR{تأكد من تثبيت الخطوط المطلوبة}
+  \item \AR{استخدم الترميز UTF-8}
+  \item \AR{اكتب \texttt{\textbackslash FarisResetTextColors} قبل كل غلاف جديد إذا غيّرت الألوان}
+  \item \AR{القيمة 0 في TitlePt أو SubtitlePt تُعامَل كـ ``-'' وتُشغِّل الحساب التلقائي}
+  \item \AR{الفرعي لا يتجاوز الرئيسي أبداً — الحارس التلقائي يُطبِّق 4/5 إذا تجاوز}
+  \item \AR{جرّب الأنماط المختلفة لاختيار الأنسب لمشروعك}
+  \item \AR{اضبط الألوان والخطوط حسب طبيعة المادة الدراسية}
+\end{itemize}
+
+
+% ==================================================================
+\section{  كلمة المؤلف}
+% ==================================================================
+
+
+
+  هذه الحزمة وُلدت من حاجة حقيقية: كنت أبحث عن طريقة بسيطة
+  وأنيقة لتصميم صفحات العناوين في مستنداتي العربية باستخدام
+\en{ XeLaTeX} ، فلم أجد ما يُرضيني، فقررت أن أبنيها بنفسي.
+
+  بدأت بفكرة واحدة، ثم تطورت عبر جلسات طويلة من التجريب والتصحيح والتفكير، حتى أصبحت ما تراه اليوم: تسعة أنماط، نظام ألوان مرن، حساب تلقائي للأحجام، وحراس أمان تمنع أي خطأ من الوصول إلى الناتج النهائي.
+
+  كل سطر في هذه الحزمة كُتب بعناية، وكل حارس أُضيف بعد تجربة فاشلة تعلمت منها. إن وجدت فيها فائدة، فهذا يكفيني. وإن وجدت فيها خطأ، فأنا أول من يريد أن يعرف.
+
+  أتمنى أن تُزيّن هذه الحزمة مستنداتك وكتبك ورسائلك، وأن تجعل البداية دائماً جميلة.
+\\
+\begin{center}
+                                  فارس  الحيدري \\
+                                 \en{  classsec81@gmail.com} \\
+                                  \en{2026/03/21 — v1.1} 
+\end{center}
+
+\end{document}

@@ -1,0 +1,50 @@
+\documentclass[a4paper]{scrartcl}
+\usepackage[
+    typ=kl,
+    klausurtyp=klausur,
+    fach=Informatik,
+    lerngruppe=XX,
+    erwartungshorizontAnzeigen,
+    loesungen=folgend,
+    module={Aufgabenpool}
+]{schule}
+
+\date{xx.xx.xxxx}
+\title{Beispielaufgabe}
+
+\setAufgabenpoolOptionen{optionA,optionB}
+
+\begin{document}
+    \inputOnce{bsp_text}
+
+    \begin{aufgabe}[subtitle=Beispielaufgabe, points=6]
+        Ein wirklich anderer Text für eine Aufgabe. Dazu gibt es auch die \autoref{fig:objektdiagramm}
+
+        \begin{figure}[ht]
+            \centering
+            \includegraphics[width=0.95\linewidth]{\getBasedir/../aufgabe-1}
+            \caption{Ein Objektdiagramm}
+            \label{fig:objektdiagramm}
+        \end{figure}
+
+        \ifAufgabenpoolOptionTF{optionA}{
+            Mache etwas damit.
+        }{
+            Dieses ist total egal.
+        }%
+        Sei glücklich.%
+        \ifAufgabenpoolOptionT{optionB}{
+            Aber mache etwas wirklich gutes.
+        }
+
+        \ifAufgabenpoolOptionTF{optionA}{
+            \erwartung{macht etwas damit}{5}
+        }{
+            \erwartung{macht etwas anderes damit}{5}
+        }
+        \erwartung{lässt anderes sein}{1}
+    \end{aufgabe}
+    \begin{loesung}
+        Eigentlich ist es ganz egal.
+    \end{loesung}
+\end{document}

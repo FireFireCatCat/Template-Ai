@@ -1,0 +1,91 @@
+% !TeX program = lualatex
+% precharge.tex — programme minimal de préchargement de texecole
+% ---------------------------------------------------------------
+% À compiler UNE SEULE FOIS après l'installation :
+%
+%     lualatex --shell-escape -interaction=nonstopmode precharge.tex
+%
+% Ce programme charge toutes les bibliothèques employées par texecole
+% (tcolorbox et sa bibliothèque poster, tkz-tab, pgfplots, fontspec...),
+% construit les caches — en particulier celui des polices, dont la
+% première génération est longue — et vérifie que la distribution TeX
+% est complète. Les compilations suivantes, de n'importe quel document,
+% en profitent.
+%
+% Il vérifie aussi, sans faire échouer la compilation, que Python 3 et
+% SymPy sont prêts pour les calculs automatiques : le résultat s'affiche
+% dans le PDF produit.
+\documentclass[marges=20, taille=11]{texecole}
+% Détection de Python, faite dans le préambule (hors de la prose texecole).
+\directlua{
+  local function version(cmd)
+    local h = io.popen(cmd .. " --version 2>&1")
+    if not h then return nil end
+    local ligne = h:read("l") or ""
+    h:close()
+    if ligne:find("Python 3", 1, true) then return ligne end
+    return nil
+  end
+  local v = version("python3") or version("python") or version("py")
+  local etat
+  if v then
+    etat = "Python 3 est installé (" .. v .. ") : les calculs "
+        .. "automatiques (SymPy, SciPy) sont disponibles si les modules "
+        .. "sont installés (python3 -m pip install sympy scipy)."
+  else
+    etat = "Python 3 est introuvable : les calculs automatiques ne "
+        .. "seront pas disponibles. Le reste de texecole fonctionne "
+        .. "intégralement."
+  end
+  token.set_macro("etatpython", etat)
+}
+\begin{document}
+<section>{Préchargement de texecole}
+
+Ce document exerce chaque famille de constructions afin de charger
+toutes les bibliothèques une première fois. S'il se compile jusqu'au
+bout, l'installation est complète.
+
+<sous-section>{Cadre (tcolorbox)}
+<Affiche un cadre avec une bordure bleu marine, un fond bleu Alice et des coins arrondis de 3 mm>{
+La bibliothèque \texttt{tcolorbox} est chargée.
+}
+
+<sous-section>{Tableau}
+<Dresse un tableau [mc, mc] avec bordures>{
+	Bibliothèque	État
+	[tcolorbox ; chargée]
+	[tkz-tab ; chargée]
+}
+
+<sous-section>{Grille (bibliothèque poster)}
+<Affiche une grille avec les zones:["gauche droite"], des bordures et un écart de 3 mm>{
+  [gauche en mc]{La bibliothèque \emph{poster}}
+  [droite en mc]{est chargée.}
+}
+
+<sous-section>{Tableau de signes (tkz-tab)}
+<Dresse le tableau de signes x:{-2 | 0 | 2}>{
+	x : - | 0 | +
+}
+
+<sous-section>{Courbe (pgfplots)}
+<Soit>une fonction f(x) = x^2 - 2
+<Représente graphiquement la fonction f pour x dans [-2 ; 2] et y dans [-2 ; 2]>
+
+<sous-section>{Figure (TikZ) et repère}
+<Soit>les points A et B de coordonnées respectives (0 ; 0) et (2 ; 1)
+<Trace un repère où l'abscisse appartient à [-1 ; 3] et l'ordonnée à [-1 ; 2]>{
+	la droite (AB)
+}
+
+<sous-section>{Moteur de calcul interne}
+La moitié de 5 vaut #{5/2}.
+
+<sous-section>{Python et SymPy}
+\etatpython
+
+<Affiche un cadre avec une bordure verte et un fond vert menthe>{
+Préchargement terminé : toutes les bibliothèques de texecole ont été chargées.
+}
+\end{document}

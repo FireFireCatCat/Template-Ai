@@ -1,0 +1,209 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{envelope-letter}[2025/08/28 Package allowing to fold a letter into its own envelope.]
+%TODO:
+%  - add support for alternative paper aera density and unit (US system, oz/ft^2...)
+
+\RequirePackage{tikz}
+\RequirePackage{pgfopts}
+\RequirePackage{geometry}
+\RequirePackage{graphics}
+\RequirePackage{pifont}
+\RequirePackage{fp}
+
+\def\el@setgrammage#1{\def\grammage{#1}} \el@setgrammage{80} %g/m^2
+\def\el@setfoldlinesmode#1{\def\el@foldlinesmode{#1}} \el@setfoldlinesmode{2}%0: none, 1: ticks, 2: lines
+\newif\ifel@foldsteps \el@foldstepstrue
+\newif\ifel@openinginstructions \el@openinginstructionstrue
+\newif\ifel@autoenvelope \el@autoenvelopefalse
+
+\pgfkeys{grammage/.code=\el@setgrammage{#1}}
+
+\pgfkeys{fold lines mode/.code=\el@setfoldlinesmode{#1}}
+\pgfkeys{no lines/.code=\el@setfoldlinesmode{0}}
+\pgfkeys{ticks/.code=\el@setfoldlinesmode{1}}
+\pgfkeys{lines/.code=\el@setfoldlinesmode{2}}
+
+\pgfkeys{steps/.code=\el@foldstepstrue}
+\pgfkeys{no steps/.code=\el@foldstepsfalse}
+
+\pgfkeys{instructions/.code=\el@openinginstructionstrue}
+\pgfkeys{no instructions/.code=\el@openinginstructionsfalse}
+
+\pgfkeys{full/.code=\el@setfoldlinesmode{2}\el@foldstepstrue\el@openinginstructionstrue}
+\pgfkeys{eco/.code=\el@setfoldlinesmode{1}\el@foldstepsfalse\el@openinginstructionsfalse}
+\pgfkeys{empty/.code=\el@setfoldlinesmode{0}\el@foldstepsfalse\el@openinginstructionsfalse}
+
+\pgfkeys{from/.code=\def\fromaddress{#1}}
+\pgfkeys{to/.code=\def\toaddress{#1}}
+
+\pgfkeys{auto/.code=\el@autoenvelopetrue}
+\pgfkeys{manual/.code=\el@autoenvelopefalse}
+\ProcessPgfPackageOptions{}
+
+\def\envelopesetup#1{\pgfkeys{#1}}
+
+\def\setstamp#1{\def\stamp{#1}} \setstamp{}
+
+\ifdefined\letter\else
+	\newenvironment{letter}{}{}\fi
+
+\newcounter{letter}
+\AddToHook{env/letter/begin}{\stepcounter{letter}}
+
+\ifdefined\opening
+	\AddToHook{cmd/opening/before}{\ifel@autoenvelope\makeenvelope\fi}
+\else
+	\AddToHook{env/letter/begin}{\ifel@autoenvelope\makeenvelope\fi}
+\fi
+
+\newif\ifel@statsswitch \el@statsswitchfalse
+\AddToHook{env/letter/end}{\ifel@statsswitch\el@printstats\fi}
+
+\newlength\el@l
+\newlength\el@L
+\ifdim\paperwidth>\paperheight
+	\setlength{\el@l}{\paperheight}
+	\setlength{\el@L}{\paperwidth}
+	\def\el@angleP{90}
+\else
+	\setlength{\el@l}{\paperwidth}
+	\setlength{\el@L}{\paperheight}
+	\def\el@angleP{0}
+\fi
+
+\def\el@paperwidth{\the\numexpr\el@l/186467\relax}
+\def\el@paperheight{\the\numexpr\el@L/186467\relax}
+\FPeval\el@angleA{arctan(el@paperwidth/(2*el@paperheight))*180/pi}
+\FPeval\el@angleB{arctan(el@paperwidth/(3*el@paperheight))*180/pi}
+
+\def\el@plotfoldlines{
+	\draw (0.125\el@l,0) -- (0.125\el@l,\el@L);
+	\draw (0.875\el@l,0) -- (0.875\el@l,\el@L);
+
+	\draw (0,0.75\el@L) -- (\el@l,0.75\el@L);
+	\draw (0,0.375\el@L) -- (\el@l,0.375\el@L);
+
+	\draw (0.25\el@l,\el@L) -- (0.125\el@l,0.75\el@L);
+	\draw (0.75\el@l,\el@L) -- (0.875\el@l,0.75\el@L);
+	\draw (0.25\el@l,0) -- (0.125\el@l,0.375\el@L);
+	\draw (0.75\el@l,0) -- (0.875\el@l,0.375\el@L);
+
+	\draw[dotted] (0,\el@L) -- (0.125\el@l,0.75\el@L);
+	\draw[dotted] (\el@l,\el@L) -- (0.875\el@l,0.75\el@L);
+	\draw[dotted] (0,0) -- (0.125\el@l,0.375\el@L);
+	\draw[dotted] (\el@l,0) -- (0.875\el@l,0.375\el@L);}
+
+\def\el@plotfoldticks{
+	\draw (0.125\el@l,0) -- ++(0,1cm);
+	\draw (0.125\el@l,\el@L) -- ++(0,-1cm);
+	\draw (0.875\el@l,0) -- ++(0,1cm);
+	\draw (0.875\el@l,\el@L) -- ++(0,-1cm);
+
+	\draw (0,0.75\el@L) -- ++(1cm,0);
+	\draw (\el@l,0.75\el@L) -- ++(-1cm,0);
+	\draw (0,0.375\el@L) -- ++(1cm,0);
+	\draw (\el@l,0.375\el@L) -- ++(-1cm,0);
+	
+	\draw (0.25\el@l,\el@L) -- ++(-90-\el@angleA:1cm);
+	\draw (0.75\el@l,\el@L) -- ++(-90+\el@angleA:1cm);
+	\draw (0.25\el@l,0) -- ++(90+\el@angleB:1cm);
+	\draw (0.75\el@l,0) -- ++(90-\el@angleB:1cm);
+
+	\draw[dotted] (0,\el@L) -- ++(-90+\el@angleA:1cm);
+	\draw[dotted] (\el@l,\el@L) -- ++(-90-\el@angleA:1cm);
+	\draw[dotted] (0,0) -- ++(90-\el@angleB:1cm);
+	\draw[dotted] (\el@l,0) -- ++(90+\el@angleB:1cm);
+
+	\draw (0.125\el@l-0.5cm,0.75\el@L) -- (0.125\el@l+0.5cm,0.75\el@L);
+	\draw (0.875\el@l-0.5cm,0.75\el@L) -- (0.875\el@l+0.5cm,0.75\el@L);
+	\draw (0.125\el@l-0.5cm,0.375\el@L) -- (0.125\el@l+0.5cm,0.375\el@L);
+	\draw (0.875\el@l-0.5cm,0.375\el@L) -- (0.875\el@l+0.5cm,0.375\el@L);
+
+	\draw (0.125\el@l,0.75\el@L+0.5cm) -- (0.125\el@l,0.75\el@L-0.5cm);
+	\draw (0.875\el@l,0.75\el@L+0.5cm) -- (0.875\el@l,0.75\el@L-0.5cm);
+	\draw (0.125\el@l,0.375\el@L+0.5cm) -- (0.125\el@l,0.375\el@L-0.5cm);
+	\draw (0.875\el@l,0.375\el@L+0.5cm) -- (0.875\el@l,0.375\el@L-0.5cm);}
+
+\def\el@foldsteps{
+	\node[left, rotate=\el@angleP] at (0.125\el@l,0.90625\el@L) {\ding{172}};
+	\node[left, rotate=\el@angleP] at (0.125\el@l,0.09375\el@L) {\ding{172}};
+	\node[right, rotate=\el@angleP] at (0.875\el@l,0.90625\el@L) {\ding{172}};
+	\node[right, rotate=\el@angleP] at (0.875\el@l,0.09375\el@L) {\ding{172}};
+
+	\path (0.25\el@l,\el@L) ++ (-90-\el@angleA:0.09375\el@L) node[left, rotate=\el@angleP] {\ding{173}};
+	\path (0.75\el@l,\el@L) ++ (-90+\el@angleA:0.09375\el@L) node[right, rotate=\el@angleP] {\ding{173}};
+	\path (0.25\el@l,0) ++ (90+\el@angleB:0.09375\el@L) node[left, rotate=\el@angleP] {\ding{173}};
+	\path (0.75\el@l,0) ++ (90-\el@angleB:0.09375\el@L) node[right, rotate=\el@angleP] {\ding{173}};
+
+	\node[above, rotate=\el@angleP] at (0.0625\el@l,0.75\el@L) {\ding{174}};
+	\node[above, rotate=\el@angleP] at (0.9375\el@l,0.75\el@L) {\ding{174}};
+	\node[below, rotate=\el@angleP] at (0.0625\el@l,0.375\el@L) {\ding{174}};
+	\node[below, rotate=\el@angleP] at (0.9375\el@l,0.375\el@L) {\ding{174}};}
+
+\def\el@openinginstructions{
+	\node[below, rotate=180+\el@angleP] at (0.3125\el@l,0.75\el@L) {{\huge$\otimes$}\hskip-1.25em\lower-0.17em\hbox{\ding{34}}};
+	\path (0.25\el@l,\el@L) ++ (-90-\el@angleA:0.09375\el@L) node[above, rotate=-90+\el@angleP-\el@angleA] {\ding{34}};
+	\path (0.75\el@l,\el@L) ++ (-90+\el@angleA:0.09375\el@L) node[below, rotate=-90+\el@angleP+\el@angleA] {\ding{34}};}
+
+\def\el@printstats{
+	\stepcounter{page}
+	\ifodd\thepage \FPeval\sheetscount{clip((thepage + 1)/2)}
+	\else \FPeval\sheetscount{clip(thepage/2)}\fi
+
+	\def\el@paperwidth{\the\numexpr\paperwidth/186467\relax}
+	\def\el@paperheight{\the\numexpr\paperheight/186467\relax}
+	\FPeval\sheetsurface{el@paperwidth*el@paperheight*pow(-6,10)} %m^2
+	\FPeval\papermass{round(sheetscount*grammage*sheetsurface:1)} %g
+	\FPeval\papersurface{round(sheetsurface*sheetscount:4)} %m^2
+
+	\@ifclassloaded{letter}{\def\el@toname##1##2##3{##3}}{\def\el@toname##1{##1}}
+
+	\typeout{}
+	\typeout{}
+	\typeout{========= envelope-letter info =========}
+	\ifx\toname\empty
+		\typeout{\space Letter \theletter:}
+	\else
+		\typeout{\space Letter \theletter, to \expandafter\el@toname\toname:}
+	\fi
+	\typeout{\space\space - grammage: \grammage\space g/m^2}
+	\typeout{\space\space - pages count (incl. envelope): \thepage}
+	\typeout{\space\space - paper sheets count: \sheetscount}
+	\typeout{\space\space - paper surface: \papersurface\space m^2}
+	\typeout{\space\space - estimated paper mass: \papermass\space g}
+	\typeout{========================================}
+	\typeout{}
+	\typeout{}
+	\addtocounter{page}{-1}
+
+	\el@statsswitchfalse}
+
+\def\makeenvelope{\@ifnextchar[{\el@makeenvelope}{\el@makeenvelope[]}}
+\def\el@makeenvelope[#1]{
+	\pgfkeys{#1}
+
+	\newgeometry{margin=0cm}
+	\thispagestyle{empty}
+	\@ifclassloaded{lettre}{\def\rule@length{0}\makeatother}{}
+
+	\ifdefined\fromaddress\else \def\fromaddress{}\fi
+	\ifdefined\toname\else \def\toname{}\fi
+	\ifdefined\toaddress\else \def\toaddress{}\fi
+
+	\noindent
+	\begin{tikzpicture}[scale=0.999, rotate=\el@angleP]
+		\draw[opacity=0] (0,0) -- (\el@l,\el@L);
+
+		\ifcase\el@foldlinesmode \or \el@plotfoldticks \or \el@plotfoldlines \fi
+		\ifel@foldsteps \el@foldsteps \fi
+		\ifel@openinginstructions \el@openinginstructions \fi
+
+		\node[align=left, below right, inner sep=1em, rotate=180+\el@angleP] at (0.8125\el@l,0.75\el@L) {\fromaddress};
+		\node[align=left, below right, inner sep=1em, rotate=\el@angleP] at (0.5\el@l,0.5625\el@L) {\toname\\\toaddress};
+		\ifdefined\stamp \node[below left, inner sep=2em, rotate=\el@angleP] at (0.875\el@l,0.75\el@L) {\stamp}; \fi
+	\end{tikzpicture}
+	\restoregeometry
+	\addtocounter{page}{-1}
+
+	\el@statsswitchtrue}
+

@@ -1,0 +1,196 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2021-2026 by Jinwen XU
+% -------------------------------
+%
+% This file may be distributed and/or modified under the conditions of the LaTeX
+% Project Public License, either version 1.3c of this license or (at your option)
+% any later version. The latest version of this license is in:
+%
+%    http://www.latex-project.org/lppl.txt
+%
+% \fi
+%
+%<*driver>
+\ProvidesFile{einfart-demo.dtx}
+%</driver>
+%
+%<*einfart-demo-style>
+%<*einfart-demo-style-classicthesis>
+\PassOptionsToPackage{
+  % drafting=true,    % print version information on the bottom of the pages
+  tocaligned=false, % the left column of the toc will be aligned (no indentation)
+  dottedtoc=false,  % page numbers in ToC flushed right
+  style=arsclassica % classicthesis, arsclassica, linedheaders, plain
+}{classicthesis}
+%</einfart-demo-style-classicthesis>
+\documentclass[a4paper, 11pt,
+%<*!einfart-demo-style-classicthesis>
+  % use font = times, % garamond, newcm, lmodern, ...
+%<*einfart-demo-style-plain>
+  % use osf,
+%</einfart-demo-style-plain>
+%<*!einfart-demo-style-plain>
+  use osf,
+%</!einfart-demo-style-plain>
+%</!einfart-demo-style-classicthesis>
+%<*einfart-demo-style-classical>
+  use style = classical,
+%</einfart-demo-style-classical>
+%<*einfart-demo-style-classicthesis>
+  use style = classicthesis,
+%</einfart-demo-style-classicthesis>
+%<*einfart-demo-style-flow>
+  use style = flow,
+%</einfart-demo-style-flow>
+%<*einfart-demo-style-plain>
+  use style = plain,
+%</einfart-demo-style-plain>
+%<*einfart-demo-style-stream>
+  use style = stream,
+%</einfart-demo-style-stream>
+%<*!einfart-demo-style-classicthesis>
+  % use indent = false,
+%<*einfart-demo-style-classical>
+  % title in boldface,
+%</einfart-demo-style-classical>
+%<*!einfart-demo-style-classical>
+  title in boldface,
+%</!einfart-demo-style-classical>
+  % title in scshape,
+  % title in sffamily,
+%</!einfart-demo-style-classicthesis>
+%<*einfart-demo-style-classical>
+  % theorem in new line,
+%</einfart-demo-style-classical>
+%<*!einfart-demo-style-classical>
+  theorem in new line,
+%</!einfart-demo-style-classical>
+  emphasize theorems,
+  theorem numbering = section,
+  % number theorems separately,
+  simple name,  % for clever referencing
+  name in link, % for clever referencing
+]{einfart}
+\usepackage{ProjLib}
+\usepackage{blindtext}
+
+%% \UseLanguage{French}
+
+\numberwithin{equation}{section}
+\SwitchTheoremNumbering{example,examples,claim}
+
+\begin{document}
+
+%<*einfart-demo-style-default>
+\title{Title of the article (demo of the default style)}
+%</einfart-demo-style-default>
+%<*einfart-demo-style-classical>
+\title{Title of the article (demo of the style \textquote{classical})}
+%</einfart-demo-style-classical>
+%<*einfart-demo-style-classicthesis>
+\title{\spacedallcaps{Title of the article}\\[.3\baselineskip](demo of the style \textquote{ClassicThesis})}
+%</einfart-demo-style-classicthesis>
+%<*einfart-demo-style-flow>
+\title{Title of the article (demo of the style \textquote{flow})}
+%</einfart-demo-style-flow>
+%<*einfart-demo-style-plain>
+\title{Title of the article (demo of the style \textquote{plain})}
+%</einfart-demo-style-plain>
+%<*einfart-demo-style-stream>
+\title{Title of the article (demo of the style \textquote{stream})}
+%</einfart-demo-style-stream>
+\author{Author One}
+\address{Address of Author One}
+\email{\href{mailto:author.one@email.com}{author.one@email.com}}
+%% \thanks{The first author is indebted to...}
+\author{Author Two}
+\address{Address of Author Two}
+\email{\href{mailto:author.two@email.com}{author.two@email.com}}
+%% \thanks{The second author would like to thank the support of...}
+\subjclass{XXXXX}
+%% \keywords{AAA, BBB, CCC}
+\date{\today[only-year-month]}
+%% \date{\TheDate{2026-01}}
+
+\maketitle
+
+\begin{abstract}
+    Some abstract. \blindtext
+\end{abstract}
+
+\begin{keyword}
+    AAA, BBB, CCC
+\end{keyword}
+
+
+\tableofcontents
+
+
+\section{Section title}
+
+\subsection{Subsection title}
+
+Some introductory text.
+
+\begin{definition}[something]
+    Define something.
+\end{definition}
+
+\begin{theorem}[some result]\label{thm:result}\index{Theorem on some result}
+    The statement.
+\end{theorem}
+
+\begin{emphasis}
+    Clever reference: \cref{thm:result} (only name: \namecref{thm:result}, only number: \labelcref{thm:result}).
+\end{emphasis}
+
+An equation:\index{Euler's equation}
+\begin{equation}\label{eq:Euler}
+    \mathrm{e}^{\mathrm{i}\pi} + 1 = 0.
+\end{equation}
+
+\begin{emphasis}
+    Reference of equation: \eqref{eq:Euler} or \cref{eq:Euler}.
+\end{emphasis}
+
+\SetTheorem{corollary}{shared counter = subsubsection}
+\begin{corollary}[of \cref{thm:result}]\label{cor:result}
+    Some corollary.
+\end{corollary}
+\SetTheorem{corollary}{shared counter = subsection}
+\begin{proof}
+    Some lines of proof.
+\end{proof}
+
+\begin{examples}
+    \begin{enumerate}
+        \item First example.
+        \item Second example.
+        \item Third example.
+    \end{enumerate}
+\end{examples}
+
+\begin{example*}[Important example]
+    The numbering is switched in the preamble, thus \verb|example*| is the numbered version while \verb|example| is the unnumbered version.
+\end{example*}
+
+%<*einfart-demo-style-stream>
+\begin{proof*}[Proof of \cref{thm:result}]
+    Some lines of proof.
+\end{proof*}
+%</einfart-demo-style-stream>
+%<*!einfart-demo-style-stream>
+\begin{proof}[Proof of \cref{thm:result}]
+    Some lines of proof.
+\end{proof}
+%</!einfart-demo-style-stream>
+
+
+\blinddocument
+
+
+\printindex
+
+\end{document}
+%</einfart-demo-style>

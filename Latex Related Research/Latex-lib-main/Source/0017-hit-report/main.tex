@@ -1,0 +1,81 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,booktabs,siunitx,enumitem}
+\usepackage[numbers]{natbib}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{HIT laboratory report}
+\rhead{\thepage}
+\title{Determining Viscosity with a Falling Sphere}
+\author{Your Name\\Experiment group 07}
+\date{\today}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+This report measures the viscosity of a transparent liquid from the terminal
+speed of a small sphere. The worked structure separates observations from
+interpretation and leaves clear places for repeat measurements and uncertainty
+budgets.
+\end{abstract}
+
+\section{Objective}
+Estimate the dynamic viscosity $\eta$ and compare it with a reference value
+after accounting for timing and diameter uncertainties.
+
+\section{Principle and method}
+At terminal speed, the viscous drag balances the effective weight. For a sphere
+of radius $r$ and density $\rho_s$ falling through a liquid of density $\rho_l$,
+\begin{equation}
+  \eta = \frac{2r^2g(\rho_s-\rho_l)}{9v_t}.
+\end{equation}
+Measure the sphere diameter at several orientations, release it without a push,
+and time its passage between two marks after the speed has stabilised.
+\citep{young2024measurement}
+
+\section{Apparatus and safety}
+\begin{itemize}[leftmargin=*]
+\item graduated cylinder, thermometer, micrometer and stopwatch;
+\item steel sphere, ruler and the test liquid;
+\item wipe spills immediately and keep the glassware away from the bench edge.
+\end{itemize}
+
+\clearpage
+\section{Observations}
+\begin{table}[ht]
+\centering
+\caption{Example measurements. Replace the values with the laboratory readings.}
+\begin{tabular}{@{}S[table-format=1.2] S[table-format=2.2] S[table-format=2.2]@{}}
+\toprule
+{$d$ (mm)} & {$L$ (cm)} & {$t$ (s)}\\
+\midrule
+2.04 & 15.0 & 18.42\\
+2.01 & 15.0 & 18.63\\
+2.03 & 15.0 & 18.51\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Analysis}
+Report the mean diameter and terminal speed, then propagate the uncertainties:
+\begin{equation}
+  \left(\frac{u_\eta}{\eta}\right)^2 =
+  \left(2\frac{u_r}{r}\right)^2 +
+  \left(\frac{u_v}{v_t}\right)^2 +
+  \left(\frac{u_{\Delta\rho}}{\rho_s-\rho_l}\right)^2.
+\end{equation}
+State whether wall effects, temperature drift or reaction-time bias dominate.
+
+\section{Conclusion}
+\begin{description}[leftmargin=3.2cm,style=nextline]
+\item[Viscosity] $\eta = \rule{0.35\linewidth}{0.4pt}$
+\item[Uncertainty] $u_\eta = \rule{0.35\linewidth}{0.4pt}$
+\item[Next check] \rule{0.65\linewidth}{0.4pt}
+\end{description}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+\end{document}

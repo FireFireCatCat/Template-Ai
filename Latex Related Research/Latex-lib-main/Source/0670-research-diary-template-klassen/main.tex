@@ -1,0 +1,47 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{xcolor,booktabs,tabularx}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\definecolor{violet}{HTML}{5A426A}\definecolor{lightviolet}{HTML}{F2EDF4}
+\hypersetup{colorlinks=true,linkcolor=violet,urlcolor=violet}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\color{violet}\textbf{Research diary}}
+\fancyhead[R]{Week 35 \textbar\ \thepage}\setlength{\headheight}{14pt}
+\newcommand{\ruleline}{\par\vspace{3mm}\noindent\rule{\linewidth}{.35pt}\par\vspace{3mm}}
+\newcommand{\panel}[1]{\par\medskip\noindent\colorbox{lightviolet}{\parbox{\dimexpr\linewidth-2\fboxsep}{\color{violet}\textbf{#1}}}\par\smallskip}
+\begin{document}
+\begin{center}{\Huge\color{violet}\bfseries Research diary}\par\medskip
+{\large A weekly record of questions, evidence, and decisions}\end{center}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}lX>{\bfseries}lX@{}}
+Researcher & Your Name & Week & 35 / 2026\\
+Project & Adaptive sampling & Supervisor & Dr. Example\\
+Primary question & \multicolumn{3}{l@{}}{How should the next sample location be selected?}
+\end{tabularx}
+\panel{Weekly intentions}
+\begin{itemize}[leftmargin=7mm,itemsep=1pt]
+  \item Reproduce the baseline analysis with the cleaned data set.
+  \item Compare uncertainty under uniform and adaptive sampling.
+  \item Write down one falsifiable prediction before inspecting results.
+\end{itemize}
+\section*{Monday — 29 August 2026}
+\textbf{Question.} Does the baseline model over-weight the central stations?\par
+\ruleline\textbf{Work completed.} Removed two duplicate records, checked units,
+and reran the summary. The median residual changed by 0.03 units.\par
+\ruleline\textbf{Evidence.} The change is smaller than the instrument tolerance,
+but the edge stations have fewer observations.\par
+\ruleline\textbf{Next action.} Plot station counts before choosing a sampling rule.
+\section*{Literature note}
+\begin{tabularx}{\linewidth}{@{}p{28mm}X@{}}\toprule
+Citation & \textbf{Smith (2024), Adaptive sampling in field studies}\\\midrule
+Claim & Sampling effort should follow expected information gain.\\
+Relevance & Useful comparison for the edge-station experiment.\\
+Open question & Which cost model is realistic for our field visits?\\\bottomrule
+\end{tabularx}
+\section*{End-of-week review}
+\begin{enumerate}[leftmargin=8mm]
+  \item Strongest result: \rule{95mm}{.35pt}
+  \item Result that needs checking: \rule{74mm}{.35pt}
+  \item First task next week: \rule{83mm}{.35pt}
+\end{enumerate}
+\end{document}

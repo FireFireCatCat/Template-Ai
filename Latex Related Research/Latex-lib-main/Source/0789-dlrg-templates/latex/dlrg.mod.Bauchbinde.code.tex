@@ -1,0 +1,17 @@
+% Wortmarke einbinden
+% ********************************************************************
+\IfFileExists{dlrg_wortmarke.pdf}
+{\pgfdeclareimage[height=7.5mm]{dlrg_wortmarke}{dlrg_wortmarke.pdf}}
+{\pgfdeclareimage[height=7.5mm]{dlrg_wortmarke}{dlrg_wortmarke_platzhalter.pdf}}
+
+% Eigentliche Bauchbinde
+% ********************************************************************
+\NewDocumentCommand{\bauchbinde}{s}{
+    \begin{tikzpicture}[remember picture,overlay]
+        \filldraw[dlrgRot] ($(current page.south west) + (0,12.5mm)$) rectangle ($(current page.south east) + (0,25mm)$);
+        \node [xshift=-7.5mm, yshift=15mm, above left, anchor=base east] at (current page.south east) {\pgfuseimage{dlrg_wortmarke}};
+        \IfBooleanF{#1}{
+            \node [xshift=7.5mm, yshift=18.75mm, above right, anchor=west, color=dlrgGelb, font=\Large\bfseries] at (current page.south west) {\bauchbinde@link{}};
+        }
+    \end{tikzpicture}
+}

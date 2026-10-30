@@ -1,0 +1,72 @@
+\documentclass[12pt,a4paper,twoside]{ctexart}
+\usepackage{amsmath,booktabs,geometry,hyperref,needspace,setspace}
+\geometry{top=2.5cm,bottom=2.5cm,left=2.7cm,right=2.7cm}
+\onehalfspacing
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+
+\title{A bilingual framework for reproducible field studies\\
+\zihao{-3}可复现现场研究的双语框架}
+\author{Alex Chen / 陈明}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This article presents a compact structure for recording field observations,
+quality checks, and interpretation in one bilingual manuscript. The example
+keeps the two languages aligned by using the same section sequence and shared
+symbols.
+
+\textbf{关键词：}可复现性；现场研究；数据质量
+\end{abstract}
+
+\section{English overview}
+Field studies often combine observations made by different people and devices.
+A document that records the sampling context and the quality decisions beside
+the results is easier to audit and update. The following normalized measure is
+useful when two instruments have different scales:
+\begin{equation}
+  y_i = \frac{x_i-x_{\min}}{x_{\max}-x_{\min}}.
+\end{equation}
+
+\section{中文概述}
+现场研究通常需要合并来自不同人员和设备的观测结果。将采样环境、质量
+判断和最终结果放在同一份文档中，可以帮助读者理解分析过程并复核关键
+决策。归一化公式中的符号与英文部分保持一致，便于双语读者对照。
+
+\Needspace{10\baselineskip}
+\section{Results / 结果}
+\begin{table}[ht]
+\centering
+\caption{Illustrative observations / 示例观测结果}
+\begin{tabular}{lrr}
+\toprule
+Site / 地点 & Samples / 样本 & Valid / 有效(\%)\\
+\midrule
+River / 河流 & 64 & 94\\
+Forest / 森林 & 58 & 90\\
+Town / 城镇 & 72 & 96\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Discussion / 讨论}
+The table is intentionally synthetic. Replace it with measurements and explain
+the inclusion criteria before using the document as a research record.
+
+表格中的数据仅用于演示排版。正式使用时，应替换为真实测量值，并说明
+数据筛选、仪器校准和统计分析的具体方法。
+
+\section{Conclusion / 结论}
+Keeping equivalent headings and notation in both languages reduces translation
+ambiguity. The starter can be extended with figures, appendices, and a longer
+bibliography while retaining the same bilingual workflow.
+
+\begin{thebibliography}{9}
+\bibitem{fair} M. D. Wilkinson et al., ``The FAIR Guiding Principles for
+scientific data management and stewardship,'' \emph{Scientific Data}, 2016.
+\bibitem{latex} L. Lamport, \emph{LaTeX: A Document Preparation System}, 2nd ed.,
+Addison--Wesley, 1994.
+\end{thebibliography}
+\end{document}

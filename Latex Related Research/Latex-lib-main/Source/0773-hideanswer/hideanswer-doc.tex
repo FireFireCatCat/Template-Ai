@@ -1,0 +1,445 @@
+\documentclass[%
+fleqn,%
+paper=a4paper,%
+fontsize=10pt,%
+open_bracket_pos=zenkakunibu_nibu,%
+hanging_punctuation,%
+]%
+{jlreq}
+\jlreqsetup{%
+itemization_beforeafter_space=0pt,%
+itemization_itemsep=0pt%
+}
+\makeatletter
+\RequirePackage{luatexja}
+\RequirePackage{luatexja-otf}
+\RequirePackage{graphicx}
+\RequirePackage{amsmath}
+\DeclareRobustCommand{\metaphysicaicon}{\raisebox{-4.0pt}{\includegraphics[width=16pt]{metaphysicaicon.pdf}}}
+\RequirePackage[normalem]{ulem}
+\RequirePackage[explicit]{titlesec}
+\titleformat{\section}[hang]{}{}{0pt}{\uuline{\raisebox{1pt}{\textsf{\thesection\quad #1}}}}[\vspace{0.35\baselineskip}]
+\renewcommand{\thesection}{\S\,\arabic{section}}
+\let\originalsection\section
+\DeclareRobustCommand{\section}{\@ifstar{\@metaphysica@section@star}{\@metaphysica@section@nostar}}
+\DeclareRobustCommand{\@metaphysica@section@star}[1]{\vspace{0.5\baselineskip}\originalsection{#1}\vspace*{-\baselineskip}}
+\DeclareRobustCommand{\@metaphysica@section@nostar}[1]{\vspace{0.5\baselineskip}\originalsection{#1}}
+\RequirePackage[%
+truedimen,%
+margin=30truemm,
+includehead%
+]{geometry}
+\RequirePackage{lastpage}
+\RequirePackage{fancyhdr}
+\pagestyle{fancy}
+\DeclareRobustCommand{\headertitle}[2][\metaphysicaicon]{%
+\rhead[#2]{#1{}\quad\thepage{}/{}\pageref{LastPage}}%
+\lhead[\thepage{}/{}\pageref{LastPage}\quad{}#1]{#2}%
+\cfoot{}%
+}
+\RequirePackage{setspace}
+\setstretch{1.155}
+\DeclareRobustCommand{\linespace}{\@ifstar{\vspace{\baselineskip}}{\vspace{0.25\baselineskip}}}
+\DeclareRobustCommand{\linesmash}{\@ifstar{\vspace{-\baselineskip}}{\vspace{-0.25\baselineskip}}}
+\AtBeginDocument{%
+\abovedisplayskip     =0.125\abovedisplayskip
+\abovedisplayshortskip=0.125\abovedisplayshortskip
+\belowdisplayskip     =0.125\belowdisplayskip
+\belowdisplayshortskip=0.125\belowdisplayshortskip}
+\setlength{\jot}{0pt}%
+\setlength{\mathindent}{2\zw}%
+\renewcommand{\floatpagefraction}{0.75}
+\allowdisplaybreaks[2]
+\RequirePackage[no-math]{fontspec}
+\RequirePackage[no-math,deluxe,haranoaji]{luatexja-preset}
+\RequirePackage{multicolpar}
+\RequirePackage[style=iso]{datetime2}
+\RequirePackage[unicode]{hyperref}
+\RequirePackage{xparse}
+\RequirePackage{dashbox}
+\newcounter{psuedosectioncounter}
+\setcounter{psuedosectioncounter}{1}
+\newcounter{psuedocontentscounter}
+\setcounter{psuedocontentscounter}{1}
+\DeclareRobustCommand{\psuedosection}[3]{%
+\hypertarget{#1}{\mbox{}}\begin{multicolpar}{2}%
+\noindent\uuline{{\raisebox{1pt}{\textsf{\S\ \thepsuedosectioncounter\quad #2}}}}
+
+\noindent\uuline{{\raisebox{1pt}{\textsf{\S\ \thepsuedosectioncounter\quad #3}}}}
+\end{multicolpar}%
+\stepcounter{psuedosectioncounter}%
+\vspace{\baselineskip}%
+}
+\DeclareRobustCommand{\psuedocontents}[3]{%
+\begin{multicolpar}{2}%
+\noindent{\textsf{\hyperlink{#1}{\S\ \thepsuedocontentscounter\quad #2}}}
+
+\noindent{\textsf{\hyperlink{#1}{\S\ \thepsuedocontentscounter\quad #3}}}\end{multicolpar}%
+\stepcounter{psuedocontentscounter}%
+}
+\newenvironment{translateing}%
+{\begin{multicolpar}{2}}
+{\end{multicolpar}\vspace{\baselineskip}}
+\DeclareRobustCommand{\maketitletranslating}%
+{\maketitle\thispagestyle{fancy}
+\vspace{\baselineskip}\begin{multicolpar}{2}
+\textsf{English}
+
+\noindent
+\textsf{日本語 (Japanese)}
+\end{multicolpar}\vspace{\baselineskip}}
+\NewDocumentCommand\macroexplanation{v}{%
+\noindent\hspace*{\fill}{\texttt{#1}}\hspace*{\fill}\linespace%
+}
+\NewDocumentEnvironment{macroexample}{O{0.625} +b}{%
+\noindent\hspace*{\fill}\dbox{\parbox{#1\textwidth}{%
+#2%
+}}\hspace*{\fill}}%
+{\vspace{\baselineskip}}
+\NewDocumentEnvironment{macroexample*}{O{0.625} m +b}{%
+\noindent\hspace*{\fill}\dbox{\parbox{#1\textwidth}{%
+\vspace{-0.5\baselineskip}\begin{#2}%
+#3
+\end{#2}%
+}}\hspace*{\fill}}
+{\vspace{\baselineskip}}
+\let\code\texttt
+\setlength{\fboxsep}{1em}
+\setstretch{1.05}
+\DeclareRobustCommand{\commandtojskip}{\hspace{2.40554pt plus 1.49994pt minus 0.59998pt}}
+\RequirePackage{listings, jlisting}
+\lstset{
+  language=[LaTeX]TeX,
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+  commentstyle={\small\itshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame=single,
+  breaklines=true,
+  columns=[l]{fullflexible},
+  stepnumber=1,
+  xrightmargin=0.1709\textwidth,
+  xleftmargin=0.1709\textwidth,
+  lineskip=-0.5ex
+}
+\RequirePackage{bxtexlogo}
+\RequirePackage{shortvrb}
+\MakeShortVerb{\|}
+\RequirePackage{hideanswer}
+\makeatother
+\hypersetup{%
+bookmarksnumbered=true,%
+colorlinks=true,%
+linkcolor=blue,%
+urlcolor=blue,%
+setpagesize=false,%
+pdftitle={The hideanswer package},%
+pdfauthor={Yukoh KUSAKABE},%
+pdfsubject={The hideanswer package},%
+pdfkeywords={TeX LaTeX answer exam}}
+\title{The \code{hideanswer} package:\\[0.25\baselineskip]
+generate documents with and without answers\\[0.25\baselineskip]
+by toggling a switch}
+\author{Yukoh KUSAKABE}
+\date{\today}
+\headertitle[Yukoh KUSAKABE\quad\metaphysicaicon]{The \code{hideanswer} package}
+\begin{document}
+\maketitletranslating
+
+\begin{translateing}
+This package can generate documents with and without answers from a single file by toggling a switch.
+However, it can only be used to create documents to be printed on paper.
+
+このパッケージは，スイッチ切り替えによって単一のファイルから答えが書かれている文書と答えが書かれていない文書を生成することができます。ただし，紙に印刷する文書を作成するときにしか使えません。
+\end{translateing}
+
+\psuedocontents{Requirements}{System Requirements}{前提条件}
+
+\psuedocontents{Installation}{Installation}{インストール}
+
+\psuedocontents{Loading}{Loading}{読み込み}
+
+\psuedocontents{Usage}{Usage}{使用方法}
+
+\psuedocontents{moreinfo}{For More Information}{問い合わせ・詳しくは}
+
+\psuedosection{Requirements}{System Requirements}{前提条件}
+
+\begin{translateing}
+\textbullet\ \LaTeXe\ format\\
+\textbullet\ \code{color} package\\
+\textbullet\ \code{graphicx} package\\
+\textbullet\ \code{xparse} package
+
+\noindent
+\textbullet\ \LaTeXe フォーマット\\
+\textbullet\ \code{color} パッケージ\\
+\textbullet\ \code{graphicx} パッケージ\\
+\textbullet\ \code{xparse} パッケージ
+\end{translateing}
+
+\newpage
+\psuedosection{Installation}{Installation}{インストール}
+
+\begin{translateing}
+If not available, move hideanswer.sty file to\\\code{\$TEXMF/tex/latex/hideanswer}.
+
+直ちに使えなければ，hideanswer.sty を\\\code{\$TEXMF/tex/latex/hideanswer}\\%（\TeX が見つけられる場所）
+に置いてください。
+\end{translateing}
+
+\psuedosection{Loading}{Loading}{読み込み}
+
+\begin{translateing}
+To use this package, load .sty file with |\usepackage{hideanswer}| command in preamble.
+
+このパッケージを使用するには，プリアンブルに\commandtojskip|\usepackage{hideanswer}| と書いてください。
+
+No package option is available.
+
+オプションはありません。
+\end{translateing}
+
+\psuedosection{Usage}{Usage}{使用方法}
+
+\begin{translateing}
+\textsf{PRECAUTIONS:}\\
+In this package, hiding text is accomplished by changing the color to white.
+Therefore, the hidden content will be known to the recipient in the PDF file.
+This package was developed for printing on paper.
+
+\noindent\textsf{使用前の注意：}\\
+このパッケージにおいて，文字を非表示にすることは色を白に変えることによって実現しています。
+したがって，PDFファイルでは隠した内容が相手に伝わってしまいます。
+このパッケージは紙に印刷して使うために開発されました。
+\end{translateing}
+
+\macroexplanation{\sethideanswer}
+
+\begin{translateing}
+After this command, the answer is hidden.
+Usually, this instruction is used to switch the generation of question and answer sheets, depending on whether or not this instruction is written at the beginning of the document.
+
+この命令以降では答えが隠されます。ふつう，文書の最初にこの命令を書くか否かで問題用紙と解答用紙の生成を切り替えるために使います。
+\end{translateing}
+
+\macroexplanation{\unsethideanswer}
+
+\begin{translateing}
+After this command, the answer appears.
+
+この命令以降では答えが現れます。
+\end{translateing}
+
+\newpage
+\macroexplanation{\hideanswer{<text>}}
+
+\begin{translateing}
+|<text>| is hidden. In |\hideanswer*{<text>}|, the hidden and visible parts are reversed.
+
+|<text>|\commandtojskip と書かれた部分が隠されます。
+|\hideanswer*{<text>}|\commandtojskip では，隠されるときと現れるときが逆になります。
+\end{translateing}
+
+\begin{lstlisting}
+A\hideanswer{B}A, C\hideanswer*{D}C.
+\end{lstlisting}
+
+\hspace*{0.14\textwidth}Under |\unsethideanswer| (or default):\\
+\unsethideanswer
+\begin{macroexample}
+A\hideanswer{B}A, C\hideanswer*{D}C.
+\end{macroexample}
+
+\hspace*{0.14\textwidth}Under |\sethideanswer|:\\
+\sethideanswer
+\begin{macroexample}
+A\hideanswer{B}A, C\hideanswer*{D}C.
+\end{macroexample}
+
+\newpage
+\macroexplanation{environment hideanswerdiv}
+
+\begin{translateing}
+The written part inside the environment is hidden. It may be used to hide long answers. In |hideanswerdiv*|, the hidden and visible parts are reversed.
+
+環境の内側に書かれた部分が隠されます。長い答えを隠すために用いるとよいでしょう。
+|hideanswerdiv*|\commandtojskip では，隠されるときと現れるときが逆になります。
+\end{translateing}
+
+\begin{lstlisting}
+E
+\begin{hideanswerdiv}
+\[F\]
+\end{hideanswerdiv}%
+E
+
+G
+\begin{hideanswerdiv*}
+\[H\]
+\end{hideanswerdiv*}%
+G
+\end{lstlisting}
+
+\hspace*{0.14\textwidth}Under |\unsethideanswer| (or default):\\
+\unsethideanswer
+\begin{macroexample}
+E
+\begin{hideanswerdiv}
+\[F\]
+\end{hideanswerdiv}%
+E
+
+G
+\begin{hideanswerdiv*}
+\[H\]
+\end{hideanswerdiv*}%
+G
+\end{macroexample}
+
+\hspace*{0.14\textwidth}Under |\sethideanswer|:\\
+\sethideanswer
+\begin{macroexample}
+E
+\begin{hideanswerdiv}
+\[F\]
+\end{hideanswerdiv}%
+E
+
+G
+\begin{hideanswerdiv*}
+\[H\]
+\end{hideanswerdiv*}%
+G
+\end{macroexample}
+
+\newpage
+\macroexplanation{\smashanswer{<text>}}
+
+\begin{translateing}
+|<text>| is hidden and the next sentence is placed as if it were not there. In |\smashanswer*{<text>}|, the hidden and visible parts are reversed.
+
+|<text>|\commandtojskip と書かれた部分が隠され，それがないかのように次の文が置かれます。
+|\smashanswer*{<text>}|\commandtojskip では，隠されるときと現れるときが逆になります。
+\end{translateing}
+
+\begin{lstlisting}
+I\smashanswer{J}I, K\smashanswer*{L}K.
+\end{lstlisting}
+
+\hspace*{0.14\textwidth}Under |\unsethideanswer| (or default):\\
+\unsethideanswer
+\begin{macroexample}
+I\smashanswer{J}I, K\smashanswer*{L}K.
+\end{macroexample}
+
+\hspace*{0.14\textwidth}Under |\sethideanswer|:\\
+\sethideanswer
+\begin{macroexample}
+I\smashanswer{J}I, K\smashanswer*{L}K.
+\end{macroexample}
+
+\newpage
+\macroexplanation{environment smashanswerdiv}
+
+\begin{translateing}
+The written part inside the environment is hidden and the next sentence is placed as if it were not there.
+It may be used to hide long answers.
+In |smashanswerdiv*|, the hidden and visible parts are reversed.
+
+環境の内側に書かれた部分が隠され，それがないかのように次の文が置かれます。
+長い答えを隠すために用いるとよいでしょう。
+|smashanswerdiv*|\commandtojskip では，隠されるときと現れるときが逆になります。
+\end{translateing}
+
+\begin{lstlisting}
+M%
+\begin{smashanswerdiv}
+\[N\]
+\end{smashanswerdiv}%
+M
+
+O%
+\begin{smashanswerdiv*}
+\[P\]
+\end{smashanswerdiv*}%
+O
+\end{lstlisting}
+
+\hspace*{0.14\textwidth}Under |\unsethideanswer| (or default):\\
+\unsethideanswer
+\begin{macroexample}
+M%
+\begin{smashanswerdiv}
+\[N\]
+\end{smashanswerdiv}%
+M
+
+O%
+\begin{smashanswerdiv*}
+\[P\]
+\end{smashanswerdiv*}%
+O
+\end{macroexample}
+
+\hspace*{0.14\textwidth}Under |\sethideanswer|:\\
+\sethideanswer
+\begin{macroexample}
+M%
+\begin{smashanswerdiv}
+\[N\]
+\end{smashanswerdiv}%
+M
+
+O%
+\begin{smashanswerdiv*}
+\[P\]
+\end{smashanswerdiv*}%
+O
+\end{macroexample}
+
+\newpage
+\macroexplanation{\hidegraphics[<includegraphics option>]{<file>}}
+
+\begin{translateing}
+The graphic is hidden.
+The options are the same as for |\includegraphics| since |\includegraphics| is loaded internally.
+In |\hidegraphics*|, the hidden and visible parts are reversed.
+
+読み込んだ画像が隠されます。
+|\includegraphics|を内部で読み込みますので，オプションは\commandtojskip|\includegraphics|のものと同様です。
+|\hidegraphics*|\commandtojskip では，隠されるときと現れるときが逆になります。
+\end{translateing}
+
+\macroexplanation{\smashraphics[<includegraphics option>]{<file>}}
+
+\begin{translateing}
+The graphic is hidden and the next sentence is placed as if it were not there.
+The options are the same as for |\includegraphics| since |\includegraphics| is loaded internally.
+In |\hidegraphics*|, the hidden and visible parts are reversed.
+
+読み込んだ画像が隠され，それがないかのように次の文が置かれます。
+|\includegraphics|を内部で読み込みますので，オプションは\commandtojskip|\includegraphics|のものと同様です。
+|\smashraphics*|\commandtojskip では，隠されるときと現れるときが逆になります。
+\end{translateing}
+
+\macroexplanation{\switchanswer{<text under unsethide>}{<text under sethide>}}\\
+\macroexplanation{\switchanswer*{<text under sethide>}{<text under unsethide>}}
+
+\begin{translateing}
+Switching between hidden and visible sentences. Since |\switchanswer(*)| does not remember the length of the sentence, the position of the next sentence moves.
+
+隠されているときと現れているときで文章を切り替えます。
+|\switchanswer(*)|\commandtojskip は文章の長さを覚えませんから，次の文の位置が動きます。
+\end{translateing}
+
+\psuedosection{contact}{Contact}{問い合わせ}
+
+\noindent\hspace*{\fill}\begin{tabular}{rl}
+Yukoh KUSAKABE:&\url{https://www.metaphysica.info/}\\
+&\url{https://x.com/metaphysicainfo}\\
+&(screen-name, 日下部幽考 in Japanese)
+\end{tabular}\hspace*{\fill}
+\end{document}

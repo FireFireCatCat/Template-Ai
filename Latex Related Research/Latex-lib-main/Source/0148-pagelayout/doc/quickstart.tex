@@ -1,0 +1,75 @@
+%%
+%% Copyright (c) 2022-2024 by Friedemann Bartels
+%%
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in:
+%%
+%%    http://www.latex-project.org/lppl.txt
+%%
+%% and version 1.3c or later is part of all distributions of
+%% LaTeX version 2008/05/04 or later.
+%%
+
+\documentclass[draft,grid,graphpaper,preflight,optimize={density=600}]{pagelayout}
+\usepackage{microtype}
+\usepackage{fontspec}
+
+\setmainfont{Menlo}
+
+\pagewidth=5.5cm
+\pageheight=4cm
+\margin=5mm
+\gutter=5mm
+\bleed=2mm
+\setpagecolor{white}
+
+\begin{document}
+  \fontsize{4pt}{4.8pt}\selectfont
+
+  % page
+  \page{
+    \setgrid{
+      {{}{}}
+    }
+    \text[breakable]{
+      Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+      Ut purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis.
+      Curabitur dictum gravida mauris.
+      Nam arcu libero, nonummy eget, consectetuer id, vulputate a, magna.
+      Donec vehicula augue eu neque.
+      Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+      Mauris ut leo. Cras viverra metus rhoncus sem.
+      Nulla et lectus vestibulum urna fringilla ultrices.
+      Phasellus eu tellus sit amet tortor gravida placerat.
+    }
+    \usetext
+  }
+
+  % template
+  \newtemplate{my template}{
+    \setgrid{
+      {[2]{3!}{2!}}
+    }
+    \placeholder{0 0 1 1}
+    \placeholder{0 1 1 2}
+  }
+  \template{my template}{}
+
+  % graphic
+  \nogrid
+  \newborder{my border}{width = 1mm, color = white, radius = 5mm}
+  \newshadow{my shadow}{size = 7}
+  \template{my template}{
+    \graphic[
+      scale=1.05,
+      hpos=0,
+      vpos=0.3,
+      shadow=my shadow,
+      border=my border,
+      border radius=0mm
+    ]{kopi}
+  }
+
+\end{document}

@@ -1,0 +1,40 @@
+% Multi-Project Consultancy Invoice with Foreign-Currency Expenses — invoice.sty
+%
+% Distinct from every other invoice in this batch (and from the
+% already-shipped us-csv-invoice, a different CTAN package by a
+% different author despite the similar name): built for a consultant
+% billing FEES across several projects, plus expenses in the invoice's
+% base currency AND in a foreign currency with either a stated exchange
+% rate or a stated already-converted result -- the class does the
+% conversion arithmetic itself when a rate is given. Column labels are
+% localized via a package option (10 languages ship); \Fee/\EBC/\EFC
+% subtotals and the grand total are computed, not typed in by hand.
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[english]{invoice}
+\usepackage[margin=2.5cm]{geometry}
+\pagestyle{empty}
+
+\begin{document}
+
+\noindent\textbf{\Large Invoice}\hfill Dahlgren Consulting\\
+\noindent Invoice \#2026-0071 \hfill 27 August 2026\\[1em]
+
+\begin{invoice}{Euro}{19}
+	\ProjectTitle{Retail Platform Migration}%
+	\Fee{Architecture review and migration plan}{950.00}{6}
+	\Fee{On-site workshop facilitation}{950.00}{2}
+	%
+	\EBC{Printed workshop materials}{84.50}
+
+	\ProjectTitle{Q3 Vendor Negotiation}%
+	\Fee{Contract review}{1100.00}{3}
+	\Fee{Negotiation sessions}{1100.00}{2}
+	%
+	\EFC{Taxi, airport to vendor site}{HK\$}{210.00}{0.1175}{}
+	\EFC{Hotel, 3 nights (card statement)}{HK\$}{5400.00}{}{634.50}
+	%
+	\Discount{Downpayment received 12 July 2026}{1500.00}
+\end{invoice}
+
+\end{document}

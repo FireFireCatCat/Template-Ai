@@ -1,0 +1,83 @@
+\NeedsTeXFormat{LaTeX2e}% LaTeX June 94 or later required
+\def\batchfile{smflatex.ins}
+\def\smffileversion{v1.6}
+\def\smffiledate{2021/05/01}
+%%
+%% This is the installation file for the smflatex bundle
+%% Run LaTeX on this file
+%%
+%% (c) 1999-2021 Societe mathematique de France
+%%
+\input docstrip.tex
+%%
+%% The package contains some files 
+%% which are only intendedfor internal use of SMF
+%% To unpack them as well, replace \smffalse with \smftrue
+\newif\ifsmf \smffalse
+
+\preamble
+
+ This is smflatex \smffileversion (released \smffiledate)
+ LaTeX bundle for the SMF publications
+ (c) 1999-2021 Société mathématique de France
+
+\endpreamble
+\declarepreamble\bstfilepreamble
+BibTeX style for the smflatex bundle, version \smffileversion
+\endpreamble
+\declarepostamble\bstfilepostamble
+\endpostamble
+\keepsilent
+\askonceonly
+% \csname newtoks\endcsname\filesmsg
+% \def\dofile#1#2{\generateFile{#1}{}{\from{smflatex.dtx}{#2}}%
+%  \filesmsg\expandafter{\the\filesmsg \Msg{* \space\space#1}}
+
+\def\dofile#1#2{%
+  \file{#1}{\from{smflatex.dtx}{#2}}}
+
+\generate{%
+   \usedir{tex/latex/smflatex}%
+% Classes smfbook et smfart
+    \dofile{smfbook.cls}{book}
+    \dofile{smfart.cls}{article}
+% Package d'adaptations pour hyperref
+    \dofile{smfhyperref.sty}{hyperref}
+%  Package de theoremes
+    \dofile{smfthm.sty}{smfthm}
+\ifsmf
+% Package pour la ponctuation haute incorpore dans smfgen
+    \dofile{upitparen.sty}{upitparen}
+\fi
+% Package de listes
+    \dofile{smfenum.sty}{smfenum}
+%  Fichiers de configuration SMF
+    \dofile{smfgen.sty}{smfgen}
+%  Fichiers pour les revues
+    \dofile{smfbull.sty}{bull}
+\ifsmf
+    \dofile{smfaster.sty}{asterisque}
+    \dofile{smfbulletin.sty}{bulletin}
+    \dofile{smfcourspe.sty}{courspe}
+    \dofile{smfcourspeedp.sty}{courspeedp}
+    \dofile{smfdocuments.sty}{documents}
+    \dofile{smfmemoires.sty}{memoires}
+    \dofile{smfpanoramas.sty}{panoramas}
+    \dofile{smfseminaires.sty}{seminaires}
+% Bourbaki (Brochure/Astérisque)
+    \dofile{smfbourbaki.cls}{asterki}
+\fi
+%  Package multi
+    \dofile{smfmulti.sty}{multi}
+% Package smfbib
+    \dofile{smfbib.sty}{smfbib}
+% Styles BiBTeX smfalpha et smfplain
+    \usedir{tex/bibtex/bst/smflatex}
+    \usepreamble\bstfilepreamble
+    \usepostamble\bstfilepostamble
+    \dofile{smfalpha.bst}{smfalpha}
+    \dofile{smfplain.bst}{smfplain}
+%  Source commente des macros
+    \usedir{doc/latex/smflatex}
+    \dofile{smfdoc.tex}{doc}
+}

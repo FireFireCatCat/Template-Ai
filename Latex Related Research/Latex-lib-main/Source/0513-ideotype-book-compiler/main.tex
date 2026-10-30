@@ -1,0 +1,45 @@
+\documentclass[11pt,oneside]{book}
+\usepackage[paperwidth=6in,paperheight=9in,margin=0.8in,headheight=14pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{hyperref}
+\definecolor{violet}{HTML}{5B3A8E}
+\definecolor{codebg}{HTML}{F3F0F7}
+\hypersetup{colorlinks=true,linkcolor=violet,citecolor=violet,urlcolor=violet}
+\lstset{basicstyle=\ttfamily\small,backgroundcolor=\color{codebg},frame=single,framerule=0pt,breaklines=true}
+\title{IdeoType\\[0.4em]\large A manuscript-to-book production starter}
+\author{Your Name}
+\date{}
+\begin{document}
+\frontmatter
+\maketitle
+\chapter*{Production brief}
+This starter follows the spirit of IdeoType, a MIT-licensed book compiler that turns structured manuscript content into a printable book. Here the production stages are visible in one directly compilable LaTeX file: metadata, front matter, chapters, and back matter.
+\tableofcontents
+\mainmatter
+\chapter{Write the source}
+Keep the manuscript content separate from production decisions wherever possible. A structured source makes it easier to generate multiple outputs, such as a reading PDF, a print edition, and an accessible web version.
+\section{A small source fragment}
+The following pseudo-markup shows the kind of source boundary a compiler can preserve:
+\begin{lstlisting}
+<chapter id="opening">
+  <title>The Opening</title>
+  <paragraph>Put the manuscript here.</paragraph>
+</chapter>
+\end{lstlisting}
+\chapter{Transform and check}
+The conversion step should apply the book's layout rules, then a human should inspect the resulting PDF. Check headings, widows, footnotes, tables, links, and the table of contents before sending a file to print.
+\section{Release checklist}
+\begin{enumerate}
+\item Confirm title, author, edition, and copyright metadata.
+\item Compile with the selected engine and resolve all references.
+\item Inspect a representative chapter opening and the final page.
+\item Archive the source and record the exact build command.
+\end{enumerate}
+\backmatter
+\chapter*{Build notes}
+Record the source revision, output format, trim size, and any post-processing used for the edition. This makes a later reprint reproducible.
+\end{document}

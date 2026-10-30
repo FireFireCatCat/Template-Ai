@@ -1,0 +1,86 @@
+%% Die TeXnische Komoedie (dtk) article starter — DANTE e.V.'s journal.
+%%
+%% The dtk class itself is NOT included in this download: it ships with the
+%% pinned compiler's TeX Live, so bundling a copy would only risk pinning you
+%% to an older version than the compiler already has.
+%%
+%% REQUIRES LuaLaTeX: the class refuses to load under pdflatex/xelatex.
+%%
+%% BIBLIOGRAPHY: the class hardcodes \RequirePackage[backend=biber]{biblatex},
+%% so this starter's own \addbibresource/\printbibliography drive biber (not
+%% classic bibtex) via the compiler's biblatex/biber cycle.
+%%
+%% Class documentation: texdoc dtk   |   https://ctan.org/pkg/dtk
+%% Licence: dtk is LPPL-1.3c, (c) Rolf Niepraschk, Herbert Voss.
+\documentclass[ngerman]{dtk}
+\usepackage{booktabs}
+\addbibresource{main.bib}
+
+\begin{document}
+\title{Ein Leitfaden zum Setzen von Algorithmen mit der \texttt{dtk}-Klasse}
+\Author{Lovelace}{Ada}%
+    {Institut für Analytische Maschinen\\
+     \Email{ada@example.edu}}
+\Author{Turing}{Alan}%
+    {Fakultät für Rechnende Maschinen\\
+     \Email{alan@example.edu}}
+\maketitle
+
+\section{Einleitung}
+Dieser Beispielartikel zeigt, wie ein Manuskript für \journalname{} mit der
+Klasse \texttt{dtk} vorbereitet wird. Ersetzen Sie diesen Text durch Ihre
+eigene Einleitung.
+
+\section{Aufbau des Artikels}
+Ein typischer Artikel gliedert sich in Abschnitte wie diesen. Absätze werden,
+wie in der KOMA-Script-Tradition üblich, ohne Einzug und mit vertikalem
+Abstand gesetzt.
+
+\begin{itemize}
+\item Listen werden mit Punkten eingeleitet.
+\item Verschachtelung ist bis zu vier Ebenen tief möglich.
+\end{itemize}
+
+\section{Quelltext-Listings}
+Die Klasse bindet das Paket \texttt{listings} bereits ein. Ein nummeriertes
+Listing:
+
+\begin{lstlisting}[style=number]
+\begin{itemize}
+\item Erster Punkt
+\item Zweiter Punkt
+\end{itemize}
+\end{lstlisting}
+
+Und ein Listing ohne Nummerierung:
+
+\begin{lstlisting}[style=noNumber]
+\begin{description}
+\item[Docstrip] zerlegt eine .dtx-Datei in ihre Bestandteile.
+\end{description}
+\end{lstlisting}
+
+\section{Tabellen}
+\begin{table}[htbp]
+  \caption{Ein einfaches Beispiel.}
+  \label{tab:beispiel}
+  \begin{tabular}{lrr}
+    \toprule
+    Bedingung & Anzahl & Anteil \\
+    \midrule
+    Basis     & 120    & 0{,}42 \\
+    Neu       & 118    & 0{,}71 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Tabelle~\ref{tab:beispiel} zeigt die Werte.
+
+\section{Zusammenfassung}
+Fassen Sie hier die wichtigsten Aussagen Ihres Artikels zusammen. Ein Zitat
+\autocite{knuth1984texbook} zeigt, wie Literaturverweise mit der
+\texttt{biblatex}-Schnittstelle der Klasse gesetzt werden.
+
+\printbibliography
+
+\end{document}

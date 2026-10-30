@@ -1,0 +1,530 @@
+\chapter{Projective geometry}\label{chap:proj}
+
+\section{The projective completion}
+
+In the Euclidean plane, two distinct lines might have one or zero points of intersection 
+(in the latter case the lines are parallel).
+We aim to extend the Euclidean plane by ideal points so that any two distinct lines will have exactly one point of intersection.
+
+\begin{wrapfigure}{o}{31mm}
+\centering
+\includegraphics{mppics/pic-226}
+\vskip4mm
+\includegraphics{mppics/pic-228}
+\end{wrapfigure}
+
+A collection of lines in the Euclidean plane is called \index{concurrent}\emph{concurrent} if they all intersect at a single point 
+or if they are all pairwise parallel.
+A maximal set of concurrent lines in the plane is called a \index{pencil}\emph{pencil}.
+There are two types of pencils: 
+\emph{central pencils} contain all lines passing thru a fixed point called the \index{center!center of the pencil}\emph{center of the pencil}
+and  
+\emph{parallel pencils} contain pairwise parallel lines.
+
+Any two lines completely determine the pencil containing both.
+
+A point $P$ in the Euclidean plane uniquely defines a central pencil with the center at $P$.
+Let us add one \index{point!ideal point}\index{ideal!point}\emph{ideal point} for each parallel pencil,
+assuming that all these ideal points lie on one \index{line!ideal line}\index{ideal!line}\emph{ideal line}.
+We also assume that the ideal line belongs to each parallel pencil.
+
+We obtain the so-called \index{projective!plane}\emph{projective plane} (or  the \index{projective!completion}\emph{projective completion} of the original plane). 
+It comes with an incidence structure --- we say that three points lie on one line if the corresponding pencils contain a common line.
+Projective geometry studies this incidence structure.
+
+A parallel pencil contains the ideal line and the lines represented by equations of the form $y=m\cdot x+b$ with a fixed slope $m$.
+If $m=\infty$, we assume that the lines are given by equations of the form $x=a$.
+Therefore the projective completion contains all the points in the $(x,y)$-plane along with the ideal line containing one ideal point $P_m$ for every slope $m\z\in\mathbb{R}\cup\{\infty\}$.
+
+\section{Euclidean space}
+
+Let us revisit the construction of the metric $d_2$ (Section~\ref{sec:Metric spaces}), but this time in three-dimensional space.
+
+Consider $\mathbb{R}^3$, which represents the set of all triples $(x,y,z)$ of real numbers.
+Let  $A=(x_A,y_A,z_A)$ and $B=(x_B,y_B,z_B)$ be arbitrary points in $\mathbb{R}^3$.
+Define the metric on $\mathbb{R}^3$ as follows:
+$$AB
+\df
+\sqrt{(x_A-x_B)^2+(y_A-y_B)^2+(z_A-z_B)^2}.$$
+The obtained metric space is called \index{Euclidean!space}\emph{Euclidean space}.
+
+A subset of points in $\mathbb{R}^3$ is called a \index{plane!in space}\emph{plane} if it can be
+described by an equation of the form
+$$a\cdot x+b\cdot y+c\cdot z+d=0,$$ 
+where $a$, $b$, $c$, and $d$ are constants, and at least one of the values $a$, $b$ or $c$ is nonzero.
+
+It is straightforward to show the following:
+\begin{itemize}
+ \item Any plane in the Euclidean space is isometric to the Euclidean plane.
+ \item Any three points in the Euclidean space lie on a plane.
+ \item The  intersection of two distinct planes (if it is nonempty) forms a line in each of these planes.
+\end{itemize}
+
+These statements enable us to generalize many results from Euclidean plane geometry to Euclidean space.
+
+\section{Space model}
+
+Let us identify the Euclidean plane with a plane $\Pi$ in the Euclidean space $\mathbb{R}^3$ that does not pass thru the origin $O$.
+Denote by $\hat\Pi$ the projective completion of $\Pi$.
+
+Denote by $\Phi$ the set of all lines in $\mathbb{R}^3$ thru $O$.
+Let us define a bijection $P\leftrightarrow \dot P$ between $\hat \Pi$ and $\Phi$.
+If $P\in \Pi$, we take the line $\dot P=(OP)$;
+if $P$ is an ideal point of $\hat \Pi$ defined by a parallel pencil of lines, we take the line $\dot P$ thru $O$ and parallel to the lines in this pencil.
+
+Furthermore, let $\Psi$ be the set of all planes in $\mathbb{R}^3$ thru $O$.
+In a similar fashion, we can define a bijection $\ell\leftrightarrow \dot \ell$ between lines in $\hat \Pi$ and $\Psi$.
+If a line $\ell$ is not ideal, we take the plane $\dot \ell$ that contains $\ell$ and $O$;
+if the line $\ell$ is ideal, we take $\dot \ell$ to be the plane passing thru $O$ and parallel to $\Pi$ (that is, $\dot\ell\cap\Pi=\emptyset$).
+
+\begin{thm}{Observation}\label{obs:bijections}
+Let $P$ and $\ell$ be a point and a line in the projective plane.
+Then 
+\[P\in \ell \quad\iff\quad \dot P\subset \dot \ell,\]
+where $\dot P$ and $\dot \ell$ are defined by the constructed bijections.
+\end{thm}
+
+\section{The perspective projection}
+\label{sec:perspective-projection}
+
+Let $O$ be a point that does not lie on planes $\Pi$ and $\Pi'$ in $\mathbb{R}^3$.
+
+\begin{wrapfigure}{o}{43mm}
+\centering
+\vskip-4mm
+\includegraphics{mppics/pic-230}
+\end{wrapfigure}
+
+A \index{perspective projection}\emph{perspective projection from $\Pi$ to $\Pi'$ with center $O$} maps a point $P\z\in \Pi$
+to the intersection point $P'$ of the plane $\Pi'$ and the line $(OP)$.
+
+In general, perspective projection is not a bijection between the planes.
+Indeed, if the line $(OP)$ is parallel to $\Pi'$ 
+(that is, if $(OP)\cap\Pi'=\emptyset$)
+then the perspective projection of $P\in \Pi$ is undefined.
+Also, if $(OP')\parallel \Pi$ 
+for $P'\in \Pi'$,
+then the point $P'$ is not an image of the perspective projection.
+
+Denote by $\hat \Pi$ and $\hat \Pi'$ the projective completions of $\Pi$ and $\Pi'$ respectively. 
+The perspective projection is a restriction of the composition of two bijections $\hat \Pi\leftrightarrow\Phi \leftrightarrow\hat \Pi'$ constructed in the previous section.
+By Observation~\ref{obs:bijections}, the perspective projection can be extended to a bijection $\hat \Pi\leftrightarrow\hat \Pi'$ that sends lines to lines.%
+\footnote{A similar story happened with inversion.
+Inversion is not defined at its center;
+moreover, the center is not an inverse of any point.
+To deal with this problem, we introduced the inversive plane, 
+which is the Euclidean plane extended by one ideal point.
+The same strategy works for the perspective projection $\Pi\to\Pi'$, but this time we need to add an ideal line.}
+
+For example, suppose $O$ is the origin of the $(x,y,z)$-coordinate space,
+and the planes $\Pi$ and $\Pi'$ are defined by the equations
+$z=1$ and $x=1$ respectively.
+Then the perspective projection from $\Pi$ to $\Pi'$
+can be written in coordinates as
+\[(x,y,1)\mapsto (1,\tfrac yx,\tfrac 1x).\]
+Indeed the coordinates have to be proportional;
+points on $\Pi$ have a unit $z$-coordinate, 
+and points on $\Pi'$ have a unit $x$-coordinate.
+
+The perspective projection maps one plane to another.
+However, we can identify the two planes by fixing a coordinate system in each.
+In this case, we get a partially defined map from the plane to itself.
+We will keep the name {}\emph{perspective transformation} for such maps.
+
+For the described perspective projection, we may get the map 
+\[\beta\:(x,y)\mapsto (\tfrac 1x,\tfrac yx).
+\eqlbl{eq:(x,y)-perspective}\]
+This map is undefined on the line $x=0$.
+Also, points on this line are not images of points under the perspective projection.
+
+For example, to define an extension of the perspective projection $\beta$ in \ref{eq:(x,y)-perspective},
+we have to observe that 
+\begin{itemize}
+\item The pencil of vertical lines $x=a$ is mapped to itself.
+\item The ideal points defined by pencils of lines $y=m\cdot x+ b$ are mapped to the point $(0,m)$, and the other way around --- point $(0,m)$ is mapped to the ideal point defined by the  pencil of lines $y=m\cdot x+ b$.
+\end{itemize}
+
+\section{Projective transformations}
+
+A bijection from the projective plane to itself 
+that sends lines to lines 
+is called a \index{projective!transformation}\emph{projective transformation}.
+
+Any affine transformation defines  a projective transformation on the corresponding projective plane.
+We will call such projective transformations \index{affine transformation}\emph{affine}; 
+these are projective transformations that send the ideal line to itself.
+
+The extended perspective projection, as  discussed in the previous section, 
+provides another source of examples of projective transformations.
+
+\begin{thm}{Theorem}\label{thm:moving}
+Given a line $\ell$ in the projective plane, there is a perspective projection that sends $\ell$ to the ideal line.
+
+Moreover, a projective transformation is either affine or, in a suitable coordinate system, it can be written as a composition of the extension of the perspective projection
+\[\beta\:(x,y)\mapsto (\tfrac xy,\tfrac 1y)\]
+and an affine transformation.
+\end{thm}
+
+\parit{Proof.}
+Choose an $(x,y)$-coordinate system so that the line $\ell$ is defined by the equation $y=0$. 
+Then the extension of $\beta$ gives the needed transformation.
+
+Fix a projective transformation $\gamma$.
+If $\gamma$ sends the ideal line to itself,
+then it must be affine.
+In this case, the theorem is proved.
+
+Suppose $\gamma$ sends the ideal line to a line $\ell$.
+Choose a perspective projection $\beta$ as above.
+The composition $\beta\circ\gamma$ sends the ideal line to itself.
+That is, $\alpha=\beta\circ\gamma$ is affine.
+Note that $\beta$ is self-inverse; therefore 
+\[\gamma=\beta\circ\beta\circ\gamma=\beta\circ\alpha\]
+--- hence the result.
+\qeds
+
+\begin{thm}{Exercise}\label{ex:proj-cross-ratio}
+Let $P\mapsto P'$ be (a) an affine transformation, (b) the perspective projection defined by $(x,y)\mapsto (\tfrac xy,\tfrac 1y)$, or (c) an arbitrary projective transformation.
+Suppose $P_1,P_2,P_3,P_4$ are distinct points on one line.
+Show that 
+\[\frac{P_1P_2\cdot P_3P_4}{P_2P_3\cdot P_4P_1}=\frac{P'_1P'_2\cdot P'_3P'_4}{P'_2P'_3\cdot P'_4P'_1}\]
+if none of these points lies on the ideal line.
+In other words, each of these maps preserves the cross-ratio for quadruples of points on one line.
+
+\end{thm}
+
+{
+
+\begin{wrapfigure}{o}{60mm}
+\vskip-0mm
+\centering
+\includegraphics{mppics/pic-231}
+\end{wrapfigure}
+
+\begin{thm}{Advanced exercise}\label{ex:proj-cross-ratio=1}
+Let $A$, $B$, $C$, $P$, $Q$, $V$, $W$, $X$, $Y$ be as in the picture.
+\begin{enumerate}[(a)]
+\item\label{ex:proj-cross-ratio=1:=} Show that 
+\[\frac{AX\cdot BY}{AY\cdot BX}=\frac{AP\cdot CQ}{AQ\cdot CP}.\]
+\item\label{ex:proj-cross-ratio=1:1} 
+Use part (\ref{ex:proj-cross-ratio=1:=}) to show that
+\[AX\cdot BY=AY\cdot BX.\]
+\end{enumerate}
+
+\end{thm}
+
+}
+
+
+\section{Moving points to infinity}
+
+{
+
+\begin{wrapfigure}{r}{37mm}
+\vskip-8mm
+\centering
+\includegraphics{mppics/pic-234}
+\end{wrapfigure}
+
+Theorem~\ref{thm:moving} allows us to declare that a given line is ideal.
+In other words, we can choose a preferred affine plane by removing one line from the projective plane.
+This construction provides a method for solving problems in projective geometry 
+which will be illustrated by the following classical example:
+
+
+\begin{thm}{Desargues' theorem}\label{thm:desargues}\index{Desargues' theorem}
+Consider three concurrent lines $(AA')$, $(BB')$, and $(CC')$ in the projective plane.
+Let $X$, $Y$, and $Z$ be the intersection points of $(BC)$ and $(B'C')$, $(CA)$ and $(C'A')$,
+and $(AB)$ and $(A'B')$, respectively.
+Then the points $X$, $Y$, and $Z$ are collinear.
+\end{thm}
+
+}
+
+\parit{Proof.}
+We may assume that the line $(XY)$ is ideal.
+If not, apply a perspective projection that sends the line $(XY)$ to the ideal line.
+
+\begin{wrapfigure}{o}{40mm}
+\vskip-0mm
+\centering
+\includegraphics{mppics/pic-236}
+\end{wrapfigure}
+
+That is, we can assume that 
+\[(BC)\z\parallel (B'C')\quad\text{and}\quad(CA)\z\parallel (C'A'),\]
+and we need to show that 
+\[(AB)\z\parallel(A'B').\]
+
+Assume that the lines $(AA')$, $(BB')$, and $(CC')$ intersect at a point~$O$.
+Since $(BC)\z\parallel (B'C')$, 
+the transversal property (\ref{thm:parallel-2}) implies that $\measuredangle OBC\z= \measuredangle OB'C'$ and $\measuredangle OCB\z= \measuredangle OC'B'$.
+By the AA similarity condition, $\triangle OBC\z\sim\triangle OB'C'$.
+In particular,
+\[\frac{OB}{OB'}=\frac{OC}{OC'}.\]
+
+In the same way, we get that $\triangle OAC\z\sim\triangle OA'C'$ and
+\[\frac{OA}{OA'}=\frac{OC}{OC'}.\]
+Therefore, 
+\[\frac{OA}{OA'}=\frac{OB}{OB'}.\]
+By the SAS similarity condition, 
+we get that $\triangle OAB\sim\triangle OA'B'$;
+in particular, $\measuredangle OAB=\pm\measuredangle OA'B'$.
+
+Note that $\measuredangle AOB=\measuredangle A'OB'$.
+Therefore, 
+\[\measuredangle OAB=\measuredangle OA'B'.\]
+By the transversal property (\ref{thm:parallel-2}), we have
+$(AB)\parallel (A'B')$.
+
+The case $(AA')\parallel(BB')\parallel(CC')$ is done similarly.
+In this case, the quadrangles $B'BCC'$ and $A'ACC'$ are parallelograms.
+Therefore, 
+\[BB'=CC'=AA'.\]
+Hence $\square B'BAA'$ is a parallelogram and $(AB)\parallel (A'B')$.
+\qeds
+
+
+
+
+Here is another classical theorem of projective geometry.
+
+\begin{thm}{Pappus' theorem}\label{thm:pappus}\index{Pappus' theorem}
+Let $A$, $B$, $C$ and $A'$, $B'$, $C'$ be two triples of collinear points, and let $X$, $Y$, and $Z$ be the intersection points of $(BC')$ and $(B'C)$, $(CA')$ and $(C'A)$,
+and $(AB')$ and $(A'B)$, respectively.
+Then the points $X$, $Y$, $Z$ are collinear.
+\end{thm}
+
+
+Pappus' theorem can be proved the same way as Desargues' theorem.
+
+\parit{Idea of the proof.}
+Applying a perspective projection, we can assume that $Y$ and $Z$ lie on the ideal line.
+It remains to show that $X$ lies on the ideal line.
+
+In other words, assuming that $(AB')\parallel (A'B)$ and $(AC')\parallel (A'C)$, we need to show that $(BC')\parallel(B'C)$.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics{mppics/pic-238}
+\hskip15mm
+\includegraphics{mppics/pic-240}
+\end{figure}
+
+
+\begin{thm}{Exercise}\label{ex:pappus}
+Finish the proof of Pappus' theorem using the idea described above.
+\end{thm}
+
+The following exercise gives a partial converse to Pappus' theorem.
+
+\begin{thm}{Exercise}\label{ex:pappus-converse}
+Given two triples of points $A$, $B$, $C$,
+and $A'$, $B'$, $C'$,
+suppose that distinct points $X$, $Y$, and $Z$ are the unique intersection points of $(BC')$ and $(B'C)$, $(CA')$ and $(C'A)$,
+and $(AB')$ and $(A'B)$, respectively.
+Assume that the triples $A$, $B$, $C$,
+and $X$, $Y$, $Z$ are collinear.
+Show that the triple $A'$, $B'$, $C'$ is collinear.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:desargues-construction}
+Solve the following construction problem
+\begin{enumerate}[(a)]
+\item\label{ex:desargues-construction:desargues} using Desargues' theorem;
+\item\label{ex:desargues-construction:pappus} using Pappus' theorem.
+\end{enumerate}
+\parbf{Problem.}
+Suppose a parallelogram and a line $\ell$ are given.
+Assume that $\ell$ crosses all sides (or their extensions) of the parallelogram at different points. 
+Construct another line parallel to $\ell$ with a ruler only.
+\end{thm}
+
+
+\section{Duality}
+
+Assume a bijection $P\leftrightarrow p$ between the set of lines and the set of points of a plane is given.
+\begin{figure}[!ht]
+\centering
+\includegraphics{mppics/pic-242}
+\hskip15mm
+\includegraphics{mppics/pic-244}
+\caption*{Dual configurations.}
+\end{figure}
+That is,
+given a point $P$, we denote by $p$ the corresponding line;
+and the other way around, 
+given a line $\ell$ we denote by $L$ the corresponding point. 
+
+The bijection between points and lines is called \index{duality}\emph{duality}\label{page:duality}%
+\footnote{The standard definition of duality is more general; we consider a special case which is also called \index{polarity}\emph{polarity}.}
+if 
+\[P\in \ell
+\quad
+\iff
+\quad 
+p\ni L\]
+for any point $P$ and line~$\ell$.
+
+{
+
+\begin{wrapfigure}{r}{40mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-245}
+\end{wrapfigure}
+
+\begin{thm}{Exercise}\label{ex:dual-configurations}
+Consider the configuration of lines and points in the picture.
+
+\begin{enumerate}[(a)]
+\item\label{ex:dual-configurations:infty} Redraw the picture after moving the line $q$ to infinity; mark the points and lines respectively.
+
+\item\label{ex:dual-configurations:dual} Start with a generic quadrangle $KLMN$ and extend it to a dual picture; label the lines and points using the convention described above.
+\end{enumerate}
+
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:dual-euclid}
+Show that the Euclidean plane does not admit a duality. 
+\end{thm}
+
+}
+
+\begin{thm}{Theorem}\label{thm:dual}
+The projective plane admits a duality.
+\end{thm}
+
+
+
+\parit{Proof.}
+Consider a plane $\Pi$ and a point $O\notin\Pi$ in the space;
+suppose that $\hat \Pi$ denotes the corresponding projective plane.
+
+Recall that $\Phi$ and $\Psi$ denote the set of all lines and planes passing thru~$O$.
+By \ref{obs:bijections}, there are bijections $P\leftrightarrow\dot P$  between points of $\hat\Pi$ and $\Phi$ and $\ell\leftrightarrow\dot\ell$ between lines in $\hat\Pi$ and $\Psi$ such that 
+$P\in\ell$ if and only if $\dot P\subset \dot \ell$.
+
+It remains to construct a bijection $\dot L \leftrightarrow \dot \ell$
+between $\Phi$ and $\Psi$ 
+such that 
+\[\dot P\subset \dot \ell
+\quad
+\iff
+\quad
+\dot p\supset \dot L
+\eqlbl{iff-dual}\]
+for any two lines $\dot P$ and $\dot L$ passing thru~$O$.
+
+Set $\dot \ell$ to be the plane thru $O$ 
+that is perpendicular to~$\dot L$.
+Both conditions \ref{iff-dual} are equivalent to $\dot P\perp \dot L$;
+hence the result follows.
+\qeds
+
+\begin{thm}{Exercise}\label{ex:dula-coordinates}
+Consider the Euclidean plane with $(x,y)$-coordinates; suppose that $O$ denotes the origin.
+Given a point $P\ne O$ with coordinates $(a,b)$ consider the line $p$ 
+given by the equation 
+$a\cdot x+b\cdot y=1$.
+
+Show that the correspondence $P\mapsto p$ can be extended to a duality of the projective plane.
+
+Which line corresponds to $O$?
+
+Which point corresponds to the line  $a\cdot x\z+b\cdot y=0$?
+\end{thm}
+
+Duality says that lines and points have the same rights in terms of incidence.
+In particular, we can formulate an equivalent dual statement for  any statement in projective geometry.
+For example, the dual statement of  ``the points $X$, $Y$, and $Z$ lie on one line $\ell$''
+would be the ``lines $x$, $y$, and $z$ intersect at one point $L$''.
+Let us formulate the dual statement for Desargues' theorem~\ref{thm:desargues}.
+
+
+\begin{thm}{Dual Desargues' theorem}\label{thm:dual-desargues}\index{Desargues' theorem}
+Let $X$, $Y$, and $Z$ be the unique intersection points of $(BC)$ and $(B'C')$, $(CA)$ and $(C'A')$,
+and $(AB)$ and $(A'B')$, respectively.
+If the points $X$, $Y$, and~$Z$ are collinear, then the lines $(AA')$, $(BB')$, and $(CC')$ are concurrent.
+\end{thm}
+
+In this theorem, the points $X$, $Y$, and $Z$ 
+are dual to the lines $(AA')$, $(BB')$, and $(CC')$ in the original formulation, and the other way around.
+
+Once Desargues' theorem is proved, applying duality (\ref{thm:dual})
+we get the dual Desargues' theorem.
+Note that the dual Desargues' theorem is the converse to the original Desargues' theorem~\ref{thm:desargues}.
+So, we get a stronger version of the theorem for free: \textit{the points $X$, $Y$, and~$Z$ are collinear {}\emph{if and only if} the lines  $(AA')$, $(BB')$, and $(CC')$ are concurrent.}
+
+\begin{thm}{Exercise}\label{ex:dual-pappus}
+Formulate the dual Pappus' theorem (see \ref{thm:pappus}).
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:dual-desargues-construction} 
+Solve the following construction problem
+\begin{enumerate}[(a)]
+\item\label{ex:dual-desargues-construction:desargues} using dual Desargues' theorem;
+\item\label{ex:dual-desargues-construction:pappus} using Pappus' theorem or its dual.
+\end{enumerate}
+\parbf{Problem.}
+Given two parallel lines, construct a third parallel line thru a given point with a ruler only.
+\end{thm}
+
+\section{The polar and the pole}
+
+In this section, we describe a powerful trick that can be used in the constructions with a ruler.
+
+Assume $\Gamma$ is a circle in the plane and $P\notin \Gamma$.
+\begin{figure}[!ht]
+\centering
+\includegraphics{mppics/pic-290}
+\end{figure}
+Draw two lines $x$ and $y$ thru $P$ that intersect $\Gamma$ at two pairs of points $X$, $X'$ and $Y$, $Y'$.
+Let $Z=(XY)\cap(X'Y')$ and $Z'=(XY')\cap(X'Y)$.
+Consider the line $p=(ZZ')$.
+
+\begin{thm}{Claim}\label{clm:polar}
+The constructed line $p=(ZZ')$ does not depend on the choice of lines $x$ and $y$.
+
+Moreover, 
+
+\begin{enumerate}[(a)]
+\item $P\leftrightarrow p$ can be extended to a duality such that any point $P$ on the circle $\Gamma$ corresponds to a line $p$ that is tangent to $\Gamma$ at~$P$.
+\item If $O$ is the center of $\Gamma$, then the inversion of $P$ across $\Gamma$ is the footpoint of $O$ on~$p$.
+\end{enumerate}
+ 
+\end{thm}
+
+We will not prove this claim, but the proof is not hard.
+If $P$ lies outside of $\Gamma$, it can be done by moving $P$ to infinity while keeping $\Gamma$ fixed as a set.
+If $P$ lies inside $\Gamma$, it can be done by moving $P$ to the center of $\Gamma$.
+The existence of corresponding projective transformations follows from the idea in Exercise~\ref{ex:cone}.
+
+The line $p$ is called the \index{polar}\emph{polar} of the point $P$ with respect to~$\Gamma$.
+
+The point $P$ is called the \index{pole}\emph{pole} of the line $p$ with respect to~$\Gamma$.
+
+\begin{thm}{Exercise}\label{ex:revert}
+Reverse the described construction.
+That is, given a circle $\Gamma$ and a line $p$ that is not tangent to $\Gamma$, construct a point $P$ such that the described construction for $P$ and $\Gamma$ produces the line $p$.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:tangent ruler}
+Let $p$ be a polar line of a point $P$ with respect to the circle~$\Gamma$.
+Suppose $p$ intersects $\Gamma$ at points $V$ and~$W$.
+Show that the lines $(PV)$ and $(PW)$ are tangent to~$\Gamma$.
+
+Provide a ruler-only construction of the tangent lines to the given circle $\Gamma$ thru the given point $P\notin\Gamma$.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:concentric-circ}
+Assume two concentric circles $\Gamma$ and $\Gamma'$ are given.
+Construct the common center of $\Gamma$ and $\Gamma'$ using only a ruler.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:proj-perp}
+Assume a line $\ell$ and a circle $\Gamma$ with its center $O$ are given.
+Suppose $O\notin \ell$.
+Construct a perpendicular from $O$ to $\ell$ using only a ruler.
+\end{thm}
+

@@ -1,0 +1,2194 @@
+% \iffalse meta-comment
+%
+% attinormativi.dtx
+%
+% Documented source for the `attinormativi' LaTeX class.
+% Sorgente documentato per la classe LaTeX `attinormativi'.
+%
+% Copyright (C) 2026 Federico Gallo <gallofede75@gmail.com>
+%
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License, either version 1.3c of this license
+% or (at your option) any later version.
+% The latest version of this license is at:
+%   https://www.latex-project.org/lppl.txt
+% This work has the LPPL maintenance status `maintained'.
+% The Current Maintainer of this work is Federico Gallo.
+%
+% This work consists of the files:
+%   attinormativi.dtx   (this file)
+%   attinormativi.ins
+% and the derived files:
+%   attinormativi.cls
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{attinormativi.dtx}
+  [2026/05/25 v1.2 Documented source for attinormativi class]
+\documentclass[11pt,a4paper]{ltxdoc}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{tgtermes}
+  \usepackage[scale=0.92]{tgheros}
+  \usepackage{tgcursor}
+\else
+  \usepackage{fontspec}
+  \setmainfont{TeX Gyre Termes}
+  \setsansfont{TeX Gyre Heros}
+  \setmonofont{TeX Gyre Cursor}
+\fi
+\usepackage[italian]{babel}
+\addto\captionsitalian{\renewcommand{\abstractname}{Abstract}}
+\usepackage[
+  a4paper,
+  top=25mm, bottom=25mm,
+  inner=38mm, outer=24mm,
+  marginparwidth=33mm,
+  marginparsep=3mm,
+  headheight=14pt
+]{geometry}
+\usepackage[dvipsnames,svgnames]{xcolor}
+\definecolor{accentcolor}{HTML}{2B4D8E}
+\definecolor{codebg}     {HTML}{F5F5F5}
+\definecolor{notabg}  {HTML}{FFF8DC}
+\definecolor{warnbg}  {HTML}{FFF0E0}
+\definecolor{warnframe}{HTML}{C0602A}
+\definecolor{rulecolor}  {HTML}{CCCCCC}
+\usepackage{hologo}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{ragged2e}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\setlist[itemize] {noitemsep, topsep=0.4ex, leftmargin=1.8em}
+\setlist[enumerate]{noitemsep, topsep=0.4ex, leftmargin=1.8em}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\newtcolorbox{notabox}[1][Nota]{%
+  enhanced, breakable,
+  colback=notabg, colframe=accentcolor,
+  fonttitle=\bfseries\small, title={#1},
+  left=4pt, right=4pt, top=3pt, bottom=3pt, boxrule=0.5pt,
+  before=\smallskip, after=\smallskip
+}
+\newtcolorbox{warnbox}[1][Attenzione]{%
+  enhanced, breakable,
+  colback=warnbg, colframe=warnframe,
+  fonttitle=\bfseries\small, title={#1},
+  left=4pt, right=4pt, top=3pt, bottom=3pt, boxrule=0.5pt,
+  before=\smallskip, after=\smallskip
+}
+
+\newcommand*{\pkg}[1]{\textsf{#1}}
+\newcommand*{\cls}[1]{\textsf{#1}}
+\newcommand*{\opt}[1]{\texttt{#1}}
+\providecommand*{\meta}[1]{\textlangle\textit{#1}\textrangle}
+\newenvironment{cmdtable}[1][Comando]{%
+  \vspace{0.4ex}\small\sloppy
+  \begin{longtable}{L{0.46\linewidth} L{0.48\linewidth}}
+  \toprule
+  \textbf{#1} & \textbf{Descrizione} \\
+  \midrule\endhead
+  \bottomrule\endlastfoot
+}{%
+  \end{longtable}\vspace{0.2ex}
+}
+\newcommand*{\cmdrow}[2]{\texttt{#1} & #2 \\[0.15ex]}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+
+\usepackage{hyperref}
+\hypersetup{%
+  colorlinks=true,
+  linkcolor=accentcolor,
+  citecolor=accentcolor,
+  urlcolor=accentcolor,
+  pdfborder={0 0 0},
+  pdftitle={attinormativi --- Sorgente documentato},
+  pdfsubject={Classe LaTeX per atti normativi italiani},
+  pdfkeywords={LaTeX, atti normativi, diritto, italiano, CTAN}
+}
+
+\begin{document}
+  \DocInput{attinormativi.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \changes{v1.1}{2026/05/17}{Versione stabile.}
+% \changes{v1.2}{2026/05/25}{Migrazione font a TeX Gyre (Termes, Heros,
+%   Cursor). Con pdf\LaTeX{} vengono caricati \pkg{tgtermes},
+%   \pkg{tgheros} e \pkg{tgcursor}; con \hologo{XeLaTeX} e
+%   \hologo{LuaLaTeX} i corrispondenti font OpenType tramite
+%   \pkg{fontspec}. Aggiunta opzione \opt{accessible}: supporto
+%   PDF/UA-1 tramite \pkg{tagpdf} e kernel tagging. Tagging strutturato
+%   del frontespizio, del comma, dell'ambiente definizioni (sezioni~6,
+%   9, 14, 16). Mappatura ruoli \texttt{H1}--\texttt{H5} per la gerarchia
+%   strutturale (sezione~11). Registrazione liste \texttt{lettere} e
+%   \texttt{numeri} come \texttt{OL} in \pkg{tagpdf} (sezione~15).
+%   Tagging \texttt{Sect}/\texttt{Caption} per ambienti \texttt{preambolo},
+%   \texttt{relazione} e allegati (sezioni~17, 19). Tagging \texttt{TOC}
+%   per gli indici secondari (sezioni~16, 19, 20).}
+
+% \GetFileInfo{attinormativi.dtx}
+%
+% \DoNotIndex{\newcommand,\renewcommand,\NewDocumentCommand}
+% \DoNotIndex{\begin,\end,\par,\vspace,\hspace,\noindent}
+% \DoNotIndex{\textbf,\textit,\textrm,\texttt,\emph}
+% \DoNotIndex{\small,\large,\Large,\huge,\Huge,\normalsize,\normalfont}
+% \DoNotIndex{\centering,\clearpage,\phantomsection}
+% \DoNotIndex{\label,\ref,\nameref,\addcontentsline}
+% \DoNotIndex{\setcounter,\the,\value,\refstepcounter,\stepcounter}
+% \DoNotIndex{\ifx,\empty,\else,\fi,\begingroup,\endgroup}
+% \DoNotIndex{\RequirePackage,\LoadClass,\ProvidesClass,\NeedsTeXFormat}
+% \DoNotIndex{\DeclareOption,\ProcessOptions,\CurrentOption}
+% \DoNotIndex{\newif,\newcounter,\newlist,\newenvironment}
+% \DoNotIndex{\AtBeginDocument,\@ifpackageloaded,\@starttoc}
+% \DoNotIndex{\protected@edef,\@currentlabelname,\@dottedtocline}
+%
+% \title{La classe \textsf{attinormativi}\\[0.3ex]
+%        \large Sorgente documentato --- Versione \fileversion}
+% \author{Federico Gallo\\\texttt{gallofede75@gmail.com}}
+% \date{\filedate}
+%
+% \maketitle
+%
+% \begin{abstract}
+% \smallskip
+% The class \cls{attinormativi} provides a complete typographic framework
+% for drafting Italian normative acts: laws, decrees, regulations,
+% statutes, resolutions, and similar documents. It manages the six-level
+% hierarchical structure typical of the Italian legislative tradition
+% (\emph{Book}, \emph{Title}, \emph{Chapter}, \emph{Section},
+% \emph{Article}, \emph{Paragraph}), the institutional title page,
+% dedicated indexes (articles, annexes, definitions), draft mode with
+% editorial notes, optional integration with the \pkg{cleveref}
+% package for Italian-language cross-references, and --- from v1.2 ---
+% full PDF/UA-1 accessibility tagging via the \opt{accessible} class
+% option, in compliance with Directive~(EU)~2016/2102.
+%
+% \bigskip
+% \smallskip
+% La classe \cls{attinormativi} fornisce un framework tipografico completo
+% per la composizione di atti normativi italiani: leggi, decreti, regolamenti,
+% statuti, delibere e documenti assimilabili. Gestisce la struttura gerarchica
+% a sei livelli tipica della tradizione legislativa italiana (\emph{Libro},
+% \emph{Titolo}, \emph{Capo}, \emph{Sezione}, \emph{Articolo}, \emph{Comma}),
+% il frontespizio istituzionale, gli indici dedicati (articoli, allegati,
+% definizioni), la modalità bozza con note redazionali, l'integrazione
+% opzionale con il pacchetto \pkg{cleveref} per i riferimenti incrociati
+% in italiano e --- dalla v1.2 --- il tagging strutturale PDF/UA-1
+% tramite l'opzione \opt{accessible}, in conformità alla
+% Direttiva~(UE)~2016/2102 recepita con D.Lgs.\ 106/2018.
+%
+% \end{abstract}
+%
+% \tableofcontents
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Introduzione}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% La classe \cls{attinormativi} è costruita sopra la classe standard
+% \cls{book} ed è compatibile con pdf\LaTeX{}, \hologo{XeLaTeX} e
+% \hologo{LuaLaTeX}.
+%
+% La classe introduce:
+% \begin{itemize}
+%   \item una gerarchia strutturale a sei livelli corrispondente alla
+%         tradizione legislativa italiana;
+%   \item comandi per i metadati dell'atto e generazione automatica
+%         del frontespizio;
+%   \item numerazione automatica e manuale, con isolamento del numero
+%         manuale in un gruppo \TeX{} per non alterare il contatore interno;
+%   \item riferimenti incrociati tra articoli e commi, con supporto
+%         nativo per il pacchetto \pkg{cleveref};
+%   \item un glossario delle definizioni con indice separato;
+%   \item liste tipizzate per le enumerazioni normative
+%         (\emph{lettere} e \emph{numeri});
+%   \item tre comandi tipizzati per le clausole finali ricorrenti;
+%   \item allegati con numerazione automatica alfabetica e indice;
+%   \item un indice specifico degli articoli;
+%   \item modalità bozza con note redazionali a blocco e in linea;
+%   \item opzioni di classe per la famiglia tipografica, i margini
+%         e l'impaginazione fronte/retro;
+%   \item tagging strutturale PDF/UA-1 tramite l'opzione \opt{accessible},
+%         in conformità alla Direttiva~(UE)~2016/2102.
+% \end{itemize}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Requisiti e installazione}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \subsection{Motori di composizione}
+%
+% Tutte le funzionalità della classe sono disponibili con
+% pdf\LaTeX{}, \hologo{XeLaTeX} e \hologo{LuaLaTeX}.
+% Si raccomanda \TeX{} Live 2020 o successivo oppure MiK\TeX{} 21
+% o successivo.
+%
+% \begin{notabox}[Eccezione: opzione \opt{accessible}]
+% L'unica funzionalità che richiede un motore specifico è il tagging
+% PDF/UA-1, attivato dall'opzione \opt{accessible}. Questa opzione
+% è disponibile \textbf{esclusivamente con \hologo{LuaLaTeX}} e
+% \TeX{} Live 2023 o successivo. Per i dettagli vedere
+% §~\ref{subsec:accessible}.
+% \end{notabox}
+%
+% \subsection{Pacchetti richiesti}
+%
+% Tutti i pacchetti elencati sono inclusi in una installazione standard
+% di \TeX{} Live o MiK\TeX{}:
+%
+% \begin{cmdtable}[Pacchetto]
+%   \cmdrow{iftex}    {Rilevamento del motore}
+%   \cmdrow{inputenc} {Codifica input UTF-8 (solo pdf\LaTeX{})}
+%   \cmdrow{fontenc}  {Codifica font T1 (solo pdf\LaTeX{})}
+%   \cmdrow{tgtermes} {TeX Gyre Termes --- serif (solo pdf\LaTeX{})}
+%   \cmdrow{tgheros}  {TeX Gyre Heros --- sansserif (solo pdf\LaTeX{})}
+%   \cmdrow{tgcursor} {TeX Gyre Cursor --- monospaced (solo pdf\LaTeX{})}
+%   \cmdrow{fontspec} {Font OpenType per \hologo{XeLaTeX}/\hologo{LuaLaTeX}}
+%   \cmdrow{geometry} {Impostazione dei margini}
+%   \cmdrow{babel}    {Localizzazione italiana}
+%   \cmdrow{microtype}{Ottimizzazione microtypografica}
+%   \cmdrow{xcolor}   {Colori per le note redazionali}
+%   \cmdrow{xparse}   {Sintassi avanzata per i comandi (solo kernel < 2020-10-01)}
+%   \cmdrow{titlesec} {Formattazione dei titoli di sezione}
+%   \cmdrow{chngcntr} {Gestione dei contatori}
+%   \cmdrow{enumitem} {Liste personalizzate}
+%   \cmdrow{hyperref} {Riferimenti ipertestuali e metadati PDF}
+%   \cmdrow{tagpdf}   {Tagging PDF/UA-1 --- solo con l'opzione \opt{accessible}
+%                      (\hologo{LuaLaTeX} + \TeX{} Live 2023+ richiesti)}
+% \end{cmdtable}
+%
+% \subsection{Installazione}
+%
+% \subsubsection*{TeX Live e MiKTeX (caso normale)}
+%
+% La classe è distribuita tramite CTAN ed è inclusa in \textbf{\TeX{} Live}
+% e \textbf{MiK\TeX{}}. Se si usa una di queste distribuzioni non è
+% necessario copiare alcun file manualmente: è sufficiente aggiornare
+% i pacchetti con il gestore della propria distribuzione.
+%
+% Con \TeX{} Live (da terminale):
+% \begin{verbatim}
+%   tlmgr update attinormativi
+% \end{verbatim}
+%
+% Con MiK\TeX{}: avviare il \textbf{MiK\TeX{} Console}, selezionare
+% «Updates» e aggiornare il pacchetto \texttt{attinormativi}, oppure
+% eseguire da terminale:
+% \begin{verbatim}
+%   miktex packages update attinormativi
+% \end{verbatim}
+%
+% \subsubsection*{Installazione locale a un singolo progetto}
+%
+% Per un uso occasionale è sufficiente copiare \texttt{attinormativi.cls}
+% nella stessa cartella del file \texttt{.tex} da compilare.
+%
+% Per rigenerare \texttt{attinormativi.cls} dal sorgente documentato
+% \texttt{attinormativi.dtx} sarà sufficiente compilare il file
+% \texttt{attinormativi.ins}.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Opzioni della classe}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \subsection{Opzione \opt{bozza}}
+%
+% L'opzione \opt{bozza} attiva la modalità bozza: le note redazionali
+% inserite con |\notaredaz| e |\notaredazinline| diventano
+% visibili nel documento compilato. In assenza di tale opzione le note
+% non compaiono nel PDF.
+%
+% \begin{cmdtable}[Opzione]
+%   \cmdrow{bozza}{Attiva le note redazionali e il banner di bozza}
+% \end{cmdtable}
+%
+% \subsection{Opzione \opt{accessible}}
+% \label{subsec:accessible}
+%
+% L'opzione \opt{accessible} attiva il supporto alla produzione di
+% PDF conformi allo standard \textbf{PDF/UA-1} (ISO~14289-1), come
+% richiesto dalla Direttiva (UE)~2016/2102 recepita in Italia con
+% D.Lgs.\ 106/2018.
+%
+% \begin{cmdtable}[Opzione]
+%   \cmdrow{accessible}{Attiva il tagging strutturale PDF/UA-1
+%                       (solo \hologo{LuaLaTeX} + \TeX{} Live 2023+)}
+% \end{cmdtable}
+%
+% \begin{warnbox}[Requisiti dell'opzione \opt{accessible}]
+% L'opzione \opt{accessible} richiede \textbf{tutti e tre} i seguenti
+% prerequisiti:
+% \begin{itemize}
+%   \item \textbf{Motore \hologo{LuaLaTeX}.}
+%         Il tagging PDF/UA non è supportato da pdf\LaTeX{} né da
+%         \hologo{XeLaTeX} nella forma completa con il kernel attuale.
+%         Se si usa un motore diverso, la classe emette un
+%         \cs{ClassWarning} e disattiva automaticamente il tagging;
+%         la compilazione prosegue senza errori fatali ma il PDF
+%         prodotto non è taggato.
+%   \item \textbf{\TeX{} Live 2023 o successivo}
+%         (kernel \LaTeX{}~$\geq$ 2023-06-01), che include il
+%         framework di tagging automatico e il pacchetto \pkg{tagpdf}.
+%   \item \textbf{La dichiarazione \cs{DocumentMetadata}} inserita
+%         \emph{prima} di \cs{documentclass} nel file \texttt{.tex}
+%         dell'utente (vedere l'esempio al §~\ref{sec:esempio-accessible}).
+%         Se \cs{DocumentMetadata} è assente, la classe emette un
+%         \cs{ClassWarning} e disattiva automaticamente il tagging;
+%         anche in questo caso la compilazione prosegue senza errori
+%         fatali ma il PDF prodotto non è taggato.
+% \end{itemize}
+% In entrambi i casi di fallback il booleano pubblico
+% \cs{ifANaccessible} vale \texttt{false} e può essere interrogato
+% nel documento per codice condizionale.
+% \end{warnbox}
+%
+% \subsubsection{Utilizzo}
+%
+% Il documento utente deve anteporre a |\documentclass| la dichiarazione:
+%
+% \begin{verbatim}
+%   \DocumentMetadata{
+%     pdfversion  = 1.7,
+%     pdfstandard = UA-1,
+%     lang        = it-IT,
+%   }
+%   \documentclass[accessible]{attinormativi}
+% \end{verbatim}
+%
+% \label{sec:esempio-accessible}
+% La dichiarazione |\DocumentMetadata| inizializza il motore di tagging
+% del kernel LaTeX e specifica la lingua del documento. L'opzione
+% \opt{accessible} della classe attiva quindi il caricamento di \pkg{tagpdf}
+% e le strutture di tagging specifiche per gli elementi non gestiti
+% automaticamente dal kernel.
+%
+% \begin{notabox}[Compatibilità con \opt{bozza}]
+% Le opzioni \opt{accessible} e \opt{bozza} sono compatibili.
+% In modalità bozza, le note redazionali (\cs{notaredaz} e
+% \cs{notaredazinline}) vengono marcate come \texttt{Artifact} nel
+% PDF taggato, in modo che i lettori di schermo non le trattino
+% come contenuto normativo.
+% \end{notabox}
+%
+% \subsection{Opzione \opt{serif} / \opt{sansserif}}
+%
+% Controlla la famiglia tipografica del documento.
+%
+% \begin{cmdtable}[Opzione]
+%   \cmdrow{serif (default)}
+%         {TeX Gyre Termes --- tutti i motori}
+%   \cmdrow{sansserif}
+%         {TeX Gyre Heros --- tutti i motori}
+% \end{cmdtable}
+%
+% In entrambe le modalità la sillabazione italiana e la giustificazione
+% rimangono pienamente attive.
+%
+% \subsection{Opzione \opt{simplex} / \opt{duplex}}
+%
+% Controlla l'impaginazione fronte/retro.
+%
+% \begin{cmdtable}[Opzione]
+%   \cmdrow{simplex (default)}
+%         {Impaginazione solo fronte; alias: \opt{oneside}}
+%   \cmdrow{duplex}
+%         {Impaginazione fronte/retro; alias: \opt{twoside}}
+% \end{cmdtable}
+%
+% \begin{warnbox}[Nota implementativa --- duplex e keyval/geometry]
+% La classe inietta le stringhe \texttt{twoside}/\texttt{oneside}
+% nell'argomento esplicito di \cs{LoadClass}, non tramite
+% \cs{PassOptionsToClass}. Questo evita il conflitto con
+% \pkg{keyval}/\pkg{geometry} che si verifica quando quelle stringhe
+% raggiungono \pkg{keyval} dopo la sua inizializzazione.
+% \end{warnbox}
+%
+% \subsection{Opzioni di margine}
+%
+% Le opzioni \opt{left=}, \opt{right=}, \opt{top=}, \opt{bottom=}
+% consentono di sovrascrivere i margini predefiniti direttamente nella
+% dichiarazione della classe.
+%
+% \begin{cmdtable}[Margine]
+%   \cmdrow{left}   {35\,mm (default)}
+%   \cmdrow{right}  {30\,mm (default)}
+%   \cmdrow{top}    {25\,mm (default)}
+%   \cmdrow{bottom} {25\,mm (default)}
+% \end{cmdtable}
+%
+% Esempio:
+% \begin{verbatim}
+%   \documentclass[left=40mm, right=25mm, top=30mm]{attinormativi}
+% \end{verbatim}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Comandi e ambienti}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \subsection{Metadati dell'atto}
+%
+% \DescribeMacro{\autoritaatto}
+% \DescribeMacro{\tipoatto}
+% \DescribeMacro{\numeroatto}
+% \DescribeMacro{\dataatto}
+% \DescribeMacro{\titoloatto}
+% \DescribeMacro{\oggettoatto}
+% I sei comandi di metadato si dichiarano nel preambolo del documento,
+% prima di |\begin{document}|. Tutti sono opzionali: le voci non
+% impostate non compaiono nel frontespizio.
+%
+% \begin{cmdtable}
+%   \cmdrow{\textbackslash autoritaatto\{testo\}}{Ente o autorità emanante}
+%   \cmdrow{\textbackslash tipoatto\{testo\}}    {Tipo dell'atto}
+%   \cmdrow{\textbackslash numeroatto\{testo\}}  {Numero identificativo}
+%   \cmdrow{\textbackslash dataatto\{testo\}}    {Data in forma libera}
+%   \cmdrow{\textbackslash titoloatto\{testo\}}  {Titolo ufficiale}
+%   \cmdrow{\textbackslash oggettoatto\{testo\}} {Oggetto sintetico o rubrica}
+% \end{cmdtable}
+%
+% \subsection{Frontespizio}
+%
+% \DescribeMacro{\frontespizioatto}
+% Il comando |\frontespizioatto| genera una pagina titolo (\texttt{titlepage})
+% con i metadati impostati, centrata e priva di numero di pagina.
+% Va inserito immediatamente dopo |\begin{document}|.
+%
+% \DescribeMacro{\maketitle}
+% La classe definisce |\maketitle| come alias di |\frontespizioatto|
+% per compatibilità con editor visivi, template engine e script Pandoc.
+%
+% \subsection{Struttura gerarchica}
+%
+% \DescribeMacro{\libro}
+% \DescribeMacro{\titolo}
+% \DescribeMacro{\capo}
+% \DescribeMacro{\sezione}
+% \DescribeMacro{\articolo}
+% \DescribeMacro{\comma}
+% La classe fornisce sei comandi strutturali, tutti con la stessa
+% sintassi:
+% \begin{verbatim}
+%   \comando[numero-manuale]{testo del titolo}[label]
+% \end{verbatim}
+%
+% \begin{cmdtable}
+%   \cmdrow{\textbackslash libro[n]\{t\}[l]}
+%         {Libro --- livello 1, \texttt{\textbackslash part}; numerazione romana}
+%   \cmdrow{\textbackslash titolo[n]\{t\}[l]}
+%         {Titolo --- livello 2, \texttt{\textbackslash chapter}; numerazione romana}
+%   \cmdrow{\textbackslash capo[n]\{t\}[l]}
+%         {Capo --- livello 3, \texttt{\textbackslash section}; numerazione romana}
+%   \cmdrow{\textbackslash sezione[n]\{t\}[l]}
+%         {Sezione --- livello 4, \texttt{\textbackslash subsection}; numerazione romana}
+%   \cmdrow{\textbackslash articolo[n]\{t\}[l]}
+%         {Articolo --- livello 5, \texttt{\textbackslash subsubsection}; numerazione araba}
+%   \cmdrow{\textbackslash comma[n]\{testo\}[l]}
+%         {Comma --- livello 6, \texttt{\textbackslash paragraph}; numerazione araba}
+% \end{cmdtable}
+%
+% Il primo argomento opzionale \meta{n} forza un numero specifico
+% \emph{senza} alterare il contatore interno: l'elemento successivo
+% con numerazione automatica riprende dalla progressione corretta.
+%
+% \begin{warnbox}[Nota implementativa --- ripristino del contatore]
+% I comandi strutturali con numero manuale isolano la modifica del contatore
+% in un gruppo \TeX{} (\cs{begingroup}/\cs{endgroup}). Poiché i contatori
+% \LaTeX{} sono globali, l'incremento automatico eseguito dal comando
+% strutturale (\cs{part}, \cs{chapter} ecc.) avviene \emph{prima} del ripristino
+% esplicito tramite \cs{setcounter}. Il valore salvato in \cs{AN@saved@counter}
+% è il valore \emph{antecedente} all'incremento, cosicché il ripristino
+% rimette il contatore allo stato precedente all'intera emissione,
+% garantendo la corretta progressione automatica successiva.
+% \end{warnbox}
+%
+% \subsection{Ambienti di corredo}
+%
+% \DescribeEnv{preambolo}
+% \DescribeEnv{relazione}
+% Gli ambienti \texttt{preambolo} e \texttt{relazione} generano
+% capitoli non numerati con voce nell'indice generale.
+%
+% \subsection{Disposizioni finali tipizzate}
+%
+% \DescribeMacro{\entrataInVigore}
+% \DescribeMacro{\abrogazioni}
+% \DescribeMacro{\normatransitoria}
+% I tre comandi generano automaticamente un articolo con titolo fisso
+% e un comma con il testo fornito.
+%
+% \begin{cmdtable}
+%   \cmdrow{\textbackslash entrataInVigore[n]\{t\}[l]}
+%         {Articolo «Entrata in vigore»}
+%   \cmdrow{\textbackslash abrogazioni[n]\{t\}[l]}
+%         {Articolo «Abrogazioni»}
+%   \cmdrow{\textbackslash normatransitoria[n]\{t\}[l]}
+%         {Articolo «Norma transitoria»}
+% \end{cmdtable}
+%
+% \subsection{Riferimenti incrociati}
+%
+% \DescribeMacro{\artref}
+% \DescribeMacro{\articoloeref}
+% \DescribeMacro{\commaref}
+% \DescribeMacro{\artcomma}
+% \DescribeMacro{\articolocomma}
+% \DescribeMacro{\artcommaref}
+%
+% \begin{cmdtable}
+%   \cmdrow{\textbackslash artref\{l\}}              {«art.~N»}
+%   \cmdrow{\textbackslash articoloeref\{l\}}         {«articolo~N»}
+%   \cmdrow{\textbackslash commaref\{l\}}             {«comma~N»}
+%   \cmdrow{\textbackslash artcomma\{l1\}\{l2\}}      {«art.~N, comma~M»}
+%   \cmdrow{\textbackslash articolocomma\{l1\}\{l2\}} {«articolo~N, comma~M»}
+%   \cmdrow{\textbackslash artcommaref\{l\}}          {Riferimento combinato tramite label unica}
+% \end{cmdtable}
+%
+% La classe supporta inoltre il pacchetto \pkg{cleveref} con nomi
+% italiani per tutti i livelli strutturali. Se \pkg{cleveref} è stato
+% caricato dall'utente prima di |\begin{document}|, le definizioni
+% vengono attivate automaticamente in |\AtBeginDocument|.
+%
+% \subsection{Glossario delle definizioni}
+%
+% \DescribeEnv{definizioni}
+% \DescribeMacro{\definizione}
+% \DescribeMacro{\definizioneref}
+% \DescribeMacro{\defref}
+% \DescribeMacro{\indicedefinizioni}
+%
+% L'ambiente \texttt{definizioni} fornisce un elenco tipograficamente
+% formattato di termini con la rispettiva definizione; le voci sono
+% numerate con lettere minuscole a), b), c)\ldots{} e il termine viene
+% composto in grassetto. Ciascuna voce viene indicizzata automaticamente.
+%
+% \begin{cmdtable}
+%   \cmdrow{definizioni}                               {Ambiente elenco definizioni}
+%   \cmdrow{\textbackslash definizione\{nome\}\{t\}[l]}{Voce con indicizzazione automatica}
+%   \cmdrow{\textbackslash definizioneref\{l\}}        {Citazione del termine in corsivo}
+%   \cmdrow{\textbackslash defref\{l\}}                {Alias di \texttt{\textbackslash definizioneref}}
+%   \cmdrow{\textbackslash indicedefinizioni}           {Indice delle definizioni}
+% \end{cmdtable}
+%
+% \subsection{Liste normative}
+%
+% \DescribeEnv{lettere}
+% \DescribeEnv{numeri}
+% Due ambienti di lista predefiniti adeguati alla struttura degli
+% atti normativi:
+%
+% \begin{cmdtable}[Ambiente]
+%   \cmdrow{lettere}{Lista alfabetica: a), b), c)\ldots}
+%   \cmdrow{numeri} {Lista numerica: 1), 2), 3)\ldots}
+% \end{cmdtable}
+%
+% \subsection{Allegati}
+%
+% \DescribeMacro{\allegato}
+% \DescribeMacro{\allegatoref}
+% \DescribeMacro{\indiceallegati}
+%
+% \begin{cmdtable}
+%   \cmdrow{\textbackslash allegato[id]\{t\}[l]}
+%         {Allegato con numerazione automatica (A, B\ldots) o manuale}
+%   \cmdrow{\textbackslash allegatoref\{l\}}
+%         {«Allegato X»}
+%   \cmdrow{\textbackslash indiceallegati}
+%         {Indice degli allegati}
+% \end{cmdtable}
+%
+% \begin{notabox}[Nota --- larghezza della colonna numerica nell'indice degli allegati]
+% La voce \cs{l@ANallegato} usa una larghezza fissa di \texttt{10.5em} per
+% la colonna del numero. Titoli di allegato eccezionalmente lunghi possono
+% sforare il margine destro. In tal caso è sufficiente ridefinire il comando
+% nel preambolo del documento:
+% \begin{verbatim}
+%   \renewcommand*{\l@ANallegato}{\@dottedtocline{1}{0pt}{12em}}
+% \end{verbatim}
+% \end{notabox}
+%
+% \subsection{Indice degli articoli}
+%
+% \DescribeMacro{\indicearticoli}
+% Il comando |\indicearticoli| genera un capitolo separato con l'elenco
+% di tutti gli articoli e rimando alla pagina.
+%
+% \subsection{Modalità bozza}
+%
+% \DescribeMacro{\bozzainfo}
+% \DescribeMacro{\notaredaz}
+% \DescribeMacro{\notaredazinline}
+%
+% \begin{cmdtable}
+%   \cmdrow{\textbackslash bozzainfo}
+%         {Banner «VERSIONE DI BOZZA» con data di compilazione}
+%   \cmdrow{\textbackslash notaredaz\{t\}}
+%         {Nota a blocco con riquadro e numerazione progressiva}
+%   \cmdrow{\textbackslash notaredazinline\{t\}}
+%         {Nota breve in linea, evidenziata in rosso}
+%   \cmdrow{\textbackslash ifANbozza}
+%         {Booleano pubblico per codice condizionale}
+% \end{cmdtable}
+%
+% \subsection{Nomi strutturali ridefinibili}
+%
+% \DescribeMacro{\ANLibroName}
+% \DescribeMacro{\ANTitoloName}
+% \DescribeMacro{\ANCapoName}
+% \DescribeMacro{\ANSezioneName}
+% \DescribeMacro{\ANArticoloName}
+% \DescribeMacro{\ANCommaName}
+% \DescribeMacro{\ANAllegatoName}
+%
+% I nomi stampati nei titoli e negli indici possono essere ridefiniti
+% nel preambolo del documento, ad esempio per adattare la classe a
+% ordinamenti diversi da quello italiano:
+%
+% \begin{verbatim}
+%   \renewcommand*{\ANCapoName}{Sezione}
+% \end{verbatim}
+%
+% \subsection{Diagnostica}
+%
+% \DescribeMacro{\ANclassversion}
+% La macro |\ANclassversion| espone la stringa di versione della classe
+% (ad es.\ \texttt{v1.2 (2026/05/25)}) per uso nei documenti o negli
+% script di verifica.
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Esempio minimo}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% L'esempio seguente illustra il flusso completo di un atto normativo
+% minimo, comprensivo di indici, definizioni e allegato.
+%
+% \begin{verbatim}
+% \documentclass[bozza, serif, simplex, 12pt]{attinormativi}
+%
+% \autoritaatto{Comune di Esempiopoli}
+% \tipoatto{Regolamento}
+% \numeroatto{3}
+% \dataatto{17 maggio 2026}
+% \titoloatto{Regolamento per la gestione degli spazi pubblici}
+% \oggettoatto{Disciplina delle modalità di utilizzo e concessione
+%              degli spazi pubblici comunali}
+%
+% \begin{document}
+% \frontespizioatto
+% \bozzainfo
+% \tableofcontents
+% \indicearticoli
+%
+% \titolo{Disposizioni generali}
+%
+% \articolo{Definizioni}[art:definizioni]
+% \comma{Ai fini del presente regolamento si intende per:}
+% \begin{definizioni}
+%   \definizione{Spazio pubblico}{qualsiasi area di proprietà comunale
+%     aperta al pubblico accesso}[def:spaziopubblico]
+%   \definizione{Concessionario}{il soggetto titolare di concessione
+%     rilasciata ai sensi del presente regolamento}[def:concessionario]
+% \end{definizioni}
+%
+% \articolo{Finalità e ambito di applicazione}[art:finalita]
+% \comma{Il presente regolamento disciplina le modalità di utilizzo
+% e di concessione temporanea degli \defref{def:spaziopubblico}
+% di proprietà del Comune di Esempiopoli.}[c:finalita:1]
+% \comma{Le disposizioni del presente regolamento si applicano a
+% tutti i soggetti, pubblici e privati, che intendano utilizzare
+% gli spazi di cui al comma precedente.}
+%
+% \titolo{Procedimento concessorio}
+%
+% \articolo{Domanda di concessione}[art:domanda]
+% \comma{La domanda di concessione è presentata al Comune mediante
+% apposito modulo, allegando la documentazione indicata
+% nell'\allegatoref{all:modello}.}
+%
+% \entrataInVigore{Il presente regolamento entra in vigore il giorno
+% successivo alla sua pubblicazione all'albo pretorio online.}
+%
+% \indiceallegati
+% \indicedefinizioni
+%
+% \allegato{Modello di domanda di concessione}[all:modello]
+% Testo del modello allegato.
+%
+% \end{document}
+% \end{verbatim}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Flusso di compilazione}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Per ottenere tutti gli indici correttamente popolati sono necessarie
+% almeno due passate del motore di composizione.
+%
+% \subsection*{Flusso standard (tutti i motori)}
+%
+% La classe è compilabile con pdf\LaTeX{}, \hologo{XeLaTeX} e
+% \hologo{LuaLaTeX}. In tutti e tre i casi il flusso raccomandato è:
+%
+% \begin{verbatim}
+%   pdflatex documento.tex   % oppure: xelatex  documento.tex
+%   makeindex -s gind.ist documento.idx
+%   makeindex -s gglo.ist -o documento.gls documento.glo
+%   pdflatex documento.tex   %          xelatex  documento.tex
+%   pdflatex documento.tex   %          xelatex  documento.tex
+% \end{verbatim}
+%
+% Con \hologo{LuaLaTeX}:
+%
+% \begin{verbatim}
+%   lualatex documento.tex
+%   makeindex -s gind.ist documento.idx
+%   makeindex -s gglo.ist -o documento.gls documento.glo
+%   lualatex documento.tex
+%   lualatex documento.tex
+% \end{verbatim}
+%
+% Con \texttt{latexmk} è sufficiente aggiungere nella directory di lavoro
+% un file \texttt{latexmkrc}. Esempio per \hologo{LuaLaTeX}:
+%
+% \begin{verbatim}
+%   @default_files = ('documento.tex');
+%   $pdf_mode = 4;   # LuaLaTeX  (usare 1 per pdfLaTeX, 5 per XeLaTeX)
+%   add_cus_dep('glo','gls',0,'run_makeglossaries');
+%   add_cus_dep('idx','ind',0,'run_makeindex');
+%   sub run_makeglossaries {
+%       system("makeindex -s gglo.ist -o '$_[0].gls' '$_[0].glo'");
+%   }
+%   sub run_makeindex {
+%       system("makeindex -s gind.ist '$_[0].idx'");
+%   }
+% \end{verbatim}
+%
+% \subsection*{Flusso con opzione \opt{accessible} (solo \hologo{LuaLaTeX})}
+%
+% L'opzione \opt{accessible} richiede \textbf{esclusivamente
+% \hologo{LuaLaTeX}} (pdf\LaTeX{} e \hologo{XeLaTeX} non sono
+% supportati per questa funzionalità; vedere §~\ref{subsec:accessible}).
+%
+% Il file \texttt{.tex} deve iniziare con la dichiarazione
+% |\DocumentMetadata| \emph{prima} di |\documentclass|:
+%
+% \begin{verbatim}
+%   \DocumentMetadata{
+%     pdfversion  = 1.7,
+%     pdfstandard = UA-1,
+%     lang        = it-IT,
+%   }
+%   \documentclass[accessible]{attinormativi}
+% \end{verbatim}
+%
+% Il flusso di compilazione diventa:
+%
+% \begin{verbatim}
+%   lualatex documento.tex
+%   lualatex documento.tex
+%   lualatex documento.tex
+% \end{verbatim}
+%
+% Tre passate sono necessarie affinché \pkg{tagpdf} completi la
+% struttura dell'albero dei tag e \pkg{hyperref} scriva correttamente
+% i metadati PDF/UA nel dizionario del documento. Non occorre eseguire
+% \texttt{makeindex} per gli indici \texttt{.art}, \texttt{.alg},
+% \texttt{.dfn}: sono gestiti da |\@starttoc| e si aggiornano
+% automaticamente ad ogni passata.
+%
+% La conformità PDF/UA-1 del documento prodotto può essere verificata con:
+% \begin{itemize}
+%   \item \textbf{PAC~2024} (PDF Accessibility Checker, gratuito, Windows);
+%   \item \textbf{Adobe Acrobat Pro}: Strumenti $\to$ Accessibilità $\to$
+%         Verifica completa;
+%   \item \textbf{axessPDF} o \textbf{CommonLook} per verifiche più granulari.
+% \end{itemize}
+%
+% \begin{warnbox}[File ausiliari corrotti]
+% Se la compilazione si interrompe in modo anomalo, il file \texttt{.aux}
+% può risultare troncato. La compilazione successiva produce l'errore
+% \texttt{File ended while scanning use of \textbackslash @writefile}.
+% La soluzione è eliminare tutti i file ausiliari
+% (\texttt{.aux}, \texttt{.toc}, \texttt{.idx}, \texttt{.glo},
+% \texttt{.art}, \texttt{.alg}, \texttt{.dfn}, \texttt{.out})
+% e ripartire da capo.
+% \end{warnbox}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Cronologia delle versioni}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \begin{description}[leftmargin=5em, labelwidth=4.5em]
+%
+%   \item[v1.0] \textit{Prima versione stabile (2026/05/08).}
+%
+%   \item[v1.1] \textit{Versione stabile (2026/05/17).}
+%     Correzione del refuso nella tabella delle note redazionali
+%     (\cs{notaredazinline} era descritto erroneamente come \cs{notaredaz}).
+%     Aggiunta di \cs{markboth} negli indici secondari per la corretta
+%     generazione delle intestazioni. Sostituzione di \cs{clearpage} con
+%     \cs{newpage} in \cs{bozzainfo}. Soppressione dello spazio spurio
+%     generato da \cs{paragraph\{\}} nel comando \cs{comma}.
+%     Condizionamento del caricamento di \pkg{xparse} al kernel \LaTeX{}
+%     (superfluo da 2020-10-01). Nota documentativa sul meccanismo di
+%     ripristino del contatore in \cs{AN@emit}. Nota sulla larghezza
+%     variabile di \cs{l@ANallegato}. Esempio minimo esteso con definizioni
+%     e allegato. Sezione dedicata al flusso di compilazione.
+%
+%   \item[v1.2] \textit{Migrazione font a TeX Gyre; supporto accessibilità
+%     PDF/UA-1 (2026/05/25).}
+%     Sostituzione della famiglia \emph{Latin Modern} con \emph{TeX Gyre
+%     Termes} (serif), \emph{TeX Gyre Heros} (sansserif) e \emph{TeX Gyre
+%     Cursor} (monospaced). Con pdf\LaTeX{} vengono caricati i pacchetti
+%     \pkg{tgtermes}, \pkg{tgheros} e \pkg{tgcursor}; con
+%     \hologo{XeLaTeX} e \hologo{LuaLaTeX} i corrispondenti font OpenType
+%     tramite \pkg{fontspec}.
+%     Aggiunta opzione \opt{accessible}: attiva il caricamento
+%     condizionato di \pkg{tagpdf} (sezione~1a-bis), il controllo del
+%     motore di composizione con avvertimento se non si usa
+%     \hologo{LuaLaTeX} (sezione~2), e il controllo della presenza di
+%     |\DocumentMetadata| con avvertimento se assente (sezione~2).
+%     Tagging strutturato del frontespizio (\cs{frontespizioatto},
+%     sezione~9): ciascun campo metadato è racchiuso in una struttura
+%     \pkg{tagpdf} con ruolo semantico appropriato (\texttt{Title},
+%     \texttt{P}). Tagging del comma (sezione~14): il contenuto testuale
+%     è emesso in una struttura \texttt{P} esplicita quando l'opzione è
+%     attiva. Tagging dell'ambiente \texttt{definizioni} (sezione~16):
+%     sostituzione del \texttt{list} grezzo con strutture
+%     \texttt{DL}/\texttt{DT}/\texttt{DD} di \pkg{tagpdf}. Tagging delle
+%     note redazionali come \texttt{Artifact} (sezione~6).
+%     Mappatura ruoli \texttt{H1}--\texttt{H5} per la gerarchia
+%     strutturale \cs{libro}--\cs{articolo} tramite |\tagpdfsetup|
+%     in |\AtBeginDocument| (sezione~11); il livello |\paragraph| non
+%     riceve \texttt{H6} perché il comma è taggato come \texttt{P}.
+%     Registrazione delle liste \texttt{lettere} e \texttt{numeri}
+%     come \texttt{OL} in \pkg{tagpdf} tramite |\SetEnumitemValue|
+%     (sezione~15). Tagging \texttt{Sect} per gli ambienti
+%     \texttt{preambolo} e \texttt{relazione} (sezione~17); sezione~18
+%     non richiede modifiche (delega a \cs{articolo}/\cs{comma} già
+%     taggati). Tagging \texttt{Sect}/\texttt{Caption} per
+%     |\ANallegatoheading| e |\allegato| (sezione~19). Tagging
+%     \texttt{TOC} per |\indiceallegati|, |\indicedefinizioni| e
+%     |\indicearticoli| (sezioni~16, 19, 20).
+%     Aggiornamento del flusso di compilazione raccomandato.
+%
+% \end{description}
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \StopEventually{\PrintChanges\PrintIndex}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \section{Implementazione}
+%
+% Il codice che segue è estratto direttamente da \texttt{attinormativi.cls}
+% e annotato con commenti che spiegano le scelte implementative.
+%
+%    \begin{macrocode}
+%<*class>
+% attinormativi.cls
+%
+% LaTeX class for Italian normative acts.
+% Classe LaTeX per atti normativi italiani.
+%
+% Version: 1.2  --  2026/05/25
+%
+% Modifiche rispetto a v1.1:
+%   [font]        Migrazione da Latin Modern a TeX Gyre:
+%                 - serif:      TeX Gyre Termes (tgtermes / fontspec)
+%                 - sansserif:  TeX Gyre Heros  (tgheros  / fontspec)
+%                 - monospaced: TeX Gyre Cursor  (tgcursor / fontspec)
+%   [accessible]  Nuova opzione: attiva il tagging PDF/UA-1 tramite
+%                 tagpdf e il framework di tagging del kernel LaTeX.
+%                 Richiede LuaLaTeX e TeX Live 2023+.
+%                 Controllo del motore e di \DocumentMetadata con
+%                 ClassWarning in caso di violazione.
+%   [sez.6]       Note redazionali marcate come Artifact in modalita'
+%                 accessible (bozzainfo, notaredaz, notaredazinline).
+%   [sez.9]       Frontespizio con strutture tagpdf per ciascun campo:
+%                 Title per il titolo ufficiale, P per gli altri campi.
+%   [sez.11]      AtBeginDocument: mappatura H1-H5 per la gerarchia
+%                 strutturale tramite \tagpdfsetup{add-new-tag=...}.
+%                 Il livello paragraph non riceve H6 (il comma e' P).
+%   [sez.14]      Comma: testo racchiuso in struttura P (paragrafo)
+%                 anziché lasciato come heading H6 implicito.
+%   [sez.15]      Liste lettere/numeri registrate come OL in tagpdf
+%                 tramite \SetEnumitemValue in AtBeginDocument.
+%   [sez.16]      Ambiente definizioni: strutture DL/DT/DD in modalita'
+%                 accessible. Indice definizioni: struttura TOC.
+%   [sez.17]      Ambienti preambolo/relazione racchiusi in Sect.
+%   [sez.18]      Nessuna modifica: delega ad articolo/comma gia' taggati.
+%   [sez.19]      ANallegatoheading: Sect+Caption. allegato: chiusura
+%                 Sect. indiceallegati: struttura TOC.
+%   [sez.20]      indicearticoli: struttura TOC.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{attinormativi}[2026/05/25 v1.2 Classe per atti normativi italiani]
+
+% Macro di versione accessibile ai documenti per diagnostica
+\def\ANclassversion{v1.2 (2026/05/25)}
+%    \end{macrocode}
+%
+% \subsection{Sezione 1 --- Dichiarazione delle opzioni}
+%
+% \subsubsection{1a. Modalità bozza}
+%
+% Il booleano interno |\ifAN@bozza| è usato dalla classe.
+% Il booleano pubblico |\ifANbozza| è accessibile ai documenti utente
+% senza richiedere |\makeatletter|/|\makeatother|.
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 1 — Dichiarazione delle opzioni
+% ==========================================================================
+
+% ── 1a. Bozza ──────────────────────────────────────────────────────────────
+
+\newif\ifAN@bozza
+\AN@bozzafalse
+\newif\ifANbozza
+\ANbozzafalse
+\DeclareOption{bozza}{\AN@bozzatrue\ANbozzatrue}
+%    \end{macrocode}
+%
+% \subsubsection{1a-bis. Accessibilità PDF/UA}
+%
+% Il booleano interno |\ifAN@accessible| governa il caricamento di
+% \pkg{tagpdf} e l'attivazione di tutte le strutture di tagging della
+% classe. Il booleano pubblico |\ifANaccessible| è esposto ai documenti
+% utente per eventuale codice condizionale.
+%
+%    \begin{macrocode}
+% ── 1a-bis. Accessibilità PDF/UA ───────────────────────────────────────────
+
+\newif\ifAN@accessible
+\AN@accessiblefalse
+\newif\ifANaccessible
+\ANaccessiblefalse
+\DeclareOption{accessible}{\AN@accessibletrue\ANaccessibletrue}
+%    \end{macrocode}
+%
+% \subsubsection{1b. Famiglia tipografica}
+%
+% L'alias \opt{sanserif} (con un solo~\texttt{s}) è accettato per
+% tolleranza tipografica.
+%
+%    \begin{macrocode}
+% ── 1b. Famiglia tipografica ───────────────────────────────────────────────
+
+\newif\ifAN@sansserif
+\AN@sansseriffalse
+\DeclareOption{sansserif}{\AN@sansseriftrue}
+\DeclareOption{sanserif}{\AN@sansseriftrue}  % alias tollerante (un solo 's')
+\DeclareOption{serif}{}
+%    \end{macrocode}
+%
+% \subsubsection{1c. Fronte/retro vs solo fronte}
+%
+% Solo booleano: nessun |\PassOptionsToClass| qui.
+% L'opzione concreta viene iniettata in |\LoadClass| (§~1e).
+%
+%    \begin{macrocode}
+% ── 1c. Fronte/retro vs solo fronte ────────────────────────────────────────
+
+\newif\ifAN@duplex
+\AN@duplexfalse
+\DeclareOption{duplex} {\AN@duplextrue}
+\DeclareOption{simplex}{\AN@duplexfalse}
+\DeclareOption{twoside}{\AN@duplextrue}
+\DeclareOption{oneside}{\AN@duplexfalse}
+%    \end{macrocode}
+%
+% \subsubsection{1d. Margini personalizzabili}
+%
+% Il parser |\AN@parseMarginOption| separa la chiave dal valore con
+% il delimitatore \texttt{=}. Le opzioni non riconosciute vengono
+% passate a \cls{book} tramite |\PassOptionsToClass|.
+%
+%    \begin{macrocode}
+% ── 1d. Margini personalizzabili ───────────────────────────────────────────
+
+\def\AN@margin@left  {35mm}
+\def\AN@margin@right {30mm}
+\def\AN@margin@top   {25mm}
+\def\AN@margin@bottom{25mm}
+
+\def\AN@str@left  {left}
+\def\AN@str@right {right}
+\def\AN@str@top   {top}
+\def\AN@str@bottom{bottom}
+
+\def\AN@parseMarginOption#1=#2\relax{%
+  \def\AN@optkey{#1}%
+  \def\AN@optval{#2}%
+  \ifx\AN@optval\empty
+    \PassOptionsToClass{\AN@currentopt}{book}%
+  \else
+    \ifx\AN@optkey\AN@str@left   \edef\AN@margin@left  {\AN@optval}\else
+    \ifx\AN@optkey\AN@str@right  \edef\AN@margin@right {\AN@optval}\else
+    \ifx\AN@optkey\AN@str@top    \edef\AN@margin@top   {\AN@optval}\else
+    \ifx\AN@optkey\AN@str@bottom \edef\AN@margin@bottom{\AN@optval}\else
+      \PassOptionsToClass{\AN@currentopt}{book}%
+    \fi\fi\fi\fi
+  \fi
+}
+
+\DeclareOption*{%
+  \edef\AN@currentopt{\CurrentOption}%
+  \expandafter\AN@parseMarginOption\AN@currentopt=\relax\relax
+}
+%    \end{macrocode}
+%
+% \subsubsection{1e. ProcessOptions e LoadClass}
+%
+% L'iniezione dell'opzione di layout nell'argomento esplicito di
+% |\LoadClass| garantisce che le stringhe \texttt{twoside}/\texttt{oneside}
+% arrivino esclusivamente a \cls{book} e non transitino per
+% \pkg{keyval}/\pkg{geometry}.
+%
+%    \begin{macrocode}
+% ── 1e. ProcessOptions e LoadClass ─────────────────────────────────────────
+
+\ProcessOptions\relax
+
+\ifAN@duplex
+  \LoadClass[twoside,openright]{book}
+\else
+  \LoadClass[oneside,openany]{book}
+\fi
+%    \end{macrocode}
+%
+% \subsection{Sezione 2 --- Pacchetti richiesti}
+%
+% La classe utilizza la famiglia \emph{TeX Gyre} in tutte le modalità
+% e su tutti i motori: \emph{TeX Gyre Termes} (serif), \emph{TeX Gyre
+% Heros} (sansserif) e \emph{TeX Gyre Cursor} (monospaced). Con
+% pdf\LaTeX{} vengono caricati i pacchetti \pkg{tgtermes},
+% \pkg{tgheros} e \pkg{tgcursor}; con \hologo{XeLaTeX} e
+% \hologo{LuaLaTeX} i corrispondenti font OpenType sono selezionati
+% tramite \pkg{fontspec}. Tutti i pacchetti sono inclusi in ogni
+% installazione standard di \TeX{} Live e MiK\TeX{} senza dipendenze
+% aggiuntive.
+%
+% Il caricamento di \pkg{xparse} è condizionato alla versione del kernel:
+% dalla release 2020-10-01 i comandi |\NewDocumentCommand| e affini
+% sono nativi in \LaTeX{} e il pacchetto risulterebbe superfluo.
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 2 — Pacchetti richiesti
+% ==========================================================================
+
+\RequirePackage{iftex}
+
+% ── Font ───────────────────────────────────────────────────────────────────
+%
+% Serif:      TeX Gyre Termes (clone di Times New Roman)
+% Sansserif:  TeX Gyre Heros  (clone di Helvetica); caricato in entrambe
+%             le modalità come famiglia sans di corredo (scala 0.92).
+% Monospaced: TeX Gyre Cursor (clone di Courier)
+
+\ifPDFTeX
+  \RequirePackage[utf8]{inputenc}
+  \RequirePackage[T1]{fontenc}
+  \ifAN@sansserif
+    \RequirePackage{tgheros}
+    \RequirePackage{tgcursor}
+    \renewcommand{\familydefault}{\sfdefault}
+  \else
+    \RequirePackage{tgtermes}
+    \RequirePackage[scale=0.92]{tgheros}
+    \RequirePackage{tgcursor}
+  \fi
+\else
+  \RequirePackage{fontspec}
+  \ifAN@sansserif
+    \setmainfont{TeX Gyre Heros}
+    \setsansfont{TeX Gyre Heros}
+    \setmonofont{TeX Gyre Cursor}
+  \else
+    \setmainfont{TeX Gyre Termes}
+    \setsansfont[Scale=0.92]{TeX Gyre Heros}
+    \setmonofont{TeX Gyre Cursor}
+  \fi
+\fi
+
+% ── Geometry ───────────────────────────────────────────────────────────────
+
+\RequirePackage{geometry}
+\ifAN@duplex
+  \geometry{
+    a4paper,
+    twoside,
+    top    = \AN@margin@top,
+    bottom = \AN@margin@bottom,
+    inner  = \AN@margin@left,
+    outer  = \AN@margin@right
+  }
+\else
+  \geometry{
+    a4paper,
+    top    = \AN@margin@top,
+    bottom = \AN@margin@bottom,
+    left   = \AN@margin@left,
+    right  = \AN@margin@right
+  }
+\fi
+
+% ── Localizzazione e tipografia ────────────────────────────────────────────
+
+\RequirePackage[italian]{babel}
+\RequirePackage{microtype}
+
+% ── Utility ────────────────────────────────────────────────────────────────
+
+\RequirePackage{xcolor}
+
+% xparse è nativo nel kernel LaTeX dalla release 2020-10-01.
+% Lo carichiamo solo su installazioni più vecchie.
+\@ifpackagelater{LaTeX}{2020/10/01}{}{%
+  \RequirePackage{xparse}%
+}
+
+\RequirePackage{titlesec}
+\RequirePackage{chngcntr}
+\RequirePackage{enumitem}
+\RequirePackage{hyperref}
+%    \end{macrocode}
+%
+% \subsubsection{Caricamento condizionato di \pkg{tagpdf}}
+%
+% Quando l'opzione \opt{accessible} è attiva, la classe verifica che:
+% \begin{enumerate}
+%   \item il motore sia \hologo{LuaLaTeX} (unico motore che supporta il
+%         tagging PDF/UA completo con il kernel attuale);
+%   \item |\DocumentMetadata| sia stato dichiarato prima di |\documentclass|
+%         (condizione necessaria per l'inizializzazione del framework di
+%         tagging del kernel).
+% \end{enumerate}
+% In entrambi i casi di violazione viene emesso un |\ClassWarning|
+% (non un errore fatale) per non interrompere la compilazione.
+% Il tagging viene attivato solo se entrambe le condizioni sono soddisfatte.
+%
+%    \begin{macrocode}
+% ── tagpdf (solo opzione accessible) ──────────────────────────────────────
+
+\ifAN@accessible
+  % Controllo 1: motore LuaLaTeX
+  \ifLuaTeX\else
+    \ClassWarning{attinormativi}{%
+      L'opzione `accessible' richiede LuaLaTeX.\MessageBreak
+      Con il motore corrente il tagging PDF/UA non verra' attivato.%
+    }%
+    \AN@accessiblefalse
+    \ANaccessiblefalse
+  \fi
+\fi
+
+\ifAN@accessible
+  % Controllo 2: DocumentMetadata dichiarato
+  \@ifundefined{document@metadata}{%
+    \ClassWarning{attinormativi}{%
+      L'opzione `accessible' richiede \string\DocumentMetadata\space
+      prima di \string\documentclass.\MessageBreak
+      Aggiungere nel file .tex, prima di \string\documentclass:\MessageBreak
+      \space\space\string\DocumentMetadata\string{pdfstandard=UA-1,
+      lang=it-IT\string}\MessageBreak
+      Il tagging PDF/UA non verra' attivato.%
+    }%
+    \AN@accessiblefalse
+    \ANaccessiblefalse
+  }{}%
+\fi
+
+\ifAN@accessible
+  \RequirePackage{tagpdf}%
+\fi
+%    \end{macrocode}
+%
+% \subsection{Sezione 3 --- Giustificazione di emergenza}
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 3 — Giustificazione di emergenza
+% ==========================================================================
+
+\AtBeginDocument{\emergencystretch=2em}
+%    \end{macrocode}
+%
+% \subsection{Sezione 4 --- Profondità di numerazione}
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 4 — Profondità di numerazione
+% ==========================================================================
+
+\setcounter{secnumdepth}{6}
+\setcounter{tocdepth}{3}
+%    \end{macrocode}
+%
+% \subsection{Sezione 5 --- Hyperlink}
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 5 — Hyperlink
+% ==========================================================================
+
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = black,
+  citecolor  = black,
+  urlcolor   = black,
+  pdfborder  = {0 0 0}
+}
+%    \end{macrocode}
+%
+% \subsection{Sezione 6 --- Modalità bozza e note redazionali}
+%
+% \begin{macro}{\notaredaz}
+% Nota a blocco con riquadro, visibile solo in modalità bozza.
+% Il contatore |\ANnotaredaz| fornisce la numerazione progressiva.
+% Quando l'opzione \opt{accessible} è attiva, il blocco è racchiuso
+% in una struttura \pkg{tagpdf} con ruolo \texttt{Artifact}, in modo
+% che i lettori di schermo non lo trattino come contenuto normativo.
+% \end{macro}
+%
+% \begin{macro}{\notaredazinline}
+% Nota breve in linea, evidenziata in rosso, visibile solo in bozza.
+% In modalità \opt{accessible} è anch'essa marcata come \texttt{Artifact}.
+% \end{macro}
+%
+% \begin{macro}{\bozzainfo}
+% Banner «VERSIONE DI BOZZA» inserito all'inizio del documento.
+% Usa |\newpage| anziché |\clearpage| per evitare l'emissione di
+% una pagina bianca vuota prima del banner stesso.
+% In modalità \opt{accessible} il banner è marcato come \texttt{Artifact}.
+% \end{macro}
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 6 — Modalità bozza e note redazionali
+% ==========================================================================
+
+\newcounter{ANnotaredaz}
+
+\NewDocumentCommand{\notaredaz}{+m}{%
+  \ifAN@bozza
+    \refstepcounter{ANnotaredaz}%
+    \par\smallskip
+    \noindent
+    \ifAN@accessible
+      \tagmcbegin{tag=Artifact}%
+    \fi
+    \fbox{%
+      \begin{minipage}{0.96\linewidth}
+        \small
+        \textbf{Nota redazionale \theANnotaredaz.} #1
+      \end{minipage}%
+    }%
+    \ifAN@accessible
+      \tagmcend
+    \fi
+    \par\smallskip
+  \fi
+}
+
+\NewDocumentCommand{\notaredazinline}{+m}{%
+  \ifAN@bozza
+    \ifAN@accessible
+      \tagmcbegin{tag=Artifact}%
+    \fi
+    \textcolor{red}{[\textbf{Nota redazionale:} #1]}%
+    \ifAN@accessible
+      \tagmcend
+    \fi
+  \fi
+}
+
+\NewDocumentCommand{\bozzainfo}{}{%
+  \ifAN@bozza
+    \ifAN@accessible
+      \tagmcbegin{tag=Artifact}%
+    \fi
+    \begin{center}
+      \fbox{%
+        \begin{minipage}{0.85\linewidth}
+          \centering
+          \textbf{VERSIONE DI BOZZA}\\
+          Documento compilato il \today.\\
+          Le note redazionali sono visibili solo in modalit\`a bozza.
+        \end{minipage}%
+      }
+    \end{center}
+    \ifAN@accessible
+      \tagmcend
+    \fi
+    \newpage
+  \fi
+}
+%    \end{macrocode}
+%
+% \subsection{Sezione 7 --- Nomi strutturali}
+%
+% I nomi dei livelli strutturali sono ridefinibili nel preambolo del
+% documento. Il comando |\addto\captionsitalian| integra le ridefinizioni
+% con il meccanismo di \pkg{babel}.
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 7 — Nomi strutturali
+% ==========================================================================
+
+\newcommand*{\ANLibroName}{Libro}
+\newcommand*{\ANTitoloName}{Titolo}
+\newcommand*{\ANCapoName}{Capo}
+\newcommand*{\ANSezioneName}{Sezione}
+\newcommand*{\ANArticoloName}{Articolo}
+\newcommand*{\ANCommaName}{Comma}
+
+\addto\captionsitalian{%
+  \renewcommand*{\partname}{\ANLibroName}%
+  \renewcommand*{\chaptername}{\ANTitoloName}%
+}
+%    \end{macrocode}
+%
+% \subsection{Sezione 8 --- Metadati dell'atto}
+%
+% \begin{macro}{\tipoatto}
+% \begin{macro}{\numeroatto}
+% \begin{macro}{\dataatto}
+% \begin{macro}{\autoritaatto}
+% \begin{macro}{\titoloatto}
+% \begin{macro}{\oggettoatto}
+% I sei comandi di metadato memorizzano il valore in una macro interna
+% tramite |\renewcommand|. Le macro interne sono inizializzate vuote
+% in modo che il frontespizio possa testarne la presenza con |\ifx...\empty|.
+% \end{macro}\end{macro}\end{macro}\end{macro}\end{macro}\end{macro}
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 8 — Metadati dell'atto
+% ==========================================================================
+
+\newcommand*{\ANtipoatto}{}
+\newcommand*{\ANnumeroatto}{}
+\newcommand*{\ANdataatto}{}
+\newcommand*{\ANautoritaatto}{}
+\newcommand*{\ANtitoloatto}{}
+\newcommand*{\ANoggettoatto}{}
+
+\NewDocumentCommand{\tipoatto}    {m}{\renewcommand*{\ANtipoatto}{#1}}
+\NewDocumentCommand{\numeroatto}  {m}{\renewcommand*{\ANnumeroatto}{#1}}
+\NewDocumentCommand{\dataatto}    {m}{\renewcommand*{\ANdataatto}{#1}}
+\NewDocumentCommand{\autoritaatto}{m}{\renewcommand*{\ANautoritaatto}{#1}}
+\NewDocumentCommand{\titoloatto}  {m}{\renewcommand*{\ANtitoloatto}{#1}}
+\NewDocumentCommand{\oggettoatto} {m}{\renewcommand*{\ANoggettoatto}{#1}}
+%    \end{macrocode}
+%
+% \subsection{Sezione 9 --- Frontespizio e alias \texttt{\textbackslash maketitle}}
+%
+% \begin{macro}{\frontespizioatto}
+% Il frontespizio condiziona la stampa di ciascun campo al test
+% |\ifx...\empty|, così gli utenti che non impostano tutti i metadati
+% ottengono un frontespizio coerente senza voci vuote.
+%
+% Quando l'opzione \opt{accessible} è attiva, ciascun campo è racchiuso
+% in una struttura \pkg{tagpdf}. Il titolo dell'atto riceve il ruolo
+% semantico \texttt{Title}; tutti gli altri campi ricevono il ruolo
+% \texttt{P} (paragrafo). Questa struttura consente ai lettori di schermo
+% di identificare correttamente il titolo del documento e di distinguerlo
+% dagli altri metadati.
+% \end{macro}
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 9 — Frontespizio e alias \maketitle
+% ==========================================================================
+
+\NewDocumentCommand{\frontespizioatto}{}{%
+  \begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  \ifx\ANautoritaatto\empty\else
+    \ifAN@accessible
+      \tagstructbegin{tag=P}%
+      {\Large \ANautoritaatto\par}%
+      \tagstructend
+    \else
+      {\Large \ANautoritaatto\par}%
+    \fi
+    \vspace{2cm}%
+  \fi
+  \ifx\ANtipoatto\empty\else
+    \ifAN@accessible
+      \tagstructbegin{tag=P}%
+      {\huge\bfseries \ANtipoatto\par}%
+      \tagstructend
+    \else
+      {\huge\bfseries \ANtipoatto\par}%
+    \fi
+    \vspace{0.5cm}%
+  \fi
+  \ifx\ANnumeroatto\empty\else
+    \ifAN@accessible
+      \tagstructbegin{tag=P}%
+      {\Large n.~\ANnumeroatto\par}%
+      \tagstructend
+    \else
+      {\Large n.~\ANnumeroatto\par}%
+    \fi
+    \vspace{0.5cm}%
+  \fi
+  \ifx\ANdataatto\empty\else
+    \ifAN@accessible
+      \tagstructbegin{tag=P}%
+      {\large \ANdataatto\par}%
+      \tagstructend
+    \else
+      {\large \ANdataatto\par}%
+    \fi
+    \vspace{2cm}%
+  \fi
+  \ifx\ANtitoloatto\empty\else
+    \ifAN@accessible
+      % Il titolo ufficiale dell'atto riceve ruolo Title in PDF/UA
+      \tagstructbegin{tag=Title}%
+      {\LARGE\bfseries \ANtitoloatto\par}%
+      \tagstructend
+    \else
+      {\LARGE\bfseries \ANtitoloatto\par}%
+    \fi
+    \vspace{1.5cm}%
+  \fi
+  \ifx\ANoggettoatto\empty\else
+    \begin{minipage}{0.82\textwidth}
+      \centering
+      \ifAN@accessible
+        \tagstructbegin{tag=P}%
+        {\large \ANoggettoatto}%
+        \tagstructend
+      \else
+        {\large \ANoggettoatto}%
+      \fi
+    \end{minipage}%
+  \fi
+  \vfill
+  \end{titlepage}
+}
+
+\let\maketitle\frontespizioatto
+%    \end{macrocode}
+%
+% \subsection{Sezione 10 --- Contatori}
+%
+% Il contatore degli articoli (|\subsubsection|) è reso globale
+% tramite |\counterwithout|: la progressione è unica per l'intero
+% documento, indipendente dalla struttura dei capitoli e titoli.
+%
+% Il contatore |\articoloecomma| fornisce etichette combinate
+% per i riferimenti articolo+comma tramite |\artcommaref|.
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 10 — Contatori
+% ==========================================================================
+
+\renewcommand*{\thepart}{\Roman{part}}
+\renewcommand*{\thechapter}{\Roman{chapter}}
+\renewcommand*{\thesection}{\Roman{section}}
+\renewcommand*{\thesubsection}{\Roman{subsection}}
+
+\counterwithout{subsubsection}{subsection}
+\renewcommand*{\thesubsubsection}{\arabic{subsubsection}}
+
+\counterwithin*{paragraph}{subsubsection}
+\renewcommand*{\theparagraph}{\arabic{paragraph}}
+
+\newcounter{articoloecomma}
+\renewcommand*{\thearticoloecomma}{art.~\thesubsubsection, c.~\theparagraph}
+%    \end{macrocode}
+%
+% \subsection{Sezione 11 --- Formati dei titoli}
+%
+% I titoli strutturali sono composti in stile centrato con il nome
+% del livello e il numero su una riga e il testo del titolo sulla
+% riga successiva (\texttt{display} shape di \pkg{titlesec}).
+% Il livello articolo aggiunge il testo in corsivo.
+%
+% Il livello comma usa lo stile \texttt{runin} con titolo vuoto.
+% Per evitare lo spazio spurio che |\paragraph{}| genera prima del
+% numero, il formato è configurato in modo che il separatore
+% dopo il titolo non produca spazio orizzontale quando il titolo
+% è assente.
+%
+% \subsubsection{Mappatura ruoli strutturali per PDF/UA}
+%
+% Quando l'opzione \opt{accessible} è attiva, il blocco
+% |\AtBeginDocument| registra in \pkg{tagpdf} la corrispondenza
+% tra i comandi \LaTeX{} di sezionamento e i ruoli PDF/UA (heading
+% levels \texttt{H1}--\texttt{H5}).
+%
+% La mappatura utilizza |\tagpdfsetup{add-new-tag=...}| (interfaccia
+% stabile di \pkg{tagpdf} da TeX Live 2023):
+%
+% \begin{cmdtable}[Livello]
+%   \cmdrow{\textbackslash libro    → \texttt{\textbackslash part}}
+%         {Ruolo PDF/UA: \texttt{H1}}
+%   \cmdrow{\textbackslash titolo   → \texttt{\textbackslash chapter}}
+%         {Ruolo PDF/UA: \texttt{H2}}
+%   \cmdrow{\textbackslash capo     → \texttt{\textbackslash section}}
+%         {Ruolo PDF/UA: \texttt{H3}}
+%   \cmdrow{\textbackslash sezione  → \texttt{\textbackslash subsection}}
+%         {Ruolo PDF/UA: \texttt{H4}}
+%   \cmdrow{\textbackslash articolo → \texttt{\textbackslash subsubsection}}
+%         {Ruolo PDF/UA: \texttt{H5}}
+% \end{cmdtable}
+%
+% Il livello |\paragraph| (comma) \emph{non} riceve il ruolo \texttt{H6}:
+% come illustrato nella sezione~14, il testo del comma viene racchiuso
+% esplicitamente in una struttura \texttt{P} (paragrafo). Il |\paragraph|
+% emette soltanto il numero di comma, che risulta quindi come \texttt{Artifact}
+% decorativo, non come elemento strutturale navigabile.
+%
+% La mappatura è inserita in |\AtBeginDocument| per garantire che
+% \pkg{tagpdf} e \pkg{hyperref} siano già inizializzati al momento
+% della registrazione.
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 11 — Formati dei titoli
+% ==========================================================================
+
+\titleformat{\part}[display]
+  {\normalfont\Huge\bfseries\centering}
+  {\ANLibroName~\thepart}{1ex}{}
+
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\centering}
+  {\ANTitoloName~\thechapter}{1ex}{}
+
+\titleformat{\section}[display]
+  {\normalfont\Large\bfseries\centering}
+  {\ANCapoName~\thesection}{1ex}{}
+
+\titleformat{\subsection}[display]
+  {\normalfont\large\bfseries\centering}
+  {\ANSezioneName~\thesubsection}{1ex}{}
+
+\titleformat{\subsubsection}[display]
+  {\normalfont\normalsize\bfseries\centering}
+  {\ANArticoloName~\thesubsubsection}{0.5ex}{\itshape}
+
+% Il separatore è impostato a 0pt per sopprimere lo spazio spurio
+% prima del numero del comma quando il titolo è vuoto.
+\titleformat{\paragraph}[runin]
+  {\normalfont\normalsize}
+  {\theparagraph.}{0pt}{}
+
+\titlespacing*{\part}         {0pt}{0pt}{4ex}
+\titlespacing*{\chapter}      {0pt}{2ex plus 1ex minus .2ex}{3ex}
+\titlespacing*{\section}      {0pt}{2.5ex plus 1ex minus .2ex}{1.5ex}
+\titlespacing*{\subsection}   {0pt}{2ex plus 1ex minus .2ex}{1ex}
+\titlespacing*{\subsubsection}{0pt}{2ex plus 1ex minus .2ex}{1ex}
+\titlespacing*{\paragraph}    {0pt}{0.6ex plus .2ex minus .1ex}{0.75em}
+
+% ── Mappatura ruoli PDF/UA (solo opzione accessible) ───────────────────────
+%
+% La registrazione in AtBeginDocument garantisce che tagpdf e hyperref
+% siano già inizializzati. I ruoli H1-H5 corrispondono alla gerarchia
+% normativa italiana (Libro → Titolo → Capo → Sezione → Articolo).
+% Il livello paragraph (Comma) non riceve H6: il suo contenuto testuale
+% è taggato come P in \comma (§ 14), rendendo superflua la mappatura.
+\AtBeginDocument{%
+  \ifAN@accessible
+    \tagpdfsetup{%
+      add-new-tag = {part/H1},%
+      add-new-tag = {chapter/H2},%
+      add-new-tag = {section/H3},%
+      add-new-tag = {subsection/H4},%
+      add-new-tag = {subsubsection/H5},%
+    }%
+  \fi
+}
+%    \end{macrocode}
+%
+% \subsection{Sezione 12 --- Riferimenti avanzati e supporto cleveref}
+%
+% I comandi di riferimento in italiano sono forniti senza richiedere
+% l'installazione di pacchetti aggiuntivi.
+%
+% Il blocco |\AtBeginDocument| attiva le definizioni \pkg{cleveref}
+% solo se il pacchetto è stato effettivamente caricato dall'utente,
+% attraverso il test |\@ifpackageloaded|. Questo evita errori in
+% documenti che non usano \pkg{cleveref}.
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 12 — Riferimenti avanzati e supporto cleveref
+% ==========================================================================
+
+\newcommand*{\artref}[1]{art.~\ref{#1}}
+\newcommand*{\commaref}[1]{comma~\ref{#1}}
+\newcommand*{\artcommaref}[1]{\ref{a+c:#1}}
+\newcommand*{\articoloeref}[1]{articolo~\ref{#1}}
+\newcommand*{\commaeref}[1]{comma~\ref{#1}}
+\newcommand*{\artcomma}[2]{art.~\ref{#1}, comma~\ref{#2}}
+\newcommand*{\articolocomma}[2]{articolo~\ref{#1}, comma~\ref{#2}}
+
+\AtBeginDocument{%
+  \@ifpackageloaded{cleveref}{%
+    \crefname  {part}          {libro}      {libri}
+    \Crefname  {part}          {Libro}      {Libri}
+    \crefname  {chapter}       {titolo}     {titoli}
+    \Crefname  {chapter}       {Titolo}     {Titoli}
+    \crefname  {section}       {capo}       {capi}
+    \Crefname  {section}       {Capo}       {Capi}
+    \crefname  {subsection}    {sezione}    {sezioni}
+    \Crefname  {subsection}    {Sezione}    {Sezioni}
+    \crefname  {subsubsection} {articolo}   {articoli}
+    \Crefname  {subsubsection} {Articolo}   {Articoli}
+    \crefname  {paragraph}     {comma}      {commi}
+    \Crefname  {paragraph}     {Comma}      {Commi}
+    \crefname  {articoloecomma}{comma}      {commi}
+    \Crefname  {articoloecomma}{Comma}      {Commi}
+    \crefname  {ANdefinizione} {definizione}{definizioni}
+    \Crefname  {ANdefinizione} {Definizione}{Definizioni}
+    \crefname  {ANallegato}    {allegato}   {allegati}
+    \Crefname  {ANallegato}    {Allegato}   {Allegati}
+  }{}%
+}
+%    \end{macrocode}
+%
+% \subsection{Sezione 13 --- Macro interna \texttt{\textbackslash AN@emit}}
+%
+% \begin{macro}{\AN@emit}
+% La macro |\AN@emit| è il motore comune a tutti i comandi strutturali.
+% Riceve cinque argomenti:
+% \begin{enumerate}
+%   \item il comando \LaTeX{} da invocare (|\part|, |\chapter|, ecc.);
+%   \item il nome del contatore corrispondente;
+%   \item il numero manuale (può essere |\NoValue|);
+%   \item il testo del titolo;
+%   \item l'etichetta (può essere |\NoValue|).
+% \end{enumerate}
+%
+% Quando è presente un numero manuale, la modifica al contatore è
+% isolata in un gruppo \TeX{}. Poiché i contatori \LaTeX{} sono globali,
+% l'incremento automatico eseguito dal comando strutturale avviene prima
+% del ripristino esplicito: il valore salvato in |\AN@saved@counter| è
+% quello \emph{antecedente} all'incremento, così il ripristino finale
+% riporta il contatore allo stato precedente all'intera emissione,
+% garantendo la corretta progressione automatica successiva.
+% \end{macro}
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 13 — Macro interna \AN@emit
+% ==========================================================================
+\NewDocumentCommand{\AN@emit}{m m m m m}{%
+  \IfNoValueTF{#3}
+    {%
+      #1{#4}%
+      \IfNoValueF{#5}{\label{#5}}%
+    }
+    {%
+      \begingroup
+        % Salva il valore del contatore PRIMA dell'incremento automatico
+        % che il comando strutturale eseguirà globalmente.
+        % Il ripristino finale riporta il contatore a questo valore,
+        % garantendo la corretta progressione automatica successiva.
+        \edef\AN@saved@counter{\the\value{#2}}%
+        \expandafter\renewcommand\csname the#2\endcsname{#3}%
+        #1{#4}%
+        \IfNoValueF{#5}{\label{#5}}%
+        \setcounter{#2}{\AN@saved@counter}%
+      \endgroup
+    }%
+}
+%    \end{macrocode}
+%
+% \subsection{Sezione 14 --- Comandi strutturali pubblici}
+%
+% \begin{macro}{\libro}
+% \begin{macro}{\titolo}
+% \begin{macro}{\capo}
+% \begin{macro}{\sezione}
+% \begin{macro}{\articolo}
+% Tutti i comandi strutturali delegano a |\AN@emit|.
+% Il comando |\articolo| aggiunge anche la registrazione nell'indice
+% degli articoli tramite |\ANaddarticleindex|.
+% \end{macro}\end{macro}\end{macro}\end{macro}\end{macro}
+%
+% \begin{macro}{\comma}
+% Il comma gestisce autonomamente la numerazione manuale per
+% compatibilità con il contatore |\articoloecomma| (riferimento
+% combinato articolo+comma) e la doppia etichetta associata.
+% Il separatore del formato \texttt{runin} è impostato a \texttt{0pt}
+% (§~11) per sopprimere lo spazio spurio prima del testo del comma
+% quando il titolo è vuoto.
+%
+% Quando l'opzione \opt{accessible} è attiva, il testo del comma è
+% racchiuso in una struttura \pkg{tagpdf} con ruolo \texttt{P}
+% (paragrafo). Questo è necessario perché il kernel LaTeX taggerebbe
+% il contenuto di un |\paragraph| come heading (\texttt{H6}), mentre
+% il comma è semanticamente un paragrafo normativo privo di titolo.
+% La struttura \texttt{P} è aperta dopo l'emissione del numero e
+% chiusa al termine del testo con |\par|.
+% \end{macro}
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 14 — Comandi strutturali pubblici
+% ==========================================================================
+
+\NewDocumentCommand{\libro}  {o m o}{\AN@emit{\part}       {part}       {#1}{#2}{#3}}
+\NewDocumentCommand{\titolo} {o m o}{\AN@emit{\chapter}    {chapter}    {#1}{#2}{#3}}
+\NewDocumentCommand{\capo}   {o m o}{\AN@emit{\section}    {section}    {#1}{#2}{#3}}
+\NewDocumentCommand{\sezione}{o m o}{\AN@emit{\subsection} {subsection} {#1}{#2}{#3}}
+
+\NewDocumentCommand{\articolo}{o m o}{%
+  \AN@emit{\subsubsection}{subsubsection}{#1}{#2}{#3}%
+  \IfNoValueTF{#1}
+    {\ANaddarticleindex{\thesubsubsection}{#2}}
+    {\ANaddarticleindex{#1}{#2}}%
+}
+
+\NewDocumentCommand{\comma}{o +m o}{%
+  \IfNoValueTF{#1}
+    {%
+      \ifAN@accessible
+        \paragraph{}%
+        \tagstructbegin{tag=P}%
+        #2%
+        \tagstructend
+        \par
+      \else
+        \paragraph{}#2\par
+      \fi
+      \IfNoValueF{#3}{%
+        \label{#3}%
+        \refstepcounter{articoloecomma}%
+        \label{a+c:#3}%
+      }%
+    }
+    {%
+      \begingroup
+        \edef\AN@saved@para{\the\value{paragraph}}%
+        \renewcommand*{\theparagraph}{#1}%
+        \ifAN@accessible
+          \paragraph{}%
+          \tagstructbegin{tag=P}%
+          #2%
+          \tagstructend
+          \par
+        \else
+          \paragraph{}#2\par
+        \fi
+        \IfNoValueF{#3}{%
+          \label{#3}%
+          \refstepcounter{articoloecomma}%
+          \label{a+c:#3}%
+        }%
+        \setcounter{paragraph}{\AN@saved@para}%
+      \endgroup
+    }%
+}
+%    \end{macrocode}
+%
+% \subsection{Sezione 15 --- Liste}
+%
+% La classe definisce due ambienti di lista adeguati alla struttura
+% degli atti normativi: \texttt{lettere} (enumerazione alfabetica
+% a), b), c)\ldots) e \texttt{numeri} (enumerazione numerica
+% 1), 2), 3)\ldots). Entrambi sono costruiti tramite |\newlist|
+% di \pkg{enumitem}.
+%
+% \subsubsection{Compatibilità con il tagging automatico del kernel}
+%
+% Il kernel LaTeX (da 2023-06-01) tagger automaticamente le liste
+% \pkg{enumitem} come strutture \texttt{L}/\texttt{LI}/\texttt{LBody}
+% conformi a PDF/UA. Tuttavia, le liste create con |\newlist|
+% (liste personalizzate non standard) \emph{non} sono registrate
+% automaticamente nel framework di tagging: il kernel riconosce
+% soltanto i tipi \texttt{itemize}, \texttt{enumerate} e
+% \texttt{description}.
+%
+% Per garantire il tagging corretto, il blocco |\AtBeginDocument|
+% (attivo solo con l'opzione \opt{accessible}) registra esplicitamente
+% i tipi \texttt{lettere} e \texttt{numeri} come liste ordinate
+% tramite |\SetEnumitemValue| di \pkg{tagpdf}, associando loro la
+% struttura \texttt{OL} (ordered list) conforme a PDF/UA.
+%
+% Il tag \texttt{OL} è corretto per entrambe le liste in quanto
+% le enumerazioni normative sono sempre ordinate (la lettera o il
+% numero identifica univocamente la voce nel testo dell'atto).
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 15 — Liste
+% ==========================================================================
+
+\newlist{lettere}{enumerate}{1}
+\setlist[lettere]{
+  label      = \alph*),
+  ref        = \alph*),
+  leftmargin = 2.5em,
+  itemsep    = 0.2ex,
+  topsep     = 0.5ex
+}
+
+\newlist{numeri}{enumerate}{1}
+\setlist[numeri]{
+  label      = \arabic*),
+  ref        = \arabic*),
+  leftmargin = 2.5em,
+  itemsep    = 0.2ex,
+  topsep     = 0.5ex
+}
+
+% ── Registrazione tagpdf per liste personalizzate (solo accessible) ────────
+%
+% Il kernel LaTeX tagger automaticamente itemize/enumerate/description,
+% ma non le liste create con \newlist. La registrazione esplicita
+% tramite \SetEnumitemValue associa le liste normative alla struttura
+% OL (ordered list) di PDF/UA, garantendo il tagging corretto di
+% ogni voce (LI/LBody) senza intervento manuale nell'ambiente.
+\AtBeginDocument{%
+  \ifAN@accessible
+    \@ifpackageloaded{tagpdf}{%
+      \SetEnumitemValue{list-type}{lettere}{OL}%
+      \SetEnumitemValue{list-type}{numeri} {OL}%
+    }{}%
+  \fi
+}
+%    \end{macrocode}
+%
+% \subsection{Sezione 16 --- Definizioni}
+%
+% \begin{environment}{definizioni}
+% L'ambiente \texttt{definizioni} usa un ambiente \texttt{list} con
+% parametri personalizzati. Il contatore |\ANdefinizione| si azzera
+% all'inizio di ogni ambiente.
+%
+% Quando l'opzione \opt{accessible} è attiva, l'ambiente emette una
+% struttura \pkg{tagpdf} di tipo \texttt{DL} (definition list) attorno
+% all'intera lista. Questa struttura ha un corrispondente diretto nella
+% specifica PDF/UA e consente ai lettori di schermo di interpretare
+% correttamente l'elenco come una lista di definizioni.
+% \end{environment}
+%
+% \begin{macro}{\definizione}
+% Ogni voce incrementa |\ANdefinizione|, compone il termine in grassetto
+% e aggiunge la voce all'indice delle definizioni.
+%
+% Quando l'opzione \opt{accessible} è attiva, ciascuna voce emette:
+% \begin{itemize}
+%   \item una struttura \texttt{DT} (definition term) attorno al termine
+%         in grassetto;
+%   \item una struttura \texttt{DD} (definition description) attorno al
+%         testo della definizione.
+% \end{itemize}
+% Questa distinzione permette ai lettori di schermo di annunciare
+% separatamente il termine e la sua definizione.
+% \end{macro}
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 16 — Definizioni
+% ==========================================================================
+
+\newcounter{ANdefinizione}
+\renewcommand*{\theANdefinizione}{\alph{ANdefinizione}}
+\newcommand*{\ANDefinizioneName}{Definizione}
+
+\NewDocumentCommand{\indicedefinizioni}{}{%
+  \chapter*{Indice delle definizioni}%
+  \markboth{Indice delle definizioni}{Indice delle definizioni}%
+  \addcontentsline{toc}{chapter}{Indice delle definizioni}%
+  \ifAN@accessible
+    \tagstructbegin{tag=TOC}%
+    \@starttoc{dfn}%
+    \tagstructend
+  \else
+    \@starttoc{dfn}%
+  \fi
+}
+
+\newcommand*{\l@ANdefinizione}{\@dottedtocline{1}{0pt}{0em}}
+\newcommand*{\ANadddefinitionindex}[1]{\addcontentsline{dfn}{ANdefinizione}{#1}}
+
+\NewDocumentEnvironment{definizioni}{}
+  {%
+    \ifAN@accessible
+      \tagstructbegin{tag=DL}%
+    \fi
+    \begin{list}{}{%
+      \setlength{\leftmargin}{2.5em}%
+      \setlength{\labelwidth}{2em}%
+      \setlength{\labelsep}{0.75em}%
+      \setlength{\itemsep}{0.4ex}%
+      \setlength{\topsep}{0.6ex}%
+    }%
+    \setcounter{ANdefinizione}{0}%
+  }
+  {%
+    \end{list}%
+    \ifAN@accessible
+      \tagstructend
+    \fi
+  }
+
+\NewDocumentCommand{\definizione}{m +m o}{%
+  \refstepcounter{ANdefinizione}%
+  \protected@edef\@currentlabelname{#1}%
+  \ifAN@accessible
+    \item[%
+      \tagstructbegin{tag=DT}%
+      \textbf{\theANdefinizione)}%
+      \tagstructend
+    ]%
+    \tagstructbegin{tag=DD}%
+    \textbf{#1}: #2%
+    \tagstructend
+  \else
+    \item[\textbf{\theANdefinizione)}]\textbf{#1}: #2%
+  \fi
+  \ANadddefinitionindex{#1}%
+  \IfNoValueF{#3}{\label{#3}}%
+}
+
+\newcommand*{\definizioneref}[1]{\emph{\nameref{#1}}}
+\newcommand*{\defref}[1]{\definizioneref{#1}}
+%    \end{macrocode}
+%
+% \subsection{Sezione 17 --- Ambienti di servizio}
+%
+% \begin{environment}{preambolo}
+% Genera un capitolo non numerato con voce nell'indice generale.
+% Il preambolo introduce le premesse giuridiche e fattuali dell'atto
+% (le clausole \emph{visto}, \emph{considerato}, \emph{ritenuto}
+% degli atti amministrativi).
+% \end{environment}
+%
+% \begin{environment}{relazione}
+% Genera un capitolo non numerato con voce nell'indice generale.
+% La relazione illustrativa accompagna gli atti di maggior complessità.
+% \end{environment}
+%
+% \subsubsection{Tagging PDF/UA}
+%
+% In modalità \opt{accessible}, i due ambienti racchiudono il proprio
+% contenuto in una struttura \pkg{tagpdf} con ruolo \texttt{Sect}
+% (sezione generica), che è il tag appropriato in PDF/UA per blocchi
+% di contenuto che non appartengono alla gerarchia heading-level
+% numerata ma costituiscono comunque unità logiche distinte del documento.
+%
+% Il tag \texttt{Sect} è scelto in preferenza a \texttt{NonStruct}
+% perché il preambolo e la relazione hanno un titolo (il \texttt{\textbackslash chapter*})
+% e un contenuto coeso, caratteristiche che definiscono una sezione
+% in PDF/UA-1 (ISO~14289-1, §~7.1).
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 17 — Ambienti di servizio
+% ==========================================================================
+
+\NewDocumentEnvironment{preambolo}{+b}
+  {%
+    \ifAN@accessible\tagstructbegin{tag=Sect}\fi
+    \chapter*{Preambolo}%
+    \addcontentsline{toc}{chapter}{Preambolo}%
+    #1%
+  }
+  {\ifAN@accessible\tagstructend\fi}
+
+\NewDocumentEnvironment{relazione}{+b}
+  {%
+    \ifAN@accessible\tagstructbegin{tag=Sect}\fi
+    \chapter*{Relazione illustrativa}%
+    \addcontentsline{toc}{chapter}{Relazione illustrativa}%
+    #1%
+  }
+  {\ifAN@accessible\tagstructend\fi}
+%    \end{macrocode}
+%
+% \subsection{Sezione 18 --- Disposizioni finali tipizzate}
+%
+% \begin{macro}{\AN@articoloFisso}
+% La macro interna |\AN@articoloFisso| fattorizza la logica comune ai
+% tre comandi tipizzati. Gestisce le quattro combinazioni possibili di
+% presenza/assenza del numero manuale e dell'etichetta.
+% \end{macro}
+%
+% \subsubsection{Tagging PDF/UA}
+%
+% I tre comandi |\entrataInVigore|, |\abrogazioni| e |\normatransitoria|
+% delegano interamente a |\articolo| e |\comma|, che in modalità
+% \opt{accessible} producono già strutture \texttt{H5} e \texttt{P}
+% corrette (rispettivamente, dalla mappatura di §~11 e dal codice
+% di §~14). Non è quindi necessario alcun intervento aggiuntivo
+% in questa sezione.
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 18 — Disposizioni finali tipizzate
+% ==========================================================================
+
+\NewDocumentCommand{\AN@articoloFisso}{m m +m m}{%
+  \IfNoValueTF{#2}
+    {%
+      \IfNoValueTF{#4}{\articolo{#1}}{\articolo{#1}[#4]}%
+    }
+    {%
+      \IfNoValueTF{#4}{\articolo[#2]{#1}}{\articolo[#2]{#1}[#4]}%
+    }%
+  \comma{#3}%
+}
+
+\NewDocumentCommand{\entrataInVigore} {o +m o}{\AN@articoloFisso{Entrata in vigore}{#1}{#2}{#3}}
+\NewDocumentCommand{\abrogazioni}     {o +m o}{\AN@articoloFisso{Abrogazioni}{#1}{#2}{#3}}
+\NewDocumentCommand{\normatransitoria}{o +m o}{\AN@articoloFisso{Norma transitoria}{#1}{#2}{#3}}
+%    \end{macrocode}
+%
+% \subsection{Sezione 19 --- Allegati}
+%
+% \begin{macro}{\allegato}
+% Il comando |\allegato| gestisce la numerazione automatica alfabetica
+% (A, B, C\ldots) e quella manuale. La macro interna
+% |\ANallegatoheading| genera il titolo del capitolo non numerato,
+% aggiunge la voce all'indice generale e all'indice degli allegati.
+% \end{macro}
+%
+% \subsubsection{Tagging PDF/UA}
+%
+% In modalità \opt{accessible}, |\ANallegatoheading| racchiude l'intero
+% blocco dell'allegato in una struttura \texttt{Sect} (sezione generica),
+% e il titolo dell'allegato viene emesso con una struttura \texttt{Caption}
+% all'interno di essa. Questa struttura è conforme alla specifica
+% PDF/UA-1: \texttt{Sect} per delimitare l'unità logica dell'allegato,
+% \texttt{Caption} per il titolo che lo identifica.
+%
+% Il tag \texttt{Caption} è preferibile a \texttt{H2} o \texttt{H1}
+% perché l'allegato non partecipa alla gerarchia heading dell'atto
+% normativo (non è un Libro, Titolo o Capo): è un documento
+% accessorio, la cui intestazione ha funzione descrittiva e non
+% strutturale rispetto alla gerarchia normativa.
+%
+% I comandi |\indiceallegati|, |\indicedefinizioni| e |\indicearticoli|
+% (sezione~20) producono capitoli non numerati di natura navigazionale.
+% In modalità \opt{accessible}, il loro contenuto (l'elenco puntato
+% generato da |\@starttoc|) è racchiuso in una struttura \texttt{TOC}
+% (table of contents), il tag PDF/UA dedicato agli indici.
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 19 — Allegati
+% ==========================================================================
+
+\newcounter{ANallegato}
+\renewcommand*{\theANallegato}{\Alph{ANallegato}}
+\newcommand*{\ANAllegatoName}{Allegato}
+\newcommand*{\allegatoref}[1]{\ANAllegatoName~\ref{#1}}
+
+\NewDocumentCommand{\indiceallegati}{}{%
+  \chapter*{Indice degli allegati}%
+  \markboth{Indice degli allegati}{Indice degli allegati}%
+  \addcontentsline{toc}{chapter}{Indice degli allegati}%
+  \ifAN@accessible
+    \tagstructbegin{tag=TOC}%
+    \@starttoc{alg}%
+    \tagstructend
+  \else
+    \@starttoc{alg}%
+  \fi
+}
+
+% La larghezza di 10.5em è adeguata per identificatori standard (Allegato A).
+% Per titoli molto lunghi ridefinire nel preambolo:
+%   \renewcommand*{\l@ANallegato}{\@dottedtocline{1}{0pt}{12em}}
+\newcommand*{\l@ANallegato}{\@dottedtocline{1}{0pt}{10.5em}}
+
+\newcommand*{\ANaddattachmentindex}[2]{%
+  \addcontentsline{alg}{ANallegato}{\protect\numberline{\ANAllegatoName~#1}#2}%
+}
+
+\NewDocumentCommand{\ANallegatoheading}{m m o}{%
+  \clearpage\phantomsection
+  \ifAN@accessible
+    \tagstructbegin{tag=Sect}%
+    \tagstructbegin{tag=Caption}%
+    \chapter*{\ANAllegatoName~#1\\[0.5ex]\large #2}%
+    \tagstructend
+  \else
+    \chapter*{\ANAllegatoName~#1\\[0.5ex]\large #2}%
+  \fi
+  \markboth{\ANAllegatoName~#1}{#2}%
+  \addcontentsline{toc}{chapter}{\ANAllegatoName~#1 -- #2}%
+  \ANaddattachmentindex{#1}{#2}%
+  \IfNoValueF{#3}{\label{#3}}%
+  \vspace{1em}%
+}
+
+\NewDocumentCommand{\allegato}{o m o}{%
+  \IfNoValueTF{#1}
+    {%
+      \refstepcounter{ANallegato}%
+      \IfNoValueTF{#3}
+        {\ANallegatoheading{\theANallegato}{#2}}
+        {\ANallegatoheading{\theANallegato}{#2}[#3]}%
+    }
+    {%
+      \begingroup
+        \renewcommand*{\theANallegato}{#1}%
+        \refstepcounter{ANallegato}%
+        \IfNoValueTF{#3}
+          {\ANallegatoheading{#1}{#2}}
+          {\ANallegatoheading{#1}{#2}[#3]}%
+      \endgroup
+    }%
+  \ifAN@accessible\tagstructend\fi
+}
+%    \end{macrocode}
+%
+% \subsection{Sezione 20 --- Indice degli articoli}
+%
+%    \begin{macrocode}
+% ==========================================================================
+% SEZIONE 20 — Indice degli articoli
+% ==========================================================================
+
+\NewDocumentCommand{\indicearticoli}{}{%
+  \chapter*{Indice degli articoli}%
+  \markboth{Indice degli articoli}{Indice degli articoli}%
+  \addcontentsline{toc}{chapter}{Indice degli articoli}%
+  \ifAN@accessible
+    \tagstructbegin{tag=TOC}%
+    \@starttoc{art}%
+    \tagstructend
+  \else
+    \@starttoc{art}%
+  \fi
+}
+
+\newcommand*{\l@ANarticolo}{\@dottedtocline{1}{0pt}{8.5em}}
+
+\newcommand*{\ANaddarticleindex}[2]{%
+  \addcontentsline{art}{ANarticolo}{\protect\numberline{\ANArticoloName~#1}#2}%
+}
+
+\endinput
+%</class>
+%    \end{macrocode}
+%
+% \Finale
+\endinput

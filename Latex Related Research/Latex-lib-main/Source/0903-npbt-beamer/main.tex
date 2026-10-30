@@ -1,0 +1,130 @@
+\documentclass{beamer}
+
+% NPBT ("Norman's Pandoc Beamer Themes") ships several colour variants;
+% NPBT_FOM is used here rather than the bundled NPBT_SC demo variant, whose
+% "line" graphic is shipped under upstream's own tree as
+% lNPBT_SC_linie.png (stray leading "l") while the theme code composes the
+% path as NPBT_SC_linie -- a filename typo in the upstream package that
+% throws "File not found" under any colour scheme selecting NPBT_SC. The
+% FOM colour scheme's assets are named consistently and is used instead.
+\usetheme{NPBT}
+\usecolortheme{NPBT_FOM}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+
+\title{Field Notes from the Boreal Survey}
+\subtitle{A Beamer starter built on the NPBT theme}
+\author{Alex Rivera}
+\institute{Department of Environmental Science}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}{Why This Survey}
+  \begin{itemize}
+    \item Boreal forest cover has changed measurably over the last decade
+    \item Existing satellite estimates disagree by up to 12\% in mixed stands
+    \item A ground-truthed transect survey closes that gap
+    \item This deck walks through method, sites, and early results
+  \end{itemize}
+\end{frame}
+
+\section{Method}
+
+\begin{frame}{Survey Design}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \textbf{Sampling}
+      \begin{itemize}
+        \item 48 transects, 500 m each
+        \item Stratified by canopy density
+        \item Repeated across two seasons
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Instruments}
+      \begin{itemize}
+        \item Handheld LiDAR
+        \item Multispectral drone passes
+        \item Soil moisture probes
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Site Coverage}
+  \begin{table}
+    \centering
+    \begin{tabular}{lrr}
+      \toprule
+      Region & Transects & Area (km$^2$) \\
+      \midrule
+      Northern block & 19 & 41.2 \\
+      Central block & 17 & 33.6 \\
+      Southern block & 12 & 22.9 \\
+      \bottomrule
+    \end{tabular}
+    \caption{Transect allocation by region.}
+  \end{table}
+\end{frame}
+
+\section{Results}
+
+\begin{frame}{Canopy Density Estimates}
+  \begin{itemize}
+    \item Ground survey and satellite estimates converge in dense stands
+    \item Divergence concentrated in mixed and edge stands
+    \item Drone multispectral passes explain most of the gap
+  \end{itemize}
+  \vfill
+  \begin{block}{Headline result}
+    Ground-truthed density is within 3\% of satellite estimates once edge
+    stands are excluded, down from a 12\% gap in the raw comparison.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Seasonal Comparison}
+  \begin{figure}
+    \centering
+    \begin{tikzpicture}
+      \draw[->] (0,0) -- (6,0) node[right] {\small season};
+      \draw[->] (0,0) -- (0,3.2) node[above] {\small density};
+      \draw[thick] (0.3,0.6) -- (1.6,1.4) -- (2.9,1.1) -- (4.2,2.3) -- (5.5,2.6);
+      \foreach \x/\y in {0.3/0.6, 1.6/1.4, 2.9/1.1, 4.2/2.3, 5.5/2.6}
+        \fill (\x,\y) circle (2pt);
+    \end{tikzpicture}
+    \caption{Measured canopy density across five survey passes.}
+  \end{figure}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Summary}
+  \begin{itemize}
+    \item Ground-truthed transects reduce estimate error to under 3\%
+    \item Edge stands remain the dominant source of disagreement
+    \item Next season adds 15 transects targeting edge zones specifically
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Thank You}
+  \centering
+  \Large Questions?\\[1em]
+  \normalsize alex.rivera@example.edu
+\end{frame}
+
+\end{document}

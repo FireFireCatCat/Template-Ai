@@ -1,0 +1,94 @@
+yes
+
+# 0743-ieeetran-journal: IEEEtran journal kit (IEEE Computer Society "bare advanced" demo)
+
+- Unverified: read from the source, not compiled.
+- Source: Source/0743-ieeetran-journal/ (origin: https://journals.ieeeauthorcenter.ieee.org/wp-content/uploads/sites/7/IEEE-Transactions-LaTeX2e-templates-and-instructions.zip; licence: not established in the manifest; the class, sample and `.bst` headers state LPPL 1.3, IEEEtran/IEEEtran.cls:53-57)
+- Kind: journal
+- Lib: v5
+- Engine: pdfLaTeX-compatible (psnfss families `ppl` `phv` `pcr`, IEEEtran/IEEEtran.cls:494-500; ZapfDingbats `pzd` through NFSS for the diamond line, :4845; no fontspec, no Lua; `\RequirePackage` occurs only in the `comsoc` fallback chain, :474-479, not selected here)
+- Look carried by: class (IEEEtran.cls with options `10pt,journal,compsoc`; the sample adds one static `cite` load, one `\hyphenation` line and content)
+- Class origin: publisher-official (IEEE Author Center Transactions kit; the same class V1.8b is on CTAN, read once at ctan.org/pkg/ieeetran: IEEEtran 1.8b, LPPL 1.3, in TeX Live and MiKTeX; the zip's own README:7-9 and IEEEtran.cls:10 name that page)
+- Main file: IEEEtran/bare_adv.tex (other samples: IEEEtran/bare_jrnl.tex, bare_jrnl_compsoc.tex, bare_jrnl_comsoc.tex, bare_jrnl_transmag.tex, bare_conf.tex, bare_conf_compsoc.tex: same class, other option sets; only their `\documentclass`, `\usepackage`, `\hyphenation` lines were grepped)
+- Read: main yes, zip-local classes and styles partly (IEEEtran/IEEEtran.cls has 6347 lines; read 1-1294, 1655-2874, 4205-6347; not read: 1295-1654 (the margin and text-height quantising helpers, outlined by grep at :1354, :1394, :1478, :1570) and 2875-4204 (the `IEEEeqnarray` machinery, outlined by grep, :3621 entry); of the five `.bst` files only IEEEtran.bst:1-40 and the two READMEs were read; the `.bib` files, changelog.txt and the three PDFs were not read)
+
+## Verdict
+yes. The look is carried entirely by one published class, `IEEEtran` V1.8b (IEEEtran/IEEEtran.cls:2, :206), with options `10pt,journal,compsoc` (IEEEtran/bare_adv.tex:69). W1 holds twice over: the zip is IEEE's own author-centre kit, and the identical version is on CTAN. The sample adds only a static `cite` load (:114-121), a hyphenation exception (:520), an unused `\newcommand` alias (:456) and class-native front-matter and back-matter commands; the active parts of its preamble are conditionals that an emitter resolves from the known options. The class loads no package unconditionally, so there is no `EXTERNAL`, and there is no `ART`. This is evidence about the class dimension (Look carried by: class), not about the component ways. Caveat for re-reading under another definition: the class's internals (box-measuring title spacer, `\fontdimen` tuning, `\halign` author blocks, `IEEEeqnarray`, drop-cap font solver) would be irreducible `BESPOKE/class` if the class were ruled zip-local; they are not counted because the class is published.
+
+## Blockers
+none
+
+## Class setting
+- Class: `class.ieeetran` options: `10pt` (IEEEtran.cls:291), `journal` (:345), `compsoc` (:366); defaults supplied by the class `letterpaper,10pt,twocolumn,oneside,final,journal` (:374). It has no `\LoadClass` and defines sizes, sectioning, floats, lists and captions itself. Options not used here: `conference`, `technote`, `peerreview`, `peerreviewca`, `draft*`, `captionsoff`, `nofonttune`, `romanappendices`, `cspaper`, `a4paper`, `comsoc`, `transmag` (:290-370).
+- Class-native vocabulary used by the sample: `\IEEEmembership` (bare_adv.tex:555-557), `\IEEEcompsocitemizethanks` and `\IEEEcompsocthanksitem` (:558-564), `\markboth` (:588-589), `\IEEEtitleabstractindextext` holding `abstract` and `IEEEkeywords` (:626-634), `\IEEEdisplaynontitleabstractindextext` (:648), `\IEEEpeerreviewmaketitle` (:661), `\IEEEraisesectionheading` (:665), `\IEEEPARstart` (:696), `\appendices` (:837), `IEEEbiography` and `IEEEbiographynophoto` (:909-924), switches `\ifCLASSOPTIONcompsoc` (:114, :664, :848), `\ifCLASSINFOpdf` (:151), `\ifCLASSOPTIONcaptionsoff` (:862).
+- Commented-out class vocabulary in the sample: `\CLASSINPUT*` (bare_adv.tex:59-63), `\IEEEpubid` and `\IEEEpubidadjcol` (:606-611), `\IEEEspecialpapernotice` (:617), `\IEEEtriggeratref` and `\IEEEtriggercmd` (:872-874), `\IEEEiedlistdecl` (:223-227).
+- Defined by the class, not exercised by the sample: `\IEEEauthorblockN` and `\IEEEauthorblockA` (IEEEtran.cls:4636, :4653; dummies outside conference mode, :4680-4681), `IEEEeqnarray` (:3621), `IEEEproof` and `\IEEEQED` (:5547, :5533-5540), `IEEEitemize` `IEEEenumerate` `IEEEdescription` (:2244-2249), `\IEEEnoauxwrite` (:4448), `\bstctlcite` (:4438).
+
+## Component map
+Rows marked "class-defined" describe a look the class sets for a construct the sample does not use (scope item 1 of the rubric).
+
+| Component | Evidence | Way | Parameters |
+|---|---|---|---|
+| document class | IEEEtran/bare_adv.tex:69; IEEEtran/IEEEtran.cls:206, :374, :376 | `class.ieeetran` | 10pt, journal, compsoc; defaults letterpaper, twocolumn, oneside, final |
+| paper size and text block | IEEEtran/IEEEtran.cls:297-303, :1754-1781, :1869-1878, :1702, :1713-1714 | `page.class-options` | letterpaper 8.5in x 11in; compsoc: columnsep 12bp, textwidth 7in + columnsep, text height 9.75in rounded to whole lines (:1767-1781), header margin below and footer margin above of one baseline (:1875-1876); footskip 0.4in, headheight 12pt, headsep 18pt; all set by the class from its options, no sample line |
+| columns | IEEEtran/IEEEtran.cls:374, :5655 | `cols.twocolumn-option` | twocolumn is the class default and is switched on at class load |
+| title block above the columns | IEEEtran/IEEEtran.cls:4772 | `cols.twocolumn-cmd` | `\maketitle` calls `\twocolumn[{...\@maketitle...}]` with a quantised spacer, nominal 2.5 baselineskip, minimum 2 (:4969-4970; the static 2.5 baselineskip spacer at :4959 serves single-column mode) |
+| bottom flush | IEEEtran/IEEEtran.cls:5649, :5658 | `pg.flush` | `\flushbottom` in two-column mode (:5658), which overrides the `\raggedbottom` that oneside sets first (:5649) |
+| running head | IEEEtran/bare_adv.tex:588-589; IEEEtran/IEEEtran.cls:4233-4247, :4263-4264, :4284-4286, :4360-4361 | `hf.class-native` | `\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}{Shell ...: Bare Advanced Demo ...}`; class upper-cases both marks; compsoc head `\normalfont\sffamily\scriptsize` (:4238); oneside: left mark, `\hfil`, page number, no foot in final mode; the second mark is used only under twoside |
+| page numbering | IEEEtran/IEEEtran.cls:5632-5636 | `pgnum.pagenumbering` | `\pagestyle{headings}`, `\pagenumbering{arabic}`, page counter 1 |
+| font families | IEEEtran/IEEEtran.cls:494-496, :500, :503 | `font.family-default` | sfdefault phv, rmdefault ptm then ppl (Palatino) for compsoc non-conference, ttdefault pcr |
+| font sizes | IEEEtran/IEEEtran.cls:721-766, :858-882, :916 | `font.size-commands` | compsoc 10pt in bp: `\normalsize` 9.5bp/11.54bp (:875), `\small` 9/10bp (:755), `\footnotesize` 8/9bp (:756), `\scriptsize` 7/8bp (:757), `\sublargesize` 11/13.5bp (:760), `\large` 12/14bp, `\LARGE` 17/20bp, `\Huge` 24/28bp (:765); `\fontsubfuzz` 1.7bp |
+| interword glue tuning | IEEEtran/IEEEtran.cls:1011-1033, :1042-1094 | `class.ieeetran` (internal) | `\fontdimen2-4` rewritten per size, weight and shape; compsoc ratios 0.28/0.21/0.47 medium, 0.305/0.21/0.52 bold (:1026-1032); off with `nofonttune` (:360); no lib way for raw `\fontdimen`, it stays inside the class |
+| paragraph and block lengths | IEEEtran/IEEEtran.cls:1695-1698, :1706, :1708-1711, :1918-1937, :2466, :982 | `sp.lengths` | parskip 0ex plus 0.2ex minus 0.1ex; parindent 1.5em (compsoc, :1710); lineskip 0pt; topsep 0.5 baselineskip, partopsep, parsep, itemsep 0; footins 0.9 baselineskip plus 0.4 minus 0.2; jot 0.25 baselineskip |
+| space after period | IEEEtran/IEEEtran.cls:1676 | `sp.frenchspacing` | `\frenchspacing` |
+| penalties | IEEEtran/IEEEtran.cls:1668-1685, :2516, :2521 | `sp.penalties` | hyphenpenalty 750 then 500 for compsoc, binoppenalty 1000, relpenalty 800, clubpenalty, widowpenalty, displaywidowpenalty 1000, interfootnotelinepenalty 10000, interdisplaylinepenalty 2500 |
+| hyphenation exceptions and `\sloppy` | IEEEtran/bare_adv.tex:520; IEEEtran/IEEEtran.cls:5657 | `sp.hyphenat` | `\hyphenation{op-tical net-works semi-conduc-tor}`; class `\sloppy` in two-column mode |
+| manual spacing in body | IEEEtran/bare_adv.tex:703, :705 | `sp.manual-space` | `\hfill mds`, `\hfill August 26, 2015` |
+| inline font switches | IEEEtran/bare_adv.tex:589 | `mark.kernel` | `\textit{et al.}` in the second header mark |
+| case change | IEEEtran/bare_adv.tex:589; IEEEtran/IEEEtran.cls:4360-4361 | `mark.case` | `\MakeLowercase{...}` inside `\markboth`; the class wraps each mark in `\MakeUppercase` |
+| title data | IEEEtran/bare_adv.tex:531, :555-557, :638; IEEEtran/IEEEtran.cls:4753-4788, :4802-4839 | `front.maketitle` | `\title{Bare Advanced Demo of IEEEtran.cls for\\ IEEE Computer Society Journals}`, `\author{...}` with `~` ties and `\IEEEmembership`, `\maketitle`; class sets title `\Huge\sffamily` (:4808), authors `\lineskip.5em\sffamily\sublargesize` (:4832) |
+| author note | IEEEtran/bare_adv.tex:565; IEEEtran/IEEEtran.cls:4878-4882, :2504-2513 | `front.thanks` | `\thanks{Manuscript received April 19, 2005; revised August 26, 2015.}`; compsoc prints it `\itshape` and fires a one-shot footnote rule |
+| membership, affiliation bullets, title-area text | IEEEtran/bare_adv.tex:555-564, :626-634, :648, :661; IEEEtran/IEEEtran.cls:4525, :4899-4907, :5226-5249, :4794-4797, :4929-4931 | `front.class-native` | `\IEEEmembership{Member,~IEEE,}` (sans italic in compsoc, :4525); `\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem ...}`; `\IEEEtitleabstractindextext{...}` set in a `\parbox{0.922\textwidth}` (:4796) inside the title area; `\IEEEdisplaynontitleabstractindextext` prints nothing for compsoc journal (:5241-5247); `\IEEEpeerreviewmaketitle` is `\relax` unless peerreview (:4931) |
+| diamond line after keywords | IEEEtran/IEEEtran.cls:4844-4870, :4833-4835 | `front.class-native` | rules 4cm or 2.5cm plus ZapfDingbats glyph `\char70` through `\fontfamily{pzd}` (:4845), chosen by `\linewidth`; class-internal (rule and glyph, not TikZ) |
+| raised first heading | IEEEtran/bare_adv.tex:664-669; IEEEtran/IEEEtran.cls:5527 | `front.class-native` | `\IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}` for compsoc; the `\ifCLASSOPTIONcompsoc` picks the branch |
+| drop cap | IEEEtran/bare_adv.tex:696; IEEEtran/IEEEtran.cls:5788-5792, :5816, :5829, :5845, :5863-5939 | `front.class-native` | `\IEEEPARstart{T}{his}`; compsoc letter `\mdseries`, rest `\scshape` without caps (:5789-5791), 2 drop lines, drop depth 1.1 baselineskip, sep 0.15em; considered: lettrine package, not used because the sample calls the class's own command |
+| biographies | IEEEtran/bare_adv.tex:909-924; IEEEtran/IEEEtran.cls:5982-5989, :5991-6059, :6065-6082 | `front.class-native` | `IEEEbiography{Michael Shell}` with a "PLACE PHOTO HERE" frame 1.0in x 1.25in (:5982-5983, :6006), `IEEEbiographynophoto{John Doe}`; compsoc `\sffamily\footnotesize` (:5991, :6079), bold run-in name |
+| abstract | IEEEtran/bare_adv.tex:627-629; IEEEtran/IEEEtran.cls:5313-5318, :5269, :5283 | `abs.class-native` | `abstract` environment: sans, `\footnotesize`, baselinestretch 1.15, bold "Abstract---" run-in, end space 1.34ex |
+| keywords | IEEEtran/bare_adv.tex:632-634; IEEEtran/IEEEtran.cls:5319-5325, :2614, :5292 | `abs.keywords` | `IEEEkeywords` environment, label `\IEEEkeywordsname` = "Index Terms", sans `\footnotesize`, end space 0.67ex |
+| headings | IEEEtran/bare_adv.tex:665, :707, :713, :815, :838, :843; IEEEtran/IEEEtran.cls:5500-5509, :5397-5403, :5407-5432 | `head.class-native` | compsoc journal: section `\sublargesize\sffamily\bfseries\scshape`, above -3.5ex plus -2ex minus -1.5ex, below 0.7ex plus 1ex; subsection `\sffamily\bfseries`; subsubsection `\sffamily\itshape`; negative top skips (no indent after heading); number to title gap 1em (:5402); paragraph run-in, indent 2\parindent |
+| unnumbered heading | IEEEtran/bare_adv.tex:848-854; IEEEtran/IEEEtran.cls:5438-5445 | `head.class-native` | `\section*{Acknowledgments}` (compsoc branch of `\ifCLASSOPTIONcompsoc`), through the class's `\@ssect` |
+| heading numbers | IEEEtran/IEEEtran.cls:2546-2551, :2579-2582 | `num.counters` | compsoc: `\thesection` arabic, `\thesubsection` 1.1, `\thesubsubsection` 1.1.1, `\theparagraph` 1.1.1.1; display forms `\thesectiondis` without a period |
+| numbering depth | IEEEtran/IEEEtran.cls:2524, :2534-2537 | `num.secnumdepth` | `secnumdepth` 4 |
+| appendices | IEEEtran/bare_adv.tex:837-844; IEEEtran/IEEEtran.cls:5702-5707, :5755-5783 | `num.appendix` | `\appendices`, `\section{Proof of the First Zonklar Equation}`, `\section{}` (empty title); letters A, B (`romanappendices` off, :5770); heading "Appendix A" + `\\*` + title (:5706) |
+| bullet list in `\thanks` | IEEEtran/bare_adv.tex:558-564; IEEEtran/IEEEtran.cls:2266-2310, :4891-4893, :2426-2429 | `list.kernel` | class `itemize` as `IEEEitemize`: label `$\bullet$`, label indent 0pt, labelsep 1.2em, parskip 0, topsep 0.5 baselineskip; class-defined `enumerate` labels `1)` `a)` `i)` `A)` (:1993-2002), `description`, `quote`, `verse` (:2434-2442) not used |
+| footnotes | IEEEtran/IEEEtran.cls:2466, :2490-2498, :2504-2513 | `fn.kernel` | `\@makefntext` with mark `1. ` (compsoc, :2493-2494), empty `\footnoterule` except a 0.5\columnwidth rule after `\thanks` |
+| labels | IEEEtran/bare_adv.tex:665, :668 | `xref.kernel` | `\label{sec:introduction}` right after `\section` inside the raised box; no `\ref` in the sample |
+| citations | IEEEtran/bare_adv.tex:114-121; IEEEtran/IEEEtran.cls:4377-4387, :4402-4403 | `bib.cite-pkg` | `\usepackage[nocompress]{cite}` when compsoc (plain `cite` otherwise); class pre-sets `\citepunct` `], [` and `\citedash` `]--[`; no `\cite` in the body |
+| reference list | IEEEtran/bare_adv.tex:890-896; IEEEtran/IEEEtran.cls:4478-4515 | `bib.thebibliography` | `thebibliography{1}` with one `\bibitem{IEEEhowto:kopka}`; `\section*{\refname}`, labels `[n]\hfill` (:4481), `\footnotesize`, `\IEEEbibitemsep` 0pt plus .5pt (:4484), clubpenalty and widowpenalty 4000, interlinepenalty 500 (:4513) |
+| BibTeX route (shipped, commented in sample) | IEEEtran/bare_adv.tex:883-885; Transactions-Bibliography/IEEEtran.bst:2-4 | `bib.bibtex-bst` | `\bibliographystyle{IEEEtran}`, `\bibliography{IEEEabrv,../bib/paper}`; official `IEEEtran.bst` v1.12 beside `IEEEtranS`, `N`, `SA`, `SN` variants; not emitted by `bare_adv.tex` |
+| captions (class-defined) | IEEEtran/IEEEtran.cls:2697-2701, :2753-2770 | `cap.kernel` | kernel `\caption` with the class's compsoc `\@makecaption`: sans `\footnotesize`, table caption = number line over title line (:2757), figure caption `Fig. n.` wrapped or left-set (:2762-2769); `\abovecaptionskip` 0.75 baselineskip (:2700) |
+| figure float (class-defined) | IEEEtran/IEEEtran.cls:2813-2824; IEEEtran/bare_adv.tex:730-738 (commented) | `fig.graphicx` | figure counter arabic, `\figurename` "Fig." (:2607), default placement `tbp` (:2815); example block is commented out |
+| table float (class-defined) | IEEEtran/IEEEtran.cls:2826-2842; IEEEtran/bare_adv.tex:782-799 (commented) | `tbl.tabular` | table counter arabic for compsoc (:2828), `\tablename` "TABLE", body in `\footnotesize` (:2838); example is commented out |
+| float placement parameters (class-defined) | IEEEtran/IEEEtran.cls:2653-2688 | `fig.placement` | floatsep 0.85 baselineskip, textfloatsep 1.55, topfraction 0.9, bottomfraction 0.4, floatpagefraction 0.8, topnumber 2, totalnumber 4 |
+| equations (class-defined) | IEEEtran/IEEEtran.cls:2544-2545, :2597, :3621 | `math.kernel` | `\theequation` arabic, `\@eqnnum` through `\theequationdis`; `IEEEeqnarray` family (not read, not used) |
+| theorem and proof (class-defined) | IEEEtran/IEEEtran.cls:5562-5578, :5547-5549 | `thm.class-native` | compsoc: bold italic title with a period, `\hangindent\parindent`, open QED box; `IEEEproof` |
+| contents lists (class-defined) | IEEEtran/IEEEtran.cls:2629-2645 | `toc.kernel` | `\tableofcontents`, `\listoffigures`, `\listoftables` with class `\l@section` etc.; unused |
+| optional packages, all commented out | IEEEtran/bare_adv.tex:152, :195, :254, :291-294, :404, :465 | none | graphicx, amsmath, array, subfig (`caption=false,font=footnotesize,labelfont=sf,textfont=sf` for compsoc), url, hyperref; none is loaded, so none is part of the look |
+
+## Bespoke code
+| Item | Where | Reducible? | Reduction |
+|---|---|---|---|
+| `\newcommand\MYhyperrefoptions{...}` | IEEEtran/bare_adv.tex:456-463 | yes | an alias for a `meta.hyperref` option list (bookmarks, bookmarksnumbered, pdfpagemode, plainpages, pdfpagelabels, colorlinks with black link, cite and url colours, pdftitle, pdfsubject, pdfauthor, pdfkeywords); referenced only by commented lines (:465, :467), so nothing is emitted |
+| `\ifCLASSOPTIONcompsoc ... \else ... \fi` around the `cite` load | IEEEtran/bare_adv.tex:114-121 | yes | static switch (IEEEtran.cls:255); with `compsoc` selected the emitter prints `\usepackage[nocompress]{cite}` |
+| `\ifCLASSINFOpdf ... \else ... \fi` | IEEEtran/bare_adv.tex:151-168 | yes | true under pdfLaTeX (IEEEtran.cls:557); both branches hold only comments, nothing printed |
+| `\ifCLASSOPTIONcompsoc` around the first section | IEEEtran/bare_adv.tex:664-669 | yes | prints `\IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}` |
+| `\ifCLASSOPTIONcompsoc` around the acknowledgment heading | IEEEtran/bare_adv.tex:848-854 | yes | prints `\section*{Acknowledgments}` |
+| `\ifCLASSOPTIONcaptionsoff \newpage \fi` | IEEEtran/bare_adv.tex:862-864 | yes | `captionsoff` is not selected (:362), nothing printed |
+| `IEEEtran.cls` hand-written TeX: `\@maketitle` (:4802), `\IEEEquantizevspace` (:4983-5194), `\@makecaption` (:2753), `\@sect` (:5407), `\IEEEPARstart` (:5863, font solver with `\font ... at`), `IEEEbiography` (:5991), `\fontdimen` tuning (:1042-1094), author `\halign` (:4689-4705), `IEEEeqnarray` (:3621) | IEEEtran/IEEEtran.cls | not bespoke here | published class (publisher-official kit, also on CTAN), so one way `class.ieeetran`; the sample calls only class-native commands and copies no macro logic; irreducible `BESPOKE/class` only if the class were ruled zip-local |
+
+## Content-opaque
+none (the `\includegraphics` and `\subfloat` examples at IEEEtran/bare_adv.tex:732, :755-758 and the biography photo at :906 are commented out; the biography frame is a text placeholder)
+
+## Lib changes
+- New ways proposed: none
+- Existing ways used for the first time by the lib: none needed (the consolidator computes this)

@@ -1,0 +1,62 @@
+\documentclass{rescience}
+\usepackage{booktabs}
+
+\begin{document}
+\input{header.tex}
+
+\section{Introduction}
+Computational results are most useful when another researcher can inspect the
+path from input to claim. This starter presents a small reproducibility study
+using a deterministic simulation as its running example. The design follows
+the ReScience convention of keeping article metadata separate from article
+content and makes the FAIR principles a concrete checklist~\parencite{wilkinson2016}.
+
+\section{Methods}
+We simulated a discrete-time population with carrying capacity $K=100$ and
+growth rate $r=0.12$. At each step, the population was updated with
+\begin{equation}
+  N_{t+1}=N_t+rN_t\left(1-\frac{N_t}{K}\right).
+  \label{eq:logistic}
+\end{equation}
+The exact parameters, code location, and data location should be replaced by
+the author. Keeping them beside the manuscript makes a replication attempt
+auditable rather than dependent on undocumented defaults.
+
+\section{Results}
+Starting from $N_0=12$, Eq.~\eqref{eq:logistic} approaches the carrying
+capacity without overshoot. A replication should compare the full time series,
+not only its final value, because two implementations can agree at the end
+while differing substantially in the transient phase.
+
+\begin{table}[ht]
+\centering
+\caption{Suggested replication checkpoints.}
+\begin{tabular}{lll}
+\toprule
+Checkpoint & Record & Acceptance rule \\
+\midrule
+Input & parameters and initial state & exact match \\
+Process & software and random seed & documented \\
+Output & final value and full series & tolerance stated \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Discussion}
+The example is deterministic, so a mismatch points to an implementation or
+parameter difference rather than sampling noise. For stochastic experiments,
+the same section should report the seed policy, number of repetitions, and
+uncertainty summary.
+
+\section{Conclusion}
+Use this file with the accompanying `metadata.tex` as a compact starting point
+for a ReScience C submission. Replace the example claims with a replication of
+an actual computational result and keep the metadata synchronized with the
+PDF.
+
+\hypersetup{linkcolor=black,urlcolor=darkgray}
+\renewcommand\emph[1]{{\bfseries #1}}
+\setlength\bibitemsep{0pt}
+\printbibliography
+
+\end{document}

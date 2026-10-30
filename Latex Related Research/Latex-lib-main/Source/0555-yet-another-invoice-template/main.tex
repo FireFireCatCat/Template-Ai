@@ -1,0 +1,42 @@
+% Yet Another Invoice Template starter (CC0 upstream).
+% Replace the fictional business details and line items before sending.
+\documentclass[a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{array,tabularx}
+\usepackage{helvet}\renewcommand{\familydefault}{\sfdefault}
+\pagestyle{empty}
+\definecolor{invoicegray}{gray}{0.18}
+\begin{document}
+\begin{flushright}
+{\Huge\color{invoicegray}\bfseries INVOICE}\par\medskip
+Invoice no. 2026--014\\
+Issued: \today\\
+Payment due: 14 days
+\end{flushright}
+\vspace{8mm}
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+\textbf{North Star Studio} & \textbf{Bill to:}\tabularnewline
+42 Orchard Lane\\Portland, OR 97205 & Fieldwork Cooperative\\18 Market Street\\Portland, OR 97204
+\end{tabularx}
+\vspace{12mm}
+\rowcolors{2}{gray!7}{white}
+\begin{tabularx}{\linewidth}{@{}Xrrr@{}}
+\rowcolor{invoicegray}\color{white}\textbf{Description} & \color{white}\textbf{Qty.} & \color{white}\textbf{Rate} & \color{white}\textbf{Amount}\\
+Research workshop & 1 & \$850.00 & \$850.00\\
+Editorial review & 3 & \$180.00 & \$540.00\\
+Travel materials & 1 & \$75.00 & \$75.00
+\end{tabularx}
+\vspace{7mm}
+\begin{flushright}
+\begin{tabular}{lr}
+Subtotal & \$1,465.00\\
+Tax (0\%) & \$0.00\\
+\arrayrulecolor{invoicegray}\hline
+\textbf{Total due} & \textbf{\$1,465.00}
+\end{tabular}
+\end{flushright}
+\vfill
+Thank you for your business. Please include the invoice number with your
+payment. Contact: billing@example.org
+\end{document}

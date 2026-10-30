@@ -1,0 +1,379 @@
+%$% techreport.sty
+%$% Technical Report style option to the USC Thesis/Dissertation
+%$% document-style.
+%$% $Header: techreport.sty,v 1.7 92/08/13 14:25:21 sdc Exp $
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% @LaTeX-style-file{
+%%%    Author              = "Steven Douglas Cochran",
+%%%    Version             = "1.7",
+%%%    Date                = "13 August 1992",
+%%%    Time                = "14:25:21 EDT",
+%%%    Filename            = "techreport.sty",
+%%%    Address             = "Digital Mapping Laboratory
+%%%                           School of Computer Science
+%%%                           Carnegie-Mellon University
+%%%                           5000 Forbes Avenue
+%%%                           Pittsburgh, PA 15213-3890
+%%%                           USA",
+%%%    Telephone           = "(412) 268-5654",
+%%%    FAX                 = "",
+%%%    checksum            = "22179 335 1194 11016",
+%%%    Email               = "sdc+@CS.CMU.EDU (Internet)",
+%%%    CodeTable           = "ISO/ASCII",
+%%%    Keywords            = "LaTeX, Technical Report",
+%%%    Archives            = "shsu*", 
+%%%    Supported           = "yes",
+%%%    Abstract            = "LaTeX document-style option to the 
+%%%                           USCthesis style for converting a thesis
+%%%                           or dissertation into a technical report."
+%%%    Note                = "Requires Tomas Rokicki's `rotate' style
+%%%                           option (or equivalent) if the spine-art
+%%%                           option is used.
+%%%    SeeAlso             = "USCthesis.sty",
+%%%    DocString           = "The checksum field above contains a CRC-16
+%%%                           the checksum as the first value, followed
+%%%                           by equivalent of the standard UNIX wc
+%%%                           (word count) utility output of lines,
+%%%                           words, and characters.  This is produced
+%%%                           by Robert Solovay's checksum utility.",
+%%% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% $Log:	techreport.sty,v $
+%$%  Revision 1.7  92/08/13  14:25:21  sdc
+%$%  Changed the standard title page to use \@university instead of a
+%$%  hardcoded name.  The standard (Thesis/Dissertation) titlepage may
+%$%  now be replaced by redefining \customtitlepage.  Cleaned-up the
+%$%  code and comments a little. 
+%$%
+%$%  Revision 1.6  91/03/23  01:36:48  cochran
+%$%  Updated to allow the multiple volumes change to USCthesis.
+%$%  Corrected bug which caused the chapters to be allowed to begin on
+%$%  an even page if the preface section was not processed.
+%$% 
+%$%  Revision 1.5  1991/03/20  06:03:05  cochran
+%$%  Modified to auto-load and use the standard rotate style.
+%$%
+%$%  Revision 1.4  1991/03/15  04:51:49  cochran
+%$%  Modified cover page so that it is centered.  Added a "(top of
+%$%  spine)" message to the spine-art page.  (Maybe in the future the
+%$%  Printer won't get it upside-down!)
+%$%
+%$%  Revision 1.3  1991/02/09  01:04:02  cochran
+%$%  Fixed bug in interaction with USCthesis and added the ability
+%$%  to change the layout of the copyright line.
+%$%
+%$%  Revision 1.1  90/12/03  12:33:31  cochran
+%$%  Initial revision.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%$% Usage:  \documentstyle[...,twoside,techreport,...]{USCthesis}
+%%%
+%$%   and add the following lines before the \begin{preface}:
+%%%
+%$%         \reportnumber{IRIS 256}
+%$%         \acknowledgment{This research was sponsored by ...}
+%$%         \address{Institute for Robotics and Intelligent Systems\\
+%$%                  School of Engineering\\
+%$%                  ...}
+%%%
+%%%   An additional command has been added which allows the printing
+%%%   of the art for the spine of the document.  It must be used prior
+%%%   to the \begin{preface}.
+%%%
+%%%         \printspinetrue  
+%%%
+%%%   Also there is an optional argument in the \pageleft macro in the
+%%%   USCthesis style which allows the gutter margin to be adjusted
+%%%   for paper that is not 8.5in across:
+%%%
+%%%         \paperleft[-5.75pt]{1.50in}
+%%%
+%%%   (However, you will have to know how the printer aligns the pages
+%%%   to make use of this feature.)
+%%%
+%%%   If the copyright notice is not correct according to your
+%%%   organization's practice.  You can (re)define the \thecopyright
+%%%   macro to give the correct form (the variables \@copyrightyrear
+%%%   and \@author should have useful values in them).
+%%%
+%%%   If you want the titlepage (i.e. the page inside the cover) to be
+%%%   different than the standard (Thesis/Dissertation) one then you
+%%%   can (re)define the \customtitlepage macro to be what you want.
+%%%   Currently it creates a page that is a cross between the
+%%%   techreport cover and a dissertation titlepage and includes the
+%%%   following information: \@reportnumber, \@title, \@author,
+%%%   \@university, \@majorfield, \@address, \@submitdate,
+%%%   \@acknowledgementtext and either \@mastersdegree or
+%%%   \@doctorsdegree (depending on the switch \ifthesis).  \@volume
+%%%   is included if non-empty.  One example of a "regular" techreport
+%%%   titlepage would be to add the following to your techreport
+%%%   between the \documentstyle and the \begin{document}.
+%%%
+%%%         \makeatletter
+%%%         \def\customtitlepage{%
+%%%           \vbox{%
+%%%             \null
+%%%             \vskip 1.69 true in
+%%%             \hbox to 4.57in{%
+%%%               \vbox to 2.125in{%
+%%%                 \vss
+%%%                 \begin{center}%
+%%%                   \vskip 0.20 true in plus 1fil
+%%%                   {\TechTitleSize \@reportnumber \par}%
+%%%                   \vskip 0.20 true in plus 2fil
+%%%                   {\TechTitleSize \@title\@acknowledgmentmark \par}%
+%%%                   \ifx\@volume\@empty\else
+%%%                     \vskip 0.20 true in plus 1fil
+%%%                     {\TechRegularSize \@volume \par}%
+%%%                   \fi
+%%%                   \vskip 0.20 true in plus 2fil
+%%%                   {\TechRegularSize\sl \@author \par}%
+%%%                   \vskip 0.20 true in plus 1fil
+%%%                 \end{center}%
+%%%                 \vss}}%
+%%%             \vfill
+%%%             \ifcopyright
+%%%               \begin{center}%
+%%%                 \thecopyright
+%%%               \end{center}%
+%%%             \fi
+%%%             \@acknowledgmenttext
+%%%             \vss}}
+%%%         \makeatother
+%%%
+%%%   With either the default or the above \customtitlepage, you can
+%%%   throw out the coverpage and the spine and use a printed cover
+%%%   with a cutout box to show through the title, report number and
+%%%   author.
+%%%
+%$% NOTE:  This style requires a local rotate.sty that contains the
+%$%        macro \rotr.  If this style option is not available, the
+%$%        \printspinetrue option will not work.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+%% Allow larger font sizes (The normal large sizes are disabled in the
+%% USCthesis style.
+%%
+\def\TechTitleSize{\@setsize\TechTitleSize{25pt}\xxpt\@xxpt}
+\def\TechRegularSize{\@setsize\TechRegularSize{18pt}\xivpt\@xivpt}
+
+%%
+%%  Now define the functions to handle the titlepage blips.
+%%
+\def\reportnumber#1{%
+  \gdef\@reportnumber{#1}}
+
+\def\@acknowledgmentmark{}
+\def\@acknowledgmenttext{}
+\def\acknowledgment#1{%
+  \gdef\@acknowledgmentmark{$^{1}$}%
+  \gdef\@acknowledgmenttext{%
+    \vbox{%
+      \hrule width 2.5in
+      \vskip 3pt
+      \parbox{\textwidth}{\footnotesize \qquad $^{1}$#1}}}}
+
+\def\address#1{%
+  \gdef\@address{#1}}
+
+%%
+%%  Next set up for the control of the spine art
+%%
+\newif\ifprintspine
+\printspinefalse
+
+%%
+%%  Allow the copyright message to be changed.
+%%
+\def\thecopyright{%
+  \normalsize Copyright\ \ \copyright\ \ \@copyrightyear\ \ \@author}
+
+%%
+%%  Now, we define the title (etc) page(s)
+%%
+\def\customtitlepage{%
+  \vbox to \textheight{%
+    \null
+    \vskip 1.69 true in
+    \hbox to 4.57in{%
+      \vbox to 2.125in{%
+        \vss
+        \begin{center}%
+          \vskip 0.20 true in plus 1fil
+          {\TechTitleSize \@reportnumber \par}%
+          \vskip 0.20 true in plus 2fil
+          {\TechTitleSize \@title\@acknowledgmentmark \par}%
+          \ifx\@volume\@empty\else
+            \vskip 0.20 true in plus 1fil
+            {\TechRegularSize \@volume \par}%
+          \fi
+          \vskip 0.20 true in plus 2fil
+          {\TechRegularSize\sl \@author \par}%
+          \vskip 0.20 true in plus 1fil
+        \end{center}%
+        \vss}}%
+    \vskip 0.15 true in plus 0.05 true in minus 0.05 true in
+    \begin{center}%
+      {\ifthesis
+         A Thesis Presented to the%
+       \else
+         A Dissertation Presented to the%
+       \fi\\
+       FACULTY OF THE \@schoolname\\
+       \@university\\
+       In Partial Fulfillment of the Requirements for the Degree\\
+       \ifthesis 
+         \@mastersdegree
+       \else
+         \@doctorsdegree
+       \fi\\
+       \ifshowmajorfield
+         (\@majorfield)%
+       \fi}
+      \vskip 0.35 true in plus 0.11 true in minus 0.11 true in
+      \@address \par
+      \vskip 0.25 true in plus 0.08 true in minus 0.08 true in
+      {\bf \small \@submitdate \par}%   should be just month and year
+    \end{center}%
+    \par
+    \vfill
+    \ifcopyright
+      \begin{center}%
+        \thecopyright
+      \end{center}%
+    \fi
+    \@acknowledgmenttext}}
+
+\def\maketitle{%
+  \begin{titlepage}%
+    \setcounter{page}{0}%
+    \advance\evensidemargin 0.25in%
+    \null
+    \vskip 1.54 true in
+    \hbox to 4.3125in{%
+      \vbox to 2.125in{%
+        \vss
+        \begin{center}%
+          \vskip 0.20 true in plus 1fil
+          {\TechTitleSize \@reportnumber \par}%
+          \vskip 0.20 true in plus 2fil
+          {\TechTitleSize \@title \par}%
+          \ifx\@volume\@empty\else
+            \vskip 0.20 true in plus 1fil
+            {\TechRegularSize \@volume \par}%
+          \fi
+          \vskip 0.20 true in plus 2fil
+          {\TechRegularSize\sl \@author \par}%
+          \vskip 0.20 true in plus 1fil
+        \end{center}%
+        \vss}}%
+    \vskip 0.875 true in
+    \begin{center}%
+      {\TechRegularSize \@address \par}%
+      \vskip .25 true in
+      {\TechRegularSize \@submitdate \par}% Should be just month and year
+    \end{center}%
+    \par
+    \vfill
+    \newpage
+    \advance\evensidemargin -0.25in%
+    %%
+    \ifprintspine
+      \makeatletter 
+        %% Load the rotate functions if not defined.
+        \expandafter\ifx\csname rotr\endcsname\relax
+          \@input{rotate.sty}%
+        \fi
+        %% If necessary, create a temporary box for use with \rotr.
+        \expandafter\ifx\csname @rotbox\endcsname\relax
+          \newbox\@rotbox
+        \fi
+      \makeatother
+      \setcounter{page}{1}%
+      \rlap{%
+        \hbox to \textwidth{%
+          \TechRegularSize\hfil (Top of Spine)\hfil}}%
+      \nobreak
+      {\setbox\@rotbox=\hbox to \textheight{%
+         \hfil
+         {\TechTitleSize \@reportnumber}%
+         \hfil
+         \hfil
+         {\TechTitleSize \@author}%
+         \hfil}
+       \rotr\@rotbox}%
+      \newpage
+    \fi
+    %%
+    \setcounter{page}{1}%
+    \customtitlepage
+  \end{titlepage}}
+
+%%
+%%  Redefine the preface and chapter so that the latter starts on odd pages
+%%  (if two-sided and if past the preface section) and the former does
+%%  not have this attribute (since each section of the preface
+%%  environment acts like a chapter).
+%%
+\newif\if@twosidebody
+\@twosidebodytrue % Default is true
+
+% Update the PREFACE environment.  The titlepage is generated when the
+% environment is first entered and the numbering is roman within the preface.
+% The \endpreface switches to arabic numbering. 
+\def\preface{%
+  \newpage
+  \if@twoside % Turn off blank even pages during the preface.
+    \global\@twosidebodyfalse
+  \fi
+  \pagenumbering{roman}%
+  \pagestyle{empty}%
+  \begin{singlespace}%      
+    \ifproposal
+      \makeproptitle
+      \setcounter{page}{1}%
+      \addtocounter{page}{\@startpageA}% Advance page counter for title page.
+    \else
+      \maketitle
+      \setcounter{page}{1}%
+      \addtocounter{page}{\@startpageA}% Advance page counter for (signature
+    \fi				       %   and) title.  At USC, the signature
+ \newpage			       %   page is not counted!
+    \ifx\@volume\@empty\else % Add Volume ID to contents if present.
+      \addtocontents{toc}{\protect\contentsline{part}{\@volume}{}}%
+    \fi
+  \end{singlespace}%
+  \pagestyle{plain}}
+
+\def\endpreface{%
+  \clearpage
+  \global\@twosidebodytrue
+  \if@twoside
+    \ifodd \c@page \else
+      \hbox{}%  Add a blank page at the end of the preface
+      \newpage
+    \fi
+  \fi
+  \pagenumbering{arabic}%
+  \pagestyle{plain}%
+  \setcounter{page}{\@startpageB}}
+
+%
+% Now, update the chapter to check for even/odd pages.
+%
+\def\chapter{%
+  \if@twoside
+    \if@twosidebody
+      \cleardoublepage   % Start each chapter on an odd page
+    \else
+      \clearpage
+    \fi
+  \else 
+    \clearpage
+  \fi
+  \thispagestyle{plain}
+  \global\@topnum\z@
+  \@afterindentfalse
+  \secdef
+  \@chapter
+  \@schapter} 

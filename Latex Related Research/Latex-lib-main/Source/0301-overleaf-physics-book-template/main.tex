@@ -1,0 +1,73 @@
+\documentclass[11pt,twoside]{book}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in,bottom=1.15in]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{wrapfig}
+\usepackage{tikz}
+\usepackage[hidelinks]{hyperref}
+\definecolor{physicsred}{HTML}{8C2F39}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\thepage\quad\small\nouppercase{\leftmark}}
+\fancyhead[RO]{\small\nouppercase{\rightmark}\quad\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\titleformat{\chapter}[display]{\normalfont\bfseries\Huge\color{physicsred}}
+  {\filleft\MakeUppercase{\chaptertitlename}~\thechapter}{12pt}{\filright}
+\begin{document}
+\begin{titlepage}
+\centering
+\vspace*{0.8in}
+{\fontsize{38}{44}\selectfont\bfseries Spacetime\\and Motion\par}
+\vspace{18pt}\textcolor{physicsred}{\rule{0.65\textwidth}{2pt}}\par
+\vspace{20pt}{\Large Notes in introductory physics\par}
+\vfill
+{\Large Author Name\par}\vspace{6pt}{\large Institution or laboratory\par}
+\vspace{0.5in}{\small First edition \textbullet{} \the\year\par}
+\end{titlepage}
+\frontmatter
+\chapter*{How to use this book}
+Equations, short explanations, and margin observations are arranged to make
+the mathematics visible. Replace the sample notes with the conventions and
+examples of your own course or monograph.
+\tableofcontents
+\mainmatter
+\chapter{Frames of reference}
+\section{Describing an event}
+An event is specified by a position and a time. Different observers may use
+different coordinates, but they can still agree on the event itself.
+\begin{equation}
+  \mathbf r(t)=x(t)\,\mathbf e_x+y(t)\,\mathbf e_y+z(t)\,\mathbf e_z.
+\end{equation}
+\section{A physical estimate}
+Before calculating, estimate the scale of the answer. Dimensional analysis is
+often the quickest way to find an incorrect factor or an impossible unit.
+\begin{equation}
+  [v]=\frac{\mathrm{length}}{\mathrm{time}},\qquad
+  [a]=\frac{\mathrm{length}}{\mathrm{time}^2}.
+\end{equation}
+\chapter{Dynamics}
+\section{A compact derivation}
+For constant acceleration, integrating $a=\mathrm{d}v/\mathrm{d}t$ twice gives
+\begin{align}
+v(t)&=v_0+at,\\
+x(t)&=x_0+v_0t+\tfrac12at^2.
+\end{align}
+\begin{quote}
+\textbf{Observation.} A derivation is easier to check when each line preserves
+the dimensions of the physical quantity it defines.
+\end{quote}
+\chapter{Problems}
+\begin{enumerate}
+  \item Choose a coordinate system for a projectile and state its origin.
+  \item Derive the time at which the projectile reaches its highest point.
+  \item Which measurements would most strongly affect the final estimate?
+\end{enumerate}
+\backmatter
+\chapter*{Notation}
+Use this page for symbols, constants, and conventions shared across chapters.
+\end{document}

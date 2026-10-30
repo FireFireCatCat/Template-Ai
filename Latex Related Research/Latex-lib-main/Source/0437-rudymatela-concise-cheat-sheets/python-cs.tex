@@ -1,0 +1,516 @@
+%% python-cs.tex
+%
+% Copyright 2018  Rudy Matela
+%
+% This text is available under (at your option):
+%   * Creative Commons Attribution-ShareAlike 3.0 Licence
+%   * GNU Free Documentation License version 1.3 or Later
+%
+
+
+\documentclass{refcard}
+\usepackage[T1]{fontenc} % necessary so '{', '}' and '\' get the right font
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{Concise Python Cheat Sheet}
+
+\cright{
+	Copyright 2018--2026, Rudy Matela --
+	Compiled on \today{} \\
+	Upstream: \texttt{https://github.com/rudymatela/concise-cheat-sheets}
+}{
+	This text is available under
+	the Creative Commons Attribution-ShareAlike 3.0 Licence, \\
+	\textbf{or} (at your option), the GNU Free Documentation License version 1.3 or Later.
+}
+\version{0.3}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{center}
+{\Large\textbf{NOTE:} this is a work in progress}
+\end{center}
+
+\section{Structure}
+
+\begin{verbatim}
+#!/usr/bin/env python
+
+def hello(who):
+    print("Hello " + who + "!");
+
+hello("world")
+\end{verbatim}
+
+
+% TODO: add a couple of build tools?
+% TODO: add something about f strings
+
+
+
+\section{Standard Classes and Types}
+
+% https://docs.python.org/2.0/ref/types.html
+% https://docs.python.org/3/reference/datamodel.html
+
+\begin{ldesc}
+	\li[\C{NoneType}]  None
+	\li[\C{ellipsis}]  ...
+	\li[\C{bool}]      False
+	\li[\C{int}]       5040
+	\li[\C{float}]     3.141
+	\li[\C{str}]       "Escape \textbackslash{}"double-quotes\textbackslash{}", not 'single'"
+	\li[\C{str}]       'Escape \textbackslash{}'single-quotes\textbackslash{}', not "double"'
+	\li[\C{list}]      [360,'abc',3.141,360]
+	\li[\C{set}]       \{1,'abc',3\}
+	\li[\C{dict}]      \{'abc': 10, 2: 3, 7: 'def'\}
+\end{ldesc}
+
+\section{Evaluation Order}
+
+Expressions are evaluated left-to-right:
+\begin{verbatim}
+1st + (2nd * 3rd)
+(1st + 2nd) * 3rd
+3rd, 4th = 1st, 2nd
+\end{verbatim}
+
+\section{Modules}
+
+\begin{ldesc}
+	\li[qualified module import] import \I{module} \li
+	                             module.foo()
+	\lI[unqualified module import] from \I{module} import * \li
+	                               foo()
+	\lI[import specific name]      from \I{module} import \I{foo} \li
+	                               foo()
+	\lI[import module renaming] import \I{module} as \I{m} \li
+	                            m.foo()
+	\lI[import specific rename] from \I{module} import \I{foo} as \I{f} \li
+	                            f()
+\end{ldesc}
+
+
+
+\pagebreak
+\section{Operators (grouped by precedence)}
+
+\begin{Ldesc}
+	\Li[tuples, lists, dictionaries]          (...), [...], \{...\}
+	\Li[attribute reference]                  .
+	\Li[function call, indexing\&slicing]     \I{name}(\I{args}), \I{name}{[}\I{idx}{]}
+	\Li[exponentiation]                       **
+	\Li[bitwise negation]                     \~{}
+	\Li[unary identity, unary negation]       -, +
+	\Li[multiplication\&repetition, division] *, /
+	\li[integer division, integer remainder]  //, \%
+	\li[matrix multiplication]                @
+	\Li[addition \& concat, subtraction]      +, -
+	\Li[left shift, right shift]              <{<}, >{>}
+	\Li[bitwise and]                          \&
+	\Li[bitwise xor]                          \^{}
+	\Li[bitwise or]                           |
+	\Li[comparisons (chaining)]               ==, !=, <, <=, >, >=
+	\li[object identity, set membership]      is, is not, in, not in
+	\Li[logical negation]                     not
+	\Li[conjunction]                          and
+	\Li[disjunction]                          or
+	\Li[ternary selection]                    \I{expr1} if \I{cond} else \I{expr2}
+	\Li[lambda]                               lambda \I{args}: \I{expr}
+\end{Ldesc}
+
+
+\vspace{-1em}
+\section{Functions}
+\vspace{-1ex}
+
+\begin{ldesc}
+	\li[referencing] \I{fun}
+
+	\lI[calling]     \I{fun}()
+
+	\lI[calling (w/arg)] \I{fun}(\I{arg\_value})
+
+	\lI[calling (w/kw arg)] \I{fun}(\I{1st\_arg}, \I{2nd\_arg}, \I{key}=\I{val}) \li
+
+	\li[0-arguments] def \I{fun}(): \li
+	                 ~~~~\I{code-block}
+
+	\lI[1-argument]  def \I{fun}(\I{arg}): \li
+	                 ~~~~\I{code-block}
+
+	\lI[2-arguments] def \I{fun}(\I{arg0},\I{arg1}): \li
+	                 ~~~~\I{code-block}
+
+	\lI[default args] def \I{fun}(\I{mandatory},\I{optional}=\I{default}): \li
+	                       ~~~~\I{code-block}
+
+	\lI[arbitrary args] def \I{fun}(\I{mandatory}, \I{*args}): \li
+	                         ~~~~\I{code-block}
+
+	\lI[keyword-exclusive] def \I{fun}(*,key=\I{default}): \li
+	                       ~~~~\I{code-block}
+
+	\lI[lambda (1-arg)]      lambda \I{arg}:~\I{expression}
+
+	\lI[lambda (2-args)]     lambda \I{arg0},\I{arg1}:~\I{expression}
+
+	\lI[docstring] def \I{fun}(\I{args}): \li
+	               ~~~~"""Concise summary of purpose \li
+	               ~~~~\li
+	               ~~~~Longer description, ifneedbe \li
+	               ~~~~""" \li
+	               ~~~~\I{code-block} \li
+\end{ldesc}
+
+\section{Flow Control}
+
+\begin{ldesc}
+	\li[if statement]            if \I{condition}: \li
+	                             ~~~~\I{code-block}
+
+	\lI[if-else statement]       if \I{condition1}: \li
+	                             ~~~~\I{code-block} \li
+								 else: \li
+								 ~~~~\I{code-block}
+
+	\lI[if-elif-else statement]  if \I{condition1}: \li
+	                             ~~~~\I{code-block} \li
+								 elif \I{condition2}: \li
+								 ~~~~\I{code-block} \li
+								 else: \li
+								 ~~~~\I{code-block}
+
+	\lI[while statement]         while \I{condition}: \li
+	                             ~~~~\I{code-block}
+
+	\lI[for statement]           for \I{v} in \I{values}: \li
+	                             ~~~~\I{code-block}
+
+	\lI[for statement (copy)]    for \I{v} in values[:]: \li
+	                             ~~~~\I{code-block}
+
+	\lI[for statement (count)]   for \I{i} in range(\I{n}): \li
+	                             ~~~~\I{code-block} ~~ \# from 0 to n
+
+	\lI[break statement]
+		\I{while-or-for-statement}: \li
+		~~~~break ~~~ \# \textnormal{exit loop, skip else} \li
+		else: \li
+		~~~~\I{code-block}
+
+	\lI[continue-statement]
+		\I{while-or-for-statement}: \li
+		~~~~continue ~\# \textnormal{next loop iteraction}
+
+	\lI[pass-statement (no-op)]
+		\I{def do-nothing():} \li
+		~~~~pass
+
+	\lI[case/switch statements]  \textnormal{There aren't any.  Use if-elif-else.}
+\end{ldesc}
+
+
+\section{List Comprehensions}
+
+Take \emph{element} from \emph{list}.
+If \emph{boolPredicate}, add element \emph{expr} to list:\\
+\begin{tabular}{C@{\s$\equiv$\s}C}
+	\multicolumn{2}{C}{[\I{expr} for \I{element} in \I{list} if \I{boolPredicate} ...]} \\[1ex]
+	{[}x for x in \I{xs}]                   & \I{xs} \\
+	{[}\I{f}(x) for x in [\I{a},\I{b},\I{c}]]    & [\I{f}(\I{a}),\I{f}(\I{b}),\I{f}(\I{c})] \\
+	{[}\I{f}(x) for x in \I{xs} if \I{p}(x)]    & list(map(\I{f},filter(\I{p},\I{xs}))) \\
+%\multicolumn{2}{C}{
+%	{[}x for x in \I{xs} if \I{p} x if \I{q} x] $\equiv$
+%	list(filter(\I{q},filter(\I{p},\I{xs})))
+%	} \\
+\multicolumn{2}{C}{
+	{[}x+y for x in [\I{a},\I{b}] for y in [\I{i},\I{j}]]
+} \\
+\multicolumn{2}{C}{
+	\hfill $\equiv$ [\I{a}+\I{i}, \I{a}+\I{j}, \I{b}+\I{i}, \I{b}+\I{j}]
+} \\
+\end{tabular}
+Generator \C{(...)} and set \C{\{...\}} comprehensions
+	are also allowed.
+\begin{verbatim}
+lets:
+[x for y in ys for x in (doSomethingLong(y),)]
+\end{verbatim}
+
+
+
+\section{Exceptions}
+
+\begin{ldesc}
+	\li[try-except]
+		try: \li
+		~~~~code-block \li
+		except \I{Exception}: \li
+		~~~~code-block \li
+	\li[finally-else]
+		try: \li
+		~~~~code-block \li
+		except \I{Exception1}: \li
+		~~~~\textnormal{run when \I{\C{Exception1}} is raised} \li
+		except \I{Exception2}: \li
+		~~~~\textnormal{run when \I{\C{Exception2}} is raised} \li
+		else: \li
+		~~~~\textnormal{run when no exception is raised} \li
+		finally: \li
+		~~~~always-run \li
+
+	\li[catch \C{BaseException}]   except: ~\# \textnormal{\emph{dangerous}}
+	\li[catch all \C{Exception}s]  except Exception:
+	\li[catch as]                  except \I{Ex1} as \I{ex}:
+	\li[catch multiple exceptions] except (\I{Ex1}, \I{Ex2}, \I{Ex3}): \li
+	\li[exception arguments (\C{as})]  \I{ex.args}
+
+	\li[raise exception \I{\C{Ex1}}]       raise \I{Ex1}
+	\li[raise \I{\C{Ex1}} with ``msg'']    raise \I{Ex1}("\I{msg}")
+	\li[re-raise (inside \C{except:})]  raise
+\end{ldesc}
+
+\subsection{Exception Hierarchy}
+
+% Please see the following for a complete list
+% https://docs.python.org/3/library/exceptions.html#exception-hierarchy
+\begin{tabular}{ll}
+\C{BaseException}              & not to be directly inherited \\
+\C{~~SystemExit}               & raised by \C{sys.exit()} \\
+\C{~~KeyboardInterrupt}        & raised on interrupt / ctrl-C \\
+\C{~~Exception}                & derive \textbf{user-defined exceptions} \\
+\C{~~~~StopIteration}          & no further items on iterator \\
+\C{~~~~ArithmeticError}        & arithmetic error \\
+\C{~~~~~~ZeroDivisionError}    & raised on division by zero \\
+\C{~~~~AssertionError}         & raised by \C{assert()} \\
+\C{~~~~AttributeError}         & inaccessible/nonexistent attribute \\
+\C{~~~~BufferError}            & error on a buffer operation \\
+\C{~~~~EOFError}               & raised by \C{input()} on \C{EOF} \\
+\C{~~~~LookupError}            & error on lookup \\
+\C{~~~~~~IndexError}           & out of range list index \\
+\C{~~~~~~KeyError}             & key not found on dictionary \\
+\C{~~~~NameError}              & name not found \\
+\C{~~~~OSError}                & raised by the OS \\
+\C{~~~~~~FileExistsError}      & file exists \\
+\C{~~~~~~FileNotFoundError}    & file not found \\
+\C{~~~~~~PermissionError}      & inadequate access rights \\
+\C{~~~~RuntimeError}           & runtime error, see error string \\
+\C{~~~~~~NotImplementedError}  & unimplemented abstract method \\
+\C{~~~~~~RecursionError}       & maximum recursion depth reached \\
+\C{~~~~TypeError}              & inappropriate type \\
+\C{~~~~ValueError}             & right type, innapropriate value \\
+\C{~~~~Warning}                & warnings \\
+\end{tabular}
+
+
+
+\section{Functions}
+
+\subsection{Objects}
+
+\begin{ldesc}
+	\li[list attributes \& methods of object \I{o}] dir(o)
+	\li[shows the help for object \I{o}]            help(o)
+	\li[type/class of \I{x}]                        type(\I{x})
+	\li[base classes of \I{cls}]                    cls.\_\_bases\_\_
+\end{ldesc}
+
+\subsection{Lists}
+
+\begin{ldesc}
+	\li[append \C{x} to the end of list \C{xs}]                xs.append(x)
+	\li[append iterable \C{iter} to the end of list \C{xs}]    xs.extend(iter)
+	\li[insert \C{x} in position \C{i} on the list \C{xs}]     xs.insert(i, x)
+	\li[remove the first occurrence of \C{x} in \C{xs}]        xs.remove(x)
+	\li[remove then return the last element of xs]             xs.pop()
+	\li[remove then return the \C{i}-th element of xs]         xs.pop(i)
+	\li[remove all items from \C{xs}]                          xs.clear()
+	\li[index of the first occurrence of \C{x}]                xs.index(x)
+	\li[~~~~ between \C{i} and \C{j}]                          xs.index(x,i,j)
+	\li[count occurrences of \C{x} in \C{xs}]                  xs.count(x)
+	\li[sort the list \C{xs}]                                  xs.sort()
+%	\li[sort the list \C{xs} in reverse]                       xs.sort(reverse=True)
+	\li[sort the list \C{xs} using keying function \C{k}]      xs.sort(key=k)
+	\li[reverse the list \C{xs}]                               xs.reverse()
+	\li[return a copy of the list \C{xs}]                      xs.copy()
+\end{ldesc}
+
+\subsection{Printing}
+
+\begin{ldesc}
+	\li[printable representation of \I{x}]          str(\I{x})
+	\li[parsable printable representation of \I{x}] repr(\I{x})
+	\li[identity of \I{x}]                          parse(repr(\I{x}))
+\end{ldesc}
+
+
+\subsection{String formatting (f-string)}
+
+\begin{ldesc}
+	\li[format \I{x} to string] f"\{x\}"
+	\li[format \I{x} to string message] f"We have \{x\} items."
+	\li[format \I{x} and \I{y} to string] f"x is \{x\}, y is \{y\}"
+	\li[format \I{n} to hexadecimal] f"\{n\} in hexadecimal is \{n:x\}"
+	\li[format \I{n} to octal] f"\{n\} in hexadecimal is \{n:o\}"
+	\li[format \I{n} with six decimal places] f"\{n:06d\}"
+	\li[yield \C{"pi is 3.14"}]    f"pi is \{0:2f\}"
+	\li[yield \C{"pi is 003.141"}] f"pi is \{0:3.3f\}"
+\end{ldesc}
+
+\vspace{-1ex}
+\subsubsection{Old printf-style string formatting}
+
+\begin{ldesc}
+	\li[format \I{x} to string using \C{str}] "\%s" \% x
+	\li[format \I{x} to string using \C{repr}] "\%s" \% x
+	\li[format \I{x} to decimal]     "\%d" \% x
+	\li[format \I{x} to hexadecimal] "\%x" \% x
+	\li[format \I{x} to octal]       "\%o" \% x
+	\li[replace \C{\%s} by \I{s}] "...~\%s~..." \% s
+	\li[repl.~\C{\%s} by \I{s1} then \I{s2}]  ".~\%s~.~\%s~." \% (s1,s2)
+	\li[generate \C{"pi is 3.14"}] "pi is \%.2f" \% math.pi
+	\li[generate \C{"pi is 003.141"}] "pi is \%3.3f" \% math.pi
+	\li[generate \C{"1 + 1 = 2"}] "1 + 1 = \%d" \% (1 + 1)
+%	\li[generate \C{"2'n'1"}] "\%(two)d'n'\%(one)d" \% \{'one':~1, \li
+%	                              ~~~~~~~~~~~~~~~~~~~~~~ "two":~2\}
+\end{ldesc}
+
+\subsection{Input and output to files}
+
+\begin{ldesc}
+	\li[open a file for reading]              \I{f} = open('\I{file.txt}')
+	\li[open a file for reading]              \I{f} = open('\I{file.txt}','r')
+	\li[open a file for writing]              \I{f} = open('\I{file.txt}','w')
+	\li[open a file for writing (appending)]  \I{f} = open('\I{file.txt}','a')
+	\li[closes file \I{f}]                    close(\I{f})
+	\li[opens and closes]                     with open('\I{file.txt}') as \I{f} \li
+	                                          ~~~~\I{operations on f}
+	\li[reads the entire contents of file \I{f}]  \I{f}.read()
+	\li[reads a line from file \I{f}]             \I{f}.readline()
+	\li[reads all lines from file \I{f}]          \I{f}.readlines()
+	\li[loop over all lines from file \I{f}]      for line in \I{f}: \li
+	                                              ~~~~\I{code-block}
+	\li[writes \I{string} on file \I{f}]          \I{f}.write(\I{string})
+\end{ldesc}
+
+\section{Classes}
+
+\begin{ldesc}
+	\li[defining a class]
+		class \I{OurClass}: \li
+		~~~~"""Description of \I{OurClass}""" \li
+		~~~~\I{class\_var} = \I{val} ~ \# shared\lI
+		~~~~def \I{f}(self): \li
+		~~~~~~~~\I{self.instance\_var} = \I{val} \li
+		~~~~~~~~\I{code} \li
+
+	\li[inheritance] class \I{OurSubClass}(\I{OurClass}):
+	\li[multiple inheritance] class \I{SubClass}(\I{Cl1},\I{Cl2}):
+	\li[object instance]     \I{x} = \I{MyClass}()
+	\li[attribute reference] \I{x}.\I{x}
+	\li[class var reference] \I{OurClass}.class\_var
+	\li[class var reference on obj] \I{x}.class\_var
+	\li[instance var reference] \I{x}.instance\_var
+	\li[method call]         \I{x}.\I{f}()
+
+	\li[initializer/constructor]
+		def \_\_init\_\_(self, \I{arg1}, \I{arg2}): \li
+		~~~~\I{code} \li
+
+	\li[simple record]
+		class \I{Record}: \li
+		~~~~pass \lI
+
+		\I{record} = \I{Record}() \li
+		\I{record}.\I{x} = \I{value1} \li
+		\I{record}.\I{y} = \I{value2}
+\end{ldesc}
+
+
+\section{Iterators \& Generators}
+
+\begin{ldesc}
+	\li[declaring]  def \I{generator}() \li
+	                ~~~~yield \I{value1} \li
+	                ~~~~yield \I{value2} \li
+	                ~~~~yield \I{value3}
+	\lI[using]      for \I{value} in \I{generator}(): \li
+	                ~~~~\I{code-block}
+\end{ldesc}
+
+\end{document}
+
+
+\section{Decorators}
+
+\begin{tabular}{CC}
+	\hline
+	\textnormal{sugary}          & \textnormal{explicit}    \\[1ex]
+
+	\hline
+	@\I{decorate}                & def \I{fun}():                  \\
+	def \I{fun}():               & ~~\I{code-block}                \\
+	~~\I{code-block}             & \I{fun} = \I{decorate}(\I{fun}) \\[1ex]
+	\hline
+
+	@\I{decorate}(\I{arg})~~~~~  & def \I{fun}():                           \\
+	def \I{fun}():               & ~~\I{code-block}                         \\
+	~~\I{code-block}             & \I{fun} = \I{decorate}(\I{arg})(\I{fun}) \\[1ex]
+	\hline
+
+	@\I{deco2}                   & def \I{fun}():                           \\
+	@\I{deco1}                   & ~~\I{code-block}                         \\
+	def \I{fun}():               & \I{fun} = \I{deco2}(\I{deco1}(\I{fun}))  \\
+	~~\I{code-block}             &                                          \\
+	\hline
+\end{tabular}
+
+\subsection{Defining a decorator}
+
+\begin{verbatim}
+def decorate(fun):
+    @functools.wraps(fun):
+    def decorated(*args, **kwargs):
+        ... fun ...
+    return decorated
+\end{verbatim}
+
+\subsection{Useful decorators}
+
+\begin{ldesc}
+	\li[class method (class as 1st arg)]   @classmethod
+	\li[static method (skip 1st arg)] @staticmethod
+	\li[overload function \texttt{foo}] @singledispatch \li
+	                                    @\I{foo}.register(\I{type})
+	\li[object property \texttt{obj.prop}] @property \li @\I{prop}.setter
+\end{ldesc}
+
+
+\section{Libraries}
+
+\begin{tabular}{Cll}
+\textnormal{library} & description & useful cls/funs/vars \\[1ex]
+os        & operating system interfaces  & \C{environ()}, \C{system()} \\
+sys       & system specific functions    & \C{argv[]}, \C{stdin}, \C{exit()} \\
+inspect   & function introspection       & \C{signature()}\\
+functools & functional programming tools & \C{reduce()}\\
+operator  & standard operators as funs.  & \C{add()}, \C{mul()}\\
+mailbox   & manipulate mailboxes         & \C{Mailbox} \\
+email     & email/MIME handling          & \C{EmailMessage} \\
+\end{tabular}
+
+
+\section{Interesting resources}
+
+\begin{itemize}
+\item \texttt{www.pythontutor.com}
+\end{itemize}
+
+
+
+\end{document}

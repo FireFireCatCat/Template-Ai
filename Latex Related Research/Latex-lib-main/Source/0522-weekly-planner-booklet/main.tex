@@ -1,0 +1,43 @@
+% Weekly Planner Booklet — an A5-landscape weekpage-per-spread planner
+% (folds down to A6 for binding), plus an optional class timetable, built on
+% Enrico Miccoli's TeXalendar `calendar` class.
+%
+% Upstream normally generates a full year of \weekpage{...} calls from
+% config.ini via a Python script (gencal.py) at build time. This starter
+% writes the \weekpage{} calls directly instead, so it is a normal,
+% directly-compilable LaTeX document with no external build step — pick a
+% handful of real weeks below and extend the pattern for a full year.
+\documentclass{calendar}
+\begin{document}
+
+% One \timetable{} call per academic term, showing weekday columns and
+% hourly rows — left blank for the user to fill in their own schedule.
+\timetable{Spring 2026}
+
+% \weekpage{...} draws one two-page week spread. Keys:
+%   da..dg      = day-of-month numbers for Monday..Sunday
+%   curmonth    = month label shown rotated in the margin
+%   newmonth    = month label to switch to when a week crosses into a new
+%                 month (only used if newday is reached)
+%   newday      = 1-indexed weekday (1=Mon..7=Sun) at which the new month's
+%                 first day falls, when the week spans two months
+%
+% PATCHED (latextemplates.com): the class defaults newday=3 (Wednesday) even
+% for a week that does NOT cross a month boundary, and newmonth defaults to
+% the literal string "default". Upstream's generator always sets both keys
+% explicitly per week, which hides this; a \weekpage{} call here that omits
+% them prints "DEFAULT" in the Wednesday margin instead of the real month
+% (confirmed rendering — see README). Every call below sets newday=8 (out of
+% range, so \daymonth never matches) unless the week genuinely spans two
+% months, in which case newday/newmonth are set to the real crossover point.
+\weekpage{da=5,db=6,dc=7,dd=8,de=9,df=10,dg=11,curmonth=january,newday=8}
+\weekpage{da=12,db=13,dc=14,dd=15,de=16,df=17,dg=18,curmonth=january,newday=8}
+\weekpage{da=19,db=20,dc=21,dd=22,de=23,df=24,dg=25,curmonth=january,newday=8}
+% Week spanning January into February: Monday the 26th through Sunday
+% February 1st. newday=7 means the new month's first day falls on the 7th
+% (Sunday) column.
+\weekpage{da=26,db=27,dc=28,dd=29,de=30,df=31,dg=1,%
+  curmonth=january,newmonth=february,newday=7}
+\weekpage{da=2,db=3,dc=4,dd=5,de=6,df=7,dg=8,curmonth=february,newday=8}
+
+\end{document}

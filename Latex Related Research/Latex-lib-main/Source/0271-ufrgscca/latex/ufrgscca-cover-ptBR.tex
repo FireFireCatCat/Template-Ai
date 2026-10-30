@@ -1,0 +1,348 @@
+%%%==============================================================================
+%% Copyright 2022-present by Alceu Frigeri
+%%
+%% This work may be distributed and/or modified under the conditions of
+%%
+%% * The [LaTeX Project Public License](http://www.latex-project.org/lppl.txt),
+%%   version 1.3c (or later), and/or
+%% * The [GNU Affero General Public License](https://www.gnu.org/licenses/agpl-3.0.html),
+%%   version 3 (or later)
+%%
+%% This work has the LPPL maintenance status *maintained*.
+%%
+%% The Current Maintainer of this work is Alceu Frigeri
+%%
+%% This is version {2.13a} {2026/07/04}
+%%
+%% The list of files that compose this work can be found in the README.md file at
+%% https://ctan.org/pkg/ufrgscca
+%%
+%%%==============================================================================
+%% UFRGS stands for "Federal University of Rio Grande do Sul" in south Brazil
+%% EE    stands for "Engineering School"
+%% CCA   stands for "Control and Automation Engineering Course" (Portuguese acronym)
+%%%==============================================================================
+
+
+
+\ExplSyntaxOn
+  \tl_new:N \tmpFieldA
+  \tl_new:N \tmpFieldB
+  \tl_new:N \tmpFieldC
+\ExplSyntaxOff
+
+
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+
+\SetTerms{%
+  advisor.descpage       = %
+  {%
+    \noindent%
+    \studentCoadvCase{%
+      \UseTerm{advisors}:\\
+      \DataFields{student.advisor}{name}\\[1ex]
+      \DataFields{student.coadvisor}{name}
+    }{%
+      \UseTerm{advisor}:\\
+      \DataFields{student.advisor}{name}
+    }
+  } ,
+  advisor.approvalpage   = %
+  {%
+    \noindent%
+      \studentCoadvCase{%
+        \UseTerm{advisors}:\\
+        \DataFields{student.advisor}{name}, \DataFields{student.advisor}{institution}\\
+        \DataFields{student.advisor}{title}\\[1ex]
+        \DataFields{student.coadvisor}{name}, \DataFields{student.coadvisor}{institution}\\
+        \DataFields{student.coadvisor}{title}
+      }{%
+        \UseTerm{advisor}:\\
+        \DataFields{student.advisor}{name}, \DataFields{student.advisor}{institution}\\
+        \DataFields{student.advisor}{title}
+      }
+  } ,
+  internship.tutorapproval  =
+  {         ~\\
+            \noindent\UseTerm{tutor}:\\
+            \DataFields{student.tutor}{name}, \DataFields{student.tutor}{institution}\\
+            \DataFields{student.tutor}{title}\\[1ex]
+            
+            \noindent\UseTerm{supervisor}:\\
+            \DataFields{student.supervisor}{name}, \DataFields{student.supervisor}{institution}\\
+            \DataFields{student.supervisor}{office}\\
+            \DataFields{student.internship}{company}\\
+            
+            
+  } ,
+  cover.students        = %
+  {%
+        \DataGet{student}{name}{\tmpFieldA}
+        \DataGet{student}{ID}{\tmpFieldB}
+        \centering{\MakeUppercase{\tmpFieldA} - \tmpFieldB}  
+  } ,
+  cover.topbase            = %
+  {%
+        \centering%
+          \MakeUppercase{\UseHeading{university}}\\
+          \MakeUppercase{\UseHeading{unit}}\\
+          \MakeUppercase{\UseHeading{course}}
+  } ,
+  cover.title             = %
+  {%
+          \DataGet{student}{worktitle}{\tmpFieldA}
+          \centering\textbf{\MakeUppercase{\tmpFieldA}}  
+  } ,
+  cover.bottom            = {%
+          \centering \UseConst{publ.city}\\ \UseConst{publ.date}\par
+  } ,
+  ppc.top            = %
+  {%
+        \centering%
+          \MakeUppercase{\UseHeading{university}}\\
+          \MakeUppercase{\UseHeading{unit}}\\
+          \MakeUppercase{\UseHeading{ppc.comgrad}}\\
+          \MakeUppercase{\UseHeading{ppc.nde}}\\
+          \MakeUppercase{\UseHeading{ppc.course}}\\
+
+  } ,
+  report.top            = %
+  {%
+        \centering%
+          \MakeUppercase{\UseHeading{university}}\\
+          \MakeUppercase{\UseHeading{unit}}\\
+          \MakeUppercase{\UseHeading{department}}\\
+          \MakeUppercase{\UseHeading{class.code}~ -~ \UseHeading{class.name}}\\
+  } ,
+  report.prof-descpage       = %
+  {%
+    \noindent\raggedleft
+    \studentAdvCase{%
+      \UseTerm{professors}:\\
+      \studentadvisoriterate%
+        {%
+          \DataFields{student.advisor}{name}\\
+        }
+    }{%
+      \UseTerm{professor}:\\
+      \DataFields{student.advisor}{name}\\
+    }
+  } ,
+}
+
+\SetTerms{
+  cover.students   =
+  {%
+    \studentiterate%
+     {%
+        \DataGet{student}{name}{\tmpFieldA}
+        \DataGet{student}{ID}{\tmpFieldB}
+        \centering{\MakeUppercase{\tmpFieldA} - \tmpFieldB}  
+     }
+  }  
+}
+
+
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+%%%
+%%%  TCC I
+%%%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+\SetCoverFields{tccI}{clist}{cover,desc,approval}
+\SetCoverFields{tccI}{top}{  \UseTerm{cover.topbase} }
+\SetCoverFields{tccI}{students}{ \UseTerm{cover.students} }
+\SetCoverFields{tccI}{title}{ \UseTerm{cover.title} }
+\SetCoverFields{tccI}{bottom}{\centering \UseConst{publ.city}\\ \UseConst{publ.year}\par}
+
+\SetCoverFields{tccI}{text-descpage}{ \UseTerm{tccI.text-descpage} }
+
+\SetCoverFields{tccI}{advisor-descpage}{ \UseTerm{advisor.descpage} }
+
+\SetCoverFields{tccI}{bottom-descpage}{\centering \UseConst{publ.city}\\ \UseConst{publ.year}\par}
+
+\SetCoverFields{tccI}{text-approvalpage}{ \UseTerm{tccI.text-approvalpage} }
+\SetCoverFields{tccI}{advisor-approvalpage}{ \UseTerm{advisor.approvalpage} }
+
+\SetCoverFields{tccI}{bottom-approvalpage}{ \UseTerm{cover.bottom} }
+
+
+\SetCoverFields{tccI}{board}{%
+\noindent \UseTerm{board}:\\
+\indent \DataFields{student.reviewer[2]}{name}, \DataFields{student.reviewer[2]}{institution}\\
+\indent \DataFields{student.reviewer[2]}{title}\\
+\\
+\indent \DataFields{student.reviewer[3]}{name}, \DataFields{student.reviewer[2]}{institution}\\
+\indent \DataFields{student.reviewer[3]}{title}\\
+}
+
+
+\SetCoverFields{tccI}{coord}{%
+\noindent\hrulefill\\
+\ActivityCoord[course]{name}\\
+\ActivityCoord[course]{title}\\
+\Activity[course]{name}
+}
+
+
+
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+%%%
+%%%  TCC II
+%%%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+\SetCoverFields{tccII}{clist}{cover,desc,approval}
+\SetCoverFields{tccII}{top}{  \UseTerm{cover.topbase} }
+\SetCoverFields{tccII}{students}{  \UseTerm{cover.students} }
+\SetCoverFields{tccII}{title}{  \UseTerm{cover.title} }
+\SetCoverFields{tccII}{bottom}{\centering \UseConst{publ.city}\\ \UseConst{publ.year}\par}
+
+\SetCoverFields{tccII}{text-descpage}{ \UseTerm{tccII.text-descpage} }
+
+\SetCoverFields{tccII}{advisor-descpage}{ \UseTerm{advisor.descpage} }
+
+\SetCoverFields{tccII}{bottom-descpage}{\centering \UseConst{publ.city}\\ \UseConst{publ.year}\par}
+
+\SetCoverFields{tccII}{text-approvalpage}{ \UseTerm{tccII.text-approvalpage} }
+\SetCoverFields{tccII}{advisor-approvalpage}{ \UseTerm{advisor.approvalpage} }
+
+\SetCoverFields{tccII}{bottom-approvalpage}{ \UseTerm{cover.bottom} }
+
+
+\SetCoverFields{tccII}{board}{
+\noindent \UseTerm{board}:\\
+\indent \DataFields{student.reviewer[1]}{name}, \DataFields{student.reviewer[1]}{institution}\\
+\indent \DataFields{student.reviewer[1]}{title}\\[-1ex]
+
+\indent \DataFields{student.reviewer[2]}{name}, \DataFields{student.reviewer[2]}{institution}\\
+\indent \DataFields{student.reviewer[2]}{title}\\[-1ex]
+
+\indent \DataFields{student.reviewer[3]}{name}, \DataFields{student.reviewer[2]}{institution}\\
+\indent \DataFields{student.reviewer[3]}{title}\\
+}
+
+
+\SetCoverFields{tccII}{coord}{
+\noindent\hrulefill\\
+\ActivityCoord[course]{name}\\
+\ActivityCoord[course]{title}\\
+\Activity[course]{name}
+}
+
+
+
+
+\SetCoverFields{ppc}{clist}{cover}
+\SetCoverFields{ppc}{top}{  \UseTerm{ppc.top} }
+\SetCoverFields{ppc}{students}{  }
+\SetCoverFields{ppc}{title}{ \centering PROJETO~ PEDAGÓGICO~ DO\\
+CURSO~ EM~ ENGENHARIA~ DE\\
+CONTROLE~ E~ AUTOMAÇÃO }
+\SetCoverFields{ppc}{bottom}{\centering \UseConst{publ.city}\\ \UseConst{publ.year}\par}
+
+
+
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+%%%
+%%%  Internship
+%%%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+\SetCoverFields{internship}{clist}{cover,approval}
+\SetCoverFields{internship}{top}{  \UseTerm{cover.topbase} }
+\SetCoverFields{internship}{students}{ \UseTerm{cover.students} }
+\SetCoverFields{internship}{title}{ \centering\textbf{ \UseTerm{internship.title} } }
+\SetCoverFields{internship}{bottom}{\centering \UseConst{publ.city}\\ \UseConst{publ.year}\par}
+
+\SetCoverFields{internship}{text-approvalpage}{ \UseTerm{internship.text-approvalpage} }
+
+\SetCoverFields{internship}{advisor-approvalpage}{ \UseTerm{internship.tutorapproval} }
+
+\SetCoverFields{internship}{bottom-approvalpage}{ \centering \UseConst{publ.city}\\\UseConst{publ.month}~ \UseConst{publ.year}\par }
+
+
+\SetCoverFields{internship}{board}{}
+
+
+\SetCoverFields{internship}{coord}{
+\noindent\hrulefill\\
+\ActivityCoord[internship]{name}\\
+\ActivityCoord[internship]{title}
+}
+
+
+
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+%%%
+%%%  Nonrequired / Internship-optional
+%%%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+\SetCoverFields{internship-opt}{clist}{cover,approval}
+\SetCoverFields{internship-opt}{top}{  \UseTerm{cover.topbase} }
+\SetCoverFields{internship-opt}{students}{ \UseTerm{cover.students} }
+\SetCoverFields{internship-opt}{title}{ \centering\textbf{ \UseTerm{internship-opt.title} } }
+\SetCoverFields{internship-opt}{bottom}{\centering \UseConst{publ.city}\\ \UseConst{publ.year}\par}
+
+\SetCoverFields{internship-opt}{text-approvalpage}{ \UseTerm{internship-opt.text-approvalpage} }
+
+\SetCoverFields{internship-opt}{advisor-approvalpage}{ \UseTerm{internship.tutorapproval} }
+
+\SetCoverFields{internship-opt}{bottom-approvalpage}{ \centering \UseConst{publ.city}\\\UseConst{publ.month}~ \UseConst{publ.year}\par }
+
+
+\SetCoverFields{internship-opt}{board}{}
+
+
+\SetCoverFields{internship-opt}{coord}{}
+
+
+
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+%%%
+%%%  class report
+%%%
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+\SetCoverFields{class-report}{clist}{desc}
+\SetCoverFields{class-report}{top}{  \UseTerm{report.top} }
+\SetCoverFields{class-report}{students}{ \UseTerm{cover.students} }
+\SetCoverFields{class-report}{title}{   \UseTerm{cover.title} }
+\SetCoverFields{class-report}{bottom}{\centering \UseConst{publ.city}\\\UseConst{publ.month}~ \UseConst{publ.year}\par}
+
+\SetCoverFields{class-report}{text-descpage}{ \UseTerm{class-report.desc} }
+
+\SetCoverFields{class-report}{advisor-descpage}{ \UseTerm{report.prof-descpage} }
+
+\SetCoverFields{class-report}{bottom-descpage}{\centering \UseConst{publ.city}\\\UseConst{publ.month}~  \UseConst{publ.year}\par}
+
+\SetCoverFields{class-report}{text-approvalpage}{}
+
+\SetCoverFields{class-report}{advisor-approvalpage}{}
+
+\SetCoverFields{class-report}{bottom-approvalpage}{}
+
+
+\SetCoverFields{class-report}{board}{}
+
+
+\SetCoverFields{class-report}{coord}{}
+
+
+
+
+
+

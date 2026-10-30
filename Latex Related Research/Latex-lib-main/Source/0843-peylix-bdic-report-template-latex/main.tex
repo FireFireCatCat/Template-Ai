@@ -1,0 +1,92 @@
+\documentclass{report}
+
+% Title page layout and spacing configuration
+% Adjust these values based on your needs
+\newcommand{\vspaceone}{0.8cm}
+\newcommand{\vspacetwo}{0.8cm}
+\newcommand{\vspacethree}{1.5cm}
+\newcommand{\vspacefour}{0.5cm}
+\newcommand{\vspacefive}{1.0cm}
+\newcommand{\vspacesix}{7cm}
+\newcommand{\vspaceseven}{0.8cm}
+
+% User commands and theorem styles
+% If this is a group project, you can use the following commands to define the group members
+% If this is individual, just add your name to both \authorname and \namelist
+\newcommand{\authorname}{Group 0}
+\newcommand{\namelist}{
+    {Any Student (00000000)},
+    {Another Student (11111111)}
+}
+% If you want to add a supervisor, uncomment the following lines
+% \newcommand{\supervisorlist}{
+%     {Dr. Supervisor,},
+%     {Prof. Supervisor}
+% }
+\newcommand{\coursecode}{COMP0000J}
+\newcommand{\paperdate}{\today} % This is optional. You can remove this line if you don't want to add the date.
+
+\newcommand{\HRule}[1]{\rule{\linewidth}{#1}}
+
+\newcommand{\reporttitle}{Intro to Temporal Engineering}
+\newcommand{\projecttitle}{Project: A Simple Time Machine}
+% \newcommand{\subsubtitle}{A project to travel through time}
+
+% Bibliography
+\addbibresource{bibliography/references.bib}
+
+\begin{document}
+
+% Enable these if you prefer an individual title page
+% ------------------------------------------
+\makenewtitlepage
+
+% Adjust the line spacing of the contents page
+\begin{spacing}{1.0}
+    \tableofcontents
+\end{spacing}
+
+\newpage
+% ------------------------------------------
+
+% Or enable this if you prefer a compact title at the top of the first page
+% ------------------------------------------
+% \makecompacttitle
+% ------------------------------------------
+
+% It is also a good choice to use a combination of the compact title and the table of contents based on your needs
+
+
+% Set the title for the abstract
+\renewcommand{\abstractname}{Abstract}
+
+% Uncomment the following lines to use the colorful abstract or monochrome abstract
+
+% \begin{abstract}
+%     \input{src/abstract.tex}
+% \end{abstract}
+
+% \begin{colorfulabstract}
+%     \input{src/abstract.tex}
+% \end{colorfulabstract}
+
+\begin{monochromeabstract}
+    \input{src/abstract.tex}
+\end{monochromeabstract}
+
+\section{Introduction}
+    \input{src/intro.tex}
+
+\section{Methodology}
+    \input{src/methodology.tex}
+
+\section{Implementation}
+    \input{src/code_impl.tex}
+
+\section{Conclusion}
+    \input{src/conclusion.tex}
+
+% Print bibliography
+% \printbibliography[heading=bibliography, title={References}]
+
+\end{document}

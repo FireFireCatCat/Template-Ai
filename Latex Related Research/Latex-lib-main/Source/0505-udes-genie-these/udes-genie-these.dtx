@@ -1,0 +1,1541 @@
+% \iffalse meta-comment
+%% udes-genie-these.dtx
+%% Copyright 2023 Charles-Antoine Brunet
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Charles-Antoine Brunet and
+%   can be contacted at Charles-Antoine.Brunet@USherbrooke.ca
+%
+% This work consists of the files udes-genie-these.dtx and udes-genie-these.ins
+% and the derived files udes-genie-these.cls.
+% \fi
+%
+% \iffalse
+%<@@=udesgeniethese>
+%<these|protocole>%%
+%<these|protocole>%%-----------------------------------------------------------------------------
+%<these|protocole>%%---   IDENTIFICATION   ------------------------------------------------------
+%<these|protocole>%%-----------------------------------------------------------------------------
+%<these|protocole>
+%<these>\ProvidesExplClass{udes-genie-these}{2023/09/01}{3.1.0}
+%<these>  {Université de Sherbrooke, Faculté de génie: classe de document pour thèses, mémoires, DPR et essais}
+%<protocole>\ProvidesExplClass{udes-genie-protocole}{2023/09/01}{3.1.0}
+%<protocole>  {Université de Sherbrooke, Faculté de génie: classe de document pour le protocole de rédaction}
+%<these|protocole>
+%<*driver>
+\documentclass[12pt,letterpaper,french]{l3doc}
+\usepackage[T1]{fontenc}
+\usepackage{kpfonts}
+\usepackage[scaled=0.7881]{DejaVuSansMono}
+\usepackage[french]{babel}
+\usepackage{setspace,xspace,hologo,bookmark}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,linktocpage=true}
+\setlength{\parskip}{1ex plus0.25ex minus0ex}
+\setlength{\parindent}{0em}
+\clubpenalty=10000  % Penalité pour lignes orphelines
+\widowpenalty=10000 % Penalité pour lignes veuves
+\singlespacing %\singlespacing \onehalfspacing \doublespacing \setstretch{1.25}
+\makeatletter
+\c@IndexColumns = 2
+\c@GlossaryColumns = 2
+\makeatother
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\OnlyDescription
+\GlossaryPrologue{\section*{Historique des changements}\markboth{Historique des changements}{Historique des changements}  \addcontentsline{toc}{section}{Historique des changements}
+}
+\IndexPrologue{\section*{Index}\markboth{Index}{Index}\addcontentsline{toc}{section}{Index}}
+\newcommand{\lancienneclasse}{\cls{udes-genie-demt}\xspace}
+\newcommand{\laclassename}{udes-genie-these}
+\newcommand{\laclasse}{\cls{\laclassename}\xspace}
+\newcommand{\laclasseprefix}{\cls{udes-genie}\xspace}
+\newcommand{\laclassefile}{\file{udes-genie-these.cls}\xspace}
+\newcommand{\laclassetitre}{\textsf{\laclassename}\xspace}
+\newcommand{\babel}{\pkg{babel}\xspace}
+\newcommand{\latex}{\hologo{LaTeX}\xspace}
+\newcommand{\latexiii}{\hologo{LaTeX3}\xspace}
+\newcommand{\pdflatex}{\hologo{pdfLaTeX}\xspace}
+\newcommand{\lualatex}{\hologo{LuaLaTeX}\xspace}
+\newcommand{\xelatex}{\hologo{XeLaTeX}\xspace}
+\newcommand{\bibtex}{\hologo{BibTeX}\xspace}
+\newcommand{\fac}{Faculté de génie\xspace}
+\newcommand{\overleaf}{\textsf{Overleaf}\xspace}
+\newcommand{\protocole}{protocole\xspace}
+\newcommand{\protocoleit}{\textit{protocole}\xspace}
+\newcommand{\protlgu}{\textit{Protocole de rédaction aux études supérieures} de la Faculté de génie de l'Université de Sherbrooke\xspace}
+\newcommand{\package}{package\xspace}
+\newcommand{\packages}{packages\xspace}
+\newcommand{\encodage}{UTF-8\xspace}
+\newcommand{\enchamp}{\textbf{Nom} & \textbf{Requis} & \textbf{\bibtex}}
+\newcommand{\non}{}
+\newcommand{\oui}{\ding{'63}}
+\newcommand{\bipm}{\textit{Bureau international des poids et mesures} (BIPM)\xspace}  \newcommand{\siunitx}{\pkg{siunitx}\xspace}
+\newcommand{\windows}{\textsf{Windows}\xspace}
+\newcommand{\macos}{\textsf{MacOS}\xspace}
+\newcommand{\linux}{\textsf{Linux}\xspace}
+\newcommand{\miktex}{\textsf{MiKTeX}\xspace}
+\newcommand{\texlive}{\textsf{TeX Live}\xspace}
+\newcommand{\tlmgr}{\textsf{TeX Live Manager}\xspace}
+\newcommand{\ctan}{\textsf{CTAN}\xspace}
+\newcommand{\ctanurl}{\url{https://www.ctan.org/pkg/udes-genie-these}}
+
+\addto\captionsfrench
+{
+	\renewcommand{\glossaryname}{Historique~des~changements}
+	\renewcommand{\contentsname}{Table~des~matières}
+	\renewcommand{\bibname}{Liste~des~références}
+}
+
+\begin{document}
+	\DisableImplementation
+	\DocInput{udes-genie-these.dtx}
+	\clearpage
+  \PrintChanges
+	\PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{17}
+%
+% \CharacterTable
+% {Upper-case \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+% Lower-case \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+% Digits \0\1\2\3\4\5\6\7\8\9
+% Exclamation \! Double quote \" Hash (number) \#
+% Dollar \$ Percent \% Ampersand \&
+% Acute accent \' Left paren \( Right paren \)
+% Asterisk \* Plus \+ Comma \,
+% Minus \- Point \. Solidus \/
+% Colon \: Semicolon \; Less than \<
+% Equals \= Greater than \> Question mark \?
+% Commercial at \@ Left bracket \[ Backslash \\
+% Right bracket \] Circumflex \^ Underscore \_
+% Grave accent \` Left brace \{ Vertical bar \|
+% Right brace \} Tilde \~}
+%
+% \changes{v1.0}{2017-01-18}{Première version}
+% \changes{v1.1}{2017-07-18}{Adaptation à la nouvelle version de babel (changements internes).}
+% \changes{v1.2}{2017-12-21}{Adaptation à la nouvelle version de \latexiii (changements internes).}
+% \changes{v2.0}{2018-09-26}{Adaptations pour respecter la nouvelle version du protocole de rédaction.}
+% \changes{v2.0.1}{2020-04-17}{(Aussi connue comme v2.0a) Correction de bugs. Changements internes. Changements à la documentation.}
+% \changes{v2.0.2}{2022-09-15}{Maintenance (LaTeX2e 2020-02-02 à 2022-06-01). Distribution sur CTAN. Adaptations à la documentation.}
+% \changes{v3.0}{2022-09-19}{Support pour \pkg{biblatex}. Ajustements à la documentation.}
+% \changes{v3.0.1}{2022-11-17}{Ajustements à la documentation et à l'exemple. Changements internes pour les formats LaTeX antérieurs à 2022-06-01.}
+% \changes{v3.1.0}{2023-09-01}{Ajout des champs auto-bib et legendes-min. Ajustements à la documentation.  Correction de bugs. Format 2022-06-01 ou plus récent requis. Maintenance interne.}
+%
+% \GetFileInfo{udes-genie-these.dtx}
+%
+% \title{CLASSE DE DOCUMENT \latex POUR LA RÉDACTION AUX ÉTUDES SUPÉRIEURES À LA FACULTÉ DE GÉNIE DE L'UNIVERSITÉ DE SHERBROOKE\\{\large \laclassetitre, version 3.1.0}}
+% \author{Charles-Antoine Brunet}
+% \date{\today}
+% \maketitle
+%
+% \begin{abstract}
+% La classe de document \laclasse pour \latex gère la mise en page et l'ordonnancement des parties préliminaires et de la liste des références d'un document afin qu'il respecte le \protlgu. Ce document explique l'utilisation de \laclasse. Un exemple d'utilisation est aussi distribué avec la documentation de \laclasse.
+% \end{abstract}
+%
+% \clearpage\tableofcontents\clearpage
+%
+% \section{Introduction}\label{sec:intro}
+% La classe de document \laclasse pour \latex gère la mise en page et l'ordonnancement des parties préliminaires et de la liste des références d'un document afin qu'il respecte le \protlgu, ci-après appelé le \protocoleit. La dernière version du \protocole est disponible dans l'intranet de la Faculté de génie.
+%
+% Ce document détaille l'utilisation de \laclasse afin de faciliter son utilisation. Un exemple complet est distribué avec \laclasse. Le but de ce document n'est pas d'expliquer l'utilisation générale de \latex ou de \bibtex. Pour cela, il faut consulter d'autres ouvrages. D'ailleurs, ce document assume une connaissance préalable fonctionnelle de \latex et de \bibtex.
+%
+% \subsection*{De la version~2 à la version~3}
+%
+% La version 3 contient un changement incompatible avec la version~2. Le changement répond à des demandes faites à plusieurs reprises au cours des années: supporter le \package |biblatex|. Heureusement, si vous utilisiez la version~2, la transition devrait vous prendre moins de deux minutes. Le paragraphe qui suit vous donne tous les détails.
+%
+% Le style de références est maintenant spécifié par le nouveau champ de configuration |style-references| et non plus dans le préambule avec la macro |\bibliographystyle|. Il faut donc retirer une macro du style |\bibliographystyle{AAA}| et la remplacer par un champ de configuration du genre |style-references = AAA|. C'est tout!
+%
+%\section{Installation et vérification}\label{sec:inst}
+% La classe \laclasse utilise des fonctionnalités récentes de \latex. Il faut donc vous assurer d'avoir une version à jour de votre distribution \latex (\texlive ou \miktex). Si vous utilisez \overleaf, il faut vous assurer que votre projet compile avec la version la plus récente de \texlive offerte.
+%
+% Selon votre distribution \latex, choisissez l'option qui vous convient.
+% la classe
+% \subsection*{\texlive et \miktex}
+% La classe \laclasse est disponible sur \ctan et fait donc partie des deux distributions. Il y a deux options d'installation: pour une utilisation à \textit{long terme} et pour une utilisation à \textit{court terme}.
+%
+% \textbf{Long terme:}\\ Si vous pensez utiliser \laclasse pour les prochaines années, alors vous pouvez installer \laclasse comme tout autre \package \latex: à partir de la console de \miktex ou du \tlmgr. Si vous utilisez \miktex, n'oubliez pas d'installer aussi la documentation, car elle est installée séparément. Une fois la classe \laclasse installée, les mises à jour de \laclasse seront faites en même temps que les autres \packages à chaque fois que vous faites une mise à jour de votre distribution \latex.
+%
+% Notez que la documentation de \laclasse est disponible avec la commande |texdoc|, comme tous les autres \packages \latex. Sur la ligne de commande, il suffit d'utiliser la commande suivante:
+%
+% |texdoc udes-genie-these|
+%
+% L'exemple d'utilisation qui est distribué avec \laclasse est situé dans le même répertoire que la documentation, donc dans un sous-répertoire de votre distribution \latex.
+%
+% \textbf{Court terme:}\\ Si vous pensez utiliser \laclasse à court terme, alors procédez comme avec \overleaf, comme ce qui suit.
+%
+% \subsection*{\overleaf}
+%  Cette méthode fonctionne pour \overleaf et aussi toutes les autres distributions \latex. Pour utiliser \laclasse, vous pouvez récupérer une archive sur l'intranet de la Faculté de génie qui contient tout ce qu'il faut pour compiler un document. Consultez le fichier |README| distribué pour la suite.
+%
+% Cette manière de fonctionner fait en sorte que vous êtes responsables de faire les mises à jour, car elles ne se feront pas automatiquement. Cela veut aussi dire qu'au cours du temps, si vous n'êtes pas vigilants, vous pourriez avoir plusieurs projets qui utilisent \laclasse, mais qui utilisent des versions différentes.
+%
+% Dans \overleaf, pour l'instant, la classe \laclasse ne fait pas partie des \packages préinstallés et il n'est pas possible non plus de l'installer de manière standard, comme avec les autres distributions \latex (\miktex et \texlive). Selon les informations sur le site web d'\overleaf au moment de l'écriture de ces lignes, leur distribution \texlive est mise à jour une fois par année lorsque la nouvelle version de \texlive est disponible. Avec un peu de chance, \laclasse fera partie d'\overleaf lors de leur prochaine mise à jour. Même dans ce cas, cela veut dire que la classe \laclasse serait mise à jour qu'une seule fois par année.
+%
+% \subsection*{Vérification}
+% Afin de vérifier que l'installation s'est bien passée, il vous est suggéré de compiler l'exemple distribué avec \laclasse. C'est le meilleur moyen de savoir si vous avez tout ce qu'il faut.
+%
+% L'exemple a été compilé avec succès avec \overleaf et les distributions \miktex et \texlive sous \windows, \macos et \linux. Si des erreurs surviennent avec l'exemple, typiquement, c'est que l'installation de \laclasse n'a pas été faite correctement ou que la distribution de \latex qui est utilisée est incomplète ou désuète.
+%
+%\section{Contact et support technique}\label{sec:support}
+% Une personne est responsable du support de \laclasse. Vous pouvez contacter cette personne uniquement dans les situations suivantes:
+%\begin{itemize}
+%	\item Si des non-conformités par rapport à la dernière version du \protocole sont identifiées et que la section~\ref{sec:conformite} ne donne pas d'indication à ce sujet.
+%	\item S'il y a des incompatibilités avec d'autres \packages \latex et que \laclasse est la cause du problème.
+% \item Si vous avez une idée géniale afin d'améliorer \laclasse  et qu'elle serait bénéfique pour les autres. Cela à condition que votre idée ne soit pas déjà réalisée par d'autres \packages \latex existants et à condition que votre idée ne soit pas une préférence personnelle.
+%\end{itemize}
+%
+% La personne responsable ne répondra que pour des questions concernant les types de situations mentionnées ci-haut. Ne la contactez donc pas pour des questions reliées à l'usage général de \latex ou de \bibtex, car vos questions resteront sans réponses. L'entête du fichier \laclassefile nomme une personne responsable avec un courriel afin de la contacter.
+%
+% \section{Conformité au protocole}\label{sec:conformite}
+% Les chances sont que vous utilisez plusieurs \packages \latex pour la rédaction de votre document. Soyez donc vigilant et assurez-vous qu'ils ne modifieront pas le comportement de \laclasse ou tout autre aspect couvert par le \protocole afin de remettre un document qui est conforme.
+%
+% La classe \laclasse est réputée être conforme à la dernière version du \protocole. Si vous apportez des modifications aux fichiers distribués, vous pourriez alors remettre un document qui n'est pas conforme. Si des divergences au \protocole autres que celles mentionnées dans cette section sont identifiées, vous pouvez contacter la personne responsable (voir la section~\ref{sec:support}) en mentionnant et en expliquant les divergences. Ainsi, les correctifs nécessaires seront apportés dans les versions futures et tous bénéficieront des améliorations.
+%
+% Bien que \laclasse automatise et gère la mise en forme d'un document et l'ordonnancement des pages préliminaires et de la liste des références, elle ne tente pas de reproduire les fonctionnalités de \packages existants afin de laisser un maximum de liberté pour la rédaction. Plus spécifiquement, les points suivants ne sont pas pris en charge.
+%
+%	\subsection{Minuscules et majuscules} À cause de la quantité d'exceptions qui surviennent, tout ce qui est relatif aux exigences des  minuscules et majuscules, comme pour les titres de chapitres et de sections, n'est pas géré automatiquement par \laclasse. Cela veut dire que l'auteure ou l'auteur d'un document doit s'assurer de bien respecter ce qui est demandé dans le \protocole au sujet des minuscules et des majuscules.
+%
+%	\subsection{Légendes} La position des légendes des tableaux et des figures, telle qu'exigée par le \protocole, n'est pas gérée automatiquement. L'auteure ou l'auteur d'un document doit s'assurer de positionner correctement les légendes.
+%
+% \subsection{Sous-figures et sous-tableaux} La numérotation ainsi que la référence aux sous-figures et aux sous-tableaux ne sont pas gérées automatiquement par \laclasse, car plusieurs \packages \latex permettent aisément de satisfaire les exigences du \protocole à ce sujet. Le \package \pkg{subcaption} en est un exemple. L'auteure ou l'auteur d'un document doit s'assurer de bien respecter le \protocole à ce sujet.
+%
+% \subsection{Système international d'unités}
+% Le protocole requiert que le système international d'unités soit utilisé. L'écriture correcte des unités est l'un des endroits où il y a le plus d'erreurs dans un document, car les règles d'écritures des unités ne sont pas bien connues. Pourtant, elles sont fixées par le \bipm qui publie des documents à ce sujet. L'usage correct des unités n'est pas géré par \laclasse, mais plusieurs \packages \latex peuvent aider à la rédaction et le respect des normes de rédaction, dont \siunitx.
+%
+%\section{Utilisation}\label{sec:utilisation}%
+% Un document basé sur \laclasse est rédigé comme tout autre document \latex standard de type \cls{book}, car la classe \laclasse est basée sur cette classe ainsi que sur d'autres \packages standards de \latex. La classe de document \laclasse ne devrait pas interférer avec les \packages standards de \latex et toutes les macros habituelles de \latex sont accessibles et l'utilisation de tout \package \latex est permis. La classe \laclasse tente d'imposer le minimum afin de maximiser la liberté de la personne qui rédige.
+%
+% Ce qui suit explique l'utilisation de \laclasse et il peut être avantageux de suivre avec l'exemple qui est distribué avec \laclasse.
+%
+% \subsection{Encodage}\label{sec:encodage}
+% L'encodage des fichiers distribués est \encodage, autant pour l'exemple d'utilisation que pour \laclasse. Cet encodage est maintenant l'encodage par défaut de toutes les variantes de \latex pour les fichiers en entrée. En effet, depuis la version d'avril 2018, \latex et \pdflatex présument que l'encodage des fichiers en entrée est \encodage et il n'est donc plus nécessaire de le spécifier avec le \package \pkg{inputenc} dans le préambule. Normalement, si vous avez une distribution à jour, le \package \pkg{inputenc} est utilisé uniquement si l'encodage n'est pas \encodage, malgré que de le spécifier ne cause pas de torts. Par design, l'encodage \encodage est le seul admis par \lualatex et \xelatex et l'usage du \package \pkg{inputenc} n'a aucun effet. Bref, il est maintenant avantageux d'avoir tous les fichiers en entrée dans l'encodage \encodage.
+%
+% Les fontes utilisées ne sont pas imposées afin de donner la même liberté que les classes standards de \latex, comme \pkg{book} et \pkg{article}. L'encodage des fontes est fixé avec le \package \pkg{fontenc} dans le préambule du document, comme tout autre document \latex.
+%
+%\begin{implementation}
+%%-----------------------------------------------------------------------------
+%%---   DECLARATION DES VARIABLES   -------------------------------------------
+%%-----------------------------------------------------------------------------
+\bool_new:N \g_@@_autobib_bool
+\bool_new:N \g_@@_legendes_min_bool
+\bool_new:N \g_@@_lignes_bool
+\bool_new:N \g_@@_liste_figures_bool
+\bool_new:N \g_@@_liste_tableaux_bool
+
+\clist_new:N \g_@@_dedicace_cl
+\clist_new:N \g_@@_fichiers_references_cl
+\clist_new:N \g_@@_jury_codirecteurs_cl
+\clist_new:N \g_@@_jury_evaluateurs_cl
+\clist_new:N \g_@@_pas_jury_cl
+\clist_new:N \g_@@_remerciements_cl
+\clist_new:N \g_@@_specialite_cl
+
+\int_new:N \g_@@_pages_int
+\int_new:N \l_@@_tmp_int
+
+\seq_new:N \g_@@_jury_codirecteurs_mf_seq
+\seq_new:N \g_@@_jury_evaluateurs_mf_seq
+
+\tl_new:N \g_@@_acknowledgementsname_tl
+\tl_new:N \g_@@_adressname_tl
+\tl_new:N \g_@@_auteur_nom_tl
+\tl_new:N \g_@@_auteur_prenom_tl
+\tl_new:N \g_@@_date_annee_tl
+\tl_new:N \g_@@_date_mois_tl
+%<protocole>\tl_new:N \g_@@_date_cres_tl
+%<protocole>\tl_new:N \g_@@_date_cefg_tl
+\tl_new:N \g_@@_dedicace_tl
+\tl_new:N \g_@@_departement_tl
+\tl_new:N \g_@@_dprdoctorat_tl
+\tl_new:N \g_@@_dprmaitrise_tl
+\tl_new:N \g_@@_essai_tl
+\tl_new:N \g_@@_facultyname_tl
+\tl_new:N \g_@@_fichier_acronymes_tl
+\tl_new:N \g_@@_fichier_lexique_tl
+\tl_new:N \g_@@_fichier_remerciements_tl
+\tl_new:N \g_@@_fichier_resume_anglais_tl
+\tl_new:N \g_@@_fichier_resume_francais_tl
+\tl_new:N \g_@@_fichier_symboles_tl
+\tl_new:N \g_@@_format_tl
+\tl_new:N \g_@@_juryname_tl
+\tl_new:N \g_@@_jury_codirname_tl
+\tl_new:N \g_@@_jury_codirnamef_tl
+\tl_new:N \g_@@_jury_directeur_tl
+\tl_new:N \g_@@_jury_directeur_mf_tl
+\tl_new:N \g_@@_jury_dirname_tl
+\tl_new:N \g_@@_jury_dirnamef_tl
+\tl_new:N \g_@@_jury_evalname_tl
+\tl_new:N \g_@@_jury_evalnamef_tl
+\tl_new:N \g_@@_langue_tl
+\tl_new:N \g_@@_listacronymsname_tl
+\tl_new:N \g_@@_listsymbolsname_tl
+\tl_new:N \g_@@_memoire_tl
+\tl_new:N \g_@@_mots_cles_anglais_tl
+\tl_new:N \g_@@_mots_cles_francais_tl
+\tl_new:N \g_@@_motsclesname_tl
+\tl_new:N \g_@@_programme_tl
+\tl_new:N \g_@@_references_engin_tl
+\tl_new:N \g_@@_specialite_tl
+\tl_new:N \g_@@_specialityname_tl
+\tl_new:N \g_@@_style_references_tl
+\tl_new:N \g_@@_these_tl
+\tl_new:N \g_@@_titre_anglais_tl
+\tl_new:N \g_@@_titre_francais_tl
+\tl_new:N \g_@@_type_tl
+\tl_new:N \g_@@_udesname_tl
+
+%%-----------------------------------------------------------------------------
+%%---   DECLARATION DES CONSTANTES   ------------------------------------------
+%%-----------------------------------------------------------------------------
+\int_const:Nn \c_@@_max_pages_dprdoctorat_int {40}
+\int_const:Nn \c_@@_max_pages_dprmaitrise_int {25}
+\int_const:Nn \c_@@_max_pages_essai_int {70}
+\int_const:Nn \c_@@_max_pages_memoire_int {120}
+%<protocole>\int_const:Nn \c_@@_max_pages_protocole_int {10000}
+\int_const:Nn \c_@@_max_pages_these_int {250}
+
+\tl_const:Nn \c_@@_female_tl {f}
+\tl_const:Nn \c_@@_format_livre_tl {livre}
+\tl_const:Nn \c_@@_format_simple_tl {simple}
+\tl_const:Nn \c_@@_langue_english_tl {english}
+\tl_const:Nn \c_@@_langue_francais_tl {francais}
+\tl_const:Nn \c_@@_male_tl {m}
+\tl_const:Nn \c_@@_programme_aero_tl {aerospatial}
+\tl_const:Nn \c_@@_programme_chim_tl {chimique}
+\tl_const:Nn \c_@@_programme_civil_tl {civil}
+\tl_const:Nn \c_@@_programme_elec_tl {electrique}
+\tl_const:Nn \c_@@_programme_meca_tl {mecanique}
+%<protocole>\tl_const:Nn \c_@@_protocole_droits_tl {Tous~droits~réservés.\ Faculté~de~génie,~Université~de~Sherbrooke.}
+%<protocole>\tl_const:Nn \c_@@_protocole_notice_tl {Document~adopté~à~la~Faculté~de~génie~de~l'Université~de~Sherbrooke~par~le~Comité~de~la~recherche~et~des~études~supérieures~(\g_@@_date_cres_tl)~et~le~Comité~des~études~de~la~faculté~de~génie~(\g_@@_date_cefg_tl).}
+\tl_const:Nn \c_@@_references_biblatex_tl {biblatex}
+\tl_const:Nn \c_@@_references_bibtex_tl {bibtex}
+\tl_const:Nn \c_@@_type_dprdoctorat_tl {dprdoctorat}
+\tl_const:Nn \c_@@_type_dprmaitrise_tl {dprmaitrise}
+\tl_const:Nn \c_@@_type_essai_tl {essai}
+\tl_const:Nn \c_@@_type_memoire_tl {memoire}
+%<protocole>\tl_const:Nn \c_@@_type_protocole_tl {protocole}
+\tl_const:Nn \c_@@_type_these_tl {these}
+
+%%-----------------------------------------------------------------------------
+%%---   INITIALISATION DE VARIABLES   -----------------------------------------
+%%-----------------------------------------------------------------------------
+\tl_gset_eq:NN \g_@@_references_engin_tl \c_@@_references_bibtex_tl
+\tl_gset:Nn \g_@@_style_references_tl {plain}
+
+%% Identifie les types de documents avec dedicace (optionnelle)
+\clist_gput_right:Nx \g_@@_dedicace_cl
+  {\c_@@_type_essai_tl, \c_@@_type_memoire_tl, \c_@@_type_these_tl}
+%% Identifie les types de documents sans jury
+\clist_gput_right:Nx \g_@@_pas_jury_cl
+  {\c_@@_type_essai_tl}
+%% Identifie les types de documents avec remerciements (optionnels)
+\clist_gput_right:Nx \g_@@_remerciements_cl
+  {\c_@@_type_essai_tl, \c_@@_type_memoire_tl, \c_@@_type_these_tl}
+%% Identifie les types de documents avec specialite
+\clist_gput_right:Nx \g_@@_specialite_cl
+  {\c_@@_type_memoire_tl, \c_@@_type_these_tl}
+
+%%-----------------------------------------------------------------------------
+%%---   MESSAGES D'ERREURS   --------------------------------------------------
+%%-----------------------------------------------------------------------------
+\msg_new:nnnn {udesgeniethese}{erreur_format}{Un~LaTeX~plus~récent~est~nécessaire.~Veuillez~mettre~à~jour~votre~distribution~LaTeX.}{Le~format~2022-06-01~ou~un~plus~récent~est~nécessaire.}
+
+\msg_new:nnnn {udesgeniethese}{biblatex_en_trop}{Avec~l'option~bibtex,~il~ne~faut~pas~charger~le~package~biblatex.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{biblatex_manquant}{L'option~biblatex~requiert~de~charger~le~package~biblatex~dans~le~preambule.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{auteur_nom_vide}{Le~nom~de~l'auteur~du~document~n'est~pas~specifie.~Specifiez-le~avec~la~macro~\Auteur~dans~le~preambule.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{auteur_prenom_vide}{Le~prenom~de~l'auteur~du~document~n'est~pas~specifie.~Specifiez-le~avec~la~macro~\Auteur~dans~le~preambule.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{config_fichier_vide}{Le~fichier~pour~#1~n'est~pas~specifie.~Specifiez-le~avec~la~cle~'#2'~dans~la~configuration~du~document.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{config_fichiers_vides}{Les~fichiers~pour~#1~ne~sont~pas~specifies.~Specifiez-les~avec~la~cle~'#2'~dans~la~configuration~du~document.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{config_langue_vide}{La~langue~principale~du~document~n'est~pas~specifiee.~Specifiez-la~avec~la~cle~'langue'~dans~la~configuration~du~document.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{config_programme_vide}{Le~programme~du~document~n'est~pas~specifie.~Specifiez-le~avec~la~cle~'programme'~dans~la~configuration~du~document.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{config_type_vide}{Le~type~du~document~n'est~pas~specifie.~Specifiez-le~avec~la~cle~'type'~dans~la~configuration~du~document.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{date_annee_vide}{L'annee~de~la~date~du~document~n'est~pas~specifiee.~Specifiez-la~avec~la~macro~\Date~dans~le~preambule.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{date_mois_vide}{Le~mois~de~la~date~du~document~n'est~pas~specifie.~Specifiez-le~avec~la~macro~\Date~dans~le~preambule.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{dprdoctorat_max_pages}{La~DPR~de~doctorat~semble~longue.~Le~protocole~exige~un~maximum~de~40~pages.}{Consultez~le~protocole~de~redaction.}
+
+\msg_new:nnnn {udesgeniethese}{dprmaitrise_max_pages}{La~DPR~de~maitrise~semble~longue.~Le~protocole~exige~un~maximum~de~25~pages.}{Consultez~le~protocole~de~redaction.}
+
+\msg_new:nnnn {udesgeniethese}{essai_max_pages}{L'essai~semble~long.~Le~protocole~exige~un~maximum~de~70~pages.}{Consultez~le~protocole~de~redaction.}
+
+\msg_new:nnnn {udesgeniethese}{memoire_max_pages}{Le~memoire~semble~long.~Le~protocole~exige~un~maximum~de~120~pages.}{Consultez~le~protocole~de~redaction.}
+
+\msg_new:nnnn {udesgeniethese}{mots_cles_anglais_vide}{Les~mots-cles~anglais~ne~sont~pas~specifies.~Specifiez-les~avec~la~macro~\MotsClesAnglais~dans~le~preambule.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{mots_cles_francais_vide}{Les~mots-cles~francais~ne~sont~pas~specifies.~Specifiez-les~avec~la~macro~\MotsClesFrancais~dans~le~preambule.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{remerciements_longs}{Les~remerciements~doivent~etre~d'une~page~maximum.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{resume_anglais_long}{Le~resume~anglais~doit~etre~d'une~page~maximum,~incluant~les~mots-cles.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{titre_resume_mots_cles_anglais}{Le~titre,~le~resume~et~les~mots-cles~anglais~doivent~etre~donnes.~On~ne~peut~donner~l'un~sans~les~autres.}{Consultez~la~documentation.}
+
+\msg_new:nnnn {udesgeniethese}{resume_francais_long}{Le~resume~francais~doit~etre~d'une~page~maximum,~incluant~les~mots-cles.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{these_max_pages}{La~these~semble~longue.~Le~protocole~exige~un~maximum~de~250~pages}{Consultez~le~protocole~de~redaction.}
+
+\msg_new:nnnn {udesgeniethese}{titre_anglais_vide}{Le~titre~anglais~du~document~n'est~pas~specifie.~Specifiez-le~avec~la~macro~\TitreAnglais~dans~le~preambule.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{titre_francais_vide}{Le~titre~francais~du~document~n'est~pas~specifie.~Specifiez-le~avec~la~macro~\TitreFrancais~dans~le~preambule.}{Consultez~la~documentation~de~la~classe.}
+
+\msg_new:nnnn {udesgeniethese}{aerospatial}{Le~type~du~document~doit~etre~essai~si~le~programme~est~aerospatial.~Specifiez-le~~bon~type~dans~la~configuration~du~document.}{Consultez~la~documentation~de~la~classe.}
+
+%\end{implementation}
+%
+% \subsection{Options} \label{class-options}
+% Pour utiliser \laclasse, il faut spécifier son utilisation avec la macro \cs{documentclass} de \latex. La classe \laclasse a deux types d'options qui sont spécifiées dans le paramètre optionnel de \cs{documentclass}.
+%
+%\begin{variable}{livre,simple}
+%\begin{syntax}
+% |\documentclass| \oarg{style} \{\laclassename\}
+%\end{syntax}
+% La valeur de \meta{style} est |livre| ou |simple|, tel que spécifié dans le \protocole. Si le paramètre est absent, le style |livre| est utilisé par défaut.
+%
+%\end{variable}
+%
+%\begin{variable}[added=2022-09-19]{bibtex,biblatex}
+%\begin{syntax}
+% |\documentclass| \oarg{engin-bib} \{\laclassename\}
+%\end{syntax}
+% La valeur de \meta{engin-bib} est |bibtex| ou |biblatex|, selon ce que vous voulez utiliser. Si rien n'est spécifié, |bibtex| est utilisé par défaut.
+%
+% Si le choix est |bibtex|, le style bibliographique est spécifié avec le champ de configuration |style-references| et les fichiers de références utilisés par |bibtex| sont ceux spécifiés avec le champ |references| (voir la section~\ref{sec:config}). La liste des références est générée automatiquement par \laclasse avec la macro |\bibliography|.
+%
+% Si le choix est de |biblatex|, la personne qui rédige le document est responsable de charger le \package |biblatex| avec la macro |\usepackage| dans le préambule, car trop de cas de figures peuvent survenir afin d'assurer un chargement correct. La liste des références est gérérée automatiquement par \laclasse avec la macro |\printbibliography| et les fichiers de références sont spécifiés avec le champs de configuration |references| (voir la section~\ref{sec:config}). Les fichiers de références sont fournis automatiquement par \laclasse avec la macro |\addbibresource|. Le champ de configuration |style-references| est ignoré, car le style est géré par la personne qui rédige avec avec l'aide de |biblatex|.
+%
+%\end{variable}
+%\begin{implementation}
+%%-----------------------------------------------------------------------------
+%%---   OPTIONS DE CLASSE   ---------------------------------------------------
+%%-----------------------------------------------------------------------------
+\IfFormatAtLeastTF {2022-06-01}
+  {}{\msg_fatal:nn{udesgeniethese}{erreur_format}}
+
+\DeclareKeys
+{
+  biblatex .code:n = {\tl_gset_eq:NN \g_@@_references_engin_tl \c_@@_references_biblatex_tl},
+  biblatex .usage:n = load,
+  bibtex .code:n = {\tl_gset_eq:NN \g_@@_references_engin_tl \c_@@_references_bibtex_tl},
+  bibtex .usage:n = load,
+  livre .code:n = {
+    \PassOptionsToClass{twoside,openright}{book}
+    \PassOptionsToPackage{twoside=true}{geometry}
+    \tl_gset_eq:NN \g_@@_format_tl \c_@@_format_livre_tl
+  },
+  livre .usage:n = load,
+  simple .code:n = {
+    \PassOptionsToClass{oneside,openany}{book}
+    \PassOptionsToPackage{twoside=false}{geometry}
+    \tl_gset_eq:NN \g_@@_format_tl \c_@@_format_simple_tl
+  },
+  simple .usage:n = load,
+  unknown .code:n = {\PassOptionsToClass{\CurrentOption}{book}},
+}
+
+\SetKeys{livre}
+
+\ProcessKeyOptions
+
+
+%%-----------------------------------------------------------------------------
+%%---   DEPENDANCES DE CLASSE   -----------------------------------------------
+%%-----------------------------------------------------------------------------
+\LoadClass[letterpaper,12pt]{book}
+
+\RequirePackage[english,french]{babel}
+\RequirePackage{caption,fancyhdr,flafter,geometry,parskip,setspace}
+
+%%-----------------------------------------------------------------------------
+%%---   MACROS DE DOCUMENT (USAGER)   --------------------------------------
+%%-----------------------------------------------------------------------------
+%\end{implementation}
+%
+% \subsection{Configuration du document}\label{sec:config}
+% Le \protocole a des exigences au niveau de l'ordonnancement de certaines parties ou de certains éléments de présentation. Certaines de ces exigences sont gérées automatiquement en utilisant la macro de configuration du document, la macro |\ConfigurationDocument|. Cette macro est utilisée dans le préambule du document. L’exemple distribué avec \laclasse montre un exemple de configuration. Vous devez évidemment adapter le contenu des champs de la configuration du document pour refléter vos besoins et les noms de vos fichiers. Il est à remarquer que chaque ligne qui spécifie un champ se termine par une virgule.
+%
+%\begin{function}{\ConfigurationDocument}
+%\begin{syntax}
+%\begin{verbatim}
+% \ConfigurationDocument
+% {
+%   ...
+% }
+%\end{verbatim}
+%\end{syntax}
+%\end{function}
+%
+%\begin{variable}{langue}
+%\begin{syntax}
+% |langue =| \meta{valeur}
+%\end{syntax}
+% Ce champ spécifie la langue principale utilisée dans le document. Les choix pour \meta{valeur} sont |francais| et |english|. Il n'y a pas de valeur par défaut, ce champ doit être spécifié.
+%\end{variable}
+%
+%\begin{variable}{type}
+%\begin{syntax}
+% |type =| \meta{valeur}
+%\end{syntax}
+% Ce champ spécifie le type document, comme une thèse de doctorat. Les choix pour \meta{valeur} sont |dprmaitrise|, |dprdoctorat|, |essai|, |memoire| et |these|. Il n'y a pas de valeur par défaut, ce champ doit être spécifié.
+%\end{variable}
+%
+%\begin{variable}{programme}
+%\begin{syntax}
+% |programme =| \meta{valeur}
+%\end{syntax}
+% Ce champ spécifie le programme d'étude. Les choix pour \meta{valeur} sont |electrique|, |mecanique|, |aerospatial|, |chimique| et |civil|. Il n'y a pas de valeur par défaut, ce champ doit être spécifié.
+%\end{variable}
+%
+%\begin{variable}{lignes}
+%\begin{syntax}
+% |lignes =| \meta{valeur}
+%\end{syntax}
+% Ce champ spécifie si des lignes sont présentes dans l'entête et le pied de page du document. Les choix pour \meta{valeur} sont |true| et |false|. Si ce champ est omis, la valeur par défaut est |true|. Il est possible aussi de spécifier uniquement |lignes| pour spécifier |true|, comme dans l'exemple au début de la section.
+%\end{variable}
+%
+%\begin{variable}{liste-figures,liste-tableaux}
+%\begin{syntax}
+% |liste-figures =| \meta{valeur}
+% |liste-tableaux =| \meta{valeur}
+%\end{syntax}
+% Ces champs spécifient respectivement si une liste des figures et une liste des tableaux doivent être générées. Les choix pour \meta{valeur} sont |true| et |false|. Si le champ est omis, la valeur par défaut est |true|. Il est possible aussi de spécifier uniquement |liste-figures| ou |liste-tableaux| pour spécifier |true|, comme dans l'exemple au début de la section.
+%\end{variable}
+%
+%\begin{variable}{fichier-resume-francais,fichier-resume-anglais}
+%\begin{syntax}
+% |fichier-resume-francais =| \marg{valeur}
+% |fichier-resume-anglais =| \marg{valeur}
+%\end{syntax}
+% Ces champs spécifient respectivement le nom du fichier contenant le résumé français et le résumé anglais. \meta{valeur} est un nom de fichier et l'extension |.tex| est assumé. Si, tout en respectant le \protocole, un de ces résumés n'a pas à être fourni, le champ correspondant peut être omis.
+%\end{variable}
+%
+%\begin{variable}{fichier-remerciements,fichier-lexique,fichier-symboles,fichier-acronymes}
+%\begin{syntax}
+% |fichier-remerciements =| \marg{valeur}
+% |fichier-lexique =| \marg{valeur}
+% |fichier-symboles =| \marg{valeur}
+% |fichier-acronymes =| \marg{valeur}
+%\end{syntax}
+% Ces champs spécifient respectivement le nom du fichier contenant les remerciements, le lexique, la liste des symboles et la liste des acronymes. \meta{valeur} est un nom de fichier et l'extension |.tex| est assumé. Si, tout en respectant le \protocole, une de ces parties préliminaires n'est pas donnée, le champ correspondant peut être omis.
+%\end{variable}
+%
+%\begin{variable}{fichiers-references}
+%\begin{syntax}
+% |fichiers-references =| \marg{valeur}
+%\end{syntax}
+% Ce champ spécifie les fichiers de bibliographie \bibtex à être inclus pour la construction de la liste des références par \bibtex ou un autre utilitaire équivalent. La liste des fichiers à utiliser est spécifiée par \meta{valeur}, une liste de noms de fichiers. Chaque nom de fichier est séparé par une virgule. Ce champ ne doit pas contenir d'espaces superflus. D'autres détails au sujet des références bibliographiques sont donnés dans la section~\ref{sec:refbib}.
+%\end{variable}
+%
+%\begin{variable}[added=2022-09-19]{style-references}
+%\begin{syntax}
+% |style-references =| \marg{valeur}
+%\end{syntax}
+% Ce champ spécifie le style bibliographique à utiliser pour la construction de la liste des références, tel que requis par \bibtex ou un autres engins bibliographiques équivalents. Comme ce champ spécifie le style à utiliser, il n'est pas nécessaire de mettre la macro |\bibliographystyle| dans le préambule, car la classe \laclasse automatise cette étape. Ce champ est ignoré, si l'option de classe |biblatex| a été spécifié (voir la section~\ref{class-options}). Consultez le protocole au sujet des styles bibliographiques. D'autres détails au sujet des références bibliographiques sont donnés dans la section~\ref{sec:refbib}.
+%\end{variable}
+%
+%\begin{variable}[added=2023-08-29]{auto-bib}
+%\begin{syntax}
+% |auto-bib =| \meta{valeur}
+%\end{syntax}
+% Ce champ est utilitaire et il est ignoré, sauf si l'option |biblatex| de classe a été spécifié (voir section~\ref{class-options}). Les choix pour \meta{valeur} sont |true| et |false|. Si ce champ est |true|, l'extension |bib| est ajoutée automatiquement à tous les fichiers spécifiés avec le champ |fichiers-references|. Ceci peut être pratique pour uniformiser les noms dans la liste des fichiers que \bibtex ou |biblatex| soit utilisé. Si la valeur de ce champ est |false|, rien n'est fait. Si ce champ est omis, la valeur par défaut est |false|. Il est possible aussi de spécifier uniquement |auto-bib| pour spécifier |true|.
+%\end{variable}
+%
+%
+%\begin{variable}[added=2023-08-30]{legendes-min}
+%\begin{syntax}
+% |legendes-min =| \meta{valeur}
+%\end{syntax}
+% Ce champ permet de spécifier si les mots \textit{figure} et \textit{tableau} des légendes sont écrits en style \textit{minuscule} ou non. Si ce champ est |true|, alors seule la première lettre du mot est en majuscule et ils sont écrits comme suit: Figure et Tableau. Si ce champ est |false|, alors le style est \textit{petites majuscules} et ils sont écrits comme suit: \textsc{Figure} et \textsc{Tableau}. La valeur par défaut de ce champ est |false|.
+%\end{variable}
+%\begin{implementation}
+\DeclareDocumentCommand \ConfigurationDocument { m }
+{ \keys_set:nn { udes-genie-these } { #1 } }
+
+\keys_define:nn {udes-genie-these}
+{
+  langue .choices:nn = {francais,english}
+    {\tl_gset_eq:NN \g_@@_langue_tl \l_keys_choice_tl},
+  langue .value_required:n = true,
+%<these>  type .choices:nn = {dprmaitrise,dprdoctorat,essai,memoire,these}
+%<protocole>  type .choices:nn = {protocole}
+    {\tl_gset_eq:NN \g_@@_type_tl \l_keys_choice_tl},
+  type .value_required:n = true,
+  programme .choices:nn = {electrique,mecanique,aerospatial,chimique,civil}
+    {\tl_gset_eq:NN \g_@@_programme_tl \l_keys_choice_tl},
+  programme .value_required:n = true,
+  liste-figures .bool_gset:N = \g_@@_liste_figures_bool,
+  liste-figures .default:n = true,
+  liste-tableaux .bool_gset:N = \g_@@_liste_tableaux_bool,
+  liste-tableaux .default:n = true,
+  lignes .bool_gset:N = \g_@@_lignes_bool,
+  lignes .default:n = true,
+  fichier-resume-francais .tl_gset:N = \g_@@_fichier_resume_francais_tl,
+  fichier-resume-francais .value_required:n = true,
+  fichier-resume-anglais .tl_gset:N = \g_@@_fichier_resume_anglais_tl,
+  fichier-resume-anglais .value_required:n = true,
+  fichier-remerciements .tl_gset:N = \g_@@_fichier_remerciements_tl,
+  fichier-remerciements .value_required:n = true,
+  fichier-lexique .tl_gset:N = \g_@@_fichier_lexique_tl,
+  fichier-lexique .value_required:n = true,
+  fichier-symboles .tl_gset:N = \g_@@_fichier_symboles_tl,
+  fichier-symboles .value_required:n = true,
+  fichier-acronymes .tl_gset:N = \g_@@_fichier_acronymes_tl,
+  fichier-acronymes .value_required:n = true,
+  fichiers-references .clist_gset:N = \g_@@_fichiers_references_cl,
+  fichiers-references .value_required:n = true,
+  style-references .tl_gset:N = \g_@@_style_references_tl,
+  style-references .value_required:n = true,
+  auto-bib .bool_gset:N = \g_@@_autobib_bool,
+  auto-bib .default:n = true,
+  legendes-min .bool_gset:N = \g_@@_legendes_min_bool,
+  legendes-min .default:n = true,
+}
+
+%\end{implementation}
+%
+% \subsection{Informations générales}\label{sec:macros}
+% Les macros suivantes sont utilisées dans le préambule du document.
+%
+%\begin{function}{\Auteur}
+%\begin{syntax}
+% |\Auteur| \marg{prénom} \marg{nom}
+%\end{syntax}
+% L'auteure ou l'auteur du document sur la page titre est spécifié avec cette macro. La macro a deux paramètres qui spécifient le prénom et le nom de l'auteure ou l'auteur.
+%\end{function}
+%
+%\begin{implementation}
+\DeclareDocumentCommand \Auteur {mm}
+{
+  \tl_gset:Nn \g_@@_auteur_prenom_tl {#1}
+  \tl_gset:Nn \g_@@_auteur_nom_tl {#2}
+}
+
+%\end{implementation}
+%
+%\begin{function}{\Date}
+%\begin{syntax}
+% |\Date| \marg{mois} \marg{année}
+%\end{syntax}
+% La date sur la page titre est spécifiée avec cette macro. La macro a deux paramètres qui spécifient le mois et l'année.
+%\end{function}
+%
+%\begin{implementation}
+\DeclareDocumentCommand \Date {mm}
+{
+  \tl_gset:Nn \g_@@_date_mois_tl {#1}
+  \tl_gset:Nn \g_@@_date_annee_tl {#2}
+}
+
+%\end{implementation}
+%
+%\begin{function}{\Dedicace}
+%\begin{syntax}
+% |\Dedicace| \marg{texte}
+%\end{syntax}
+% Le texte de la dédicace est spécifié avec cette macro. La macro a un seul paramètre et il permet de spécifier le texte de la dédicace, typiquement une phrase courte.
+%\end{function}
+%
+%\begin{implementation}
+\DeclareDocumentCommand \Dedicace {+m}
+{ \tl_gset:Nn \g_@@_dedicace_tl {#1} }
+
+%\end{implementation}
+%
+%\begin{function}{\Directeur,\Directrice}
+%\begin{syntax}
+% |\Directeur| \marg{prénom} \marg{nom}
+% |\Directrice| \marg{prénom} \marg{nom}
+%\end{syntax}
+% La directrice principale ou le directeur principal de recherche est spécifié avec cette macro. Ces macros ont deux paramètres qui spécifient le prénom et le nom de la directrice ou du directeur.
+%\end{function}
+%
+%\begin{implementation}
+\DeclareDocumentCommand \Directeur {mm}
+{
+  \tl_gset:Nn \g_@@_jury_directeur_tl {#1\ #2}
+  \tl_gset_eq:NN \g_@@_jury_directeur_mf_tl \c_@@_male_tl
+}
+
+\DeclareDocumentCommand \Directrice {mm}
+{
+  \tl_gset:Nn \g_@@_jury_directeur_tl {#1\ #2}
+  \tl_gset_eq:NN \g_@@_jury_directeur_mf_tl \c_@@_female_tl
+}
+
+%\end{implementation}
+%
+%\begin{function}{\Codirecteur,\Codirectrice}
+%\begin{syntax}
+% |\Codirecteur| \marg{prénom} \marg{nom}
+% |\Codirectrice| \marg{prénom} \marg{nom}
+%\end{syntax}
+% Les codirectrices et les codirecteurs de recherche sont spécifiés avec ces macros. Ces macros ont deux paramètres qui spécifient le prénom et le nom de la codirectrice ou du codirecteur. Afin d'ajouter à la liste toutes les codirectrices et tous les codirecteurs, il faut utiliser ces macros autant de fois qu'il y a de codirectrices et de codirecteurs.
+%\end{function}
+%
+%\begin{implementation}
+\DeclareDocumentCommand \Codirecteur {mm}
+{
+  \clist_gput_right:Nn \g_@@_jury_codirecteurs_cl {#1\ #2}
+  \seq_gput_right:NV \g_@@_jury_codirecteurs_mf_seq \c_@@_male_tl
+}
+
+\DeclareDocumentCommand \Codirectrice {mm}
+{
+  \clist_gput_right:Nn \g_@@_jury_codirecteurs_cl {#1\ #2}
+  \seq_gput_right:NV \g_@@_jury_codirecteurs_mf_seq \c_@@_female_tl
+}
+
+%\end{implementation}
+%
+%\begin{function}{\Evaluateur,\Evaluatrice}
+%\begin{syntax}
+% |\Evaluateur| \marg{prénom} \marg{nom}
+% |\Evaluatrice| \marg{prénom} \marg{nom}
+%\end{syntax}
+% Les évaluatrices et les évaluateurs du jury sont spécifiés avec ces macros. Ces macros ont deux paramètres qui spécifient le prénom et le nom d'une évaluatrice ou d'un évaluateur. Afin d'ajouter à la liste toutes les évaluatrices et tous les évaluateurs, il faut utiliser ces macros autant de fois qu'il y a d'évaluatrices et d'évaluateurs.
+%\end{function}
+%
+%\begin{implementation}
+\DeclareDocumentCommand \Evaluateur {mm}
+{
+  \clist_gput_right:Nn \g_@@_jury_evaluateurs_cl {#1\ #2}
+  \seq_gput_right:NV \g_@@_jury_evaluateurs_mf_seq \c_@@_male_tl
+}
+
+\DeclareDocumentCommand \Evaluatrice {mm}
+{
+  \clist_gput_right:Nn \g_@@_jury_evaluateurs_cl {#1\ #2}
+  \seq_gput_right:NV \g_@@_jury_evaluateurs_mf_seq \c_@@_female_tl
+}
+
+%\end{implementation}
+%
+%\begin{function}{\MotsClesAnglais,\MotsClesFrancais}
+%\begin{syntax}
+% |\MotsClesAnglais| \marg{keywords}
+% |\MotsClesFrancais| \marg{mots-clés}
+%\end{syntax}
+% Les mot-clés des résumés anglais et français sont spécifiés avec ces macros. Ces macros ont un seul paramètre et il spécifie la liste des mots-clés. Si, tout en respectant le \protocole des mots-clés dans une langue ne sont pas requis, alors l'usage de la macro correspondante peut être omis.
+%\end{function}
+%
+%\begin{implementation}
+\DeclareDocumentCommand \MotsClesAnglais {m}
+{ \tl_gset:Nn \g_@@_mots_cles_anglais_tl {#1} }
+
+\DeclareDocumentCommand \MotsClesFrancais {m}
+{ \tl_gset:Nn \g_@@_mots_cles_francais_tl {#1} }
+
+%\end{implementation}
+%
+%\begin{function}{\TitreAnglais,\TitreFrancais}
+%\begin{syntax}
+% |\TitreAnglais| \marg{title}
+% |\TitreFrancais| \marg{titre}
+%\end{syntax}
+% Les titres anglais et français du document sont spécifiés avec ces macros. Ces macros ont un seul paramètre qui spécifie le texte du titre. Si, tout en respectant le \protocole le titre dans une langue n'est pas requis, alors l'usage de la macro correspondante peut être omis.
+%\end{function}
+%
+%\begin{implementation}
+\DeclareDocumentCommand \TitreAnglais {+m}
+{ \tl_gset:Nn \g_@@_titre_anglais_tl {#1} }
+
+\DeclareDocumentCommand \TitreFrancais {+m}
+{ \tl_gset:Nn \g_@@_titre_francais_tl {#1} }
+
+%\end{implementation}
+%
+%\subsection{Document multilingue}\label{sec:multi}
+%
+% Certains documents sont écrits avec des parties en français et d'autres en anglais. C'est souvent le cas avec un mémoire ou une thèse par articles où, par exemple, les articles insérés sont écrits en anglais alors que le reste du document est écrit en français.
+%
+% La gestion du passage d'une langue à une autre dans les parties principales est laissée à la personne qui rédige le document. Cependant, la classe \laclasse est basée, entre autres, sur le \package \babel qui permet de gérer des documents multilingues. Pour plus de détail sur le passage d'une langue à une autre dans un document, la lecture de la documentation de \babel est suggérée. Avec un bon usage des macros de \babel, la typographie sera ajustée en accord avec la langue de ces différentes parties du document.
+%
+%\subsection{Références bibliographiques}\label{sec:refbib}
+% L'utilisation de \bibtex, ou autre utilitaires similaires, avec \laclasse est évidemment possible.
+%
+% Le style bibliographique est spécifié dans le document avec le champ |style-references| de la configuration du document et les fichiers de références (fichiers |.bib|) sont spécifiés avec le champ |fichiers-references|. Il est important de noter que le style bibliographique choisi doit respecter les exigences du \protocole. La section~\ref{sec:config} discute de ces champs et la section~\ref{class-options} discute aussi des options pour \bibtex et |biblatex|.
+%
+%\begin{implementation}
+%<*protocole>
+\DeclareDocumentCommand \DateCRES {m}
+{ \tl_gset:Nn \g_@@_date_cres_tl {#1} }
+
+\DeclareDocumentCommand \DateCEFG {m}
+{ \tl_gset:Nn \g_@@_date_cefg_tl {#1} }
+
+%</protocole>
+%%-----------------------------------------------------------------------------
+%%---   MISE EN PAGE   --------------------------------------------------------
+%%-----------------------------------------------------------------------------
+\setlength{\parskip}{1.5ex plus0.25ex minus0ex}
+\setlength{\parindent}{0em}
+\clubpenalty=10000
+\widowpenalty=10000
+\geometry{letterpaper,hmargin={2.5cm,2.5cm},vmargin={2.5cm,2.5cm},
+  foot=1.25cm,head=0.9cm,headsep=0.35cm,bindingoffset=0.5cm}
+\captionsetup[table]{labelsep=quad,textformat=simple,font=normal,margin=5ex,position=top,skip=0.5ex}
+\captionsetup[figure]{labelsep=quad,textformat=simple,font=normal,margin=5ex,position=bottom,skip=1ex}
+\frenchsetup{ItemLabels=\textendash}
+
+%%-----------------------------------------------------------------------------
+%%---   REDEFINITION MACROS STANDARDS   ------------------------------------
+%%-----------------------------------------------------------------------------
+\renewcommand*{\appendix}
+{
+  \par\singlespacing
+  \setcounter{chapter}{0}
+  \setcounter{section}{0}
+  \renewcommand*{\chaptername}{\appendixname}
+  \renewcommand*{\thechapter}{\Alph{chapter}}
+  \int_gset:Nn \g_@@_pages_int {\value{page}}
+}
+
+\renewcommand*{\subsubsection}{\@startsection{subsubsection}{3}{0pt}
+  {-0.3ex plus-0.03ex minus0ex}{0.15ex plus 0.015ex minus0ex}{\normalfont\normalsize\sffamily\bfseries}}
+
+\renewcommand*{\subsection}{\@startsection{subsection}{2}{0pt}
+  {-0.6ex plus-0.06ex minus0ex}{0.3ex plus0.03ex minus0ex}{\normalfont\large\sffamily\bfseries}}
+
+\renewcommand*{\section}{\@startsection{section}{1}{0pt}
+  {-1.2ex plus-0.12ex minus0ex}{0.6ex plus0.06ex minus0ex}{\normalfont\Large\sffamily\bfseries}}
+
+\renewcommand*{\chapter}
+{
+  \if@openright\cleardoublepage\else\clearpage\fi
+  \thispagestyle{chapitre}
+  \global\@topnum\z@
+  \@afterindentfalse
+  \secdef\@@_chapter\@@_schapter
+}
+
+%%-----------------------------------------------------------------------------
+%%---   MACROS INTERNES   --------------------------------------------------
+%%-----------------------------------------------------------------------------
+\fancypagestyle{chapitre}
+{\fancyhf{} \cfoot{\thepage} \renewcommand{\headrulewidth}{0pt}}
+
+\newcommand*{\@@_chapter}[2][default]
+{
+  \ifnum \c@secnumdepth >\m@ne
+  \if@mainmatter
+  \refstepcounter{chapter}
+  \typeout{\chaptername\space\thechapter.}
+  \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}
+  \else
+  \addcontentsline{toc}{chapter}{\protect\numberline#1}
+  \fi
+  \else
+  \addcontentsline{toc}{chapter}{\protect\numberline#1}
+  \fi
+  \chaptermark{#1}
+  \addtocontents{lof}{\protect\addvspace{10\p@}}
+  \addtocontents{lot}{\protect\addvspace{10\p@}}
+  \if@twocolumn
+  \@topnewpage[\@@_makechapterhead{#2}]
+  \else
+  \@@_makechapterhead{#2}
+  \@afterheading
+  \fi
+}
+
+\newcommand*{\@@_makechapterhead}[1]
+{
+  \group_begin:
+  \parindent \z@ \normalfont % \raggedright
+  \ifnum \c@secnumdepth >\m@ne
+  \if@mainmatter
+  \LARGE\sffamily\bfseries \chaptername\space \thechapter
+  \par\nobreak
+  \vskip 0\p@
+  \fi
+  \fi
+  \interlinepenalty\@M
+  \LARGE\sffamily\bfseries #1 \par\nobreak
+  \vskip 30\p@
+  \group_end:
+}
+
+\newcommand*{\@@_schapter}[1]
+{
+  \if@twocolumn
+  \@topnewpage[\@@_makeschapterhead{#1}]
+  \else
+  \@@_makeschapterhead{#1}
+  \@afterheading
+  \fi
+}
+
+\newcommand*{\@@_makeschapterhead}[1]
+{
+  \group_begin:
+  \parindent \z@ \normalfont %\raggedright
+  \vskip 0\p@
+  \interlinepenalty\@M
+  \LARGE\sffamily\bfseries #1 \par\nobreak
+  \vskip 30\p@
+  \group_end:
+}
+
+\cs_new:Npn \@@_caption_fmt #1 { #1 }
+
+\cs_new:Npn \@@_setup_captions
+{
+  \addto\captionsfrench
+  {
+    \tl_gset:Nn \contentsname {TABLE~DES~MATIÈRES}
+    \tl_gset:Nn \listfigurename {LISTE~DES~FIGURES}
+    \tl_gset:Nn \listtablename {LISTE~DES~TABLEAUX}
+    \tl_gset:Nn \chaptername {CHAPITRE}
+    \tl_gset:Nn \bibname {LISTE~DES~RÉFÉRENCES}
+    \tl_gset:Nn \appendixname {ANNEXE}
+    \tl_gset:Nn \partname {PARTIE}
+    \tl_gset:Nn \figurename {Figure}
+    \tl_gset:Nn \tablename {Tableau}
+    \tl_gset:Nn \glossaryname {LEXIQUE}
+    \tl_gset:Nn \indexname {INDEX}
+    \tl_gset:Nn \abstractname {RÉSUMÉ}
+    \tl_gset:Nn \refname {LISTE~DES~RÉFÉRENCES}
+    \tl_gset:Nn \prefacename {PRÉFACE}
+    \tl_gset:Nn \CaptionSeparator {~~}
+    \tl_gset:Nn \g_@@_listsymbolsname_tl {LISTE~DES~SYMBOLES}
+    \tl_gset:Nn \g_@@_listacronymsname_tl {LISTE~DES~ACRONYMES}
+    \tl_gset:Nn \g_@@_acknowledgementsname_tl {REMERCIEMENTS}
+    \tl_gset:Nn \g_@@_udesname_tl {UNIVERSITÉ~DE~SHERBROOKE}
+    \tl_gset:Nn \g_@@_facultyname_tl {Faculté~de~génie}
+    \tl_gset:Nn \g_@@_specialityname_tl {Spécialité~:~}
+    \tl_gset:Nn \g_@@_juryname_tl {MEMBRES~DU~JURY}
+    \tl_gset:Nn \g_@@_adressname_tl {Sherbrooke~(Québec)~Canada}
+    \tl_gset:Nn \g_@@_motsclesname_tl {Mots-clés~:}
+    \tl_gset:Nn \g_@@_jury_codirname_tl {Codirecteur}
+    \tl_gset:Nn \g_@@_jury_codirnamef_tl {Codirectrice}
+    \tl_gset:Nn \g_@@_jury_dirname_tl {Directeur}
+    \tl_gset:Nn \g_@@_jury_dirnamef_tl {Directrice}
+    \tl_gset:Nn \g_@@_jury_evalname_tl {Évaluateur}
+    \tl_gset:Nn \g_@@_jury_evalnamef_tl {Évaluatrice}
+  }
+
+  \addto\captionsenglish
+  {
+    \tl_gset:Nn \contentsname {TABLE~OF~CONTENTS}
+    \tl_gset:Nn \listfigurename {LIST~OF~FIGURES}
+    \tl_gset:Nn \listtablename {LIST~OF~TABLES}
+    \tl_gset:Nn \chaptername {CHAPTER}
+    \tl_gset:Nn \bibname {LIST~OF~REFERENCES}
+    \tl_gset:Nn \appendixname {APPENDIX}
+    \tl_gset:Nn \partname {PART}
+    \tl_gset:Nn \figurename {\_@@_caption_fmt{Figure}}
+    \tl_gset:Nn \tablename {\_@@_caption_fmt{Table}}
+    \tl_gset:Nn \glossaryname {GLOSSARY}
+    \tl_gset:Nn \indexname {INDEX}
+    \tl_gset:Nn \abstractname {ABSTRACT}~
+    \tl_gset:Nn \refname {LIST~OF~REFERENCES}
+    \tl_gset:Nn \prefacename {PREFACE}
+    \tl_gset:Nn \CaptionSeparator {~~}
+    \tl_gset:Nn \g_@@_listsymbolsname_tl {LIST~OF~SYMBOLS}
+    \tl_gset:Nn \g_@@_listacronymsname_tl {LIST~OF~ACRONYMS}
+    \tl_gset:Nn \g_@@_acknowledgementsname_tl {ACKNOWLEDGEMENTS}
+    \tl_gset:Nn \g_@@_udesname_tl {UNIVERSITÉ~DE~SHERBROOKE}
+    \tl_gset:Nn \g_@@_facultyname_tl {Faculté~de~génie}
+    \tl_gset:Nn \g_@@_specialityname_tl {Specialité:~}
+    \tl_gset:Nn \g_@@_juryname_tl {JURY~MEMBERS}
+    \tl_gset:Nn \g_@@_adressname_tl {Sherbrooke~(Québec)~Canada}
+    \tl_gset:Nn \g_@@_motsclesname_tl {Keywords:}
+    \tl_gset:Nn \g_@@_jury_codirname_tl {Co-supervisor}
+    \tl_gset:Nn \g_@@_jury_codirnamef_tl {Co-supervisor}
+    \tl_gset:Nn \g_@@_jury_dirname_tl {Supervisor}
+    \tl_gset:Nn \g_@@_jury_dirnamef_tl {Supervisor} %Directress
+    \tl_gset:Nn \g_@@_jury_evalname_tl {Examiner} %Internal et external
+    \tl_gset:Nn \g_@@_jury_evalnamef_tl {Examiner} %Internal et external
+  }
+}
+
+\cs_new:Npn \@@_validation
+{
+  \tl_if_blank:VT \g_@@_fichier_resume_francais_tl
+  { \tl_gclear:N \g_@@_fichier_resume_francais_tl }
+
+  \tl_if_blank:VT \g_@@_fichier_resume_anglais_tl
+  { \tl_gclear:N \g_@@_fichier_resume_anglais_tl }
+
+  \tl_if_blank:VT \g_@@_fichier_remerciements_tl
+  { \tl_gclear:N \g_@@_fichier_remerciements_tl }
+
+  \tl_if_blank:VT \g_@@_fichier_lexique_tl
+  { \tl_gclear:N \g_@@_fichier_lexique_tl }
+
+  \tl_if_blank:VT \g_@@_fichier_symboles_tl
+  { \tl_gclear:N \g_@@_fichier_symboles_tl }
+
+  \tl_if_blank:VT \g_@@_fichier_acronymes_tl
+  { \tl_gclear:N \g_@@_fichier_acronymes_tl }
+
+  \tl_if_blank:VT \g_@@_titre_francais_tl
+  { \tl_gclear:N \g_@@_titre_francais_tl }
+
+  \tl_if_blank:VT \g_@@_titre_anglais_tl
+  { \tl_gclear:N \g_@@_titre_anglais_tl }
+
+  \tl_if_blank:VT \g_@@_auteur_nom_tl
+  { \tl_gclear:N \g_@@_auteur_nom_tl }
+
+  \tl_if_blank:VT \g_@@_auteur_prenom_tl
+  { \tl_gclear:N \g_@@_auteur_prenom_tl }
+
+  \tl_if_blank:VT \g_@@_date_mois_tl
+  { \tl_gclear:N \g_@@_date_mois_tl }
+
+  \tl_if_blank:VT \g_@@_date_annee_tl
+  { \tl_gclear:N \g_@@_date_annee_tl }
+
+  \tl_if_blank:VT \g_@@_jury_directeur_tl
+  { \tl_gclear:N \g_@@_jury_directeur_tl }
+
+  \tl_if_blank:VT \g_@@_dedicace_tl
+  { \tl_gclear:N \g_@@_dedicace_tl }
+
+  \tl_if_blank:VT \g_@@_mots_cles_francais_tl
+  { \tl_gclear:N \g_@@_mots_cles_francais_tl }
+
+  \tl_if_blank:VT \g_@@_mots_cles_anglais_tl
+  { \tl_gclear:N \g_@@_mots_cles_anglais_tl }
+
+  \tl_if_empty:NT \g_@@_langue_tl
+  { \msg_error:nn {udesgeniethese}{config_langue_vide} }
+
+  \tl_if_empty:NT \g_@@_type_tl
+  { \msg_error:nn {udesgeniethese}{config_type_vide}{type} }
+
+%<these>  \tl_if_empty:NT \g_@@_programme_tl
+%<these>  { \msg_error:nn {udesgeniethese}{config_programme_vide}{type} }
+%<these>
+  \clist_if_empty:NT \g_@@_fichiers_references_cl
+  { \msg_error:nnnn {udesgeniethese}{config_fichiers_vides}{la~bibliographie}{fichiersReferences} }
+
+  \tl_if_empty:NT \g_@@_auteur_nom_tl
+  { \msg_error:nn {udesgeniethese}{auteur_nom_vide} }
+
+  \tl_if_empty:NT \g_@@_auteur_prenom_tl
+  { \msg_error:nn {udesgeniethese}{auteur_prenom_vide} }
+
+  \tl_if_empty:NT \g_@@_date_annee_tl
+  { \msg_error:nn {udesgeniethese}{date_annee_vide} }
+
+  \tl_if_empty:NT \g_@@_date_mois_tl
+  { \msg_error:nn {udesgeniethese}{date_mois_vide} }
+
+  \token_case_meaning:Nn \g_@@_langue_tl
+  {
+    \c_@@_langue_francais_tl
+    {
+      \tl_if_empty:NT \g_@@_titre_francais_tl
+        { \msg_error:nn {udesgeniethese}{titre_francais_vide} }
+%<*these>
+      \tl_if_empty:NT \g_@@_mots_cles_francais_tl
+        { \msg_error:nn {udesgeniethese}{mots_cles_francais_vide} }
+
+      \tl_if_empty:NT \g_@@_fichier_resume_francais_tl
+        { \msg_error:nnnn {udesgeniethese}{config_fichier_vide}{le~resume~francais}{fichierResumeFrancais} }
+
+      \int_zero:N \l_tmpa_int
+      \tl_if_empty:NF \g_@@_titre_anglais_tl
+        { \int_incr:N \l_tmpa_int }
+      \tl_if_empty:NF \g_@@_fichier_resume_anglais_tl
+        { \int_incr:N \l_tmpa_int }
+      \tl_if_empty:NF \g_@@_mots_cles_anglais_tl
+        { \int_incr:N \l_tmpa_int }
+      \int_case:nnF { \l_tmpa_int }
+      {  {0}{}{3}{} }
+      {
+        \msg_error:nn {udesgeniethese}{titre_resume_mots_cles_anglais}
+        \tl_gclear:N \g_@@_fichier_resume_anglais_tl % resume pas genere
+      }
+    }
+    \c_@@_langue_english_tl
+    {
+      \tl_if_empty:NT \g_@@_titre_francais_tl
+      { \msg_error:nn {udesgeniethese}{titre_francais_vide} }
+      \tl_if_empty:NT \g_@@_mots_cles_francais_tl
+      { \msg_error:nn {udesgeniethese}{mots_cles_francais_vide} }
+      \tl_if_empty:NT \g_@@_fichier_resume_francais_tl
+      { \msg_error:nnnn {udesgeniethese}{config_fichier_vide}{le~resume~francais}{fichierResumeFrancais} }
+      \tl_if_empty:NT \g_@@_titre_anglais_tl
+      { \msg_error:nn {udesgeniethese}{titre_anglais_vide} }
+      \tl_if_empty:NT \g_@@_mots_cles_anglais_tl
+      { \msg_error:nn {udesgeniethese}{mots_cles_anglais_vide} }
+      \tl_if_empty:NT \g_@@_fichier_resume_anglais_tl
+      { \msg_error:nnnn {udesgeniethese}{config_fichier_vide}{le~resume~anglais}{fichierResumeAnglais} }
+%</these>
+    }
+  }
+}
+
+\cs_new:Npn \@@_setup_electrique
+{
+  \tl_gset:Nn \g_@@_departement_tl
+    {Département~de~génie~électrique~et~de~génie~informatique}
+  \tl_gset:Nn \g_@@_specialite_tl
+    {génie~électrique}
+  \tl_gset:Nn \g_@@_essai_tl
+    {GEI~808~Essai}
+  \tl_gset:Nn \g_@@_dprmaitrise_tl
+    {GEI~727~Définition~du~projet~de~recherche}
+  \tl_gset:Nn \g_@@_dprdoctorat_tl
+    {SCA~772~Définition~du~projet~de~recherche~au~doctorat}
+  \tl_gset:Nn \g_@@_memoire_tl
+    {Mémoire~de~maitrise}
+  \tl_gset:Nn \g_@@_these_tl
+    {Thèse~de~doctorat}
+}
+
+\cs_new:Npn \@@_setup_mecanique
+{
+  \tl_gset:Nn \g_@@_departement_tl
+    {Département~de~génie~mécanique}
+  \tl_gset:Nn \g_@@_specialite_tl
+    {génie~mécanique}
+  \tl_gset:Nn \g_@@_essai_tl
+    {GMC~808~Essai}
+  \tl_gset:Nn \g_@@_dprmaitrise_tl
+    {GMC~727~Définition~du~projet~de~recherche}
+  \tl_gset:Nn \g_@@_dprdoctorat_tl
+    {SCA~772~Définition~du~projet~de~recherche~au~doctorat}
+  \tl_gset:Nn \g_@@_memoire_tl
+    {Mémoire~de~maitrise}
+  \tl_gset:Nn \g_@@_these_tl
+    {Thèse~de~doctorat}
+}
+
+\cs_new:Npn \@@_setup_aerospatial
+{
+  \@@_setup_mecanique
+  \tl_gset:Nn \g_@@_essai_tl
+    {GMC~809~Projet~en~génie~aérospatial}
+  \tl_if_eq:NNF \g_@@_type_tl \c_@@_type_essai_tl
+    {\msg_error:nn {udesgeniethese}{aerospatial}}
+}
+
+\cs_new:Npn \@@_setup_chimique
+{
+  \tl_gset:Nn \g_@@_departement_tl
+    {Département~de~génie~chimique~et~de~génie~biotechnologique}
+  \tl_gset:Nn \g_@@_specialite_tl
+    {génie~chimique}
+  \tl_gset:Nn \g_@@_essai_tl
+    {GCH~808~Essai}
+  \tl_gset:Nn \g_@@_dprmaitrise_tl
+    {GCH~727~Définition~du~projet~de~recherche}
+  \tl_gset:Nn \g_@@_dprdoctorat_tl
+    {SCA~772~Définition~du~projet~de~recherche~au~doctorat}
+  \tl_gset:Nn \g_@@_memoire_tl
+    {Mémoire~de~maitrise}
+  \tl_gset:Nn \g_@@_these_tl
+    {Thèse~de~doctorat}
+}
+
+\cs_new:Npn \@@_setup_civil
+{
+  \tl_gset:Nn \g_@@_departement_tl
+    {Département~de~génie~civil}
+  \tl_gset:Nn \g_@@_specialite_tl
+    {génie~civil}
+  \tl_gset:Nn \g_@@_essai_tl
+    {GCI~808~Projet~d'intégration:~essai}
+  \tl_gset:Nn \g_@@_dprmaitrise_tl
+    {GCI~727~Définition~du~projet~de~recherche}
+  \tl_gset:Nn \g_@@_dprdoctorat_tl
+    {SCA~772~Définition~du~projet~de~recherche~au~doctorat}
+  \tl_gset:Nn \g_@@_memoire_tl
+    {Mémoire~de~maitrise}
+  \tl_gset:Nn \g_@@_these_tl
+    {Thèse~de~doctorat}
+}
+
+\cs_new:Npn \@@_setup
+{
+  \token_case_meaning:Nn \g_@@_langue_tl
+  {
+    \c_@@_langue_francais_tl {
+      \selectlanguage{french}
+    }
+    \c_@@_langue_english_tl {
+      \selectlanguage{english}
+    }
+  }
+
+  \bool_if:NTF \g_@@_lignes_bool
+  {
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+  }
+  {
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+  }
+
+  \token_case_meaning:Nn \g_@@_format_tl
+  {
+    \c_@@_format_livre_tl
+    {
+      \pagestyle{fancy}
+      \fancyhf{}
+      \fancyhead[RO,LE]{\thepage}
+      \fancyhead[LO]{\rightmark}
+      \fancyhead[RE]{\leftmark}
+    }
+    \c_@@_format_simple_tl
+    {
+      \pagestyle{fancy}
+      \fancyhf{}
+      \cfoot{\thepage}
+    }
+  }
+%<these>
+%<these>  \use:c {_@@_setup_ \g_@@_programme_tl}
+}
+
+\cs_new:Npn \@@_generer_page_titre
+{
+  \group_begin:
+  \begin{titlepage}
+    \renewcommand*{\thepage}{T1}
+    \vspace*{-0.5 in}
+    \begin{center}
+      \begin{tabular}{c}
+        \Large \g_@@_udesname_tl \\
+%<protocole>        \Large\g_@@_facultyname_tl
+%<these>        \Large\g_@@_facultyname_tl\\
+%<these>        \Large\g_@@_departement_tl\\[0.5ex]
+      \end{tabular}
+      \vfill
+      \token_case_meaning:Nn \g_@@_langue_tl
+      {
+        \c_@@_langue_francais_tl {
+          {\huge\g_@@_titre_francais_tl\par}
+        }
+        \c_@@_langue_english_tl {
+          \begin{otherlanguage}{french}
+            {\huge\g_@@_titre_francais_tl}
+          \end{otherlanguage}\par
+          {\Large\g_@@_titre_anglais_tl\par}
+        }
+      }
+      \vfill
+%<these>      \begin{tabular}{c}
+%<these>        \Large \use:c {g_@@_ \g_@@_type_tl _tl}
+%<these>        \clist_if_in:NVT \g_@@_specialite_cl \g_@@_type_tl
+%<these>        {
+%<these>          \\[0.5ex]\Large\g_@@_specialityname_tl\g_@@_specialite_tl
+%<these>        }
+%<these>      \end{tabular}
+%<these>      \vfill
+      \begin{tabular}{c}
+        {\Large\g_@@_auteur_prenom_tl\ \g_@@_auteur_nom_tl}
+      \end{tabular}
+      \vfill
+      {\Large \g_@@_adressname_tl \par \vspace{2ex}\g_@@_date_mois_tl\ \g_@@_date_annee_tl}
+    \end{center}
+  \end{titlepage}
+%<protocole>  \thispagestyle{empty}
+%<protocole>  \renewcommand*{\thepage}{T2}
+%<protocole>  \null\vfill
+%<protocole>  \c_@@_protocole_notice_tl\par
+%<protocole>  \textcopyright\g_@@_date_annee_tl\ \c_@@_protocole_droits_tl
+%<protocole>  \cleardoublepage
+%<these>  \clearpage
+%<these>  \if@openright\null\thispagestyle{empty}\renewcommand*{\thepage}{T2}\cleardoublepage\fi
+  \group_end:
+}
+
+\cs_new:Npn \@@_generer_jury
+{
+  \group_begin:
+  {\centering\chapter*{\g_@@_juryname_tl}}
+
+  \begin{center}
+    \vspace{4ex}
+    \begin{tabular}{p{3in}}
+      \hfill\large\g_@@_jury_directeur_tl\hfill\null \\ \hline
+      \centering\small
+      \token_case_meaning:Nn \g_@@_jury_directeur_mf_tl
+      {
+        \c_@@_male_tl   {\g_@@_jury_dirname_tl}
+        \c_@@_female_tl {\g_@@_jury_dirnamef_tl}
+      }
+    \end{tabular}\par
+
+    \tl_if_empty:NF \g_@@_jury_codirecteurs_cl
+    { \vspace{6ex} }
+
+    \clist_map_inline:Nn \g_@@_jury_codirecteurs_cl
+    {
+      \begin{tabular}{p{3in}}
+        \hfill\large ##1 \hfill\null \\ \hline
+        \seq_gpop_left:NN \g_@@_jury_codirecteurs_mf_seq \l_tmpa_tl
+        \centering\small
+        \token_case_meaning:Nn \l_tmpa_tl
+        {
+          \c_@@_male_tl   {\g_@@_jury_codirname_tl}
+          \c_@@_female_tl {\g_@@_jury_codirnamef_tl}
+        }
+      \end{tabular}\par
+    }
+
+    \tl_if_empty:NF \g_@@_jury_evaluateurs_cl
+    { \vspace{6ex} }
+
+    \clist_map_inline:Nn \g_@@_jury_evaluateurs_cl
+    {
+      \begin{tabular}{p{3in}}
+        \hfill\large ##1 \hfill\null \\ \hline
+        \seq_gpop_left:NN \g_@@_jury_evaluateurs_mf_seq \l_tmpa_tl
+        \centering\small
+        \token_case_meaning:Nn \l_tmpa_tl
+        {
+          \c_@@_male_tl   {\g_@@_jury_evalname_tl}
+          \c_@@_female_tl {\g_@@_jury_evalnamef_tl}
+        }
+      \end{tabular}\par
+    }
+  \end{center}
+
+  \thispagestyle{empty}\clearpage
+  \if@openright\null\thispagestyle{empty}\cleardoublepage\fi
+  \group_end:
+}
+
+\cs_new:Npn \@@_generer_dedicace
+{
+  \tl_if_empty:NF \g_@@_dedicace_tl
+  {
+    \group_begin:
+    \null\vfill\flushright
+    \begin{minipage}{0.5\linewidth}
+      \setlength{\parskip}{1.5ex}\setlength{\parindent}{0em}
+      \g_@@_dedicace_tl
+    \end{minipage}
+    \vfill\vfill
+    \thispagestyle{empty}\clearpage
+    \if@openright\null\thispagestyle{empty}\cleardoublepage\fi
+    \group_end:
+  }
+}
+
+\cs_new:Npn \@@_generer_resume_francais
+{
+  \begin{otherlanguage}{french}
+    \chapter*{\abstractname}
+    \int_set:Nn \l_@@_tmp_int {\value{page}}
+    \input{\g_@@_fichier_resume_francais_tl}\par
+    \textbf{\g_@@_motsclesname_tl}~\g_@@_mots_cles_francais_tl \par
+    \thispagestyle{empty}\clearpage
+    \int_sub:Nn \l_@@_tmp_int {\value{page}}
+    \int_compare:nNnT {\l_@@_tmp_int} < {-1}
+    { \msg_error:nn {udesgeniethese}{resume_francais_long} }
+    \ifodd\value{page}\else\if@openright\null\thispagestyle{empty}\cleardoublepage\fi\fi
+  \end{otherlanguage}
+}
+
+\cs_new:Npn \@@_generer_resume_anglais
+{
+  \begin{otherlanguage}{english}
+    \chapter*{\abstractname}
+    \int_set:Nn \l_@@_tmp_int {\value{page}}
+
+    \tl_if_eq:NNT \g_@@_langue_tl \c_@@_langue_francais_tl
+    {{\bfseries\g_@@_titre_anglais_tl}\par}
+
+    \input{\g_@@_fichier_resume_anglais_tl}\par
+    \textbf{\g_@@_motsclesname_tl}~\g_@@_mots_cles_anglais_tl \par
+    \thispagestyle{empty}\clearpage
+    \int_sub:Nn \l_@@_tmp_int {\value{page}}
+    \int_compare:nNnT {\l_@@_tmp_int} < {-1}
+    {
+      \msg_error:nn {udesgeniethese}{resume_anglais_long}
+    }
+    \ifodd\value{page}\else\if@openright\null\thispagestyle{empty}\cleardoublepage\fi\fi
+  \end{otherlanguage}
+}
+
+\cs_new:Npn \@@_generer_remerciements
+{
+  \tl_if_empty:NF \g_@@_fichier_remerciements_tl
+  {
+    \chapter*{\g_@@_acknowledgementsname_tl}
+    \int_set:Nn \l_@@_tmp_int {\value{page}}
+    \input{\g_@@_fichier_remerciements_tl}\par
+    \thispagestyle{empty}\clearpage
+    \int_sub:Nn \l_@@_tmp_int {\value{page}}
+    \int_compare:nNnT {\l_@@_tmp_int} < {-1}
+    {
+      \msg_error:nn {udesgeniethese}{remerciements_longs}
+    }
+    \ifodd\value{page}\else\if@openright\null\thispagestyle{empty}\cleardoublepage\fi\fi
+  }
+}
+
+\cs_new:Npn \@@_generer_pages_preliminaires
+{
+  \setcounter{page}{1}
+%<*these>
+  \clist_if_in:NVF \g_@@_pas_jury_cl \g_@@_type_tl
+  { \@@_generer_jury }
+
+  \@@_generer_resume_francais
+  \token_case_meaning:Nn \g_@@_langue_tl
+  {
+    \c_@@_langue_francais_tl {
+      \tl_if_blank:VF \g_@@_fichier_resume_anglais_tl
+      { \@@_generer_resume_anglais }
+    }
+    \c_@@_langue_english_tl {
+      \@@_generer_resume_anglais
+    }
+  }
+
+  \clist_if_in:NVT \g_@@_dedicace_cl \g_@@_type_tl
+  { \@@_generer_dedicace  }
+
+  \clist_if_in:NVT \g_@@_remerciements_cl \g_@@_type_tl
+  { \@@_generer_remerciements  }
+%</these>
+
+  \tableofcontents
+  \if@openright\cleardoublepage\else\clearpage\fi
+
+  \bool_if:NT \g_@@_liste_figures_bool
+  {
+    \listoffigures
+    \if@openright\cleardoublepage\else\clearpage\fi
+  }
+
+  \bool_if:NT \g_@@_liste_tableaux_bool
+  {
+    \listoftables
+    \if@openright\cleardoublepage\else\clearpage\fi
+  }
+%<*these>
+
+  \tl_if_empty:NF \g_@@_fichier_lexique_tl
+  {
+    \chapter*{\glossaryname}
+    \markboth{\glossaryname}{\glossaryname}
+    \input{\g_@@_fichier_lexique_tl}\par
+    \if@openright\cleardoublepage\else\clearpage\fi
+  }
+
+  \tl_if_empty:NF \g_@@_fichier_symboles_tl
+  {
+    \chapter*{\g_@@_listsymbolsname_tl}
+    \markboth{\g_@@_listsymbolsname_tl}{\g_@@_listsymbolsname_tl}
+    \input{\g_@@_fichier_symboles_tl}\par
+    \if@openright\cleardoublepage\else\clearpage\fi
+  }
+
+  \tl_if_empty:NF \g_@@_fichier_acronymes_tl
+  {
+    \chapter*{\g_@@_listacronymsname_tl}
+    \markboth{\g_@@_listacronymsname_tl}{\g_@@_listacronymsname_tl}
+    \input{\g_@@_fichier_acronymes_tl}\par
+    \if@openright\cleardoublepage\else\clearpage\fi
+  }
+%</these>
+}
+
+\cs_new:Npn \@@_generer_liste_references
+{
+  \refstepcounter{chapter}
+  \addcontentsline{toc}{chapter}{\bibname}
+
+  \token_case_meaning:Nn \g_@@_references_engin_tl
+  {
+    \c_@@_references_bibtex_tl
+      { \bibliography{\g_@@_fichiers_references_cl} }
+    \c_@@_references_biblatex_tl
+      { \printbibliography }
+  }
+
+  \if@openright\cleardoublepage\else\clearpage\fi
+}
+
+%%-----------------------------------------------------------------------------
+%%---   GESTION AUTOMATISEE   -------------------------------------------------
+%%-----------------------------------------------------------------------------
+\AddToHook{begindocument/before}
+{
+  \bool_if:NTF \g_@@_legendes_min_bool
+    {\frenchsetup{SmallCapsFigTabCaptions=false}}
+    {\cs_gset:Npn \@@_caption_fmt #1 { \textsc{#1} }}
+
+  \token_case_meaning:Nn \g_@@_references_engin_tl
+  {
+    \c_@@_references_bibtex_tl
+    {
+  	  \IfPackageLoadedTF{biblatex}
+  	     {\msg_error:nn {udesgeniethese}{biblatex_en_trop}}{}
+    	\bibliographystyle{\g_@@_style_references_tl}
+    }
+    \c_@@_references_biblatex_tl
+    {
+  	  \IfPackageLoadedTF{biblatex}
+  	    {}{\msg_error:nn {udesgeniethese}{biblatex_manquant}}
+
+      \clist_map_inline:Nn \g_@@_fichiers_references_cl
+      {
+        \bool_if:nTF \g_@@_autobib_bool
+          { \addbibresource{#1.bib} }
+          { \addbibresource{#1} }
+      }
+    }
+  }
+  \@@_setup_captions
+}
+
+\AddToHook{begindocument/end}
+{
+  \@@_validation
+  \@@_setup
+  \frontmatter
+  \singlespacing
+  \@@_generer_page_titre
+  \@@_generer_pages_preliminaires
+  \mainmatter
+  \onehalfspacing
+}
+
+\AddToHook{enddocument}
+{
+  % Si pas eu d'annexes avec \appendix
+  \int_compare:nNnT {\g_@@_pages_int} = {0}
+  { \int_gset:Nn \g_@@_pages_int {\value{page}} }
+
+  \int_compare:nNnT {\g_@@_pages_int} > {\use:c {c_@@_max_pages_ \g_@@_type_tl _int}}
+  { \msg_error:nn {udesgeniethese}{\g_@@_type_tl _max_pages} }
+
+  \backmatter
+  \singlespacing
+  \@@_generer_liste_references
+}
+%\end{implementation}
+%\Finale
+\endinput

@@ -1,0 +1,948 @@
+% !TeX program = lualatex
+% =====================================================================
+%  texecole.tex  --  documentation utilisateur du package texecole
+%
+%  Document AUTONOME : il utilise la classe standard « article » et se
+%  compile avec n'importe quel LuaLaTeX, indépendamment de la classe
+%  texecole qu'il documente. Il ne requiert aucune image.
+%
+%  Compilation :  lualatex texecole.tex   (deux fois, pour la table
+%                 des matières)
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[margin=25mm]{geometry}
+\usepackage[svgnames]{xcolor}
+\definecolor{Marine}{HTML}{1F3A5F}
+\definecolor{FondCode}{HTML}{F4F5F7}
+\definecolor{CadreCode}{HTML}{D7DBE0}
+\definecolor{Accent}{HTML}{8A1C1C}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyvrb}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage[colorlinks=true,linkcolor=Marine,urlcolor=Marine]{hyperref}
+
+\DefineVerbatimEnvironment{code}{Verbatim}{%
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{CadreCode},
+  fontsize=\small,
+  xleftmargin=4mm,
+  xrightmargin=4mm,
+  framesep=3mm,
+  formatcom=\color{black!88}}
+
+\newcommand{\bal}[1]{\texttt{#1}}
+\newcommand{\opt}[1]{\texttt{\textcolor{Accent}{#1}}}
+
+\titleformat{\part}[block]
+  {\bigskip\Huge\bfseries\color{Marine}}
+  {\partname~\thepart\quad}{0pt}{}
+\titlespacing*{\part}{0pt}{0.4em}{0.8em}
+\titleformat{\section}{\Large\bfseries\color{Marine}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{Marine!85!black}}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.4em}{0.5em}
+\setcounter{tocdepth}{2}
+
+\usepackage{chngcntr}
+\counterwithin*{section}{part}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+
+\hypersetup{
+  pdftitle={texecole --- manuel de l'utilisateur},
+  pdfauthor={Gerard Dubard},
+}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{3.5cm}
+{\Huge\bfseries\color{Marine} texecole\par}
+\vspace{0.8cm}
+{\Large Écrire des documents pédagogiques en français naturel\par}
+\vspace{2.5cm}
+{\large Un langage à balises pour cours, fiches et exercices,\\[2pt]
+bâti sur LuaLaTeX\par}
+\vspace{3cm}
+{\large Gérard Dubard\par}
+\vspace{0.4cm}
+{\large Version 1.1\par}
+\vfill
+{\small Diffusé sous licence GNU General Public License v3.0\par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% =====================================================================
+\part{Prise en main}
+% =====================================================================
+
+\section{Introduction}
+
+texecole est une classe LuaLaTeX qui laisse l'enseignant écrire son
+document en \textbf{français ordinaire}. Là où LaTeX demande des
+commandes à barre oblique inverse, texecole demande des mots : les
+styles se nomment (\bal{gras}, \bal{rouge}), les objets se décrivent
+(\bal{un cadre avec une bordure bleu marine et un fond bleu Alice}), les
+actions se conjuguent à l'impératif (\bal{Trace le triangle ABC
+équilatéral, de côté 5 cm}), et les mathématiques s'écrivent sans
+contorsion : \bal{racine(2)}, \bal{somme(k=1;n) k},
+\bal{pour tout x dans RR}.
+
+Le vocabulaire est français de bout en bout — la virgule décimale
+s'écrit et s'affiche à la française — et chaque message d'erreur parle
+français en citant la règle enfreinte. L'objectif est de coller au
+langage naturel en usage chez les enseignants et les chercheurs, du
+secondaire au supérieur.
+
+\subsection{Installation}
+
+texecole se compile avec \textbf{LuaLaTeX} (TeX~Live ou MacTeX récent).
+Pour le calcul formel et numérique, il faut en plus \textbf{Python~3}
+avec \textbf{SymPy} et \textbf{SciPy}. Quel que soit le système, on
+récupère l'installeur officiel sur \url{https://www.python.org}, on
+l'exécute (sous Windows, en cochant « Add Python to PATH »), puis :
+
+\begin{code}
+python3 -m pip install sympy scipy
+\end{code}
+
+\textbf{L'éditeur recommandé est TeXstudio.} Ouvrir le menu
+« Préférences », onglet « Compilation », et remplacer le contenu de la
+ligne \textbf{LuaLaTeX} par :
+
+\begin{code}
+lualatex --shell-escape -synctex=1 -interaction=nonstopmode %.tex
+\end{code}
+
+L'option \opt{-{}-shell-escape} autorise l'appel de Python, que
+texecole trouve tout seul (\texttt{python3}, \texttt{python} puis
+\texttt{py}). Sans Python, texecole fonctionne intégralement avec son
+moteur de calcul interne : seuls les calculs automatiques demandent le
+moteur externe.
+
+Le programme minimal \texttt{precharge.tex}, fourni avec la classe, se
+compile \textbf{une seule fois} après l'installation : il précharge
+toutes les bibliothèques employées par texecole, construit les caches
+--- notamment celui des polices --- et vérifie que la distribution est
+complète.
+
+\section{La règle unique}
+
+\textbf{La règle d'or.} Une action s'écrit \bal{<Action>complément} :
+le verbe seul dans la balise, le complément à l'extérieur, en français
+complet — articles compris et nom de l'objet rappelé (\bal{<Trace>la
+fonction f}, \bal{<Résous>l'équation 3x + 5 = 17}). Un contenu de
+plusieurs lignes suit entre accolades : \bal{<Action>complément \{}
+\dots\ \bal{\}}. Les options éventuelles d'une action restent dans la
+balise, après le verbe. La rédaction pas à pas est le
+comportement, pas une option : \bal{<Résous>le système s} déroule le
+pivot, \bal{<Calcule>1/2 + 1/3} détaille la mise au même dénominateur.
+L'ancienne écriture \bal{<Action complément>}
+reste comprise ; la documentation entière suit la règle d'or.
+
+
+texecole tient sur une distinction : \textbf{les objets sont des
+fiches, les actions sont des phrases.}
+
+Un \textbf{objet} est un nom : un cadre, un tableau, une grille, une
+image. Il s'écrit entre chevrons, suivi de son contenu entre
+accolades. Ses attributs s'ouvrent par le mot \textbf{avec}, se
+séparent par des virgules, et le dernier se relie par \textbf{et} :
+
+\begin{code}
+<Affiche un cadre avec une bordure bleu marine, un fond bleu Alice
+       et des coins arrondis de 3 mm>{
+    Le contenu du cadre.
+}
+\end{code}
+
+Une \textbf{action} est un verbe à l'impératif : Trace, Soit, Résous,
+Factorise. Elle s'écrit comme une phrase, close par le passage à la
+ligne :
+
+\begin{code}
+<Trace>le triangle ABC équilatéral, de côté 5 cm, avec les marques
+\end{code}
+
+Cette dualité guide tout le reste : quand on hésite, on se demande si
+l'on \emph{pose} un objet ou si l'on \emph{fait} une action.
+
+\subsection{La ponctuation des attributs}
+
+La liste d'attributs d'un objet est balisée, sans exception :
+
+\begin{itemize}[nosep]
+\item elle \textbf{commence} par \bal{avec} ;
+\item les attributs se \textbf{séparent} par une virgule ;
+\item les deux derniers se \textbf{relient} par \bal{et}.
+\end{itemize}
+
+\begin{code}
+<Dresse un tableau [mc, mg, mc] avec des bordures, entête, un écart de 3 mm,
+    une bordure bleu marine, un fond bleu Alice
+    et un entête en blanc, sur fond bleu marine>{ ... }
+\end{code}
+
+Un objet sans attribut s'écrit simplement \bal{<Affiche un cadre>\{...\}} ; un
+placement seul entre crochets ne demande pas de \bal{avec}. Mais dès
+qu'un attribut apparaît, il s'introduit par \bal{avec} — écrire les
+attributs « à la volée » est refusé, avec un message qui rappelle la
+règle. Cette rigueur est une liberté : on sait exactement où commence
+la liste, et le document reste lisible des mois plus tard.
+
+\section{Options de classe}
+
+\begin{code}
+\documentclass[marges=20, taille=11]{texecole}
+\end{code}
+
+\begin{longtable}{@{}lll@{}}
+\toprule
+\textbf{Option} & \textbf{Défaut} & \textbf{Rôle} \\
+\midrule
+\opt{marges} & \texttt{20} & Marges externes (mm) ; \texttt{20} ou \texttt{\{25;20;25;20\}} \\
+\opt{espacements} & \texttt{2} & Espacements internes des cadres (mm) ; \texttt{2} ou \texttt{\{4;2;4;2\}} \\
+\opt{taille} & \texttt{11} & Corps de la police (pt) \\
+\opt{précision} & \texttt{-1} & Décimales d'arrondi ($-1$ = exact) \\
+\bottomrule
+\end{longtable}
+
+Les \opt{marges} sont les marges \emph{externes} de la page (le
+\emph{margin} anglais) ; les \opt{espacements} sont les marges
+\emph{internes} des cadres, tableaux et zones (le \emph{padding}
+anglais). Chacune prend une valeur pour les quatre côtés, ou quatre
+valeurs \texttt{haut;droite;bas;gauche} protégées par des accolades.
+
+Toutes les dépendances (\texttt{pgfplots}, \texttt{tkz-tab},
+\texttt{tcolorbox} et sa bibliothèque \emph{poster}) sont chargées
+systématiquement : le comportement est identique pour tous les
+documents. La première compilation après l'installation gagne à passer
+par \texttt{precharge.tex} (voir l'installation).
+
+% =====================================================================
+\part{Texte et structure}
+% =====================================================================
+
+\section{Attributs de texte}
+
+Les styles se posent en ligne, dans une balise dont le contenu suit
+entre accolades :
+
+\begin{code}
+Du <gras>{gras}, de l'<italique>{italique}, du <souligné>{souligné},
+des <petites capitales>{petites capitales}, et une combinaison
+<gras italique rouge>{gras italique rouge}.
+\end{code}
+
+Les couleurs se nomment en français, composés compris : \bal{rouge},
+\bal{bleu marine}, \bal{vert forêt}, \bal{bleu canard}. La palette
+française couvre les 164 couleurs de la nomenclature usuelle.
+
+Les tailles s'écrivent \bal{Npt} : \bal{<8pt>\{petit\}},
+\bal{<14pt>\{moyen\}}, \bal{<20pt>\{grand\}}. Les alignements se posent
+en tête de paragraphe : \bal{<à gauche>}, \bal{<au centre>},
+\bal{<à droite>} ; un paragraphe nu est justifié.
+
+\section{Alias --- l'outil de factorisation}
+
+Un alias nomme une fois pour toutes une combinaison d'attributs et se
+rappelle ensuite partout :
+
+\begin{code}
+soit titre = <rouge gras 18pt centre>
+soit h1 = <bleu marine gras section num>
+
+<titre>Le titre du document
+<h1>Une première partie
+\end{code}
+
+Changer la définition d'un alias rhabille d'un coup tout le document :
+un seul point de contrôle tient une longue fiche. Un alias peut être
+paramétré :
+
+\begin{code}
+soit exo{n} = <cadre avec un titre {Exercice #n}, une bordure bleu marine
+    et un fond bleu Alice>
+
+pour n de 1 à 3 {
+    <exo #n>{ Énoncé numéro #n. }
+}
+\end{code}
+
+\section{Listes}
+
+Une liste s'écrit \bal{<Dresse>une liste STYLE}, un élément par ligne, sans
+balise d'élément. Les styles : \bal{à puces}, \bal{à puces vides},
+\bal{à puces carrées}, \bal{sans puce}, \bal{numérotée},
+\bal{alphabétique}, \bal{en chiffres romains}, \bal{à cocher}. Une
+liste écrite sous un élément devient sa sous-liste.
+
+\begin{code}
+<Dresse>une liste numérotée{
+    Lire l'énoncé
+    Souligner les mots importants
+    Rédiger la réponse
+}
+\end{code}
+
+\section{Échappements}
+
+Une poignée de caractères pilote le langage ; pour les afficher, on
+les double : \bal{<{}<} donne \texttt{<}, \bal{>{}>} donne \texttt{>},
+\bal{\{\{} donne \texttt{\{}, \bal{\}\}} donne \texttt{\}}, \bal{\#\#}
+donne \texttt{\#}, \bal{\$\$} donne \texttt{\$}.
+
+% =====================================================================
+\part{Conteneurs et mise en page}
+% =====================================================================
+
+\section{Tableaux}
+
+Trois règles suffisent, et rien ne se déclare.
+
+\begin{itemize}[nosep]
+\item hors des crochets, tout est \textbf{entête} --- la rangée du haut
+comme la colonne de gauche ;
+\item entre crochets, tout est \textbf{donnée} : \bal{[a ; b ; c]} est une
+rangée, les cellules séparées par un point-virgule ;
+\item les \textbf{fusions se déduisent de la forme} : une rangée plus
+courte que le tableau étend sa dernière cellule jusqu'au bord droit, une
+entête suivie de plusieurs rangées descend sur autant de lignes.
+\end{itemize}
+
+Les colonnes se déclarent dans la balise, un code à deux lettres par
+colonne : la première verticale (h/m/b), la seconde horizontale (g/c/d)
+--- ou en toutes lettres, \bal{[en haut, à gauche]}.
+
+\begin{code}
+<Dresse>un tableau [mc, mg, md] avec des bordures{
+    Figure    Formule       Valeur
+    [carré ; $1/2 + 1/3$ ; $5/6$]
+    [cercle ; $racine(2)$ ; $1,41$]
+}
+\end{code}
+
+La première rangée est hors crochets : elle devient l'entête, en gras,
+sans que le mot \bal{entête} figure nulle part.
+
+\subsection{Entêtes verticales}
+
+Une entête suivie d'un deux-points porte les rangées qui la suivent.
+Les entêtes verticales se collent aux données : la dernière touche le
+crochet, celle d'avant la précède, et ainsi de suite. Les tabulations ne
+servent qu'à aligner la source à l'œil, si bien qu'elle prend la forme du
+tableau.
+
+\begin{code}
+<Dresse>un tableau [mc, mc, mg, md] avec des bordures{
+    Semaine   Jour      Matière   Note
+    S1 :      Lundi :   [Maths ; 15]
+                        [Français ; 12]
+              Mardi :   [EPS ; 16]
+    S2 :      Lundi :   [Maths ; 18]
+}
+\end{code}
+
+« S1 » couvre trois rangées, « Lundi » deux : chacun couvre ce qu'il
+porte. Le deux-points est consommé, jamais imprimé. Une entête écrite
+seule sur sa ligne ouvre un groupe que l'indentation dessine --- cette
+forme en plan donne le même tableau et reste acceptée.
+
+\subsection{Fusion horizontale}
+
+Une rangée à qui il manque des cellules étend la dernière jusqu'au bord
+droit. Un titre seul couvre donc toute la largeur, et une moyenne
+solitaire toutes les colonnes qui restent.
+
+\begin{code}
+<Dresse>un tableau [mc, mg, md] avec des bordures{
+    Bulletin du premier trimestre
+    Jour        Matière   Note
+    Lundi :     [Maths ; 15]
+    Moyenne :   [13,7]
+}
+\end{code}
+
+Le nombre de colonnes est celui de la rangée la plus large ; s'il dépasse
+le nombre de codes annoncés, le dernier code vaut pour les colonnes
+suivantes. Boucles et interpolation vivent dans un tableau, une rangée
+entre crochets s'écrivant aussi bien dans une boucle. Pour écrire des
+crochets littéraux dans une cellule, les protéger par des dollars :
+\bal{$[AB]$}.
+
+Un tableau qui ne contient aucun crochet conserve exactement la
+sémantique de la version 1.1 --- tabulations, \bal{entête},
+\bal{<2 colonnes mc>}, \bal{<2 lignes mc>} et cellules absorbées notées
+par un point : les documents existants ne bougent pas.
+
+\section{Images}
+
+Une image se pose par une action, avec sa taille et sa légende en
+langage naturel. Le nom du fichier est le contenu de la balise :
+
+\begin{code}
+<au centre>{
+    <Insère une image avec une largeur de 60 mm
+        et la légende {Figure 1}>{figure1.jpg}
+}
+\end{code}
+
+La largeur et la hauteur s'expriment en millimètres
+(\bal{avec une largeur de 60 mm}, \bal{avec 80 mm sur 60 mm}). Comme
+tout le reste, une image se place dans une zone de grille, dans une
+cellule, ou se répète dans une boucle :
+
+\begin{code}
+pour n de 1 à 3 {
+    <au centre>{
+        <Insère une image avec une largeur de 40 mm
+            et la légende {Figure #n}>{figure#n.jpg}
+    }
+}
+\end{code}
+
+\section{Vecteurs, lois et suites}
+
+Un vecteur s'écrit en colonne, deux ou trois coordonnées, fractions
+acceptées, le nom étant facultatif.
+
+\begin{code}
+<Écris>le vecteur u de coordonnées (3 ; -2)
+\end{code}
+
+Une loi de probabilité se donne en deux lignes et le tableau se dresse
+tout seul. La somme des probabilités est vérifiée : une loi qui ne
+totalise pas 1 est refusée, avec le total fautif dans le message.
+
+\begin{code}
+<Dresse>la loi de probabilité de X{
+    valeurs : [1 ; 2 ; 3]
+    probabilités : [1/6 ; 1/3 ; 1/2]
+}
+\end{code}
+
+Une suite se définit d'un premier terme et d'une relation ; la définition
+s'affiche en notation indicielle, puis les termes se calculent à la
+demande.
+
+\begin{code}
+<Définis>la suite u par récurrence{
+    u(0) = 1 ; u(n+1) = 2u(n) + 1
+}
+
+<Calcule>les 6 premiers termes de u
+\end{code}
+
+\section{Second degré}
+
+Le trinôme se donne tel qu'il s'écrit, un par ligne. L'étude sort
+complète : discriminant, racines, forme factorisée et forme canonique.
+
+\begin{code}
+<Étudie>le second degré{
+    2x^2 - 3x + 1
+    x^2 - 4x + 4
+    x^2 + x + 1
+}
+\end{code}
+
+Les fractions restent exactes tant que le discriminant est un carré
+parfait ; sinon le radical est conservé et une valeur approchée
+l'accompagne. La variable se précise si besoin, \bal{<Étudie le second
+degré en t>}.
+
+\section{Opérations posées}
+
+Un nombre, un signe, un nombre : chaque chiffre prend sa case, le trait se
+pose tout seul, la ligne du résultat reste vide pour l'élève. Une
+opération par ligne, les signes acceptés étant \bal{+}, \bal{-} et
+\bal{×}.
+
+\begin{code}
+<Pose>l'opération{
+    347 + 58
+    4732 - 1589
+}
+\end{code}
+
+L'attribut \bal{avec le résultat} remplit la dernière ligne et, pour la
+multiplication, fait apparaître les produits partiels décalés. Les
+décimaux s'alignent sur la virgule et se complètent par des zéros, comme
+au tableau. La soustraction refuse de descendre sous zéro, la
+multiplication se pose sur des entiers : dans les deux cas le message le
+dit en français.
+
+\section{Cadres}
+
+Un cadre encadre son contenu ; ses attributs suivent la règle du
+\bal{avec}. Une ligne ne portant que \bal{-{}-{}-} le coupe en deux
+parties (énoncé / solution).
+
+\begin{code}
+<Affiche un cadre avec une bordure cramoisi, un fond rose brumeux,
+    des coins arrondis de 4 mm et un titre {Identité remarquable}>{
+    L'identité $(a + b)^2 = a^2 + 2*a*b + b^2$ vaut pour tout réel.
+}
+\end{code}
+
+Une rangée pose des cadres côte à côte, d'égale largeur :
+
+\begin{code}
+<Affiche>une rangée avec un écart de 5 mm{
+    <Affiche>un cadre avec titre {Énoncé}{ ... }
+    <Affiche>un cadre avec titre {Résultat}{ ... }
+}
+\end{code}
+
+\section{Grille (zones nommées)}
+
+La grille dispose la page comme une maquette : un plan de zones, un mot
+par case, un point pour une case vide, un nom répété fusionne ses
+cases. Chaque zone se place et s'habille en langage naturel.
+
+\begin{code}
+<Affiche une grille avec les zones ["titre titre date", "consigne corps corps"],
+    bordures et écart de 3 mm>{
+    [titre : en haut, à gauche, une bordure bleu marine, un fond bleu Alice]{
+        <bleu marine gras 14pt>Contrôle de mathématiques
+    }
+    [date : en haut, à droite]{ Le 12 mai }
+    [consigne : au milieu, au centre, fond gris perle]{
+        Calculatrice autorisée.
+    }
+    [corps en mc]{ Résoudre $x^2 - 5x + 6 = 0$. }
+}
+\end{code}
+
+\section{Figures}
+
+L'action \bal{<Trace>} dessine une figure décrite en français.
+L'unité vaut un centimètre ; les côtés égaux et les angles droits se
+codent par les marques.
+
+\begin{code}
+<Trace>le triangle ABC équilatéral, de côté 5 cm, avec les marques
+<Trace>le cercle C, de centre (0;0) et de rayon 2 cm
+<Trace>le solide cube, d'arête 3 cm
+\end{code}
+
+Les constructions de base du collège se posent avec une longueur
+imposée, par la clause \bal{tel que} (ou \bal{telle que}), unité
+obligatoire :
+
+\begin{code}
+<Trace>le segment de droite [AB] tel que AB = 4 cm
+<Trace>la demi-droite (AB] telle que AB = 3,5 cm
+\end{code}
+
+Pour une figure complète dans un repère, on ouvre un bloc dont la
+première phrase décrit le repère ; les points posés par \bal{<Soit>}
+s'y placent d'eux-mêmes. Le repère est orthonormé par défaut (une
+graduation = 1~cm) ; l'unité se dit en prose --- \bal{avec une unité
+de 1,5 cm} --- et le repère \bal{orthogonal} prend des unités
+distinctes : \bal{avec des unités respectives de 2 cm et 0,5 cm}
+(abscisses puis ordonnées). \bal{<Soit>} factorise la déclaration au
+pluriel, par l'article, par un nombre, ou par la distribution
+respective : \bal{<Soit>les points A, B et C de coordonnées
+respectives (1;2), (-1;2) et (-1;-2)}. La factorisation vaut aussi
+pour les phrases calculantes (\bal{<Calcule la dérivée de f, g et
+h>} vaut trois calculs) et pour le tracé : \bal{<Trace les fonctions
+f, g et h pour x dans [-2 ; 2] et y dans [-3 ; 3]>} dessine les
+trois courbes dans le même repère, légende comprise.
+
+\begin{code}
+<Soit>les points A(1;1), B(5;3) et C(2;4)
+
+<Trace un repère où l'abscisse appartient à [-1 ; 6]
+    et l'ordonnée à [-1 ; 5]>{
+    la droite (AB)
+    la médiatrice de [AB]
+    la bissectrice de l'angle BAC
+}
+\end{code}
+
+% =====================================================================
+\part{Mathématiques}
+% =====================================================================
+
+\section{Notation en ligne}
+
+Les formules s'écrivent entre \$, en mots plutôt qu'en commandes :
+
+\begin{longtable}{@{}ll@{}}
+\toprule
+\textbf{On écrit} & \textbf{On obtient} \\
+\midrule
+\verb|$1/2 + 1/3$| & $\tfrac12 + \tfrac13$ \\
+\verb|$x^2 + y^2 = r^2$| & $x^2 + y^2 = r^2$ \\
+\verb|$racine(2)$| & $\sqrt{2}$ \\
+\verb|$somme(k=1;n) k$| & $\sum_{k=1}^{n} k$ \\
+\verb|$pour tout x dans RR$| & $\forall x \in \mathbb{R}$ \\
+\verb|$il existe x$| & $\exists x$ \\
+\verb|$il n'existe pas de x$| & $\nexists\, x$ \\
+\verb|$alpha + beta$| & $\alpha + \beta$ \\
+\verb|$NN inclus dans RR$| & $\mathbb{N} \subset \mathbb{R}$ \\
+\verb|$A union B$| & $A \cup B$ \\
+\verb|$A inter B$| & $A \cap B$ \\
+\verb|$A privé de B$| & $A \setminus B$ \\
+\verb|$(P et Q) ou non R$| & $(P \land Q) \lor \lnot R$ \\
+\bottomrule
+\end{longtable}
+
+La négation d'une relation ou d'un quantificateur se marque d'un \bal{!}
+initial : \bal{racine(2) !in QQ} donne $\sqrt2 \notin \mathbb{Q}$. Un
+calcul s'insère par \bal{\#\{...\}} : \bal{la moitié de 5 vaut
+\#\{5/2\}} affiche « 2,5 » (virgule française).
+
+\section{Calcul formel (SymPy)}
+
+Dès que Python~3 et SymPy sont installés, la phrase devient
+calculante --- aucune option à activer, les constructions de calcul
+formel appellent le moteur externe d'elles-mêmes. L'objectif
+n'est pas d'afficher de belles formules --- LaTeX sait déjà le faire ---
+mais de \textbf{résoudre}.
+
+\begin{longtable}{@{}ll@{}}
+\toprule
+\textbf{Phrase} & \textbf{Effet} \\
+\midrule
+\bal{<Factorise>EXPR} & Factorisation \\
+\bal{<Développe>et réduis EXPR} & Développement \\
+\bal{<Décompose>en éléments simples EXPR} & Éléments simples \\
+\bal{<Calcule>la forme canonique de EXPR} & Trinôme canonique \\
+\bal{<Résous>l'équation ...} & Résolution dans $\mathbb{R}$ \\
+\bal{<Résous>dans CC l'équation ...} & Autre domaine \\
+\bal{<Calcule>la somme de EXPR pour k de a à b} & Forme close \\
+\bal{<Calcule>la dérivée de f}, \bal{<Calcule>la primitive de f} & Analyse d'une fonction \\
+\bal{<Détermine>les zéros de f}, \bal{<Calcule>la limite de f en a} & Zéros, limites \\
+\bal{<Calcule>le développement limité de f en a à l'ordre n} & DL \\
+\bal{<Dresse>le tableau de variations de f} & Étude complète automatique \\
+\bottomrule
+\end{longtable}
+
+Une fonction se pose d'abord par \bal{<Soit>}, puis s'étudie :
+
+\begin{code}
+<Soit>une fonction q(x) = -x^4 + 2x^2 + 1
+
+<Dresse>le tableau de variations de q
+<Détermine>les zéros de q
+<Trace la fonction q pour x appartient à [-2 ; 2]
+    et y à [-3 ; 3], avec 200 échantillons>
+\end{code}
+
+\subsection{Équations différentielles}
+
+La notation prime se lit telle quelle ; l'inconnue et sa variable se
+déclarent au besoin :
+
+\begin{code}
+<Résous>l'équation différentielle y'' + 4y = 0
+<Résous>l'équation différentielle N' = -0,12N, d'inconnue N(t)
+\end{code}
+
+Les équations aux dérivées partielles du premier ordre linéaire
+s'écrivent en notation indicée :
+
+\begin{code}
+<Résous>l'équation aux dérivées partielles u_x + u_y = u
+\end{code}
+
+\section{Algèbre linéaire}
+
+Une matrice est un bloc, une rangée par ligne, le point-virgule sépare
+les coefficients :
+
+\begin{code}
+<Soit la matrice M>{
+    2 ; 1
+    1 ; 2
+}
+
+<Calcule>le déterminant de M
+<Calcule>les valeurs propres de M
+<Diagonalise M>
+\end{code}
+
+Un système s'aligne seul sur le premier opérateur relationnel :
+
+\begin{code}
+<Soit le système s>{
+    2x + 3y = 7
+    x - y = 1
+}
+
+<Résous>s pas à pas
+\end{code}
+
+\section{Calcul numérique (SciPy)}
+
+Là où le formel n'a pas de forme close, le numérique prend le relais.
+
+\begin{longtable}{@{}ll@{}}
+\toprule
+\textbf{Phrase} & \textbf{Effet} \\
+\midrule
+\bal{<Résous>numériquement l'équation ... sur [a ; b]} & Racine (Brent) \\
+\bal{<Calcule la probabilité que X <= a pour la loi normale(m ; s)>} & Probabilité \\
+\bal{<Calcule>le quantile d'ordre p de la loi ...} & Quantile \\
+\bal{<Calcule>l'espérance de la loi ...} & Moment \\
+\bal{<Ajuste f(x) = ... aux données \{...\}>} & Moindres carrés \\
+\bottomrule
+\end{longtable}
+
+Les lois reconnues : \bal{normale(m ; s)}, \bal{binomiale(n ; p)},
+\bal{poisson(l)}, \bal{uniforme(a ; b)}, \bal{exponentielle(l)},
+\bal{student(k)}, \bal{khi-deux(k)}. Les opérateurs de probabilité :
+\bal{<=}, \bal{>=}, \bal{=}, \bal{<}, \bal{>}.
+
+\section{Probabilités : l'arbre pondéré}
+
+Un nœud à branche unique reçoit son complément automatiquement ; le
+produit de chaque chemin s'imprime à la feuille.
+
+\begin{code}
+<Construis>un arbre avec les produits{
+    A 0,3 {
+        B 0,6
+    }
+    !A 0,7 {
+        B 0,1
+    }
+}
+\end{code}
+
+\section{Statistiques}
+
+\begin{code}
+<Affiche une statistique en barres
+    avec les données {1: 4 | 2: 7 | 3: 2 | 4: 5}>
+
+<Affiche une statistique en camembert
+    avec les données {Marche: 5 | Bus: 3 | Vélo: 2}>
+\end{code}
+
+Une table de données se déclare et se réutilise par son nom :
+
+\begin{code}
+soit sondage = {
+    Jeudi: 8
+    Lundi: 5
+    Mardi: 3
+}
+
+<Affiche une statistique en barres
+    avec les données sondage et en disposition horizontale>
+\end{code}
+
+% =====================================================================
+\part{Programmer le document}
+% =====================================================================
+
+\section{Variables et contrôle}
+
+\begin{code}
+soit tva = 0,2
+soit prix = 150
+
+Le prix TTC est #{prix * (1 + tva)} euros.
+
+pour k de 1 à 3 {
+    Ligne #k : le carré de #k vaut #{k*k}.
+}
+
+si prix au moins 100 {
+    Livraison gratuite.
+} sinon {
+    Frais de port en sus.
+}
+\end{code}
+
+Les deux bornes d'une boucle sont incluses : \bal{pour n de 1 à 5}
+parcourt 1, 2, 3, 4 \emph{et} 5. Le pas se précise en prose,
+décimaux admis : \bal{pour i de 0,5 à 2,5 avec un pas de 0,5}.
+S'y ajoutent \bal{tant que n < 3 faire \{...\}} (condition vérifiée
+avant chaque passage), \bal{faire \{...\} tant que n < 3} (le corps
+s'exécute au moins une fois), l'enchaînement \bal{sinon si}, et les
+connecteurs \bal{et} / \bal{ou} dans les conditions. Un compteur posé
+avant la boucle (\bal{soit n = 0}) se réaffecte à l'intérieur
+(\bal{soit n = n + 1}) : c'est ce qui fait avancer la boucle.
+
+Enfin, la règle n°12 : toute balise commence par un verbe d'action à
+l'impératif présent (\bal{<Dresse>un tableau ...}, \bal{<Affiche un
+cadre ...>}, \bal{<Insère>une image ...}, \bal{<Calcule la dérivée
+de f>}), jamais par l'objet nu. Seuls les styles, les commandes
+structurelles (\bal{<section>}) et les définitions d'alias y
+échappent.
+
+% =====================================================================
+\part{Référence}
+% =====================================================================
+
+\section{Diagnostic}
+
+Chaque erreur est un message français qui cite la règle enfreinte et
+propose la forme correcte. Par exemple, une liste d'attributs sans
+\bal{avec} produit : « \textit{liste d'attributs mal introduite ... les
+attributs d'un objet s'ouvrent par avec} ». Une phrase de calcul
+formel sans Python explique comment l'installer.
+
+\section{Le programme du collège}
+
+Les rédactions types du collège s'écrivent en une
+phrase, calculs exacts et justification comprise.
+
+\begin{longtable}{@{}ll@{}}
+\toprule
+\textbf{Phrase} & \textbf{Effet} \\
+\midrule
+\bal{<Calcule>AC dans le triangle ABC rectangle en B, avec AB = 3 et BC = 4} & Pythagore rédigé \\
+\bal{<Vérifie>si le triangle ABC est rectangle, avec ...} & Réciproque ou contraposée \\
+\bal{<Calcule>AC par le théorème de Thalès, avec AM = 3, AB = 6 et AN = 4} & Thalès (config.\ A, M, N) \\
+\bal{<Vérifie>si les droites (MN) et (BC) sont parallèles, avec ...} & Réciproque de Thalès \\
+\bal{<Calcule>BC dans le triangle ABC rectangle en B, avec l'angle A = 30 degrés et AC = 8} & Trigonométrie (côté) \\
+\bal{<Calcule>l'angle A dans le triangle ABC rectangle en B, avec AB = 3 et AC = 6} & Trigonométrie (angle) \\
+\bal{<Calcule>la moyenne de la série 12 ; 15 ; 9 ; 14} & Aussi pondérée, médiane, étendue, quartiles \\
+\bal{<Calcule>la quatrième proportionnelle de 3, 5 et 12} & Produit en croix \\
+\bal{<Vérifie si le tableau est de proportionnalité>\{...\}} & Et \bal{<Complète>le tableau ...} \\
+\bal{<Calcule>30 \% de 250} & Avec augmentation, diminution, taux \\
+\bal{<Calcule>l'échelle d'un plan où 2 cm représentent 50 m} & Échelles \\
+\bal{<Calcule>la vitesse moyenne pour 150 km en 2 h 30 min} & Et distance, durée \\
+\bal{<Calcule>le périmètre du cercle de rayon 5} & Aires et volumes aussi, $\pi$ exact \\
+\bal{<Convertis>3,5 km en m} & Longueurs, masses, contenances, aires, volumes \\
+\bal{<Calcule>1/2 + 1/3 en détaillant} & Fractions pas à pas ; \bal{<Simplifie>la fraction 84/60} \\
+\bal{<Écris>le nombre 45 600 en notation scientifique} & Puissances de dix \\
+\bal{<Vérifie>si 456 est divisible par 3} & Critères justifiés \\
+\bal{<Applique le programme de calcul à 5>\{...\}} & Et \bal{<Exprime ... en fonction de x>\{...\}} \\
+\bal{<Construis>l'image du triangle ABC par la symétrie centrale de centre O} & Figure et image tracées \\
+\bal{<... par la rotation de centre O et d'angle 90 degrés>} & Aussi symétrie axiale, translation, homothétie \\
+\bottomrule
+\end{longtable}
+
+\section{Les exemples, en quatre niveaux}
+
+Les documents d'exemples suivent désormais le niveau scolaire, porté
+par le suffixe du nom de fichier : \textbf{1} pour la langue et la mise
+en forme (\bal{basic1}, \bal{basic2}), \textbf{2} pour le collège,
+\textbf{3} pour le lycée, \textbf{4} pour le supérieur — ainsi
+\bal{algebre2}, \bal{algebre3}, \bal{algebre4}, et de même pour
+\bal{analyse}, \bal{geometrie} et \bal{statistiques-probabilites}.
+
+\section{Le programme du lycée, couvert}
+
+Chaque chapitre du lycée (seconde,
+première, terminale spécialité, option maths expertes) dispose de sa
+phrase. Les objets se posent par \bal{<Soit>}, les actions suivent le
+registre des enseignants.
+
+\begin{longtable}{@{}ll@{}}
+\toprule
+\textbf{Phrase} & \textbf{Effet} \\
+\midrule
+\bal{<Étudie>la convexité de f} & Signe de $f''$, inflexions \\
+\bal{<Détermine>les asymptotes de f} & Horizontales, obliques, verticales \\
+\bal{<Résous>l'équation trigonométrique cos(x) = 1/2} & Solutions sur $\mathbb{R}$ \\
+\bal{<Calcule>le produit scalaire de u et v} & Détail et orthogonalité \\
+\bal{<Calcule>la norme de u}, \bal{<Calcule>l'angle entre u et v} & Normes et angles exacts \\
+\bal{<Étudie>la colinéarité de u et v} & Déterminant ou produit vectoriel \\
+\bal{<Donne>un vecteur normal de P} & Plan posé par son équation \\
+\bal{<Calcule>la distance du point (1 ; 2 ; 0) au plan P} & Distance exacte \\
+\bal{<Construis le graphe G>\{ A -> B ... \}} & Tracé (\bal{--} non orienté, \bal{->} orienté) \\
+\bal{<Dresse>la matrice d'adjacence de G} & Sommets en ordre annoncé \\
+\bal{<Dénombre>les chemins de longueur 3 de A à B dans G} & Par $M_G^{\,n}$ \\
+\bal{<Calcule>la puissance 3 de M}, \bal{<Calcule>l'état stable de M} & Chaînes de Markov \\
+\bal{<Résous>l'équation diophantienne 12x + 20y = 8} & Bézout, solution générale \\
+\bal{<Calcule>l'intervalle de fluctuation pour n = 100 et p = 0,3} & $[\,p \pm 1/\sqrt{n}\,]$ \\
+\bal{<Applique>l'inégalité de Bienaymé-Tchebychev pour une espérance de 5, une variance de 2 et un écart de 3} & Borne $V/a^2$ \\
+\bottomrule
+\end{longtable}
+
+Les vecteurs et les plans se posent en prose, comme le reste :
+
+\begin{code}
+<Soit>les vecteurs u et v de coordonnées respectives (3 ; -2) et (4 ; 6)
+<Soit>le plan P d'équation 2x + y - z = 3
+\end{code}
+
+\section{Le programme du supérieur (CPGE)}
+
+Le registre des classes préparatoires s'écrit tel quel. Les résultats
+sont exacts (rationnels, radicaux), les impossibilités renvoient
+honnêtement au raisonnement à rédiger.
+
+\begin{longtable}{@{}ll@{}}
+\toprule
+\textbf{Phrase} & \textbf{Effet} \\
+\midrule
+\bal{<Calcule>l'intégrale de f entre a et b} & Forme close exacte \\
+\bal{<Détermine>la nature de l'intégrale de f entre 1 et +infini} & Impropres : nature et valeur \\
+\bal{<Calcule>un équivalent de f en a} & $\sim$ en un point ou en $\pm\infty$ \\
+\bal{<Détermine>la nature de la série de terme général 1/n\string^2} & Convergence, somme si close \\
+\bal{<Calcule>le rang de M}, \bal{<Détermine>le noyau de M}, \bal{<Détermine>l'image de M} & $\operatorname{rg}$, $\operatorname{Ker}$, $\operatorname{Im}$ \\
+\bal{<Calcule>le polynôme caractéristique de M} & $\chi_M(X)$ factorisé \\
+\bal{<Calcule>le polynôme minimal de M} & $\pi_M(X)$ \\
+\bal{<Trigonalise>M} & $M = PTP^{-1}$, $T$ triangulaire \\
+\bal{<Orthonormalise>la famille u, v et w} & Gram-Schmidt exact \\
+\bal{<Calcule>le projeté orthogonal de u sur v} & Projection détaillée \\
+\bal{<Effectue>la division euclidienne de X\string^3 + 2X - 1 par X\string^2 + 1} & Dans $K[X]$ (entiers acceptés) \\
+\bal{<Calcule>le PGCD de P et Q} & Polynomial (unitaire) ou entier \\
+\bal{<Factorise>X\string^4 - 1 dans R[X]}, \bal{... dans C[X]} & Irréductibles du corps choisi \\
+\bal{<Calcule>le gradient de f}, \bal{<Calcule>la matrice hessienne de f} & Plusieurs variables \\
+\bal{<Calcule>la dérivée partielle de f par rapport à y} & $\partial f/\partial y$ \\
+\bal{<Détermine>les points critiques de f} & Nature par la hessienne \\
+\bal{<Calcule>l'espérance de X}, \bal{la variance}, \bal{l'écart type} & Sur une loi posée en tableau \\
+\bal{<Calcule>la série de Fourier de f sur [-pi ; pi] à l'ordre 4} & Série tronquée \\
+\bal{<Calcule>la transformée de Laplace de f}, \bal{... inverse de F} & $\mathcal{L}$ et originale \\
+\bal{<Calcule>le wronskien de f et g} & Avec conclusion sur la liberté \\
+\bottomrule
+\end{longtable}
+
+Les fonctions de plusieurs variables se posent naturellement :
+
+\begin{code}
+<Soit>une fonction psi(x, y) = x^3 - 3x + y^2
+
+<Détermine>les points critiques de psi
+\end{code}
+
+\section{État du projet}
+
+texecole~1.1 couvre le langage, la syntaxe en prose française, les
+deux moteurs de calcul (interne et SymPy), et le programme de
+mathématiques du collège (transformations du plan comprises), du
+lycée et des classes préparatoires. Le
+développement se poursuit, avec deux axes prioritaires pour les
+prochaines versions : une géométrie 3D plus riche (au-delà des
+solides simples déjà tracés par \bal{<Trace>}) et davantage de
+possibilités de calcul, en mathématiques comme dans les autres
+sciences enseignées. Ces ajouts se feront sans rien retirer à la
+syntaxe existante.
+
+\section{Exemples}
+
+La distribution fournit douze fichiers d'exemples, en deux niveaux :
+\texttt{basic1} et \texttt{basic2} pour le socle, puis chaque domaine
+en paire secondaire / supérieur --- \texttt{analyse}, \texttt{algebre},
+\texttt{geometrie}, \texttt{statistiques-probabilites},
+\texttt{physique-chimie}. Le manuel complet, en français, est le
+fichier \texttt{TEXECOLE.md}.
+
+\vfill
+{\small\itshape texecole est publié sous licence GPL~v3. Le
+développement se suit sur \url{https://github.com/gdubard}.\par}
+
+\end{document}

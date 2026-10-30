@@ -1,0 +1,76 @@
+\documentclass[solutions]{worksheet}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+
+\coursename{Number Theory}
+\semester{Fall 2026}
+\weeknumber{4}
+\worksheetnumbertotal{10}
+\worksheetnumber{4}
+
+\begin{document}
+
+\begin{exercise}
+
+  Is $91$ prime? Justify your answer.
+
+\end{exercise}
+
+\begin{solution}
+
+  No: $91 = 7 \times 13$, so it is not prime.
+
+\end{solution}
+
+\begin{exercise}
+
+  This exercise has multiple sub-questions about modular arithmetic.
+
+  \begin{questions}
+
+    \question Compute $2^{10} \bmod 11$.
+
+    \question State Fermat's little theorem and explain why your answer to
+    the previous question is consistent with it.
+
+  \end{questions}
+
+  These ideas are the foundation of several primality tests used in modern
+  cryptography.
+
+  \begin{questions}
+
+    \question Does the converse of Fermat's little theorem hold, i.e.\ if
+    $a^{p-1} \equiv 1 \pmod p$ for some $a$, must $p$ be prime?
+
+  \end{questions}
+
+\end{exercise}
+
+\begin{solution}
+
+  Fermat's little theorem is a cheap first filter for primality: it never
+  wrongly rejects a prime, but it can be fooled by certain composite
+  numbers (Carmichael numbers), which is why the converse fails and why
+  real primality tests use several independent bases.
+
+  \begin{answers}
+
+    \answer By Fermat's little theorem, $2^{10} \equiv 1 \pmod{11}$ since
+      $11$ is prime and $\gcd(2, 11) = 1$.
+
+    \answer Fermat's little theorem states that if $p$ is prime and
+      $\gcd(a, p) = 1$, then $a^{p-1} \equiv 1 \pmod p$. Since $11$ is
+      prime, this predicts exactly the result computed above.
+
+    \answer No. A composite number $p$ for which $a^{p-1} \equiv 1
+      \pmod p$ holds for some (or even every) $a$ coprime to $p$ is called
+      a pseudoprime (or, if it holds for every valid $a$, a Carmichael
+      number) -- for example $341 = 11 \times 31$ satisfies
+      $2^{340} \equiv 1 \pmod{341}$ despite being composite.
+
+  \end{answers}
+
+\end{solution}
+
+\end{document}

@@ -1,0 +1,77 @@
+\documentclass[10pt]{beamer}
+\usetheme{digital-minimal}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+
+\title{Continuous Deployment Pipelines}
+\subtitle{From commit to production}
+\author{Sam Okafor}
+\institute{Platform Engineering}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Overview}
+  \tableofcontents
+\end{frame}
+
+\section{Pipeline stages}
+
+\begin{frame}{What happens after a merge}
+  \begin{itemize}
+    \item Build and unit tests run on every commit
+    \item Integration tests gate the staging deploy
+    \item A manual approval gates production
+  \end{itemize}
+\end{frame}
+
+\section{Rollout strategy}
+
+\begin{frame}{Comparing rollout styles}
+  \begin{table}
+    \centering
+    \begin{tabular}{lcc}
+      \toprule
+      Strategy & Rollback speed & Risk \\
+      \midrule
+      Blue/green & Instant & Low \\
+      Canary & Minutes & Low-medium \\
+      Rolling & Minutes & Medium \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Two columns}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \textbf{Before}
+      \begin{itemize}
+        \item Manual deploys, Friday freezes
+        \item Hours of lead time
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{After}
+      \begin{itemize}
+        \item Automated, multiple deploys a day
+        \item Minutes of lead time
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Next steps}
+
+\begin{frame}{Rollout plan}
+  \begin{enumerate}
+    \item Ship canary deploys for the checkout service first
+    \item Expand to the rest of the fleet next quarter
+  \end{enumerate}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,920 @@
+% \iffalse meta-comment
+%
+% Copyright 2018-2021, 2024 Sergiu Deitsch
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% \fi
+%
+% \iffalse
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{rebuttal}
+%<package>   [2024-11-14 v0.1.1 Markup for rebuttal letters]
+%
+%<*driver>
+\ProvidesFile{rebuttal.dtx}
+
+\documentclass[american,reportchangedates]{ltxdoc}
+\usepackage[abbreviations]{foreign}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\usepackage{microtype}
+\usepackage[all]{nowidow}
+\usepackage{rebuttal}
+\usepackage{hyperref}
+
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+
+\hypersetup{%
+  pdfauthor = {Sergiu Deitsch},
+  pdftitle  = {The rebuttal package},
+  urlcolor  = NavyBlue,
+  linkcolor = Firebrick3,
+}
+
+\begin{document}
+  \DocInput{rebuttal.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{v0.1.0}{2024-11-01}{Initial release}
+% \changes{v0.1.1}{2024-11-14}{Improved documentation}
+%
+% \GetFileInfo{rebuttal.sty}
+%
+% \DoNotIndex{\newcommand,\newenvironment,\def,\the,\let,\if,\fi,\else,\\}
+% \DoNotIndex{\newif,\ifx,\ifcase,\or}
+% \DoNotIndex{\begingroup,\endgroup}
+%
+% \title{The \href{https://github.com/sergiud/rebuttal}{\textsf{rebuttal}} package%
+%   \thanks{This document corresponds to \textsf{rebuttal}~\fileversion, dated \filedate.}}
+% \author{Sergiu % Deitsch\\%
+%   \href{mailto:sergiu.deitsch@gmail.com}{\texttt{sergiu.deitsch@gmail.com}}%
+% }
+% \date{November 14, 2024}
+%
+% \maketitle
+%
+% \begin{abstract}
+% The rebuttal \LaTeX\ package provides means for writing structured journal and
+% conference paper rebuttals.
+% \end{abstract}
+%
+% \section{Introduction}
+%
+% A well-structured rebuttal typically consists of the following parts:
+%
+% \begin{enumerate}
+%   \item a master list of referee comments and author's replies, and
+%   \item clearly highlighted changes to the manuscript that stem from
+%   reviewers' comments.
+% \end{enumerate}
+%
+% The \textsf{rebuttal} provides markup to support authors in producing the
+% above content in a consistent manner.
+%
+% \section{Usage}
+%
+% The following sections provide an overview of the package's functionality for
+% structuring rebuttals and annotating manuscripts.
+%
+% \subsection{Structuring the Rebuttal}
+%
+% \DescribeEnv{rebuttal}
+% \DescribeEnv{comment}
+% \DescribeEnv{answer}
+% The packages defines the |rebuttal| environment that can contain several
+% blocks that refer to editor's or specific reviewers' comments and your replies
+% to referees' comments. Specifically, the environment accepts an optional
+% \oarg{title} and is expected to contain a |comment| and an |answer|
+% environment. The general layout looks as follows:
+%
+% \begin{verbatim}
+%   \begin{rebuttal}[Editor's Comments]
+%     \begin{comment}
+%       % Reviewer's comment
+%     \end{comment}
+%     \begin{answer}
+%       % The reply
+%     \end{answer}
+%   \end{rebuttal}
+% \end{verbatim}
+%
+% \subsection{Annotating Changes to the Manuscript}
+%
+% \DescribeMacro{\addition}
+% \DescribeMacro{\deletion}
+% \DescribeMacro{\change}
+% Within the manuscript, three main commands can be used to denote additions,
+% deletions, or changes. The corresponding commands are
+% |\addition|\oarg{options}\marg{text}, |\deletion|\oarg{options}\marg{text},
+% and |\change|\oarg{options}\marg{old text}\marg{new text}. While |\addition|
+% and |\deletion| require a single argument. |\change| expects two arguments,
+% where the first one denotes the changed text, and the second one the new text.
+%
+% All three commands require specifying their labels for referencing the
+% modifications using the \meta{label} option. Additionally, the \meta{ref}
+% option back references the original reviewer comment and may specify multiple
+% labels, \eg
+%
+% \begin{verbatim}
+%   \addition[label=a:new,ref={c:c1,c:c2}]{new text}.
+% \end{verbatim}
+%
+% \subsection{Annotating Multiple Paragraphs}
+%
+% \DescribeEnv{additionenv}
+% \DescribeEnv{changeenv}
+% \DescribeEnv{deletionenv}
+% Additionally to the provided markup commands, the package also defines
+% equivalent environments for annotating multiple paragraphs:
+%
+% \begin{verbatim}
+%   \begin{additionenv}[label=a:par,ref=c:missing-motivations]
+%     \section{New Experiment}
+%     % new text
+%   \end{additionenv}
+%
+%   \begin{changeenv}[label=ch:par,ref=c:missing-motivations]{old text}
+%     \section{Improved Experiment}
+%     % new text
+%   \end{changeenv}
+%
+%   \begin{deletionenv}[label=d:par,ref=c:missing-motivations]
+%     \section{Useless Discussion}
+%     % old text
+%   \end{deletionenv}
+% \end{verbatim}
+%
+% \subsection{Disabling Annotations}
+%
+% \DescribeMacro{\rebuttalset}
+% Once a manuscript has been accepted for publication, rebuttal annotations are
+% no longer necessary and only the accepted changes should be typeset.
+% \textsf{rebuttal} allows to disable annotations using the |\rebuttalset|
+% command by disabling the \meta{marked} option, \ie,
+% \begin{verbatim}
+%   \rebuttalset{marked=false}
+% \end{verbatim}
+% which will disable the annotiations in the current group.
+%
+% \section{Known Limitations}
+%
+% Rebuttal markup cannot be used within floating environments such as |figure|
+% and |table|, and the |\caption| command.
+%
+% \MaybeStop{\PrintChanges\PrintIndex}
+%
+% \section{Implementation}
+%
+% \subsection{Package}
+%
+%    \begin{macrocode}
+%<*package>
+%    \end{macrocode}
+% We need to load additional color sets.
+%    \begin{macrocode}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%    \end{macrocode}
+% Package dependencies.
+%    \begin{macrocode}
+\RequirePackage{calc}
+\RequirePackage{environ}
+\RequirePackage{etoolbox}
+\RequirePackage{marginnote}
+\RequirePackage{pgfkeys}
+\RequirePackage{soul}
+\RequirePackage{tikz}
+\RequirePackage{todonotes}
+\RequirePackage{ulem}
+\RequirePackage{xcolor}
+\RequirePackage{xstring}
+
+\AtEndPreamble{
+  \RequirePackage{pdfcomment}
+}
+
+\ifx\counterwithin\@undefined
+\RequirePackage{chngcntr}
+\fi
+%    \end{macrocode}
+% \begin{macro}{\rebuttal@triangle}
+% The following command is used to generate a triangle in the left margin.
+%    \begin{macrocode}
+\newcommand\rebuttal@triangle{%
+  \begingroup
+  \ifx\tikzexternaldisable\@undefined\else
+    \tikzexternaldisable
+  \fi
+  \begin{tikzpicture}[x=.5em,y=.5em]
+    \fill[/rebuttal/answer/label] (0,0) -- (0,1) -- (.75,.5) -- cycle;
+  \end{tikzpicture}%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\rebuttal@decbookmarklevel}
+% Unless \textsf{hyperref} was not loaded, the command decrements the current
+% bookmark level.
+%    \begin{macrocode}
+\newcommand\rebuttal@decbookmarklevel{%
+  \ifx\Hy@currentbookmarklevel\@undefined\else
+    \@tempcnta\Hy@currentbookmarklevel
+    \advance\@tempcnta by -1 %
+    \xdef\Hy@currentbookmarklevel{\the\@tempcnta}%
+  \fi
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\rebuttal@incbookmarklevel}
+% Unless \textsf{hyperref} was not loaded, the command incements the current
+% bookmark level.
+%    \begin{macrocode}
+\newcommand\rebuttal@incbookmarklevel{%
+  \ifx\Hy@currentbookmarklevel\@undefined\else
+    \@tempcnta\Hy@currentbookmarklevel
+    \advance\@tempcnta by 1 %
+    \xdef\Hy@currentbookmarklevel{\the\@tempcnta}%
+  \fi
+}
+%    \end{macrocode}
+% \end{macro}
+
+%    \begin{macrocode}
+\newif\ifrebuttal@marked
+\newif\ifrebuttal@nohyperlinks
+\newif\ifrebuttal@refbreak
+\newif\ifrebuttal@twocolumn
+
+\pgfkeys{
+  /rebuttal/.is family,
+  /rebuttal/execute on begin/.initial=,
+  /rebuttal/execute on end/.initial=,
+  /rebuttal/no hyperlinks/.is if=rebuttal@nohyperlinks,
+  /rebuttal/no hyperlinks=false,
+  /rebuttal/marked/.is if=rebuttal@marked,
+  /rebuttal/marked=true,
+  /rebuttal/title/font/.store in=\rebuttal@titlefont,
+  /rebuttal/title/font=\normalfont\bfseries,
+  /rebuttal/title/format/.code=#1:,
+  /rebuttal/change/from command/.store in=\rebuttal@changefrom,
+  /rebuttal/change/from command=\sout,
+  /rebuttal/change/from color/.code={\colorlet{rebuttal@change@from}{#1}},
+  /rebuttal/change/from color=DodgerBlue3!50,
+  /rebuttal/deletion/command/.store in=\rebuttal@delete,
+  /rebuttal/deletion/command=\xout,
+  /rebuttal/comment/font/.store in=\rebuttal@commentfont,
+  /rebuttal/comment/font=\normalfont\itshape,
+  /rebuttal/comment/label/font/.store in=\rebuttal@commentlabelfont,
+  /rebuttal/comment/label/font=\normalfont\rmfamily\bfseries,
+  /rebuttal/answer/font/.store in=\rebuttal@answerfont,
+  /rebuttal/answer/font=\normalfont,
+  /rebuttal/answer/label/.store in=\rebuttal@answerlabel,
+  /rebuttal/answer/label={\rebuttal@triangle},
+  /rebuttal/answer/label/font/.store in=\rebuttal@answerlabelfont,
+  /rebuttal/answer/label/font=\normalfont,
+  /rebuttal/answer/label/.style={black!65},
+  /rebuttal/reference/font/.store in=\rebuttal@referencefont,
+  /rebuttal/reference/font={%
+    \tiny\bfseries%
+  },
+  % TODO does not work within \todo
+  %/rebuttal/reference/.code={%
+  %},
+}
+
+\let\rebuttalanswerlabel\rebuttal@answerlabel
+
+\newrobustcmd\rebuttal@reference[1]{%
+  \begingroup
+  \rebuttal@referencefont
+  \begin{tabular}{@{}c@{}}
+    \begingroup
+      \color{rebuttal@#1}%
+      \MakeUppercase{\rebuttal@id}%
+      \csname therebuttal#1\endcsname
+    \endgroup
+    \ifrebuttal@refbreak
+      \\%
+    \else
+      \enspace
+    \fi
+    \normalfont
+    % Reset color (TODO Maybe allow to modify the color)
+    \color{black}%
+    (\pgfkeys{/rebuttal/#1/ref/all})%
+  \end{tabular}%
+  \endgroup
+}
+
+\newcommand\rebuttal@define@keys[2]{
+  \pgfkeys{
+    /rebuttal/#1/label/.initial=,
+    /rebuttal/#1/label/.value required,
+    /rebuttal/#1/break/.is if=rebuttal@refbreak,
+    /rebuttal/#1/ref/.initial=,
+    /rebuttal/#1/ref/.value required,
+    /rebuttal/#1/ref/create/.code={
+      \ifrebuttal@nohyperlinks
+        \ref*{##1}%
+      \else
+        \ref{##1}%
+      \fi
+    },
+    /rebuttal/#1/ref/all/.code={%
+      \pgfkeysgetvalue{/rebuttal/#1/ref}\rebuttal@currefs
+      \edef\rebuttal@tmp{\rebuttal@currefs}%
+      \foreach
+      [
+        %expand list,
+        count=\ri from 0,
+      ]
+      \r in \rebuttal@tmp {%
+        \ifnum\ri > 0\relax
+          ,\,%
+        \fi
+        \pgfkeys{/rebuttal/#1/ref/create=\r}%
+      }%
+    },
+    /rebuttal/#1/color/.code={\colorlet{rebuttal@#1}{##1}},
+    /rebuttal/#1/color=#2,
+    /rebuttal/#1/font/.value required,
+    /rebuttal/#1/font/.code={
+      \expandafter\def\csname rebuttal@#1@font\endcsname{##1}%
+    },
+    /rebuttal/#1/font=\normalfont\mdseries,
+  }
+}
+
+\rebuttal@define@keys{addition}{RedViolet}
+\rebuttal@define@keys{deletion}{Firebrick3}
+\rebuttal@define@keys{change}{DodgerBlue3}
+
+\newlength\rebuttal@textwidth
+\newlength\rebuttal@hskip
+
+\newcommand\rebuttal@command[3]{%
+  \newcounter{rebuttal#1}%
+  \AtEndPreamble{%
+    \@ifpackageloaded{cleveref}{%
+      \crefname{rebuttal#1}{#1}{#1s}%
+    }{}%
+  }%
+  % Marked version with full output
+  \expandafter\newcommand\csname #1\endcsname[#3][]{%
+    \ifrebuttal@marked
+      \stepcounter{rebuttalchanges}%
+      \refstepcounter{rebuttal#1}%
+      \begingroup
+        \tikzset{notestyleraw/.append style={
+          inner sep=\z@,
+          rounded corners=\z@,
+        }}%
+        \pgfqkeys{/rebuttal/#1}{##1}%
+        \label{\pgfkeysvalueof{/rebuttal/#1/label}}%
+        \colorlet{Changes@Color}{rebuttal@#1}%
+        \begingroup
+%    \end{macrocode}
+% Main content.
+%    \begin{macrocode}
+          #2%
+        \endgroup
+        \StrLeft{#1}{1}[\rebuttal@id]%
+        \ifx\tikzexternaldisable\@undefined\else
+          \tikzexternaldisable
+        \fi
+%    \end{macrocode}
+% Shrink to text.
+%    \begin{macrocode}
+        \settowidth\rebuttal@textwidth{\rebuttal@reference{#1}}%
+        \tikzset{notestyleraw/.append style={text width=\rebuttal@textwidth}}%
+%    \end{macrocode}
+% Place labels in left margin at the same distance as on the right.
+%    \begin{macrocode}
+        \setlength\rebuttal@hskip{\marginparwidth}%
+        \addtolength\rebuttal@hskip{-\rebuttal@textwidth}%
+        \let\old@xmpar\@xmpar
+%    \end{macrocode}
+% Hook into \LaTeX\ kernel command since |\if@firstcolumn| is not unreliable
+% because margin notes are floats.
+%    \begin{macrocode}
+        \renewcommand\@xmpar[2][]{%
+          \old@xmpar[\hspace*{\rebuttal@hskip}####1]{####2}%
+        }%
+        \todo
+        [
+          backgroundcolor=none,
+          bordercolor=none,
+          linecolor=rebuttal@#1,
+          %size=\tiny,
+        ]{%
+          \rebuttal@reference{#1}%
+          %\pgfkeys{/rebuttal/reference=#1}
+        }%
+      \endgroup
+    \else
+      #2%
+    \fi
+  }%
+}
+%    \end{macrocode}
+
+% \begin{environment}{additionenv}
+% Provide an equivalent environment for the |\addition| command.
+%    \begin{macrocode}
+\NewEnviron{additionenv}[1][]{%
+  \addition[#1]{\BODY}%
+}%
+%    \end{macrocode}
+% \end{environment}
+
+% \begin{environment}{changeenv}
+% Provide an equivalent environment for the |\change| command.
+%    \begin{macrocode}
+\NewEnviron{changeenv}[2][]{%
+  \change[#1]{#2}{\BODY}%
+}%
+%    \end{macrocode}
+% \end{environment}
+
+% \begin{environment}{deletionenv}
+% Provide an equivalent environment for the |\deletion| command.
+%    \begin{macrocode}
+\NewEnviron{deletionenv}[1][]{%
+  \deletion[#1]{\BODY}%
+}%
+%    \end{macrocode}
+% \end{environment}
+
+%    \begin{macrocode}
+\newcommand\rebuttal@added[1]{%
+  \ifrebuttal@marked
+    \rebuttal@addition@font%
+    \textcolor{rebuttal@addition}{#1}%
+  \else
+    #1%
+  \fi
+}
+
+\newcommand\rebuttal@deleted[1]{%
+  \ifrebuttal@marked
+    \rebuttal@deletion@font%
+    \textcolor{rebuttal@deletion}{\rebuttal@delete{#1}}%
+  \fi
+}
+
+\newcommand\rebuttal@replaced[2]{%
+  \ifrebuttal@marked
+    \rebuttal@change@font%
+    \textcolor{rebuttal@change@from}{\rebuttal@changefrom{#1}}%
+    \allowbreak
+    \textcolor{rebuttal@change}{#2}%
+  \else
+    #2%
+  \fi
+}
+
+\rebuttal@command{addition}{\rebuttal@added{#2}}{2}
+\rebuttal@command{deletion}{\rebuttal@deleted{#2}}{2}
+\rebuttal@command{change}{\rebuttal@replaced{#2}{#3}}{3}
+
+\newcounter{rebuttalcomments}
+\newcounter{rebuttalchanges}
+
+\newcounter{rebuttal}
+\newcounter{rebuttalcomment}
+\newcounter{rebuttalanswer}
+
+\renewcommand\therebuttalcomment{%
+  \arabic{rebuttal}.\arabic{rebuttalcomment}%
+}
+
+\let\theHrebuttalcomment\therebuttalcomment
+
+\renewcommand\therebuttalanswer{%
+  \therebuttalcomment%
+}
+
+\counterwithin*{rebuttalcomment}{rebuttal}%
+\counterwithin*{rebuttalanswer}{rebuttalcomment}%
+
+\newdimen\rebuttal@labelsep
+%    \end{macrocode}
+
+% \begin{macro}{\rebuttal@startlinkguard}
+% Disable hyperlinks if |NoHyper| environment is available.
+%    \begin{macrocode}
+\newcommand\rebuttal@startlinkguard{%
+  \ifx\NoHyper\@undefined\else
+    \ifrebuttal@nohyperlinks
+      \begin{NoHyper}%
+    \fi
+  \fi
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\rebuttal@startlinkguard}
+% End of disable hyperlinks if |NoHyper| environment is available.
+%    \begin{macrocode}
+\newcommand\rebuttal@endlinkguard{
+  \ifx\endNoHyper\@undefined\else
+    \ifrebuttal@nohyperlinks
+      \end{NoHyper}%
+    \fi
+  \fi
+}
+%    \end{macrocode}
+% \end{macro}
+
+% TODO Comment labels tooltips
+% \begin{environment}{rebuttal}
+% The main environment that defines the remaining ones.
+% \changes{v0.1.1}{2024-11-14}{Fixed incorrect bookmark structure}
+%    \begin{macrocode}
+\newenvironment{rebuttal}[1][]{%
+  \rebuttal@startlinkguard
+%    \end{macrocode}
+% Execute user code.
+%    \begin{macrocode}
+  \pgfkeysvalueof{/rebuttal/execute on begin}%
+  \begingroup
+  \refstepcounter{rebuttal}%
+  \if@twocolumn
+    \onecolumn
+%    \end{macrocode}
+% Remember the layout.
+%    \begin{macrocode}
+    \rebuttal@twocolumntrue
+  \else
+    \rebuttal@twocolumnfalse
+  \fi
+  \begingroup
+  \par
+  \addvspace{\bigskipamount}%
+  \ifstrempty{#1}{}{%
+%    \end{macrocode}
+% In case the current bookmark level is 0, we leave it as is. Otherwise, we
+% increment the level to anchor the following bookmarks below the current
+% bookmark. This ensures that the bookmark structure is correct even if the
+% document either does not use or provides structuring commands (\eg,
+% missing |\section| in a \textsf{scrlttr2} document).
+%    \begin{macrocode}
+    \ifx\Hy@currentbookmarklevel\@undefined\else
+      \ifnum\Hy@currentbookmarklevel>0
+        \@tempcnta\Hy@currentbookmarklevel
+        \advance\@tempcnta by 1 %
+        \xdef\Hy@currentbookmarklevel{\the\@tempcnta}%
+      \fi
+    \fi
+    \ifx\currentpdfbookmark\@undefined\else
+      \currentpdfbookmark{#1}{rebuttalcomment.\therebuttalcomment}%
+    \fi
+    \noindent\bgroup\rebuttal@titlefont\strut
+    \pgfkeys{/rebuttal/title/format=#1}\egroup%
+  }%
+  \par%
+  \@afterheading
+  \vspace*{\medskipamount}%
+  \begin{trivlist}%
+  \let\rebuttal@oldmakelabel\makelabel%
+  \renewcommand\makelabel[1]{\llap{\rebuttal@commentlabelfont ##1}}%
+  \labelwidth\z@
+  %\setlength{\parsep}{\smallskipamount}%
+  %\setlength{\labelsep}{1pt}%
+  %\setlength{\topsep}{\z@}%
+  %\setlength{\partopsep}{\bigskipamount}
+  \let\comment\@undefined
+  \let\endcomment\@undefined
+  \newenvironment{comment}{%
+    \rebuttal@incbookmarklevel
+    \apptocmd\@item{%
+      \ifx\currentpdfbookmark\@undefined\else
+        \currentpdfbookmark{Comment~\therebuttalcomment}{rebuttalcomment.\therebuttalcomment}%
+      \fi
+    }{%
+      \PackageInfo{rebuttal}{The \string\@item\space command was patched to
+        provide comment bookmarks.}%
+    }{%
+      \PackageWarning{rebuttal}{Failed to patch the \string\@item\space command.
+        Bookmarks may not be displayed correctly.}%
+    }%
+%    \end{macrocode}
+% Do not allow to place answers within a comment by undefining the answer
+% environment
+%    \begin{macrocode}
+    \let\answer\@undefined
+    \let\endanswer\@undefined
+    \stepcounter{rebuttalcomments}%
+    \refstepcounter{rebuttalcomment}
+    %\settowidth{\labelwidth}{\rebuttal@commentlabelfont #1}
+    %\addtolength{\labelwidth}{1em}
+    \item
+    [%
+      \therebuttalcomment%
+    ]%
+    \begingroup
+    \rebuttal@commentfont
+    \let\makelabel\rebuttal@oldmakelabel
+  }{%
+    \endgroup
+    \rebuttal@decbookmarklevel
+  }
+  \newenvironment{answer}{%
+    \par\medskip
+    \@afterheading
+    \rebuttal@incbookmarklevel
+    \begin{trivlist}
+      \ifx\belowpdfbookmark\@undefined\else
+        \belowpdfbookmark{Anwser to~\therebuttalcomment}{rebuttalanswer.\therebuttalanswer}%
+      \fi
+      \normalfont\rebuttal@answerfont%
+      \rebuttal@labelsep\labelsep%
+      \newcommand\rebuttal@makelabel[1]{\rebuttal@answerlabelfont ####1\enspace}
+      \renewcommand\makelabel[1]{\rebuttal@makelabel{####1}}%
+      \labelsep\z@
+      \labelwidth\z@
+      \let\makelabel\empty
+      %\settowidth\labelwidth{\rebuttal@makelabel{\rebuttal@answerlabel}}%
+      \item
+        [%
+          \ifx\pdftooltip\@undefined
+            \llap{\rebuttal@answerlabel\enspace}%
+          \else
+            \llap{\pdftooltip{\rebuttal@answerlabel}{Reply}\enspace}%
+          \fi
+        ]%
+        \begingroup
+        \labelsep\rebuttal@labelsep
+        \refstepcounter{rebuttalanswer}%
+  }{%
+    \endgroup
+    \end{trivlist}%
+    \rebuttal@decbookmarklevel
+  }
+}{%
+  \end{trivlist}%
+  \rebuttal@decbookmarklevel
+  \endgroup
+  \par\addvspace{\bigskipamount}%
+  \ifrebuttal@twocolumn
+%    \end{macrocode}
+% Restore the layout.
+%    \begin{macrocode}
+    \twocolumn
+  \fi
+  \endgroup
+%    \end{macrocode}
+% Execute user code.
+%    \begin{macrocode}
+  \pgfkeysvalueof{/rebuttal/execute on end}%
+  \rebuttal@endlinkguard
+}
+%    \end{macrocode}
+% \end{environment}
+
+% Support \textsf{cleveref}.
+%    \begin{macrocode}
+\AtEndPreamble{%
+  \@ifpackageloaded{cleveref}{%
+    \crefname{rebuttalcomment}{comment}{comments}
+    \crefname{rebuttalanswer}{answer}{answers}
+    \Crefname{rebuttalcomment}{Comment}{Comments}
+    \Crefname{rebuttalanswer}{Answer}{Answers}
+  }{}
+}
+
+\newcommand\rebuttaltotalcomments{%
+  \textbf{??}%
+  \@latex@warning{Reference \string\rebuttaltotalcomments\space on page \thepage\space undefined}%
+}
+
+\newcommand\rebuttaltotalchanges{%
+  \textbf{??}%
+  \@latex@warning{Reference \string\rebuttaltotalchanges\space on page \thepage\space undefined}%
+}
+
+\AtEndDocument{%
+  \immediate\write\@auxout{%
+    \gdef\string\rebuttaltotalcomments{\arabic{rebuttalcomments}}%
+    \gdef\string\rebuttaltotalchanges{\arabic{rebuttalchanges}}%
+  }
+}
+%    \end{macrocode}
+% \begin{macro}{\rebuttalset}\marg{options}
+% Allows to update package options.
+%    \begin{macrocode}
+\newcommand\rebuttalset[1]{%
+  \pgfqkeys{/rebuttal}{#1}%
+}
+%</package>
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Example}
+%
+%    \begin{macrocode}
+%<*example1>
+\documentclass[american,version=last,fromphone,fromemail,svgnames,dvipsnames,x11names]{scrlttr2}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[babel]{csquotes}
+\usepackage{babel}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{lipsum}
+\usepackage{rebuttal}
+\usepackage{varioref}
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\hypersetup{colorlinks=true}
+
+\setkomavar{fromname}{Jane Smith}
+\setkomavar{fromaddress}{%
+  Pattern Recognition Lab\\
+  University of Erlangen-Nürnberg
+}
+\setkomavar{backaddress}{}
+\setkomavar{fromphone}{$+49$\,(0)\,12345678}
+\setkomavar{fromemail}{firstname.lastname@fau.de}
+\setkomavar{place}{Erlangen}
+
+\begin{document}
+
+\setkomavar{subject}{Manuscript: Extended Field of View in C-Arm Computed
+  Tomography for Weight-Bearing Imaging}
+
+\begin{letter}{Medical Physics}
+
+\opening{Dear Prof. Jones, Dear Prof. Taylor,}
+
+We thank you for considering our submission as a research article for Medical
+Physics. We also thank the reviewers for the thoughtful comments. We have
+carefully revised the document and prepared a point-by-point response to the
+reviewer’s comments.
+
+The major changes to the paper are:
+\begin{itemize}
+  \item Clarification of the medical impact
+  \item An extension of the evaluation and discussion to 3D Cone Beam CT and
+    off-center positioning of the object
+  \item Inclusion of more substantive figure captions
+\end{itemize}
+
+Below, you will find the reviewers’ comments in blue, our response in normal
+face and additions to the manuscript in quotes and \enquote{italic face.} Note
+that we omitted footnotes and references in the quotations.
+
+We are looking forward to hearing from you.
+
+\closing{With kind regards,}
+
+\end{letter}
+\include{rebuttal}
+\end{document}
+%</example1>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*example2>
+\documentclass{article}
+\usepackage{rebuttal}
+\usepackage[colorlinks]{hyperref}
+\usepackage{lipsum}
+\usepackage{cleveref}
+
+\begin{document}
+\section{Test}
+\input{rebuttal}
+\end{document}
+%</example2>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*rebuttal-comments>
+
+The following pages contain a list of editor's and reviewers' comments followed
+by our replies. The comments are sequentially numbered and associated either
+with the editor or the corresponding reviewer. The replies may contain
+references to changes in the original manuscript which are identified by a label
+consisting of a running number and followed by the label of the original comment
+in parentheses. The label back references the original reviewer comment within
+the manuscript. For instance, the reference \textbf{C2~(1.3)}, which is typeset
+in the manuscript margin, refers to the second change stemming from the third
+comment of the first reviewer.
+
+\begin{rebuttal}[Editor's Comments]
+  \begin{comment}
+  The topic of this manuscript is of interest. We concur with the summary review
+  of the associate editor and the reviews of the referees. The authors should
+  thoroughly address all of the comments, below, in a revised manuscript.
+  \end{comment}
+
+\end{rebuttal}
+
+\begin{rebuttal}[Specific Comments]
+  \begin{comment}
+  \label{c:specific}
+  You need to include figure captions that make your figures intelligible.
+  See~\cref{a:foo} and \cref{c:foo2}.
+  \end{comment}
+
+  \begin{answer}
+    The reviewer is right. We have reworked the figure captions to make the
+    figures more independent of the text. Furthermore, check if lists are
+    typeset correctly:
+    \begin{itemize}
+      \item One
+      \item Two
+        \begin{enumerate}
+          \item Three
+          \item Four
+        \end{enumerate}
+    \end{itemize}
+  \end{answer}
+
+  \begin{comment}
+    \label{c:c2}
+    Are you going to pay for color in the print article? If not, the lines are
+    not intelligible in Figures 2, 5, 11. In addition to color coding for the
+    digital version, you could make lines with distinct patterns (dots, dashes,
+    etc.) so they are distinct in monochrome presentations.
+  \end{comment}
+
+  \begin{answer}
+    We agree with this point and we are sorry that we missed this in the first
+    version of the article. The article will appear as an online only version
+    and is part of the special issue associated with this year’s CT Meeting
+    conference. Thus there will be no additional cost associated with color
+    figures. Nonetheless, we agree that all figures need to be correct in
+    grey-scale as some readers might print the article. According to the
+    reviewer’s comment, we have adjusted the figures by using different patterns
+    and gray levels.
+
+    (Refer also to \cref{c:specific} for more information.)
+  \end{answer}
+\end{rebuttal}
+
+\lipsum[1] \addition[label=a:foo,ref=c:specific]{\lipsum[2]} \lipsum[3]
+
+\lipsum[4] \deletion[label=a:foo1,ref=c:c2]{An unintended addition.}
+and a \change[label=c:foo2,ref=c:c2]{from}{to} change. And another addition
+\addition[label=a:foo3,ref=c:c2]{here}.
+Also \addition[label=a:foo4,ref=c:c2]{here}.
+Maybe \addition[label=a:foo5,ref=c:c2]{here}.
+Additionally \addition[label=a:foo6,ref=c:c2]{here}.
+Additionally \addition[label=a:foo7,ref=c:c2]{here}.
+
+\begin{additionenv}[label=d:par,ref=c:c2]
+  \begin{itemize}
+    \item \lipsum[1]
+  \end{itemize}
+  \lipsum[2]
+\end{additionenv}
+
+Additional notes:
+\begin{itemize}
+  \item Multiple source references can be
+    \addition[label=a:foo8,ref={c:specific,c:c2}]{specified}.
+  \item If the references do not fit into a single line in the margin, you may
+    force a \addition[label=a:break,ref={c:specific,c:c2},break]{break}.
+\end{itemize}
+%</rebuttal-comments>
+%    \end{macrocode}
+%
+% \Finale
+
+% \endinput
+
+% vim: ft=tex

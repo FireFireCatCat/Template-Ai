@@ -1,0 +1,21 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=20mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{tikz}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small\sffamily THE RECIPE NOTEBOOK}\fancyhead[R]{\small\textcolor{olive}{SEASONAL}}\fancyfoot[C]{\thepage}
+\setlist{nosep,leftmargin=*}\setlength{\parindent}{0pt}
+\definecolor{olive}{HTML}{6A783C}\definecolor{terracotta}{HTML}{B65D43}\definecolor{paper}{HTML}{FFF9EF}
+\newcommand{\recipe}[5]{%
+  \clearpage\begin{tikzpicture}[remember picture,overlay]\fill[paper] (current page.south west) rectangle (current page.north east);\end{tikzpicture}%
+  \vspace*{7mm}{\sffamily\bfseries\color{terracotta}\fontsize{25}{29}\selectfont #1}\par\smallskip\textcolor{olive}{#2}\hspace{1em}\textcolor{terracotta}{\textbullet}\hspace{1em}#3\par\medskip\textcolor{terracotta}{\rule{\linewidth}{1pt}}\par\medskip
+  \begin{multicols}{2}\textcolor{olive}{\sffamily\bfseries INGREDIENTS}\par\smallskip #4\columnbreak\textcolor{olive}{\sffamily\bfseries PREPARATION}\par\smallskip #5\end{multicols}\vfill\begin{center}\small\textit{Write your own notes, variations, and serving ideas here.}\end{center}}
+\begin{document}
+\begin{center}\vspace*{20mm}{\fontsize{34}{39}\selectfont\sffamily\bfseries\color{terracotta} TABLE NOTES}\par\smallskip{\large A practical collection of recipes}\par\vspace{20mm}\begin{tikzpicture}\draw[olive,line width=1.2pt] (0,0) circle (13mm);\draw[terracotta,line width=1pt] (-9mm,-3mm) arc (200:340:9mm);\draw[terracotta,line width=1pt] (9mm,-3mm) arc (-20:160:9mm);\end{tikzpicture}\par\vfill\textcolor{olive}{YOUR NAME \quad\textbullet\quad 2026}\end{center}
+\recipe{Roasted Tomato Tart}{Serves 4}{Prep 20 min, bake 35 min}{\begin{itemize}\item 1 sheet puff pastry\item 4 ripe tomatoes\item 2 tbsp olive oil\item thyme and basil\item salt and pepper\end{itemize}}{Layer the pastry on a baking sheet and score a border. Arrange the sliced tomatoes inside, season generously, and drizzle with oil. Bake at 200\textdegree C until the pastry is golden. Finish with herbs and serve warm.}
+\recipe{Pear and Hazelnut Oats}{Serves 2}{Prep 10 min, cook 8 min}{\begin{itemize}\item 100 g rolled oats\item 2 ripe pears\item 300 ml milk\item 1 tbsp honey\item toasted hazelnuts\end{itemize}}{Dice one pear and simmer it with the oats and milk until creamy. Slice the second pear and warm it briefly in a pan. Spoon the oats into bowls, add the fruit, and finish with honey and hazelnuts.}
+\end{document}

@@ -1,0 +1,28 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{turnthepage}[2024/11/15 v2.0a Indicating to turn the page (LM; MvD; HMM)]
+
+\DeclareOption{short}{\providecommand{\turnp@geoption}{short}}
+\DeclareOption{english}{\providecommand{\turnp@geoption}{english}}
+\DeclareOption{francais}{\providecommand{\turnp@geoption}{francais}}
+\DeclareOption{nederlands}{\providecommand{\turnp@geoption}{nederlands}}
+\DeclareOption{deutsch}{\providecommand{\turnp@geoption}{deutsch}}
+
+\ProcessOptions
+
+\ifx\turnp@geoption\undefined
+ \providecommand{\turnp@geoption}{ }
+\fi
+
+\begingroup\expandafter\expandafter\expandafter\endgroup
+\expandafter\ifx\csname eTeXversion\endcsname\relax
+ \PackageInfo{turnthepage}{e-TeX not found, loading package turnpagewoetex.}
+ \RequirePackage[\turnp@geoption]{turnpagewoetex}
+\else
+ \@ifl@t@r\fmtversion{2024-06-01}{
+   \PackageInfo{turnthepage}{e-TeX found, loading package turnpageetex.}
+   \RequirePackage[\turnp@geoption]{turnpageetex}
+ }{\PackageInfo{turnthepage}{e-TeX found but old LaTeX format,loading package turnpagewoetex.}
+   \RequirePackage[\turnp@geoption]{turnpagewoetex}
+  }
+\fi
+\endinput

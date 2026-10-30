@@ -1,0 +1,146 @@
+% Farbe der Person (Rot als Ausbilder, weiß sonst)
+% ********************************************************************
+\NewDocumentCommand{\dlrg@Personen@Farbe}{m}{
+    \IfBooleanTF{#1}{
+        \colorlet{dlrg@kleidungfarbe}{red}
+        \colorlet{dlrg@badefarbe}{red}
+    }{
+        \colorlet{dlrg@kleidungfarbe}{white}
+        \colorlet{dlrg@badefarbe}{gray}
+    }
+}
+
+% Blickrichtung (n, e, s, w oder direkt angegeben als Winkel)
+% ********************************************************************
+\NewDocumentCommand{\dlrg@PersonenDrehung}{m}{
+    \ifthenelse{\equal{#1}{e}}{\def\drehung{0}}{
+        \ifthenelse{\equal{#1}{n}}{\def\drehung{90}}{
+            \ifthenelse{\equal{#1}{w}}{\def\drehung{180}}{
+                \ifthenelse{\equal{#1}{s}}{\def\drehung{270}}{
+                    \def\drehung{#1}
+                }
+            }
+        }
+    }
+}
+
+% Stehende Person von oben
+% ********************************************************************
+\NewDocumentCommand{\dlrgPersonStehend}{s r() E{rs}{{e}{1}}}{
+    \dlrg@Personen@Farbe{#1}
+    \dlrg@PersonenDrehung{#3}
+    \begin{scope}[shift={(#2)},rotate=\drehung,scale=#4]
+        \draw[fill=dlrg@kleidungfarbe] (0.0,0.0) ellipse (0.1 and 0.3);
+        \draw[fill=white] (0.04,0.0) circle (0.1);
+    \end{scope}
+}
+
+% Stehende Person von oben mit Arme vorne und hinten
+% ********************************************************************
+\NewDocumentCommand{\dlrgPersonStehendArme}{s r() E{rs}{{e}{1}}}{
+    \dlrg@Personen@Farbe{#1}
+    \dlrg@PersonenDrehung{#3}
+    \begin{scope}[shift={(#2)},rotate=\drehung,scale=#4]
+        \draw[fill=dlrg@kleidungfarbe,rounded corners=1*#4] (0.0,0.2) rectangle (0.25,0.3);
+        \draw[fill=dlrg@kleidungfarbe,rounded corners=1*#4] (0.0,-0.2) rectangle (-0.25,-0.3);
+        \draw[fill=dlrg@kleidungfarbe] (0.0,0.0) ellipse (0.1 and 0.3);
+        \draw[fill=white] (0.04,0.0) circle (0.1);
+    \end{scope}
+}
+
+% Sitzende Person von oben
+% ********************************************************************
+\NewDocumentCommand{\dlrgPersonSitzend}{s r() E{rs}{{e}{1}}}{
+    \dlrg@Personen@Farbe{#1}
+    \dlrg@PersonenDrehung{#3}
+    \begin{scope}[shift={(#2)},rotate=\drehung,scale=#4]
+        \draw[fill=dlrg@kleidungfarbe,rounded corners=2*#4] (0.0,0.05) rectangle (0.35,0.23);
+        \draw[fill=dlrg@kleidungfarbe,rounded corners=2*#4] (0.0,-0.05) rectangle (0.35,-0.23);
+        \draw[fill=dlrg@kleidungfarbe] (0.0,0.0) ellipse (0.1 and 0.3);
+        \draw[fill=white] (0.04,0.0) circle (0.1);
+    \end{scope}
+}
+
+% Schwimmende Person von oben, Kraul
+% ********************************************************************
+\NewDocumentCommand{\dlrgPersonSchwimmenKraul}{s r() E{rsge}{{e}{1}{m}{}}}{
+    \dlrg@Personen@Farbe{#1}
+    \dlrg@PersonenDrehung{#3}
+    \begin{scope}[shift={(#2)},rotate=\drehung,scale=#4]
+        %Arme
+        \draw[fill=white,rounded corners=1*#4] (0,-0.2) rectangle (0.45,-0.08);
+        \draw[fill=white,rounded corners=1*#4] (0,0.2) rectangle (0.3,0.08);
+        %Knick im Arm
+        \draw[very thin] (0.15,0.2) -- (0.15,0.08);
+
+        %Beine
+        \draw[fill=white,rounded corners=1.5*#4] (-0.47,-0.2) rectangle (-1.1,-0.04);
+        \draw[fill=white,rounded corners=1.5*#4] (-0.47,0.2) rectangle (-1.1,0.04);
+        %Pullboy
+        \ifthenelse{\equal{#6}{p}}{
+            \draw[fill=gray,rounded corners=0.5*#4] (-0.75,-0.06) rectangle (-0.55,0.06);
+        }{}
+
+        %Body
+        \draw[fill=white,rounded corners=2*#4] (-0.5,-0.2) rectangle (0.02,0.2);
+        \begin{scope}
+            \clip[rounded corners=2*#4] (-0.5,-0.2) rectangle (0.02,0.2);
+            %Badehose
+            \filldraw[line width=0,color=dlrg@badefarbe,fill=dlrg@badefarbe] (-0.5,-0.2) rectangle (-0.35,0.2);
+            %Badeanzug
+            \ifthenelse{\equal{#5}{w}}{
+                \draw[dlrg@badefarbe,line width=0.5mm] (-0.15,-0.2) -- (-0.15,0.2);
+                \draw[dlrg@badefarbe,line width=0.3mm] (-0.15,-0.08) -- (0.02,-0.08);
+                \draw[dlrg@badefarbe,line width=0.3mm] (-0.15,0.08) -- (0.02,0.08);
+                \draw[dlrg@badefarbe,fill=dlrg@badefarbe,line width=0] (-0.35,-0.2) -- (-0.13,-0.2) -- (-0.35,-0.05) -- cycle;
+                \draw[dlrg@badefarbe,fill=dlrg@badefarbe,line width=0] (-0.35,0.2) -- (-0.13,0.2) -- (-0.35,0.05) -- cycle;
+            }{}
+        \end{scope}
+        %Noch mal die Ränder...
+        \draw[rounded corners=2*#4] (-0.5,-0.2) rectangle (0.02,0.2);
+
+        %Kopf
+        \draw[fill=white] (0.1,0.0) circle (0.1);
+    \end{scope}
+}
+
+% Schwimmende Person von oben, Brust
+% ********************************************************************
+\NewDocumentCommand{\dlrgPersonSchwimmenBrust}{s r() E{rsge}{{e}{1}{m}{}}}{
+    \dlrg@Personen@Farbe{#1}
+    \dlrg@PersonenDrehung{#3}
+    \begin{scope}[shift={(#2)},rotate=\drehung,scale=#4]
+        %Arme
+        \draw[fill=white,rounded corners=1*#4] (-0.05,-0.2) -- (0.2,-0.35) -- (0.35,-0.2) --(0.28,-0.12) -- (0.2,-0.22)  -- (-0.05,-0.08) -- cycle;
+        \draw[fill=white,rounded corners=1*#4] (-0.05,0.2) -- (0.2,0.35) -- (0.35,0.2) --(0.28,0.12) -- (0.2,0.22)  -- (-0.05,0.08) -- cycle;
+
+        %Beine
+        \draw[fill=white,rounded corners=1.5*#4] (-0.47,-0.2) rectangle (-1.1,-0.04);
+        \draw[fill=white,rounded corners=1.5*#4] (-0.47,0.2) rectangle (-1.1,0.04);
+        %Pullboy
+        \ifthenelse{\equal{#6}{p}}{
+            \draw[fill=gray,rounded corners=0.5*#4] (-0.75,-0.06) rectangle (-0.55,0.06);
+        }{}
+
+        %Body
+        \draw[fill=white,rounded corners=2*#4] (-0.5,-0.2) rectangle (0.02,0.2);
+        \begin{scope}
+            \clip[rounded corners=2*#4] (-0.5,-0.2) rectangle (0.02,0.2);
+            %Badehose
+            \filldraw[line width=0,color=dlrg@badefarbe,fill=dlrg@badefarbe] (-0.5,-0.2) rectangle (-0.35,0.2);
+            %Badeanzug
+            \ifthenelse{\equal{#5}{w}}{
+                \draw[dlrg@badefarbe,line width=0.5mm] (-0.15,-0.2) -- (-0.15,0.2);
+                \draw[dlrg@badefarbe,line width=0.3mm] (-0.15,-0.08) -- (0.02,-0.08);
+                \draw[dlrg@badefarbe,line width=0.3mm] (-0.15,0.08) -- (0.02,0.08);
+                \draw[dlrg@badefarbe,fill=dlrg@badefarbe,line width=0] (-0.35,-0.2) -- (-0.13,-0.2) -- (-0.35,-0.05) -- cycle;
+                \draw[dlrg@badefarbe,fill=dlrg@badefarbe,line width=0] (-0.35,0.2) -- (-0.13,0.2) -- (-0.35,0.05) -- cycle;
+            }{}
+        \end{scope}
+        %Noch mal die Ränder...
+        \draw[rounded corners=2*#4] (-0.5,-0.2) rectangle (0.02,0.2);
+
+        %Kopf
+        \draw[fill=white] (0.1,0.0) circle (0.1);
+    \end{scope}
+}

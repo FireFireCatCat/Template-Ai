@@ -1,0 +1,119 @@
+\documentclass[12pt,a4paper]{Thesis} % Paper size, default font size and one-sided paper
+
+\graphicspath{%
+	{./Figures/}%
+}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[square, numbers, comma, sort&compress]{natbib}
+
+\title{\ttitle}
+
+\usepackage{Styles/mydefs}
+
+\thesistitle{Robust Trajectory Planning for Multi-Robot Systems Under Communication Delay}
+\supervisor{Prof. Wei Lim Tan}
+\degree{Doctor of Philosophy}
+\authors{Kai Ming Ong}
+\university{Nanyang Technological University}
+\department{School of Mechanical and Aerospace Engineering}
+\group{Robotics Research Group}
+
+\begin{document}
+
+\frontmatter
+
+\setstretch{1.3}
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[LO]{\sl{\leftmark}}
+\fancyhead[RE]{\sl{\rightmark}}
+\fancyhead[LE,RO]{\thepage}
+
+\maketitle
+
+\thesisdeclareOriginality{I hereby certify that the work embodied in this thesis is the result of original research, is free of plagiarised materials, and has not been submitted for a higher degree to any other University or Institution.}{May 2026}{Styles/signature.png}
+
+\thesisdeclareSupervisor{I have reviewed the content and presentation style of this thesis and declare it is free of plagiarism and of sufficient grammatical clarity to be examined. To the best of my knowledge, the research and writing are those of the candidate except as acknowledged in the Author Attribution Statement.}{May 2026}{Styles/signature.png}
+
+\thesisdeclareAuthorship{This thesis does not contain any materials from papers published in peer-reviewed journals or from papers accepted at conferences in which the author is listed as an author.}{}{May 2026}{Styles/signature.png}
+
+\setstretch{1.3}
+
+\acknowledgements{\addtocontents{toc}{\vspace{0.8em}}
+
+I would like to thank my supervisor for the guidance and support offered
+throughout this project, and my colleagues in the Robotics Research Group
+for many helpful discussions and for their assistance with the field
+trials described in this thesis.
+}
+
+\pagestyle{empty}
+
+\null\vfill
+\begin{center}
+\large{To everyone who kept the robots from colliding.}
+\end{center}
+\vfill\vfill\null
+\cleardoublepage
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[LO]{\sl{\leftmark}}
+\fancyhead[RE]{\sl{\rightmark}}
+\fancyhead[LE,RO]{\thepage}
+
+\addtotoc{Abstract}
+
+\abstract{\addtocontents{toc}{\vspace{0.8em}}
+
+Coordinating multiple mobile robots in a shared workspace becomes
+substantially harder when inter-robot communication is delayed or
+intermittent, since each robot's plan is computed against a view of its
+neighbours that may already be stale. This thesis proposes a trajectory
+planning method that explicitly accounts for bounded communication delay
+by reserving a time-varying safety margin around each robot's planned path,
+sized according to the delay bound rather than a fixed worst case. We
+evaluate the method in both simulation and on a fleet of physical ground
+robots under artificially injected communication delay, and show that it
+maintains collision-free operation at delays where a delay-unaware
+baseline planner fails, at a modest cost in path efficiency.
+}
+
+\pagestyle{fancy}
+
+\tableofcontents
+
+\listoffigures
+
+\listoftables
+
+\mainmatter
+\pagenumbering{arabic}
+\setstretch{1.3}
+
+\fancyhead{}
+\fancyhead[LO]{\sl{\leftmark}}
+\fancyhead[RE]{\sl{\rightmark}}
+\fancyhead[LE,RO]{\thepage}
+
+\input{./Chapters/Chapter1}
+\input{./Chapters/Chapter2}
+
+\addtocontents{toc}{\vspace{0.8em}}
+
+\appendix
+
+\input{./Appendices/AppendixA}
+
+\cleardoublepage
+
+\backmatter
+
+\label{Bibliography}
+\setstretch{1}
+\bibliographystyle{unsrtnat}
+\bibliography{References/references}
+
+\end{document}

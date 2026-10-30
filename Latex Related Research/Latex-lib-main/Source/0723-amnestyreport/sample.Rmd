@@ -1,0 +1,277 @@
+---
+title: "RMarkdown report example"
+subtitle: "An example report for Amnesty output"
+titleimage: "BoschFragment"
+titleimagecaption: "The Garden of Earthly Delights is the modern title
+given to a triptych oil painting on oak panel painted by the Early
+Netherlandish master Hieronymus Bosch, between 1490 and 1510, when
+Bosch was between 40 and 60 years old. It has been housed in the
+Museo del Prado in Madrid, Spain since 1939.\n\n
+\\textcopyright{} Image: Public domain.\n\n
+\\textcopyright{} Caption:  Wikipedia contributors, 2023, released
+under  Creative Commons Attribution-ShareAlike License 4.0"
+copyrightyear: 2023
+firstpublicationyear: 2022
+reportindex: ABXC/AAAA/2022
+blurb: "This sample output of Rmarkdown with TeX shows the general
+commands and options of the amnestyinternational TeX class.  It is based
+on the text by Jule Krueger."
+
+output: 
+  pdf_document:
+    template: amnestytemplate.tex
+    latex_engine: xelatex
+    toc: true
+    keep_tex: true
+    citation_package: natbib
+classoption: freefonts, nologo
+header-includes:
+  - \renewcommand{\thesection}{\Alph{section}}
+bibliography: "examplereferences.bib"
+vignette: >
+  %\VignetteIndexEntry{amenstyreportR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include=FALSE}
+library(amnestyreportR)
+setup_amnesty_plots(options='freefonts, nologo')
+# use
+# setup_amnesty_plots(draft=TRUE)
+# to make fast draft plots
+library(knitr)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+
+
+\begin{AmnestyGlossary}[10em]
+Commute &
+Commute means to replace a punishment, usually a death sentence, with a less severe one. For example, Amnesty called for the USA to commute to time served the 35-year jail sentence of whistleblower Chelsea Manning, who had been arrested after leaking classified government material
+\\
+Crimes against humanity &
+When certain acts---including murder, torture and slavery---form part of a widespread attack on a civilian population by a state or organization. Unlike war crimes, they can take place at times of peace as well as during conflict. The Rwandan genocide of 1994 is one example of a crime against humanity.
+\\
+Extrajudicial executions &
+Unlawful killings ordered by a government, or committed with its knowledge and support. They can be carried out by the military, police, or by civilians working with government forces. For example, Hamas forces in Gaza committed serious human rights abuses, including extrajudicial executions, torture and abductions, during the 2014 Gaza/Israel conflict.
+\\
+Freedom of expression &
+The right to seek, receive and share information and ideas, without fear or interference. It is closely linked with freedom of association (the right to meet with anyone you choose, for example, to form and join clubs, societies or trade unions) and the right to take part in a peaceful assembly, such as a demonstration or public meeting.
+\\
+Immunity (from prosecution) &
+Allows an accused person to avoid prosecution for a crime because of their job or office. Amnesty International is opposed to immunity. For example, Amnesty has called for the rejection of immunity in the Central African Republic so that people who committed crimes during conflict there are brought to justice.
+\\
+Impunity &
+Impunity is when people who have committed crimes avoid punishment. For example, there is a ‘culture of impunity’ among police in the Philippines, who are able to torture people without fear of being punished. Amnesty calls for these people to be tried and sentenced fairly, according to the law.
+\\
+Prisoner of conscience &
+A prisoner of conscience is someone who is imprisoned because of who they are (sexual orientation, ethnic, national or social origin, language, birth, colour, sex or economic status) or their religious, political or other beliefs, and who hasn’t used or advocated violence. For example, Dr Mohammed al-Roken is a current prisoner of conscience in the United Arab Emirates, jailed for 10 years following a deeply unfair trial.
+\\
+War crimes &
+War crimes are serious crimes committed during armed conflicts, which could include murdering prisoners of war, killing hostages, torture and destroying towns and villages. A recent example is in the Ukraine, where there is overwhelming evidence of ongoing war crimes, including torture and summary killings of prisoners.
+\\
+\end{AmnestyGlossary}
+
+From \url{https://www.amnesty.org/en/latest/campaigns/2015/07/beginners-guide-human-rights-jargon/} 
+
+\clearpage
+# Introduction {.unnumbered}
+
+In this document we discuss the use of `amnestyreport.cls`, and accompanying `R` package \& `pandoc` template for writing Amnesty International Reports.  
+
+You can either use an `Rnw` file with \LaTeX\ syntax, or an `Rmd` file with R Markdown syntax. In both cases you need:
+
+* The \LaTeX\ class file `amnestyreport.cls`,
+* A properly installed `R` package `amnestyreportR`,
+* Optionally Amnesty International fonts and logo (see below).
+
+If you use R Markdown syntax rather than \LaTeX\ syntax, you also need
+
+* The `pandoc` template `amnestytemplate.tex`
+
+## A note about the fonts and logos {.unnumbered}
+
+If you have an established relationship with Amnesty International, you may use their fonts and logos in your report.  You need to install the fonts, and the file with the logo (rename it to `Amnesty_logo.png`).  Otherwise you need the options `freefonts, nologo` in your preamble for \LaTeX\ or the line 
+`classoption: freefonts, nologo` in the RMD preamble.  
+
+## Rmd premable example {.unnumbered}
+
+If you use Rmd, you need to specify in your preamble that
+
+* You are using the template `amnestytemplate.tex` rather than the generic `pandoc` template;
+* You are using `xelatex` (or `lualatex`) rather than a 8-bit engine `podflatex`.
+
+For example this file has the following preamble:
+
+
+```
+---
+title: "RMarkdown report example"
+subtitle: "An example report for Amnesty output"
+titleimage: "BoschFragment"
+titleimagecaption: "The Garden of Earthly Delights is the modern title
+given to a triptych oil painting on oak panel painted by the Early
+Netherlandish master Hieronymus Bosch, between 1490 and 1510, when
+Bosch was between 40 and 60 years old. It has been housed in the
+Museo del Prado in Madrid, Spain since 1939.\n\n
+\\textcopyright{} Image: Public domain.\n\n
+\\textcopyright{} Caption:  Wikipedia contributors, 2023, released
+under  Creative Commons Attribution-ShareAlike License 4.0"
+copyrightyear: 2023
+firstpublicationyear: 2022
+reportindex: ABXC/AAAA/2022
+blurb: "This sample output of Rmarkdown with TeX shows the general
+commands and options of the amnestyinternational TeX class.  It is based
+on the text by Jule Krueger."
+
+output: 
+  pdf_document:
+    template: amnestytemplate.tex
+    latex_engine: xelatex
+    toc: true
+    keep_tex: true
+    citation_package: natbib
+classoption: freefonts, nologo
+header-includes:
+  - \renewcommand{\thesection}{\Alph{section}}
+bibliography: "examplereferences.bib"
+---
+```
+
+\clearpage
+
+# Cross-references and bibliography \label{cross-ref}
+
+You can use the standard \LaTeX\ and R Markdown facilities for references.  
+
+The package uses `biblatex` with the `bibtex` backend for citations to provide footnote citations, [See @SecondRef2022]\textsuperscript{,}[See also @FirstRef2023, p.12] and [@FirstRef2023, p. 23].  However, due to idiosyncrasies of `pandoc` we need to specify `natbib` as the citation engine in the preamble.  Never mind biblatex warnings during the processing.
+
+
+Below in \autoref{sec:figures_tables} we show the examples of tables and figures provided by the package.
+
+
+# Figures and tables \label{sec:figures_tables}
+
+## Inline expressions
+
+Irises are beautiful flowers that come in different types, shapes and sizes. In this report, we look at  different species of irises in terms of petal size.\footnote{This is how you can add a footnote. Some footnotes are very long, and some are several lines log, but this is OK. Just make sure the indentation is right.}
+
+
+We define the variable `N_iris` and use it inline in the following example:
+
+```{r total_number_iris}
+N_iris <- nrow(iris)
+```
+
+There are a total of `r N_iris` (coded as \texttt{`}\texttt{r N\_iris}\texttt{`}) iris flower specimen in the built-in \textbf{iris} data.
+
+
+
+## A table
+
+Here is an example of a table using `kable` package and `amnesty_table` function:
+
+
+```{r example_table, eval=FALSE}
+iris %>% 
+  count(Species) %>% 
+  mutate(percent = n/sum(n)*100) %>% 
+  bind_rows(summarise(., across(where(is.numeric), sum),
+                      across(where(is.factor), ~'Total'))) %>% 
+  amnesty_table(row.names = FALSE,
+                align = "lrr",
+		caption="\\label{tab:species}
+		Frequency distribution of iris species.",
+		position="!ht",
+		col.names = c("Species", "Number of species", "(%)"),
+		digits=2) %>%
+  kableExtra::row_spec(4, bold=TRUE)
+```
+
+We can typeset it with sideways caption using `\sideTableCaptions`:
+\sideTableCaptions
+
+```{r example_table, echo=FALSE, eval=TRUE}
+```
+
+Alternatively, we can typeset it  with normal captions using `\normalTableCaptions`:
+\normalTableCaptions
+```{r example_table_1, echo=FALSE}
+iris %>% 
+  count(Species) %>% 
+  mutate(percent = n/sum(n)*100) %>% 
+  bind_rows(summarise(., across(where(is.numeric), sum),
+                      across(where(is.factor), ~'Total'))) %>% 
+  amnesty_table(row.names = FALSE,
+                align = "lrr",
+		caption="\\label{tab:species1}
+		Frequency distribution of iris species.",
+		position="!ht",
+		col.names = c("Species", "Number of species", "(%)"),
+		digits=2) %>%
+  kableExtra::row_spec(4, bold=TRUE)
+```
+
+
+
+\FloatBarrier
+
+## Figures
+
+Normally the figures are prepared in separate \LaTeX\ runs.  This might be very slow, so you may want to use the draft mode for the editing runs.  Before making the figures, you need to issue the `R` command `setup_amnesty_plots(options=..., draft=...)`.  The `options` are those that are passed to \LaTeX\ class;  if you do not have Amnesty International fonts, use `freefonts`.   The `draft` can be either `TRUE` or `FALSE` (for quick plots).  For example
+
+```{r setup_example, eval=FALSE}
+setup_amnesty_plots()  # You have Amnesty fonts and logo
+setup_amnesty_plots(options='freefonts, nologo') # No Amnesty fonts
+setup_amnesty_plots(draft=TRUE) # Draft mode
+```
+
+We are using the \textit{ggplot2} package to make an example figure from the  built-in iris data. As can be seen  in \autoref{fig:species-petal-size}, the virginica species of iris has the largest petal size in comparison to the other two iris species.  Note that it is recommended to use both color and line shape to convey the same information for the benefit of color blind users.
+
+```{r species-petal-size, echo=FALSE, fig.cap="Distribution of petal length and petal width, by iris species.", fig.align="center", fig.height = 3, fig.width = 6}
+iris %>% 
+  ggplot(aes(x=Petal.Length, y=Petal.Width, color=Species, fill=Species,
+  shape=Species)) +
+  geom_point() + 
+  xlab("Petal Length") + ylab("Petal Width") 
+```
+
+
+
+We use viridis scale optimized for color blind users both for the discrete (\autoref{fig:species-petal-size}) and continuous (\autoref{fig:petal-size-sepal-size}) scales.  We also use `\sideFigureCaptions` to typeset the caption on the side
+\sideFigureCaptions
+
+```{r, petal-size-sepal-size, fig.cap="Distribution of petal and sepal sizes", fig.align="center", fig.height = 3, fig.width = 4, echo=FALSE}
+iris %>% ggplot + geom_point(aes(Petal.Length, Petal.Width, color=Sepal.Length)) +
+labs(x="Petal Length", y="Petal Width", colour="Sepal Length")
+```
+
+\clearpage
+
+# Other typographic features
+
+## A subsection heading
+
+### A subsubsection heading
+
+#### A subsubsubsection heading
+We have line break after a subsubsubsection heading as Amnesty style requires.
+
+#### Type of iris species (Species)
+This variable indicates the different botanical types of iris species. 
+
+\begin{description}
+\item[\textbf{setosa:}] The iris belongs to the botanical species of setosa. 
+\item[\textbf{versicolor:}]  The iris belongs to the botanical species of versicolor. 
+\item[\textbf{virginica:}] The iris belongs to the botanical species of virginica. 
+\end{description}
+
+
+An example of a quotation.
+
+> All human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood.
+> 
+> \attribution{Universal Declaration of Human Rights}
+
+

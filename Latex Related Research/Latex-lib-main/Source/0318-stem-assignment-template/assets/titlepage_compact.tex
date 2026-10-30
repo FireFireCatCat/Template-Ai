@@ -1,0 +1,38 @@
+% !TeX root = ../main.tex
+% Copyright (c) 2026 Tyler Bignell
+% Licensed under the MIT License - see LICENSE file for details
+
+{ % Begins container for the titlepage
+	\thispagestyle{plain}
+	% COURSE CODE ---------------------------------------------
+	\begin{Centering}
+		{\Large \seriftext{\textbf{\metaAssignmentTitle}}}\par
+		\small \metaCourseCode\ : \metaCourseName\par
+	\end{Centering}
+	\noindent\textcolor{themecolour}{\rule{\linewidth}{0.5mm}}
+	% STUDENT / SCHOOL+INSTRUCTOR BLOCK -------------------------
+	\begin{minipage}[t]{0.45\textwidth}
+		\begin{FlushLeft}\small
+			\ifthenelse{\equal{\metaPartners}{}}{%
+				\metaStudentName\\
+				\metaStudentNumber\\
+				\metaStudentEmail
+			}{%
+				\begin{tabular}{@{}l@{\quad}l@{}}
+					\metaStudentName & \metaStudentNumber\\
+					\metaPartners
+				\end{tabular}
+			}
+		\end{FlushLeft}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.45\textwidth}
+		\begin{FlushLeft}\small
+			\ifthenelse{\equal{\metaDepartment}{}}{}{\metaDepartment,\\}\metaUniversity\\
+			\metaInstructor\\
+			\metaDate
+		\end{FlushLeft}
+	\end{minipage}
+	\par\vspace{0.3cm}
+	\noindent\textcolor{themecolour}{\rule{\linewidth}{0.5mm}}
+} % Ends container of the titlepage

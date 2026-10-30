@@ -1,0 +1,115 @@
+% Gemini poster theme — A0 landscape, beamer + beamerposter.
+\documentclass[final]{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[size=custom,width=118.9,height=84.1,scale=1.0]{beamerposter}
+\usetheme{gemini}
+\usecolortheme{gemini}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+
+\newlength{\sepwidth}
+\newlength{\colwidth}
+\setlength{\sepwidth}{0.025\paperwidth}
+\setlength{\colwidth}{0.3\paperwidth}
+\newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
+
+\title{A Legible Result Communicated Over Coffee}
+\author{A. Researcher \inst{1} \and B. Collaborator \inst{2} \and C. Advisor \inst{1}}
+\institute[shortinst]{\inst{1} Department of Computational Something \samelineand \inst{2} University of Somewhere}
+
+\footercontent{
+	\href{https://example.org}{example.org} \hfill
+	Example Conference 2026, Somewhere \hfill
+	\href{mailto:a.researcher@example.org}{a.researcher@example.org}}
+
+\begin{document}
+
+\begin{frame}[t]
+\begin{columns}[t]
+\separatorcolumn
+
+\begin{column}{\colwidth}
+	\begin{block}{Introduction}
+		This poster is built on the widely-forked Gemini beamerposter
+		theme: a beamer frame scaled to A0 by \texttt{beamerposter}, with
+		\texttt{block} environments arranged in separator-spaced columns.
+		Replace this paragraph with the motivation for the work: the
+		problem being solved, why it matters, and what gap the poster's
+		result fills.
+	\end{block}
+	\begin{block}{Methods}
+		\begin{itemize}
+			\item Describe the approach, dataset, or apparatus here.
+			\item A second bullet, for a second step of the method.
+			\item A third, for whatever completes the picture.
+		\end{itemize}
+	\end{block}
+	\begin{block}{Result Figure}
+		\begin{figure}
+			\centering
+			\begin{tikzpicture}
+				\draw[thick] (0,0) rectangle (8,6);
+				\draw[thick, dashed] (0,0) -- (8,6);
+				\draw[thick, dashed] (0,6) -- (8,0);
+				\node at (4,3) {\Large figure placeholder};
+			\end{tikzpicture}
+			\caption{A placeholder figure — replace with a plot or diagram.}
+		\end{figure}
+	\end{block}
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+	\begin{block}{Result Table}
+		\centering
+		\begin{tabular}{lcc}
+			\toprule
+			Condition & Metric A & Metric B \\
+			\midrule
+			Baseline  & 0.42     & 12.3     \\
+			Proposed  & 0.61     & 9.7      \\
+			\bottomrule
+		\end{tabular}
+	\end{block}
+	\begin{exampleblock}{Discussion}
+		Summarise what the result above means, and how it compares to
+		prior work. This is also the natural place for limitations or
+		threats to validity.
+	\end{exampleblock}
+	\begin{block}{Conclusion}
+		One or two sentences stating the takeaway a passer-by should
+		leave with, even if they read nothing else on the poster.
+	\end{block}
+\end{column}
+
+\separatorcolumn
+
+\begin{column}{\colwidth}
+	\begin{alertblock}{Key Takeaway}
+		If a reader remembers only one sentence from this poster, it
+		should be this one.
+	\end{alertblock}
+	\begin{block}{Acknowledgements}
+		Funding, collaborators, and anyone else the authors wish to
+		thank.
+	\end{block}
+	\begin{block}{References}
+		\begin{itemize}
+			\item[{[1]}] A. Author, ``A Foundational Paper,''
+				\emph{Journal of Examples}, 2020.
+			\item[{[2]}] B. Author and C. Author, ``A Follow-up
+				Study,'' \emph{Proc. of the Conference on
+				Placeholders}, 2022.
+		\end{itemize}
+	\end{block}
+\end{column}
+
+\separatorcolumn
+\end{columns}
+\end{frame}
+
+\end{document}

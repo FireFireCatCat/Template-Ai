@@ -1,0 +1,112 @@
+% !TEX TS-program = LuaLaTeX
+% !TEX encoding = UTF-8 Unicode
+\documentclass[%
+   a4paper,
+   12pt,
+   twoside,
+   tipotesi=scudo,
+   ]{toptesi}
+ 
+%%%% Use the following package if and only if you want to produce
+%%%% an archivable document according to standard PDF/A-1b
+%%%% No need to load package imakeidx, because it has already been
+%%%% loaded by the specific module toptesi-scudo.
+\usepackage[a-1b]{pdfx}
+%%%%%% Read the English documentation of TOPtesi in order to check
+%%%%%% the special attention needed to produce ISO compliant
+%%%%%% archivable files
+
+%%%%
+
+\ifPDFTeX
+    \usepackage[utf8]{inputenc}% 
+    \usepackage[T1]{fontenc}
+\fi
+
+\errorcontextlines=9% more information on the console in case of errors
+
+%%%% Specify fonts here; chose one among these fonts by leaving just
+%%%% one line without initial comment character.
+%%%% With LuaLaTeX or XeLaTeX don't change fonts
+    \usepackage{fontspec}
+    \defaultfontfeatures{Ligatures=TeX}
+    \setmainfont{Libertinus Serif}
+    \setsansfont{Libertinus Sans}
+    \setmonofont{Libertinus Mono}[Scale=MatchLowercase]
+    \usepackage{unicode-math}% add special math stile option here
+                             % for example [style=ISO]
+% chose one math font by commenting the line of the undesired font
+    \setmathfont{XITS Math}
+
+
+
+
+\raggedbottom
+\begin{document}
+
+
+% The contents of this ThesisTitlePage environment may be written
+% in a configuration file named exactly the same as the thesis main
+% file, but with extension .cfg. If similar commands with different
+% data are written within this environment, such data prevail on
+% those read from the configuration file.
+\begin{ThesisTitlePage}
+%\renewcommand\fivestars{\rule{0pt}{\baselineskip}\rule{30mm}{0.4pt}}
+% Use the optional command to set a different School logo
+\PhDschoolLogo{TITDocScCropped}
+% Doctorate course name; mandatory
+\ProgramName{Energy Enginering}
+% Cycle ordinal number; optional.
+% You can write 29.th, or 29\ap{th}, or 29\textsuperscript{th}, or ...
+\CycleNumber{29.th}
+% PhD candidate name; mandatory
+\author{Mario Rossi}
+% Dissertation title; mandatory
+\title{Writing your Doctoral~Thesis\\with \LaTeX}
+% Dissertation subtitle: optional.
+% It might be useful only if the actual full title is too long.
+\subtitle{Typeset with the TOPtesi class}
+% The supervisor(s) label; optional; default value "Supervisor:".
+% You can change it to plural as in this example, where the colon has
+% been eliminated.
+%\NSupervisor{Supervisor}{Supervisors}
+%
+% The SupervisorNumber may contain a value such as 0, 1, or any
+% number higher than 1. If 0 is specified, no label is typeset
+% over the supervisor(s) list; if 1 is specified then the singular
+% form is used: if any value higher than 1 is specified, the plural
+% form is used.
+\SupervisorNumber{2}
+% List of supervisors with academic title, name(s), surname(s),
+% and function; mandatory
+\SupervisorList{%
+    Prof.~A.B., Supervisor\\
+    Prof.~C.D. Co-supervisor}
+% Name of the examining committee: optional. 
+% Default value "Doctoral Examination Committee"
+%\Nexaminationcommittee{Doctoral examination committee}
+% List of the  examining committee members: mandatory if the above label
+% is not empty.
+\ExaminerList{%
+Prof.~A.B., Referee, University of \dots\\
+Prof.~C.D., Referee, University of \dots\\
+Prof.~E.F., University of \dots\\
+Prof.~G.H., University of \dots\\
+Prof.~I.J., University of \dots}
+% Name of the institution where the examination takes place; optional.
+% Default value: "Politecnico di Torino"
+%\Nlocation{Politecnico di Torino}
+% Examination date: mandatory, although the way to write it is free.
+\ExaminationDate{February 29, 2123}
+% Disclaimer with signature; optional. Default text as
+% in the following lines. 
+%\Signature{%
+%\begin{flushright}
+%\parbox{0.5\textwidth}{\centering
+%\dotfill\\
+%Mario Rossi\\
+%Turin, February 29, 2123
+%}
+%\end{flushright}}
+\end{ThesisTitlePage}
+\end{document}

@@ -1,0 +1,29 @@
+% to use non-standard font
+\usepackage{fontspec}
+
+% to ensure that beamer does not meddle with the fonts we use
+\usefonttheme{professionalfonts}
+
+% our main font
+%
+% PATCH (latextemplates.com): \setmainfont{lato} resolves by FONTCONFIG
+% family, and this compiler's fontconfig has zero "lato" entries (checked
+% with fc-list) even though Lato IS shipped in this TeX Live and resolves
+% by FILENAME via kpathsea (research/README.md's font trap). Loaded
+% explicitly by filename below instead. Also note: this file's own
+% \usepackage{fontspec} has no \ifxetex/\ifluatex guard, so this theme
+% requires xelatex or lualatex unconditionally -- the task brief listed
+% pdflatex for this template; engine.txt here is xelatex.
+\setmainfont{Lato}[
+  Extension = .ttf,
+  UprightFont = *-Regular,
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  BoldItalicFont = *-BoldItalic,
+]
+
+\setbeamerfont{title}{family=\rmfamily, series=\bfseries, size=\LARGE}
+\setbeamerfont{subtitle}{family=\rmfamily, series=\mdseries, size=\large}
+
+\setbeamerfont{frametitle}{family=\rmfamily, series=\bfseries, size=\Large}
+\setbeamerfont{framesubtitle}{family=\rmfamily, series=\mdseries, size=\large}

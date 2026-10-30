@@ -1,0 +1,76 @@
+% ********************************************************************
+% Ars Classica article
+%
+% classicthesis's typographic style (Bringhurst-inspired small caps,
+% sober rules, Palatino-metric text) run in its "arsclassica" mode —
+% Lorenzo Pantieri's re-styling of André Miede's classicthesis, now
+% bundled directly into classicthesis.sty as a \usepackage option.
+% ********************************************************************
+\RequirePackage{silence}
+    \WarningFilter{scrartcl}{Usage of package `titlesec'}
+    \WarningFilter{titlesec}{Non standard sectioning command detected}
+\documentclass[11pt,a4paper]{scrartcl} % KOMA-Script article
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[style=arsclassica,nochapters]{classicthesis}
+
+\title{\rmfamily\normalfont\spacedallcaps{A Note on Typographic Restraint}}
+\author{\spacedlowsmallcaps{Jane Researcher}}
+\date{\today}
+
+\begin{document}
+
+\pagestyle{plain}
+\maketitle
+
+\begin{abstract}
+    \noindent This article demonstrates the \emph{arsclassica} styling of the
+    \texttt{classicthesis} package: small-caps headings, a restrained rule
+    under the title, and Palatino-metric body text. It is meant as a starting
+    point for a short paper or article-length piece of writing, not a full
+    thesis.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+\label{sec:introduction}
+
+Classic typography favours restraint: generous margins, a single text
+typeface, and small capitals for emphasis rather than boldface. This
+template applies that restraint via the \texttt{arsclassica} style bundled
+with classicthesis~\cite{classicthesis}, itself inspired by Bringhurst's
+\emph{The Elements of Typographic Style}~\cite{bringhurst2004}.
+
+\subsection{Why a KOMA-Script base}
+\label{sec:koma}
+
+The document class is \texttt{scrartcl} (KOMA-Script), which classicthesis
+was written against; a plain \texttt{article} class also works but loses a
+few spacing refinements KOMA provides for headings and margins.
+
+\section{Using this template}
+\label{sec:usage}
+
+Replace the title, author and abstract above, then write sections as usual.
+Citations use the classic \texttt{bibtex} + \texttt{plain} style pipeline,
+already wired to \texttt{references.bib}: for example, this sentence cites
+Miede's original thesis template~\cite{miede2012} to show a resolved
+reference rather than a \texttt{[?]} mark.
+
+\subsection{Headings}
+
+Section and subsection headings render in small caps via the arsclassica
+style. Nest headings up to \verb|\subsubsection|; deeper levels are
+unnumbered by classicthesis's own configuration.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Swap in real content, a real bibliography, and this becomes a short article
+or report set in the same style classicthesis uses for full theses.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

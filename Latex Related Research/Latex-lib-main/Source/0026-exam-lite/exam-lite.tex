@@ -1,0 +1,98 @@
+% Author: Rok Kukovec and Iztok Fister Jr.
+% CC-BY-SA-4.0 license 
+
+\documentclass[english, exam]{exam-lite} %1: slovene, english; 2: exam, midterm
+\begin{document}
+
+% change according to your data
+%-----------------------------------------------------------
+% path to logo image
+%\ImagePath{imgs/um-logo.png} % Slovenian FERI UM logo
+%\ImagePath{imgs/logo-um-feri-ang.png} % English FERI UM logo
+\ImagePath{imgs/exam-lite-affl-logo.png} % logo example
+% name of the subject
+\subject{Interesting computer science}
+% academic year
+\academicyear{2022-2023}
+% study program
+\studyprogram{Prog-I}
+% id of exam
+\examid{1}
+% location of exam
+\location{A-1}
+% date of exam
+\newdate{examdate}{07}{02}{2022}
+% acronym of subject
+\subacronym{PISZ}
+% writing time in minutes
+\writingtimeminutes{90}
+
+% predefined instructions in english
+\instructionstext{
+    \begin{enumerate}
+        \item The exam consists of 10 questions.\\
+        \item The use of a calculator is not allowed.\\
+        \item Write only what the question asks for.\\
+        \item You do not get minus points for wrong answers.\\
+    \end{enumerate}
+}
+% predefined instructions in slovene
+\iffalse % multi-line coment
+\instructionstext{
+    \begin{enumerate}
+        \item Izpit je sestavljen iz 10 vprašanj.\\
+        \item Uporaba kalkulatorja ni dovoljena. \\
+        \item Zapišite le tisto, kar zahteva vprašanje. \\
+        \item Napačni odgovori ne prinašajo minus točk. \\
+    \end{enumerate}
+}
+\fi % end of multi-line coment
+%-----------------------------------------------------------
+
+% create first page
+%-----------------------------------------------------------
+\makefirstpage
+%-----------------------------------------------------------
+\makenextheaders
+%-----------------------------------------------------------
+% SYNTAX questions of the exam
+%-----------------------------------------------------------
+% Question Number
+% \qncounter{Number}
+% Points next to question
+% \question{What do you want to ask?}{No. of points}{vspace in cm} 
+% Points under question
+% \longquestion{What do you want to ask?}{No. of points}{vspace in cm}
+% Used in begin enumerate/itemize - question with multiple subquestions
+% \alinea{What do you want to ask?}{No. of points}{vspace in cm} 
+%-----------------------------------------------------------
+\makeatletter
+% Set page coutner to 1 - First page with questions
+\setcounter{page}{1}
+
+\qncounter{1}
+\question{List some of the disadvantages of data standardisation.}{3}{0}
+
+\qncounter{2}
+\question{Write down the main features of intelligent systems.}{2}{1}
+
+\qncounter{3}
+\longquestion{Please list at least 5 data preparation techniques, write down their characteristics, and for what purposes these methods are used.}{5}{0}
+
+\begin{enumerate}[i]
+    \alinea{Why is it important to perform data preparation before starting to learn a classifier?}{3}{3}
+    \alinea{What is meant by the term \textbf{dataset}, and how is it constructed?}{2}{2}
+\end{enumerate}
+
+\qncounter{4}
+\question{Circle the letter before the correct answer}{1}{0}
+\begin{enumerate}
+    \item Right one
+    \item First wrong
+    \item Second wrong
+\end{enumerate}
+
+\qncounter{5}
+\longquestion{What is the purpose of data standardization and normalization in machine learning and how do they differ? Can you provide examples of how these techniques are applied in practice, their benefits and limitations, and how they impact model performance? Can you also explain how these techniques can be used in preprocessing data for deep learning models and the impact of not properly standardizing or normalizing data on the training and prediction phases?}{5}{1}
+
+\end{document}

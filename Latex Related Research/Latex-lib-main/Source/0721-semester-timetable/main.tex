@@ -1,0 +1,50 @@
+% Semester timetable -- ctan:semesterplanner, github:nlschn/semesterplanner,
+% LPPL-1.3 (verified in the shipped semesterplanner.sty header: "This file
+% may be distributed and/or modified under the conditions of the LaTeX
+% Project Public License, either version 1.3 of this license or (at your
+% option) any later version"). Ships with TeX Live (tex/lualatex/semesterplanner)
+% -- starter does not bundle the class.
+%
+% merged.tsv lists engine=lualatex for this package. The .sty's own
+% RequirePackage list (fontawesome, color, schedule, tikz) has no
+% unconditional fontspec or LuaTeX-only primitive, so pdflatex was tried
+% first per this batch's engine-preference rule -- and DOES compile cleanly
+% here, so engine.txt is left unset (defaults to pdflatex) rather than
+% following merged.tsv's engine column blindly.
+%
+% Starter is a real weekly class schedule (five courses Mon-Fri with room
+% numbers and time slots) via the class's own \lecture/\tutorial timetable
+% grid, an exams list and a deadlines list -- exercising the three real
+% environments the class provides, not just the bare grid.
+\documentclass[11pt]{article}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{semesterplanner}
+
+\begin{document}
+
+\begin{timetable}
+\lecture{Algorithms}{Room 2.14}{}{M}{09:00-10:30}{}
+\lecture{Linear Algebra II}{Room 1.08}{}{M}{13:00-14:30}{}
+\tutorial{Algorithms}{Room 2.14}{}{T}{11:00-12:00}{}
+\lecture{Distributed Systems}{Room 3.21}{}{T}{14:00-15:30}{}
+\lecture{Linear Algebra II}{Room 1.08}{}{W}{09:00-10:30}{}
+\officehour{Prof. Adeyemi}{Room 2.40}{}{W}{15:00-16:00}{}
+\lecture{Distributed Systems}{Room 3.21}{}{Th}{09:00-10:30}{}
+\seminar{Research Methods}{Room 1.15}{}{Th}{13:00-15:00}{}
+\tutorial{Linear Algebra II}{Room 1.08}{}{F}{10:00-11:00}{}
+\meeting{Project Group}{Library Room 4}{}{F}{14:00-15:00}{}
+\end{timetable}
+
+\begin{exams}
+\exam{2026-12-15}{09:00-11:00}{Algorithms}{\written}
+\exam{2026-12-18}{09:00-12:00}{Linear Algebra II}{\written}
+\exam{2027-01-09}{14:00-14:30}{Distributed Systems}{\oral}
+\end{exams}
+
+\begin{deadlines}
+\deadline{2026-11-06}{Research Methods}{Literature review draft}{\phigh}
+\deadline{2026-11-20}{Distributed Systems}{Coursework 1 submission}{\pmandatory}
+\deadline{2026-12-04}{Project Group}{Final project report}{\phigh}
+\end{deadlines}
+
+\end{document}

@@ -1,0 +1,79 @@
+% Imperial College London dissertation template (circa-2015 layout
+% requirements), built on the `icldt' class. Adapted from
+% blaahhrrgg/icldiss (MIT), split into a real front-matter/chapters
+% structure. Bibliography style is jfm2.bst (classic bibtex, no
+% biblatex/biber hazard).
+% enabledeprecatedfontcommands: jfm2.bst (the bibliography style) emits
+% NFSS1-era \sc/\bf font-switch commands directly into the generated .bbl,
+% which modern KOMA-Script (scrreprt, which icldt is built on) rejects by
+% default ("undefined old font command"). icldt.cls passes unknown
+% documentclass options straight through to scrreprt, so this option
+% re-enables them without needing to patch the .bst.
+\documentclass[enabledeprecatedfontcommands]{icldt}
+
+\usepackage{amsmath,amsthm, amssymb, latexsym}
+\usepackage[all]{xy}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage[bf,labelsep=space]{caption}
+\usepackage[singlelinecheck=off]{subcaption}
+\usepackage{mathrsfs}
+\usepackage[linktoc=page]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{pgfplots}
+\usepackage[nottoc]{tocbibind}
+
+\captionsetup{format=plain}
+
+\pagestyle{fancy}
+\fancyhead{}
+\lhead{\nouppercase{\leftmark}}
+\renewcommand{\footrulewidth}{0.4pt}
+\cfoot{\thepage}
+
+\usepackage[sort]{natbib}
+
+\newlength\figureheight
+\newlength\figurewidth
+\setlength\figureheight{7cm}
+\setlength\figurewidth{10cm}
+
+\title{Numerical Continuation of a Subcritical Pitchfork Bifurcation}
+\author{A. Student}
+\date{September 2026}
+\department{Mathematics}
+\supervisor{Dr. J. Supervisor}
+\declareoriginality{I certify that this thesis, and the research to which it refers, are the product of my own work, and that any ideas or quotations from the work of other people, published or otherwise, are fully acknowledged in accordance with the standard referencing practices of the discipline.}
+\declarecopyright{The copyright of this thesis rests with the author and is made available under a Creative Commons Attribution Non-Commercial No Derivatives licence. Researchers are free to copy, distribute or transmit the thesis on the condition that they attribute it, that they do not use it for commercial purposes and that they do not alter, transform or build upon it. For any reuse or redistribution, researchers must make clear to others the licence terms of this work.}
+\acknowledgements{With thanks to the department for the use of its computing cluster.}
+
+\begin{document}
+
+\maketitle
+\makedeclaration
+\makecopyright
+\makeacknowledgements
+
+\begin{abstract}
+We trace the equilibrium branches of the subcritical pitchfork
+bifurcation $\dot{x} = rx + x^3$ using pseudo-arclength continuation,
+confirm their stability analytically, and validate the numerical
+branch against the closed-form root. We conclude by outlining a
+two-parameter unfolding as further work.
+\end{abstract}
+
+\tableofcontents
+\listoftables
+\listoffigures
+
+\input{chapters/introduction}
+\input{chapters/methods}
+\input{chapters/conclusion}
+
+\bibliographystyle{jfm2}
+\bibliography{bibliography}
+
+\appendix
+\input{chapters/appendix}
+
+\end{document}

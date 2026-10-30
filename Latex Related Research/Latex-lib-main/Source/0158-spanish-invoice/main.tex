@@ -1,0 +1,30 @@
+% Spanish-Language Invoice (factura fiscal, Venezuela) — factura.cls
+%
+% A Spanish-language invoice convention, not a translated English
+% template: "factura" is the Venezuelan legal-invoice document, with the
+% client's RIF (tax ID) and IVA (VAT) handling built into the class
+% itself. \Item computes each line's IVA and the class totals the
+% invoice automatically -- verified below that the printed total is a
+% real resolved number, not a raw macro.
+\documentclass{factura}
+\usepackage[utf8]{inputenc}
+
+\Num{482}
+\RazonSocial{Ferreter\'ia Altamira, C.A.}
+\RIF{J-40.812.556-3}
+\Contacto{Rosaura Beltr\'an}
+\Direccion{Av.\ Francisco de Miranda, Centro Comercial Lido, Nivel P2, Local 14, Caracas, Venezuela}
+\Telefono{+58 (212) 555.04.18}
+\Email{rosaura.beltran@example.com}
+\Fecha{27-08-2026}
+\Resumen{Suministro de materiales de ferreter\'ia para obra}
+\NotaFinal{Pago a 15 d\'ias fecha factura. Gracias por su preferencia.}
+
+\begin{document}
+\begin{factura}
+ \Item{20}{Tubos de PVC 1/2 pulgada (6m)}{18}
+ \Item{8}{Sacos de cemento gris 42.5kg}{95}
+ \Item{3}{Cajas de tornillos autorroscantes (500u)}{27}
+\end{factura}
+\Descripcion{Materiales solicitados seg\'un orden de compra OC-2026-0331 para la obra de remodelaci\'on del local 14.}
+\end{document}

@@ -1,0 +1,58 @@
+% Preamble: packages, theorem environments, and small custom commands.
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+\usepackage[margin=1.20in,top=1.35in,bottom=1.35in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning,shapes}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{framed}
+\usepackage{palatino}
+\usepackage{enumitem}
+\usepackage[nameinlink]{cleveref}
+\usepackage{glossaries}
+\usepackage{todonotes}
+\usepackage[bottom]{footmisc}
+\usepackage{lastpage,fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.3pt}
+\fancyhead[RE]{\small\nouppercase\leftmark}
+\fancyhead[LO]{\small\nouppercase\rightmark}
+\fancyhead[LE,RO]{\thepage}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% A left-coloured bar around a theorem-like block — used sparingly, since
+% every block having one gets noisy fast.
+\renewenvironment{leftbar}[1][black]{%
+    \def\FrameCommand{{\color{#1}\vrule width 0.5pt}\hspace{0pt}%
+        \fboxsep=\FrameSep\colorbox{lightgray}}%
+    \MakeFramed{\hsize\hsize\advance\hsize-\width\FrameRestore}%
+}{%
+    \endMakeFramed%
+}
+\definecolor{lightgray}{rgb}{0.94,0.94,0.94}
+
+\makeglossaries
+\newglossaryentry{tex}{
+    name={\TeX},
+    description={A typesetting system designed by Donald Knuth}
+}

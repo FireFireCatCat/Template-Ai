@@ -1,0 +1,151 @@
+%\RequirePackage{longtable}
+% \RequirePackage{supertabular}
+% \usepackage{tabu} %% this is broken, don't use until it is fixed
+% \usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{ifthen}
+
+% Table Header
+\newcommand{\tableheader}[1]{{
+  \par\vspace*{8pt}
+  \noindent
+  \pfTableTitleFont
+  #1}}
+
+\newcommand{\header}[1]{%
+  \textbf{\cellcolor{tabletitlebg}\color{tabletitlefg}{#1}}%
+}
+
+\makeatletter
+\newenvironment{tablehere}
+  {\def\@captype{table}}
+  {}
+\makeatother
+
+% \newcommand\starttable{\tablehere}
+% \newcommand\stoptable{\endtablehere}
+
+% Table Environment
+\newenvironment{pf-table}[2][]{
+  % \par\vspace*{8pt}
+  \noindent
+  \tablehere
+
+  \ifthenelse{\equal{#1}{}}
+    {}% empty
+    { \captionsetup{margin=0pt,
+                justification=raggedright,
+                format=plain,
+                singlelinecheck=false,
+                font={pf@CaptionFont,
+                  color=tablecaption}}
+      \caption{#1}}% not empty
+
+  \pfTableBodyFont
+  \rowcolors{1}{tablecolor2}{tablecolor1} % Alternate colors
+  \noindent
+  \tabularx{\linewidth}{#2}
+}{
+  \endtabularx
+  \endtablehere
+  % \vspace{8pt plus 1pt}
+  % \noindent
+}
+
+\newenvironment{pf-table*}[2][]{
+  \table
+
+  \noindent
+    \ifthenelse{\isempty{#1}}
+    {}% empty
+    { \captionsetup{margin=0pt,
+                    justification=raggedright,
+                    format=plain,
+                    singlelinecheck=false,
+                    font={pf@CaptionFont,
+                      color=tablecaption}}
+      \caption{#1}}% not empty
+
+  \pfTableBodyFont
+  \rowcolors{1}{tablecolor2}{tablecolor1} % Alternate colors
+  \tabularx{\textwidth}{#2}
+}{
+  \endtabularx
+  \endtable
+}
+
+% Table Environment
+\newenvironment{pf-table2}[1][lX]{
+    \par\vspace*{8pt}
+    \noindent
+    \pfTableBodyFont %Select font
+    \rowcolors{1}{tablecolor2}{tablecolor1} % Alternate colors
+    \tabularx{\linewidth}{#1}
+}
+{
+    \endtabularx
+    \vspace{8pt plus 1pt}
+    \noindent
+}
+
+% Long Table Environment
+% \newenvironment{pf-longtable}[1][lX]{
+%     \par\vspace*{8pt}
+%     \noindent
+%     \pfTableBodyFont
+%     \rowcolors{1}{tablecolor2}{tablecolor1} % Alternate colors
+%     \supertabular{#1}
+% }{
+%     \endsupertabular
+%     \vspace{8pt plus 1pt}
+%     \noindent
+% }
+
+\newenvironment{pf-weapontable-tabu}{
+    % \par\vspace*{8pt}
+    % \noindent
+
+    % \begin{table*}[t]
+    \centering
+    \pfTableBodyFont\selectfont %Select font
+    % \rowcolors{1}{lightgray}{} % Alternate colors
+
+    \tabu to \textwidth {l|c|c|c|c|c|X}
+    \taburowcolors[2]2{green!30 .. yellow!40}
+    \rowfont{\bfseries\large}\rowcolor{gray!25} Weapon  & Price & Damage & Bulk & Hands & Group & Weapon Traits \\
+    \hline
+}
+{
+    % \vspace{8pt plus 1pt}
+    % \noindent
+    \endtabu
+    % \end{table*}
+}
+
+\DeclareCaptionFont{pf@CaptionFont}{\pfStatBlockTitleFont}
+
+\newenvironment{pf-weapontable}[1]{
+  \table
+  \noindent
+
+  \captionsetup{margin=0pt,
+                justification=raggedright,
+                format=plain,
+                singlelinecheck=false,
+                font={pf@CaptionFont,
+                  color=tablecaption}}
+  \caption{#1}
+
+  \pfTableBodyFont
+  \rowcolors{1}{tablecolor2}{tablecolor1} % Alternate colors
+
+  \tabularx{\textwidth}{l|c|c|c|c|c|X}
+  \header{Weapon} & \header{Price} & \header{Damage} & \header{Bulk} & \header{Hands} & \header{Group} & \header{Weapon Traits} \\
+}
+{
+  \endtabularx
+  \endtable
+}

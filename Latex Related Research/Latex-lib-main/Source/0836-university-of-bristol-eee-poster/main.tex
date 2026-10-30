@@ -1,0 +1,72 @@
+\documentclass[20pt]{article}
+\usepackage[paperwidth=1189mm,paperheight=841mm,margin=24mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{microtype}
+\pagestyle{empty}
+\definecolor{accent}{HTML}{143D6B}
+\definecolor{highlight}{HTML}{C93C4B}
+\definecolor{panel}{HTML}{EDF4FC}
+\definecolor{ink}{HTML}{182331}
+\newcommand{\head}[1]{\vspace{2mm}{\Large\bfseries\color{accent}#1}\par\vspace{2mm}}
+\begin{document}
+\color{ink}
+\begin{tikzpicture}[remember picture,overlay]
+  \fill[accent] (current page.north west) rectangle ([yshift=-35mm]current page.north east);
+  \fill[highlight] ([yshift=-35mm]current page.north west) rectangle ([yshift=-40mm]current page.north east);
+\end{tikzpicture}
+\vspace*{-7mm}
+\color{white}{\fontsize{38}{42}\selectfont\bfseries Electrical and Electronic Engineering}\par
+\vspace{5mm}{\fontsize{25}{30}\selectfont\bfseries A low-power sensing node for crowded environments}\par
+\vspace{3mm}{\Large Taylor Morgan \quad\textbullet\quad Final-Year Project}
+\vspace{14mm}\color{ink}
+\noindent
+\begin{minipage}[t]{0.31\linewidth}
+\head{Context}
+Research is easier to communicate when the question, method, and decision are visible together. This starter gives a technical project a clear narrative with enough space for evidence and limitations.
+\head{Question}
+How can a compact, repeatable workflow make results easier for another reader to evaluate?
+\head{Method}
+\colorbox{panel}{\parbox{0.94\linewidth}{\large\textbf{Question} $\rightarrow$ \textbf{Measure} $\rightarrow$ \textbf{Compare} $\rightarrow$ \textbf{Decide}}}
+\head{Study design}
+We compared a baseline process with the proposed workflow using repeated trials and a fixed review protocol. Replace this sample paragraph with the details of your own project.
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.31\linewidth}
+\head{Results}
+\begin{tabular}{p{0.52\linewidth}rr}
+Measure & Baseline & Proposed\\\hline
+Agreement & 58\% & \textbf{88\%}\\
+Review time & 26 min & \textbf{15 min}\\
+Complete records & 63\% & \textbf{94\%}
+\end{tabular}
+\head{Main finding}
+\colorbox{panel}{\parbox{0.94\linewidth}{\centering{\fontsize{42}{46}\selectfont\bfseries\color{highlight}2.1$\times$}\par\Large faster shared decisions}}
+\head{Interpretation}
+The largest gain came from making assumptions explicit at the start. The result remained stable across the repeated trials, while the review process became easier to audit.
+\head{Evidence}
+Use this space for a figure, a short table, or one carefully chosen visualization. Keeping the evidence close to its interpretation helps readers follow the argument.
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.31\linewidth}
+\head{Conclusion}
+A good poster is a coordination tool: it makes the next action visible without hiding uncertainty. Replace this conclusion with the strongest defensible claim from your work.
+\head{Limitations}
+The sample is deliberately small and the test setting is controlled. Transfer to other populations, environments, or operating conditions should be tested before making a broader claim.
+\head{Next steps}
+\begin{itemize}\setlength\itemsep{3mm}
+\item Extend the evaluation to new conditions.
+\item Release the smallest reproducible artifact.
+\item Compare independent teams or sites.
+\end{itemize}
+\head{Takeaway}
+\colorbox{panel}{\parbox{0.94\linewidth}{\Large\bfseries\color{accent}Make the evidence trail easy to follow.}}
+\head{Contact}
+taylor.morgan@example.org\\
+\texttt{example.org/project}
+\end{minipage}
+\vfill\hfill{\small EEE-style starter | Final-Year Project 2026}
+\end{document}

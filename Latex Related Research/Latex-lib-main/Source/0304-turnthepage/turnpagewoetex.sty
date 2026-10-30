@@ -1,0 +1,74 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{turnpagewoetex}[2024/11/15 v2.0a Indicating to turn the page w/o etex (LM; MvD; HMM)]
+
+\PackageInfo{turnpagewoetex}{This is turnthepage without using e-TeX.}
+
+\ifx\turnthepage\undefined
+ \DeclareOption{short}{\providecommand{\turnthepage}{/\ldots}}
+ \DeclareOption{english}{\providecommand{\turnthepage}{\textit{Turn the page.}}}
+ \DeclareOption{francais}{\providecommand{\turnthepage}{\textit{Tournez la page.}}}
+ \DeclareOption{nederlands}{\providecommand{\turnthepage}{\textit{Sla de pagina om.}}}
+ \DeclareOption{deutsch}{\providecommand{\turnthepage}{\textit{Bitte wenden.}}}
+\else
+ \newcommand{\turnp@agewarn}{%
+   \PackageWarning{turnpageetex}{Command turnthepage was already defined.\MessageBreak%
+     Now redefining it.}}
+ \DeclareOption{short}{\turnp@agewarn \renewcommand{\turnthepage}{/\ldots}}
+ \DeclareOption{english}{\turnp@agewarn \renewcommand{\turnthepage}{\textit{Turn the page.}}}
+ \DeclareOption{francais}{\turnp@agewarn \renewcommand{\turnthepage}{\textit{Tournez la page.}}}
+ \DeclareOption{nederlands}{\turnp@agewarn \renewcommand{\turnthepage}{\textit{Sla de pagina om.}}}
+ \DeclareOption{deutsch}{\turnp@agewarn \renewcommand{\turnthepage}{\textit{Bitte wenden.}}}
+\fi
+
+\ProcessOptions
+
+\ifx\turnthepage\undefined
+ \providecommand{\turnthepage}{ }
+ \PackageWarning{turnpagewoetex}{No option for package turnthepage\MessageBreak%
+   (or turnpagewoetex) choosen!\MessageBreak%
+   There will be no information regarding\MessageBreak%
+   the need to turn the page!\MessageBreak%
+   }
+\fi
+
+\RequirePackage{atbegshi}
+\RequirePackage{everyshi}
+\RequirePackage{atveryend}
+\RequirePackage{picture}
+
+\newcounter{tpCurrentPage}
+\setcounter{tpCurrentPage}{1}
+\EveryShipout{\addtocounter{tpCurrentPage}{1}}
+
+\newcounter{tppagenr}
+\setcounter{tppagenr}{1}
+\AfterLastShipout{%
+ \addtocounter{tpCurrentPage}{-1}%
+ \edef\turnpage@tmpCP{\arabic{tpCurrentPage}}%
+ \if@filesw%
+  \immediate\write\@auxout{\string\setcounter{tppagenr}{\turnpage@tmpCP}}%
+ \fi%
+ \addtocounter{tpCurrentPage}{+1}%
+}
+
+\AtBeginShipout{%
+ \AtBeginShipoutUpperLeft{%
+  \ifodd\value{tpCurrentPage}% The \value{tpCurrentPage} is already 1 higher than the current page number here.
+  \else%
+   \ifnum\value{tppagenr}>\value{tpCurrentPage}\relax%
+    \dimen1=1in%
+    \advance\dimen1 by \textwidth%
+    \advance\dimen1 by \oddsidemargin%
+    \dimen3=1in%
+    \advance\dimen3 by \topmargin%
+    \advance\dimen3 by \headheight%
+    \advance\dimen3 by \headsep%
+    \advance\dimen3 by \textheight%
+    \advance\dimen3 by \footskip%
+    \put(\dimen1,-\dimen3){\llap{\turnthepage}}%
+   \fi%
+  \fi%
+ }%
+}
+
+\endinput

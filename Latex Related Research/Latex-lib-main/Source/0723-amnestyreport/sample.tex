@@ -1,0 +1,400 @@
+\documentclass[
+  freefonts, nologo]{amnestyreport}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\renewcommand{\thesection}{\Alph{section}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\title{RMarkdown report example}
+\subtitle{An example report for Amnesty output}
+\titleimage{BoschFragment}
+\titleimagecaption{The Garden of Earthly Delights is the modern title
+given to a triptych oil painting on oak panel painted by the Early
+Netherlandish master Hieronymus Bosch, between 1490 and 1510, when Bosch
+was between 40 and 60 years old. It has been housed in the Museo del
+Prado in Madrid, Spain since 1939.\\
+\textcopyright{} Image: Public domain.\\
+\textcopyright{} Caption: Wikipedia contributors, 2023, released under
+Creative Commons Attribution-ShareAlike License 4.0}
+\copyrightyear{2023}
+\firstpublicationyear{2022}
+\reportindex{ABXC/AAAA/2022}
+\blurb{This sample output of Rmarkdown with TeX shows the general
+commands and options of the amnestyinternational TeX class. It is based
+on the text by Jule Krueger.}
+
+\addbibresource{examplereferences.bib}
+
+\begin{document}
+\frontmatter
+\maketitle
+
+
+\tableofcontents
+\mainmatter
+
+\begin{AmnestyGlossary}[10em]
+Commute &
+Commute means to replace a punishment, usually a death sentence, with a less severe one. For example, Amnesty called for the USA to commute to time served the 35-year jail sentence of whistleblower Chelsea Manning, who had been arrested after leaking classified government material
+\\
+Crimes against humanity &
+When certain acts---including murder, torture and slavery---form part of a widespread attack on a civilian population by a state or organization. Unlike war crimes, they can take place at times of peace as well as during conflict. The Rwandan genocide of 1994 is one example of a crime against humanity.
+\\
+Extrajudicial executions &
+Unlawful killings ordered by a government, or committed with its knowledge and support. They can be carried out by the military, police, or by civilians working with government forces. For example, Hamas forces in Gaza committed serious human rights abuses, including extrajudicial executions, torture and abductions, during the 2014 Gaza/Israel conflict.
+\\
+Freedom of expression &
+The right to seek, receive and share information and ideas, without fear or interference. It is closely linked with freedom of association (the right to meet with anyone you choose, for example, to form and join clubs, societies or trade unions) and the right to take part in a peaceful assembly, such as a demonstration or public meeting.
+\\
+Immunity (from prosecution) &
+Allows an accused person to avoid prosecution for a crime because of their job or office. Amnesty International is opposed to immunity. For example, Amnesty has called for the rejection of immunity in the Central African Republic so that people who committed crimes during conflict there are brought to justice.
+\\
+Impunity &
+Impunity is when people who have committed crimes avoid punishment. For example, there is a ‘culture of impunity’ among police in the Philippines, who are able to torture people without fear of being punished. Amnesty calls for these people to be tried and sentenced fairly, according to the law.
+\\
+Prisoner of conscience &
+A prisoner of conscience is someone who is imprisoned because of who they are (sexual orientation, ethnic, national or social origin, language, birth, colour, sex or economic status) or their religious, political or other beliefs, and who hasn’t used or advocated violence. For example, Dr Mohammed al-Roken is a current prisoner of conscience in the United Arab Emirates, jailed for 10 years following a deeply unfair trial.
+\\
+War crimes &
+War crimes are serious crimes committed during armed conflicts, which could include murdering prisoners of war, killing hostages, torture and destroying towns and villages. A recent example is in the Ukraine, where there is overwhelming evidence of ongoing war crimes, including torture and summary killings of prisoners.
+\\
+\end{AmnestyGlossary}
+
+From
+\url{https://www.amnesty.org/en/latest/campaigns/2015/07/beginners-guide-human-rights-jargon/}
+
+\clearpage
+
+\section*{Introduction}\label{introduction}
+\addcontentsline{toc}{section}{Introduction}
+
+In this document we discuss the use of \texttt{amnestyreport.cls}, and
+accompanying \texttt{R} package \& \texttt{pandoc} template for writing
+Amnesty International Reports.
+
+You can either use an \texttt{Rnw} file with \LaTeX~syntax, or an
+\texttt{Rmd} file with R Markdown syntax. In both cases you need:
+
+\begin{itemize}
+\tightlist
+\item
+  The \LaTeX~class file \texttt{amnestyreport.cls},
+\item
+  A properly installed \texttt{R} package \texttt{amnestyreportR},
+\item
+  Optionally Amnesty International fonts and logo (see below).
+\end{itemize}
+
+If you use R Markdown syntax rather than \LaTeX~syntax, you also need
+
+\begin{itemize}
+\tightlist
+\item
+  The \texttt{pandoc} template \texttt{amnestytemplate.tex}
+\end{itemize}
+
+\subsection*{A note about the fonts and
+logos}\label{a-note-about-the-fonts-and-logos}
+\addcontentsline{toc}{subsection}{A note about the fonts and logos}
+
+If you have an established relationship with Amnesty International, you
+may use their fonts and logos in your report. You need to install the
+fonts, and the file with the logo (rename it to
+\texttt{Amnesty\_logo.png}). Otherwise you need the options
+\texttt{freefonts,\ nologo} in your preamble for \LaTeX~or the line
+\texttt{classoption:\ freefonts,\ nologo} in the RMD preamble.
+
+\subsection*{Rmd premable example}\label{rmd-premable-example}
+\addcontentsline{toc}{subsection}{Rmd premable example}
+
+If you use Rmd, you need to specify in your preamble that
+
+\begin{itemize}
+\tightlist
+\item
+  You are using the template \texttt{amnestytemplate.tex} rather than
+  the generic \texttt{pandoc} template;
+\item
+  You are using \texttt{xelatex} (or \texttt{lualatex}) rather than a
+  8-bit engine \texttt{podflatex}.
+\end{itemize}
+
+For example this file has the following preamble:
+
+\begin{verbatim}
+---
+title: "RMarkdown report example"
+subtitle: "An example report for Amnesty output"
+titleimage: "BoschFragment"
+titleimagecaption: "The Garden of Earthly Delights is the modern title
+given to a triptych oil painting on oak panel painted by the Early
+Netherlandish master Hieronymus Bosch, between 1490 and 1510, when
+Bosch was between 40 and 60 years old. It has been housed in the
+Museo del Prado in Madrid, Spain since 1939.\n\n
+\\textcopyright{} Image: Public domain.\n\n
+\\textcopyright{} Caption:  Wikipedia contributors, 2023, released
+under  Creative Commons Attribution-ShareAlike License 4.0"
+copyrightyear: 2023
+firstpublicationyear: 2022
+reportindex: ABXC/AAAA/2022
+blurb: "This sample output of Rmarkdown with TeX shows the general
+commands and options of the amnestyinternational TeX class.  It is based
+on the text by Jule Krueger."
+
+output: 
+  pdf_document:
+    template: amnestytemplate.tex
+    latex_engine: xelatex
+    toc: true
+    keep_tex: true
+    citation_package: natbib
+classoption: freefonts, nologo
+header-includes:
+  - \renewcommand{\thesection}{\Alph{section}}
+bibliography: "examplereferences.bib"
+---
+\end{verbatim}
+
+\clearpage
+
+\section{\texorpdfstring{Cross-references and bibliography
+\label{cross-ref}}{Cross-references and bibliography }}\label{cross-references-and-bibliography}
+
+You can use the standard \LaTeX~and R Markdown facilities for
+references.
+
+The package uses \texttt{biblatex} with the \texttt{bibtex} backend for
+citations to provide footnote citations,
+\citep[See][]{SecondRef2022}\textsuperscript{,}\citep[See
+also][12]{FirstRef2023} and \citep[23]{FirstRef2023}. However, due to
+idiosyncrasies of \texttt{pandoc} we need to specify \texttt{natbib} as
+the citation engine in the preamble. Never mind biblatex warnings during
+the processing.
+
+Below in \autoref{sec:figures_tables} we show the examples of tables and
+figures provided by the package.
+
+\section{\texorpdfstring{Figures and tables
+\label{sec:figures_tables}}{Figures and tables }}\label{figures-and-tables}
+
+\subsection{Inline expressions}\label{inline-expressions}
+
+Irises are beautiful flowers that come in different types, shapes and
+sizes. In this report, we look at different species of irises in terms
+of petal
+size.\footnote{This is how you can add a footnote. Some footnotes are very long, and some are several lines log, but this is OK. Just make sure the indentation is right.}
+
+We define the variable \texttt{N\_iris} and use it inline in the
+following example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{N\_iris }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(iris)}
+\end{Highlighting}
+\end{Shaded}
+
+There are a total of 150 (coded as
+\texttt{`}\texttt{r N\_iris}\texttt{`}) iris flower specimen in the
+built-in \textbf{iris} data.
+
+\subsection{A table}\label{a-table}
+
+Here is an example of a table using \texttt{kable} package and
+\texttt{amnesty\_table} function:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{iris }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{count}\NormalTok{(Species) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{percent =}\NormalTok{ n}\SpecialCharTok{/}\FunctionTok{sum}\NormalTok{(n)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(., }\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.factor), }\SpecialCharTok{\textasciitilde{}}\StringTok{\textquotesingle{}Total\textquotesingle{}}\NormalTok{))) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{amnesty\_table}\NormalTok{(}\AttributeTok{row.names =} \ConstantTok{FALSE}\NormalTok{,}
+                \AttributeTok{align =} \StringTok{"lrr"}\NormalTok{,}
+        \AttributeTok{caption=}\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{label\{tab:species\}}
+\StringTok{        Frequency distribution of iris species."}\NormalTok{,}
+        \AttributeTok{position=}\StringTok{"!ht"}\NormalTok{,}
+        \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Species"}\NormalTok{, }\StringTok{"Number of species"}\NormalTok{, }\StringTok{"(\%)"}\NormalTok{),}
+        \AttributeTok{digits=}\DecValTok{2}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  kableExtra}\SpecialCharTok{::}\FunctionTok{row\_spec}\NormalTok{(}\DecValTok{4}\NormalTok{, }\AttributeTok{bold=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We can typeset it with sideways caption using
+\texttt{\textbackslash{}sideTableCaptions}: \sideTableCaptions
+
+\begin{table}[!ht]
+
+\caption{\label{tab:example_table}\label{tab:species}
+        Frequency distribution of iris species.}
+\centering
+\begin{tabular}[t]{lrr}
+\toprule
+\textbf{Species} & \textbf{Number of species} & \textbf{(\%)}\\
+\midrule
+setosa & 50 & 33.33\\
+versicolor & 50 & 33.33\\
+virginica & 50 & 33.33\\
+\textbf{Total} & \textbf{150} & \textbf{100.00}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Alternatively, we can typeset it with normal captions using
+\texttt{\textbackslash{}normalTableCaptions}: \normalTableCaptions
+
+\begin{table}[!ht]
+
+\caption{\label{tab:example_table_1}\label{tab:species1}
+        Frequency distribution of iris species.}
+\centering
+\begin{tabular}[t]{lrr}
+\toprule
+\textbf{Species} & \textbf{Number of species} & \textbf{(\%)}\\
+\midrule
+setosa & 50 & 33.33\\
+versicolor & 50 & 33.33\\
+virginica & 50 & 33.33\\
+\textbf{Total} & \textbf{150} & \textbf{100.00}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\FloatBarrier
+
+\subsection{Figures}\label{figures}
+
+Normally the figures are prepared in separate \LaTeX~runs. This might be
+very slow, so you may want to use the draft mode for the editing runs.
+Before making the figures, you need to issue the \texttt{R} command
+\texttt{setup\_amnesty\_plots(options=...,\ draft=...)}. The
+\texttt{options} are those that are passed to \LaTeX~class; if you do
+not have Amnesty International fonts, use \texttt{freefonts}. The
+\texttt{draft} can be either \texttt{TRUE} or \texttt{FALSE} (for quick
+plots). For example
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{setup\_amnesty\_plots}\NormalTok{()  }\CommentTok{\# You have Amnesty fonts and logo}
+\FunctionTok{setup\_amnesty\_plots}\NormalTok{(}\AttributeTok{options=}\StringTok{\textquotesingle{}freefonts, nologo\textquotesingle{}}\NormalTok{) }\CommentTok{\# No Amnesty fonts}
+\FunctionTok{setup\_amnesty\_plots}\NormalTok{(}\AttributeTok{draft=}\ConstantTok{TRUE}\NormalTok{) }\CommentTok{\# Draft mode}
+\end{Highlighting}
+\end{Shaded}
+
+We are using the \textit{ggplot2} package to make an example figure from
+the built-in iris data. As can be seen in
+\autoref{fig:species-petal-size}, the virginica species of iris has the
+largest petal size in comparison to the other two iris species. Note
+that it is recommended to use both color and line shape to convey the
+same information for the benefit of color blind users.
+
+\begin{figure}
+
+{\centering \includegraphics{sample_files/figure-latex/species-petal-size-1} 
+
+}
+
+\caption{Distribution of petal length and petal width, by iris species.}\label{fig:species-petal-size}
+\end{figure}
+
+We use viridis scale optimized for color blind users both for the
+discrete (\autoref{fig:species-petal-size}) and continuous
+(\autoref{fig:petal-size-sepal-size}) scales. We also use
+\texttt{\textbackslash{}sideFigureCaptions} to typeset the caption on
+the side \sideFigureCaptions
+
+\begin{figure}
+
+{\centering \includegraphics{sample_files/figure-latex/petal-size-sepal-size-1} 
+
+}
+
+\caption{Distribution of petal and sepal sizes}\label{fig:petal-size-sepal-size}
+\end{figure}
+
+\clearpage
+
+\section{Other typographic features}\label{other-typographic-features}
+
+\subsection{A subsection heading}\label{a-subsection-heading}
+
+\subsubsection{A subsubsection heading}\label{a-subsubsection-heading}
+
+\paragraph{A subsubsubsection heading}\label{a-subsubsubsection-heading}
+
+We have line break after a subsubsubsection heading as Amnesty style
+requires.
+
+\paragraph{Type of iris species
+(Species)}\label{type-of-iris-species-species}
+
+This variable indicates the different botanical types of iris species.
+
+\begin{description}
+\item[\textbf{setosa:}] The iris belongs to the botanical species of setosa. 
+\item[\textbf{versicolor:}]  The iris belongs to the botanical species of versicolor. 
+\item[\textbf{virginica:}] The iris belongs to the botanical species of virginica. 
+\end{description}
+
+An example of a quotation.
+
+\begin{quote}
+All human beings are born free and equal in dignity and rights. They are
+endowed with reason and conscience and should act towards one another in
+a spirit of brotherhood.
+
+\attribution{Universal Declaration of Human Rights}
+\end{quote}
+
+\backmatter
+\end{document}

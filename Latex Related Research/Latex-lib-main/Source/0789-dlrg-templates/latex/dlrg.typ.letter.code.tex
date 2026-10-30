@@ -1,0 +1,146 @@
+% allgemeine Voreinstellungen
+% ****************************************************************
+\LoadLetterOption{DIN5008B} % Einstellungen für DIN 5008 laden
+
+\KOMAoptions{
+fromlogo=true,
+fromalign=left,
+paper=a4,
+fontsize=11pt,
+foldmarks=blmTP
+}
+
+% Nötige Variablen setzen
+% ****************************************************************
+\newkomavar{rechtsform}
+\newkomavar{gericht}
+\newkomavar{ansprechpartner}
+\newkomavar{funktionsbezeichnung}
+\newkomavar{fromaddressZusatz}
+\newkomavar{fromgliederung}
+\newkomavar{fromgliederungShort}
+\newkomavar{bgbVorstand}
+\newkomavar{funktion}
+\newkomavar{alternativeSignature}
+
+% Titel/Betreff setzen
+% ****************************************************************
+\NewDocumentCommand{\betreff}{m}{\setkomavar{subject}{#1}}
+
+% Datum automatisch setzen
+% ****************************************************************
+\setkomavar{date}{\todaysname, \today} % Datum z.B. Montag, 1. April 2222
+
+% Absender/Gliederungsdaten
+% ****************************************************************
+\NewDocumentCommand{\gliederungName}{om}{
+    \IfNoValueTF{#1}{
+        \setkomavar{fromgliederungShort}{#2}
+    }{
+        \setkomavar{fromgliederungShort}{#1}
+    }
+    \setkomavar{fromgliederung}{#2}
+}
+\NewDocumentCommand{\adresseZusatz}{m}{\setkomavar{fromaddressZusatz}{#1}}
+\NewDocumentCommand{\adresse}{m}{\setkomavar{fromaddress}{#1}}
+\NewDocumentCommand{\ort}{m}{\setkomavar{fromzipcode}{#1}}
+\NewDocumentCommand{\telefon}{m}{\setkomavar{fromphone}{#1}}
+\NewDocumentCommand{\telefax}{m}{\setkomavar{fromfax}{#1}}
+\NewDocumentCommand{\email}{m}{\setkomavar{fromemail}{#1}}
+\NewDocumentCommand{\webseite}{m}{\setkomavar{fromurl}{#1}}
+\NewDocumentCommand{\rechtsform}{m}{\setkomavar{rechtsform}{#1}}
+\NewDocumentCommand{\gericht}{m}{\setkomavar{gericht}{#1}}
+\NewDocumentCommand{\bgbVorstand}{m}{\setkomavar{bgbVorstand}{#1}}
+\NewDocumentCommand{\bankverbindung}{m}{\setkomavar{frombank}{#1}}
+
+\NewDocumentCommand{\ansprechpartner}{m}{\setkomavar{ansprechpartner}{#1}}
+\NewDocumentCommand{\funktionsbezeichnung}{m}{\setkomavar{funktion}{#1}}
+\NewDocumentCommand{\signatur}{m}{\setkomavar{alternativeSignature}{#1}}
+
+% Abstaende
+% ****************************************************************
+\setplength{backaddrheight}{6mm}
+\setplength{toaddrvpos}{56mm}
+\setplength{toaddrheight}{35mm}
+\setplength{toaddrwidth}{80mm}
+\setplength{subjectvpos}{112mm}
+\setplength{refvpos}{112mm}
+% \setplength{refwidth}{165mm}
+
+% Faltmarken
+% ****************************************************************
+\setplength{foldmarkhpos}{0mm}
+\setplength{tfoldmarkvpos}{105mm}
+\setplength{tfoldmarklength}{0mm}
+\setplength{pfoldmarklength}{0mm}
+\setkomafont{foldmark}{\tiny\leavevmode\hbox to 10mm{\cleaders\hbox to 2pt{.}\hfill\hfil}\textcolor{white}}
+
+% Ruecksendeadresse
+% ****************************************************************
+\setkomavar{backaddress}{\tiny\textcolor{black!80}{
+\usekomavar{fromgliederungShort}~|~\usekomavar{fromaddress} | \usekomavar{fromzipcode}
+}}
+
+% Absenderergaenzung
+% ****************************************************************
+\setplength{lochpos}{25mm}
+\setplength{locwidth}{35mm}
+\setplength{locvpos}{12mm}
+\setkomavar{location}{
+  \linespread{1.42857}
+  \raggedright\tiny\textcolor{black!80}{
+  \IfFileExists{dlrg_adler.jpg}
+  {\includegraphics[width=35mm]{dlrg_adler.jpg}\\}
+  {\includegraphics[width=35mm]{dlrg_adler_platzhalter.jpg}\\}
+  \vspace{6mm}
+  \textbf{\usekomavar{fromgliederung}}\\
+  \Ifkomavarempty{funktion}{}{\usekomavar{funktion}\\}
+  \Ifkomavarempty{ansprechpartner}{}{\usekomavar{ansprechpartner}\\}
+  \Ifkomavarempty{fromaddressZusatz}{}{\usekomavar{fromaddressZusatz}\\}
+  \usekomavar{fromaddress}\\
+  \usekomavar{fromzipcode}\\
+  \Ifkomavarempty{fromphone}{}{Tel.:~\usekomavar{fromphone}\\}
+  \Ifkomavarempty{fromfax}{}{Fax:~\usekomavar{fromfax}\\}
+  \Ifkomavarempty{fromemail}{}{\usekomavar*{fromemail}\usekomavar{fromemail}}}
+  \Ifkomavarempty{fromurl}{}{Internet:~\usekomavar{fromurl}\\}
+}
+
+% Unterzeichner/Signatur
+% ****************************************************************
+\setkomavar{signature}{%
+    \Ifkomavarempty{alternativeSignature}%
+    {\usekomavar{ansprechpartner}\Ifkomavarempty{funktion}{}{\\\usekomavar{funktion}}}%
+    {\usekomavar{alternativeSignature}}%
+}
+
+% Fußzeile
+% ****************************************************************
+\setplength{firstfootvpos}{273mm}
+\setplength{firstfoothpos}{22.2mm}
+\setkomavar{firstfoot}{\linespread{1.14285}
+\tiny\textcolor{black!80}{
+\begin{tabular}[t]{l@{}}
+\usekomavar{frombank}
+\end{tabular}
+\hfill
+\begin{tabular}[t]{l@{}}
+\textbf{Rechtsform:}~\usekomavar{rechtsform}\\
+\textbf{Amtsgericht:}~\usekomavar{gericht}\\
+\textbf{Vertretungsberechtigung gemäß § 26 BGB:}\\
+\usekomavar{bgbVorstand}
+\end{tabular}
+\hfill
+\begin{tabular}[t]{l@{}}
+Die Deutsche Lebens-Rettungs-Gesellschaft\\
+ist Spitzenverband im Deutschen Olympischen\\
+Sportbund (DOSB), Mitglied im Deutschen\\
+Paritätischen Wohlfahrtsverband, im Deutschen\\
+Spendenrat, der International Life Saving\\
+Federation (ILS) und der ILS-Europe.
+\end{tabular}
+}}
+
+% Seitenzahlen anpassen
+% ****************************************************************
+\setkomafont{pagefoot}{\normalfont}
+\cfoot{\thepage}

@@ -1,0 +1,185 @@
+%-------------------------
+% Rover Resume - Star Template
+% Link: https://github.com/subidit/rover-resume
+%
+% CUSTOM COMMANDS \aux{} and \rside{} for part formatting
+% eg. \subsection{Company Name \aux{Designation} \rside{Duration}}
+% Double lined titles with \subsection{} and \subsubsection{}
+% \linkicon gives external link icon
+%-------------------------
+
+\documentclass[11pt]{article}
+
+
+\usepackage[sfdefault,semibold,lf]{FiraSans}
+\usepackage[a4paper,margin=1in]{geometry}
+
+\usepackage{xcolor}
+\definecolor{accent}{HTML}{141E61}
+
+\newcommand{\linkicon}{
+  \color{gray}{\footnotesize\raisebox{1pt}{\faIcon{external-link-alt}}}
+}
+
+\setcounter{secnumdepth}{0}
+\pdfgentounicode=1
+
+
+%====== LIST FORMATTING ======
+\usepackage{enumitem}
+\setlist[itemize]{nosep, left=0pt .. 1.5em}
+\setlist[enumerate]{left=0pt..1.5em}
+\setlist[description]{itemsep=0pt}
+
+
+%====== TITLE FORMATTING ======
+\usepackage{xhfill}
+\usepackage{soul}
+\newcommand{\midrule}[1]{
+  \leavevmode
+  \xrfill[.5ex]{1pt}[accent]~\so{#1}~\xrfill[.5ex]{1pt}[accent]
+}
+
+\usepackage{titlesec}
+\titlespacing{\section}{0pt}{*4}{*1}
+\titlespacing{\subsection}{0pt}{*3}{*0}
+\titlespacing{\subsubsection}{0pt}{*0}{*0}
+\titleformat{\section}{\large\bfseries\uppercase}{}{}{\midrule}
+\titleformat*{\subsection}{\large\bfseries\scshape}
+
+
+%====== CUSTOM COMMANDS ======
+\newcommand{\aux}[1]{
+  $|$ \space {\normalfont\itshape #1}%
+}
+
+\newcommand{\rside}[1]{
+  \hfill {\normalfont\color{accent} #1}%
+}
+
+
+%====== FOOTER ======
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+
+% Replace 'Star Rover' with your name in next line
+\fancyfoot[C]{\small\color{gray} Maya Torres -- Page \thepage\ of \pageref*{LastPage}}
+
+% \pagestyle{empty} 
+% uncomment previous line to hide page numbering
+
+
+%====== PACKAGES ======
+\usepackage{fontawesome5}
+\usepackage{multicol}
+\usepackage[bookmarks=false,hidelinks]{hyperref}
+
+
+%====== FINISH PREAMBLE ======
+
+%====== DOCUMENT STARTS HERE ======
+
+\begin{document}
+
+%====== BANNER ======
+
+\begin{center}
+  {
+    \fontsize{36}{12}
+    \fontseries{heavy}\selectfont
+    \color{accent}
+    MAYA TORRES
+  } \\ \medskip
+
+  % {\color{gray}{\faHome}} 1 infinite loop, CA \quad
+
+  \href{tel:15550135}{{\color{gray}{\faPhone}} +1 555 0135} \quad
+  \href{mailto:maya.torres@example.com}{{\color{gray}{\faEnvelope}} maya.torres@example.com} \quad
+  \href{https://github.com/maya-torres}{{\color{gray}{\faGithub}} maya-torres} \quad
+  % \href{https://www.linkedin.com/in/yourprofile}{{\color{gray}{\faLinkedin}} profile-name} \quad
+  \href{https://maya-torres.example.com}{{\color{gray}{\faLink}} maya-torres.example.com}
+\end{center}
+
+%====== BANNER END ======
+
+
+\section{Education}
+%==========
+\subsection{Oakhaven State University \aux{BS in Computer Science} \rside{2018 -- 2022}}
+\begin{itemize}
+  \item \textit{cum laude}
+  \item Coursework: Distributed Systems, Databases, Computer Networks
+  \item Dean's List, four semesters
+\end{itemize}
+
+
+\section{Experience}
+%==========
+\subsection{Harborlight Systems \rside{Remote}}
+\subsubsection{Backend Engineer \rside{Aug 2022 -- present}}
+\begin{itemize}
+  \item Rebuilt the order-processing service's retry logic, cutting failed-payment incidents by 65\%.
+  \item Designed the schema and API for a new inventory-sync feature adopted by all three storefront teams.
+  \item Mentored two new-grad engineers through their first two on-call rotations.
+\end{itemize}
+
+\subsection{Kestrel Analytics \rside{Boston, MA}}
+\subsubsection{Software Engineering Intern \rside{May 2021 -- Aug 2021}}
+\begin{itemize}
+  \item Built an internal dashboard for tracking data-pipeline latency, now used daily by the data team.
+  \item Fixed a caching bug that was causing stale results for roughly 5\% of report queries.
+\end{itemize}
+
+
+\section{Skills}
+%===============
+\begin{description}
+  \item[Technical] Python, Go, PostgreSQL, Docker, AWS
+  \item[Language] English (native), Spanish (conversational)
+  \item[Interests] Rock climbing, woodworking, running a small vegetable garden
+\end{description}
+
+
+\section{Certifications}
+%=======================
+\begin{enumerate}[label=\null, left=0pt..0pt, itemsep=0pt]
+  \item AWS Certified Solutions Architect -- Associate \rside{2023}
+  \item Backend Engineering Bootcamp, Codepath \rside{2021}
+\end{enumerate}
+
+
+\section{Publications}
+%=====================
+\begin{enumerate}
+  \item M. Torres and R. Alden, ``Retry Budgets for High-Throughput Payment Pipelines,'' in \textit{Proceedings of the Regional Systems Workshop}, pp. 41--49, 2023.
+\end{enumerate}
+
+
+\section{Awards}
+%===============
+\begin{description}
+  \item [2023] Harborlight Systems Q3 Engineering Impact Award
+  \item [2021] Kestrel Analytics Summer Intern Showcase, 1st place
+\end{description}
+
+
+\section{Projects}
+%=================
+\subsection{tinyqueue \aux{\href{https://github.com/maya-torres/tinyqueue}{Link \linkicon}} \rside{2023 -- present}}
+\begin{itemize}
+  \item A minimal, dependency-free job queue for Go, built as a lighter alternative to heavier queue libraries.
+  \item Used in two of Harborlight's internal services; roughly 200 GitHub stars.
+\end{itemize}
+
+\subsection{Pipeline Latency Dashboard \aux{\href{https://github.com/maya-torres/pipeline-dashboard}{Project link \linkicon}} \rside{Summer 2021}}
+\begin{itemize}
+  \item Python, Flask, PostgreSQL, Chart.js
+  \item Built during my internship to surface per-stage latency across the data pipeline in real time.
+  \item Reduced the average time to diagnose a slow pipeline stage from hours to minutes.
+\end{itemize}
+
+
+\end{document}

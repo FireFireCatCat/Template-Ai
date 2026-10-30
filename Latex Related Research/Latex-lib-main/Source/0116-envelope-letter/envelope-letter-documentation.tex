@@ -1,0 +1,140 @@
+\documentclass{article}
+
+\usepackage[a4paper, margin=1.7cm]{geometry}
+\usepackage[colorlinks=true, linkcolor=black, urlcolor=blue]{hyperref}
+\usepackage{xurl}
+\usepackage[inter-unit-product={\cdot}]{siunitx}
+\usepackage{envelope-letter}
+
+\setlength\parskip{0.7\baselineskip}
+\newcommand{\optarg}[1]{$\langle$\textit{#1}\,$\rangle$}
+
+\title{Package \texttt{envelope-letter}\\\Large version 1.1}
+\author{Florian Tasso \thanks{E-mail: florian dot tasso at gmail dot com.}}
+
+\begin{document}
+	\maketitle
+
+	\begin{abstract}
+		This package provides the \verb|\makeenvelope| command, which draws a layout for folding the first page of a letter into its own envelope, filled in with both recipient and sender addresses.
+
+		The package also provides an estimation of the total letter's mass to foresee the stamping rate, and can print a digital stamp on the envelope.
+
+		It can be useful when running out of envelopes, or to spare a little of paper (especially when letter is an odd number pages long). It can also help implementing a (somewhat "poor man's") automated batch letter generating system.
+	\end{abstract}
+
+	\vfil
+
+	\tableofcontents
+	
+	\vfil
+
+	\clearpage
+
+	\section{Basic Usage}
+		Simply load the package using \verb|\usepackage{envelope-letter}|, and start writing your letter as usual. Right after the \verb|\begin{letter}| statement, use the command \verb|\makeenvelope| to print the layout on a newly inserted page, just before the letter body\footnote{The envelope is not taken into account in the letter's page numbering.}. The layout automatically adjusts itself to any paper format and orientation.
+
+		The command \verb|\setstamp{|\optarg{stamp \LaTeX\ material}\verb|}| enables to add stamps. Invoked just before \verb|\makeenvelope| within the \verb|letter| environment sets the stamp for the current envelope only. Used anywhere else outside applies this stamp to every subsequent envelopes.
+
+		When writing is finished, print the letter, fold the envelope and add the required stamps. Seal it and just send it. If the letter is more than one page long, one can simply fold the extra paper sheets and put them into the envelope.
+
+		This package works with classes \href{https://ctan.org/pkg/letter}{\texttt{letter}} and \href{https://ctan.org/pkg/lettre}{\texttt{lettre}} (and probably other), that is to say it automatically extracts recipient and sender addresses from file content. Two keys are also provided to manually specify these addresses, so the package can work with virtually any class, even non-letter-related ones like \verb|article| (see section \ref{sec:options}).
+
+		The \verb|\makeenvelope| can actually be used anywhere in the \verb|document| environment. However, mass-related information is computed and diplayed only when ending \verb|letter| environment. To preserve this feature, a minimal \verb|letter| environment is provided by the package, if not already existing. It does nothing special, but offering a frame to enable advanced package functioning.
+
+	\clearpage
+
+	\section{Folding The Envelope}
+		Here is a preview of the default printed layout:
+
+		\makeatletter
+
+		\setlength{\el@l}{10.5cm}
+		\setlength{\el@L}{14.85cm}
+
+		\def\fromname{\small Sender Name}
+		\def\fromaddress{\small Sender address\\00000 City S}
+
+		\def\toname{\small Recipient Name}
+		\def\toaddress{\small Recipient address\\00000 City R}
+
+		\setstamp{\fbox{\rule[-0.13cm]{0pt}{0.6cm}\textbf{\Large S}}}
+
+		\begin{center}
+			\begin{tikzpicture}
+				\draw (0,0) -- (0,\el@L) -- (\el@l,\el@L) -- (\el@l,0) -- cycle;
+				\el@plotfoldlines
+				\el@foldsteps
+				\el@openinginstructions
+
+			\node[align=left, below right, inner sep=1em, rotate=180] at (0.8125\el@l,0.75\el@L) {\fromname\\\fromaddress};
+			\node[align=left, below right, inner sep=1em] at (0.5\el@l,0.5625\el@L) {\toname\\\toaddress};
+			\node[below left, inner sep=2em] at (0.875\el@l,0.75\el@L) {\stamp};
+			\end{tikzpicture}
+		\end{center}
+
+		\makeatother
+
+		Folding the envelope is quite straightforward. Looking at the recto of the envelope (like in the current example), simply fold the line to hide the flaps behind the paper sheet, following the steps from 1 to 3. To seal the envelope, put adhesive tape on the sides of the rear flaps\footnote{Glue should be avoided, as it may result in tearing the letter up when opening.}.
+
+		Scissors symbols are instructions to the recipient, to remind not to cut the top of the envelope. While this is the standard way to proceed, with the here crafted envelope it will result in ripping the header of the letter.
+
+		Stamp is drawn here just as an illustration. If none is supplied, nothing is drawn (default behaviour). Other package options can customize what is actually printed (see section \ref{sec:options}).
+
+		\section{Options}\label{sec:options}
+		This package provides several options to control what should be drawn. These options can be passed directly to the package at loading, using the \verb|\envelopesetup{|\optarg{options}\verb|}| command, or as an optional argument to the \verb|\makeenvelope| command, using the syntax \verb|\makeenvelope[|\optarg{options}\verb|]|.
+
+		If those commands are used in the main document's scope, options will be applied for all following envelopes created in the document. If they are used in the \verb|letter| environment, since it starts a new group under the hood, options will have effect for the current letter only, temporarily overwriting global options.
+
+		Options are input as a comma separated list of \optarg{key}=\optarg{value} pairs and processed by \verb|\pgfkeys|. Supported options are:
+		\begin{itemize}
+			\item \verb|grammage=|\optarg{number}: set grammage (surface density) of paper (in \unit{\gram\per\square\meter}, \emph{default} \qty{80}{\gram\per\square\meter})\footnote{Other grammage system and units should be implemented in a future release (pound per ream, \unit{oz\per\square{ft}}\dots)},
+
+			\item \verb|fold lines mode=|\optarg{number}: set lines drawing mode (\verb|0|: no lines, \verb|1|: only fold ticks, \verb|2|: full fold lines, \emph{default}~\verb|2|),
+			\item \verb|lines|: print full fold lines (equivalent to \verb|fold lines mode=2|, \emph{default}),
+			\item \verb|ticks|: print only fold ticks (reduces ink consumption and visual overload, equivalent to \verb|fold lines mode=1|),
+			\item \verb|no lines|: for hardcore users (equivalent to \verb|fold lines mode=0|),
+
+			\item \verb|steps|: print folding steps (\emph{default}),
+			\item \verb|no steps|: do not print folding steps,
+
+			\item \verb|instructions|: print opening instructions, to prevent recipient opening the letter by cutting the top edge (scissors symbols, \emph{default}),
+			\item \verb|no instructions|: do not print opening instruction (to save ink, or when you trust the recipient to open the letter safely).
+		\end{itemize}
+
+		Some shortand keys are also provided:
+		\begin{itemize}
+			\item \verb|full|: shortand for "\verb|lines, steps, instructions|" (\emph{default situation}),
+			\item \verb|eco|: shortand for "\verb|ticks, no steps, no instructions|",
+			\item \verb|empty|: shortand for "\verb|no lines, no steps, no instructions|",
+			\item \verb|auto|: the \verb|\makeenvelope| command is automatically invoked before the \verb|\opening| command or, if it is not defined, at the begining of the \verb|letter| environment,
+			\item \verb|manual|: the \verb|\makeenvelope| command should be manually called (\emph{default}).
+		\end{itemize}
+		Be aware that with the \verb|auto| key, any subsequent manual call of \verb|\makeenvelope| will draw additional envelopes. To avoid it, use \verb|\envelopesetup{manual}| or \verb|\makeenvelope[manual]| to restore manual operation mode.
+
+		Addresses can be manually supplied using the following keys. They default to the values set by class parameters:
+		\begin{itemize}
+			\item \verb|to=|\optarg{text string}: sets the recipient's address,
+			\item \verb|from=|\optarg{text string}: sets the sender's address.
+		\end{itemize}
+		Addresses should be enclosed by curly braces. It is mandatory if they contain a comma. To split lines, simply use the \verb|\\| command.
+
+	\section{Layout Proportions}
+		This envelope was inspired by this article: \url{https://www.imprimeur-imprimerie.com/comment-faire-une-enveloppe-avec-une-feuille-a4-astuces-pratiques}\footnote{Consulted in august 2025, in french. The article also gives motivation to craft such envelopes.}. For those interested in folding the envelope whitout using the package, here are the layout proportions:
+		\begin{itemize}
+			\item lines of step 1 are parallels to the longest side of the sheet, at $\frac{1}{8}$ and $\frac{7}{8}$ along the shortest side length from right to left. They can be obtained by folding the width of the paper three times in two,
+			\item lines of step 2 are the diagonals of the rectangles made by the top and bottom edges of the sheet, and the lines of step 3. These rectangles appear only when lines of step 1 are folded, but the dotted lines give a preview of those diagonals,
+			\item lines of step 3 are parallels to the shortest side of the sheet, at $\frac{1}{4}$ and $\frac{5}{8}$ along the longest side, from top to bottom. First, fold the height of the paper two times in two to make the flap (upper folding line), then fold the remaining aera in two to make the envelope container.
+		\end{itemize}
+
+	\section{Dependencies}
+			This package relies on and loads the following packages: \href{https://ctan.org/pkg/tikz}{\texttt{tikz}}, \href{https://ctan.org/pkg/pgfopts}{\texttt{pgfopts}}, \href{https://ctan.org/pkg/geometry}{\texttt{geometry}}, \href{https://ctan.org/pkg/graphics}{\texttt{graphics}}, \href{https://ctan.org/pkg/pifont}{\texttt{pifont}} and \href{https://ctan.org/pkg/fp}{\texttt{fp}}.
+
+	\section{Change History}
+		\begin{description}
+			\item[v1.1 \textnormal{(2025/08/28)}] Adding support for class \href{https://ctan.org/pkg/lettre}{\texttt{lettre}}, adding \verb|from|, \verb|to|, \verb|auto| and \verb|manual| keys, minor code optimisations.
+
+			\item[v1.0 \textnormal{(2025/08/21)}] Initial release.
+		\end{description}
+
+\end{document}

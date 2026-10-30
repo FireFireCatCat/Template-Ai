@@ -1,0 +1,260 @@
+% LaTeX Curriculum Vitae
+% Original author: Xovee Xu (https://www.xoveexu.com)
+% LICENSE: MIT
+
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[full]{textcomp}
+\usepackage[lf]{ebgaramond}
+\usepackage[T1]{fontenc}
+
+\usepackage{enumitem}
+\setlist[enumerate,1]{leftmargin=2em}
+\usepackage[a4paper,left=1in, right=1in, top=1in, bottom=1in]{geometry} % or use letterpaper
+\usepackage{url}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+\usepackage{eqparbox}
+
+% package settings
+\usepackage[
+    hidelinks,
+    pdfnewwindow=true,
+    pdfauthor={Jordan Blake},
+    pdftitle={Curriculum Vitae of Jordan Blake},
+    pdfpagemode=UseThumbs,
+]{hyperref}
+
+% if you want to use some Chinese characters -- uncomment below
+% \usepackage{CJKutf8}
+% \newcommand{\chinese}[1]{%
+%   {\begin{CJK}{UTF8}{gbsn}#1\end{CJK}}%
+% }
+
+\pagestyle{headings}
+\markright{\textbf{Jordan Blake}}
+
+\setlength\parindent{2em}
+
+% text box for left alignment text/number
+\newcommand{\stb}[2][4em]{%
+    \makebox[#1][l]{#2}%
+}
+\newcommand{\mtb}[2][7em]{%
+    \makebox[#1][l]{#2}%
+}
+\newcommand{\ltb}[2][10em]{%
+    \makebox[#1][l]{#2}%
+}
+
+\thispagestyle{empty}
+
+% define cv section
+\newcommand{\cvsection}[1]{\section*{\rmfamily#1}}
+\newcommand{\cvsubsection}[1]{\subsection*{\rmfamily\hspace{1.6em}#1}}
+\newcommand{\HL}[1]{\textbf{\color{red}#1}}
+
+% begin
+\begin{document}
+
+% name
+\begin{center}
+    \Huge{
+    \rmfamily
+    \textbf{Jordan Blake}}
+\end{center}
+\vspace{20pt}
+
+\setlength{\parskip}{3pt}
+
+% Contact Information
+\noindent Associate Professor in Computer Science \hfill 0000-0001-2345-6789
+
+\noindent School of Computer Science \hfill (+1) 415-555-0142
+
+\noindent Cascadia State University \hfill \href{mailto:jblake@cascadia.edu}{\texttt{jblake@cascadia.edu}}
+
+\noindent Portland, OR 97201, USA\hfill \url{https://www.jordanblake.dev}
+
+
+% Summary / Statement
+\cvsection{Summary / Statement}
+
+\hangindent=2emI work on distributed systems and probabilistic models for
+network reliability, with a focus on making large-scale simulation
+reproducible. I am looking for collaborations that combine systems
+engineering with applied statistics.
+
+
+% Education
+\cvsection{Education}
+% bold the most important information that you want to highlight -- show them first
+
+\textbf{Cascadia State University}, Portland, USA
+
+\hspace{2em}Ph.D., Computer Science, 2021
+
+\hspace{2em}Dissertation: Reliability estimation for large-scale distributed
+systems. Advisor: Prof. Elena Marsh.
+
+\textbf{Riverside Institute of Technology}, Riverside, USA
+
+\hspace{2em}B.S. Hons, Software Engineering, 2015
+
+\hspace{2em}GPA: 3.91/4.0
+
+
+% below is another kind of style
+\cvsection{Education (Another Style)}
+
+Ph.D., Computer Science, Cascadia State University, 2021
+
+M.S., Computer Science, Cascadia State University, 2018
+
+B.S., Software Engineering, Riverside Institute of Technology, 2015
+
+
+% below is another kind of style
+\cvsection{Education (Another Style)}
+
+\eqparbox[t]{program}{Ph.D.} \hfill \eqparbox{major}{Computer Science} \hfill \eqparbox{edu-univ}{Cascadia State, Portland, USA} \hfill \eqparbox{edu-year}{2021}
+
+\eqparbox[t]{program}{M.S.} \hfill \eqparbox{major}{Computer Science} \hfill \eqparbox{edu-univ}{Cascadia State, Portland, USA} \hfill \eqparbox{edu-year}{2018}
+
+\eqparbox[t]{program}{B.S.} \hfill \eqparbox{major}{Software Engineering} \hfill \eqparbox{edu-univ}{Riverside Institute, Riverside, USA} \hfill \eqparbox{edu-year}{2015}
+
+\cvsection{Education (Another Style)}
+
+% use \stb[]{} to control the space
+
+\stb[5em]{Ph.D.} \stb[11em]{Computer Science} \stb[14em]{Cascadia State, Portland, USA} \hfill 2021
+
+\stb[5em]{M.S.} \stb[11em]{Computer Science} \stb[14em]{Cascadia State, Portland, USA} \hfill 2018
+
+\stb[5em]{B.S.} \stb[11em]{Software Engineering} \stb[14em]{Riverside Institute, Riverside, USA} \hfill 2015
+
+\vspace{5pt}
+
+There are many styles above -- delete the ones you don't use and keep the one you like.
+
+% academic employment
+\cvsection{Academic Employment}
+
+\textbf{Cascadia State University}, Portland, USA
+
+\hspace{2em}Associate Professor, Dept. of Computer Science, 2027 -
+
+\hspace{2em}Assistant Professor, 2021 - 2027
+
+\textbf{Riverside Institute of Technology}, Riverside, USA
+
+\hspace{2em}Postdoctoral Researcher, 2020 - 2021
+
+
+\cvsection{Academic Employment (Another Style)}
+
+Associate Professor, Cascadia State University, Portland, USA, 2027 -
+
+Assistant Professor, Cascadia State University, Portland, USA, 2021 - 2027
+
+Postdoctoral Researcher, Riverside Institute of Technology, Riverside, USA, 2020 - 2021
+
+
+% distinction, award, honor, and fellowship
+\cvsection{Distinction}
+
+Best Paper Award, USENIX NSDI, 2023
+
+Rising Star Award, Cascadia State University, 2022
+
+Outstanding Dissertation Award, Cascadia State University, 2021
+
+
+% academic service
+\cvsection{Academic Service}
+
+\cvsubsection{Associate Editor}
+
+IEEE Transactions on Dependable and Secure Computing, 2024 -
+
+\cvsubsection{Program Co-Chair}
+
+International Workshop on Reliable Distributed Systems, 2024
+
+\cvsubsection{Program Committee Member}
+
+ACM SIGCOMM, USENIX NSDI, IEEE INFOCOM
+
+\cvsubsection{Professional Membership}
+
+\textbf{ACM}: Association for Computing Machinery
+
+\hspace{2em}Senior Member (2023), Member (2016)
+
+\textbf{IEEE}: Institute of Electrical and Electronics Engineers
+
+\hspace{2em}Member (2016)
+
+
+% publication
+\input{article.tex}
+
+
+% talks
+\cvsection{Invited Talk}
+
+University of Cascadia, Dept. of Computer Science, 2024
+
+Riverside Institute of Technology, Systems Seminar, 2023
+
+
+% teaching experience
+\cvsection{Teaching Experience}
+
+\textbf{Distributed Systems}\hfill Fall 2023, 2024
+
+\hspace{2em}Instructor of Record, Cascadia State University
+
+\textbf{Introduction to Algorithms}\hfill Spring 2022
+
+\hspace{2em}Teaching Assistant, with Prof. Elena Marsh, at Cascadia State University
+
+
+% industrial experience
+\cvsection{Industrial Experience}
+
+\textbf{Northwind Systems Inc.}, Seattle, USA
+
+\hspace{2em}Research Intern, Summer 2019
+\begin{itemize}[leftmargin=5em, topsep=0pt, itemsep=0pt]
+    \item Built a fault-injection framework used across three internal teams
+    \item Reduced simulated failover time by 40\% in the storage subsystem
+\end{itemize}
+
+
+% language
+\cvsection{Language}
+
+Native English
+
+Working proficiency in Spanish
+
+
+% reference
+\cvsection{Reference}
+
+\textbf{Dr. Elena Marsh}, Professor and Chair, Dept. of Computer Science, Cascadia State University
+
+\hspace{2em}(+1) 415-555-0198 \hspace{2em} \url{mailto:emarsh@cascadia.edu}
+
+
+\vfill
+
+\noindent
+\LaTeX~CV Template: \url{https://github.com/Xovee/latex-cv}
+
+\section*{\hfill\color{OliveGreen}\today}
+
+\end{document}

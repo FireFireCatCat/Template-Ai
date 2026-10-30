@@ -1,0 +1,579 @@
+% \iffalse
+%
+% Copyright 2025, Boris Veytsman
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3 of this license or (at your option) any 
+% later version.
+% The latest version of the license is in
+%    http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of
+% LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Boris Veytsman,
+% <borisv@lk.net> 
+%
+% This work consists of the file deutschesmuseum.dtx and the
+% derived file deutschesmuseum.cls
+%
+% \fi 
+% \CheckSum{0}
+%
+%
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~} 
+%
+%\iffalse
+% Taken from xkeyval.dtx
+%\fi
+%\makeatletter
+%\def\DescribeOption#1{\leavevmode\@bsphack
+%              \marginpar{\raggedleft\PrintDescribeOption{#1}}%
+%              \SpecialOptionIndex{#1}\@esphack\ignorespaces}
+%\def\PrintDescribeOption#1{\strut\emph{option}\\\MacroFont #1\ }
+%\def\SpecialOptionIndex#1{\@bsphack
+%    \index{#1\actualchar{\protect\ttfamily#1}
+%           (option)\encapchar usage}%
+%    \index{options:\levelchar#1\actualchar{\protect\ttfamily#1}\encapchar
+%           usage}\@esphack}
+%\def\DescribeOptions#1{\leavevmode\@bsphack
+%  \marginpar{\raggedleft\strut\emph{options}%
+%  \@for\@tempa:=#1\do{%
+%    \\\strut\MacroFont\@tempa\SpecialOptionIndex\@tempa
+%  }}\@esphack\ignorespaces}
+%\makeatother
+%
+% \MakeShortVerb{|}
+% \GetFileInfo{deutschesmuseum.dtx}
+% \newcommand{\progname}[1]{\textsf{#1}}
+% \title{\LaTeX{} Style For \emph{Deutsches Museum}
+%   \thanks{\copyright 2025, Boris Veytsman.  This work has been
+%   commissioned by Wayne Shahnke}}
+% \author{Boris Veytsman\thanks{%
+% \href{mailto:borisv@lk.net}{\texttt{borisv@lk.net}},
+% \href{mailto:boris@varphi.com}{\texttt{boris@varphi.com}}}} 
+% \date{\filedate, \fileversion}
+% \maketitle
+% \begin{abstract}
+%   This package provides class for typesetting books for Deutsches
+%   Museum, \url{https://www.deutsches-museum.de}
+% \end{abstract}
+% \tableofcontents
+%
+% \clearpage
+%
+%
+%\section{Introduction}
+%\label{sec:intro}
+%
+% Deutsches museum regularly publishes studies.  This package provides
+% the way to the authors to format the contributions in \LaTeX.  
+%
+%
+%\section{Options}
+%\label{sec:ug_options}
+%
+% \DescribeOptions{cfonts,nocfonts}%
+% The contributions to Deutsches Museum should use their fonts:
+% Garamond Berthold BQ and Futura PT.  You probably want to buy them
+% and install.  If you do not have them, use the options |nocfonts| to
+% substitute them for free fonts available in standard \TeX\
+% distriutions.  The option |cfonts| (the default) uses commercial
+% fonts.
+%
+% In both cases the package uses fonts in OTF formats, so you need to
+% use Lua\TeX\ or Xe\TeX\ for the compilation.
+%
+% If you use commercial fonts, the package expects the file names
+% listed in Table~\ref{tab:fonts}.
+%
+% \begin{table}
+%   \centering
+%   \begin{tabularx}{\textwidth}{>{\raggedright}Xl}
+%       \toprule
+%       Font & File\\
+%       \midrule
+%       Garamond BQ Regular & |GaramondBQ-Regular.otf|\\
+%       Garamond BQ Italic & |GaramondBQ-Italic.otf| \\
+%       Garamond BQ Bold & |GaramondBQ-Bold.otf|\\
+%       Garamond BQ Medium Italic & |GaramondBQ-MediumItalic.otf|\\
+%       Futura PT Light & |futura-pt_light.otf|\\
+%       Futura PT Light Oblique & |futura-pt_light-oblique.otf|\\
+%       Futura PT Medium & |futura-pt_medium.otf|\\
+%       Futura PT Medium Oblique & |futura-pt_medium-oblique.otf|\\
+%       Futura PT Condensed Medium & |futura-pt_cond-medium.otf|\\
+%       Futura PT Condensed Medium Oblique & |futura-pt_cond-medium-oblique.otf|\\
+%       \bottomrule
+%     \end{tabularx}
+%   \caption{Commerical fonts (if the option \texttt{cfonts} is used)}
+%   \label{tab:fonts}
+% \end{table}
+%
+% \DescribeOption{garamondmath,nogaramondmath}%
+% By default the class uses \textsl{unicode-math} with Garamond math
+% package.  The option |nogaramondmath| disables this behavior, so you
+% can experiment with other math styles.
+%
+% Internally the class uses \textsl{amsart}, so all its options are
+% supported.  
+%
+% \DescribeOption{folios,nofolios}%
+% Deutsches Museum prefers to put running titles and page numbers in
+% the post production, 
+% so we omit them by default.  The option |folios| restores them,
+% while the option |nofolios| (default) suppresses them.
+%
+%
+%\section{Floats}
+%\label{sec:ug_floats}
+%
+% We put captions \emph{before} tables and \emph{after} figures.
+%
+%\section{Front matter}
+%\label{sec:ug_frontmatter}
+%
+% \DescribeMacro{\title}%
+% As in \textsl{amsart} package, the \cs{title} command has an
+% optional argument, that defines \cs{shortitle} macro, used for
+% running heads.
+%
+% \DescribeMacro{\subtitle}%
+% Deutsches Museum contributions, along with the title, have
+% |\subtitle|.  The running heads pick either short title, or
+% subtitle, whichever is defined last.  You can override this choice
+% by redefining |\shortitle|.  Examples
+%
+% \DescribeMacro{abstract}%
+% Abstract, if present, should follow \cs{maketitle}
+%
+%\section{Bibliography}
+%\label{sec:ug_biblio}
+%
+% The package uses bibliography in footnotes and |natbib| for
+% formatting the bibliography list.  The command \cs{cite} produces
+% footnote citations. 
+%
+%
+% \StopEventually{%
+% \clearpage}
+% 
+% \clearpage
+%
+%
+%\section{Implementation}
+%\label{sec:impl}
+%
+%\subsection{Identification}
+%\label{sec:ident}
+%
+% We start with the declaration who we are.  Most |.dtx| files put
+% driver code in a separate driver file |.drv|.  We roll this code into the
+% main file, and use the pseudo-guard |<gobble>| for it.
+%    \begin{macrocode}
+%<class>\NeedsTeXFormat{LaTeX2e}
+%<*gobble>
+\ProvidesFile{deutschesmuseum.dtx}
+%</gobble>
+%<class>\ProvidesClass{deutschesmuseum}
+[2026/02/04 v1.7 Typesetting books for Deutsches Museum]
+%    \end{macrocode}
+%
+% And the driver code:
+%    \begin{macrocode}
+%<*gobble>
+\documentclass{ltxdoc}
+\usepackage{booktabs,tabularx}
+\usepackage[breaklinks,colorlinks,linkcolor=black,citecolor=black,
+pagecolor=black,urlcolor=black,hyperindex=false]{hyperref}
+\PageIndex
+\CodelineIndex
+\RecordChanges
+\EnableCrossrefs
+\begin{document}
+  \DocInput{deutschesmuseum.dtx}
+\end{document}
+%</gobble> 
+%<*class>
+%    \end{macrocode}
+%   
+%
+%\subsection{Options}
+%\label{sec:options}
+%
+%\begin{macro}{\ifdeutschesmuseum@cfonts}
+% First, let us decide whether we have non-free fonts:
+%    \begin{macrocode}
+\newif\ifdeutschesmuseum@cfonts
+\deutschesmuseum@cfontstrue
+\DeclareOption{cfonts}{\deutschesmuseum@cfontstrue}
+\DeclareOption{nocfonts}{\deutschesmuseum@cfontsfalse}
+%    \end{macrocode} 
+% \end{macro}
+%
+% \begin{macro}{\ifdeutschesmuseum@garamondmath}
+% \changes{1.1}{2025/09/11}{Added option}
+% Whether we are using Garamond math
+%    \begin{macrocode}
+\newif\ifdeutschesmuseum@garamondmath
+\deutschesmuseum@garamondmathtrue
+\DeclareOption{garamondmath}{\deutschesmuseum@garamondmathtrue}
+\DeclareOption{nogaramondmath}{\deutschesmuseum@garamondmathfalse}
+%    \end{macrocode} 
+% \end{macro}
+%
+% \begin{macro}{\ifdeutschesmuseum@folios}
+% \changes{1.2}{2025/09/13}{Added option}
+% \changes{1.3}{2025/09/25}{Nofolios option now suppresses running
+% title as well}
+% Whether we are using folios
+%    \begin{macrocode}
+\newif\ifdeutschesmuseum@folios
+\deutschesmuseum@foliosfalse
+\DeclareOption{folios}{\deutschesmuseum@foliostrue}
+\DeclareOption{nofolios}{\deutschesmuseum@foliosfalse}
+%    \end{macrocode} 
+% \end{macro}
+%
+%
+% The size-changing options produce a warning:
+%    \begin{macrocode}
+\long\def\deutschesmuseum@size@warning#1{%
+  \ClassWarning{deutschesmuseum}{Size-changing option #1 will not be
+    honored}}%
+\DeclareOption{8pt}{\deutschesmuseum@size@warning{\CurrentOption}}%
+\DeclareOption{9pt}{\deutschesmuseum@size@warning{\CurrentOption}}%
+\DeclareOption{10pt}{\deutschesmuseum@size@warning{\CurrentOption}}%
+\DeclareOption{11pt}{\deutschesmuseum@size@warning{\CurrentOption}}%
+\DeclareOption{12pt}{\deutschesmuseum@size@warning{\CurrentOption}}%
+%    \end{macrocode}
+% 
+%
+% All other options are passed to \progname{amsart}:
+%    \begin{macrocode}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{amsart}}
+\ProcessOptions\relax
+%    \end{macrocode}
+%
+%\subsection{Loading Class and Packages}
+%\label{sec:loading}
+%
+% We start with the base class
+%    \begin{macrocode}
+\LoadClass{amsart}
+\RequirePackage[breaklinks,colorlinks,linkcolor=black,citecolor=black,
+pagecolor=black,urlcolor=black,hyperindex=false]{hyperref}
+\RequirePackage{multicol}
+%    \end{macrocode}
+%
+%
+%\subsection{Fonts}
+%\label{sec:fonts}
+%
+%    \begin{macrocode}
+\usepackage{fontspec}
+\ifdeutschesmuseum@cfonts
+  \setmainfont{GaramondBQ}[
+  Extension = .otf,
+  UprightFont = *-Regular,
+  BoldFont    = *-Bold,
+  ItalicFont  = *-Italic,
+  BoldItalicFont = *-MediumItalic]
+  \newfontfamily\FuturaPTLight{futura-pt_light}[
+  Extension = .otf,
+  UprightFont = *,
+  ItalicFont = *-oblique,
+  BoldFont = futura-pt_medium,
+  BoldItalicFont = futura-pt_medium-oblique]
+  \newfontfamily\FuturaPTMedium{futura-pt_medium}[
+  Extension = .otf,
+  UprightFont = *,
+  ItalicFont = *-oblique]
+  \newfontfamily\FuturaPTCondMedium{futura-pt_cond-medium}[
+  Extension = .otf,
+  UprightFont = *,
+  ItalicFont = *-oblique]
+  \newcommand{\foliofont}{\FuturaPTLight\fontsize{9pt}{11pt}\selectfont}
+  \newcommand{\hIfont}{\FuturaPTCondMedium\fontsize{14pt}{16pt}\selectfont}
+  \newcommand{\hIIfont}{\FuturaPTCondMedium\fontsize{12.5pt}{12pt}\selectfont}
+  \newcommand{\hIIIfont}{\FuturaPTCondMedium\fontsize{12.5pt}{12pt}\selectfont}
+  \newcommand{\hIVfont}{\FuturaPTCondMedium\fontsize{11pt}{12pt}\selectfont}
+  \newcommand{\fnmarkfont}{\FuturaPTMedium\fontsize{10pt}{11pt}\selectfont}
+  \newcommand{\fnmarktextfont}{\FuturaPTMedium\fontsize{8pt}{10pt}\selectfont}
+  \newcommand{\fnfont}{\FuturaPTLight\fontsize{8pt}{10pt}\selectfont}
+\else
+  \setmainfont{EBGaramond}[
+  Extension = .otf,
+  UprightFont = *-Regular,
+  BoldFont    = *-Bold,
+  ItalicFont  = *-Italic,
+  BoldItalicFont = *-BoldItalic]
+  \newfontfamily\LatoLight{Lato-Light}[
+  Extension = .ttf,
+  UprightFont = *,
+  ItalicFont = *Italic,
+  BoldFont = Lato-Medium,
+  BoldItalicFont = Lato-MediumItalic]
+  \newfontfamily\LatoMedium{Lato-Medium}[
+  Extension = .ttf,
+  UprightFont = *,
+  ItalicFont = *Italic]
+  \newcommand{\foliofont}{\LatoLight\fontsize{9pt}{11pt}\selectfont}
+  \newcommand{\hIfont}{\LatoMedium\fontsize{14pt}{16pt}\selectfont}
+  \newcommand{\hIIfont}{\LatoMedium\fontsize{12.5pt}{12pt}\selectfont}
+  \newcommand{\hIIIfont}{\LatoMedium\fontsize{11pt}{12pt}\selectfont}
+  \newcommand{\hIVfont}{\LatoMedium\fontsize{10pt}{12pt}\selectfont}
+  \newcommand{\fnmarkfont}{\LatoMedium\fontsize{10pt}{11pt}\selectfont}
+  \newcommand{\fnmarktextfont}{\LatoMedium\fontsize{8pt}{10pt}\selectfont}
+  \newcommand{\fnfont}{\LatoLight\fontsize{8pt}{10pt}\selectfont}
+\fi
+\let\bibfont\fnfont
+\ifdeutschesmuseum@garamondmath
+  \RequirePackage[math-style=ISO, bold-style=ISO]{unicode-math}
+  \setmathfont{Garamond-Math.otf}[StylisticSet={7,9}]
+\else
+  \RequirePackage{amssymb}
+\fi  
+%    \end{macrocode}
+%
+% Font sizes.  We redefine |amsart| ones
+%    \begin{macrocode}
+ \def\@typesizes{%
+    \or{5}{6}\or{5}{6}\or{6}{7}\or{7}{8}\or{8}{10}%
+    \or{9.25}{11}% normalsize
+    \or{10}{12}\or{\@xipt}{13}\or{\@xiipt}{14}%
+    \or{\@xivpt}{17}\or{\@xviipt}{20}}%
+  \normalsize \linespacing=\baselineskip
+%    \end{macrocode}
+%
+%
+%\section{Page dimensions and paragraphing}
+%\label{dimensions}
+%
+%    \begin{macrocode}
+\usepackage[paperwidth=155mm, paperheight=220mm, includeheadfoot,
+headheight=15pt, headsep=0.35in,
+inner=20mm, outer=17mm, top=8.3mm, bottom=14.1mm]{geometry}
+\setlength\parskip{0pt}
+\setlength\parindent{5mm}
+\renewcommand{\arraystretch}{0.9}
+\renewenvironment{quotation}{\list{}{%
+    \leftmargin5mm \listparindent\normalparindent
+    \itemindent\z@
+    \rightmargin\leftmargin \parsep\z@ \@plus\p@}%
+  \item[]%
+}{%
+  \vspace\baselineskip
+  \endlist
+}
+\let\endquotation=\endlist % for efficiency
+\renewenvironment{quote}{%
+  \list{}{\rightmargin5mm\leftmargin\rightmargin}\item[]%
+}{%
+  \vspace\baselineskip
+  \endlist
+}
+%    \end{macrocode}
+%
+%\section{Colors}
+%\label{sec:colors}
+%
+% We use DeutscheMuseumRed color
+%    \begin{macrocode}
+\RequirePackage{xcolor}
+\definecolor{DeutschesMuseumRed}{cmyk}{0.36,0.87,0.61,0.33}
+%    \end{macrocode}
+%
+%\section{Front matter}
+%\label{sec:front_matter}
+%
+% \begin{macro}{\subtitle}
+% The subtitle
+%    \begin{macrocode}
+\newcommand\subtitle[1]{\def\@subtitle{#1}\def\shorttitle{#1}}
+\subtitle{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\maketitle}
+% And |maketitle| command
+%    \begin{macrocode}
+\renewcommand\maketitle{%
+  \@afterindentfalse
+  \ifx\@empty\shortauthors \let\shortauthors\shorttitle
+  \else \andify\shortauthors
+  \fi
+  \par
+  \@topnum\z@ % this prevents figures from falling at the top of page
+  \thispagestyle{firstpage}%
+  \ifx\@title\@empty
+  \else{\noindent\color{DeutschesMuseumRed}\hIfont\@title\par}\fi
+  \ifx\@subtitle\@empty\else
+     {\vspace\baselineskip\noindent\hIIfont\@subtitle\par}%
+  \fi
+  {\noindent\author@andify\authors\normalsize\normalfont\itshape\authors\vspace\baselineskip\par}%
+  \@afterheading
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\abstract}
+% \changes{1.1}{2025/09/04}{Added abstract handling}
+% \changes{1.3}{2025/09/25}{Abstract is now a normal unnumbered
+% section}
+% \changes{1.6}{2026/01/13}{Deleted space between abstract and the
+% body}
+% \changes{1.6}{2026/01/13}{Added space before abstract}
+% Abstract is an unnumbered section divided from the body
+%    \begin{macrocode}
+\renewenvironment{abstract}{\par\vspace{2.5ex}\section*{\abstractname}}{}
+%    \end{macrocode}
+% \end{macro}
+%
+%\subsection{Sectioning}
+%\label{sec:sectioning}
+%
+% \begin{macro}{\section}
+% The standard sectioning
+%    \begin{macrocode}
+\renewcommand\section{%
+  \@startsection{section}{1}{\z@}{-2\baselineskip}{\baselineskip}{\hIIIfont}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\subsection}
+% The standard subsectioning
+%    \begin{macrocode}
+\renewcommand\subsection{%
+  \@startsection{subsection}{2}{\z@}{-\baselineskip}{1sp}{\hIVfont}}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%\section{Footnotes}
+%\label{sec:footnotes}
+%
+% \begin{macro}{\footnoterule}
+% We do not wnat rules
+%    \begin{macrocode}
+\def\footnoterule{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@makefnmark}
+% The footnote marker in the text
+%    \begin{macrocode}
+\def\@makefnmark{\textsuperscript{{\color{DeutschesMuseumRed}\fnmarktextfont\@thefnmark}}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@makefntext}
+% The text of a footnote
+%    \begin{macrocode}
+\def\@makefntext{{\color{DeutschesMuseumRed}\fnmarktextfont\@thefnmark}\quad
+  \fnfont}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%\section{Page styles}
+%\label{sec:page_styles}
+%
+%    \begin{macrocode}
+\RequirePackage{fancyhdr}
+%    \end{macrocode}
+%
+% Standard headers
+%    \begin{macrocode}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+%    \end{macrocode}
+%
+% First page style
+%    \begin{macrocode}
+\fancypagestyle{firstpage}{\fancyhf{}%
+  \fancyhead[RO]{\ifdeutschesmuseum@folios\foliofont\thepage\fi}%
+  \fancyhead[LE]{\ifdeutschesmuseum@folios\foliofont\thepage\fi}%
+}
+%    \end{macrocode}
+%
+% And the standard page style
+%    \begin{macrocode}
+\fancypagestyle{standard}{%
+  \fancyhf{}%
+  \fancyhead[RO]{\ifdeutschesmuseum@folios\foliofont\shorttitle\quad\thepage\fi}%
+  \fancyhead[LE]{\ifdeutschesmuseum@folios\foliofont\thepage\quad\shortauthors\fi}%
+}
+%    \end{macrocode}
+%
+%
+%\section{Floats}
+%\label{sec:floats}
+%
+% \changes{1.6}{2026/01/13}{Remade captions}
+% \changes{1.7}{2026/01/14}{singleline check for captions}
+%    \begin{macrocode}
+\RequirePackage{caption}
+\DeclareCaptionFont{capfont}{\foliofont}
+\captionsetup{font=capfont, textfont=capfont,
+labelfont={capfont,bf}, labelsep=quad, justification=centering}
+\captionsetup[figure]{name=Fig.}
+\captionsetup[table]{name=Table, position=top}
+%    \end{macrocode}
+%
+%\section{Bibliography}
+%\label{sec:biblio}
+%
+% We use natbib
+%    \begin{macrocode}
+\RequirePackage{natbib}
+%    \end{macrocode}
+%
+% \begin{macro}{\cite}
+% Our citations are footnotes
+%    \begin{macrocode}
+\RenewDocumentCommand{\cite}{O{}O{}m}{\footnote{\citealt[#1][#2]{#3}}}
+%    \end{macrocode}
+% \end{macro}
+%
+% And some redefinitions
+%    \begin{macrocode}
+\renewcommand\bibsection{}
+\renewcommand\refname{Bibliography}
+\def\bibpreamble{\setlength\multicolsep{\z@}\begin{multicols}{2}[\section*{\refname}]}
+\def\bibcleanup{\vskip-\lastskip\end{multicols}}%  
+%    \end{macrocode}
+%
+%\subsection{End of Class}
+%\label{end}
+%
+%
+%    \begin{macrocode}
+\pagestyle{standard}
+\normalsize
+\normalfont
+%</class>
+%    \end{macrocode}
+%
+%
+%\Finale
+%\clearpage
+%
+%\PrintChanges
+%\clearpage
+%\PrintIndex
+%
+\endinput

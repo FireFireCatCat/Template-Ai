@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage[designv]{web}
+\usepackage{eforms}
+
+%\previewOn\pmpvOn
+\def\cs#1{\texttt{\eqbs#1}}
+
+\begin{defineJS}{\btnHashStrAct}
+var resp=app.response({
+  cQuestion: "Enter a PIN number",
+  cTitle: "Get Hash String"
+});
+if (resp !=null) {
+  var f=this.getField("txtHashStr");
+  var hashStr=Collab.hashString(resp);
+  f.value=hashStr;
+  f=this.getField("txtPINNum");
+  f.value=resp;
+  f=this.getField("txtdeclPINId");
+  f.value = "\\\\declPINId{"+resp+"}{"+hashStr+"}";
+  f=this.getField("txtdeclPINId");
+  var g=this.getField("txtdeclRePINId");
+  g.value = "\\\\declRePINId{"+resp+"}{"+hashStr+"}";
+  
+}
+\end{defineJS}
+
+\parindent0pt
+
+\begin{document}
+
+\section*{Get Hash String from PIN number}
+
+\textbf{Extensive Instructions.} Create a four digit (PIN) number.
+Push the button and enter the four digit number you just created into the response box.
+When you press the  \textsf{OK} button,
+the hash string of the PIN number you entered appears in the text field. The PIN number goes in as the
+first argument of \verb|\declPINId| (\verb|\declRePINId|), and the hash string is the second argument of 
+\verb|\declPINId| (\verb|\declRePINId|); eg,
+\begin{verbatim}
+\declPINId{5243}{02JRVZdRgYgCA-Rtje8VkD}   % PIN/hash string (default)
+\declRePINId{1234}{By9mbLF0NJMA2sN2x4D0VB} % PIN/hash string (default)
+\end{verbatim}
+Normally, the PIN numbers for \cs{declPINId} and \cs{declRePINId} are different.\medskip
+
+\textbf{Brief Instructions.} Press \textsf{Push}, enter your PIN, press \textsf{OK}.\medskip\par\noindent
+\pushButton[\CA{Push}\AAmouseup{\btnHashStrAct}]{btn}{}{11bp}\olBdry
+\textField[\textSize{8}]{txtHashStr}{2in}{11bp} Chosen PIN: \textField[\textSize{8}]{txtPINNum}{\widthof{00000}}{11bp}
+\medskip\par\noindent
+%
+Save these two values as arguments of \verb|\declPINId| and place in the preamble of your
+quiz document.\medskip
+
+\noindent
+For \cs{declPINId}, copy to quiz document:\\[6pt]\null
+  \hspace{15pt}\textField[\textSize{8}]{txtdeclPINId}{3in}{13bp}\vcgBdry[6pt]
+For \cs{declRePINId}, copy to quiz document:\\[6pt]\null
+  \hspace{15pt}\textField[\textSize{8}]{txtdeclRePINId}{3in}{13bp}\vcgBdry[6pt]
+\pushButton[\CA{Reset}\AAmouseup{this.resetForm();}]{reset}{}{13bp}
+
+
+
+
+\end{document}

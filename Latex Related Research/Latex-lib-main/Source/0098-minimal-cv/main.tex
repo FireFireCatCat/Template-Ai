@@ -1,0 +1,347 @@
+\documentclass[11pt]{article}
+
+
+% -- Color scheme
+
+% Color package
+\usepackage{xcolor}
+
+% Color scheme definitions
+
+% Default
+\definecolor{minimal-main}{HTML}{131313}
+\definecolor{minimal-light}{HTML}{F2F2F2}
+\definecolor{minimal-contrast}{HTML}{F3F2F5}
+
+% Blue
+%\definecolor{minimal-main}{HTML}{1E2839}
+%\definecolor{minimal-light}{HTML}{EFF4F9}
+%\definecolor{minimal-contrast}{HTML}{F3F2F5}
+
+% Green
+%\definecolor{minimal-main}{HTML}{083031}
+%\definecolor{minimal-light}{HTML}{DEECE9}
+%\definecolor{minimal-contrast}{HTML}{F3F2F5}
+
+% Red
+%\definecolor{minimal-main}{HTML}{361222}
+%\definecolor{minimal-light}{HTML}{FFE8F2}
+%\definecolor{minimal-contrast}{HTML}{F3F2F5}
+
+% Additional color definitions
+\definecolor{minimal-black}{HTML}{131313}
+\definecolor{minimal-white}{HTML}{F3F2F5}
+\definecolor{minimal-red}{HTML}{C43C2D}
+\definecolor{minimal-blue}{HTML}{343454}
+\definecolor{minimal-yellow}{HTML}{F1C40F}
+\definecolor{minimal-green}{HTML}{2D6514}
+\definecolor{minimal-beige}{HTML}{D7B6A5}
+\definecolor{minimal-orange}{HTML}{F28D49}
+
+% Colorbox environments
+\usepackage[most]{tcolorbox}
+
+
+% -- Page layout
+
+% Layout adjustments of page (a4 without margin)
+\usepackage[paperheight=842pt, paperwidth=595pt, margin=0pt]{geometry}
+
+% Remove paragraph indentation
+\setlength{\parindent}{0pt}
+
+% Interline spacing options
+\newcommand{\largespace}{\\[2pt]}
+\newcommand{\mediumspace}{\\[-3pt]}
+\newcommand{\smallspace}{\\[-5pt]}
+
+% In-box spacing around content
+\newcommand{\inboxspacing}{.015\paperheight}
+
+% Horizontal spacing of the boxes (must sum up to 1)
+\newcommand{\sideboxwidth}{.35}
+\newcommand{\mainboxwidth}{.65}
+
+% Vertical spacing of the boxes (must sum up to 1)
+\newcommand{\headboxheight}{.080}
+\newcommand{\mainboxheight}{.910}
+\newcommand{\footboxheight}{.010}
+
+%   sideboxwidth           mainboxwidth
+%  <------------> <---------------------------->
+%  _____________________________________________
+% |#############################################| ^
+% |#############################################| |
+% |################## HEADBOX ##################| | headboxheight
+% |#############################################| |
+% |#############################################| v
+% |///////////////                              | ^
+% |///////////////                              | |
+% |///////////////                              | |
+% |///////////////                              | |
+% |////   ////////                              | |
+% |//// S ////////              M               | |
+% |//// I ////////              A               | |
+% |//// D ////////              I               | |
+% |//// E ////////              N               | | mainboxheight
+% |//// B ////////              B               | |
+% |//// O ////////              O               | |
+% |//// X ////////              X               | |
+% |////   ////////                              | |
+% |///////////////                              | |
+% |///////////////                              | |
+% |///////////////                              | |
+% |///////////////                              | v
+% |#############################################| ^
+% |################## FOOTBOX ##################| | footboxheight
+% |#############################################| v
+
+
+% -- Font settings
+
+% Typesetting packages
+\usepackage[letterspace=20]{microtype}
+\usepackage[T1]{fontenc}
+
+% Raleway font family
+\usepackage[semibold]{raleway}
+\renewcommand{\familydefault}{\sfdefault}
+
+% Custom font commands
+\newcommand{\header}[3]{\uppercase{\textbf{\fontsize{30}{100}{\lsstyle{#1 \hspace{3pt} #2 \hspace{3pt} #3}}}}}
+\newcommand{\titlefont}[1]{\uppercase{\textbf{\Large{#1}}}}
+
+
+% -- Additional packages
+
+% Multirow tables
+\usepackage{multirow}
+
+% Settings for entire table columns (e.g \begin{tabular}{>{\footnotesize}rl})
+\usepackage{array}
+
+% Tikzpicture graphics
+\usepackage{tikz}
+
+% Clickable URLs
+\usepackage{hyperref}
+\urlstyle{same}
+
+
+\begin{document}
+
+\begin{tcbposter}[
+    poster = {columns=1, rows=1, spacing=0pt},
+    boxes = {sharp corners, halign=center, valign=center, boxrule=0pt}
+]
+
+
+% -- Headbox
+
+\posterbox[
+    colback=minimal-main,
+    halign=center]
+    {name=headbox,
+    span=1,
+    rowspan=\headboxheight}
+{
+
+    \color{white}
+
+    \header{Amara}{K.}{Osei}
+
+    \vspace{-7px}
+    \begin{tikzpicture}
+        \draw[fill=white] (-5.0, -0.01) rectangle (5.0, 0.01);
+    \end{tikzpicture}
+    \vspace{5px}
+
+    \titlefont{Structural engineer}
+}
+
+
+% -- Sidebox
+
+\posterbox[
+    colback=minimal-light,
+    valign=top,
+    top=\inboxspacing,
+    halign=right,
+    right=\inboxspacing]
+    {name=sidebar,
+    below=headbox,
+    column=1,
+    span=\sideboxwidth,
+    rowspan=\mainboxheight}
+{
+
+    \begin{tabular}{rl}
+
+        \multicolumn{2}{@{}c@{}}{\scalebox{0.25}{\input{images/image.tex}}} \\
+        % \multicolumn{2}{@{}c@{}}{\includegraphics[scale=0.25]{images/image.jpg}} \\
+        \mediumspace
+
+        & \titlefont{Contact} \\
+        \hline \mediumspace
+
+        \multirow{4}{*}{\scalebox{0.075}{\input{icons/address.tex}}}
+            & \textbf{Address} \\
+                & Accra \\
+                & Ghana \\
+                & \smallspace
+
+        \multirow{2}{*}{\scalebox{0.075}{\input{icons/phone.tex}}}
+            & \textbf{Phone} \\
+                & \href{tel:+233201234567}{+233 20 123 4567} \\
+                & \smallspace
+
+        \multirow{2}{*}{\scalebox{0.075}{\input{icons/email.tex}}}
+            & \textbf{E-Mail} \\
+                & \href{mailto:amara.osei@example.com}{amara.osei@example.com} \\
+                & \largespace
+
+        & \titlefont{Personal} \\
+        \hline \mediumspace
+
+        \multirow{2}{*}{\scalebox{0.075}{\input{icons/birthday.tex}}}
+            & \textbf{Date of Birth} \\
+                & 14/03/1993 \\
+                & \smallspace
+
+        \multirow{2}{*}{\scalebox{0.075}{\input{icons/nationality.tex}}}
+            & \textbf{Nationality} \\
+                & Ghanaian \\
+                & \largespace
+
+        & \titlefont{Platforms} \\
+        \hline \mediumspace
+
+        \multirow{2}{*}{\scalebox{0.075}{\input{icons/github.tex}}}
+            & \textbf{GitHub} \\
+                & \href{https://github.com/amaraosei}{amaraosei} \\
+                & \smallspace
+
+        \multirow{2}{*}{\scalebox{0.075}{\input{icons/linkedin.tex}}}
+            & \textbf{LinkedIn} \\
+                & \href{https://linkedin.com/in/amara-osei}{Amara Osei} \\
+                & \largespace
+
+        & \titlefont{Languages} \\
+        \hline \mediumspace
+
+        \multirow{2}{*}{\scalebox{0.075}{\input{flags/britain.tex}}}
+            & \textbf{English} \\
+                & Native \\
+                & \smallspace
+
+        \multirow{2}{*}{\scalebox{0.075}{\input{flags/france.tex}}}
+            & \textbf{French} \\
+                & Fluent \\
+                & \smallspace
+
+        \multirow{2}{*}{\scalebox{0.075}{\input{flags/germany.tex}}}
+            & \textbf{German} \\
+                & Intermediate
+
+    \end{tabular}
+}
+
+
+% -- Mainbox
+
+\posterbox[
+    colback=white,
+    valign=top,
+    top=\inboxspacing,
+    halign=left,
+    left=\inboxspacing]
+    {name=mainbox,
+    column*=1,
+    span=\mainboxwidth,
+    below=headbox,
+    rowspan=\mainboxheight}
+{
+
+    \begin{tabular}{>{\footnotesize}rl}
+
+        & \titlefont{Education} \\
+        \hline \mediumspace
+
+        09/2015 - 06/2017
+            & \textbf{ETH Zurich} \\
+            & MSc in Civil Engineering \\
+            & Focus: earthquake-resistant design \\
+            & \smallspace
+
+        09/2011 - 06/2015
+            & \textbf{KNUST, Kumasi} \\
+            & BSc in Civil Engineering \\
+            & Graduated with First Class Honours \\
+            & \largespace
+
+        & \titlefont{Work Experience} \\
+        \hline \mediumspace
+
+        Since 03/2021
+            & \textbf{Buro Happold} \\
+            & Senior Structural Engineer \\
+            & Lead engineer on two stadium roof retrofits \\
+            & \smallspace
+
+        06/2017 - 02/2021
+            & \textbf{Arup} \\
+            & Structural Engineer \\
+            & Designed bridge and high-rise foundation systems \\
+            & \largespace
+
+        & \titlefont{Selected Projects} \\
+        \hline \mediumspace
+        2024
+            & \textbf{Accra Sports Stadium Roof Retrofit} \\
+        2022
+            & \textbf{Kumasi Pedestrian Bridge} \\
+        2019
+            & \textbf{Lagos Mixed-Use Tower Foundations} \\
+            & \largespace
+
+        & \titlefont{Certifications} \\
+        \hline \mediumspace
+
+        2020
+            & \textbf{Chartered Engineer (ICE)} \\
+        2017
+            & \textbf{Eurocode Structural Design} \\
+            & \largespace
+
+        & \titlefont{Memberships} \\
+            \hline \mediumspace
+            2021
+                & \textbf{Institution of Structural Engineers} \\
+                & Chartered member \\
+            2017
+                & \textbf{Ghana Institution of Engineers} \\
+                & Corporate member \\
+                & \largespace
+
+        & \titlefont{Interests} \\
+        \hline \mediumspace
+            & Long-distance cycling \\
+            & Timber-frame woodworking \\
+            & Volunteer post-disaster structural inspections
+
+    \end{tabular}
+}
+
+
+% -- Footbox
+
+\posterbox[colback=minimal-main]
+           {name=blankbox2,
+           below=sidebar,
+           column=1,
+           span=1,
+           rowspan=\footboxheight}{}
+
+\end{tcbposter}
+
+\end{document}

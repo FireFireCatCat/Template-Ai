@@ -1,0 +1,854 @@
+% !TeX root = ../main.tex
+% Copyright (c) 2026 Tyler Bignell
+% Licensed under the MIT License - see LICENSE file for details
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{assets/stemtemplate}[2026/08/22 LaTeX University Assignment STEM Template]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CONDITIONALS & UTILITIES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{xifthen}  % Extended \ifthenelse with \isempty and other conditionals
+\usepackage{xstring}  % String manipulation (\StrLen, \StrLeft, \IfSubStr)
+\usepackage{lipsum}   % \lipsum to generate dummy text
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COLOURS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[dvipsnames,svgnames,x11names]{xcolor} % Extended color support including \definecolor
+% DEFINE BRAND COLOUR --------------------------------------
+\definecolor{DefaultBlue}{HTML}{1B4F8A}
+\definecolor{YorkRedDark}{HTML}{810001}
+\definecolor{ScienceSkyBlueDark}{HTML}{065C87}
+\definecolor{LassondeNavy}{HTML}{003366}
+% PROVIDE FALLBACKS ---------------------------------------
+\providecommand{\metaThemeColour}{}
+\providecommand{\metaLinkColour}{}
+\providecommand{\metaCiteColour}{}
+\providecommand{\metaUrlColour}{}
+% SET THEME COLOUR ----------------------------------------
+\ifx\metaThemeColour\empty
+\colorlet{themecolour}{DefaultBlue}%
+\else
+\StrLeft{\metaThemeColour}{1}[\@firstchar]% Get the first character
+\if#\@firstchar
+% If it starts with #, treat as HTML hex (removing the # for xcolor)
+\StrGobbleLeft{\metaThemeColour}{1}[\@hexpure]%
+\definecolor{themecolour}{HTML}{\@hexpure}%
+\else
+% If no #, treat as a named color
+\colorlet{themecolour}{\metaThemeColour}%
+\fi
+\fi
+% SET LINK COLOUR -----------------------------------------
+\ifx\metaLinkColour\empty
+\colorlet{linkcolour}{themecolour}%
+\else
+\StrLen{\metaLinkColour}[\@linklen]%
+\ifnum\@linklen=6
+\definecolor{linkcolour}{HTML}{\metaLinkColour}%
+\else
+\colorlet{linkcolour}{\metaLinkColour}%
+\fi
+\fi
+% SET CITE COLOUR -----------------------------------------
+\ifx\metaCiteColour\empty
+\colorlet{citecolour}{themecolour}%
+\else
+\StrLen{\metaCiteColour}[\@citelen]%
+\ifnum\@citelen=6
+\definecolor{citecolour}{HTML}{\metaCiteColour}%
+\else
+\colorlet{citecolour}{\metaCiteColour}%
+\fi
+\fi
+% SET URL COLOUR ------------------------------------------
+\ifx\metaUrlColour\empty
+\colorlet{urlcolour}{themecolour}%
+\else
+\StrLen{\metaUrlColour}[\@urllen]%
+\ifnum\@urllen=6
+\definecolor{urlcolour}{HTML}{\metaUrlColour}%
+\else
+\colorlet{urlcolour}{\metaUrlColour}%
+\fi
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PAGE GEOMETRY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[margin=2.54cm, headheight=14.9pt]{geometry} % control margins
+\usepackage{setspace}  % Line spacing control
+\ifthenelse{\equal{\metaLineSpacing}{single}}{\singlespacing}{}
+\ifthenelse{\equal{\metaLineSpacing}{onehalf}}{\onehalfspacing}{}
+\ifthenelse{\equal{\metaLineSpacing}{double}}{\doublespacing}{}
+\usepackage{pdflscape} % Landscape pages: \begin{landscape} ... \end{landscape}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LANGUAGE & FONT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[english]{babel} % English hyphenation and language rules
+\usepackage{fontspec}		% XeLaTeX font selection
+% SERIF FONT ----------------------------------------------
+% \metaSerifFont: empty = IBM Plex Serif, otherwise any system font name
+% PATCHED for latextemplates.com: \setmainfont{IBM Plex Serif} (a bare
+% family name) goes through fontconfig via fontspec, and "IBM Plex Serif"
+% is NOT fontconfig-registered in this pinned image even though the OTF
+% files are present and kpathsea finds them (fc-list has no "IBM Plex"
+% entry) -- confirmed this compiles with ZERO errors but every glyph
+% falls back to nullfont (missing-character warnings only), a silent
+% blank-text failure. The IBM Plex default branch below now loads the
+% family by OTF FILENAME (kpathsea, not fontconfig) instead. A
+% user-supplied \metaSerifFont/\metaSansFont (the \else branch) is left
+% as a bare name, same as upstream, since that is the user's own font
+% choice to get right on their own system.
+\newif\ifkme@usedefaultserif
+\ifx\metaSerifFont\empty
+\kme@usedefaultseriftrue
+\edef\resolvedSerifFont{IBM Plex Serif}%
+\else
+\edef\resolvedSerifFont{\metaSerifFont}%
+\fi
+% SANS FONT -----------------------------------------------
+% \metaSansFont: empty = IBM Plex Sans, otherwise any system font name
+\newif\ifkme@usedefaultsans
+\ifx\metaSansFont\empty
+\kme@usedefaultsanstrue
+\edef\resolvedSansFont{IBM Plex Sans}%
+\else
+\edef\resolvedSansFont{\metaSansFont}%
+\fi
+% LOAD FONTS ----------------------------------------------
+\ifkme@usedefaultserif
+\setmainfont{IBMPlexSerif}[
+  Extension=.otf,
+  UprightFont=*-Regular,
+  BoldFont=*-Bold,
+  ItalicFont=*-Italic,
+  BoldItalicFont=*-BoldItalic,
+]
+\else
+\setmainfont{\resolvedSerifFont}
+\fi
+\ifkme@usedefaultsans
+\setsansfont{IBMPlexSans}[
+  Extension=.otf,
+  UprightFont=*-Regular,
+  BoldFont=*-Bold,
+  ItalicFont=*-Italic,
+  BoldItalicFont=*-BoldItalic,
+]
+\else
+\setsansfont{\resolvedSansFont}
+\fi
+% HELPERS -------------------------------------------------
+% \seriftext{}: apply the serif font to a span of text
+% \sansseriftext{}: apply the sans-serif font to a span of text
+\ifkme@usedefaultserif
+\newfontfamily\seriffont{IBMPlexSerif}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-BoldItalic]
+\else
+\newfontfamily\seriffont{\resolvedSerifFont}
+\fi
+\ifkme@usedefaultsans
+\newfontfamily\sansfont{IBMPlexSans}[Extension=.otf,UprightFont=*-Regular,BoldFont=*-Bold,ItalicFont=*-Italic,BoldItalicFont=*-BoldItalic]
+\else
+\newfontfamily\sansfont{\resolvedSansFont}
+\fi
+\newcommand{\seriftext}[1]{{\seriffont #1}}
+\newcommand{\sansseriftext}[1]{{\sansfont #1}}
+% SET DEFAULT FONT FROM METADATA --------------------------
+% \metaDefaultFont must be set to: sans or serif
+\ifthenelse{\equal{\metaDefaultFont}{sans}}{%
+	\renewcommand{\familydefault}{\sfdefault}%
+}{%
+	\renewcommand{\familydefault}{\rmdefault}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SPACING AROUND HEADINGS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{titlesec} % Customise heading fonts, sizes, spacing, and colors
+\titlespacing*{\part}{0pt}{0pt}{2em}
+\titlespacing*{\section}{0pt}{1em}{0.5em}
+\titlespacing*{\subsection}{0pt}{0.75em}{0.25em}
+\titlespacing*{\subsubsection}{0pt}{0.5em}{0.25em}
+\titlespacing*{\paragraph}{0pt}{0.5em}{1em}
+\titlespacing*{\subparagraph}{\parindent}{0.5em}{1em}
+\titleformat{\part}[display]{\Large\bfseries\color{themecolour}}{Part~\thepart}{0.5em}{\huge\bfseries\color{themecolour}}
+\titleformat{\section}{\Large\bfseries\color{themecolour}}{\color{themecolour}\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\color{themecolour}}{\color{themecolour}\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{themecolour}}{\color{themecolour}\thesubsubsection}{1em}{}
+\titleformat{\paragraph}[runin]{\normalsize\bfseries\color{themecolour}}{\color{themecolour}\theparagraph}{1em}{}
+\titleformat{\subparagraph}[runin]{\normalsize\itshape\bfseries\color{themecolour}}{\color{themecolour}\thesubparagraph}{1em}{}
+% ABSTRACT ENVIRONMENT ------------------------------------
+\renewenvironment{abstract}{%
+	\section*{Abstract}%
+	\noindent\ignorespaces
+}{%
+	\par\vspace{1em}%
+} % This changes the abstract environment
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MATH
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath, amssymb, amsfonts} % AMS math environments and symbols
+\usepackage{mathtools}          % Extensions to amsmath (e.g. \coloneqq, matrices)
+\usepackage{bm}                 % Bold math symbols via \bm{}
+\usepackage{siunitx} % Units and scientific notation (e.g. \SI{9.8}{\metre\per\second})
+\sisetup{detect-all, per-mode=symbol} % Inherit surrounding font in SI units
+% EQUATIONS NUMBERED BY SECTION ---------------------------
+\ifthenelse{\equal{\metaNumberEquations}{true}}{\numberwithin{equation}{section}}{} % Change in metadata
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CHEMISTRY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[version=4]{mhchem} % Chemical equations via \ce{}
+% REACTION COUNTER ----------------------------------------
+\newcounter{reaction}
+\ifthenelse{\equal{\metaNumberEquations}{true}}{%
+	\counterwithin{reaction}{section}%
+	\renewcommand{\thereaction}{\arabic{section}.R\arabic{reaction}}%
+}{%
+	\renewcommand{\thereaction}{R\arabic{reaction}}%
+}
+% REACTION ENVIRONMENTS -----------------------------------
+\newenvironment{requation}{%
+	\refstepcounter{reaction}%
+	\let\orig@ltx@label\ltx@label%
+	\def\ltx@label##1{%
+		\cref@constructprefix{reaction}{\cref@result}%
+		\protected@edef\@currentlabel{\thereaction}%
+		\protected@edef\cref@currentlabel{[reaction][\arabic{reaction}][\cref@result]\thereaction}%
+		\orig@ltx@label{##1}}%
+	\equation%
+}{\tag{\thereaction}\endequation}
+\newenvironment{ralign}{%
+	\refstepcounter{reaction}%
+	\let\orig@ltx@label\ltx@label%
+	\def\ltx@label##1{%
+		\cref@constructprefix{reaction}{\cref@result}%
+		\protected@edef\@currentlabel{\thereaction}%
+		\protected@edef\cref@currentlabel{[reaction][\arabic{reaction}][\cref@result]\thereaction}%
+		\orig@ltx@label{##1}}%
+	\align%
+}{\tag{\thereaction}\endalign}
+\newenvironment{rgather}{%
+	\refstepcounter{reaction}%
+	\let\orig@ltx@label\ltx@label%
+	\def\ltx@label##1{%
+		\cref@constructprefix{reaction}{\cref@result}%
+		\protected@edef\@currentlabel{\thereaction}%
+		\protected@edef\cref@currentlabel{[reaction][\arabic{reaction}][\cref@result]\thereaction}%
+		\orig@ltx@label{##1}}%
+	\gather%
+}{\tag{\thereaction}\endgather}
+\newenvironment{rmultline}{%
+	\refstepcounter{reaction}%
+	\let\orig@ltx@label\ltx@label%
+	\def\ltx@label##1{%
+		\cref@constructprefix{reaction}{\cref@result}%
+		\protected@edef\@currentlabel{\thereaction}%
+		\protected@edef\cref@currentlabel{[reaction][\arabic{reaction}][\cref@result]\thereaction}%
+		\orig@ltx@label{##1}}%
+	\multline\tag{\thereaction}%
+}{\endmultline}
+\newenvironment{rflalign}{%
+	\refstepcounter{reaction}%
+	\let\orig@ltx@label\ltx@label%
+	\def\ltx@label##1{%
+		\cref@constructprefix{reaction}{\cref@result}%
+		\protected@edef\@currentlabel{\thereaction}%
+		\protected@edef\cref@currentlabel{[reaction][\arabic{reaction}][\cref@result]\thereaction}%
+		\orig@ltx@label{##1}}%
+	\flalign%
+}{\tag{\thereaction}\endflalign}
+\newenvironment{ralignat}[1]{%
+	\refstepcounter{reaction}%
+	\let\orig@ltx@label\ltx@label%
+	\def\ltx@label##1{%
+		\cref@constructprefix{reaction}{\cref@result}%
+		\protected@edef\@currentlabel{\thereaction}%
+		\protected@edef\cref@currentlabel{[reaction][\arabic{reaction}][\cref@result]\thereaction}%
+		\orig@ltx@label{##1}}%
+	\alignat{#1}%
+}{\tag{\thereaction}\endalignat}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREM ENVIRONMENTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsthm} % AMS theorem boxes
+% PLAIN (Theorem, Lemma, Proposition, Corollary, Conjecture, Axiom) ---
+\newtheoremstyle{plain} % name
+{0.75em}   % Space above
+{0.75em}   % Space below
+{\itshape} % Body font
+{}         % Indent
+{\bfseries\color{themecolour}} % Head font
+{:}        % Punctuation after theorem head
+{0.5em}    % Space after theorem head
+{}         % Head spec
+% DEFINITION (Definition, Example, Criterion) -------------
+\newtheoremstyle{definition}
+{0.75em}
+{0.75em}
+{}
+{}
+{\bfseries\color{themecolour}}
+{:}
+{0.5em}
+{}
+% REMARK (Remark, Note) -----------------------------------
+\newtheoremstyle{remark}
+{0.75em}
+{0.75em}
+{}
+{}
+{\bfseries\color{themecolour!70}}
+{:}
+{0.5em}
+{}
+% APPLY STYLES AND DEFINE ENVIRONMENTS --------------------
+% Plain
+\theoremstyle{plain}
+\ifthenelse{\equal{\metaNumberTheorems}{true}}{%
+	\newtheorem{theorem}{Theorem}[section]%
+	\newtheorem{lemma}{Lemma}[section]%
+	\newtheorem{proposition}{Proposition}[section]%
+	\newtheorem{corollary}{Corollary}[section]%
+	\newtheorem{conjecture}{Conjecture}[section]%
+	\newtheorem{axiom}{Axiom}[section]%
+}{%
+	\newtheorem{theorem}{Theorem}%
+	\newtheorem{lemma}{Lemma}%
+	\newtheorem{proposition}{Proposition}%
+	\newtheorem{corollary}{Corollary}%
+	\newtheorem{conjecture}{Conjecture}%
+	\newtheorem{axiom}{Axiom}%
+}
+% Definition
+\theoremstyle{definition}
+\ifthenelse{\equal{\metaNumberTheorems}{true}}{%
+	\newtheorem{definition}{Definition}[section]%
+	\newtheorem{example}{Example}[section]%
+	\newtheorem{criterion}{Criterion}[section]%
+}{%
+	\newtheorem{definition}{Definition}%
+	\newtheorem{example}{Example}%
+	\newtheorem{criterion}{Criterion}%
+}
+% Remark
+\theoremstyle{remark}
+\ifthenelse{\equal{\metaNumberTheorems}{true}}{%
+	\newtheorem{remark}{Remark}[section]%
+	\newtheorem{note}{Note}[section]%
+}{%
+	\newtheorem{remark}{Remark}%
+	\newtheorem{note}{Note}%
+}
+% PROOF ENVIRONMENT ---------------------------------------
+\renewcommand{\qedsymbol}{$\color{themecolour}\blacksquare$} % QED symbol
+\renewenvironment{proof}[1][\proofname]{%
+	\par\pushQED{\qed}%
+	\normalfont\topsep0.75em\relax
+	\trivlist\item[\hskip\labelsep\bfseries\color{themecolour}#1\@addpunct{:}]\ignorespaces
+}{%
+	\popQED\endtrivlist\@endpefalse
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FIGURES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}   % Include external images (\includegraphics)
+\ifthenelse{\equal{\metaShowFigures}{true}}{}{%
+	\setkeys{Gin}{draft=true} % Figures render as placeholder boxes
+}
+\graphicspath{{figures/}{assets/}} % Look for images in these subfolders
+\usepackage{float}      % Precise float placement with [H] specifier
+\usepackage{subcaption} % Sub-figures and sub-captions (subfigure environment)
+\usepackage{caption}    % Better captions
+\DeclareCaptionJustification{ragged2e}{\RaggedRight}
+\captionsetup{
+	font={small},
+	labelfont={bf,color=themecolour},
+	textfont={color=black},
+	labelsep=colon,
+	justification=ragged2e,
+	singlelinecheck=false,
+	skip=8pt}
+\captionsetup[figure]{
+	position=below,
+	skip=8pt}
+\DeclareCaptionJustification{centred}{\Centering}
+\captionsetup[subfigure]{
+	justification=centred}
+\usepackage{pdfpages}   % Insert external PDF pages (\includepdf)
+% FIGURES NUMBERED BY SECTION -----------------------------
+\ifthenelse{\equal{\metaNumberFigures}{true}}{\numberwithin{figure}{section}}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TABLES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{booktabs}   % Horizontal rules in tables (\toprule, \midrule, \bottomrule)
+\usepackage{array}      % Extended column formatting options for tabular
+\usepackage{tabularx}   % Tables with auto-width columns (X column type)
+\newcolumntype{L}{>{\RaggedRight\arraybackslash}X}
+\newcolumntype{C}{>{\Centering\arraybackslash}X}
+\newcolumntype{R}{>{\RaggedLeft\arraybackslash}X}
+\newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{Q}[1]{>{\Centering\arraybackslash}p{#1}}
+\newcolumntype{K}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+\usepackage{multirow}   % Multi-row cells in tables
+\usepackage{ltablex}    % Extends tabularx with page-breaking (replaces longtable)
+\AtBeginDocument{\keepXColumns} % Always stretch X columns to fill specified width
+\captionsetup[table]{
+	position=above,
+	skip=4pt}
+\captionsetup[longtable]{
+	hypcap=false, 
+	justification=raggedright, 
+	singlelinecheck=false} % ltablex tables are not floats; suppress hypcap warning
+% TABLES NUMBERED BY SECTION ------------------------------
+\ifthenelse{\equal{\metaNumberTables}{true}}{\numberwithin{table}{section}}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DIAGRAMS & PLOTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}         % Programmatic vector graphics (flowcharts, block diagrams)
+\usepackage{pgfplots}     % Data plots and function graphs built on TikZ
+\pgfplotsset{compat=1.18} % Locks pgfplots behaviour to v1.18 for reproducibility
+\usepackage{circuitikz}   % Circuit schematics using TikZ nodes
+\usepackage{pgf-pie}      % Pie charts built on TikZ/pgf
+% DRAFT MODE ----------------------------------------------
+\newif\ifmetaShowFigures
+\ifthenelse{\equal{\metaShowFigures}{true}}{\metaShowFigurestrue}{\metaShowFiguresfalse}
+\ifmetaShowFigures
+% true: tikzpicture/circuitikz render normally, no override needed
+\else
+\usepackage{environ} % Captures an environment's body without executing it
+\let\stem@realtikzpicture\tikzpicture
+\let\stem@endrealtikzpicture\endtikzpicture
+\newcommand{\stem@vectorPlaceholder}[2][6cm]{%
+	\stem@realtikzpicture
+	\draw[gray, thick] (0,0) rectangle (\linewidth,#1);
+	\draw[gray] (0,0) -- (\linewidth,#1) (0,#1) -- (\linewidth,0);
+	\node[gray, align=center] at (0.5\linewidth,0.5*#1) {\small #2};
+	\stem@endrealtikzpicture
+}
+\RenewEnviron{tikzpicture}[1][]{%
+	\stem@vectorPlaceholder[6cm]{Vector graphic suppressed, set metaShowFigures to \texttt{true}}%
+}
+\RenewEnviron{circuitikz}[1][]{%
+	\stem@vectorPlaceholder[6cm]{Circuit diagram suppressed, set metaShowFigures to \texttt{true}}%
+}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ALGORITHMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{algorithm}  % Float wrapper for algorithms
+\usepackage{algpseudocode} % Pseudocode layout from algorithmicx
+% STYLE ---------------------------------------------------
+\captionsetup[algorithm]{
+	font={small},
+	labelfont={bf,color=themecolour},
+	textfont={color=black},
+	labelsep=colon,
+	justification=ragged2e,
+	singlelinecheck=false,
+	skip=4pt}
+\algrenewcommand\algorithmicindent{1.5em}
+\algrenewcommand{\algorithmiccomment}[1]{\hfill\textcolor{themecolour!60}{$\triangleright$ #1}}
+\renewcommand{\algorithmicrequire}{\textbf{\textcolor{themecolour}{Input:}}}
+\renewcommand{\algorithmicensure}{\textbf{\textcolor{themecolour}{Output:}}}
+\renewcommand{\ALG@beginalgorithmic}{\small}
+% ALGORITHMS NUMBERED BY SECTION --------------------------
+\ifthenelse{\equal{\metaNumberAlgorithms}{true}}{\numberwithin{algorithm}{section}}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LINKS & REFERENCES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{hyperref} % Clickable cross-references, citations, and URLs
+\hypersetup{
+	pdftitle={\metaAssignmentTitle},
+	pdfauthor={\metaStudentName\ (\metaStudentNumber)},
+	pdfsubject={\metaCourseCode : \metaCourseName},
+	pdfkeywords={\metaUniversity, \metaFaculty, \metaDepartment, \metaCourseCode, \metaCourseName, \metaAssignmentTitle, \metaStudentName, \metaStudentNumber},
+	pdfcreator={LaTeX with hyperref},
+	pdfproducer={XeLaTeX with hyperref},
+	colorlinks=true,
+	linkcolor=linkcolour,
+	citecolor=citecolour,
+	urlcolor=urlcolour,
+	pageanchor=true}
+\usepackage{cleveref} % Smart cross-references that auto-insert type name (\cref)
+% LOWERCASE VARIANTS (For mid-sentence use)
+\crefname{equation}{eq.}{eqs.}
+\crefname{reaction}{rxn.}{rxns.}
+\creflabelformat{reaction}{(#2#1#3)}
+\crefname{figure}{fig.}{figs.}
+\crefname{table}{table}{tables}
+\crefname{section}{section}{sections}
+\crefname{appendix}{appendix}{appendices}
+\crefname{algorithm}{algorithm}{algorithms}
+\crefname{theorem}{theorem}{theorems}
+\crefname{lemma}{lemma}{lemmas}
+\crefname{proposition}{proposition}{propositions}
+\crefname{corollary}{corollary}{corollaries}
+\crefname{conjecture}{conjecture}{conjectures}
+\crefname{axiom}{axiom}{axioms}
+\crefname{definition}{definition}{definitions}
+\crefname{example}{example}{examples}
+\crefname{criterion}{criterion}{criteria}
+\crefname{remark}{remark}{remarks}
+\crefname{note}{note}{notes}
+\crefname{problem}{problem}{problems}
+\crefname{lstlisting}{listing}{listings}
+% UPPERCASE VARIANTS (For beginning of sentences)
+\Crefname{equation}{Eq.}{Eqs.}
+\Crefname{reaction}{Rxn.}{Rxns.}
+\creflabelformat{reaction}{(#2#1#3)}
+\Crefname{figure}{Fig.}{Figs.}
+\Crefname{table}{Table}{Tables}
+\Crefname{section}{Section}{Sections}
+\Crefname{appendix}{Appendix}{Appendices}
+\Crefname{algorithm}{Algorithm}{Algorithms}
+\Crefname{theorem}{Theorem}{Theorems}
+\Crefname{lemma}{Lemma}{Lemmas}
+\Crefname{proposition}{Proposition}{Propositions}
+\Crefname{corollary}{Corollary}{Corollaries}
+\Crefname{conjecture}{Conjecture}{Conjectures}
+\Crefname{axiom}{Axiom}{Axioms}
+\Crefname{definition}{Definition}{Definitions}
+\Crefname{example}{Example}{Examples}
+\Crefname{criterion}{Criterion}{Criteria}
+\Crefname{remark}{Remark}{Remarks}
+\Crefname{note}{Note}{Notes}
+\Crefname{problem}{Problem}{Problems}
+\Crefname{lstlisting}{Listing}{Listings}
+% TOC/LOF/LOT links are always black
+\AtBeginDocument{%
+	\addtocontents{toc}{\protect\hypersetup{linkcolor=black}}%
+	\addtocontents{lof}{\protect\hypersetup{linkcolor=black}}%
+	\addtocontents{lot}{\protect\hypersetup{linkcolor=black}}%
+	\addtocontents{loa}{\protect\hypersetup{linkcolor=black}}%
+	\addtocontents{lol}{\protect\hypersetup{linkcolor=black}}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TYPOGRAPHY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifthenelse{\equal{\metaFinalDraft}{true}}{%
+	\usepackage{microtype}
+}{%
+	\usepackage[draft]{microtype}
+} % Font improvements; XeLaTeX supports protrusion only (expansion is silently ignored)
+\usepackage{xurl}                  % Allow URLs to break at more points
+\setlength{\emergencystretch}{3em} % Prevent overfull hboxes in paragraphs
+\usepackage{indentfirst}    	   % Indents first paragraph
+\usepackage{ragged2e} % Improved text alignment: \RaggedRight, \RaggedLeft, \Centering, \justify
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% LISTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{enumitem} % Fine-grained control over list spacing, labels, and alignment
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PROBLEM / SOLUTION ENVIRONMENTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tcolorbox} % Colored and framed boxes, used for problem/solution environments
+\tcbuselibrary{most}   % Loads most tcolorbox libraries (skins, breakable, etc.)
+% COUNTER (RESETS EACH SECTION OR SIMPLE) -----------------
+\ifthenelse{\equal{\metaNumberProblems}{true}}{%
+	\newcounter{problem}[section]%
+	\renewcommand{\theproblem}{\thesection.\arabic{problem}}%
+}{%
+	\newcounter{problem}%
+	\renewcommand{\theproblem}{\arabic{problem}}%
+}
+% PROBLEM BOX ---------------------------------------------
+\newenvironment{problem}[1][]{%
+	\refstepcounter{problem}%
+	\begin{tcolorbox}[
+		enhanced,
+		breakable,
+		colback=white,
+		colframe=themecolour,
+		colbacktitle=themecolour,
+		coltitle=white,
+		fonttitle=\bfseries,
+		title={Problem~\theproblem\ifthenelse{\equal{#1}{}}{}{:~#1}},
+		sharp corners,
+		toptitle=6pt,
+		bottomtitle=6pt,
+		lefttitle=10pt,
+		leftrule=3pt,
+		rightrule=1pt,
+		toprule=1pt,
+		before upper={\RaggedRight},
+		bottomrule=1pt,]}{%
+\end{tcolorbox}}
+% SOLUTION BOX --------------------------------------------
+\newenvironment{solution}{%
+	\begin{tcolorbox}[
+		enhanced,
+		breakable,
+		colback=white,
+		colframe=themecolour,
+		fonttitle=\bfseries,
+		title={Solution},
+		coltitle=themecolour,
+		attach title to upper={\par\vspace{2pt}\RaggedRight},
+		sharp corners,
+		leftrule=3pt,
+		rightrule=1pt,
+		toprule=1pt,
+		bottomrule=1pt,]}{%
+\end{tcolorbox}}
+% DRAFT MODE ----------------------------------------------
+\ifthenelse{\equal{\metaShowFigures}{true}}{}{%
+	\RenewEnviron{problem}[1][]{%
+		\refstepcounter{problem}%
+		\par\noindent{\color{themecolour}\rule{3pt}{1.2em}}\hspace{6pt}%
+		\textbf{\color{themecolour}Problem~\theproblem\ifthenelse{\equal{#1}{}}{}{:~#1}}%
+		\ \textcolor{gray}{\itshape[content suppressed, set metaShowFigures to \texttt{true}]}\par\medskip
+	}
+	\RenewEnviron{solution}{%
+		\par\noindent{\color{themecolour}\rule{3pt}{1.2em}}\hspace{6pt}%
+		\textbf{\color{themecolour}Solution}%
+		\ \textcolor{gray}{\itshape[content suppressed, set metaShowFigures to \texttt{true}]}\par\medskip
+	}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CODE LISTINGS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{listings} % Syntax-highlighted source code listings
+\renewcommand{\lstlistlistingname}{List of Listings} % Overrides default heading
+% BASE STYLE ----------------------------------------------
+\lstset{
+	basicstyle=\ttfamily\small,
+	breaklines=true,
+	columns=fullflexible,
+	tabsize=4,
+	numbers=left,
+	numberstyle=\tiny\color{themecolour!60},
+	numbersep=8pt,
+	backgroundcolor=\color{black!5},
+	frame=none,
+	xleftmargin=14pt,
+	xrightmargin=4pt,
+	keywordstyle=\color{blue},
+	commentstyle=\color{green!45!black},
+	stringstyle=\color{red!60!black}}
+\AddToHook{begindocument/end}{%
+	\captionsetup[lstlisting]{
+		font={small},
+		labelfont={bf,color=themecolour},
+		textfont={color=black},
+		labelsep=colon,
+		justification=ragged2e,
+		singlelinecheck=false,
+		position=above,
+		aboveskip=10pt,
+		skip=4pt}%
+% CODE LISTINGS NUMBERED BY SECTION ------------------------
+\ifthenelse{\equal{\metaNumberListings}{true}}{%
+	\numberwithin{lstlisting}{section}%
+}{}%
+}
+% MATLAB --------------------------------------------------
+\lstdefinestyle{matlab}{
+	language=Matlab,
+	keywordstyle=\color{blue},
+	commentstyle=\color{green!45!black},
+	stringstyle=\color{red!60!black},
+	morekeywords={classdef, properties, methods, events, enumeration, arguments, parfor, spmd}}
+% JAVA ----------------------------------------------------
+\lstdefinestyle{java}{
+	language=Java,
+	keywordstyle=\color{blue},
+	commentstyle=\color{green!45!black},
+	stringstyle=\color{red!60!black},
+	morekeywords={var, record, sealed, permits, yield}}
+% PYTHON --------------------------------------------------
+\lstdefinestyle{python}{
+	language=Python,
+	keywordstyle=\color{blue},
+	commentstyle=\color{green!45!black},
+	stringstyle=\color{red!60!black},
+	morekeywords={match, case, type, Self, Never, async, await}}
+% C / C++ -------------------------------------------------
+\lstdefinestyle{cpp}{
+	language=C++,
+	keywordstyle=\color{blue},
+	commentstyle=\color{green!45!black},
+	stringstyle=\color{red!60!black},
+	morekeywords={constexpr, consteval, constinit, concept, requires, co_await, co_return, co_yield, nullptr, override, final, export, import, module}}
+% LATEX ---------------------------------------------------
+\lstdefinestyle{latex}{
+	language=[LaTeX]TeX,
+	keywordstyle=\color{blue},
+	commentstyle=\color{green!45!black},
+	stringstyle=\color{red!60!black},
+	morekeywords={usepackage, documentclass, begin, end, newcommand, renewcommand, newenvironment, renewenvironment, setlength, addtolength, includegraphics, caption, label, ref, cref, cite, bibliography, textbf, textit, texttt, emph, frac, sqrt, sum, int, prod}}
+% MINTED (OPTIONAL, TOGGLED VIA METADATA) ------------------
+\providecommand{\metaUseMinted}{false}
+\newif\ifmetaUseMinted
+\ifthenelse{\equal{\metaUseMinted}{true}}{\metaUseMintedtrue}{\metaUseMintedfalse}
+\ifmetaUseMinted
+\usepackage[cache=false]{minted} % Listing environment, requires python
+\setminted{
+	style=vs,
+	fontsize=\small,
+	breaklines=true,
+	tabsize=4,
+	linenos=true,
+	numbersep=8pt,
+	bgcolor=black!5,
+	frame=none,
+	xleftmargin=14pt,
+	xrightmargin=4pt,
+	listparameters={\setlength{\topsep}{\medskipamount}\setlength{\partopsep}{0pt}}}
+\renewcommand{\theFancyVerbLine}{\ttfamily\tiny\textcolor{themecolour!60}{\arabic{FancyVerbLine}}}
+\fi
+% UNIFIED CODE ENVIRONMENT (SWITCHES WITH METADATA) ---------
+\ifmetaUseMinted
+\newenvironment{codelisting}[1]{\VerbatimEnvironment\begin{minted}{#1}}{\end{minted}}
+\else
+\lstnewenvironment{codelisting}[1]{\lstset{style=#1}}{}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HEADER & FOOTER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr} % Custom headers and footers (\lhead, \rhead, \cfoot, etc.)
+% Robust Acronym Generator
+\newcommand{\makeAcronym}[1]{%
+	\gdef\tempAcro{}%
+	% Substitute spaces with commas
+	\StrSubstitute{#1}{ }{,}[\tempStepOne]%
+	% Substitute hyphens with commas so "Object-Oriented" becomes two words
+	\StrSubstitute{\tempStepOne}{-}{,}[\commaName]%
+	\foreach \word in \commaName {%
+		\IfSubStr{:a:an:the:and:or:for:of:to:in:at:on:by:with:is:as:via:per:A:An:The:And:Or:For:Of:To:In:At:On:By:With:Is:As:Via:Per:}{:\word:}{}{%
+			\StrLeft{\word}{1}[\firstL]%
+			\xdef\tempAcro{\tempAcro\MakeUppercase{\firstL}}%
+		}%
+	}%
+	\tempAcro%
+}
+% SMART LEFT HEADER (Collision Detection)
+\newcommand{\smartleftheader}{%
+	% Measure the Right Side (Student info)
+	\sbox2{\ifx\metaPartners\empty\metaStudentName\ifx\metaStudentNumber\empty\else\ (\metaStudentNumber)\fi\fi}%
+	% Measure Left Side Variants
+	\sbox0{\metaCourseCode: \metaCourseName}% Full
+	\sbox1{\metaCourseCode: \makeAcronym{\metaCourseName}}% Acronym
+	\sbox3{\metaCourseCode}% Code Only
+	% Compare widths against total header width (allowing 5% margin)
+	\ifdim \dimexpr\wd0 + \wd2\relax < 0.95\headwidth
+	\metaCourseCode: \metaCourseName
+	\else
+	\ifdim \dimexpr\wd1 + \wd2\relax < 0.95\headwidth
+	\metaCourseCode: \makeAcronym{\metaCourseName}
+	\else
+	\ifdim \dimexpr\wd3 + \wd2\relax < 0.95\headwidth
+	\metaCourseCode
+	\else
+	\relax % If right side is so long it hits even the code, hide left side
+	\fi
+	\fi
+	\fi
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BIBLIOGRAPHY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{csquotes} % Context-sensitive quotation marks; used by biblatex
+\providecommand{\metaShowBib}{true}
+\newif\ifmetaShowBib
+\ifthenelse{\equal{\metaShowBib}{true}}{\metaShowBibtrue}{\metaShowBibfalse}
+\ifmetaShowBib
+\usepackage[
+backend=biber,            			% Use Biber as the bibliography processor
+style=\metaBibStyle,      			% Change bib style in metadata
+sorting=none, 						% Sorts by order of citations
+backref=\metaShowBackref]{biblatex} % Change back reference in metadata
+\addbibresource{\metaBibFile} 		% Change bib file in metadata
+% Back-references colour matches URL colour (only when backref is enabled)
+\ifthenelse{\equal{\metaShowBackref}{true}}{%
+	\renewbibmacro*{pageref}{%
+		\iflistundef{pageref}{}{\setunit{\addspace}%
+			\printtext{\hypersetup{linkcolor=urlcolour}%
+				(\ifnumgreater{\value{pageref}}{1}%
+				{\bibstring{backrefpages}\ppspace}%
+				{\bibstring{backrefpage}\ppspace}%
+				\printlist[pageref][-\value{listtotal}]{pageref})}}}%
+}{}
+\else
+% DRAFT MODE:
+\newcommand{\autocite}[2][]{\textcolor{red}{[#2]}}
+\renewcommand{\cite}[2][]{\textcolor{red}{[#2]}}
+\newcommand{\parencite}[2][]{\textcolor{red}{[#2]}}
+\newcommand{\textcite}[2][]{\textcolor{red}{[#2]}}
+\newcommand{\footcite}[2][]{\textcolor{red}{[#2]}}
+\newcommand{\fullcite}[2][]{\textcolor{red}{[#2]}}
+\newcommand{\citeauthor}[2][]{\textcolor{red}{[#2]}}
+\newcommand{\citeyear}[2][]{\textcolor{red}{[#2]}}
+\newcommand{\citetitle}[2][]{\textcolor{red}{[#2]}}
+\renewcommand{\nocite}[1]{}
+\newcommand{\printbibliography}[1][]{%
+	\textcolor{red}{\textit{[Bibliography suppressed in draft mode --- set \textbackslash metaShowBib to true for final compile]}}}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% APPENDICES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\let\orig@appendix\appendix % Recreates \appendix, changes numbering counter
+\renewcommand{\appendix}{%
+	\orig@appendix%
+	\crefalias{section}{appendix}%
+	\crefalias{subsection}{appendix}%
+	\crefalias{subsubsection}{appendix}%
+	\titleformat{\section}%
+	{\Large\bfseries\color{themecolour}}%
+	{Appendix~\Alph{section}}%
+	{1em}{}%
+	\renewcommand{\thesection}{\Alph{section}}%
+	\renewcommand{\thefigure}{\Alph{section}.\arabic{figure}}%
+	\renewcommand{\thetable}{\Alph{section}.\arabic{table}}%
+	\renewcommand{\theequation}{\Alph{section}.\arabic{equation}}%
+	\renewcommand{\theproblem}{\Alph{section}.\arabic{problem}}%
+	\renewcommand{\thetheorem}{\Alph{section}.\arabic{theorem}}%
+	\renewcommand{\thelemma}{\Alph{section}.\arabic{lemma}}%
+	\renewcommand{\theproposition}{\Alph{section}.\arabic{proposition}}%
+	\renewcommand{\thecorollary}{\Alph{section}.\arabic{corollary}}%
+	\renewcommand{\theconjecture}{\Alph{section}.\arabic{conjecture}}%
+	\renewcommand{\theaxiom}{\Alph{section}.\arabic{axiom}}%
+	\renewcommand{\thedefinition}{\Alph{section}.\arabic{definition}}%
+	\renewcommand{\theexample}{\Alph{section}.\arabic{example}}%
+	\renewcommand{\thecriterion}{\Alph{section}.\arabic{criterion}}%
+	\renewcommand{\theremark}{\Alph{section}.\arabic{remark}}%
+	\renewcommand{\thenote}{\Alph{section}.\arabic{note}}%
+	\renewcommand{\thealgorithm}{\Alph{section}.\arabic{algorithm}}%
+	\renewcommand{\thelstlisting}{\Alph{section}.\arabic{lstlisting}}%
+	\counterwithin{figure}{section}%
+	\counterwithin{table}{section}%
+	\counterwithin{equation}{section}%
+	\counterwithin{reaction}{section}%
+	\renewcommand{\thereaction}{\Alph{section}.R\arabic{reaction}}%
+	\counterwithin{problem}{section}%
+	\counterwithin{theorem}{section}%
+	\counterwithin{lemma}{section}%
+	\counterwithin{proposition}{section}%
+	\counterwithin{corollary}{section}%
+	\counterwithin{conjecture}{section}%
+	\counterwithin{axiom}{section}%
+	\counterwithin{definition}{section}%
+	\counterwithin{example}{section}%
+	\counterwithin{criterion}{section}%
+	\counterwithin{remark}{section}%
+	\counterwithin{note}{section}%
+	\counterwithin{algorithm}{section}%
+	\counterwithin{lstlisting}{section}%
+}

@@ -1,0 +1,36 @@
+% This file is embedded in flowfram-manual.pdf 
+% Example 5 Rules
+% Label: "ex:rules"
+% arara: pdflatex
+\documentclass[12pt]{article}
+\pagestyle{empty}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{flowfram}
+\usepackage{lipsum}% dummy text
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathmorphing} 
+
+\twocolumnStop{1in} 
+
+\renewcommand{\ffvrule}[3]{% 
+ \hfill
+ \tikz{% 
+ \draw[decorate,decoration=zigzag,line width=#2,yshift=-#1]
+ (0,0) -- (0pt,#3);
+}% 
+ \hfill \mbox{}% 
+} 
+
+\insertvrule{flow}{1}{flow}{2} 
+
+\renewcommand{\ffhrule}[3]{% 
+ \tikz{% 
+ \draw[decorate,decoration=zigzag,line width=#3,xshift=-#1]
+ (0,0) -- (#2,0pt);
+}% 
+} 
+
+\inserthrule{static}{1}{flow}{1} 
+\begin{document}
+\setstaticcontents{1}{Top Frame} \lipsum[1-5] 
+\end{document}

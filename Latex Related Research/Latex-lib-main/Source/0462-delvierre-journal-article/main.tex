@@ -1,0 +1,222 @@
+%
+% Delvierre journal article starter — delvierre document class.
+%
+% delvierre.cls IS bundled with this download: it is a small,
+% recently-published (2026) journal class not present in TeX Live
+% (kpsewhich delvierre.cls resolves to nothing).
+%
+% Class documentation: https://ctan.org/pkg/delvierre
+% Licence: delvierre.cls is LPPL-1.3c, (c) 2026 Szoke Mark-Andor.
+%
+% The \set*{} calls below and the \renewcommand block strip the
+% publisher/journal branding (masthead, crossmark, DOI, journal name)
+% down to the plain "author package" look the class documents for
+% authors preparing their own preprint/repository copy — taken from
+% the class's own delvierre-template.tex, not guessed.
+%
+\documentclass{delvierre}
+\usetikzlibrary{arrows.meta,positioning}
+
+% Keep manuscript-facing styling only
+\setfrontmattertitlesize{\normalsize}
+\setfrontmattervshift{10pt}
+\setaftertitlewidevshift{-5pt}
+\setarticletitlefontsize{15}{18}
+\setauthorfontstyle{\sffamily\normalsize}
+\setaffilfontstyle{\sffamily\small}
+\setsectiontitlestyle{\large\sffamily\bfseries}
+\setsubsectiontitlestyle{\normalsize\sffamily\bfseries}
+\setsubsubsectiontitlestyle{\small\sffamily\bfseries}
+\setdelvierremargins{1cm}{1cm}{1.20cm}{1.20cm}
+\setheadheight{18pt}
+\setheadsep{8pt}
+\setfootskip{1.20cm}
+\setbodyfootskipextra{0pt}
+\setpagenumbervshift{0pt}
+\setlength{\stripsep}{15pt plus 1pt minus 1pt}
+\setmanuscriptruleskip{0.60cm}
+\sethighlightslistopts{label=\textbullet,leftmargin=1.2em,topsep=0pt,itemsep=0.4pt,parsep=0pt,partopsep=0pt}
+\setfrontmatterwidths{0.30\textwidth}{0.04\textwidth}
+\setgraphabsmaxheight{7cm}
+\setfirstpagefootnotesize{\tiny}
+\setfirstpagefootskip{1.20cm}
+\setfirstpagefooterraise{0pt}
+\setfirstpagefootercleargap{0cm}
+\setfirstpagefooterreserve{28pt}
+
+% Remove journal branding / editorial-production elements for author package
+\publisherlogo{}
+\journallogo{}
+\crossmarklogo{}
+\crossmarkdomain{}
+\articledoi{}
+\publishername{}
+\journaltagline{}
+\journalname{}
+\journalhomepage{}
+\journalissn{}
+\repositorylink{}
+\recommendedby{}
+\setrunningauthor{}
+\setjournalinfo{}
+\shorttitle{}
+\received{}
+\revised{}
+\accepted{}
+\published{}
+\correspondingauthor{Ada Lovelace}
+\correspondingemail{ada@example.edu}
+\license{}{}
+
+\makeatletter
+\renewcommand{\Delvierre@Masthead}{}
+\renewcommand{\Delvierre@ContentsBlock}{}
+\renewcommand{\Delvierre@TitleRightCrossmark}{}
+\renewcommand{\Delvierre@FirstPageNoteText}{%
+  \begingroup
+  \DelvierreFirstPageNoteSize
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{1pt}%
+  \raggedright
+  \hspace*{2em}\textit{Corresponding author:}~\@corrauthor.\par
+  \hspace*{2em}\textit{E-mail address:}~\href{mailto:\@corremail}{\nolinkurl{\@corremail}}.
+  \endgroup
+}
+\renewcommand{\Delvierre@PlaceFirstPageFooterOverlay}{%
+  \Delvierre@ComputeFirstPageFooterRaiseEffective
+  \AddToShipoutPictureFG*{%
+    \AtTextLowerLeft{%
+      \raisebox{\dimexpr-\footskip+\DelvierreFirstPageFooterRaise\relax}[0pt][0pt]{%
+        \Delvierre@FirstPageFooter%
+      }%
+    }%
+  }%
+}
+\renewcommand{\Delvierre@FrontMatter}{%
+  \noindent
+  \begin{minipage}[t]{\DelvierreFMLeftWidth}
+    \Delvierre@HighlightsBlock
+  \end{minipage}%
+  \hspace{\DelvierreFMGap}%
+  \begin{minipage}[t]{\DelvierreFMRightWidth}
+    \Delvierre@GraphicalAbstractBlock
+  \end{minipage}%
+  \par\vspace{0.35cm}%
+  \noindent
+  \begin{minipage}[t]{\DelvierreFMLeftWidth}
+    \Delvierre@ArticleInfo
+  \end{minipage}%
+  \hspace{\DelvierreFMGap}%
+  \begin{minipage}[t]{\DelvierreFMRightWidth}
+    \Delvierre@AbstractBlock
+  \end{minipage}%
+  \Delvierre@ManuscriptRule
+}
+\makeatother
+
+\title{Adaptive Windowing for Concept Drift in Streaming Sensor Networks}
+
+\author[1]{Ada Lovelace \orcid{0000-0002-1825-0097}}
+\author[2]{Second Author}
+\affil[1]{Institute of Analytical Engines, Bogot\'a, Colombia}
+\affil[2]{Another University, Springfield, USA}
+
+\keywords{concept drift; streaming data; predictive maintenance;
+sensor networks; adaptive windowing}
+
+\begin{abstract}
+Streaming sensor deployments in industrial settings degrade silently
+as equipment ages and operating conditions shift, and fixed-threshold
+monitors miss this drift until a fault has already occurred. We
+instrument three years of vibration and temperature readings from a
+mid-size bottling line with an adaptive windowing detector, comparing
+its alarms against maintenance logs and a fixed-window baseline. The
+adaptive detector flags 92\% of confirmed faults a median of 11 days
+earlier than the fixed-window baseline, at a false-alarm rate the
+maintenance team judged acceptable in a two-week pilot.
+\end{abstract}
+
+\begin{graphicalabstract}
+  \centering
+  \begin{tikzpicture}[
+      box/.style={draw, rounded corners, minimum width=2.1cm, minimum height=0.9cm, align=center, font=\scriptsize\sffamily},
+      arr/.style={-{Latex[length=2mm]}}
+    ]
+    \node[box] (a) {Sensor\\stream};
+    \node[box, right=0.5cm of a] (b) {Adaptive\\window};
+    \node[box, right=0.5cm of b] (c) {Drift\\score};
+    \node[box, right=0.5cm of c] (d) {Alarm};
+    \draw[arr] (a) -- (b);
+    \draw[arr] (b) -- (c);
+    \draw[arr] (c) -- (d);
+  \end{tikzpicture}
+\end{graphicalabstract}
+
+\begin{highlights}
+  \item Adaptive windowing detects concept drift in streaming sensor
+  data without a fixed decision threshold.
+  \item Flags 92\% of confirmed faults a median of 11 days earlier
+  than a fixed-window baseline.
+  \item Validated on three years of vibration and temperature data
+  from an industrial bottling line.
+  \item False-alarm rate judged acceptable by the maintenance team in
+  a two-week pilot deployment.
+\end{highlights}
+
+\begin{document}
+\maketitle
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\sffamily\scriptsize\thepage}
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \fancyfoot[C]{\sffamily\scriptsize\thepage}%
+}
+\thispagestyle{empty}
+
+\section{Introduction}\label{sec:intro}
+State the problem, why it matters, and what this paper contributes.
+Cite prior work like this~\cite{ref1}.
+
+\section{Method}\label{sec:methods}
+Describe the adaptive windowing detector and the evaluation protocol.
+Table~\ref{tab:results} summarises detection lead time by fault class.
+
+\begin{table}[htbp]
+\centering
+\caption{Median detection lead time by fault class.}
+\label{tab:results}
+\begin{tabular}{lcc}
+\hline
+Fault class & Adaptive (days) & Fixed (days) \\
+\hline
+Bearing wear   & 14 & 3 \\
+Belt slippage  & 9  & 2 \\
+Motor overheat & 11 & 4 \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Results}\label{sec:results}
+Report the findings referenced in the abstract in more detail, using
+prior methodology~\cite{ref2}.
+
+\section{Conclusion}\label{sec:concl}
+Summarise the contribution and point to future work on per-sensor
+window-size tuning.
+
+\begin{thebibliography}{99}
+\bibitem{ref1}
+\DelvierreBibHref{https://doi.org/10.1145/knuth1984}{D.~E.~Knuth,
+\textit{The \TeX book}, Addison-Wesley, Reading, Massachusetts, 1984.}
+
+\bibitem{ref2}
+\DelvierreBibHref{https://doi.org/10.1109/example2019}{A.~Bifet and
+R.~Gavald\`a, ``Learning from time-changing data with adaptive
+windowing,'' in \textit{Proceedings of the 2007 SIAM International
+Conference on Data Mining}, 2007, pp.~443--448.}
+\end{thebibliography}
+
+\end{document}

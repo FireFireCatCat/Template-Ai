@@ -1,0 +1,19 @@
+% Automatisch erzeugt von Code/tabellen.py -- nicht von Hand ändern.
+% Quelle: Code/daten.py und Ergebnisse/*.json
+
+\begin{tabular}{@{}lS[table-format=3.2]S[table-format=1.2]S[table-format=3.1]l@{}}
+\toprule
+& {Makespan} & {Abstand} & {Rechenzeit} & \\
+Verfahren & {min} & {\%} & {ms} & Gütegarantie \\
+\midrule
+  Untere Schranke (trivial) & 205.44 & -13.02 & {--} & Schranke, keine Lösung \\
+  Greedy & 266.67 & 12.90 & 0.0 & keine \\
+  LPT & 265.38 & 12.36 & 0.0 & keine \\
+  Simulated Annealing & 240.74 & 1.92 & 297.9 & keine \\
+  MILP (GLPK) & 236.20 & 0.00 & 676.5 & beweisbar optimal \\
+\midrule
+\multicolumn{5}{@{}l@{}}{\footnotesize Simulated Annealing über 20 Läufe, je 60\,000 Iterationen:}\\
+  \quad Energie nur Makespan & 240.71 & 1.91 & {--} & bestes 239.86, schlecht. 240.84 \\
+  \quad Energie mit Glättung & 240.10 & 1.65 & {--} & bestes 236.20, schlecht. 243.68 \\
+\bottomrule
+\end{tabular}

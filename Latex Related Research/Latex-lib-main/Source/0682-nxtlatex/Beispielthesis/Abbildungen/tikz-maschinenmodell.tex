@@ -1,0 +1,61 @@
+% Einordnung des Problems in die Maschinenmodelle des Scheduling.
+% Farben aus nxtlatexcolors.sty -- dieselbe Quelle wie Python und MetaPost.
+\begin{tikzpicture}[
+    alt={Drei Kästen nebeneinander, von links nach rechts immer allgemeiner:
+      identische Maschinen, bei denen alle Balken gleich lang sind;
+      uniforme Maschinen, bei denen die Balken je Person um einen Faktor
+      verschieden sind; unabhängige Maschinen mit beliebig verschiedenen
+      Balken, hervorgehoben als der Fall dieser Arbeit.},
+    font=\footnotesize,
+    modell/.style={
+      draw=nxt.gray2, line width=.6pt, rounded corners=2pt,
+      minimum width=32mm, minimum height=20mm, align=center,
+      fill=nxt.verylightgray,
+    },
+    aktiv/.style={modell, draw=nxtgreen, line width=1pt, fill=nxtgreen!8},
+    balken/.style={draw=none, fill=nxt.gray3},
+    balkenaktiv/.style={draw=none, fill=nxtgreen},
+    beschriftung/.style={font=\scriptsize\itshape, text=nxt.gray5},
+  ]
+
+  % --- Identische Maschinen: p_ij = p_j -------------------------------
+  \node[modell] (id) at (0,0) {};
+  \node[above=1mm of id, font=\footnotesize\bfseries] {Identisch};
+  \node[below=1mm of id, beschriftung] {$P\,\|\,C_{\max}$};
+  \foreach \y/\w in {0/1.0, 1/1.0, 2/1.0} {
+    \fill[balken] ($(id.west)+(3mm,-5mm+\y*5mm)$) rectangle ++(\w*22mm, 3mm);
+  }
+  \node[below=5mm of id, beschriftung, text width=32mm] {$p_{ij}=p_j$\\jeder gleich schnell};
+
+  % --- Uniforme Maschinen: p_ij = p_j / s_i ---------------------------
+  \node[modell] (uni) at (4.4,0) {};
+  \node[above=1mm of uni, font=\footnotesize\bfseries] {Uniform};
+  \node[below=1mm of uni, beschriftung] {$Q\,\|\,C_{\max}$};
+  \foreach \y/\w in {0/1.0, 1/0.75, 2/0.5} {
+    \fill[balken] ($(uni.west)+(3mm,-5mm+\y*5mm)$) rectangle ++(\w*22mm, 3mm);
+  }
+  \node[below=5mm of uni, beschriftung, text width=32mm]
+    {$p_{ij}=p_j/s_i$\\ein Tempo je Person};
+
+  % --- Unabhängige Maschinen mit Zulässigkeit: unser Fall -------------
+  \node[aktiv] (unrel) at (8.8,0) {};
+  \node[above=1mm of unrel, font=\footnotesize\bfseries, text=nxtgreen]
+    {Unabhängig};
+  \node[below=1mm of unrel, beschriftung, text=nxtgreen]
+    {$R\,|\,M_j\,|\,C_{\max}$};
+  \foreach \y/\w in {0/0.9, 1/0.45, 2/0.7} {
+    \fill[balkenaktiv] ($(unrel.west)+(3mm,-5mm+\y*5mm)$) rectangle ++(\w*22mm, 3mm);
+  }
+  % Gestrichelter Balken = Qualifikation fehlt, Zuordnung unzulässig.
+  \draw[draw=nxtgreen, densely dashed, line width=.5pt]
+    ($(unrel.west)+(3mm,5mm)$) rectangle ++(6mm, 3mm);
+  \node[below=5mm of unrel, beschriftung, text width=34mm, text=nxtgreen]
+    {$p_{ij}$ frei, $M_j$ schränkt ein\\ \textbf{der Fall dieser Arbeit}};
+
+  \draw[->, draw=nxt.gray3, line width=.6pt]
+    ($(id.east)+(1mm,0)$) -- ($(uni.west)-(1mm,0)$);
+  \draw[->, draw=nxt.gray3, line width=.6pt]
+    ($(uni.east)+(1mm,0)$) -- ($(unrel.west)-(1mm,0)$);
+  \node[beschriftung] at (2.2,1.55) {allgemeiner};
+  \node[beschriftung] at (6.6,1.55) {allgemeiner};
+\end{tikzpicture}

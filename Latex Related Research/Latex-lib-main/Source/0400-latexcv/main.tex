@@ -1,0 +1,158 @@
+%-----------------------------------------------------------------------------------------------------------------------------------------------%
+%	The MIT License (MIT)
+%
+%	Copyright (c) 2015 Jan Kuester
+%
+%	Permission is hereby granted, free of charge, to any person obtaining a copy
+%	of this software and associated documentation files (the "Software"), to deal
+%	in the Software without restriction, including without limitation the rights
+%	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%	copies of the Software, and to permit persons to whom the Software is
+%	furnished to do so, subject to the following conditions:
+%
+%	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%	THE SOFTWARE.
+%
+%-----------------------------------------------------------------------------------------------------------------------------------------------%
+% latexcv "classic" style. The repo ships several visually distinct styles in
+% one place (classic, modern, minimalistic, sidebar, infographic, two-column,
+% rows) — see this starter's README for switching to another.
+
+\documentclass[10pt,A4]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{xifthen}
+\usepackage[default]{raleway}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage[T1]{fontenc}
+\usepackage{moresize}
+
+\usepackage[a4paper]{geometry}
+\geometry{top=1.25cm, bottom=-.6cm, left=1.5cm, right=1.5cm}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\setlength{\headheight}{-5pt}
+\setlength{\parindent}{0mm}
+
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{array}
+\newcolumntype{x}[1]{%
+>{\raggedleft\hspace{0pt}}p{#1}}%
+
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes, backgrounds,mindmap, trees}
+
+\usepackage{color}
+\definecolor{sectcol}{RGB}{0,150,255}
+\definecolor{bgcol}{RGB}{110,110,110}
+\definecolor{softcol}{RGB}{225,225,225}
+
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\renewcommand{\thepage}{}
+\renewcommand{\thesection}{}
+
+\newcommand{\cvsection}[1]
+{
+	\begin{center}
+		\large\textcolor{sectcol}{\textbf{#1}}
+	\end{center}
+}
+
+\newcommand{\metasection}[2]
+{
+\footnotesize{#2} \hspace*{\fill} \footnotesize{#1}\\[1pt]
+}
+
+\newcommand{\cvevent}[4]
+{
+
+\begin{tabular*}{1\textwidth}{p{13.6cm}  x{3.9cm}}
+	\textbf{#2} - \textcolor{bgcol}{#3} &   \vspace{2.5pt}\textcolor{sectcol}{#1}
+\end{tabular*}
+
+\vspace{-8pt}
+\textcolor{softcol}{\hrule}
+\vspace{6pt}
+
+	\foreach \desc in {#4}{
+		$\cdot$ \desc\\[3pt]
+	}
+
+\vspace{3pt}
+}
+
+\newcommand{\mystrut}{\rule[-.3\baselineskip]{0pt}{\baselineskip}}
+
+\begin{document}
+
+\pagestyle{fancy}
+
+\vspace{-8pt}
+\begin{center}
+	\HUGE \textsc{Renata Silva} \textcolor{sectcol}{\rule[-1mm]{1mm}{0.9cm}} \textsc{Resume}\\[2pt]
+	\small Site Reliability Engineer
+\end{center}
+
+\vspace{6pt}
+
+\metasection{Lisbon, Portugal}{\textbf{Status:} MSc Computer Science, Site Reliability Engineer}
+\metasection{www.renatasilva.example}{\textbf{Fields:} Infrastructure, Observability, Incident Response}
+\metasection{renata.silva@example.com}{\textbf{Techs:} Go, Kubernetes, Prometheus, Terraform, Postgres}
+\metasection{+351 91 234 5678}{\textbf{Activities:} Open source, Rock climbing, Homelab tinkering}
+\vspace{-2pt}
+\textcolor{softcol}{\hrule}
+\vspace{6pt}
+
+\normalsize
+
+\vspace{-6pt}
+\cvsection{Summary}
+Site reliability engineer with seven years running infrastructure for
+consumer-facing services at scale. Currently on the platform team at
+Feedzai, owning the on-call rotation and incident-response process for the
+company's fraud-detection API.\\
+
+\cvsection{Experience}
+
+\cvevent{2022 - present}{Senior Site Reliability Engineer}{Feedzai}{
+	{Rebuilt the alerting pipeline on Prometheus and Alertmanager, cutting alert-fatigue tickets by 40\%},
+	{Own the incident-response runbook and lead the monthly game-day exercises}
+}
+
+\cvevent{2019 - 2022}{Site Reliability Engineer}{Talkdesk}{
+	{Migrated the call-routing service from EC2 to Kubernetes with zero customer-facing downtime},
+	{Built the team's first SLO dashboard, now used across four engineering teams}
+}
+
+\cvevent{2017 - 2019}{DevOps Engineer}{Farfetch}{
+	{Automated the deployment pipeline for the checkout service, reducing release time from 45 to 6 minutes},
+	{Introduced infrastructure-as-code with Terraform for the payments team's AWS accounts}
+}
+
+\cvsection{Education}
+
+\cvevent{2017}{Graduated as MSc Computer Science}{University of Lisbon}{
+	{Thesis: Adaptive Load Shedding for Multi-Tenant Message Queues},
+	{Coursework in distributed systems, database internals and network security}
+}
+
+\cvevent{2013 - 2017}{BSc Computer Science}{University of Lisbon}{
+	{Core coursework in algorithms, operating systems and computer networks}
+}
+
+\null
+\vspace*{\fill}
+\hspace{-0.25\linewidth}\colorbox{white}{\makebox[1.5\linewidth][c]{\mystrut  \textnormal{\textcolor{sectcol}{www.renatasilva.example} $\cdot$ \textcolor{sectcol}{github.com/renatasilva}}}}
+
+\end{document}

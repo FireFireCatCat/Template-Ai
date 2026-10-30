@@ -1,0 +1,598 @@
+\addtocontents{toc}{\protect\contentsline{part}{\protect\numberline{}Inversive geometry}{}{}}
+
+\chapter{Inscribed angles}\label{chap:inscribed-angle}
+
+\section{Angle between a tangent line and a chord}
+
+\begin{thm}{Theorem}\label{thm:tangent-angle}
+Let $\Gamma$ be a circle with a center $O$.
+Assume that a line $(XQ)$ is tangent to $\Gamma$ at $X$
+and $[XY]$ is a chord of~$\Gamma$.
+Then 
+$$2\cdot\measuredangle QXY
+\equiv\measuredangle X O Y.
+\eqlbl{eq:tangent-angle}$$
+Equivalently, 
+$$\measuredangle QXY
+\equiv
+\tfrac12\cdot\measuredangle X O Y
+\quad 
+\text{or}
+\quad
+\measuredangle QXY
+\equiv
+\tfrac12\cdot\measuredangle X O Y+\pi.$$
+
+\end{thm}
+
+\begin{wrapfigure}{o}{33mm}
+\centering
+\includegraphics{mppics/pic-120}
+\end{wrapfigure}
+
+\parit{Proof.}
+By Lemma~\ref{lem:tangent}, $(OX)\z\perp(XQ)$;
+therefore,
+$$\measuredangle QXY+\measuredangle YXO \equiv\pm\tfrac\pi2.$$
+
+Note that $\triangle XOY$ is isosceles.
+Therefore,
+$$\measuredangle YXO=\measuredangle OYX.$$
+
+Applying Theorem~\ref{thm:3sum}
+to $\triangle XOY$,
+we get
+\begin{align*}
+\pi&\equiv\measuredangle YXO+\measuredangle OYX+\measuredangle XOY\equiv
+\\
+&\equiv 2\cdot \measuredangle YXO+\measuredangle XOY.
+\end{align*}
+
+It follows that
+$$2\cdot\measuredangle QXY
+\equiv \pi -2\cdot \measuredangle YXO
+\equiv\measuredangle X O Y.
+$$
+\qedsf
+
+\section{Inscribed angles}\label{sec:inscribed}
+
+We say that a triangle is \index{inscribed triangle}\emph{inscribed} in the circle $\Gamma$ if all its vertices lie on~$\Gamma$.
+
+\begin{thm}{Theorem}\label{thm:inscribed-angle}
+Let $X$ and $Y$ be distinct points on a circle $\Gamma$ centered at~$O$.
+Then
+$\triangle X P Y$ is inscribed in $\Gamma$ if and only if
+$$2\cdot\measuredangle X P Y\equiv\measuredangle X O Y.
+\eqlbl{eq:inscribed-angle}$$
+Equivalently, if and only if
+$$\measuredangle XPY\equiv\tfrac12\cdot\measuredangle X O Y
+\quad
+\text{or}
+\quad
+\measuredangle XPY\equiv\pi+\tfrac12\cdot\measuredangle X O Y.$$
+
+\end{thm}
+
+
+
+\begin{wrapfigure}{o}{33mm}
+\vskip-6mm
+\centering
+\includegraphics{mppics/pic-122}
+\vskip4mm
+\includegraphics{mppics/pic-124}
+\vskip4mm
+\includegraphics{mppics/pic-126}
+\end{wrapfigure}
+
+
+\parit{Proof; the ``only if'' part.}
+Let $(PQ)$ be the tangent line to $\Gamma$ at~$P$.
+By Theorem~\ref{thm:tangent-angle},
+\begin{align*}
+2\cdot\measuredangle QPX&\equiv\measuredangle POX,
+&
+2\cdot\measuredangle QPY&\equiv\measuredangle POY.
+\end{align*}
+Subtracting one identity from the other, we get~\ref{eq:inscribed-angle}.
+
+\parit{``If'' part.}
+Assume that \ref{eq:inscribed-angle} holds for some $P\z\notin \Gamma$.
+Note that $\measuredangle X O Y\ne 0$. 
+Therefore, $\measuredangle X P Y$ is neither $0$ nor $\pi$;
+that is, $\triangle PXY$ is nondegenerate.
+
+The line $(PX)$ is tangent to $\Gamma$ at the point $X$, or it intersects $\Gamma$ at another point.
+In the latter case, suppose that $P'$ denotes this point of intersection. 
+
+In the first case, by Theorem~\ref{thm:tangent-angle}, we have
+\begin{align*}
+2\cdot \measuredangle PXY&\equiv \measuredangle XOY\equiv 
+ 2\cdot\measuredangle  XPY.
+\end{align*}
+Applying the transversal property (\ref{thm:parallel-2}), we get that
+$(XY)\parallel (PY)$, which is impossible since $\triangle PXY$ is nondegenerate.
+
+In the second case, 
+applying the ``if'' part and the fact that  $P$, $X$, and $P'$ lie on one line (see Exercise~\ref{ex:ABCO-line}) we get that
+\begin{align*}
+2\cdot \measuredangle P'PY&\equiv
+2\cdot \measuredangle XPY\equiv 
+ \measuredangle  XOY\equiv
+ \\
+&\equiv 2\cdot\measuredangle  XP'Y\equiv
+ 2\cdot\measuredangle  PP'Y.
+\end{align*}
+Again, by the transversal property,
+$(PY)\z\parallel (P'Y)$, which is impossible since $\triangle PXY$ is nondegenerate.
+\qeds
+
+{
+
+\begin{wrapfigure}{r}{34mm}
+\centering
+\includegraphics{mppics/pic-128}
+\vskip3mm
+\includegraphics{mppics/pic-130}
+\vskip3mm
+\includegraphics{mppics/pic-132}
+\end{wrapfigure}
+
+\begin{thm}{Exercise}\label{ex:inscribed-angle}
+Let $X$, $X'$, $Y$, and $Y'$ be distinct points on the circle $\Gamma$.
+Assume $(XX')$ meets $(YY')$ at a point~$P$.
+Show that 
+\begin{enumerate}[(a)]
+\item $2\cdot \measuredangle XPY\equiv\measuredangle XOY+\measuredangle X'OY'$;
+\item\label{ex:inscribed-angle:b} $\triangle PXY\sim \triangle PY'X'$;
+\item\label{ex:inscribed-angle:power} $PX\cdot PX'=|OP^2-r^2|$, where $O$ is the center and $r$ is the radius of $\Gamma$.
+\end{enumerate}
+
+\end{thm}
+
+(The value $OP^2-r^2$ is called the \index{power of a point}\emph{power} of the point $P$ with respect to the circle $\Gamma$. 
+Part \textit{(\ref{ex:inscribed-angle:power})} of the exercise makes it a useful tool for studying circles, but we are not going to consider it further in the book.)
+
+\begin{thm}{Exercise}\label{ex:inscribed-hex}
+Three chords $[XX']$, $[YY']$, and $[ZZ']$
+of a circle $\Gamma$ intersect at a point $P$.
+Show that 
+$XY'\cdot ZX'\cdot YZ'=X'Y\cdot Z'X\cdot Y'Z$.
+
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:altitudes-circumcircle}
+Let $\Gamma$ be a circumcircle of an acute triangle $A B C$.
+Denote by $A'$ and $B'$ the second points of intersection of the altitudes from $A$ and $B$ with~$\Gamma$.
+Show that $\triangle A' B' C$ is isosceles.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:two-chords}
+Let $[XY]$ and $[X'Y']$ be two parallel chords of a circle.
+Show that $XX'=YY'$.
+\end{thm}
+
+}
+
+\begin{thm}{Exercise}
+Watch ``Why is pi here? And why is it squared? A geometric answer to the Basel problem'' by Grant Sanderson. (It is available on \href{https://youtu.be/d-o3eB9sfls}{YouTube}.) 
+Prepare one question.
+\end{thm}
+
+\section{Points on a circle}
+
+Recall that the diameter of a circle is a chord that passes thru the center.
+If $[XY]$ is the diameter of a circle with center $O$, then $\measuredangle X O Y\z=\pi$. 
+Hence Theorem~\ref{thm:inscribed-angle} implies the following:
+
+
+\begin{thm}{Corollary}\label{cor:right-angle-diameter}
+Suppose $\Gamma$ is a circle with diameter~$[AB]$.
+A triangle $ABC$ has a right angle at $C$ if and only if $C\in\Gamma$.
+\end{thm}
+
+The following two exercises can be used in construction problems.
+
+\begin{thm}{Exercise}\label{ex:tangent-construction-inscribed}
+Let $\Gamma$ be a circle with center $O$, and let $\Delta$ be a circle with diameter $[OP]$.
+Assume that $\Delta$ and $\Gamma$ intersect at a point $X$.
+Prove that the line $(PX)$ is tangent to $\Gamma$.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:perp-construction-inscribed}
+Let $\Gamma$ be a circle with diameter $[PQ]$.
+Assume that a line $\ell$ passes thru $Q$ and intersects $\Gamma$ at another point $X$.
+Prove that $\ell \perp (PX)$.
+\end{thm}
+
+
+
+\begin{thm}{Exercise}\label{ex:altitude+circles}
+Assume two circles intersect at two distinct points $A$ and $B$, and have diameters $[AX]$ and $[AY]$.
+Prove that the points $X$, $Y$, and $B$ lie on one line.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:perpendicular-ruler}
+Given a line $\ell$, a circle $\Gamma$ with its center on $\ell$,
+and a point $P$ that lies on neither $\ell$ nor $\Gamma$,
+construct the perpendicular from $P$ to $\ell$ using only a ruler.
+\end{thm}
+
+\begin{wrapfigure}{r}{32mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-133}
+\end{wrapfigure}
+
+\begin{thm}{Exercise}\label{ex:tnagents+midpoint}
+Suppose that lines $\ell$, $m$, and $n$ pass thru a point $P$;
+the lines $\ell$ and $m$ are tangent to a circle $\Gamma$ at $L$ and $M$;
+the line $n$ intersects $\Gamma$ at two points $X$ and $Y$.
+Let $N$ be the midpoint of $[XY]$.
+Show that the points $P$, $L$, $M$, and $N$ lie on one circle.
+\end{thm}
+
+We say that a quadrangle $ABCD$ is 
+\index{quadrangle!inscribed quadrangle}\emph{inscribed in a circle $\Gamma$}
+if all the points $A$, $B$, $C$, and $D$ lie on $\Gamma$.
+
+\begin{thm}{Corollary}\label{cor:inscribed-quadrangle}
+A nondegenerate quadrangle $ABCD$ is inscribed in a circle if and only if 
+\[2\cdot\measuredangle ABC\equiv 2\cdot\measuredangle ADC.\]
+
+\end{thm}
+
+\parit{Proof.}
+Since $\square ABCD$ is nondegenerate, so is $\triangle ABC$.
+Let $O$ and $\Gamma$ denote the circumcenter and circumcircle of $\triangle ABC$ (they exist by Exercise~\ref{ex:unique-cline}).
+
+{
+
+\begin{wrapfigure}[10]{o}{25mm}
+\vskip-1mm
+\centering
+\includegraphics{mppics/pic-134}
+\end{wrapfigure}
+
+According to Theorem~\ref{thm:inscribed-angle},
+$$
+2\cdot\measuredangle ABC
+\equiv
+\measuredangle AOC.
+$$
+From the same theorem, $D\in\Gamma$ if and only if 
+
+$$
+2\cdot\measuredangle ADC
+\equiv\measuredangle AOC,
+$$
+hence the result.
+\qeds
+
+}
+
+
+{
+
+\begin{thm}{Exercise}\label{ex:VVAA}
+Let $\triangle A B C$ be a nondegenerate triangle,
+and let $A'$ and $B'$ be footpoints of altitudes from $A$ and~$B$ respectively.
+Show that the four points $A$, $B$, $A'$, and $B'$ lie on one circle.
+What is the center of this circle?
+\end{thm}
+
+\begin{wrapfigure}{r}{33mm}
+\vskip-0mm
+\centering
+\includegraphics{mppics/pic-136}
+\end{wrapfigure}
+
+\begin{thm}{Exercise}\label{ex:secant-circles}
+Consider two circles $\Gamma$ and $\Gamma'$ that intersect at two distinct points $A$ and~$B$.
+Assume $[XY]$ and $[X'Y']$ are the chords of $\Gamma$ and $\Gamma'$ respectively,
+such that $A$ lies between $X$ and $X'$ and $B$ lies between $Y$ and~$Y'$.
+Show that $(XY)\parallel (X'Y')$.
+\end{thm}
+
+}
+
+\begin{thm}{Advanced exercise}\label{ex:perim+angle+side}
+Perform a ruler-and-compass construction of $\triangle ABC$, given its perimeter $p$, $\beta=\measuredangle ABC$, and $b=AC$.
+\end{thm}
+
+\section{The method of an additional circle}
+
+\begin{thm*}{Problem}
+ Assume that two chords $[AA']$ and $[BB']$ intersect at the point $P$ inside their circle.
+Let $X$ be a point such that both angles $XAA'$ and $XBB'$ are right.
+Show that $(XP)\perp(A'B')$.
+\end{thm*}
+
+\parit{Solution.}
+Suppose that the lines $(A'B')$ and $(XP)$ meet at $Y$.
+
+Both angles $XAA'$ and $XBB'$ are right;
+therefore
+\[2\cdot\measuredangle XAA'
+\equiv
+2\cdot\measuredangle XBB'.\]
+By Corollary~\ref{cor:inscribed-quadrangle},  $\square XAPB$ is inscribed.
+Applying this theorem again we get that
+\[2\cdot\measuredangle AXP
+\equiv
+2\cdot\measuredangle ABP.\]
+
+\begin{wrapfigure}[9]{o}{32mm}
+\vskip-7mm
+\centering
+\includegraphics{mppics/pic-138}
+\end{wrapfigure}
+
+Since $\square ABA'B'$ is inscribed, 
+\[2\cdot\measuredangle ABB'
+\equiv
+2\cdot\measuredangle AA'B'.\]
+
+It follows that 
+\[2\cdot\measuredangle AXY
+\equiv
+2\cdot\measuredangle AA'Y.\]
+By the same theorem, $\square XAYA'$ is inscribed,
+and
+therefore, 
+\[2\cdot\measuredangle XAA'
+\equiv
+2\cdot\measuredangle XYA'.\]
+Since $\angle XAA'$ is right, 
+so is $\angle XYA'$. 
+That is, $(XP)\perp(A'B')$.
+\qeds
+
+\begin{thm}{Exercise}\label{ex:inaccuracy}
+Find an inaccuracy in the solution of the problem and try to fix it.
+\end{thm}
+
+The method used in the solution 
+is called the \textit{method of an additional circle}
+--- the circumcircles of the quadrangles $XAPB$ and $XAYA'$ 
+ above can be considered as \textit{additional constructions}. 
+
+{
+
+\begin{wrapfigure}{r}{28mm}
+\vskip-0mm
+\centering
+\includegraphics{mppics/pic-140}
+\end{wrapfigure}
+
+\begin{thm}{Exercise}\label{ex:equilateral-2}
+Assume three lines $\ell$, $m$, and $n$ intersect at point $O$ and form six equal angles at~$O$. 
+Let $X$ be a point distinct from $O$.
+Let $L$, $M$, and $N$ denote the footpoints of perpendiculars from $X$ on $\ell$, $m$, and $n$, respectively.
+Show that $\triangle LMN$ is equilateral.
+\end{thm}
+
+}
+
+\begin{thm}{Exercise}\label{ex:median-angle}
+Let $[AA']$ and $[BB']$ be the medians of a nondegenerate triangle $ABC$.
+Assume that $\measuredangle A'AC = \measuredangle CBB'$.
+Show that $AC = BC$.
+\end{thm}
+
+
+\begin{thm}{Advanced exercise}\label{ex:simson}
+Assume that a point $P$ lies on a circumcircle of $\triangle ABC$.
+Show that three footpoints of $P$ on the lines $(AB)$, $(BC)$, and $(CA)$ lie on one line
+(this is the so-called \index{Simson line}\emph{Simson line} of $P$).
+\end{thm}
+
+\section{Arcs of circlines}
+
+A subset of a circle bounded by two points is called a circular arc.
+
+More precisely,
+suppose $A$, $B$, and $C$ are distinct points on a circle $\Gamma$.
+The \index{circular arc}\emph{circular arc}~$ABC$ is the subset that includes the points $A$, $C$,
+as well as all the points on $\Gamma$ that lie with $B$ on the same side of $(AC)$.
+
+Points $A$ and $C$ are called 
+\index{endpoint of arc}\emph{endpoints} of the circular arc $ABC$. 
+There are precisely two circular arcs of $\Gamma$ with the given endpoints; they are \index{opposite arc}\emph{opposite} to each other.
+
+\begin{wrapfigure}[7]{r}{33mm}
+\vskip-6mm
+\centering
+\includegraphics{mppics/pic-142}
+\end{wrapfigure}
+
+Suppose $X$ is another point on $\Gamma$.
+By \ref{cor:inscribed-quadrangle} we have
+that $2\cdot\measuredangle AXC\equiv 2\cdot\measuredangle ABC$;
+that is,
+\[\measuredangle AXC\equiv\measuredangle ABC
+\quad\text{or}\quad
+\measuredangle AXC\equiv\measuredangle ABC+\pi.\]
+
+Recall that $X$ and $B$ lie on the same side of $(AC)$ if and only if $\angle AXC$ and $\angle ABC$ have the same sign (see Exercise~\ref{ex:signs-PXQ-PYQ}).
+It follows that 
+\begin{itemize}
+\item $X$ lies on the arc $ABC$ if and only if $\measuredangle AXC\equiv\measuredangle ABC$;
+\item $X$ lies on the arc opposite to $ABC$ if $\measuredangle AXC\equiv\measuredangle ABC+\pi$.
+\end{itemize}
+
+A circular arc $ABC$ is defined if $\triangle ABC$ is nondegenerate.
+If $\triangle ABC$ is degenerate, then arc $ABC$ is defined as a subset of the line bounded by $A$ and $C$ that contains $B$;
+in this case we say that arc $ABC$ is \index{degenerate arc}\emph{degenerate}.
+
+
+\begin{wrapfigure}{r}{43mm}
+\vskip-2mm
+\centering
+\includegraphics{mppics/pic-144}
+\vskip4mm
+\includegraphics{mppics/pic-146}
+\end{wrapfigure}
+
+More precisely, if $B$ lies between $A$ and $C$, then the {}\emph{arc} $ABC$ is defined as 
+the line segment $[AC]$.
+If $B'$ lies on the extension of $[AC]$,
+then the arc $AB'C$ is defined as the union of disjoint half-lines $[AX)$ and $[CY)$ in $(AC)$.
+In this case, the arcs $ABC$ and $AB'C$ are called opposite to each other.
+
+\begin{wrapfigure}[2]{r}{43mm}
+\vskip-0mm
+\centering
+\includegraphics{mppics/pic-148}
+\end{wrapfigure}
+
+In addition, every half-line $[AB)$ will be regarded as an arc.
+If $A$ lies between $B$ and $X$, then $[AX)$ will be called opposite to $[AB)$.
+This arc has only one endpoint $A$.
+
+It will be convenient to use the notion of 
+\index{circline}\emph{circline},
+which means \textit{circle or line}.
+For example, every arc is a subset of a circline;
+we also may use the term \index{circline!arc}\emph{circline arc} if we want to emphasize that the arc might be degenerate.
+Note that for any three distinct points $A$, $B$, and $C$ there is a unique circline arc $ABC$.
+
+The following statement summarizes the discussion above.
+
+\begin{thm}{Proposition}\label{prop:arcs}
+Let $ABC$ be a circline arc and $X$ be a point distinct from $A$ and $C$.
+Then 
+\begin{enumerate}[(a)]
+\item $\measuredangle AXC=\measuredangle ABC$ if and only if $X$ lies on the arc $ABC$;
+\item $\measuredangle AXC\equiv\measuredangle ABC+\pi$ if and only if $X$ lies on the arc opposite to $ABC$.
+\end{enumerate}
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:3x120}
+Given an acute triangle $ABC$,
+perform a ruler-and-compass construction of a point $Z$ such that
+$\measuredangle AZB
+= \measuredangle BZC
+= \measuredangle CZA
+\z=\pm\tfrac23\cdot\pi$.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:a+b=c}
+A point $P$ lies on the circumcircle of an equilateral triangle $ABC$,
+and $PA\le PB\le PC$.
+Show that $PA+PB=PC$.
+\end{thm}
+
+A quadrangle $ABCD$ is 
+\index{quadrangle!inscribed quadrangle}\emph{inscribed}
+if all the points $A$, $B$, $C$, and $D$ lie on a circline $\Gamma$.
+If the arcs $ABC$ and $ADC$ are opposite, then we say that the points $A$, $B$, $C$, and $D$ appear on $\Gamma$ in the same \index{cyclic order}\emph{cyclic order}.
+
+This definition allows us to formulate the following refinement of Corollary~\ref{cor:inscribed-quadrangle} which includes degenerate quadrangles.
+It follows directly from \ref{prop:arcs}.
+
+\begin{thm}{Proposition}\label{prop:inscribed-quadrangle}
+A quadrangle $ABCD$ is inscribed in a circline if and only if 
+$\measuredangle ABC+\measuredangle CDA\equiv 0$
+or
+$\measuredangle ABC+\measuredangle CDA\equiv\pi$.
+Moreover, the second identity holds if and only if the points $A,B,C,D$ appear on the circline in the same cyclic order.
+\end{thm}
+
+\section{Tangent half-lines}
+
+{
+
+\begin{wrapfigure}[6]{r}{30mm}
+\vskip-16mm
+\centering
+\includegraphics{mppics/pic-150}
+\end{wrapfigure}
+
+Suppose $ABC$ is an arc of a circle $\Gamma$.
+A half-line $[AX)$ is called 
+\index{tangent!half-line}\emph{tangent} 
+to the arc $ABC$ at $A$
+if the line $(AX)$ is tangent to $\Gamma$, and the points $X$ and $B$ lie on the same side of the line $(AC)$.
+
+}
+
+If the arc is formed by the line segment $[AC]$, then the half-line $[AC)$ is considered to be tangent at $A$.
+If the arc is formed by the union of two half-lines $[AX)$ and $[BY)$ in $(AC)$,
+then the half-line $[AX)$ is considered to be tangent to the arc at $A$.
+
+\begin{thm}{Proposition}\label{prop:arc(angle=tan)}
+A half-line $[AX)$ is tangent to an arc $ABC$ if and only if 
+$\measuredangle ABC+\measuredangle CAX\equiv \pi$.
+\end{thm}
+
+\parit{Proof.}
+For a degenerate arc $ABC$, 
+the statement is evident.
+Assume it is nondegenerate.
+
+Note that the tangent half-line to the arc $ABC$ at $A$ is uniquely defined.
+Furthermore, there is a unique half-line $[AX)$ such that the equation in the proposition holds.
+Therefore, it is sufficient to prove the ``only-if'' part.
+
+\begin{wrapfigure}{o}{24mm}
+\vskip-0mm
+\centering
+\includegraphics{mppics/pic-152}
+\vskip4mm
+\end{wrapfigure}
+
+If $[AX)$ is tangent to the arc $ABC$, then by \ref{thm:tangent-angle}
+and \ref{thm:inscribed-angle},
+we get that
+$$2\cdot \measuredangle ABC+2\cdot\measuredangle CAX\equiv 0.$$
+Therefore, either 
+$$\measuredangle ABC+\measuredangle CAX
+\equiv 
+\pi,
+\quad
+\text{or}
+\quad
+\measuredangle ABC+\measuredangle CAX
+\equiv 
+0.$$
+
+By the definition of a tangent half-line,
+$X$ and $B$ lie on the same side of~$(AC)$.
+By \ref{cor:half-plane} and \ref{thm:signs-of-triug}, the angles $CAX$, $CAB$, and $ABC$ 
+have the same sign.
+In particular,
+$\measuredangle ABC\z+\measuredangle CAX\not\equiv 0$;
+that is, we are left with the case 
+$\measuredangle ABC+\measuredangle CAX\equiv \pi$.
+\qeds
+
+\begin{thm}{Exercise}\label{ex:tangent-arc}
+Show that there is a unique arc 
+with given endpoints $A$ and $C$
+that is tangent to a given half-line~$[AX)$.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:tangent-lim}
+Let $[AX)$ be a tangent half-line to an arc $ABC$.
+Assume $Y$ is a point on the arc $ABC$ that is distinct from $A$.
+Show that $\measuredangle XAY$ approaches $0$ as $AY$ approaches $0$.
+
+\end{thm}
+
+{
+
+\begin{wrapfigure}{r}{33mm}
+\vskip-10mm
+\centering
+\includegraphics{mppics/pic-154}
+\end{wrapfigure}
+
+
+\begin{thm}[!]{Exercise}\label{ex:two-arcs}
+Given two circular arcs $AB_1C$ and $AB_2C$, let $[AX_1)$ and $[AX_2)$ be half-lines tangent to the arcs $AB_1C$ and $AB_2C$ at $A$, and $[CY_1)$ and $[CY_2)$ be half-lines tangent to the arcs $AB_1C$ and $AB_2C$ at~$C$.
+Show that
+$$\measuredangle X_1AX_2\equiv -\measuredangle Y_1CY_2.$$
+
+\end{thm}

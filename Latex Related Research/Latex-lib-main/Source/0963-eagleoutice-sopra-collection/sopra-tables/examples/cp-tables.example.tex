@@ -1,0 +1,65 @@
+\documentclass{article}
+
+\usepackage{hyperref}
+\usepackage[hyperref,addons]{color-palettes}
+\usepackage[cpalette]{sopra-tables}
+\usepackage{pgffor}
+
+\title{Tables example}
+\author{Florian Sihler}
+\date{\today}
+
+\makeatletter%
+\def\doinvert{%
+    \sot@invert@true%
+    \let\sot@table@headerstyle\sot@table@headerstyle@inv%
+    \sot@init%
+}
+\makeatother%
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\clearpage
+\edef\AP{\AllPalettes}
+\foreach \mode/\c in {Normal/{},Inverted/\doinvert} {
+\section{The Effects of the Palettes (\mode)}
+\c%
+\foreach \i in \AP {\UsePalette{\i}%
+% to assure the breaks :D
+\subsection{Palette: \CurrentPalette}%
+\begin{center}
+    \ShowcaseCurrentPalette%
+\end{center}\medskip
+\begin{mtabular}{lcr}
+    Little & Fine & Table \\
+    Now what & does one think & of the \\
+    quick one & then, of the & companion \\
+    that wanders & there. & \\
+    He even got stranded & was in fortune & and lived \\
+    there was & forever was & and openly \\
+    Jap & dap & jeah.
+\end{mtabular}
+
+\begin{mltabular}[I am & a long & Tabular]{lcr}
+    Hip & Hip & Yeah \\
+    Yes I & am a & tabular \\
+    and a & long open & bar. \\
+    Quite centered, & that's what I & am, cha-ka\\
+    & I still need & a line or two, yeah \\
+    and already & is the & page break \\
+    there. & I hope & somehow then \\
+    I never write & the lines & without a plan. \\
+    & Whoever & reads this \\
+    shall & be warned & \\
+    miscounted & & lines of steel \\
+    Talking non- & -sense & \\
+    Tra- & la- & la. \\
+    New page & sure thing  & \\
+    I don't wanna & do such nonsense & no more \\
+    Ha & Ha & Ha
+\end{mltabular}\clearpage
+}
+}
+\end{document}

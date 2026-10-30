@@ -1,0 +1,98 @@
+%% Overhead foils starter — the standard LaTeX `slides' class.
+%%
+%% slides is part of core LaTeX and is NOT included in this download: it ships
+%% with every modern TeX distribution (and with latextemplates.com's
+%% compiler), so bundling a copy would only risk pinning you to an older
+%% version than your own system already has.
+%%
+%% `slides' is the LaTeX2e successor to SliTeX, and produces large-format
+%% overhead transparencies: oversized sans-serif type, one idea per foil. It
+%% is the right class for a plain, high-contrast talk with no theme
+%% machinery — use beamer instead if you want overlays and navigation.
+%%
+%% Class documentation: texdoc slides   |   https://ctan.org/pkg/slides
+%% Licence: slides is LPPL-1.3c, (c) The LaTeX Project.
+\documentclass[landscape]{slides}
+
+\usepackage[T1]{fontenc}
+
+%% slides' `landscape' option swaps \paperwidth and \paperheight, but
+%% pdflatex sizes its output from \pdfpagewidth/\pdfpageheight, which the
+%% class does not touch. Without these two lines the foils are typeset
+%% landscape onto a portrait page, leaving the content in the top half.
+\pdfpagewidth=\paperwidth
+\pdfpageheight=\paperheight
+
+\begin{document}
+
+%% Each `slide' environment is one foil. Keep them short: the whole point of
+%% the large type is that it stays readable from the back of a room.
+\begin{slide}
+\begin{center}
+{\Large Your Talk Title Here}
+
+\vspace{2em}
+Ada Lovelace
+
+\vspace{1em}
+Institute of Analytical Engines
+
+\vspace{1em}
+\today
+\end{center}
+\end{slide}
+
+\begin{slide}
+\begin{center}\Large Outline\end{center}
+
+\begin{itemize}
+\item The problem
+\item What we did
+\item What we found
+\item What is next
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\begin{center}\Large The Problem\end{center}
+
+State it in one sentence.
+
+\begin{itemize}
+\item Why it matters
+\item Why it is hard
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\begin{center}\Large Results\end{center}
+
+\begin{center}
+\begin{tabular}{lr}
+Baseline & 0.71\\
+Ours     & 0.86\\
+\end{tabular}
+\end{center}
+
+One number the audience should remember.
+\end{slide}
+
+%% An `overlay' prints on top of the preceding slide — the classic
+%% transparency trick of revealing an extra layer.
+\begin{overlay}
+\begin{center}\Large \ldots and it generalises.\end{center}
+\end{overlay}
+
+\begin{slide}
+\begin{center}\Large Conclusion\end{center}
+
+\begin{itemize}
+\item What we showed
+\item What comes next
+\end{itemize}
+
+\vspace{2em}
+\begin{center}Questions?\end{center}
+\end{slide}
+
+\end{document}

@@ -1,0 +1,51 @@
+\documentclass[UTF8,a4paper,9pt]{ctexart}
+\usepackage[margin=1.25cm]{geometry}
+\usepackage{multicol,amsmath,amssymb,booktabs,xcolor}
+\setlength{\parindent}{0pt}
+\setlength{\columnsep}{0.8cm}
+\newcommand{\sectiontitle}[1]{\vspace{0.5em}\textcolor{purple!70!black}{\large\bfseries #1}\par\smallskip}
+\title{猫猫复习卡 / Meowmeow Study Sheet}
+\author{Your Name \quad 课程 Course: CS--101}
+\date{}
+\begin{document}
+\maketitle
+\begin{multicols*}{2}
+\sectiontitle{核心概念 / Core ideas}
+\textbf{不变量 Invariant:} 在允许的操作下保持不变的量。\\
+\textbf{复杂度 Complexity:} 记录输入规模 $n$ 增大时资源如何增长。\\
+\textbf{抽象 Abstraction:} 保留接口，隐藏实现细节。
+
+\sectiontitle{常用公式 / Useful formulas}
+\[
+ \sum_{k=1}^{n}k=\frac{n(n+1)}2,\qquad
+ \sum_{k=0}^{\infty}r^k=\frac1{1-r}\quad(|r|<1).
+\]
+For a recurrence $T(n)=aT(n/b)+f(n)$, compare $f(n)$ with
+$n^{\log_b a}$ before choosing a bound.
+
+\sectiontitle{数据结构 / Data structures}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Operation & Array & Hash map\\\midrule
+Lookup & $O(1)$ & $O(1)$ average\\
+Insert & $O(n)$ & $O(1)$ average\\
+Ordered scan & $O(n)$ & $O(n\log n)$\\
+\bottomrule
+\end{tabular}
+
+\sectiontitle{算法检查 / Algorithm checklist}
+\begin{enumerate}
+\item 明确输入、输出和边界条件 / define inputs, outputs, and boundaries.
+\item 先写不变量，再选择数据结构 / state the invariant first.
+\item 用小例子和极端例子测试 / test small and extreme cases.
+\item 分析时间、空间和失败模式 / analyse time, space, and failure modes.
+\end{enumerate}
+
+\sectiontitle{自测空间 / Practice space}
+\vspace{10cm}
+
+\sectiontitle{易错点 / Common mistakes}
+混淆平均复杂度与最坏复杂度；忽略空输入；只测试成功路径；忘记说明单位、
+索引从零还是从一开始，以及随机化算法所使用的种子。
+\end{multicols*}
+\end{document}

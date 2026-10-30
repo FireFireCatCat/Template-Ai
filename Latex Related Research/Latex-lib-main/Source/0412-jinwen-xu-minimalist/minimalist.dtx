@@ -1,0 +1,3356 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2021-2026 by Jinwen XU
+% ------------------------------------
+%
+% This file may be distributed and/or modified under the conditions of the LaTeX
+% Project Public License, either version 1.3c of this license or (at your option)
+% any later version. The latest version of this license is in:
+%
+%    http://www.latex-project.org/lppl.txt
+%
+% \fi
+%
+%<*driver>
+\ProvidesFile{minimalist.dtx}
+%</driver>
+\NeedsTeXFormat{LaTeX2e}[2022-06-01]
+%
+%<*minimart>
+\ProvidesExplClass
+  {minimart}
+  {2026/02/20} {}
+  {A simple and clear article style}
+
+\tl_const:Nn \l__minimclass_base_class_tl { article }
+%</minimart>
+%
+%<*minimbook>
+\ProvidesExplClass
+  {minimbook}
+  {2026/02/20} {}
+  {A simple and clear book style}
+
+\tl_const:Nn \l__minimclass_base_class_tl { book }
+%</minimbook>
+%
+%<*einfart>
+\ProvidesExplClass
+  {einfart}
+  {2026/02/20} {}
+  {A simple and clear article style}
+
+\tl_const:Nn \l__minimclass_base_class_tl { article }
+%</einfart>
+%
+%<*simplivre>
+\ProvidesExplClass
+  {simplivre}
+  {2026/02/20} {}
+  {A simple and clear book style}
+
+\tl_const:Nn \l__minimclass_base_class_tl { book }
+%</simplivre>
+%
+%<*minimalist>
+\ProvidesExplPackage
+  {minimalist}
+  {2026/02/20} {}
+  {A simple and clear style for articles and books}
+%</minimalist>
+%
+%<*minimalist-default>
+\ProvidesExplPackage
+  {minimalist-default}
+  {2026/02/20} {}
+  {The default style of minimalist}
+%</minimalist-default>
+%
+%<*minimalist-plain>
+\ProvidesExplPackage
+  {minimalist-plain}
+  {2026/02/20} {}
+  {The "plain" style of minimalist}
+%</minimalist-plain>
+%
+%<*minimalist-classical>
+\ProvidesExplPackage
+  {minimalist-classical}
+  {2026/02/20} {}
+  {The "classical" style of minimalist}
+%</minimalist-classical>
+%
+%<*minimalist-classicthesis>
+\ProvidesExplPackage
+  {minimalist-classicthesis}
+  {2026/02/20} {}
+  {The "classicthesis" style of minimalist}
+%</minimalist-classicthesis>
+%
+%<*minimalist-flow>
+\ProvidesExplPackage
+  {minimalist-flow}
+  {2026/02/20} {}
+  {The "flow" style of minimalist}
+%</minimalist-flow>
+%
+%<*minimalist-stream>
+\ProvidesExplPackage
+  {minimalist-stream}
+  {2026/02/20} {}
+  {The "stream" style of minimalist}
+%</minimalist-stream>
+
+%<*class>
+
+\bool_new:N \l__minimclass_load_custom_font_file_bool
+\bool_set_false:N \l__minimclass_load_custom_font_file_bool
+
+%<*einfart|simplivre>
+\bool_new:N \l__minimclass_load_custom_font_file_latin_bool
+\bool_set_false:N \l__minimclass_load_custom_font_file_latin_bool
+
+\bool_new:N \l__minimclass_load_custom_font_file_cjk_bool
+\bool_set_false:N \l__minimclass_load_custom_font_file_cjk_bool
+
+\bool_new:N \l__minimclass_load_custom_font_file_math_bool
+\bool_set_false:N \l__minimclass_load_custom_font_file_math_bool
+%</einfart|simplivre>
+
+\keys_define:nn { minimclass }
+  {
+    , draft                   .bool_set:N         = \l__minimclass_fast_bool
+    , draft                   .initial:n          = { false }
+    , fast                    .bool_set:N         = \l__minimclass_fast_bool
+
+    , print                   .bool_set:N         = \l__minimclass_print_mode_bool
+    , print                   .initial:n          = { false }
+    , print mode              .bool_set:N         = \l__minimclass_print_mode_bool
+    , print~mode              .bool_set:N         = \l__minimclass_print_mode_bool
+    , print-mode              .bool_set:N         = \l__minimclass_print_mode_bool
+    , print version           .bool_set:N         = \l__minimclass_print_mode_bool
+    , print~version           .bool_set:N         = \l__minimclass_print_mode_bool
+    , print-version           .bool_set:N         = \l__minimclass_print_mode_bool
+
+    , use indent              .bool_set:N         = \l__minimclass_useindent_bool
+    , use indent              .initial:n          = { true }
+    , use~indent              .bool_set:N         = \l__minimclass_useindent_bool
+    , use-indent              .bool_set:N         = \l__minimclass_useindent_bool
+
+    , load custom font file   .code:n             = {
+                                                      \bool_set_true:N \l__minimclass_load_custom_font_file_bool
+                                                      \str_set:Nn \l__minimclass_custom_font_file_str { #1 }
+%<*einfart|simplivre>
+                                                      \bool_set_true:N \l__minimclass_load_custom_font_file_latin_bool
+                                                      \str_set:Nn \l__minimclass_custom_font_file_latin_str { minimalist.font.latin }
+                                                      \bool_set_true:N \l__minimclass_load_custom_font_file_cjk_bool
+                                                      \str_set:Nn \l__minimclass_custom_font_file_cjk_str   { minimalist.font.cjk }
+                                                      \bool_set_true:N \l__minimclass_load_custom_font_file_math_bool
+                                                      \str_set:Nn \l__minimclass_custom_font_file_math_str  { minimalist.font.math }
+%</einfart|simplivre>
+                                                    }
+    , load custom font file   .default:n          = { minimalist.font }
+    , load~custom~font~file   .meta:n             = { load custom font file = { #1 } }
+    , load~custom~font~file   .default:n          = { minimalist.font }
+    , load-custom-font-file   .meta:n             = { load custom font file = { #1 } }
+    , load-custom-font-file   .default:n          = { minimalist.font }
+
+%<*einfart|simplivre>
+    , load custom latin font file   .code:n       = {
+                                                      \bool_set_true:N \l__minimclass_load_custom_font_file_latin_bool
+                                                      \str_set:Nn \l__minimclass_custom_font_file_latin_str { #1 }
+                                                    }
+    , load custom latin font file   .default:n    = { minimalist.font.latin }
+    , load~custom~latin~font~file   .meta:n       = { load custom latin font file = { #1 } }
+    , load~custom~latin~font~file   .default:n    = { minimalist.font.latin }
+    , load-custom-latin-font-file   .meta:n       = { load custom latin font file = { #1 } }
+    , load-custom-latin-font-file   .default:n    = { minimalist.font.latin }
+
+    , load custom cjk font file     .code:n       = {
+                                                      \bool_set_true:N \l__minimclass_load_custom_font_file_cjk_bool
+                                                      \str_set:Nn \l__minimclass_custom_font_file_cjk_str { #1 }
+                                                    }
+    , load custom cjk font file     .default:n    = { minimalist.font.cjk }
+    , load~custom~cjk~font~file     .meta:n       = { load custom cjk font file = { #1 } }
+    , load~custom~cjk~font~file     .default:n    = { minimalist.font.cjk }
+    , load-custom-cjk-font-file     .meta:n       = { load custom cjk font file = { #1 } }
+    , load-custom-cjk-font-file     .default:n    = { minimalist.font.cjk }
+
+    , load custom math font file    .code:n       = {
+                                                      \bool_set_true:N \l__minimclass_load_custom_font_file_math_bool
+                                                      \str_set:Nn \l__minimclass_custom_font_file_math_str { #1 }
+                                                    }
+    , load custom math font file    .default:n    = { minimalist.font.math }
+    , load~custom~math~font~file    .meta:n       = { load custom math font file = { #1 } }
+    , load~custom~math~font~file    .default:n    = { minimalist.font.math }
+    , load-custom-math-font-file    .meta:n       = { load custom math font file = { #1 } }
+    , load-custom-math-font-file    .default:n    = { minimalist.font.math }
+%</einfart|simplivre>
+
+    , a4paper                 .bool_set:N         = \l__minimclass_a_four_paper_bool
+    , a4paper                 .initial:n          = { false }
+    , b5paper                 .bool_set:N         = \l__minimclass_b_five_paper_bool
+    , b5paper                 .initial:n          = { false }
+
+    , oneside                 .code:n             = { \PassOptionsToClass { \CurrentOption } { \l__minimclass_base_class_tl } }
+    , twoside                 .code:n             = { \PassOptionsToClass { \CurrentOption } { \l__minimclass_base_class_tl } }
+
+    , 11pt                    .code:n             = { \PassOptionsToClass { \CurrentOption } { \l__minimclass_base_class_tl } }
+    , 12pt                    .code:n             = { \PassOptionsToClass { \CurrentOption } { \l__minimclass_base_class_tl } }
+
+    , unknown                 .code:n             = {
+                                                      \PassOptionsToPackage { \CurrentOption } { minimalist }
+                                                    }
+  }
+\ProcessKeyOptions [ minimclass ]
+
+\LoadClass{\l__minimclass_base_class_tl}
+
+
+\NewDocumentCommand \IfPrintModeTF { m m }
+  {
+    \bool_if:NTF \l__minimclass_print_mode_bool { #1 } { #2 }
+  }
+\NewDocumentCommand \IfPrintModeT { m }
+  {
+    \bool_if:NT \l__minimclass_print_mode_bool { #1 }
+  }
+\NewDocumentCommand \IfPrintModeF { m }
+  {
+    \bool_if:NF \l__minimclass_print_mode_bool { #1 }
+  }
+
+
+%%================================
+%%  Page layout
+%%================================
+\RequirePackage { silence }
+\WarningFilter { geometry } { Over-specification }
+
+\PassOptionsToPackage { heightrounded } { geometry }
+\RequirePackage { geometry }
+
+\geometry
+  {
+    papersize = { 7in, 10in },
+    total = { 5.535in, 8.300in },
+    centering,
+    footnotesep = 2em plus 2pt minus 2pt,
+    footskip = .5in,
+  }
+
+\bool_if:NT \l__minimclass_b_five_paper_bool
+  {
+    \geometry
+      {
+        b5paper,
+        total = { 5.535in, 8.160in },
+        centering,
+        footnotesep = 2em plus 2pt minus 2pt,
+        footskip = .5in,
+      }
+  }
+
+\bool_if:NT \l__minimclass_a_four_paper_bool
+  {
+    \geometry
+      {
+        a4paper,
+        total = { 6.500in, 9.685in },
+        centering,
+        footnotesep = 2em plus 2pt minus 2pt,
+        footskip = .5in,
+      }
+  }
+
+\bool_if:NT \l__minimclass_fast_bool
+  {
+    \PassOptionsToPackage { fast } { minimalist }
+    \RequirePackage { draftwatermark }
+    \DraftwatermarkOptions { text = { \normalfont DRAFT }, color = paper!97!-paper }
+  }
+
+\RequirePackage { minimalist }
+
+\str_if_eq:onT { \l__minimalist_style_str } { classical }
+  {
+    \bool_set_false:N \l__minimclass_useindent_bool
+  }
+
+\bool_if:NTF \l__minimclass_useindent_bool
+  {
+    \RequirePackage { indentfirst }
+  }
+  {
+    \hook_gput_code:nnn { begindocument/before } { minimclass }
+      {
+        \RequirePackage { parskip }
+      }
+  }
+
+% \raggedbottom
+% \emergencystretch=2pt
+% \hfuzz=2pt
+% \vfuzz=2pt
+
+%%================================
+%%  Fonts
+%%================================
+\WarningFilter { latexfont } { Font~shape }
+\WarningFilter { latexfont } { Some~font  }
+
+\hook_gput_code:nnn { begindocument/before } { minimclass }
+  {
+    \IfPackageLoadedTF { biblatex }
+      {
+        \PassOptionsToPackage { biblatex } { embrac }
+      } {}
+    \RequirePackage { embrac }
+  }
+
+\cs_new_protected:Nn \__minimclass_load_file_or_config:Nnn
+  {
+    \bool_if:NT #1
+      {
+        \exp_args:Nx \file_if_exist:nT { #2 }
+          {
+            \exp_args:Nx \file_input:n { #2 }
+            \use_none:nn
+          }
+      }
+    \use:n { #3 }
+  }
+
+%<*einfart|simplivre>
+\cs_new_protected:Nn \__minimclass_if_font_exist:nnn
+  {
+    \bool_if:NTF \l__minimclass_fast_bool
+      { #3 }
+      { \fontspec_font_if_exist:nTF { #1 } { #2 } { #3 } }
+  }
+%</einfart|simplivre>
+
+\__minimclass_load_file_or_config:Nnn \l__minimclass_load_custom_font_file_bool { \l__minimclass_custom_font_file_str }
+  {
+    \RequirePackage { projlib-font }
+
+%<*minimart|minimbook>
+    \bool_if:NF \g_projlib_font_already_set_bool
+      {
+        \RequirePackage { mathpazo }
+        \RequirePackage { newpxtext }
+        \bool_if:NT \l__projlib_font_useosf_bool { \useosf }
+        \RequirePackage { amssymb }
+        \sys_if_engine_pdftex:F
+          {
+            \setsansfont { texgyreheros }
+              [
+                Extension      = .otf ,
+                Scale          = MatchUppercase ,
+                UprightFont    = *-regular ,
+                BoldFont       = *-bold ,
+                ItalicFont     = *-italic ,
+                BoldItalicFont = *-bolditalic ,
+              ]
+          }
+        % Adjusting the kerning of 'embrac' for 'newpxtext'
+        \hook_gput_code:nnn { begindocument/before } { minimclass }
+          {
+            \RenewEmph{[}{]}
+            \RenewEmph{(}{)}
+          }
+      }
+%</minimart|minimbook>
+%
+%<*einfart|simplivre>
+    \bool_if:NF \g_projlib_font_already_set_bool
+      {
+        \bool_if:NT \l__minimclass_fast_bool
+          {
+            \RequirePackage { mathpazo }
+          }
+
+        \PassOptionsToPackage { no-math,quiet } { fontspec }
+        \RequirePackage { fontspec }
+
+        \__minimclass_load_file_or_config:Nnn \l__minimclass_load_custom_font_file_latin_bool { \l__minimclass_custom_font_file_latin_str }
+          {
+            \bool_if:NTF \l__projlib_font_useosf_bool
+              {
+                \setmainfont { TeXGyrePagellaX }
+                  [
+                    Extension      = .otf,
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-Italic,
+                    BoldItalicFont = *-BoldItalic,
+                    Numbers        = OldStyle ,
+                  ]
+                \setsansfont { texgyreheros }
+                  [
+                    Extension      = .otf ,
+                    Scale          = MatchUppercase ,
+                    UprightFont    = *-regular ,
+                    BoldFont       = *-bold ,
+                    ItalicFont     = *-italic ,
+                    BoldItalicFont = *-bolditalic ,
+                    Numbers        = OldStyle ,
+                  ]
+                % \setsansfont { SourceSansPro }
+                %   [
+                %     Extension      = .otf,
+                %     UprightFont    = *-Regular,
+                %     BoldFont       = *-Semibold,
+                %     ItalicFont     = *-RegularIt,
+                %     BoldItalicFont = *-SemiboldIt,
+                %     WordSpace      = {1.25, 1, 1} ,
+                %     Numbers        = OldStyle ,
+                %   ]
+              }
+              {
+                \setmainfont { TeXGyrePagellaX }
+                  [
+                    Extension      = .otf,
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-Italic,
+                    BoldItalicFont = *-BoldItalic,
+                  ]
+                \setsansfont { texgyreheros }
+                  [
+                    Extension      = .otf ,
+                    Scale          = MatchUppercase ,
+                    UprightFont    = *-regular ,
+                    BoldFont       = *-bold ,
+                    ItalicFont     = *-italic ,
+                    BoldItalicFont = *-bolditalic ,
+                  ]
+                % \setsansfont { SourceSansPro }
+                %   [
+                %     Extension      = .otf,
+                %     UprightFont    = *-Regular,
+                %     BoldFont       = *-Semibold,
+                %     ItalicFont     = *-RegularIt,
+                %     BoldItalicFont = *-SemiboldIt,
+                %     WordSpace      = {1.25, 1, 1} ,
+                %   ]
+              }
+            \setmonofont { NewCMMono10 }
+              [
+                Scale          = 1.05 ,
+                Extension      = .otf,
+                UprightFont    = *-Regular,
+                BoldFont       = *-Bold,
+                ItalicFont     = *-Italic,
+                BoldItalicFont = *-BoldOblique,
+              ]
+
+            \projlib_language_set_linespacing_latin:n { \setstretch { 1.07 } }
+
+            \hook_gput_code:nnn { begindocument/before } { minimclass }
+              {
+                \RenewEmph{[}{]}
+                \RenewEmph{(}{)}
+              }
+          }
+      }
+
+
+    \PassOptionsToPackage { fontset = none, scheme = plain } { ctex }
+    \RequirePackage { ctex }
+
+
+    \__minimclass_load_file_or_config:Nnn \l__minimclass_load_custom_font_file_cjk_bool { \l__minimclass_custom_font_file_cjk_str }
+      {
+        \__minimclass_if_font_exist:nnn { SourceHanSerifSC-Regular }
+          {
+            \setCJKmainfont { SourceHanSerifSC }
+              [
+                UprightFont    = *-Regular,
+                BoldFont       = *-Bold,
+                ItalicFont     = *-Regular,
+                BoldItalicFont = *-Bold,
+              ]
+          }
+          {
+            \setCJKmainfont { FandolSong }
+              [
+                Extension      = .otf,
+                UprightFont    = *-Regular,
+                BoldFont       = *-Bold,
+                ItalicFont     = FandolKai-Regular ,
+                BoldItalicFont = FandolKai-Regular ,
+                BoldItalicFeatures = { FakeBold = 4 } ,
+              ]
+          }
+
+        \__minimclass_if_font_exist:nnn { SourceHanSansSC-Regular }
+          {
+            \setCJKsansfont { SourceHanSansSC }
+              [
+                UprightFont    = *-Regular,
+                BoldFont       = *-Bold,
+                ItalicFont     = *-Regular,
+                BoldItalicFont = *-Bold,
+              ]
+          }
+          {
+            \setCJKsansfont { FandolHei }
+              [
+                Extension      = .otf,
+                UprightFont    = *-Regular,
+                BoldFont       = *-Bold,
+                ItalicFont     = *-Regular,
+                BoldItalicFont = *-Bold,
+              ]
+          }
+
+        \__minimclass_if_font_exist:nnn { SourceHanMonoSC-Regular }
+          {
+            \setCJKmonofont { SourceHanMonoSC }
+              [
+                UprightFont    = *-Regular,
+                BoldFont       = *-Medium,
+                ItalicFont     = *-Regular,
+                BoldItalicFont = *-Medium,
+              ]
+          }
+          {
+            \setCJKmonofont { FandolFang-Regular.otf }
+              [
+                BoldFont       = * ,
+                BoldFeatures   = { FakeBold = 4 } ,
+                ItalicFont     = * ,
+                BoldItalicFont = * ,
+                BoldItalicFeatures = { FakeBold = 4 } ,
+              ]
+          }
+
+        \bool_if:NT \g__projlib_language_enabled_schinese_bool
+          {
+            \__minimclass_if_font_exist:nnn { SourceHanSerifSC-Regular }
+              {
+                \setCJKfamilyfont { SCmain } { SourceHanSerifSC }
+                  [
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-ExtraLight,
+                    BoldItalicFont = *-SemiBold,
+                  ]
+              }
+              {
+                \setCJKfamilyfont { SCmain } { FandolSong }
+                  [
+                    Extension      = .otf,
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = FandolKai-Regular ,
+                    BoldItalicFont = FandolKai-Regular ,
+                    BoldItalicFeatures = { FakeBold = 4 } ,
+                  ]
+              }
+            \__minimclass_if_font_exist:nnn { SourceHanSansSC-Regular }
+              {
+                \setCJKfamilyfont { SCsans } { SourceHanSansSC }
+                  [
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-Regular,
+                    BoldItalicFont = *-Bold,
+                  ]
+              }
+              {
+                \setCJKfamilyfont { SCsans } { FandolHei }
+                  [
+                    Extension      = .otf,
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-Regular,
+                    BoldItalicFont = *-Bold,
+                  ]
+              }
+            \__minimclass_if_font_exist:nnn { SourceHanMonoSC-Regular }
+              {
+                \setCJKfamilyfont { SCmono } { SourceHanMonoSC }
+                  [
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Medium,
+                    ItalicFont     = *-Regular,
+                    BoldItalicFont = *-Medium,
+                  ]
+              }
+              {
+                \setCJKfamilyfont { SCmono } { FandolFang-Regular.otf }
+                  [
+                    BoldFont       = * ,
+                    BoldFeatures   = { FakeBold = 4 } ,
+                    ItalicFont     = * ,
+                    BoldItalicFont = * ,
+                    BoldItalicFeatures = { FakeBold = 4 } ,
+                  ]
+              }
+          }
+
+        \bool_if:NT \g__projlib_language_enabled_tchinese_bool
+          {
+            \__minimclass_if_font_exist:nnn { SourceHanSerifTC-Regular }
+              {
+                \setCJKfamilyfont { TCmain } { SourceHanSerifTC }
+                  [
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-ExtraLight,
+                    BoldItalicFont = *-SemiBold,
+                  ]
+              }
+              {
+                \setCJKfamilyfont { TCmain } { FandolSong }
+                  [
+                    Extension      = .otf,
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = FandolKai-Regular ,
+                    BoldItalicFont = FandolKai-Regular ,
+                    BoldItalicFeatures = { FakeBold = 4 } ,
+                  ]
+              }
+            \__minimclass_if_font_exist:nnn { SourceHanSansTC-Regular }
+              {
+                \setCJKfamilyfont { TCsans } { SourceHanSansTC }
+                  [
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-Regular,
+                    BoldItalicFont = *-Bold,
+                  ]
+              }
+              {
+                \setCJKfamilyfont { TCsans } { FandolHei }
+                  [
+                    Extension      = .otf,
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-Regular,
+                    BoldItalicFont = *-Bold,
+                  ]
+              }
+            \__minimclass_if_font_exist:nnn { SourceHanMonoTC-Regular }
+              {
+                \setCJKfamilyfont { TCmono } { SourceHanMonoTC }
+                  [
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Medium,
+                    ItalicFont     = *-Regular,
+                    BoldItalicFont = *-Medium,
+                  ]
+              }
+              {
+                \setCJKfamilyfont { TCmono } { FandolFang-Regular.otf }
+                  [
+                    BoldFont       = * ,
+                    BoldFeatures   = { FakeBold = 4 } ,
+                    ItalicFont     = * ,
+                    BoldItalicFont = * ,
+                    BoldItalicFeatures = { FakeBold = 4 } ,
+                  ]
+              }
+          }
+
+        \bool_if:NT \g__projlib_language_enabled_japanese_bool
+          {
+            \__minimclass_if_font_exist:nnn { SourceHanSerif-Regular }
+              {
+                \setCJKfamilyfont { JPmain } { SourceHanSerif }
+                  [
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-ExtraLight,
+                    BoldItalicFont = *-SemiBold,
+                  ]
+              }
+              {
+                \setCJKfamilyfont { JPmain } { FandolSong }
+                  [
+                    Extension      = .otf,
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = FandolKai-Regular ,
+                    BoldItalicFont = FandolKai-Regular ,
+                    BoldItalicFeatures = { FakeBold = 4 } ,
+                  ]
+              }
+            \__minimclass_if_font_exist:nnn { SourceHanSans-Regular }
+              {
+                \setCJKfamilyfont { JPsans } { SourceHanSans }
+                  [
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-Regular,
+                    BoldItalicFont = *-Bold,
+                  ]
+              }
+              {
+                \setCJKfamilyfont { JPsans } { FandolHei }
+                  [
+                    Extension      = .otf,
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Bold,
+                    ItalicFont     = *-Regular,
+                    BoldItalicFont = *-Bold,
+                  ]
+              }
+            \__minimclass_if_font_exist:nnn { SourceHanMono-Regular }
+              {
+                \setCJKfamilyfont { JPmono } { SourceHanMono }
+                  [
+                    UprightFont    = *-Regular,
+                    BoldFont       = *-Medium,
+                    ItalicFont     = *-Regular,
+                    BoldItalicFont = *-Medium,
+                  ]
+              }
+              {
+                \setCJKfamilyfont { JPmono } { FandolFang-Regular.otf }
+                  [
+                    BoldFont       = * ,
+                    BoldFeatures   = { FakeBold = 4 } ,
+                    ItalicFont     = * ,
+                    BoldItalicFont = * ,
+                    BoldItalicFeatures = { FakeBold = 4 } ,
+                  ]
+              }
+          }
+
+        \cs_new:Nn \minimclass_cjk_sffamily: {}
+        \cs_new:Nn \minimclass_cjk_ttfamily: {}
+
+        \hook_gput_code:nnn { cmd/sffamily/after } { minimclass } { \minimclass_cjk_sffamily: }
+        \hook_gput_code:nnn { cmd/ttfamily/after } { minimclass } { \minimclass_cjk_ttfamily: }
+
+        \AddLanguageSetting [schinese]
+          {
+            \cs_set:Nn \minimclass_cjk_sffamily: { \CJKfamily { SCsans } }
+            \cs_set:Nn \minimclass_cjk_ttfamily: { \CJKfamily { SCmono } }
+            \CJKfamily { SCmain }
+            \hook_gput_code:nnn { normalfont } { minimclass } { \CJKfamily{SCmain} }
+          }
+        \AddLanguageSetting [tchinese]
+          {
+            \cs_set:Nn \minimclass_cjk_sffamily: { \CJKfamily { TCsans } }
+            \cs_set:Nn \minimclass_cjk_ttfamily: { \CJKfamily { TCmono } }
+            \CJKfamily { TCmain }
+            \hook_gput_code:nnn { normalfont } { minimclass } { \CJKfamily{TCmain} }
+          }
+        \AddLanguageSetting [japanese]
+          {
+            \cs_set:Nn \minimclass_cjk_sffamily: { \CJKfamily { JPsans } }
+            \cs_set:Nn \minimclass_cjk_ttfamily: { \CJKfamily { JPmono } }
+            \CJKfamily { JPmain }
+            \hook_gput_code:nnn { normalfont } { minimclass } { \CJKfamily{JPmain} }
+          }
+
+        % \tl_gset:Nn \g_minimalist_title_font_common_tl { \minimclass_cjk_sffamily: }
+      }
+
+
+    \__minimclass_load_file_or_config:Nnn \l__minimclass_load_custom_font_file_math_bool { \l__minimclass_custom_font_file_math_str }
+      {
+        \bool_if:NF \g_projlib_font_already_set_bool
+          {
+            \RequirePackage { amssymb }
+            \bool_if:NF \l__minimclass_fast_bool
+              {
+                \PassOptionsToPackage { warnings-off = { mathtools-colon, mathtools-overbracket } } { unicode-math }
+                \RequirePackage { unicode-math }
+                \unimathsetup { math-style = TeX, partial = upright, nabla = upright }
+                \setmathfont { KpMath-Regular.otf }
+                \setmathfont { KpMath-Regular.otf }
+                  [
+                    range = \amalg ,
+                    Scale = 0.84625
+                  ]
+                \setmathfont { KpMath-Sans.otf }
+                  [
+                    range = { \sum, \check, \hat }
+                  ]
+                \setmathfont { latinmodern-math.otf }
+                  [
+                    range = { frak, bffrak, \mitvarpi, \mupvarpi, \ast } ,
+                    Scale = 1.10
+                  ]
+                \setmathfont { texgyrepagella-math.otf }
+                  [
+                    range = { `(, `), `/, \backslash, \setminus, `| } ,
+                    Scale = 1.21
+                  ]
+                \setmathfont { texgyrepagella-math.otf }
+                  [
+                    range = { \mathcomma, \mathsemicolon } ,
+                  ]
+                \setmathfont { texgyrepagella-math.otf }
+                  [
+                    range = { it / { Latin, latin }, bfit / { Latin, latin }, up / num, bfup / num }
+                  ]
+                \setmathfont { KpMath-Regular.otf } [ range = { cal, bfcal }, RawFeature = +ss01 ]
+                % \setmathfont { KpMath-Regular.otf } [ range = {} ]
+
+                % https://tex.stackexchange.com/a/646715
+                \sys_if_engine_luatex:T
+                  {
+                    \mathitalicsmode=1
+                  }
+
+                \hook_gput_code:nnn { begindocument } { minimclass }
+                  {
+                    \cs_gset_eq:NN \overline \wideoverbar
+
+                    \NewCommandCopy \UMmathunderbar \mathunderbar
+                    % https://tex.stackexchange.com/a/759783
+                    % \RenewDocumentCommand \mathunderbar { m } { \UMmathunderbar{{}#1} }%
+                    \RenewDocumentCommand \mathunderbar { m } { {\vphantom{#1}\smash{\UMmathunderbar{{}#1}}} }
+                    \cs_gset_eq:NN \underline \mathunderbar
+
+                    \cs_gset_eq:NN \square \mdwhtsquare
+
+                    % https://tex.stackexchange.com/a/678611
+                    \newcommand{\limstrut}{\vrule depth0.2ex width 0pt}
+                    \renewcommand{\varprojlim}{\mathop{\underleftarrow{{\lim}\limstrut}}}
+                    \renewcommand{\varinjlim}{\mathop{\underrightarrow{{\lim}\limstrut}}}
+
+                    \let\setminus@old\setminus
+                    \renewcommand*{\setminus}{\!\setminus@old\!}
+                  }
+
+                % https://tex.stackexchange.com/a/647789
+                \hook_gput_code:nnn { begindocument } { minimclass }
+                  {
+                    \NewCommandCopy\unicodevdots\vdots
+                    \RenewDocumentCommand{\vdots}{}{\mathrel{\loweredvdots}}
+                  }
+                \newcommand{\loweredvdots}{\mathpalette\loweredvdots@\relax}
+                \newcommand{\loweredvdots@}[2]{%
+                  \begingroup
+                  \sbox\z@{$\m@th#1\unicodevdots$}%
+                  \vrule width \z@ height 2.25\ht\z@ depth 0.012\ht\z@
+                  \raisebox{0.25\height}{\usebox\z@}%
+                  \endgroup
+                }
+
+                % https://tex.stackexchange.com/a/678998
+                \hook_gput_code:nnn { begindocument } { minimclass }
+                  {
+                    \NewCommandCopy\standarddashv\dashv
+                    \NewCommandCopy\standardvdash\vdash
+                    \RenewDocumentCommand{\dashv}{}{\mathrel{\mathpalette\raisesymbol\standarddashv}}
+                    \RenewDocumentCommand{\vdash}{}{\mathrel{\mathpalette\raisesymbol\standardvdash}}
+                  }
+                \newcommand{\raisesymbol}[2]{%
+                  \begingroup
+                  \sbox\z@{$\m@th#1A$}%
+                  \sbox\tw@{$\m@th#1#2$}%
+                  \raisebox{\dimexpr(\ht\z@-\ht\tw@)/2}{\usebox{\tw@}}%
+                  \endgroup
+                }
+
+                \RequirePackage { tikz-cd }
+                \tikzcdset { arrow~style = tikz, diagrams = { >={Stealth[round,length=3.4pt,width=6.15pt,inset=2.25pt]} } }
+
+                \box_new:N \l__minimclass_xarrows_above_box
+                \box_new:N \l__minimclass_xarrows_below_box
+                \dim_new:N \l__minimclass_xarrows_length_dim
+                \cs_new_protected:Nn \minimclass_xarrows_generic:nnnn
+                  % #3 = option of \tikz
+                  % #4 = edge of \draw
+                  {
+                    \hbox_set:Nn \l__minimclass_xarrows_below_box { \ensuremath { \scriptstyle #1 } }
+                    \hbox_set:Nn \l__minimclass_xarrows_above_box { \ensuremath { \scriptstyle #2 } }
+                    \dim_set:Nn \l__minimclass_xarrows_length_dim
+                      { \dim_eval:n { \dim_max:nn { \box_wd:N \l__minimclass_xarrows_below_box } { \box_wd:N \l__minimclass_xarrows_above_box } + 1em } }
+                    \mathrel
+                      {
+                        \tikz [ #3, line~width = .6pt, baseline = -.5ex, every~node/.style = { inner~sep = 0pt }, >={Stealth[round,length=3.4pt,width=6.15pt,inset=2.25pt]} ]
+                          \draw (0,0) #4
+                            node [ below = 3pt ] { \box_use:N \l__minimclass_xarrows_below_box }
+                            node [ above = 2pt ] { \box_use:N \l__minimclass_xarrows_above_box }
+                            ( \l__minimclass_xarrows_length_dim ,0) ;
+                      }
+                  }
+
+                \RenewDocumentCommand \xrightarrow { O{} m }
+                  {
+                    \minimclass_xarrows_generic:nnnn { #1 } { #2 } { -> } { -- }
+                  }
+                \RenewDocumentCommand \xleftarrow { O{} m }
+                  {
+                    \minimclass_xarrows_generic:nnnn { #1 } { #2 } { <- } { -- }
+                  }
+                \RenewDocumentCommand \xleftrightarrow { O{} m }
+                  {
+                    \minimclass_xarrows_generic:nnnn { #1 } { #2 } { <-> } { -- }
+                  }
+                \RenewDocumentCommand \xhookrightarrow { O{} m }
+                  {
+                    \minimclass_xarrows_generic:nnnn { #1 } { #2 } {} { edge [ commutative~diagrams/hookrightarrow ] }
+                  }
+                \RenewDocumentCommand \xhookleftarrow { O{} m }
+                  {
+                    \minimclass_xarrows_generic:nnnn { #1 } { #2 } {} { edge [ commutative~diagrams/hookleftarrow ] }
+                  }
+                \RenewDocumentCommand \xmapsto { O{} m }
+                  {
+                    \minimclass_xarrows_generic:nnnn { #1 } { #2 } {} { edge [ commutative~diagrams/mapsto ] }
+                  }
+                \NewDocumentCommand \xlongequal { O{} m }
+                  {
+                    \minimclass_xarrows_generic:nnnn { #1 } { #2 } {} { edge [ commutative~diagrams/equal ] }
+                  }
+                \NewDocumentCommand \xtwoheadrightarrow { O{} m }
+                  {
+                    \minimclass_xarrows_generic:nnnn { #1 } { #2 } {} { edge [ commutative~diagrams/twoheadrightarrow ] }
+                  }
+                \NewDocumentCommand \xtwoheadleftarrow { O{} m }
+                  {
+                    \minimclass_xarrows_generic:nnnn { #1 } { #2 } {} { edge [ commutative~diagrams/twoheadleftarrow ] }
+                  }
+
+                \cs_new_protected:Nn \minimclass_xarrows_double_generic:nnnnnn
+                  % #3 = option of \tikz
+                  % #4 = edge 1 of \draw
+                  % #5 = edge 2 of \draw
+                  % #6 = sep/2
+                  {
+                    \hbox_set:Nn \l__minimclass_xarrows_below_box { \ensuremath { \scriptstyle #1 } }
+                    \hbox_set:Nn \l__minimclass_xarrows_above_box { \ensuremath { \scriptstyle #2 } }
+                    \dim_set:Nn \l__minimclass_xarrows_length_dim
+                      { \dim_eval:n { \dim_max:nn { \box_wd:N \l__minimclass_xarrows_below_box } { \box_wd:N \l__minimclass_xarrows_above_box } + 1em } }
+                    \mathrel
+                      {
+                        \tikz [ #3, line~width = .6pt, baseline = -.5ex, every~node/.style = { inner~sep = 0pt }, >={Stealth[round,length=3.4pt,width=6.15pt,inset=2.25pt]} ]
+                          {
+                            \draw (0,#6) #4
+                              node [ below = 4pt+#6 ] { \box_use:N \l__minimclass_xarrows_below_box }
+                              ( \l__minimclass_xarrows_length_dim ,#6) ;
+                            \draw (0,-#6) #5
+                              node [ above = 3pt+#6 ] { \box_use:N \l__minimclass_xarrows_above_box }
+                              ( \l__minimclass_xarrows_length_dim ,-#6) ;
+                          }
+                      }
+                  }
+
+                \NewDocumentCommand \xrightrightarrows { O{} m }
+                  {
+                    \minimclass_xarrows_double_generic:nnnnnn { #1 } { #2 } {} { edge [ commutative~diagrams/rightarrow ] } { edge [ commutative~diagrams/rightarrow ] } { .2em }
+                  }
+
+                \NewDocumentCommand \xleftleftarrows { O{} m }
+                  {
+                    \minimclass_xarrows_double_generic:nnnnnn { #1 } { #2 } {} { edge [ commutative~diagrams/leftarrow ] } { edge [ commutative~diagrams/leftarrow ] } { .2em }
+                  }
+
+                \hook_gput_code:nnn { begindocument/end } { minimclass }
+                  {
+                    \RenewDocumentCommand \twoheadrightarrow {}
+                      {
+                        \minimclass_xarrows_generic:nnnn {
+                          \mathchoice { \,\, } { \, } { } { }
+                        } {} {} { edge [ commutative~diagrams/twoheadrightarrow ] }
+                      }
+                    \RenewDocumentCommand \twoheadleftarrow {}
+                      {
+                        \minimclass_xarrows_generic:nnnn {
+                          \mathchoice { \,\, } { \, } { } { }
+                        } {} {} { edge [ commutative~diagrams/twoheadleftarrow ] }
+                      }
+                  }
+              }
+          }
+      }
+%</einfart|simplivre>
+  }
+
+%<*einfart|simplivre>
+% https://tex.stackexchange.com/a/419287
+\char_set_catcode_active:n { `\· }
+\cs_new_protected:Npn · { \ensuremath\cdot }
+%</einfart|simplivre>
+
+%%================================
+%%  Graphics
+%%================================
+\RequirePackage { graphicx }
+\graphicspath { { images/ } }
+\RequirePackage { wrapfig2 }
+\RequirePackage { float }
+\RequirePackage { caption }
+\captionsetup { font = small }
+
+%%================================
+%%  Icing on the cake
+%%================================
+\bool_if:NT \l__minimclass_fast_bool { \endinput }
+
+\sys_if_engine_luatex:TF
+  {
+    \RequirePackage { lua-widow-control }
+    \lwcsetup { balanced }
+  }
+  {
+    \PassOptionsToPackage { all } { nowidow }
+    \RequirePackage { nowidow }
+  }
+
+% https://tex.stackexchange.com/a/641824
+\sys_if_engine_xetex:T
+  {
+    \RequirePackage { regexpatch }
+    \skip_new:N \g_minimclass_parfillskip_skip
+    \xpatchcmd{\@trivlist}{\@flushglue}{\g_minimclass_parfillskip_skip}{}{}
+    \hook_gput_code:nnn { begindocument } { minimclass }
+      {
+        \skip_gset:Nn \g_minimclass_parfillskip_skip { 0pt plus \dim_eval:n { \linewidth - 3em } }
+        \skip_gset_eq:NN \parfillskip \g_minimclass_parfillskip_skip
+      }
+  }
+%</class>
+%
+%
+%<*minimalist>
+\keys_define:nn { minimalist }
+  {
+    , draft             .bool_set:N         = \l__minimalist_fast_bool
+    , draft             .initial:n          = { false }
+    , fast              .bool_set:N         = \l__minimalist_fast_bool
+
+    , style             .str_set:N          = \l__minimalist_style_str
+    , style             .initial:n          = { default }
+    , use-style         .str_set:N          = \l__minimalist_style_str
+    , use~style         .str_set:N          = \l__minimalist_style_str
+    , use style         .str_set:N          = \l__minimalist_style_str
+    , classical         .meta:n             = { style = classical }
+    , flow              .meta:n             = { style = flow      }
+    , plain             .meta:n             = { style = plain     }
+    , stream            .meta:n             = { style = stream    }
+
+    , use-boldface      .bool_set:N         = \l__minimalist_use_boldface_bool
+    , use-boldface      .initial:n          = { false }
+    , use~boldface      .bool_set:N         = \l__minimalist_use_boldface_bool
+    , use boldface      .bool_set:N         = \l__minimalist_use_boldface_bool
+    , title-in-boldface .bool_set:N         = \l__minimalist_use_boldface_bool
+    , title~in~boldface .bool_set:N         = \l__minimalist_use_boldface_bool
+    , title in boldface .bool_set:N         = \l__minimalist_use_boldface_bool
+    , title-in-bold     .bool_set:N         = \l__minimalist_use_boldface_bool
+    , title~in~bold     .bool_set:N         = \l__minimalist_use_boldface_bool
+    , title in bold     .bool_set:N         = \l__minimalist_use_boldface_bool
+
+    , use-sffamily       .bool_set:N        = \l__minimalist_use_sffamily_bool
+    , use-sffamily       .initial:n         = { false }
+    , use~sffamily       .bool_set:N        = \l__minimalist_use_sffamily_bool
+    , use sffamily       .bool_set:N        = \l__minimalist_use_sffamily_bool
+    , title-in-sffamily  .bool_set:N        = \l__minimalist_use_sffamily_bool
+    , title~in~sffamily  .bool_set:N        = \l__minimalist_use_sffamily_bool
+    , title in sffamily  .bool_set:N        = \l__minimalist_use_sffamily_bool
+
+    , use-scshape       .bool_set:N         = \l__minimalist_use_scshape_bool
+    , use-scshape       .initial:n          = { false }
+    , use~scshape       .bool_set:N         = \l__minimalist_use_scshape_bool
+    , use scshape       .bool_set:N         = \l__minimalist_use_scshape_bool
+    , title-in-scshape  .bool_set:N         = \l__minimalist_use_scshape_bool
+    , title~in~scshape  .bool_set:N         = \l__minimalist_use_scshape_bool
+    , title in scshape  .bool_set:N         = \l__minimalist_use_scshape_bool
+
+    , runin             .bool_set:N         = \l__minimalist_runin_bool
+    , runin             .initial:n          = { false }
+
+    , indent-items      .dim_set:N         = \l__minimalist_item_indentation_dim
+    , indent-items      .initial:n         = { 0pt }
+    , indent-items      .default:n         = { \parindent }
+    , indent~items      .dim_set:N         = \l__minimalist_item_indentation_dim
+    , indent~items      .default:n         = { \parindent }
+    , indent items      .dim_set:N         = \l__minimalist_item_indentation_dim
+    , indent items      .default:n         = { \parindent }
+    , indent-lists      .dim_set:N         = \l__minimalist_item_indentation_dim
+    , indent-lists      .default:n         = { \parindent }
+    , indent~lists      .dim_set:N         = \l__minimalist_item_indentation_dim
+    , indent~lists      .default:n         = { \parindent }
+    , indent lists      .dim_set:N         = \l__minimalist_item_indentation_dim
+    , indent lists      .default:n         = { \parindent }
+
+    , emphasize-theorems  .bool_set:N       = \l__minimalist_emphasize_theorem_bool
+    , emphasize-theorems  .initial:n        = { false }
+    , emphasize~theorems  .bool_set:N       = \l__minimalist_emphasize_theorem_bool
+    , emphasize theorems  .bool_set:N       = \l__minimalist_emphasize_theorem_bool
+
+    , theorem-in-new-line .bool_set:N       = \l__minimalist_theorem_in_new_line_bool
+    , theorem-in-new-line .initial:n        = { false }
+    , theorem~in~new~line .bool_set:N       = \l__minimalist_theorem_in_new_line_bool
+    , theorem in new line .bool_set:N       = \l__minimalist_theorem_in_new_line_bool
+
+    , theorem-with-qed    .bool_set:N       = \l__minimalist_theorem_with_qed_bool
+    , theorem-with-qed    .initial:n        = { false }
+    , theorem~with~qed    .bool_set:N       = \l__minimalist_theorem_with_qed_bool
+    , theorem with qed    .bool_set:N       = \l__minimalist_theorem_with_qed_bool
+
+    , colored-proof     .tl_set:N           = \l__minimalist_colored_proof_tl
+    , colored-proof     .initial:n          = { * }
+    , colored-proof     .default:n          = { blue!50!cyan!55!main-text }
+    , colored~proof     .tl_set:N           = \l__minimalist_colored_proof_tl
+    , colored~proof     .initial:n          = { * }
+    , colored~proof     .default:n          = { blue!50!cyan!55!main-text }
+    , colored proof     .tl_set:N           = \l__minimalist_colored_proof_tl
+    , colored proof     .initial:n          = { * }
+    , colored proof     .default:n          = { blue!50!cyan!55!main-text }
+
+    , unknown           .code:n             = {
+                                                \PassOptionsToPackage { \CurrentOption } { projlib-language }
+                                                \PassOptionsToPackage { \CurrentOption } { projlib-author }
+                                                \PassOptionsToPackage { \CurrentOption } { projlib-datetime }
+                                                \PassOptionsToPackage { \CurrentOption } { projlib-draft }
+                                                \PassOptionsToPackage { \CurrentOption } { projlib-font }
+                                                \PassOptionsToPackage { \CurrentOption } { projlib-logo }
+                                                \PassOptionsToPackage { \CurrentOption } { projlib-math }
+                                                \PassOptionsToPackage { \CurrentOption } { projlib-paper }
+                                                \PassOptionsToPackage { \CurrentOption } { projlib-theorem }
+                                              }
+  }
+\ProcessKeyOptions [ minimalist ]
+
+\PassOptionsToPackage { dvipsnames } { xcolor }
+
+\bool_new:N \l__minimalist_is_book_bool
+\cs_if_exist:cTF { c@chapter }
+  {
+    \bool_set_true:N \l__minimalist_is_book_bool
+  }
+  {
+    \bool_set_false:N \l__minimalist_is_book_bool
+  }
+
+%%================================
+%%  Line numbers
+%%================================
+\PassOptionsToPackage { pagewise,mathlines } { lineno }
+\RequirePackage { amsmath }
+\RequirePackage { lineno }
+\renewcommand{\linenumberfont}{\ttfamily\color{main-text!7!paper}\footnotesize}
+\setlength{\linenumbersep}{1em}
+
+\newif\ifLNturnsON
+\def\LocallyStopLineNumbers{\LNturnsONfalse
+    \ifLineNumbers\LNturnsONtrue\fi\nolinenumbers}
+\def\ResumeLineNumbers{\ifLNturnsON\linenumbers\fi}
+
+\hook_gput_code:nnn { cmd/tableofcontents/before } { minimalist } { \LocallyStopLineNumbers }
+\hook_gput_code:nnn { cmd/tableofcontents/after } { minimalist } { \ResumeLineNumbers }
+\hook_gput_code:nnn { env/bibliography/before } { minimalist } { \LocallyStopLineNumbers }
+\hook_gput_code:nnn { env/bibliography/after } { minimalist } { \ResumeLineNumbers }
+
+%%================================
+%%  Paper configuration
+%%================================
+\RequirePackage { projlib-paper }
+
+%%================================
+%%  Multi-language support
+%%================================
+\RequirePackage { projlib-language }
+
+%%================================
+%%  Loading the style
+%%================================
+\exp_args:No \RequirePackage { minimalist- \l__minimalist_style_str }
+%</minimalist>
+%
+%<*style>
+\IfPackageLoadedTF { minimalist } {}
+  {
+    \msg_new:nnn { \@currname }
+      { minimalist-not-loaded }
+      { "#1"~is~an~internal~style~of~"minimalist".~To~use~it,~you~must~load~the~package~"minimalist"~first. }
+    \msg_warning:nnx { \@currname } { minimalist-not-loaded } { \@currname }
+    \endinput
+  }
+
+\bool_new:N \l__minimalist_colored_proof_bool
+\bool_set_true:N \l__minimalist_colored_proof_bool
+\tl_if_eq:NnTF \l__minimalist_colored_proof_tl { * }
+  {
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-stream|minimalist-classicthesis>
+    \bool_set_false:N \l__minimalist_colored_proof_bool
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-stream|minimalist-classicthesis>
+%<*minimalist-flow>
+    \tl_set:Nn \l__minimalist_colored_proof_tl { blue!50!cyan!55!main-text }
+%</minimalist-flow>
+  }
+  {
+    \tl_if_eq:NnT \l__minimalist_colored_proof_tl { false }
+      {
+        \bool_set_false:N \l__minimalist_colored_proof_bool
+      }
+  }
+
+%%================================
+%%  Title fonts
+%%================================
+\RequirePackage { relsize }
+\RequirePackage { anyfontsize }
+
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-stream>
+\NewCommandCopy \minimalist_original_bfseries: \bfseries
+\bool_new:N \l_minimalist_is_under_bfseries_bool
+\bool_set_false:N \l_minimalist_is_under_bfseries_bool
+\RenewDocumentCommand \bfseries { }
+  {
+    \bool_if:NF \l_minimalist_is_under_bfseries_bool
+      {
+        \colorlet{minimalist-temp-color}{.}
+        \color{minimalist-temp-color!90!paper}
+      }
+    \minimalist_original_bfseries:
+    \bool_set_true:N \l_minimalist_is_under_bfseries_bool
+  }
+\bool_if:NTF \l__minimalist_use_boldface_bool
+  {
+    \cs_new:Nn \minimalist_bfseries: { \bfseries }
+  }
+  {
+    \cs_new:Nn \minimalist_bfseries: {}
+  }
+
+\bool_if:NTF \l__minimalist_use_sffamily_bool
+  {
+    \cs_new:Nn \minimalist_sffamily: { \sffamily }
+  }
+  {
+    \cs_new:Nn \minimalist_sffamily: {}
+  }
+
+\bool_if:NTF \l__minimalist_use_scshape_bool
+  {
+    \cs_new:Nn \minimalist_scshape: { \scshape }
+  }
+  {
+    \cs_new:Nn \minimalist_scshape: {}
+  }
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-stream>
+%<*minimalist-classicthesis>
+\cs_new:Nn \minimalist_bfseries: {}
+\cs_new:Nn \minimalist_sffamily: {}
+\cs_new:Nn \minimalist_scshape: {}
+
+\hook_gput_code:nnn { begindocument } { minimalist }
+  {
+    \@ifpackageloaded{classicthesis-arsclassica}
+      {
+        \cs_set:Nn \minimalist_sffamily: { \sffamily }
+      }
+      {
+        \cs_set:Nn \minimalist_sffamily: {}
+      }
+  }
+%</minimalist-classicthesis>
+
+
+\tl_new:N \g_minimalist_title_font_common_tl
+
+\tl_new:N \g_minimalist_title_font_part_tl
+\tl_new:N \g_minimalist_title_font_chapter_tl
+\tl_new:N \g_minimalist_title_font_section_tl
+\tl_new:N \g_minimalist_title_font_subsection_tl
+\tl_new:N \g_minimalist_title_font_subsubsection_tl
+\tl_new:N \g_minimalist_title_font_paragraph_tl
+
+%<*minimalist-default|minimalist-plain|minimalist-classicthesis>
+\tl_gset:Nn \g_minimalist_title_font_part_tl          { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl }
+\tl_gset:Nn \g_minimalist_title_font_chapter_tl       { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl \minimalist_scshape: }
+\tl_gset:Nn \g_minimalist_title_font_section_tl       { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl \minimalist_scshape: }
+\tl_gset:Nn \g_minimalist_title_font_subsection_tl    { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl \minimalist_scshape: }
+\tl_gset:Nn \g_minimalist_title_font_subsubsection_tl { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl }
+\tl_gset:Nn \g_minimalist_title_font_paragraph_tl     { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl \minimalist_scshape: }
+%</minimalist-default|minimalist-plain|minimalist-classicthesis>
+%<*minimalist-classical>
+\tl_gset:Nn \g_minimalist_title_font_part_tl          { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl }
+\tl_gset:Nn \g_minimalist_title_font_chapter_tl       { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl \minimalist_scshape: }
+\tl_gset:Nn \g_minimalist_title_font_section_tl       { \minimalist_bfseries:\minimalist_sffamily: }
+\tl_gset:Nn \g_minimalist_title_font_subsection_tl    { \minimalist_bfseries:\minimalist_sffamily: }
+\tl_gset:Nn \g_minimalist_title_font_subsubsection_tl { \minimalist_bfseries:\minimalist_sffamily: \itshape }
+\tl_gset:Nn \g_minimalist_title_font_paragraph_tl     { \minimalist_bfseries:\minimalist_sffamily: \minimalist_scshape: }
+%</minimalist-classical>
+%<*minimalist-flow|minimalist-stream>
+\tl_gset:Nn \g_minimalist_title_font_part_tl          { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl }
+\tl_gset:Nn \g_minimalist_title_font_chapter_tl       { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl \minimalist_scshape: }
+\tl_gset:Nn \g_minimalist_title_font_section_tl       { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl \minimalist_scshape: }
+\tl_gset:Nn \g_minimalist_title_font_subsection_tl    { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl \minimalist_scshape: }
+% \bool_if:NTF \l__minimalist_runin_bool
+%   {
+%     \tl_gset:Nn \g_minimalist_title_font_subsubsection_tl { \itshape \g_minimalist_title_font_common_tl }
+%   }
+%   {
+%     \tl_gset:Nn \g_minimalist_title_font_subsubsection_tl { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl }
+%   }
+\tl_gset:Nn \g_minimalist_title_font_subsubsection_tl { \itshape \g_minimalist_title_font_common_tl }
+\tl_gset:Nn \g_minimalist_title_font_paragraph_tl     { \minimalist_bfseries:\minimalist_sffamily: \g_minimalist_title_font_common_tl \minimalist_scshape: }
+%</minimalist-flow|minimalist-stream>
+
+\bool_if:NF \l__minimalist_fast_bool
+  {
+    \RequirePackage { tikz }
+    \ExplSyntaxOff
+    \usetikzlibrary{calc,shadings}
+    \ExplSyntaxOn
+    \RequirePackage { tikzpagenodes } % For `current page text area`
+  }
+
+%<*minimalist-classical>
+\bool_if:NTF \l__minimalist_fast_bool
+  {
+    \tl_const:Nn \l_minimalist_sep_bar { $|$ }
+  }
+  {
+    \tl_const:Nn \l_minimalist_sep_bar
+      {
+        \skip_horizontal:n { .1em }
+        \tikz[baseline=.125em] \draw[line~width=.9pt] (0,0) -- (0,.9em);
+        \skip_horizontal:n { .1em }
+      }
+  }
+%</minimalist-classical>
+
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-stream>
+%%================================
+%%  Footer
+%%================================
+\RequirePackage { geometry }
+\RequirePackage { fancyhdr }
+\RequirePackage { extramarks }
+
+\hook_gput_code:nnn { begindocument/before } { minimalist }
+  {
+    \fancyhfoffset { 0pt }
+  }
+
+\tl_new:N \l_minimalist_leftmark_tl
+\tl_new:N \l_minimalist_rightmark_tl
+
+\tl_set:Nn \l_minimalist_leftmark_tl
+  {
+    \begin{minipage}[t]{.833\textwidth}
+      \lastleftmark
+    \end{minipage}
+  }
+\tl_set:Nn \l_minimalist_rightmark_tl
+  {
+    \begin{minipage}[t]{.833\textwidth}
+      \filleft
+      \lastrightmark
+    \end{minipage}
+  }
+
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+\fancypagestyle { fancy }
+  {
+    \fancyhf { }
+    \if@twoside
+      \fancyfoot[RO]
+        {
+          \textcolor { main-text!30!paper } { \small \l_minimalist_rightmark_tl }
+          \rlap
+            {
+              \nobreakspace \nobreakspace \nobreakspace \nobreakspace
+              \textcolor { main-text!75!paper } { \thepage }
+            }
+        }
+      \fancyfoot[LE]
+        {
+          \leavevmode
+          \llap
+            {
+              \textcolor { main-text!75!paper } { \thepage }
+              \nobreakspace \nobreakspace \nobreakspace \nobreakspace
+            }
+          \textcolor { main-text!30!paper } { \small \l_minimalist_leftmark_tl }
+        }
+    \else
+      \fancyfoot[R]
+        {
+          \textcolor { main-text!30!paper } { \small \l_minimalist_rightmark_tl }
+          \rlap
+            {
+              \nobreakspace \nobreakspace \nobreakspace \nobreakspace
+              \textcolor { main-text!75!paper } { \thepage }
+            }
+        }
+    \fi
+    \renewcommand { \headrulewidth } { 0pt }
+  }
+\pagestyle { fancy }
+
+\fancypagestyle { plain }
+  {
+    \fancyhf { }
+    \if@twoside
+      \fancyfoot[RO]
+        {
+          \nobreakspace
+          \rlap
+            {
+              \nobreakspace \nobreakspace \nobreakspace \nobreakspace
+              \textcolor { main-text!75!paper } { \thepage }
+            }
+        }
+      \fancyfoot[LE]
+        {
+          \leavevmode
+          \llap
+            {
+              \textcolor { main-text!75!paper } { \thepage }
+              \nobreakspace \nobreakspace \nobreakspace \nobreakspace
+            }
+          \nobreakspace
+        }
+    \else
+      \fancyfoot[R]
+        {
+          \nobreakspace
+          \rlap
+            {
+              \nobreakspace \nobreakspace \nobreakspace \nobreakspace
+              \textcolor { main-text!75!paper } { \thepage }
+            }
+        }
+    \fi
+    \renewcommand { \headrulewidth } { 0pt }
+  }
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+%<*minimalist-classical>
+\fancypagestyle { fancy }
+  {
+    \fancyhf { }
+    \if@twoside
+      \fancyfoot[RO]
+        {
+          \small
+          \textcolor { main-text!30!paper } { \l_minimalist_rightmark_tl }
+          \nobreakspace \nobreakspace
+          \rlap
+            {
+              \textcolor { main-text!27!paper } { \l_minimalist_sep_bar }
+              \nobreakspace \nobreakspace
+              \thepage
+            }
+        }
+      \fancyfoot[LE]
+        {
+          \small
+          \leavevmode
+          \llap
+            {
+              \thepage
+              \nobreakspace \nobreakspace
+              \textcolor { main-text!27!paper } { \l_minimalist_sep_bar }
+            }
+          \nobreakspace \nobreakspace
+          \textcolor { main-text!30!paper } { \l_minimalist_leftmark_tl }
+        }
+    \else
+      \fancyfoot[R]
+        {
+          \small
+          \textcolor { main-text!30!paper } { \l_minimalist_rightmark_tl }
+          \nobreakspace \nobreakspace
+          \rlap
+            {
+              \textcolor { main-text!27!paper } { \l_minimalist_sep_bar }
+              \nobreakspace \nobreakspace
+              \thepage
+            }
+        }
+    \fi
+    \renewcommand { \headrulewidth } { 0pt }
+  }
+\pagestyle { fancy }
+
+\fancypagestyle { plain }
+  {
+    \fancyhf { }
+    \if@twoside
+      \fancyfoot[RO]
+        {
+          \small
+          \nobreakspace
+          \rlap
+            {
+              \textcolor { main-text!27!paper } { \l_minimalist_sep_bar }
+              \nobreakspace \nobreakspace
+              \thepage
+            }
+        }
+      \fancyfoot[LE]
+        {
+          \small
+          \leavevmode
+          \llap
+            {
+              \thepage
+              \nobreakspace \nobreakspace
+              \textcolor { main-text!27!paper } { \l_minimalist_sep_bar }
+            }
+        }
+    \else
+      \fancyfoot[R]
+        {
+          \small
+          \nobreakspace
+          \rlap
+            {
+              \textcolor { main-text!27!paper } { \l_minimalist_sep_bar }
+              \nobreakspace \nobreakspace
+              \thepage
+            }
+        }
+    \fi
+    \renewcommand { \headrulewidth } { 0pt }
+  }
+%</minimalist-classical>
+
+\bool_if:NTF \l__minimalist_is_book_bool
+  {
+    \bool_if:NTF \l__minimalist_fast_bool
+      {
+        \newcommand{ \minimalist_draw_help_line: }{}
+      }
+      {
+        \newcommand{ \minimalist_draw_help_line: }
+          {
+            \begin{tikzpicture}[remember~picture,overlay]
+              \foreach\i in {0,1,...,5}{
+                \fill[opacity=0.12-0.02*\i]
+                    ($(current~page~text~area.north~east)+(-\i*0.5em-.025em,-10pt+\i*1.1pt)$)
+                      rectangle ($(current~page~text~area.south~east)+(-\i*0.5em+.025em,10pt-\i*1.1pt)$);
+                \shade[top~color=paper,bottom~color=main-text,opacity=0.12-0.02*\i]
+                    ($(current~page~text~area.north~east)+(-\i*0.5em-.025em,2pt)$)
+                      rectangle ($(current~page~text~area.north~east)+(-\i*0.5em+.025em,-10pt+\i*1.1pt)$);
+                \shade[top~color=main-text,bottom~color=paper,opacity=0.12-0.02*\i]
+                    ($(current~page~text~area.south~east)+(-\i*0.5em-.025em,-2pt)$)
+                      rectangle ($(current~page~text~area.south~east)+(-\i*0.5em+.025em,10pt-\i*1.1pt)$);
+              }
+            \end{tikzpicture}
+          }
+      }
+    \fancypagestyle { part }
+      {
+        \fancyhf { }
+        \renewcommand { \headrulewidth } { 0pt }
+        \fancyhead[C] { \minimalist_draw_help_line: }
+      }
+    \addtolength { \headheight } { 20pt }
+    \addtolength { \topmargin } { -20pt }
+    \if@twoside
+        \renewcommand{\chaptermark}[1]{\markboth{\textsc{#1}}{}}
+    \else
+        \renewcommand{\chaptermark}[1]{\markboth{\textsc{#1}}{\textsc{#1}}}
+    \fi
+    \renewcommand*{\sectionmark}[1]{
+      \markright{\protect\g_minimalist_section_decoration_char_tl\nobreakspace\thesection\nobreakspace\protect\g_minimalist_section_decoration_char_tl\nobreakspace\nobreakspace\nobreakspace#1}}
+  }
+  {
+    \if@twoside
+        \renewcommand*{\sectionmark}[1]{\markboth{\textsc{#1}}{}}
+    \else
+        \renewcommand*{\sectionmark}[1]{\markboth{\textsc{#1}}{\textsc{#1}}}
+    \fi
+  }
+
+\renewcommand*{\thefootnote}{\textcolor{main-text!45!paper}{\arabic{footnote}}}
+
+\bool_if:NT \l__minimalist_is_book_bool
+  {
+    \hook_gput_code:nnn { cmd/frontmatter/before } { minimalist }
+      {
+        \renewcommand*{\thefootnote}{\textcolor{main-text!45!paper}{\fnsymbol{footnote}}}
+      }
+    \hook_gput_code:nnn { cmd/mainmatter/before } { minimalist }
+      {
+        \setcounter{footnote}{0}
+        \renewcommand*{\thefootnote}{\textcolor{main-text!45!paper}{\arabic{footnote}}}
+      }
+  }
+
+%%================================
+%%  Title format
+%%================================
+\RequirePackage [ explicit, newparttoc ] { titlesec }
+% \renewcommand{\bottomtitlespace}{.1\textheight}
+\PassOptionsToPackage { normalem } { ulem }
+\RequirePackage { ulem }
+
+%<*minimalist-default|minimalist-flow|minimalist-stream>
+\cs_new:Nn \minimalist_title_numbering_apply_font:n { { \usefont{U}{zeur}{b}{n} #1 } }
+%</minimalist-default|minimalist-flow|minimalist-stream>
+%<*minimalist-plain|minimalist-classical>
+\cs_new:Nn \minimalist_title_numbering_apply_font:n { #1 }
+%</minimalist-plain|minimalist-classical>
+
+\cs_new_protected:Nn \minimalist_apply_title_numbering_style_static:n
+  {
+%<*minimalist-default|minimalist-flow|minimalist-stream>
+    \tl_set:Nx \l_tmpa_tl { #1 }
+    \regex_replace_all:nnN { (\w) } { \c{minimalist_original_bfseries:}{\1} } \l_tmpa_tl
+    \regex_replace_all:nnN { (\d) } { {\c{minimalist_title_numbering_apply_font:n}{\1}} } \l_tmpa_tl
+    % \textcolor { .!39!paper } { \normalfont \l_tmpa_tl }
+    \bool_if:NF \l_minimalist_is_under_bfseries_bool
+      {
+        \colorlet{minimalist-temp-color}{.}
+      }
+    \textcolor { minimalist-temp-color!39!paper } { \normalfont \l_tmpa_tl }
+%</minimalist-default|minimalist-flow|minimalist-stream>
+%<*minimalist-plain|minimalist-classical>
+    #1
+%</minimalist-plain|minimalist-classical>
+  }
+
+%<*minimalist-default|minimalist-flow|minimalist-stream>
+\cs_new_protected:Nn \minimalist_apply_title_numbering_style:n
+  {
+    \group_begin:
+    \tl_set:Nx \l_tmpa_tl { #1 }
+    \regex_replace_all:nnN { (\w) } { \c{minimalist_original_bfseries:}{\1} } \l_tmpa_tl
+    \regex_replace_all:nnN { (\d) } { {\c{minimalist_title_numbering_apply_font:n}{\1}} } \l_tmpa_tl
+    \exp_args:Nnx \regex_count:nnN { \. } {#1} \l_tmpa_int
+%<*minimalist-default|minimalist-flow>
+    \int_case:nn { \l_tmpa_int }
+      {
+        { 0 } { \textcolor { .!39!paper } }
+        { 1 } { \textcolor { .!39!paper } }
+        { 2 } { \textcolor { .!39!paper } }
+        { 3 } { \textcolor { .!39!paper } }
+      }
+%</minimalist-default|minimalist-flow>
+%<*minimalist-stream>
+    \bool_if:NTF \l__minimalist_is_book_bool
+      {
+        \int_case:nn { \l_tmpa_int }
+          {
+            { 0 } { \textcolor { .!39!paper } }
+            { 1 } { \textcolor { .!39!paper } }
+            { 2 } { \textcolor { .!39!paper } }
+            { 3 } { \smaller \textcolor { .!24!paper } }
+          }
+      }
+      {
+        \int_case:nn { \l_tmpa_int }
+          {
+            { 0 } { \textcolor { .!39!paper } }
+            { 1 } { \textcolor { .!39!paper } }
+            { 2 } { \smaller[2] \textcolor { .!24!paper } }
+          }
+      }
+%</minimalist-stream>
+    \l_tmpa_tl
+    \group_end:
+  }
+%</minimalist-default|minimalist-flow|minimalist-stream>
+%<*minimalist-plain>
+\cs_new_protected:Nn \minimalist_apply_title_numbering_style:n
+  {
+    #1
+  }
+%</minimalist-plain>
+
+\newcommand{\partstring}{\MakeUppercase{{\partname\nobreakspace\protect\thepart}}}
+
+\AddLanguageSetting
+  {
+    \renewcommand{\partstring}{\MakeUppercase{{\partname\nobreakspace\protect\thepart}}}
+  }
+\AddLanguageSetting [ schinese ]
+  {
+    \renewcommand{\partstring}{第 \zhnumber{\arabic{part}} 部分}
+  }
+\AddLanguageSetting [ tchinese ]
+  {
+    \renewcommand{\partstring}{第 \zhnumber{\arabic{part}} 部分}
+  }
+\AddLanguageSetting [ japanese ]
+  {
+    \renewcommand{\partstring}{第 \nobreakspace\thepart\nobreakspace 部}
+  }
+
+
+%<*minimalist-stream>
+\dim_new:N \l_minimalist_title_sep_dim
+\dim_set:Nn \l_minimalist_title_sep_dim { 1em }
+%</minimalist-stream>
+
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow>
+    \setcounter{secnumdepth}{3}
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow>
+%<*minimalist-stream>
+    \setcounter{secnumdepth}{4}
+%</minimalist-stream>
+
+\bool_if:NTF \l__minimalist_is_book_bool
+  {
+    %% Part
+    \titleclass{\part}{top} % make part like a chapter
+    \titleformat{\part}[display]
+      {\thispagestyle{part}
+      \LocallyStopLineNumbers
+      \g_minimalist_title_font_part_tl\filleft}
+      {\partstring}
+      {1em}
+      {\fontsize{20}{24}\selectfont\MakeUppercase{#1}}
+      [\ResumeLineNumbers]
+    \titleformat{name=\part,numberless}[display]
+      {\thispagestyle{part}
+      \LocallyStopLineNumbers
+        % \phantomsection\addcontentsline{toc}{part}{#1}
+      \g_minimalist_title_font_part_tl\filleft}
+      {\phantom{\MakeUppercase{\partname}}}
+      {1em}
+      {\fontsize{20}{24}\selectfont\MakeUppercase{#1}}
+      [\ResumeLineNumbers]
+    \titlespacing*{\part}{0pt}{5em}{6em}
+    %% Text after part
+    \newcommand{\parttext}[1]{
+      \vfill
+      \LocallyStopLineNumbers
+      \begin{flushright}
+        \begin{minipage}{0.833\textwidth}
+          \color{main-text!80!paper}\raggedleft#1
+        \end{minipage}
+      \end{flushright}
+      \ResumeLineNumbers
+      \vfill\vfill
+      \cleardoublepage
+    }
+
+    %% Chapter
+%<*minimalist-default|minimalist-plain|minimalist-flow>
+    \titleformat{\chapter}
+      {\thispagestyle{fancy}
+      \LocallyStopLineNumbers
+      \color{main-text!80!paper}\g_minimalist_title_font_chapter_tl\fontsize{16}{0}\selectfont}{}{0em}
+      {
+%<*minimalist-default|minimalist-flow>
+        \rlap
+          {
+            \hspace*{-.5em}
+            \color{main-text!10!paper}
+            \fontsize{90}{0}\selectfont\raisebox{-10pt}{ \minimalist_title_numbering_apply_font:n { \thechapter } }
+          }
+%</minimalist-default|minimalist-flow>
+%<*minimalist-plain>
+        {\fontsize{30}{0}\selectfont\minimalist_title_numbering_apply_font:n { \thechapter }}\\[1em]
+%</minimalist-plain>
+        #1
+      }
+      [\ResumeLineNumbers]
+    \titleformat{name=\chapter,numberless}
+      {\thispagestyle{fancy}
+      \LocallyStopLineNumbers
+        % \phantomsection\addcontentsline{toc}{chapter}{#1}
+      \color{main-text!90!paper}\g_minimalist_title_font_chapter_tl\fontsize{16}{0}\selectfont}{}{0em}
+      {
+        \rlap
+          {
+            \hspace*{-.5em}
+            \fontsize{80}{0}\selectfont\raisebox{-10pt}{ \phantom{*} }
+          }
+        #1
+      }
+      [\ResumeLineNumbers]
+%</minimalist-default|minimalist-plain|minimalist-flow>
+%<*minimalist-classical>
+    \titleformat{\chapter}
+      {\thispagestyle{fancy}
+      \LocallyStopLineNumbers
+      \color{main-text!80!paper}\fontsize{16}{0}\selectfont}{}{0em}
+      {\rlap{\hspace*{-.5em}{\color{main-text!12!paper}
+        \fontsize{80}{0}\selectfont\raisebox{-7pt}{\thechapter}}} \g_minimalist_title_font_chapter_tl #1}
+      [\ResumeLineNumbers]
+    \titleformat{name=\chapter,numberless}
+      {\thispagestyle{fancy}
+      \LocallyStopLineNumbers
+        % \phantomsection\addcontentsline{toc}{chapter}{#1}
+      \color{main-text!80!paper}\fontsize{16}{0}\selectfont}{}{0em}
+      {\rlap{\hspace*{-.5em}{\color{main-text!12!paper}
+        \fontsize{80}{0}\selectfont\normalfont\raisebox{-7pt}{*}}} \g_minimalist_title_font_chapter_tl #1}
+      [\ResumeLineNumbers]
+%</minimalist-classical>
+%<*minimalist-stream>
+    \titleformat{\chapter}
+      {\thispagestyle{fancy}
+      \LocallyStopLineNumbers
+      \color{main-text!90!paper}
+      \g_minimalist_title_font_chapter_tl\fontsize{16}{0}\selectfont}{}{0em}
+      {
+        \llap{
+          {
+            \color{main-text!24!paper}
+            \fontsize{40}{0}\selectfont
+            \raisebox{-5pt}{ \minimalist_title_numbering_apply_font:n { \thechapter } }
+          }
+          \skip_horizontal:n { .75 \l_minimalist_title_sep_dim }
+        }
+        #1
+      }
+      [\ResumeLineNumbers]
+    \titleformat{name=\chapter,numberless}
+      {\thispagestyle{fancy}
+      \LocallyStopLineNumbers
+        % \phantomsection\addcontentsline{toc}{chapter}{#1}
+      \color{main-text!90!paper}
+      \g_minimalist_title_font_chapter_tl\fontsize{16}{0}\selectfont}{}{0em}
+      {
+        #1
+      }
+      [\ResumeLineNumbers]
+%</minimalist-stream>
+  }
+  {
+    %% Part
+    \titleformat{\part}[display]
+      {\LocallyStopLineNumbers
+      \g_minimalist_title_font_part_tl\filleft}
+      {\partstring}
+      {.3em}
+      {\fontsize{16}{0}\selectfont\MakeUppercase{#1}}
+      [\ResumeLineNumbers]
+    \titleformat{name=\part,numberless}[display]
+      {\LocallyStopLineNumbers
+        % \phantomsection\addcontentsline{toc}{part}{#1}
+      \g_minimalist_title_font_part_tl\filleft}
+      {\phantom{\MakeUppercase{\partname}}}
+      {.3em}
+      {\fontsize{16}{0}\selectfont\MakeUppercase{#1}}
+      [\ResumeLineNumbers]
+    %% Text after part
+    \newcommand{\parttext}[1]{
+      \LocallyStopLineNumbers
+      \begin{flushright}
+        \begin{minipage}{0.833\textwidth}
+          \color{main-text!80!paper}\raggedleft#1
+        \end{minipage}
+      \end{flushright}
+      \ResumeLineNumbers
+    }
+  }
+
+%% Section
+%<*minimalist-default|minimalist-plain>
+\tl_gset:Nn \g_minimalist_section_decoration_char_tl {}
+\titleformat{\section}
+  {\LocallyStopLineNumbers
+  \g_minimalist_title_font_section_tl\centering}
+%<*minimalist-default>
+  {\raisebox{-.125ex}{\large \minimalist_apply_title_numbering_style:n { \thesection } }}{1em}
+%</minimalist-default>
+%<*minimalist-plain>
+    { \minimalist_apply_title_numbering_style:n { \thesection } }{1em}
+%</minimalist-plain>
+  {#1}
+  [\ResumeLineNumbers]
+%</minimalist-default|minimalist-plain>
+%<*minimalist-classical>
+\renewcommand\thesection{\arabic{section}}
+\newcommand\seculine{\bgroup\markoverwith{\color{main-text!27!paper}
+    \rule[-0.9ex]{2pt}{.6pt}\hspace{-2pt}\rule[-1.2ex]{2pt}{.6pt}}\ULon}
+\bool_if:NTF \l__minimalist_fast_bool
+  {
+    \tl_gset:Nn \g_minimalist_section_decoration_char_tl { \raisebox{.03em}{\normalfont/} }
+  }
+  {
+    \tl_gset:Nn \g_minimalist_section_decoration_char_tl
+      {
+        \tikz[baseline=.125em] \draw[line~width=.9pt] (-.12em,0) -- (.12em,.9em);
+      }
+  }
+\titleformat{\section}
+  {\LocallyStopLineNumbers
+  \g_minimalist_title_font_section_tl\centering}{}{0em}
+  {{\small\textcolor{main-text!27!paper}{\footnotesize \g_minimalist_section_decoration_char_tl }
+    \,\,\textcolor{main-text!90!paper}{\minimalist_bfseries:\minimalist_sffamily:\arabic{section}}
+    \,\,\textcolor{main-text!27!paper}{\footnotesize \g_minimalist_section_decoration_char_tl }}\\
+    \seculine{#1}}
+  [\ResumeLineNumbers]
+\titleformat{name=\section,numberless}
+  {\LocallyStopLineNumbers
+    % \phantomsection\addcontentsline{toc}{section}{#1}
+  \g_minimalist_title_font_section_tl\centering}{}{0em}
+  {\seculine{#1}}
+  [\ResumeLineNumbers]
+%</minimalist-classical>
+%<*minimalist-flow>
+\tl_gset:Nn \g_minimalist_section_decoration_char_tl {}
+\titleformat{\section}
+  {\LocallyStopLineNumbers
+  \centering}
+  {\raisebox{-.02\baselineskip}{\large \minimalist_apply_title_numbering_style:n { \thesection } }}{1em}
+  {\g_minimalist_title_font_section_tl #1}
+  [\ResumeLineNumbers]
+%</minimalist-flow>
+%<*minimalist-stream>
+\tl_gset:Nn \g_minimalist_section_decoration_char_tl {}
+\titleformat{\section}
+  {\LocallyStopLineNumbers
+  % \needspace{2\baselineskip}
+  \larger \g_minimalist_title_font_section_tl}
+  {
+    \llap{
+      {\minimalist_apply_title_numbering_style:n { \thesection }}
+      \skip_horizontal:n { \l_minimalist_title_sep_dim }
+    }
+  }
+  {0pt}
+  {#1}
+  [\ResumeLineNumbers]
+
+\titleformat{name=\section,numberless}
+  {\LocallyStopLineNumbers
+  % \needspace{2\baselineskip}
+  \larger \g_minimalist_title_font_section_tl}
+  {}
+  {0pt}
+  {#1}
+  [\ResumeLineNumbers]
+%</minimalist-stream>
+
+%% Subsection
+%<*minimalist-default|minimalist-plain>
+\titleformat{\subsection}
+  {\LocallyStopLineNumbers
+  \g_minimalist_title_font_subsection_tl}
+  { \minimalist_apply_title_numbering_style:n { \thesubsection } }{.75em}
+  {#1}
+  [\ResumeLineNumbers]
+%</minimalist-default|minimalist-plain>
+%<*minimalist-classical>
+\renewcommand\thesubsection{
+  \ifnum\c@section=0\else\arabic{section}.\fi\arabic{subsection}}
+\newcommand\subseculine{\bgroup\markoverwith{\color{main-text!27!paper}
+  \rule[-1ex]{2pt}{.75pt}}\ULon}
+\titleformat{\subsection}
+  {\LocallyStopLineNumbers
+  \g_minimalist_title_font_subsection_tl}{}{0em}
+  {\subseculine{\thesubsection\nobreakspace\textcolor{main-text!27!paper}{ \l_minimalist_sep_bar }\nobreakspace #1}}
+  [\ResumeLineNumbers]
+\titleformat{name=\subsection,numberless}
+  {\LocallyStopLineNumbers
+  \g_minimalist_title_font_subsection_tl}{}{0em}
+  {\subseculine{#1}}
+  [\ResumeLineNumbers]
+%</minimalist-classical>
+%<*minimalist-flow>
+\titleformat{\subsection}
+  {\LocallyStopLineNumbers}
+  { \minimalist_apply_title_numbering_style:n { \thesubsection } }{.75em}
+  {\g_minimalist_title_font_subsection_tl #1}
+  [\ResumeLineNumbers]
+%</minimalist-flow>
+%<*minimalist-stream>
+\titleformat{\subsection}[runin]
+  {\g_minimalist_title_font_subsection_tl}
+  {
+    \llap{
+      \minimalist_apply_title_numbering_style:n { \thesubsection }
+      \skip_horizontal:n { \l_minimalist_title_sep_dim }
+    }
+    \tl_if_blank:nT { #1 }
+      {
+        \hspace* { \parindent }
+      }
+  }
+  {0pt}
+  {
+    \tl_if_blank:nF { #1 }
+      {
+        #1. \hspace* { .75em }
+      }
+  }
+%</minimalist-stream>
+
+%% Subsubsection
+%<*minimalist-default|minimalist-plain>
+\bool_if:NTF \l__minimalist_runin_bool
+  {
+    \titleformat{\subsubsection}[runin]
+      {\g_minimalist_title_font_subsubsection_tl}
+      { \minimalist_apply_title_numbering_style:n { \thesection } }{.5em}
+      {#1.}[\hspace*{.3em}]
+  }
+  {
+    \titleformat{\subsubsection}
+      {\LocallyStopLineNumbers
+      \g_minimalist_title_font_subsubsection_tl}
+      { \minimalist_apply_title_numbering_style:n { \thesubsubsection } }{.5em}
+      {#1}
+      [\ResumeLineNumbers]
+  }
+%</minimalist-default|minimalist-plain>
+%<*minimalist-classical>
+\bool_if:NTF \l__minimalist_runin_bool
+  {
+    \titleformat{\subsubsection}[runin]
+      {\color{main-text!70!paper}\g_minimalist_title_font_subsubsection_tl}
+      {\scalebox{0.9}{\thesubsubsection}}{.33em}
+      {#1.}[\hspace*{.3em}]
+  }
+  {
+    \titleformat{\subsubsection}
+      {\LocallyStopLineNumbers
+      \color{main-text!70!paper}\g_minimalist_title_font_subsubsection_tl}
+      {\scalebox{0.9}{\thesubsubsection}}{.33em}
+      {#1}
+      [\ResumeLineNumbers]
+  }
+%</minimalist-classical>
+%<*minimalist-flow>
+\bool_if:NTF \l__minimalist_runin_bool
+  {
+    \titleformat{\subsubsection}[runin]
+      {}
+      {
+        \minimalist_apply_title_numbering_style:n { \thesubsubsection }
+        \tl_if_blank:nT { #1 }
+          {
+            \hspace* { .5em }
+          }
+      }
+      {.5em}
+      {
+        \tl_if_blank:nF { #1 }
+          {
+            \g_minimalist_title_font_subsubsection_tl
+            #1. \hspace* { .5em }
+          }
+      }
+  }
+  {
+    \titleformat{\subsubsection}
+      {\LocallyStopLineNumbers}
+      { \minimalist_apply_title_numbering_style:n { \thesubsubsection } }{.75em}
+      {\g_minimalist_title_font_subsubsection_tl #1}
+      [\ResumeLineNumbers]
+  }
+%</minimalist-flow>
+%<*minimalist-stream>
+\titleformat{\subsubsection}[runin]
+  {\g_minimalist_title_font_subsubsection_tl}
+  {
+    \llap{
+      { \minimalist_apply_title_numbering_style:n { \thesubsubsection } }
+      \skip_horizontal:n { \l_minimalist_title_sep_dim }
+    }
+    \tl_if_blank:nT { #1 }
+      {
+        \hspace* { \parindent }
+      }
+  }
+  {0pt}
+  {
+    \tl_if_blank:nF { #1 }
+      {
+        #1. \hspace* { .5em }
+      }
+  }
+%</minimalist-stream>
+
+%% Paragraph
+\titleformat{\paragraph}[runin]
+  { \g_minimalist_title_font_paragraph_tl }{\theparagraph}{1em}{#1}
+
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow>
+\titlespacing{\section}{0pt}{1\baselineskip plus .5\baselineskip minus .2\baselineskip}{.6\baselineskip plus .3\baselineskip minus .2\baselineskip}
+\titlespacing{\subsection}{0pt}{.75\baselineskip plus .3\baselineskip minus .2\baselineskip}{.4\baselineskip plus .2\baselineskip minus .1\baselineskip}
+\bool_if:NTF \l__minimalist_runin_bool
+  {
+    \titlespacing{\subsubsection}{0pt}{.5\baselineskip plus .2\baselineskip minus .1\baselineskip}{0pt}
+  }
+  {
+    \titlespacing{\subsubsection}{0pt}{.5\baselineskip plus .2\baselineskip minus .1\baselineskip}{.3\baselineskip plus .2\baselineskip minus .1\baselineskip}
+  }
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow>
+%<*minimalist-stream>
+\titlespacing{\section}{0pt}{1\baselineskip plus .5\baselineskip minus .2\baselineskip}{.6\baselineskip plus .3\baselineskip minus .2\baselineskip}
+\titlespacing{\subsection}{0pt}{.6\baselineskip plus .2\baselineskip minus .1\baselineskip}{0pt}
+\titlespacing{\subsubsection}{0pt}{.5\baselineskip plus .1\baselineskip minus .1\baselineskip}{0pt}
+%</minimalist-stream>
+
+%<*minimalist-stream>
+%% \sectionsub
+\titleclass{\sectionsub}{straight}[\section]
+\newcounter{sectionsub}
+\renewcommand{\thesectionsub}{\Alph{sectionsub}}
+
+\titleformat{\sectionsub}
+  {\LocallyStopLineNumbers
+  % \needspace{2\baselineskip}
+  \relscale{1.08} \g_minimalist_title_font_section_tl}
+  {
+    \llap{
+      {\minimalist_apply_title_numbering_style:n { \thesectionsub }}
+      \skip_horizontal:n { \l_minimalist_title_sep_dim }
+    }
+  }
+  {0pt}
+  {#1}
+  [\ResumeLineNumbers]
+
+\titleformat{name=\sectionsub,numberless}
+  {\LocallyStopLineNumbers
+  \phantomsection\addcontentsline{toc}{sectionsub}{#1}
+  % \needspace{2\baselineskip}
+  \relscale{1.08} \g_minimalist_title_font_section_tl}
+  {}
+  {0pt}
+  {#1}
+  [\ResumeLineNumbers]
+
+\titlespacing{\sectionsub}{0pt}{.8\baselineskip plus .4\baselineskip minus .2\baselineskip}{.6\baselineskip plus .2\baselineskip minus .1\baselineskip}
+
+\hook_gput_code:nnn { package/bookmark/after } { minimalist }
+  {
+    \tl_gset:NV \toclevel@sectionsub \toclevel@subsection
+  }
+%</minimalist-stream>
+
+\titlespacing{\paragraph}{0pt}{.3\baselineskip plus .2\baselineskip minus .1\baselineskip}{1em}
+
+%%================================
+%%  ToC format
+%%================================
+\RequirePackage { titletoc }
+\titlecontents{part}
+  [0em]
+  {\addvspace{1.5pc}\filcenter\normalfont}
+  { \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } \nopagebreak\\\nopagebreak\uppercase}
+  {}
+  {} % without page number
+  [\addvspace{.5pc}]
+
+\bool_if:NTF \l__minimalist_is_book_bool
+  {
+    \titlecontents{chapter}
+      [2em] % i.e., 0em (part) + 2em
+      {\addvspace{.5pc}\normalfont}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{2em}}
+      {\hspace*{-2em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+    \titlecontents{section}
+      [5.75em] % i.e., 2em (chapter) + 2.75em + 1em
+      {\normalfont}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{2.75em}}
+      {\hspace*{-2.75em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+%<*minimalist-stream>
+    \titlecontents{sectionsub}
+      [10.5em] % i.e., 5.75em (section) + 3.75em + 1em
+      {\normalfont}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{3.75em}}
+      {\hspace*{-3.75em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+%</minimalist-stream>
+    \titlecontents{subsection}
+      [10.5em] % i.e., 5.75em (section) + 3.75em + 1em
+      {\normalfont}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{3.75em}}
+      {\hspace*{-3.75em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+    \titlecontents{subsubsection}
+      [15.75em] % i.e., 10.5em (subsection) + 4.25em + 1em
+      {\normalfont\itshape}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{4.25em}}
+      {\hspace*{-4.25em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+%<*minimalist-classical>
+    \titlecontents{section}
+      [5em] % i.e., 2em (chapter) + 3em
+      {\normalfont}
+      {\contentslabel[\textcolor{main-text!27!paper}{\small\g_minimalist_section_decoration_char_tl}\,\textcolor{main-text!90!paper}{ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } }\,\textcolor{main-text!27!paper}{\small\g_minimalist_section_decoration_char_tl}]{2.75em}}
+      {\hspace*{-2.75em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+    \titlecontents{subsection}
+      [8em] % i.e., 5em (section) + 3em
+      {\normalfont}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{2.75em}}
+      {\hspace*{-2.75em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+    \titlecontents{subsubsection}
+      [12em] % i.e., 8em (subsection) + 4em
+      {\normalfont}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{3.75em}}
+      {\hspace*{-3.75em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+%</minimalist-classical>
+  }
+  {
+    \titlecontents{section}
+      [1.5em] % i.e., 0em (part) + 1.5em
+      {\normalfont}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{1.5em}}
+      {\hspace*{-1.5em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+    \titlecontents{subsection}
+      [4.5em] % i.e., 1.5em (section) + 2.5em + 0.5em
+      {\normalfont}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{2.5em}}
+      {\hspace*{-2.5em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+    \titlecontents{subsubsection}
+      [9em] % i.e., 4.5em (subsection) + 3.5em + 1em
+      {\normalfont\itshape}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{3.5em}}
+      {\hspace*{-3.5em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+%<*minimalist-classical>
+    \titlecontents{subsection}
+      [4.25em] % i.e., 1.5em (section) + 2.75em
+      {\normalfont}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{2.50em}}
+      {\hspace*{-2.50em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+    \titlecontents{subsubsection}
+      [7.75em] % i.e., 4.25em (subsection) + 3.5em
+      {\normalfont}
+      {\contentslabel[ \minimalist_apply_title_numbering_style_static:n { \thecontentslabel } ]{3.25em}}
+      {\hspace*{-3.25em}}
+      {\titlerule*[1em]{\textcolor{main-text!15!paper}{.}}\normalfont\contentspage}
+%</minimalist-classical>
+  }
+
+%%================================
+%%  Lists
+%%================================
+\PassOptionsToPackage { inline } { enumitem }
+\RequirePackage { enumitem }
+\setlistdepth{10}
+\setlist{noitemsep, topsep=.33\topsep-.5\parskip}
+% \setlist{topsep = .1\baselineskip, parsep=0pt, itemsep=.05\baselineskip}
+\setlist[enumerate]{labelsep=*, leftmargin=*}
+\setlist[enumerate,1]{label = \normalfont\arabic*$\mskip-.5mu\big)$,
+    ref = \normalfont\color{.!45!paper}\arabic*$\mskip-.5mu\big)$,
+    leftmargin= \l__minimalist_item_indentation_dim + \maxof{\parindent}{1.5em} }
+    % labelindent= \l__minimalist_item_indentation_dim }
+\setlist[enumerate,2]{label = \normalfont\roman*$\mskip-.5mu\big)$,
+    ref = \normalfont\color{.!45!paper}\arabic{enumi}.\roman*$\mskip-.5mu\big)$}
+\setlist[enumerate,3]{label = \normalfont\emph{\alph*}$\mskip-.5mu\big)$,
+    ref = \normalfont\color{.!45!paper}\arabic{enumi}.\roman{enumii}.\emph{\alph*}$\mskip-.5mu\big)$}
+
+\setlist[description]{font=\normalfont\minimalist_bfseries:\minimalist_sffamily: ,
+    labelindent= \l__minimalist_item_indentation_dim }
+%<*minimalist-classical>
+\newcommand\desculine{\bgroup\markoverwith{\color{.!55!paper}
+  \rule[-.45ex]{2pt}{.75pt}}\ULon}
+\renewcommand{\descriptionlabel}[1]{
+  \hspace{\labelsep}\normalfont\desculine{#1}
+}
+%</minimalist-classical>
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+% https://tex.stackexchange.com/a/1248
+% https://tex.stackexchange.com/a/365336
+\let\orgdescriptionlabel\descriptionlabel
+\renewcommand*{\descriptionlabel}[1]{%
+  \let\orglabel\label
+  \let\label\@gobble
+  \let\orig@hfil\hfil
+  \def\hfil{}%
+  \phantomsection
+  \protected@edef\@currentlabel{#1}%
+  \let\hfil\orig@hfil
+  \let\label\orglabel
+  \orgdescriptionlabel{#1}%
+}
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+
+\renewlist{itemize}{itemize}{10}
+\setlist[itemize]{leftmargin=*,label=\textcolor{.!27!paper}{$\cdot$}}
+\AddLanguageSetting { \setlist[itemize,1]{label=\textcolor{.!27!paper}{$\bullet$},leftmargin= \l__minimalist_item_indentation_dim + \maxof{\parindent}{1.5em}} }
+\AddLanguageSetting [french] { \setlist[itemize,1]{label=\textcolor{.!39!paper}{\rule[.2\baselineskip]{.8em}{.75pt}},leftmargin= \l__minimalist_item_indentation_dim + \maxof{\parindent}{1.5em} } }
+\setlist[itemize,2]{label=\textcolor{.!27!paper}{\rule[.2\baselineskip]{.55em}{.75pt}}}
+% \setlist[itemize,3]{label=\textcolor{.!27!paper}{$\diamond$}}
+\setlist[itemize,3]{label=\textcolor{.!27!paper}{$\circ$}}
+\setlist[itemize,4]{label=\textcolor{.!27!paper}{$\ast$}}
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-stream>
+
+%%================================
+%%  Blank page
+%%================================
+\projlib_langauge_define_multilingual_text:Nn \bl@nkpagetext
+  {
+    , EN = This~page~is~intentionally~left~blank
+    , FR = Cette~page~est~intentionnellement~laissée~vide
+    , DE = Diese~Seite~wurde~absichtlich~leer~gelassen
+    , IT = Questa~pagina~è~stata~lasciata~vuota~intenzionalmente
+    , PT = Esta~página~foi~intencionalmente~deixada~em~branco
+    , BR = Esta~página~foi~intencionalmente~deixada~em~branco
+    , ES = Esta~página~ha~sido~intencionalmente~dejada~en~blanco
+    , CN = \ziju{0.2} 此页为有意留为空白
+    , TC = \ziju{0.2} 此頁為有意留為空白
+    , JP = このページは意図的に空白にしてあります
+    , RU = Эта~страница~намеренно~оставлена~пустой
+  }
+\renewcommand{\cleardoublepage}{
+  \relax
+  \clearpage
+  \if@twoside\ifodd\c@page\relax\else
+  \thispagestyle{empty}
+  \hook_gput_next_code:nn { shipout/background }
+    {
+      \put(0.5\paperwidth,-0.5\paperheight){
+      \makebox[0pt]{\large\color{main-text!10!paper}\g_minimalist_title_font_common_tl\bl@nkpagetext}}
+    }
+  \null\newpage\fi\fi
+}
+
+%%================================
+%%  Index
+%%================================
+\RequirePackage { imakeidx }
+\makeindex[intoc]
+
+\RequirePackage { silence }
+\ExplSyntaxOff
+\WarningFilter{latex}{Writing or overwriting file}
+\begin{filecontents*}[overwrite]{\jobname.mst}
+delim_0 "\\IndexDotfill " % Filler between section heading and page number
+delim_1 "\\IndexDotfill " % Filler between subsection heading and page number
+headings_flag 1
+heading_prefix "\\IndexHeading{"
+heading_suffix "}\n"
+\end{filecontents*}
+\ExplSyntaxOn
+
+\projlib_langauge_define_multilingual_text:Nn \index_symbols_name
+  {
+    , EN = Symbols
+    , FR = Symboles
+    , DE = Symbole
+    , IT = Simboli
+    , PT = Símbolos
+    , BR = Símbolos
+    , ES = Símbolos
+    , CN = 符号
+    , TC = 符號
+    , JP = 記号
+    , RU = Символы
+  }
+
+\newcommand*{\IndexDotfill}
+  {
+    \null\nobreak
+    \leaders \hbox to .67em {\hss \textcolor{main-text!15!paper}{.} \hss} \hskip1em plus1fill
+  }
+\newcommand*{\IndexLinebreak}
+  {
+    \nobreakspace\textcolor{main-text!45!paper}{\raisebox{.4ex}{.}\raisebox{.2ex}{.}}
+    \item\hspace*{\hangindent}
+    \textcolor{main-text!45!paper}{\raisebox{.45ex}{.}\raisebox{.25ex}{.}}\:
+    \unskip
+  }
+% % Below is another version that can produce a better automatic result,
+% % however if you are willing to make some manual interventions, you would be able to get even better result,
+% % thus this version is only left here for reference
+% \newcommand*{\IndexDotfill}
+%   {
+%     \leaders \hbox to .67em {\hss \textcolor{main-text!15!paper}{.} \hss}\hfil
+%     \penalty0\vadjust{}
+%     \leaders \hbox to .67em {\hss \textcolor{main-text!15!paper}{.} \hss}\hskip1em plus1fill
+%   }
+% \newcommand*{\IndexLinebreak}{~}
+% \hook_gput_code:nnn { cmd/theindex/after } { minimalist } { \rightskip=1pc \parfillskip=-\rightskip }
+
+\newcommand*{\IndexHeading}[1]
+  {
+    \str_if_eq:nnTF { #1 } { Symbols }
+      { \tl_set:Nn \l_tmpa_tl { \index_symbols_name } }
+      { \tl_set:Nn \l_tmpa_tl { #1 } }
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-stream>
+    \centerline{ \g_minimalist_title_font_common_tl \minimalist_apply_title_numbering_style_static:n { \l_tmpa_tl } }
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-stream>
+%<*minimalist-classicthesis>
+    \centerline{ \minimalist_sffamily: { \l_tmpa_tl } }
+%</minimalist-classicthesis>
+    \nopagebreak
+    \par
+    \vspace{.3\baselineskip}
+  }
+
+\renewcommand*{\indexspace}
+  {
+    \par
+    \vspace{2pc plus .5pc minus .3pc}
+  }
+
+% Prevent column break before the first sub-entry in the index
+% See https://tex.stackexchange.com/a/132415
+\bool_new:N \l__minimalist_if_first_subitem_bool
+\renewcommand*{\@idxitem}
+  {
+    \par\hangindent40\p@
+    \bool_set_true:N \l__minimalist_if_first_subitem_bool
+  }
+\renewcommand*{\subitem}
+  {
+    \par\hangindent40\p@
+    \bool_if:NT \l__minimalist_if_first_subitem_bool
+      {
+        \nobreak
+        \bool_set_false:N \l__minimalist_if_first_subitem_bool
+      }
+    \hspace*{20\p@}
+  }
+
+\hook_gput_code:nnn { begindocument/before } { minimalist }
+  {
+    \bool_if:NF \l__minimalist_fast_bool
+      {
+        \hook_gput_code:nnn { cmd/printindex/before } { minimalist } { \bookmarksetup{startatroot} }
+      }
+    \hook_gput_code:nnn { cmd/printindex/before } { minimalist } { \LocallyStopLineNumbers }
+    \hook_gput_code:nnn { cmd/printindex/after } { minimalist } { \ResumeLineNumbers }
+  }
+
+%%================================
+%%  Draft mark
+%%================================
+\RequirePackage { projlib-draft }
+
+%%================================
+%%  Theorems
+%%================================
+\RequirePackage { mathtools }
+\RequirePackage { amsthm }
+
+\tl_const:Nn \c_minimalist_l_mathparen_latin_tl { $($ }
+\tl_const:Nn \c_minimalist_r_mathparen_latin_tl { $)$ }
+\tl_const:Nn \c_minimalist_l_mathparen_cjk_tl { \!\,（ }
+\tl_const:Nn \c_minimalist_r_mathparen_cjk_tl { ）\!\, }
+\cs_new:Nn \minimalist_insert_l_mathparen:
+  {
+    \tl_use:c { c_minimalist_l_mathparen_ \l_projlib_language_current_languagetype_tl _tl }
+  }
+\cs_new:Nn \minimalist_insert_r_mathparen:
+  {
+    \tl_use:c { c_minimalist_r_mathparen_ \l_projlib_language_current_languagetype_tl _tl }
+  }
+
+%% Change equation numbers to gray
+\def\tagform@#1{\maketag@@@{\textcolor{.!39!paper}{(\ignorespaces#1\unskip\@@italiccorr)}}}
+
+\PassOptionsToPackage { nopatch = eqnum } { microtype }
+
+
+\def\simpleqedsymbol{
+  \makebox[1em]{\rlap{\textcolor{.!12!paper}{\rule[-0.1em]{.95em}{.95em}}}{\kern.07em\raisebox{.07em}{\textcolor{paper}{\rule[-0.1em]{.81em}{.81em}}}\kern.07em}}}
+\DeclareRobustCommand{\simpleqed}{%
+  \ifmmode \tag*{\hbox{\simpleqedsymbol}}
+  \else
+    \leavevmode\unskip\penalty9999 \hbox{}\nobreak\hfill
+    \quad\hbox{\simpleqedsymbol}%
+  \fi
+}
+
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-classicthesis>
+\bool_if:NTF \l__minimalist_theorem_in_new_line_bool
+  {
+    \newtheoremstyle{simple}
+      {.75\baselineskip}{}
+      {
+        \normalfont
+        \parindent=0pt
+        \parskip=.3333\baselineskip plus .0667\baselineskip minus .0833\baselineskip
+      }{}
+      {\normalfont}{}
+      {0pt}
+      {
+        \rlap{\vbox{\hbox{\parbox{\linewidth}{
+%<*minimalist-default|minimalist-plain|minimalist-classicthesis>
+          {\thmname{#1}\thmnumber{\nobreakspace #2}}
+%</minimalist-default|minimalist-plain|minimalist-classicthesis>
+%<*minimalist-flow>
+          {\thmnumber{ \minimalist_apply_title_numbering_style:n { #2 } \hspace{.75em} }\thmname{#1}}
+%</minimalist-flow>
+          {\color{.!50!paper}\thmnote{\hspace{.4em} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }}
+        }}\hbox{\strut}\vspace{0pt}}}
+        \bool_if:NT \l__minimalist_theorem_with_qed_bool
+          {
+            \pushQED{\simpleqed}
+          }
+      }
+    \newtheoremstyle{simple-var}
+      {.75\baselineskip}{}
+      {
+        \bool_if:NTF \l__minimalist_emphasize_theorem_bool { \itshape } { \normalfont }
+        \parindent=0pt
+        \parskip=.3333\baselineskip plus .0667\baselineskip minus .0833\baselineskip
+      }{}
+      {\normalfont}{}
+      {0pt}
+      {
+        \rlap{\vbox{\hbox{\parbox{\linewidth}{
+%<*minimalist-default|minimalist-plain|minimalist-classicthesis>
+          {\thmname{#1}\thmnumber{\nobreakspace #2}}
+%</minimalist-default|minimalist-plain|minimalist-classicthesis>
+%<*minimalist-flow>
+          {\thmnumber{ \minimalist_apply_title_numbering_style:n { #2 } \hspace{.75em} }\thmname{#1}}
+%</minimalist-flow>
+          {\color{.!50!paper}\thmnote{\hspace{.4em} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }}
+        }}\hbox{\strut}\vspace{0pt}}}
+        \bool_if:NT \l__minimalist_theorem_with_qed_bool
+          {
+            \pushQED{\simpleqed}
+          }
+      }
+  }
+  {
+    \newtheoremstyle{simple}
+      {}{}
+      {
+        \normalfont
+        \parindent=0pt
+        \parskip=.3333\baselineskip plus .0667\baselineskip minus .0833\baselineskip
+      }{}
+      {\normalfont}{}
+      {0pt}
+%<*minimalist-default|minimalist-plain|minimalist-classicthesis>
+      {
+        {\thmname{#1}\thmnumber{\nobreakspace #2}}
+        {\color{.!50!paper}\thmnote{\hspace{.4em} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }}
+        \minimalist_bfseries:\minimalist_sffamily: .
+        \nobreakspace\nobreakspace
+        % {\normalfont\textcolor{.!27!paper}{---}}
+        \bool_if:NT \l__minimalist_theorem_with_qed_bool
+          {
+            \pushQED{\simpleqed}
+          }
+      }
+%</minimalist-default|minimalist-plain|minimalist-classicthesis>
+%<*minimalist-flow>
+      {
+        {\thmnumber{ \minimalist_apply_title_numbering_style:n { #2 } \hspace{.75em} }\thmname{#1}}
+        {\color{.!50!paper}\thmnote{\hspace{.4em} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }}\nobreakspace\nobreakspace{\normalfont\textcolor{.!27!paper}{---}}\nobreakspace\nobreakspace
+        \bool_if:NT \l__minimalist_theorem_with_qed_bool
+          {
+            \pushQED{\simpleqed}
+          }
+      }
+%</minimalist-flow>
+    \newtheoremstyle{simple-var}
+      {}{}
+      {
+        \bool_if:NTF \l__minimalist_emphasize_theorem_bool { \itshape } { \normalfont }
+        \parindent=0pt
+        \parskip=.3333\baselineskip plus .0667\baselineskip minus .0833\baselineskip
+      }{}
+      {\normalfont}{}
+      {0pt}
+%<*minimalist-default|minimalist-plain|minimalist-classicthesis>
+      {
+        {\thmname{#1}\thmnumber{\nobreakspace #2}}
+        {\color{.!50!paper}\thmnote{\hspace{.4em} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }}
+        \minimalist_bfseries:\minimalist_sffamily: .
+        \nobreakspace\nobreakspace
+        % {\normalfont\textcolor{.!27!paper}{---}}
+        \bool_if:NT \l__minimalist_theorem_with_qed_bool
+          {
+            \pushQED{\simpleqed}
+          }
+      }
+%</minimalist-default|minimalist-plain|minimalist-classicthesis>
+%<*minimalist-flow>
+      {
+        {\thmnumber{ \minimalist_apply_title_numbering_style:n { #2 } \hspace{.75em} }\thmname{#1}}
+        {\color{.!50!paper}\thmnote{\hspace{.4em} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }}\nobreakspace\nobreakspace{\normalfont\textcolor{.!27!paper}{---}}\nobreakspace\nobreakspace
+        \bool_if:NT \l__minimalist_theorem_with_qed_bool
+          {
+            \pushQED{\simpleqed}
+          }
+      }
+%</minimalist-flow>
+  }
+
+\theoremstyle{simple}
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-classicthesis>
+%<*minimalist-classical>
+\bool_if:NTF \l__minimalist_theorem_in_new_line_bool
+  {
+    \newtheoremstyle{simple}
+      {.5\baselineskip}{.5\baselineskip}
+      {\normalfont}{}
+      {\normalfont}{}
+      {\newline}
+      {
+        \rlap{\vbox{\hbox{\parbox{\linewidth}{
+          {\thmname{#1}\thmnumber{\nobreakspace #2}}
+          \thmnote{\hspace{.4em}\color{.!50!paper} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }
+        }}\hbox{\strut}\vspace{0pt}}}\vspace{-2\parskip}
+        \pushQED{\simpleqed}
+      }
+    \newtheoremstyle{simple-var}
+      {.5\baselineskip}{.5\baselineskip}
+      { \bool_if:NTF \l__minimalist_emphasize_theorem_bool { \itshape } { \normalfont } }{}
+      {\normalfont}{}
+      {\newline}
+      {
+        \rlap{\vbox{\hbox{\parbox{\linewidth}{
+          {\thmname{#1}\thmnumber{\nobreakspace #2}}
+          \thmnote{\hspace{.4em}\color{.!50!paper} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }
+        }}\hbox{\strut}\vspace{0pt}}}\vspace{-2\parskip}
+        \pushQED{\simpleqed}
+      }
+  }
+  {
+    \newtheoremstyle{simple}
+      {.5\baselineskip}{.5\baselineskip}
+      {\normalfont}{}
+      {\normalfont}{}
+      {0pt}
+      {
+        {\thmname{#1}\thmnumber{\nobreakspace #2}}\hspace{.4em}
+        \textcolor{.!27!paper}{ \l_minimalist_sep_bar }\hspace{.4em}
+        \color{.!50!paper}\thmnote{ \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: \nobreakspace\nobreakspace}
+        \pushQED{\simpleqed}
+      }
+    \newtheoremstyle{simple-var}
+      {.5\baselineskip}{.5\baselineskip}
+      { \bool_if:NTF \l__minimalist_emphasize_theorem_bool { \itshape } { \normalfont } }{}
+      {\normalfont}{}
+      {0pt}
+      {
+        {\thmname{#1}\thmnumber{\nobreakspace #2}}\hspace{.4em}
+        \textcolor{.!27!paper}{ \l_minimalist_sep_bar }\hspace{.4em}
+        \color{.!50!paper}\thmnote{ \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: \nobreakspace\nobreakspace}
+        \pushQED{\simpleqed}
+      }
+  }
+% \def\@endtheorem{\global\let\qedsymbol\simpleqedsymbol
+%   \popQED\endtrivlist\@endpefalse
+%   \global\let\qedsymbol\customqedsymbol}
+
+\theoremstyle{simple}
+%</minimalist-classical>
+%<*minimalist-stream>
+\newtheoremstyle{simple-newline}
+  {-.2\baselineskip plus 2pt minus .1\baselineskip}{.3\baselineskip plus 2pt minus .1\baselineskip}
+  {\normalfont}{}
+  {\normalfont}{}
+  {0pt}
+  {
+    \rlap{\vbox{\hbox{\parbox{\linewidth}{
+      \llap{
+        \phantom{\rule{0pt}{\baselineskip}}
+        \minimalist_apply_title_numbering_style:n { \thmnumber{#2} }
+        \skip_horizontal:n { \l_minimalist_title_sep_dim }
+      }
+      \vspace*{-\baselineskip}
+      {\thmname{#1}}
+      {\color{.!50!paper}\thmnote{\hspace{.4em} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }}
+      \phantom{q} % To provide something below the baseline
+    }}\hbox{\strut}\vspace{0pt}}}
+    \bool_if:NT \l__minimalist_theorem_with_qed_bool
+      {
+        \pushQED{\simpleqed}
+      }
+  }
+\newtheoremstyle{simple-newline-var}
+  {-.2\baselineskip plus 2pt minus .1\baselineskip}{.3\baselineskip plus 2pt minus .1\baselineskip}
+  { \bool_if:NTF \l__minimalist_emphasize_theorem_bool { \itshape } { \normalfont } }{}
+  {\normalfont}{}
+  {0pt}
+  {
+    \rlap{\vbox{\hbox{\parbox{\linewidth}{
+      \llap{
+        \phantom{\rule{0pt}{\baselineskip}}
+        \minimalist_apply_title_numbering_style:n { \thmnumber{#2} }
+        \skip_horizontal:n { \l_minimalist_title_sep_dim }
+      }
+      \vspace*{-\baselineskip}
+      {\thmname{#1}}
+      {\color{.!50!paper}\thmnote{\hspace{.4em} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }}
+      \phantom{q} % To provide something below the baseline
+    }}\hbox{\strut}\vspace{0pt}}}
+    \bool_if:NT \l__minimalist_theorem_with_qed_bool
+      {
+        \pushQED{\simpleqed}
+      }
+  }
+
+\dim_new:N \l_minimalist_space_before_inline_theorem_dim
+\hook_gput_code:nnn { begindocument } { minimalist }
+  {
+    \dim_set:Nn \l_minimalist_space_before_inline_theorem_dim
+      {
+        \dim_eval:n { .3\baselineskip - .6\parskip }
+      }
+  }
+
+\newtheoremstyle{simple-inline}
+  % {.3\baselineskip plus 2pt minus .1\baselineskip}{.3\baselineskip plus 2pt minus .1\baselineskip}
+  {\l_minimalist_space_before_inline_theorem_dim}{\l_minimalist_space_before_inline_theorem_dim}
+  {\normalfont}{}
+  {\normalfont}{}
+  {0pt}
+  {
+    \llap{
+      \minimalist_apply_title_numbering_style:n { \thmnumber{#2} }
+      \skip_horizontal:n { \l_minimalist_title_sep_dim }
+    }
+    % \minimalist_bfseries:\minimalist_sffamily:
+    {\thmname{#1}}
+    {\color{.!50!paper}\thmnote{\hspace{.4em} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }}
+    . \hspace{.5em}
+    \bool_if:NT \l__minimalist_theorem_with_qed_bool
+      {
+        \pushQED{\simpleqed}
+      }
+  }
+\newtheoremstyle{simple-inline-var}
+  % {.3\baselineskip plus 2pt minus .1\baselineskip}{.3\baselineskip plus 2pt minus .1\baselineskip}
+  {\l_minimalist_space_before_inline_theorem_dim}{\l_minimalist_space_before_inline_theorem_dim}
+  { \bool_if:NTF \l__minimalist_emphasize_theorem_bool { \itshape } { \normalfont } }{}
+  {\normalfont}{}
+  {0pt}
+  {
+    \llap{
+      \minimalist_apply_title_numbering_style:n { \thmnumber{#2} }
+      \skip_horizontal:n { \l_minimalist_title_sep_dim }
+    }
+    % \minimalist_bfseries:\minimalist_sffamily:
+    {\thmname{#1}}
+    {\color{.!50!paper}\thmnote{\hspace{.4em} \minimalist_insert_l_mathparen: #3 \minimalist_insert_r_mathparen: }}
+    . \hspace{.5em}
+    \bool_if:NT \l__minimalist_theorem_with_qed_bool
+      {
+        \pushQED{\simpleqed}
+      }
+  }
+
+\bool_if:NTF \l__minimalist_theorem_in_new_line_bool
+  {
+    \theoremstyle{simple-newline}
+  }
+  {
+    \theoremstyle{simple-inline}
+  }
+
+\newtheoremstyle{proof}
+  {3\p@\@plus3\p@}{.3\baselineskip}
+  {\normalfont}{}
+  {\itshape}{}
+  {0pt}
+  {
+    \llap{
+      \minimalist_apply_title_numbering_style:n { \thmnumber{#2} }
+      \skip_horizontal:n { \l_minimalist_title_sep_dim }
+    }
+    {\thmname{#1}}
+    . \hspace{.5em}
+  }
+%</minimalist-stream>
+
+\bool_if:NT \l__minimalist_theorem_with_qed_bool
+  {
+    \def\@endtheorem{\popQED\endtrivlist\@endpefalse}
+  }
+
+\newcommand{\customqedsymbol}{
+  \makebox[1em]{\color{.!27!paper}\rule[-0.1em]{.95em}{.95em}}}
+\let\qedsymbol\customqedsymbol
+
+%% Special treatments for the Q.E.D. symbol
+\def\noQED{\let\popQED\relax}
+\let\noqed\noQED
+% % Temporary fix so that when nested, the outside level would still have a QED symbol (should be sufficient in most cases, but is certainly not a reliable approach)
+% \def\proofless{\pushQED{\qed}\AddToHookNext{env/\@currenvir/after}{\pushQED{\qed}}}
+% \def\proofless{\pushQED{\qed}}
+\bool_if:NTF \l__minimalist_theorem_with_qed_bool
+  {
+    \def\proofless{\pushQED{\qed}}
+  }
+  {
+    \def\proofless{
+      \pushQED{\qed}
+      \popQED%\endtrivlist\@endpefalse
+    }
+  }
+
+\bool_if:NTF \l__minimalist_fast_bool
+  {
+    \RequirePackage { hyperref }
+    \hypersetup { draft }
+  }
+  {
+    \RequirePackage { hyperref }
+    \RequirePackage { bookmark }
+    \hypersetup{ hidelinks, linktoc = all }
+    \bookmarksetup{ numbered }
+    \renewcommand\Hy@numberline[1]{#1.~}
+    % https://tex.stackexchange.com/a/1821
+    % Add the bookmark of ToC
+    \bool_if:NTF \l__minimalist_is_book_bool
+      {
+        \hook_gput_code:nnn { cmd/tableofcontents/before } { minimalist }
+          {
+            \if@openright\cleardoublepage\else\clearpage\fi
+            \pdfbookmark[0]{\contentsname}{toc}
+          }
+      }
+      {
+        \hook_gput_code:nnn { cmd/tableofcontents/before } { minimalist }
+          {
+            \pdfbookmark[1]{\contentsname}{toc}
+          }
+      }
+  }
+
+% \PassOptionsToPackage { simplename } { projlib-theorem }
+
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-classicthesis>
+\PassOptionsToPackage
+  {
+    theorem-style = {
+      theorem = simple-var, lemma = simple-var, proposition = simple-var, corollary = simple-var, property = simple-var, axiom = simple-var, construction = simple-var, claim = simple-var, conjecture = simple-var,
+      theorems = simple-var, lemmas = simple-var, propositions = simple-var, corollaries = simple-var, properties = simple-var, axioms = simple-var, constructions = simple-var, claims = simple-var, conjectures = simple-var,
+      theorem-with-name = simple-var,
+    }
+  } { projlib-theorem }
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-classicthesis>
+%<*minimalist-stream>
+\bool_if:NTF \l__minimalist_theorem_in_new_line_bool
+  {
+    \PassOptionsToPackage
+      {
+        theorem-style = {
+          proof = proof,
+          remark = simple-inline, remarks = simple-inline,
+          theorem = simple-newline-var, lemma = simple-newline-var, proposition = simple-newline-var, corollary = simple-newline-var, property = simple-newline-var, axiom = simple-newline-var, construction = simple-newline-var, claim = simple-newline-var, conjecture = simple-newline-var,
+          theorems = simple-newline-var, lemmas = simple-newline-var, propositions = simple-newline-var, corollaries = simple-newline-var, properties = simple-newline-var, axioms = simple-newline-var, constructions = simple-newline-var, claims = simple-newline-var, conjectures = simple-newline-var,
+          theorem-with-name = simple-newline-var,
+        }
+      } { projlib-theorem }
+  }
+  {
+    \PassOptionsToPackage
+      {
+        theorem-style = {
+          proof = proof,
+          remark = simple-inline, remarks = simple-inline,
+          theorem = simple-inline-var, lemma = simple-inline-var, proposition = simple-inline-var, corollary = simple-inline-var, property = simple-inline-var, axiom = simple-inline-var, construction = simple-inline-var, claim = simple-inline-var, conjecture = simple-inline-var,
+          theorems = simple-inline-var, lemmas = simple-inline-var, propositions = simple-inline-var, corollaries = simple-inline-var, properties = simple-inline-var, axioms = simple-inline-var, constructions = simple-inline-var, claims = simple-inline-var, conjectures = simple-inline-var,
+          theorem-with-name = simple-inline-var,
+        }
+      } { projlib-theorem }
+  }
+%</minimalist-stream>
+
+\RequirePackage { projlib-theorem }
+
+\SetTheorem { proof, proof* } { qed-symbol = { \customqedsymbol } }
+
+% Temporary fix to ensure that the QED symbol is not added twice
+\hook_gput_code:nnn { env/proof/begin } { minimalist } { \let\simpleqed\relax }
+\hook_gput_code:nnn { env/proof*/begin } { minimalist } { \let\simpleqed\relax }
+
+\bool_if:NT \l__minimalist_colored_proof_bool
+  {
+    \clist_map_inline:nn { proof, proof* }
+      {
+        \hook_gput_code:nnn { env/ #1 /begin } { minimalist }
+          {
+            \Hy@SaveLastskip
+            \color{ \l__minimalist_colored_proof_tl }
+            \Hy@RestoreLastskip
+          }
+      }
+  }
+
+%<*minimalist-flow|minimalist-stream>
+% \exp_args:No \SetTheorem { \c_projlib_theorem_supported_clist, theorem-with-name, proof } { shared counter = subsection }
+%% Here one needs to use an internal projlib-theorem macro in order to make the setting in accordance
+%% Also, for some reason, one must manually reset this "shared counter", otherwise the numbering could be duplicated (must be caused by some hidden bug in the current counter alias mechanism)
+\tl_if_blank:oF \l__projlib_theorem_theorem_numbering_tl
+  {
+    \tl_if_eq:NnF \l__projlib_theorem_theorem_numbering_tl { * }
+      {
+        % determine the lower level counter to be shared with
+        \tl_new:N \l__minimalist_theorem_numbering_tl
+        \str_case:on { \l__projlib_theorem_theorem_numbering_tl }
+          {
+            { chapter } { \tl_set:Nn \l__minimalist_theorem_numbering_tl { section } }
+            { section } { \tl_set:Nn \l__minimalist_theorem_numbering_tl { subsection } }
+            { subsection } { \tl_set:Nn \l__minimalist_theorem_numbering_tl { subsubsection } }
+          }
+        % manually configure the shared counter
+        \exp_args:Noo \SetTheorem { \c_projlib_theorem_supported_clist, theorem-with-name, proof } { shared counter = \l__minimalist_theorem_numbering_tl }
+      }
+  }
+%</minimalist-flow|minimalist-stream>
+
+\exp_args:No \SetTheorem { \c_projlib_theorem_supported_clist, theorem-with-name }
+  {
+    name style = {
+      , heading style = {
+          , english = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+          , french = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+          , ngerman = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+          , italian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+          , portuguese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+          , brazilian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+          , spanish = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+          , schinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+          , tchinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+          , japanese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+          , russian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+        }
+%<*minimalist-flow|minimalist-stream>
+      , numbering style = { \minimalist_apply_title_numbering_style_static:n }
+%</minimalist-flow|minimalist-stream>
+    }
+  }
+
+\SetTheorem { remark }
+  {
+    name style = {
+      , heading style = {
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-classicthesis>
+          , english = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+          , french = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+          , ngerman = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+          , italian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+          , portuguese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+          , brazilian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+          , spanish = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+          , russian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+          , schinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+          , tchinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+          , japanese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+          , russian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-classicthesis>
+%<*minimalist-stream>
+          \g_minimalist_title_font_common_tl \textit
+%</minimalist-stream>
+        }
+%<*minimalist-flow|minimalist-stream>
+      , numbering style = { \minimalist_apply_title_numbering_style_static:n }
+%</minimalist-flow|minimalist-stream>
+    }
+  }
+
+\bool_if:NF \l__projlib_theorem_complexname_bool
+  {
+    \exp_args:No \SetTheorem { \c_projlib_theorem_supported_clist, theorem-with-name }
+      {
+        name style = {
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-classicthesis>
+          , crefname style = {
+              , english = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , french = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , ngerman = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , italian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , portuguese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , brazilian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , spanish = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , schinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , tchinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , japanese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , russian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+            }
+          , Crefname style = {
+              , english = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , french = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , ngerman = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , italian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , portuguese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , brazilian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , spanish = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textsc
+              , schinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , tchinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , japanese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , russian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+            }
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-classicthesis>
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-classicthesis>
+          , numbering style = {
+              \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+            }
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-classicthesis>
+%<*minimalist-flow|minimalist-stream>
+          , numbering style = { \minimalist_apply_title_numbering_style_static:n }
+%</minimalist-flow|minimalist-stream>
+        }
+      }
+
+    \SetTheorem { remark }
+      {
+        name style = {
+          , crefname style = {
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-classicthesis>
+              , english = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , french = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , ngerman = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , italian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , portuguese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , brazilian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , spanish = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , russian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , schinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , tchinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , japanese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , russian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-classicthesis>
+%<*minimalist-stream>
+              % \g_minimalist_title_font_common_tl \textit
+%</minimalist-stream>
+            }
+          , Crefname style = {
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-classicthesis>
+              , english = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , french = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , ngerman = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , italian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , portuguese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , brazilian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , spanish = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , russian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl\textit
+              , schinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , tchinese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , japanese = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+              , russian = \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-classicthesis>
+%<*minimalist-stream>
+              % \g_minimalist_title_font_common_tl \textit
+%</minimalist-stream>
+            }
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-classicthesis>
+          , numbering style = {
+              \minimalist_bfseries:\minimalist_sffamily:\g_minimalist_title_font_common_tl
+            }
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-classicthesis>
+%<*minimalist-flow|minimalist-stream>
+          , numbering style = { \minimalist_apply_title_numbering_style_static:n }
+%</minimalist-flow|minimalist-stream>
+        }
+      }
+  }
+
+\SetTheorem { proof }
+  {
+    name style = {
+      , numbering style = { \minimalist_apply_title_numbering_style_static:n }
+    }
+  }
+
+
+\PassOptionsToPackage { many } { tcolorbox }
+\RequirePackage { tcolorbox }
+\bool_if:NT \l__minimalist_fast_bool { \tcbstartdraftmode }
+
+% \bool_if:NF \l__minimalist_fast_bool
+%   {
+%     \bool_if:NT \l__minimalist_theorem_in_new_line_bool
+%       {
+%         \cs_new_protected:Nn \minimclass_box_environment:n
+%           {
+%             \hook_gput_code:nnn { env/#1/before } { minimalist }
+%               {
+%                 \LocallyStopLineNumbers
+%                 \begin { tcolorbox }
+%                   [
+%                     enhanced~jigsaw,
+%                     frame~hidden,
+%                     interior~hidden,
+%                     top = 0pt, bottom = 0pt,
+%                     left = 0pt, right = 0pt,
+%                     boxrule = 0pt, boxsep = 0pt,
+%                     before~skip = \parskip+\topsep+.25\baselineskip,
+%                     after~skip = \parskip+\topsep+.25\baselineskip,
+%                     enforce~breakable, lines~before~break=3,
+%                   ]
+%               }
+%             \hook_gput_code:nnn { env/#1/after } { minimalist }
+%               {
+%                 \end { tcolorbox }
+%                 \ResumeLineNumbers
+%               }
+%           }
+%         \exp_args:No \clist_map_inline:nn { \c_projlib_theorem_supported_clist }
+%           {
+%             \minimclass_box_environment:n { #1 }
+%             \minimclass_box_environment:n { #1 * }
+%           }
+%       }
+%   }
+
+\NewDocumentEnvironment { emphasis } { }
+  {
+    \LocallyStopLineNumbers
+    \enlargethispage{2mm}
+    \begin{tcolorbox}
+        [
+          enhanced ~ jigsaw, breakable, oversize,
+          % nobeforeafter,
+          left = .5em, right=0mm, top=0.5mm, bottom=0mm, boxrule=0pt,
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream|minimalist-classicthesis>
+          colback=main-text!2!paper, frame ~ hidden,
+          borderline ~ west = {.3em} {0mm} {main-text!25!paper},
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream|minimalist-classicthesis>
+%<*minimalist-classical>
+          colback = paper, frame ~ hidden,
+          borderline ~ west = {.125em} {-.5mm} {main-text!25!paper, double, double ~ distance=.1em},
+%</minimalist-classical>
+          arc = 0.2mm,
+        ]
+  }
+  {
+    \end{tcolorbox}
+    \ResumeLineNumbers
+  }
+
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+\hook_gput_code:nnn { env/quote/begin } { minimalist } { \small }
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+
+%%================================
+%%  Title block style
+%%================================
+\bool_if:NTF \l__minimalist_is_book_bool
+  {
+    \hook_gput_code:nnn { package/projlib-author/after } { minimalist }
+      {
+        \tl_gset:Nn \g__projlib_author_font_author_tl      { \normalfont \minimalist_scshape: }
+        \tl_gset:Nn \g__projlib_author_font_institute_tl   { \large \normalfont }
+        \tl_gset:Nn \g__projlib_author_font_address_tl     { \large \normalfont \itshape }
+        \tl_gset:Nn \g__projlib_author_font_curraddr_tl    { \large \normalfont \itshape }
+        \tl_gset:Nn \g__projlib_author_font_email_tl       { \large \normalfont \ttfamily }
+      }
+
+    \RequirePackage { projlib-titlepage }
+    \RenewDocumentCommand \maketitle { O{} }
+      {
+        \LocallyStopLineNumbers
+        \ProjLibTitlePage [ style = simple, #1 ]
+          {
+            , title  = \@title
+            , author = \@author
+            , date   = \@date
+          }
+        \ResumeLineNumbers
+      }
+  }
+  {
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream|minimalist-classicthesis>
+    \renewcommand{\@maketitle}
+      {
+        \LocallyStopLineNumbers
+        \begin{center}
+          \let\footnote\thanks
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+          {\minimalist_bfseries:\minimalist_scshape:\sffamily\Large\@title}\\\bigskip
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+%<*minimalist-classicthesis>
+          {\minimalist_sffamily:\Large\@title}\\\bigskip
+%</minimalist-classicthesis>
+          \color{main-text!80!paper}
+          {\small\minimalist_scshape:\@author}
+          \par\smallskip\vspace{-\parskip}
+          {\small
+            \projlib_author_if_content_empty:nTF { \@date } { \skip_vertical:n { -2 \baselineskip } } { \g__projlib_author_font_date_tl \@date }
+            \projlib_author_if_content_empty:nF { \g__projlib_author_dedicatory_tl }
+              {
+                \projlib_author_if_content_empty:nT { \@date } { \skip_vertical:n { 2.25 \baselineskip } }
+                \par
+                \skip_vertical:n { -\parskip }
+                \skip_vertical:n { .75\baselineskip }
+                \textit{ \g__projlib_author_dedicatory_tl }
+                \projlib_author_if_content_empty:nT { \@date }
+                  {
+                    \skip_vertical:n { -\parskip }
+                    \skip_vertical:n { \dim_eval:n { -1.7 \baselineskip } }
+                  }
+              }
+          }
+        \end{center}
+        \projlib_author_if_content_empty:nT { \@date } { \medskip }
+        \medskip\par
+        \ResumeLineNumbers
+      }
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream|minimalist-classicthesis>
+%<*minimalist-classical>
+    \renewcommand{\@maketitle}
+      {
+        \LocallyStopLineNumbers
+        \noindent
+        {\textcolor{main-text!27!paper}{\rule{\textwidth}{0.75pt}}}
+        % \vspace{-\parskip}
+        \vspace{-.5\baselineskip}
+        \begin{flushright}
+          \let\footnote\thanks
+          {\minimalist_bfseries:\minimalist_sffamily:\@title}\\\medskip
+          \color{main-text!80!paper}
+          {\small\minimalist_scshape:\@author}
+          \par\vspace{-\parskip}\vspace{2pt}
+          {\small\@date}
+        \end{flushright}
+        \vspace{-.5\baselineskip}
+        \projlib_author_if_content_empty:nTF { \@date }
+          {
+            \vspace{-.2\baselineskip}
+          }
+          {
+            \vspace{-.5\baselineskip}
+          }
+        {\textcolor{main-text!27!paper}{\rule{\textwidth}{0.75pt}}}
+        \par
+        \ResumeLineNumbers
+      }
+%</minimalist-classical>
+
+%<*minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-stream>
+    \hook_gput_code:nnn { cmd/maketitle/after } { minimalist } { \thispagestyle{fancy} }
+%</minimalist-default|minimalist-plain|minimalist-classical|minimalist-flow|minimalist-stream>
+
+%%================================
+%%  Abstract style
+%%================================
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream|minimalist-classicthesis>
+    \renewenvironment{abstract}
+      {
+        \LocallyStopLineNumbers
+        \vspace{-.5\baselineskip}
+        \begin{center}
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+          { \g_minimalist_title_font_section_tl \minimalist_scshape: \small\abstractname}\\
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+%<*minimalist-classicthesis>
+          { \small\spacedlowsmallcaps{\abstractname} }\\
+%</minimalist-classicthesis>
+          \vspace{-.3\baselineskip}
+          \begin{minipage}[t]{.833\textwidth}
+            \vspace{0pt}
+            \color{main-text!80!paper}
+            \footnotesize
+            \parindent=2em
+      }
+      {
+          \end{minipage}
+        \end{center}
+        \medskip
+        \ResumeLineNumbers
+      }
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream|minimalist-classicthesis>
+%<*minimalist-classical>
+    \renewenvironment{abstract}
+      {
+        \LocallyStopLineNumbers
+        \begin{flushright}
+          { \g_minimalist_title_font_section_tl \minimalist_scshape: \small\abstractname}\par
+          \vspace{-\parskip}
+          \vspace{-.25\baselineskip}
+          \begin{minipage}[t]{.833\textwidth}
+            \vspace{0pt}
+            \color{main-text!80!paper}
+            \footnotesize
+            \parindent=2em
+      }
+      {
+          \end{minipage}
+        \end{flushright}
+        \bigskip
+        \ResumeLineNumbers
+      }
+%</minimalist-classical>
+
+%%================================
+%%  Keyword environment
+%%================================
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream|minimalist-classicthesis>
+    \newenvironment{keyword}{
+      \LocallyStopLineNumbers
+      \vspace{-.75\baselineskip}
+      \begin{center}
+%<*minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+        { \g_minimalist_title_font_section_tl \minimalist_scshape: \small\keywordname}\\
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream>
+%<*minimalist-classicthesis>
+        { \small\spacedlowsmallcaps{\keywordname} }\\
+%</minimalist-classicthesis>
+        \vspace{-.3\baselineskip}
+        \begin{minipage}[t]{.833\textwidth}
+          \vspace{0pt}
+          \color{main-text!80!paper}
+          \footnotesize
+          \parindent=2em
+          \begin{center}
+    }{
+          \end{center}
+        \end{minipage}
+      \end{center}
+      \medskip
+      \ResumeLineNumbers
+    }
+%</minimalist-default|minimalist-plain|minimalist-flow|minimalist-stream|minimalist-classicthesis>
+%<*minimalist-classical>
+    \newenvironment{keyword}{
+      \LocallyStopLineNumbers
+      \vspace{-.5\baselineskip}
+      \begin{flushright}
+        {\minimalist_bfseries:\minimalist_sffamily:\minimalist_scshape:\small\keywordname}\par
+        \vspace{-\parskip}
+        \vspace{-.30\baselineskip}
+        \begin{minipage}[t]{.833\textwidth}
+          \vspace{0pt}
+          \color{main-text!80!paper}
+          \footnotesize
+          \parindent=2em
+          \raggedleft
+    }{
+        \end{minipage}
+      \end{flushright}
+      \bigskip
+      \ResumeLineNumbers
+    }
+%</minimalist-classical>
+  } % end of \bool_if:NTF \l__minimalist_is_book_bool
+
+%%================================
+%%  Simulate features of amsart
+%%================================
+\PassOptionsToPackage { amsfashion } { projlib-author }
+\RequirePackage { projlib-author }
+
+%%================================
+%%  Special adjustment
+%%================================
+%<*minimalist-flow|minimalist-stream>
+\setcounter{tocdepth}{1}
+
+%</minimalist-flow|minimalist-stream>
+%<*minimalist-default|minimalist-flow|minimalist-stream>
+\crefformat { part } { \nobreak \crefthemark { \crefthe_retrieve_space: } \nobreak #2 \minimalist_apply_title_numbering_style_static:n {#1} #3 }
+\labelcrefformat { part } { #2 \minimalist_apply_title_numbering_style_static:n {#1} #3 }
+\crefformat { chapter } { \nobreak \crefthemark { \crefthe_retrieve_space: } \nobreak #2 \minimalist_apply_title_numbering_style_static:n {#1} #3 }
+\labelcrefformat { chapter } { #2 \minimalist_apply_title_numbering_style_static:n {#1} #3 }
+\crefformat { section } { \nobreak \crefthemark { \crefthe_retrieve_space: } \nobreak #2 \minimalist_apply_title_numbering_style_static:n {#1} #3 }
+\labelcrefformat { section } { #2 \minimalist_apply_title_numbering_style_static:n {#1} #3 }
+\crefformat { subsection } { \nobreak \crefthemark { \crefthe_retrieve_space: } \nobreak #2 \minimalist_apply_title_numbering_style_static:n {#1} #3 }
+\labelcrefformat { subsection } { #2 \minimalist_apply_title_numbering_style_static:n {#1} #3 }
+\crefformat { subsubsection } { \nobreak \crefthemark { \crefthe_retrieve_space: } \nobreak #2 \minimalist_apply_title_numbering_style_static:n {#1} #3 }
+\labelcrefformat { subsubsection } { #2 \minimalist_apply_title_numbering_style_static:n {#1} #3 }
+%</minimalist-default|minimalist-flow|minimalist-stream>
+
+%<*minimalist-classicthesis>
+%%================================
+%%  Load the main design
+%%================================
+\hook_gput_code:nnn { begindocument/before } { minimalist }
+  {
+    \RequirePackage { classicthesis }
+  }
+%</minimalist-classicthesis>
+%</style>
+
+\endinput

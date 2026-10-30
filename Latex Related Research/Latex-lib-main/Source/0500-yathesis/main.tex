@@ -1,0 +1,73 @@
+\documentclass{yathesis}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{natbib}
+
+\author[]{Jeanne}{Dupont}
+\title[]{Tol\'erance aux partitions r\'eseau dans les protocoles de consensus approch\'e}
+\academicfield[]{Informatique}
+\speciality[]{Syst\`emes distribu\'es}
+\date{15}{9}{2026}
+\institute[]{Universit\'e de Sciences et Techniques}
+\doctoralschool[]{\'Ecole doctorale Informatique, T\'el\'ecommunications et \'Electronique}
+\laboratory[]{Laboratoire d'Informatique}{%
+  \\
+  4 place Jussieu\\
+  75005 Paris\\
+  France\\
+  }
+\supervisor[]{Marie}{Martin}
+\referee[]{Paul}{Bernard}
+\referee[]{Sophie}{Petit}
+\committeepresident[]{Luc}{Moreau}
+\examiner[]{Claire}{Simon}
+\keywords{syst\`emes distribu\'es, consensus, partition r\'eseau}{distributed systems, consensus, network partition}
+
+\begin{document}
+
+\maketitle
+
+\makekeywords
+
+\begin{abstract}
+Cette th\`ese \'etudie la d\'egradation des protocoles de consensus
+approch\'e sous partition r\'eseau partielle, et propose un protocole
+qui \'echange un faible surco\^ut de latence contre un d\'ebit accru.
+\end{abstract}
+\begin{abstract}
+This thesis studies how approximate consensus protocols degrade under
+partial network partition, and proposes a protocol that trades a small
+latency overhead for improved throughput.
+\end{abstract}
+\makeabstract
+
+\tableofcontents[depth=chapter,name=Sommaire]
+\listoftables
+\listoffigures
+
+\mainmatter
+
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+
+Les syst\`emes distribu\'es \`a grande \'echelle s'appuient de plus en
+plus sur des protocoles de consensus approch\'e pour \'equilibrer
+latence et coh\'erence \citep{lamport1998part}. Ce travail \'etudie la
+d\'egradation de tels protocoles sous partition r\'eseau.
+
+\input{chapters/related-work}
+\input{chapters/evaluation}
+
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+
+Le protocole propos\'e maintient un d\'ebit plus \'elev\'e que la
+r\'ef\'erence d\`es que le taux de partition d\'epasse 5~\%, au prix
+d'un faible surco\^ut de latence constant \citep{ongaro2014search}.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

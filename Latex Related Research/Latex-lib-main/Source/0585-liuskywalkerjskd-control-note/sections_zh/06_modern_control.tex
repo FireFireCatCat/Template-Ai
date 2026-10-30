@@ -1,0 +1,1208 @@
+%=============================================================================
+\section{现代控制理论}
+%=============================================================================
+
+经典控制（PID、频率响应、根轨迹）已经能走很远了，大多数 SISO 系统它都能漂亮地搞定。但有些问题它够不着：
+
+想象一下：你的平衡车 PID 调好了俯仰角，但每次底盘加速，倾角和速度互相干扰——怎么同时控制两个耦合的量？你的云台跟踪目标很平稳，但编码器坏了一个——怎么从剩余传感器估计出缺失的状态？你的电机要跑得快、又不能超过电流限制——怎么在约束下找到最优解？这些问题都超出了 PID 的能力范围，现代控制理论就是为它们而生的。
+
+它直接在状态空间上干活，线性代数是它的主要武器。
+
+\subsection{状态空间与传递函数的关系}
+
+你在频域里用 Bode 图整形了一个控制器，同事在状态空间里推出了 LQR——你们描述的是同一台机器吗？如何在两种语言之间切换？答案是：可以互相转换。
+
+\textbf{状态空间转传递函数：}
+\begin{equation}
+G(s) = C(sI - A)^{-1}B + D
+\end{equation}
+
+推导：对 $\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}$ 取拉普拉斯变换（零初始条件）得 $s\mathbf{X}(s) = A\mathbf{X}(s) + B\mathbf{U}(s)$，即 $\mathbf{X}(s) = (sI - A)^{-1}B\mathbf{U}(s)$。代入 $\mathbf{Y}(s) = C\mathbf{X}(s) + D\mathbf{U}(s)$ 即得。
+
+\textbf{传递函数转状态空间：}转法不唯一——同一个传递函数可以对应多种状态空间实现。常见的有\textit{可控标准型}（分母系数直接出现在 $A$ 的最后一行，可控性一目了然）和\textit{可观标准型}（分母系数出现在 $A$ 的最后一列，可观性一目了然）。实际工程中，MATLAB 的 \texttt{tf2ss} 可直接给出一种实现；用哪种标准型主要在手算分析时才有区别。
+
+\textbf{关键区别：}传递函数看的是输入-输出行为；状态空间看的是内部动力学。两个系统可以传递函数一模一样，内部结构完全不同——这些额外信息只有状态空间能捕捉到。
+
+\textbf{为什么这很重要：}有些内部模态可能不稳定，但传递函数里看不到（零点把它们抵消了）。状态空间能把这些"隐藏炸弹"揪出来。所以现代控制偏爱状态空间——它看得见全貌。
+
+\subsection{系统性能指标}
+
+\subsubsection{可控性与可观性}
+
+我们来想一个具体的问题：你的双轮平衡车有四个状态（倾角、角速度、位移、速度），但只有一个电机。一个输入能把四个状态都控制好吗？不一定——这取决于系统的\textbf{可控性}。
+
+\textbf{可控性（Controllability）：}「我能否利用现有输入，将每个状态驱动到任意期望值？」
+
+若系统 $(A, B)$ 是可控的，则\textbf{可控性矩阵}（controllability matrix）满秩：
+\begin{equation}
+\mathcal{C} = \begin{bmatrix} B & AB & A^2B & \cdots & A^{n-1}B \end{bmatrix}, \quad \text{rank}(\mathcal{C}) = n
+\end{equation}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{推导：可控性矩阵为什么长这样}
+
+\vspace{0.3em}
+$\mathcal{C} = [B \;\; AB \;\; \cdots \;\; A^{n-1}B]$ 不是凭空变出来的，它从状态递推方程一步步推出来。
+
+\textbf{第一步：逐步展开状态转移。}离散时间系统 $\mathbf{x}[k+1] = A\mathbf{x}[k] + B\mathbf{u}[k]$，从 $\mathbf{x}[0] = \mathbf{0}$ 出发往前推：
+\begin{align}
+\mathbf{x}[1] &= B\mathbf{u}[0] \\
+\mathbf{x}[2] &= A\mathbf{x}[1] + B\mathbf{u}[1] = AB\mathbf{u}[0] + B\mathbf{u}[1] \\
+\mathbf{x}[3] &= A^2B\mathbf{u}[0] + AB\mathbf{u}[1] + B\mathbf{u}[2] \\
+&\;\vdots \notag \\
+\mathbf{x}[n] &= A^{n-1}B\mathbf{u}[0] + A^{n-2}B\mathbf{u}[1] + \cdots + B\mathbf{u}[n-1]
+\end{align}
+
+\textbf{第二步：写成矩阵形式。}把输入序列摞成向量：
+\begin{equation}
+\mathbf{x}[n] = \begin{bmatrix} A^{n-1}B & A^{n-2}B & \cdots & AB & B \end{bmatrix}
+\begin{bmatrix} \mathbf{u}[0] \\ \mathbf{u}[1] \\ \vdots \\ \mathbf{u}[n-1] \end{bmatrix}
+= \mathcal{C} \cdot \mathbf{u}_{\text{seq}}
+\end{equation}
+
+（$\mathcal{C}$ 的列只是换了个顺序，秩不变。）
+
+\textbf{第三步：秩条件。}我们想从零出发到达\textit{任意}目标 $\mathbf{x}[n] \in \mathbb{R}^n$。方程 $\mathcal{C} \cdot \mathbf{u}_{\text{seq}} = \mathbf{x}[n]$ 对任意右端都有解，当且仅当 $\text{rank}(\mathcal{C}) = n$。这就是可控性判据。
+
+\textbf{为什么只要 $n$ 列？}Cayley--Hamilton 定理告诉我们，$A^n$ 可以表示为 $I, A, A^2, \ldots, A^{n-1}$ 的线性组合。所以 $A^n B$ 已经落在 $\text{span}\{B, AB, \ldots, A^{n-1}B\}$ 里了，再往后算也不会增加新信息。
+
+\textbf{连续时间版本：}对 $\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}$，从 $\mathbf{x}(0) = \mathbf{0}$ 出发的可达集合为：
+\[
+\mathbf{x}(t) = \int_0^{t} e^{A(t-\tau)} B \mathbf{u}(\tau) \, d\tau
+\]
+把矩阵指数 $e^{A(t-\tau)} = \sum_{k=0}^{\infty} \frac{(t-\tau)^k}{k!} A^k$ 展开，再用 Cayley--Hamilton 把 $n$ 阶及以上的项折叠掉，可达集合还是 $\text{span}\{B, AB, \ldots, A^{n-1}B\}$——同一个可控性矩阵。
+\end{mdframed}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{推导：可观性矩阵为什么长这样}
+
+\vspace{0.3em}
+可观性矩阵来自对偶的问题：给定输出序列 $\mathbf{y}[0], \mathbf{y}[1], \ldots$，能否反推初始状态 $\mathbf{x}[0]$？
+
+\textbf{第一步：写出输出方程。}令 $\mathbf{u} = \mathbf{0}$（已知的输入贡献可以事先减掉）。自由响应下：
+\begin{align}
+\mathbf{y}[0] &= C\mathbf{x}[0] \\
+\mathbf{y}[1] &= C\mathbf{x}[1] = CA\mathbf{x}[0] \\
+\mathbf{y}[2] &= CA^2\mathbf{x}[0] \\
+&\;\vdots \notag \\
+\mathbf{y}[n-1] &= CA^{n-1}\mathbf{x}[0]
+\end{align}
+
+\textbf{第二步：堆成矩阵方程。}
+\begin{equation}
+\begin{bmatrix} \mathbf{y}[0] \\ \mathbf{y}[1] \\ \vdots \\ \mathbf{y}[n-1] \end{bmatrix}
+= \underbrace{\begin{bmatrix} C \\ CA \\ CA^2 \\ \vdots \\ CA^{n-1} \end{bmatrix}}_{\mathcal{O}} \mathbf{x}[0]
+\end{equation}
+
+\textbf{第三步：秩条件。}要从输出序列\textit{唯一}地恢复 $\mathbf{x}[0]$，方程 $\mathcal{O} \cdot \mathbf{x}[0] = \mathbf{y}_{\text{seq}}$ 必须有唯一解。这要求 $\text{rank}(\mathcal{O}) = n$（列满秩）。
+
+\textbf{为什么只要 $n$ 行？}跟可控性同理——Cayley--Hamilton 使得 $CA^n$ 是 $C, CA, \ldots, CA^{n-1}$ 的线性组合，多测几步也不会提供新信息。
+
+\textbf{对偶性一目了然：}可控性问的是"$\mathcal{C}$ 能否把输入空间\textit{映满}状态空间"；可观性问的是"$\mathcal{O}$ 能否把状态空间\textit{区分}成不同的输出"。把一个转置，就得到另一个——这正是对偶性的数学含义：$(A, B)$ 可控 $\Leftrightarrow$ $(A^T, B^T)$ 可观（其中 $B^T$ 扮演 $C$ 的角色）。
+\end{mdframed}
+
+\textbf{物理含义：} 若某个状态是不可控的，则任何输入都无法影响它。例如，若你的机器人底盘有一个电机坏了，你就在某些方向上失去了可控性。
+
+\textbf{工作示例：} 考虑一个简化的二维底盘，状态为 $\mathbf{x} = \begin{bmatrix} v_x \\ v_y \end{bmatrix}$（$x$ 和 $y$ 方向的速度），只有一个朝前的电机：
+\[
+A = \begin{bmatrix} -1 & 0 \\ 0 & -1 \end{bmatrix}, \quad B = \begin{bmatrix} 1 \\ 0 \end{bmatrix}
+\]
+可控性矩阵：$\mathcal{C} = \begin{bmatrix} B & AB \end{bmatrix} = \begin{bmatrix} 1 & -1 \\ 0 & 0 \end{bmatrix}$。秩为 1，但 $n = 2$。\textbf{不可控！} 该电机只能驱动 $v_x$；没有任何输入能改变 $v_y$。这在物理上很直观：汽车不能横向移动。若添加一个侧向电机（$B = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$），可控性便恢复了。
+
+\textbf{可观性（Observability）：}「我能否从现有输出（测量值）中确定每个状态？」
+
+若系统 $(A, C)$ 是可观的，则\textbf{可观性矩阵}（observability matrix）满秩：
+\begin{equation}
+\mathcal{O} = \begin{bmatrix} C \\ CA \\ CA^2 \\ \vdots \\ CA^{n-1} \end{bmatrix}, \quad \text{rank}(\mathcal{O}) = n
+\end{equation}
+
+\textbf{物理含义：} 若某个状态不可观，则无法从测量值中推断出它。例如，若你只测量电机位置而不测量电流，则电流状态可能是不可观的（取决于模型）。
+
+\textbf{可控性-可观性对偶性：} 系统 $(A, B, C)$ 可控，当且仅当对偶系统 $(A^T, C^T, B^T)$ 可观。这一优美的对称性意味着控制器设计技术（极点配置）可以直接移植到观测器设计中。
+
+\textbf{总之：}设计控制器之前查可控性，设计观测器之前查可观性。条件不满足，数学再花哨也白搭——得改硬件（加传感器、修执行器）。
+
+\subsubsection{闭环系统稳定性}
+
+对于具有状态反馈 $\mathbf{u} = -K\mathbf{x}$ 的闭环状态空间系统：
+\begin{equation}
+\dot{\mathbf{x}} = (A - BK)\mathbf{x}
+\end{equation}
+
+当且仅当 $(A - BK)$ 的所有特征值都具有负实部时，系统稳定。增益矩阵 $K$ 正是我们设计用来将这些特征值配置到期望位置的。
+
+\textbf{李雅普诺夫稳定性（Lyapunov stability）：} 一种更通用的稳定性分析工具。若存在一个正定函数 $V(\mathbf{x})$（类似"能量"的函数），且该函数沿轨迹始终递减（$\dot{V} < 0$），则系统稳定。找到这样的 $V$ 就证明了稳定性；找不到并不能证明不稳定（也许只是你没往正确方向找）。
+
+对于线性系统，李雅普诺夫方程为：
+\begin{equation}
+A^T P + PA = -Q
+\end{equation}
+
+推导：选候选 Lyapunov 函数 $V(\mathbf{x}) = \mathbf{x}^T P \mathbf{x}$。沿轨迹 $\dot{\mathbf{x}} = A\mathbf{x}$ 求时间导数：$\dot{V} = \dot{\mathbf{x}}^T P \mathbf{x} + \mathbf{x}^T P \dot{\mathbf{x}} = \mathbf{x}^T(A^T P + PA)\mathbf{x}$。要求 $\dot{V} < 0$（稳定），即需 $A^T P + PA = -Q$（$Q$ 正定）。
+
+若 $Q > 0$ 且解 $P > 0$，则系统稳定。MATLAB 的 \texttt{lyap()} 可直接求解。
+
+\subsection{基于状态空间的控制器设计}
+
+\subsubsection{贝尔曼方程与动态规划：LQR 和 MPC 的核心引擎}
+
+在讲 LQR 和 MPC 之前，得先认识它们背后的数学引擎：\textbf{动态规划（DP）}和\textbf{贝尔曼方程}。如果你打过算法竞赛（USACO、Codeforces、LeetCode），DP 你肯定不陌生——控制理论里的 DP 跟那个是同一个东西，只是换了身衣服。
+
+\textbf{贝尔曼最优性原理（Bellman Principle of Optimality）：}\textit{一个最优策略具有如下性质：无论初始状态和初始决策如何，后续决策对于由第一个决策产生的状态而言，必须构成最优策略。}
+
+说人话：只要你知道从每个中间状态往后的最优策略，就可以枚举所有选项，挑出"这一步的代价 + 之后最优代价"之和最小的那个——最优的第一步就这么定了。
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{热身：网格世界最短路径（你已经熟悉的 DP）}
+
+\vspace{0.3em}
+考虑一道经典 DP 问题：你在一个 $n \times n$ 的网格上。从 $(0, 0)$ 出发，目标是到达 $(n{-}1, n{-}1)$。每个格子 $(i, j)$ 有代价 $c(i, j)$。你只能向右或向下移动。求最小代价路径。
+
+\textbf{状态：} 你的位置 $(i, j)$。
+
+\textbf{决策（控制）：} 向右移动或向下移动。
+
+\textbf{代价函数（cost-to-go）：} $V(i, j) = $ 从 $(i, j)$ 到达终点的最小总代价。
+
+\textbf{贝尔曼方程：}
+\[
+V(i, j) = c(i, j) + \min\{V(i+1, j), \; V(i, j+1)\}
+\]
+
+\textbf{边界条件：} $V(n{-}1, n{-}1) = c(n{-}1, n{-}1)$。
+
+\textbf{求解：} 从终点\textit{向后}填表，直到起点。在每个格子处，最优决策是朝代价函数值更小的那个邻居走。总复杂度：$O(n^2)$。
+
+你从第一道 DP 题就一直在这样做了。现在看看换一套词汇会发生什么：
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{DP（动态规划）} & \textbf{最优控制} & \textbf{含义} \\
+\midrule
+状态 $(i, j)$ & 状态 $\mathbf{x}_k$ & 当前所在位置 \\
+决策（右/下） & 控制输入 $\mathbf{u}_k$ & 下一步做什么 \\
+转移 $(i,j) \to (i+1,j)$ & $\mathbf{x}_{k+1} = f(\mathbf{x}_k, \mathbf{u}_k)$ & 物理/动力学规律 \\
+步骤代价 $c(i,j)$ & 阶段代价 $\ell(\mathbf{x}_k, \mathbf{u}_k)$ & 该步的惩罚 \\
+代价函数 $V(i,j)$ & 值函数 $V_k(\mathbf{x})$ & 最优未来代价 \\
+贝尔曼递推 & 贝尔曼方程 & DP 更新规则 \\
+向后填表 & 向后 Riccati 递推 & 求解方式 \\
+$(i,j)$ 处的最优动作 & 最优策略 $\mathbf{u}_k^* = \pi(\mathbf{x}_k)$ & 每个状态该做什么 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textit{一模一样的算法}。唯一的区别：控制里的「网格」是连续的（状态是实数而不是整数），「决策」是实值的控制输入而不是离散的左/右。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{gridworld_dp.pdf}
+\caption{网格世界 DP 示例（$5 \times 5$，移动方式：向右或向下）。(a) 每个格子有步骤代价 $c(i,j)$。(b) 代价函数 $V(i,j)$ 从终点\textit{向后}填充——这就是 DP 表（等价于控制中的 Riccati 递推）。(c) 最优路径（总代价 = 13）遵循贝尔曼策略：在每个格子处，朝 $V$ 值更小的邻居走。将「格子」换成「状态」、「右/下」换成「控制输入」，你就得到了 LQR。}
+\end{figure}
+\end{mdframed}
+
+\textbf{最优控制的贝尔曼方程（离散时间）：}
+
+给定系统 $\mathbf{x}_{k+1} = f(\mathbf{x}_k, \mathbf{u}_k)$，阶段代价 $\ell(\mathbf{x}_k, \mathbf{u}_k)$ 和终端代价 $\ell_f(\mathbf{x}_N)$，最优代价函数（值函数）满足：
+
+\begin{equation}
+V_k(\mathbf{x}) = \min_{\mathbf{u}} \left[ \ell(\mathbf{x}, \mathbf{u}) + V_{k+1}\left(f(\mathbf{x}, \mathbf{u})\right) \right]
+\end{equation}
+
+边界条件为 $V_N(\mathbf{x}) = \ell_f(\mathbf{x})$。
+
+第 $k$ 步的最优控制为：
+\begin{equation}
+\mathbf{u}_k^*(\mathbf{x}) = \arg\min_{\mathbf{u}} \left[ \ell(\mathbf{x}, \mathbf{u}) + V_{k+1}\left(f(\mathbf{x}, \mathbf{u})\right) \right]
+\end{equation}
+
+\textbf{这是从时间 $k = N$ 到 $k = 0$ 向后求解的}，就像从终点向起点填 DP 表一样。
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{从网格世界到 LQR：「连续网格」问题}
+
+\vspace{0.3em}
+现在想象网格世界变成了连续的。「位置」不再是格子，而是实值状态 $\mathbf{x} \in \mathbb{R}^n$。「移动」不再是右/下，而是实值控制 $\mathbf{u} \in \mathbb{R}^m$。转移是线性的：$\mathbf{x}_{k+1} = A\mathbf{x}_k + B\mathbf{u}_k$。步骤代价是二次的：$\ell(\mathbf{x}, \mathbf{u}) = \mathbf{x}^T Q \mathbf{x} + \mathbf{u}^T R \mathbf{u}$。
+
+代入贝尔曼方程：
+\[
+V_k(\mathbf{x}) = \min_{\mathbf{u}} \left[ \mathbf{x}^T Q \mathbf{x} + \mathbf{u}^T R \mathbf{u} + V_{k+1}(A\mathbf{x} + B\mathbf{u}) \right]
+\]
+
+神奇之处来了：由于动力学是线性的、代价是二次的，值函数\textbf{也是二次的}：$V_k(\mathbf{x}) = \mathbf{x}^T P_k \mathbf{x}$，其中 $P_k$ 是某个矩阵。将此假设代入并对 $\mathbf{u}$ 求导：
+
+\[
+\frac{\partial}{\partial \mathbf{u}} \left[ \mathbf{u}^T R \mathbf{u} + (A\mathbf{x} + B\mathbf{u})^T P_{k+1} (A\mathbf{x} + B\mathbf{u}) \right] = 0
+\]
+
+求解得：
+\begin{align}
+\mathbf{u}_k^* &= -\underbrace{(R + B^T P_{k+1} B)^{-1} B^T P_{k+1} A}_{K_k} \, \mathbf{x}_k \\
+P_k &= Q + A^T P_{k+1} A - A^T P_{k+1} B (R + B^T P_{k+1} B)^{-1} B^T P_{k+1} A
+\end{align}
+
+推导思路：展开 Bellman 方程 $V_k(\mathbf{x}) = \min_{\mathbf{u}}[\mathbf{x}^T Q \mathbf{x} + \mathbf{u}^T R \mathbf{u} + (A\mathbf{x}+B\mathbf{u})^T P_{k+1}(A\mathbf{x}+B\mathbf{u})]$，对 $\mathbf{u}$ 求导令其为零：$2R\mathbf{u} + 2B^T P_{k+1}(A\mathbf{x} + B\mathbf{u}) = 0$，解得 $\mathbf{u}^* = -(R + B^T P_{k+1} B)^{-1} B^T P_{k+1} A \mathbf{x}$。回代即得 $P_k$ 的递推公式。
+
+$P_k$ 的这个向后递推正是\textbf{离散 Riccati 方程}——就是「向后填 DP 表」这一步。当时域 $N \to \infty$ 时，$P_k$ 收敛到常数 $P$，得到稳态的 \textbf{LQR} 增益 $K = (R + B^T P B)^{-1} B^T P A$。
+
+\textbf{对应网格世界的类比：}
+\begin{itemize}[nosep]
+    \item $P_k$ 是代价矩阵——它告诉你从任意状态出发的「剩余代价」，就像网格中的 $V(i,j)$。
+    \item $K_k$ 是第 $k$ 步的最优策略——它告诉你在每个状态该做什么，就像「若 $V(i+1,j) < V(i,j+1)$ 则向右走」。
+    \item Riccati 递推就是填 DP 表——同样是 $O(N)$ 的向后遍历。
+\end{itemize}
+\end{mdframed}
+
+\textbf{与 MPC 的联系：} MPC 使用的是同一套贝尔曼/动态规划框架，只是额外增加了两点：
+\begin{enumerate}
+    \item 对状态和输入的\textbf{约束}（就像在网格世界中加了墙——某些格子被禁止进入）。
+    \item \textbf{滚动时域}：不是从 $k = 0$ 到 $N$ 只求解一次，而是在每个时间步用最新测量值作为新的「起点」重新求解。
+\end{enumerate}
+
+约束使贝尔曼方程更难求解（$\min$ 变成了约束优化问题），这就是为什么 MPC 需要二次规划（QP）求解器，或 TinyMPC 的 ADMM 方法。但其底层原理完全相同：向后递推求最优代价函数，向前应用最优策略。
+
+\textbf{与强化学习的联系：} 如果你熟悉强化学习（RL），贝尔曼方程与 RL 中的\textbf{贝尔曼最优性方程}完全一致（$V^*(s) = \max_a [r(s,a) + \gamma V^*(s')]$）。LQR 是线性二次问题的「闭式 RL」。当动力学未知或非线性时，RL 方法（Q-learning、策略梯度）对 LQR 精确计算的解进行近似。
+
+\subsubsection{LQR（线性二次调节器）}
+
+有了贝尔曼/动态规划这套框架，LQR 就水到渠成了——它就是线性二次贝尔曼方程的稳态解。不用手动配极点，只需给一个代价函数，告诉它"性能和控制力度之间怎么平衡"：
+
+为什么选二次型代价？因为它让优化问题有闭式解（Riccati 方程），而且物理上自然——偏差的平方意味着大偏差受到不成比例的惩罚，小偏差几乎不算。
+
+\begin{equation}
+J = \int_0^{\infty} \left( \mathbf{x}^T Q \mathbf{x} + \mathbf{u}^T R \mathbf{u} \right) dt
+\end{equation}
+
+其中 $Q$ 惩罚状态偏差（$Q$ 大 = 激进跟踪、快速响应），$R$ 惩罚控制代价（$R$ 大 = 温和输入、节省能量）。
+
+最优状态反馈增益为：
+\begin{equation}
+K = R^{-1} B^T P
+\end{equation}
+
+其中 $P$ 是\textbf{连续代数 Riccati 方程（Continuous Algebraic Riccati Equation，CARE）}的解：
+\begin{equation}
+A^T P + PA - PBR^{-1}B^T P + Q = 0
+\end{equation}
+
+不要手动求解这个方程。在 MATLAB 中用 \texttt{lqr(A, B, Q, R)}，在 Python 中用 \texttt{scipy.linalg.solve\_continuous\_are()}。
+
+\textbf{Riccati 方程到底在算什么？}$P$ 是\textbf{最优代价地图}：$P_{ij}$ 编码了状态 $i$ 和 $j$ 交互带来的「未来代价」。哪个状态难搞（拉回零点要花大力气），$P$ 里对应的元素就大。最优增益 $K = R^{-1}B^T P$ 的意思就是：「代价高的状态猛纠，代价低的状态轻拿轻放。」
+
+\textbf{LQR 调参：}关键就在 $Q$ 和 $R$ 怎么选。从 $Q = I$（单位矩阵）和 $R = \rho I$（$\rho$ 为标量）开始。$\rho$ 小意味着激进、快速、消耗大量执行器能量；$\rho$ 大则保守、缓慢、对执行器温和。若要对某些状态施加更大惩罚，增大 $Q$ 对应的对角元素——例如，若你更关心位置而非速度，令 $Q_{11} > Q_{22}$。
+
+\textbf{LQR 在比赛中的优势：}它保证稳定性（如果系统可控），并自带鲁棒性裕度（对 SISO 系统，至少 6 dB 增益裕度和 60\textdegree{} 相位裕度）。它轻松处理 MIMO 系统，且对多轴系统而言，$Q/R$ 调参比 PID 的三个增益更直观。
+
+\textbf{示例：} 平衡两轮机器人。状态为 $\mathbf{x} = [\theta, \dot{\theta}, x, \dot{x}]^T$（倾斜角、倾斜角速度、位置、速度）。PID 方法需要多个嵌套环路；LQR 只需一个 $K$ 矩阵便可搞定。
+
+\textbf{局限性：} LQR 需要完整的状态反馈（$\mathbf{u} = -K\mathbf{x}$），这意味着你需要知道所有状态。如果无法测量所有状态，则需要观测器（见第 6.4 节）。
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{彩蛋：PID 其实是伪装过的状态空间控制器}
+
+\vspace{0.3em}
+理解了状态反馈之后，我们换个角度重新审视一下老朋友。经典控制那章的 PID 控制器——它会不会本质上就是一个状态空间控制器？
+
+答案是：确实如此。考虑一个跟踪参考 $r$ 的一阶被控对象 $\dot{y} = -ay + bu$。定义三个 PID 隐式使用的"状态"：
+\[
+x_1 = \int_0^t (r - y)\,d\tau \quad \text{（误差积分）}, \qquad
+x_2 = r - y \quad \text{（误差）}, \qquad
+x_3 = -\dot{y} \quad \text{（负速度）}
+\]
+
+PID 控制律 $u = K_i x_1 + K_p x_2 + K_d x_3$ 恰好就是状态反馈 $u = K \mathbf{x}$，其中增益向量 $K = [K_i, \; K_p, \; K_d]$。你一直在做状态反馈——只不过你是在用手动试错的方式选"状态"和"增益矩阵"。
+
+那 LQR 多了什么？它不用你手调 $K_p$、$K_i$、$K_d$，而是通过求解 Riccati 方程，根据你选的 $Q$ 和 $R$ 自动\textit{算出}最优增益向量 $K$。"PID 调参的艺术"变成了"$Q/R$ 调参的艺术"——后者更容易，因为 $Q$ 和 $R$ 有直接的物理含义（你多在乎误差、多心疼执行器），而 $K_p$、$K_i$、$K_d$ 是抽象增益，它们之间的交互很难预判。
+
+这也解释了为什么 PID 在 SISO 系统上效果出奇地好：对于带积分环节的一阶对象，PID \textit{就是}最优状态反馈控制器——你只不过是在用手而不是用 Riccati 找最优增益罢了。
+\end{mdframed}
+
+\subsubsection{优化与凸性简介}
+
+MPC 在每个时间步都要解一道优化题。在深入之前，先建立必要的优化概念。
+
+\textbf{一般优化问题：}
+\[
+\min_{\mathbf{x}} \; f(\mathbf{x}) \quad \text{subject to} \quad g_i(\mathbf{x}) \leq 0, \;\; h_j(\mathbf{x}) = 0
+\]
+其中 $f$ 是\textbf{目标函数}（代价），$g_i$ 是\textbf{不等式约束}，$h_j$ 是\textbf{等式约束}。优化器在满足所有约束的前提下，寻找使 $f$ 最小的决策变量 $\mathbf{x}$。
+
+\textbf{什么使问题成为凸问题？}满足以下条件：
+\begin{enumerate}[nosep]
+    \item 目标函数 $f$ 是\textbf{凸函数}：对任意两点 $\mathbf{a}, \mathbf{b}$ 和 $0 \leq \lambda \leq 1$，
+    \[
+    f\bigl(\lambda \mathbf{a} + (1-\lambda)\mathbf{b}\bigr) \leq \lambda f(\mathbf{a}) + (1-\lambda) f(\mathbf{b})
+    \]
+    几何含义：函数曲面位于任意弦的下方。二次函数 $f(\mathbf{x}) = \mathbf{x}^T Q \mathbf{x}$，当 $Q \succeq 0$（半正定）时为凸函数。
+    \item \textbf{可行域}（由约束定义）是凸集：两个可行点之间的任意线段仍在可行域内。线性不等式（$A\mathbf{x} \leq \mathbf{b}$）始终定义凸集。
+\end{enumerate}
+
+\textbf{为什么凸性重要：}凸问题只有一个全局最小值——不存在局部最小值陷阱。任何求解器找到的解就是\textit{最优}解。非凸问题可能有多个局部最小值，求解器可能陷入较差的解。
+
+\textbf{二次规划（QP）：}控制中最常见的优化问题。目标函数是二次的，约束是线性的：
+\[
+\min_{\mathbf{x}} \; \tfrac{1}{2}\mathbf{x}^T H \mathbf{x} + \mathbf{c}^T \mathbf{x} \quad \text{s.t.} \quad A\mathbf{x} \leq \mathbf{b}
+\]
+当 $H \succeq 0$ 时，问题为凸问题，即使在嵌入式系统上也能高效求解（TinyMPC 正是利用了这一结构）。无约束 LQR 是\textit{无约束} QP，其解就是 Riccati 方程。带有输入和状态盒式约束的 MPC 是\textit{有约束} QP。
+
+\textbf{与控制的联系：}本章涉及的每一个最优控制问题——LQR、MPC、卡尔曼滤波器（LQR 的对偶）——都是凸 QP。这并非巧合：选择线性动力学和二次代价\textit{正是因为}它们使问题成为凸问题，从而可以实时求解。
+
+\subsubsection{MPC（模型预测控制）}
+
+MPC 是现代控制工具箱里最强、最灵活的一把。它在每个时间步都解一道优化题：
+
+\textit{「当前状态已知，未来 $N$ 步内，什么输入序列能在满足所有约束的前提下把代价压到最低？」}
+
+\textbf{每个时间步执行：}
+\begin{enumerate}
+    \item 测量（或估计）当前状态 $\mathbf{x}[k]$。
+    \item 求解优化问题：
+    \begin{equation}
+    \min_{\mathbf{u}[k], \ldots, \mathbf{u}[k+N-1]} \sum_{i=0}^{N-1} \left( \mathbf{x}[k+i]^T Q \mathbf{x}[k+i] + \mathbf{u}[k+i]^T R \mathbf{u}[k+i] \right) + \mathbf{x}[k+N]^T P_f \mathbf{x}[k+N]
+    \end{equation}
+    约束条件：
+    \begin{align}
+    \mathbf{x}[k+i+1] &= A_d \mathbf{x}[k+i] + B_d \mathbf{u}[k+i] \\
+    \mathbf{u}_{\min} &\leq \mathbf{u}[k+i] \leq \mathbf{u}_{\max} \\
+    \mathbf{x}_{\min} &\leq \mathbf{x}[k+i] \leq \mathbf{x}_{\max}
+    \end{align}
+    \item 仅施加第一个输入 $\mathbf{u}[k]$。
+    \item 在下一个时间步重复（滚动时域）。
+\end{enumerate}
+
+\textbf{理解代价函数的各项：}
+\begin{itemize}
+    \item $\mathbf{x}^T Q \mathbf{x}$：\textbf{状态阶段代价}。惩罚每一步偏离期望状态的程度。$Q_{ii}$ 越大，意味着「我越在乎将状态 $i$ 保持在零点（或参考值）附近。」
+    \item $\mathbf{u}^T R \mathbf{u}$：\textbf{输入阶段代价}。惩罚控制力度。$R$ 越大，意味着「对执行器温柔一些。」这防止优化器找到数学上最优但物理上剧烈的解。
+    \item $\mathbf{x}[k+N]^T P_f \mathbf{x}[k+N]$：\textbf{终端代价}。惩罚预测时域末端的状态。没有这一项，MPC 可能会「作弊」，把所有误差推到时域末尾（就像学生一直拖到最后一天才做事）。将 $P_f$ 设为 LQR Riccati 方程的解是保证稳定性的常见选择。
+    \item $N$（\textbf{预测时域}）：MPC 向前看多少步。时域越长 = 预判能力越强，但计算量越大。太短 = 近视行为（MPC「看不到」即将到来的转弯或障碍物）。一个好的起点：$N = 10$--$30$ 步。
+\end{itemize}
+
+\textbf{滚动时域：}MPC 算出\textit{整条}最优轨迹，但只走第一步，然后重新规划。看起来很浪费，但恰恰是这一点让 MPC 鲁棒：每一步都拿最新测量值修正模型误差和扰动。就像下棋提前算 10 步，但对手每走一步你就重新评估一次局面。
+
+\textbf{MPC 为何强大：}它\textbf{显式处理约束}——电机电流限制、关节角度限制、速度边界都是优化问题的一部分。它\textbf{自然处理 MIMO 系统}，多个输入和输出只是优化中的更多变量。它具备\textbf{预瞄能力}：如果你知道未来的参考轨迹（例如规划好的路径），MPC 可以提前看到并主动采取行动。最后，它\textbf{调参直观}，与 LQR 类似调整 $Q$ 和 $R$，预测时域 $N$ 是主要的额外参数。
+
+\textbf{代价：} MPC 需要在每个时间步求解优化问题。对于具有二次代价的线性系统（线性 MPC），这是一个二次规划（QP）问题，可以高效求解。对于非线性系统（非线性 MPC），则困难得多。
+
+\textbf{比赛机器人的实用考量：}
+\begin{itemize}
+    \item 对于简单系统（底盘速度控制），PID 或 LQR 通常已经足够。MPC 有些大材小用。
+    \item 对于带约束的轨迹跟踪（自主导航、机械臂），MPC 值得投入。
+    \item 像 OSQP、qpOASES 或 acados 这样的库可以快速求解 QP，足以满足嵌入式实时应用。
+    \item 如果实时计算代价太高，可以考虑\textit{显式 MPC}——将解预先离线计算为查找表。
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{mpc_horizon.pdf}
+\caption{MPC 滚动时域在位置跟踪问题上的示意图。在每个时间步，MPC 规划未来 $N=10$ 步的最优轨迹（绿色），但只施加\textbf{第一个}控制动作（圆圈标出）。然后重新测量、重新规划、反复循环。预测窗口随每步向前滑动——这种「向前规划、执行一步、再规划」的循环，正是 MPC 对模型误差和干扰具有鲁棒性的原因。}
+\end{figure}
+
+\subsubsection{TinyMPC：面向嵌入式系统的 Riccati 加速 MPC}
+
+标准 MPC 在每个时间步都求解一个完整的二次规划（QP）。对于一个有 $n$ 个状态、$m$ 个输入、时域为 $N$ 的系统，这意味着求解一个有 $N(n+m)$ 个决策变量的问题——在笔记本电脑上可行，但对微控制器来说极为繁重。\textbf{TinyMPC}（Nguyen 等，2024）是一个突破性成果，它通过利用 Riccati 方程的结构，使 MPC 能够在资源受限的嵌入式系统（Teensy、STM32，甚至 Arduino）上运行。
+
+\textbf{核心思路：} 对于无约束的线性 MPC，其解就是一个时变的 LQR——可以通过向后 Riccati 递推计算得到。TinyMPC 将这个 Riccati 递推\textbf{离线}预计算完成，然后用轻量的 ADMM（交替方向乘子法，Alternating Direction Method of Multipliers）循环\textbf{在线}处理约束。
+
+\textbf{算法结构：}
+
+\textit{第一步——离线预计算（一次性，或当模型改变时）：}
+
+从终端代价 $P_N = Q_f$ 出发，向后运行 Riccati 递推，计算每步的最优反馈增益：
+\begin{align}
+S_k &= R + B_d^T P_{k+1} B_d \\
+K_k &= S_k^{-1} B_d^T P_{k+1} A_d \\
+P_k &= Q + A_d^T P_{k+1} A_d - A_d^T P_{k+1} B_d K_k
+\end{align}
+
+这给出 $N$ 个反馈增益矩阵 $K_0, K_1, \ldots, K_{N-1}$ 和 $N+1$ 个代价矩阵 $P_0, P_1, \ldots, P_N$。这些存储在内存中，\textit{不再重复计算}（除非模型或代价矩阵发生变化）。
+
+\textit{第二步——在线求解（每个控制周期）：}
+
+给定当前状态 $\mathbf{x}_0$：
+\begin{enumerate}
+    \item \textbf{前向展开：} 使用预计算的增益计算无约束最优轨迹：$\mathbf{u}_k = -K_k (\mathbf{x}_k - \mathbf{x}_k^{\text{ref}})$，然后 $\mathbf{x}_{k+1} = A_d \mathbf{x}_k + B_d \mathbf{u}_k$。
+    \item \textbf{ADMM 投影：} 若任意 $\mathbf{u}_k$ 或 $\mathbf{x}_k$ 违反约束，运行几次 ADMM 迭代（通常 5--20 次），找到最近的可行解。每次 ADMM 迭代只需：
+    \begin{itemize}[nosep]
+        \item 一次类 Riccati 的向后遍历（使用\textit{预计算}的 $K_k$，因此代价低廉）。
+        \item 一次投影步：$z_k = \text{clamp}(u_k + \lambda_k, u_{\min}, u_{\max})$——逐元素截断。
+        \item 一次对偶更新：$\lambda_k \leftarrow \lambda_k + u_k - z_k$。
+    \end{itemize}
+    \item \textbf{施加第一个输入：} 将 $\mathbf{u}_0$ 发送给执行器。丢弃其余部分（滚动时域）。
+\end{enumerate}
+
+\textbf{为何速度如此之快：}
+\begin{itemize}
+    \item Riccati 递推（计算量最大的部分）已在\textbf{离线}完成。在线工作只是矩阵乘法和截断操作。
+    \item 无需 QP 求解器库。在线无需矩阵分解。只需乘加和截断。
+    \item 每次 ADMM 迭代的复杂度为 $O(N \cdot n^2)$——与时域成线性关系，与状态维度成二次关系。对于 4 状态系统、$N = 10$：每次迭代约 1600 次乘加。10 次迭代共 16000 次乘加——STM32F4 在 168 MHz 下可在 $< 100\,\mu$s 内完成。
+    \item 内存占用：$N \times (n \times n + m \times n)$ 个浮点数用于预计算增益。对于 4 状态、2 输入、$N = 10$：约 240 个浮点数 = 960 字节。
+\end{itemize}
+
+\textbf{与标准基于 QP 的 MPC 对比：}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+ & \textbf{标准 MPC（OSQP）} & \textbf{TinyMPC} \\
+\midrule
+在线计算 & 完整 QP 求解 & Riccati 展开 + ADMM \\
+典型求解时间（STM32） & 1--10 ms & 50--200 $\mu$s \\
+内存 & 数 KB（稀疏矩阵） & 小型系统 $<$ 1 KB \\
+依赖项 & QP 求解器库 & 无（仅矩阵运算） \\
+约束处理 & 精确（到容差） & 近似（ADMM） \\
+热启动 & 可行 & 自然（用上一次解） \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{何时使用 TinyMPC：}
+\begin{itemize}
+    \item 需要在 RAM/CPU 有限的微控制器上运行 MPC。
+    \item 模型是线性的（或可以在每步线性化用于非线性系统）。
+    \item 对输入的硬约束很重要（电机电流限制、关节角度限制）。
+    \item 时域较短到中等（$N \leq 30$）。
+\end{itemize}
+
+\textbf{何时不用 TinyMPC：}
+\begin{itemize}
+    \item 复杂非线性模型（在功能更强的计算机上使用 acados 或 CasADi）。
+    \item 时域很长（$N > 50$）且有大量状态约束。
+    \item 如果问题无约束——直接用 LQR，它更简单。
+\end{itemize}
+
+\textbf{参考：} TinyMPC 的完整论文和开源实现见 \texttt{tinympc.org}。C 实现不超过 1000 行，可在 ARM Cortex-M 微控制器上运行。附录中的 C++ 模块遵循同样的 Riccati + ADMM 结构。
+
+\textbf{非线性系统怎么办？}线性 MPC 假设 $\mathbf{x}_{k+1} = A_d \mathbf{x}_k + B_d \mathbf{u}_k$，当工作范围较宽时就不够了。\textbf{非线性 MPC（NMPC）}用完整非线性动力学 $\mathbf{x}_{k+1} = f(\mathbf{x}_k, \mathbf{u}_k)$ 替代线性模型，将 QP 变为非线性规划（NLP）。我们在非线性控制章节中详细讨论 NMPC，并通过一个具体的轨迹跟踪实例将其与线性 MPC 做正面对比。
+
+\subsection{基于状态空间的观测器设计}
+
+LQR（以及所有状态反馈）都要求你知道全部状态。但实际中往往只能测到一部分。\textbf{观测器}（Observer，也叫估计器）的作用就是从能拿到的测量值里把完整状态"猜"出来。
+
+\subsubsection{龙伯格观测器（Luenberger Observer）}
+
+龙伯格观测器的思路很直接：复制一份系统模型，再加一个修正项，用测量误差把估计值往真实状态方向拽。
+
+\begin{equation}
+\dot{\hat{\mathbf{x}}} = A\hat{\mathbf{x}} + B\mathbf{u} + L(\mathbf{y} - C\hat{\mathbf{x}})
+\end{equation}
+
+其中：
+\begin{itemize}[nosep]
+    \item $\hat{\mathbf{x}}$ 是估计状态。
+    \item $\mathbf{y} = C\mathbf{x}$ 是实际测量值。
+    \item $L$ 是观测器增益矩阵（由我们设计）。
+\end{itemize}
+
+估计误差 $\mathbf{e} = \mathbf{x} - \hat{\mathbf{x}}$ 的演化方程为：
+\begin{equation}
+\dot{\mathbf{e}} = (A - LC)\mathbf{e}
+\end{equation}
+
+推导：将观测器方程 $\dot{\hat{\mathbf{x}}} = A\hat{\mathbf{x}} + B\mathbf{u} + L(\mathbf{y} - C\hat{\mathbf{x}})$ 从真实系统 $\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}$ 中减去。$B\mathbf{u}$ 项抵消，代入 $\mathbf{y} = C\mathbf{x}$ 得 $\dot{\mathbf{e}} = A\mathbf{e} - LC\mathbf{e} = (A - LC)\mathbf{e}$。
+
+若选择 $L$ 使 $(A - LC)$ 的所有特征值都有负实部，估计误差将衰减到零。观测器「追上」真实状态。
+
+\textbf{设计经验法则：} 将观测器的极点配置得比控制器极点快 2--5 倍。观测器的收敛速度应比控制器动作快，这样控制器始终有一个良好的状态估计。
+
+\textbf{分离原理（Separation Principle）：} 你可以独立设计控制器增益 $K$ 和观测器增益 $L$。只要每个部分单独稳定，组合的控制器-观测器系统就是稳定的。这是一个优美的理论结果，极大地简化了设计过程。
+
+\textbf{何时使用龙伯格观测器：} 当你的模型准确且噪声特性不很清楚时。它简单、确定性强、易于调试。
+
+\subsubsection{深刻的对偶性：控制器与观测器互为镜像}
+
+这是控制理论里最漂亮的结论之一。搞懂它，你对控制系统的理解会上一个台阶。下面把这种对称结构摆出来。
+
+\textbf{控制器问题：} 给定系统 $\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}$，找到增益 $K$ 使得 $\mathbf{u} = -K\mathbf{x}$ 能让闭环系统 $\dot{\mathbf{x}} = (A - BK)\mathbf{x}$ 稳定且表现良好。
+
+\textbf{观测器问题：} 给定系统 $\dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}$，$\mathbf{y} = C\mathbf{x}$，找到增益 $L$ 使得估计误差 $\dot{\mathbf{e}} = (A - LC)\mathbf{e}$ 衰减到零。
+
+现在并排对比两个闭环矩阵：
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+ & \textbf{控制器} & \textbf{观测器} \\
+\midrule
+闭环矩阵 & $A - BK$ & $A - LC$ \\
+待设计的增益 & $K$ & $L$ \\
+必要条件 & 可控性 $(A, B)$ & 可观性 $(A, C)$ \\
+设计目标 & 配置 $A - BK$ 的特征值 & 配置 $A - LC$ 的特征值 \\
+信息流向 & 输入 $\to$ 状态 & 测量 $\to$ 状态估计 \\
+Riccati 方程 & $A^TP + PA - PBR^{-1}B^TP + Q = 0$ & $AP_o + P_oA^T - P_oC^TR_n^{-1}CP_o + Q_n = 0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{数学对偶性：} 若将观测器 Riccati 方程转置，令 $A \to A^T$、$C^T \to B$、$Q_n \to Q$、$R_n \to R$，你会得到与控制器 Riccati 方程完全相同的形式。它们字面上是同一个方程，只是矩阵转置了。这意味着：
+
+\begin{itemize}
+    \item 任何设计控制器的算法都可以设计观测器（只需转置输入）。
+    \item 若你能用 \texttt{place(A, B, poles)} 为控制器配置极点，就能用 \texttt{place(A', C', poles)'} 配置观测器极点——注意转置。
+    \item LQR 控制器（来自控制 Riccati 的 $K$）有一个对偶：\textbf{卡尔曼滤波器（Kalman Filter）}（来自观测器 Riccati 的 $L$）。LQR 是最优控制器；卡尔曼是最优观测器。它们是对偶问题。
+\end{itemize}
+
+\textbf{打个比方：}控制器是\textit{扬声器}，观测器是\textit{麦克风}。扬声器（控制器）通过输入 $B$ 向系统注入能量，塑造状态轨迹。麦克风（观测器）通过输出 $C$ 监听系统，重建内部状况。可控性问的是："扬声器能覆盖房间的每个角落吗？"可观性问的是："麦克风能听到房间的每个角落吗？"同一个房间，对称的两个问题。
+
+\textbf{实际价值：}你调状态反馈控制器时积累的直觉——极点越快响应越快但越怕噪声，极点越慢估计越稳但跟踪越慢——设计观测器时\textit{完全通用}。你在拧同一个旋钮，只不过拧的是镜子的另一面。
+
+\subsubsection{卡尔曼滤波器（Kalman Filter）}
+
+卡尔曼滤波器是线性高斯系统下的最优观测器，可以看作龙伯格观测器的"概率升级版"——不用手动配极点，而是根据噪声统计特性自动算出最优增益 $L$。
+
+\textbf{带噪声的系统模型：}
+\begin{align}
+\mathbf{x}[k+1] &= A_d \mathbf{x}[k] + B_d \mathbf{u}[k] + \mathbf{w}[k], \quad \mathbf{w} \sim \mathcal{N}(0, Q_n) \\
+\mathbf{y}[k] &= C \mathbf{x}[k] + \mathbf{v}[k], \quad \mathbf{v} \sim \mathcal{N}(0, R_n)
+\end{align}
+
+其中 $\mathbf{w}$ 是过程噪声（模型不确定性），$\mathbf{v}$ 是测量噪声。$Q_n$ 和 $R_n$ 是它们各自的协方差矩阵。
+
+\textbf{卡尔曼滤波器算法（离散时间）：}
+
+\textit{预测（Predict）：}
+\begin{align}
+\hat{\mathbf{x}}[k|k-1] &= A_d \hat{\mathbf{x}}[k-1|k-1] + B_d \mathbf{u}[k-1] \\
+P[k|k-1] &= A_d P[k-1|k-1] A_d^T + Q_n
+\end{align}
+
+\textit{更新（Update）：}
+\begin{align}
+K_k &= P[k|k-1] C^T (C P[k|k-1] C^T + R_n)^{-1} \\
+\hat{\mathbf{x}}[k|k] &= \hat{\mathbf{x}}[k|k-1] + K_k (\mathbf{y}[k] - C \hat{\mathbf{x}}[k|k-1]) \\
+P[k|k] &= (I - K_k C) P[k|k-1]
+\end{align}
+
+\textbf{直觉：}卡尔曼增益 $K_k$ 在模型预测和测量之间自动分配信任度：
+\begin{itemize}
+    \item 若过程噪声大（$Q_n$ 大）而测量噪声小（$R_n$ 小），滤波器更信任测量值。
+    \item 若测量噪声大而过程噪声小，滤波器更信任模型。
+\end{itemize}
+
+\textbf{卡尔曼滤波器调参} 归结于选择 $Q_n$ 和 $R_n$：
+\begin{itemize}
+    \item $R_n$ 通常可以直接测量（在系统静止时记录传感器数据，计算方差）。
+    \item $Q_n$ 更难确定——它代表模型不确定性。从较小的值开始，若滤波器太迟钝（跟踪不够快），则增大。
+    \item 一个常用技巧：将 $Q_n$ 和 $R_n$ 当作调节旋钮。增大 $Q_n / R_n$ 的比值以获得更快的跟踪（但噪声更多）。减小以获得更平滑的估计（但有更多滞后）。听起来很熟悉？这与低通滤波器截止频率的权衡相同，只是用概率语言表达。
+\end{itemize}
+
+\textbf{为什么机器人圈子到处都是卡尔曼：}
+\begin{itemize}
+    \item \textbf{传感器融合：} 将 IMU、编码器和视觉数据融合成一个连贯的状态估计。
+    \item \textbf{速度估计：} 从有噪声的位置测量中获得平滑的速度，而不使用纯微分器。
+    \item \textbf{在明确意义下最优：} 对于线性高斯系统，它最小化均方估计误差。
+\end{itemize}
+
+\textbf{实用说明：} 卡尔曼滤波器每步需要一次矩阵求逆（$K_k$ 的计算）。对于小状态维度（$n \leq 6$），这微不足道。对于更大的系统，使用高效实现（如 Cholesky 分解）。在 STM32F4 上，一个 6 状态的 EKF 可以在 1 kHz 下舒适地运行。
+
+\subsubsection{扩展卡尔曼滤波器（EKF）}
+
+标准卡尔曼滤波器假设线性动力学和线性测量。但真实机器人系统是\textbf{非线性的}：欧拉角和角速度之间是三角函数关系，加速度计的测量模型跟倾斜角的正弦余弦有关，等等。
+
+\textbf{扩展卡尔曼滤波器（EKF）}的处理方式很粗暴也很有效：每一步都在当前估计值附近把系统\textit{线性化}，当成线性的来跑标准卡尔曼，然后在新估计值处重新线性化。
+
+\textbf{非线性系统模型：}
+\begin{align}
+\mathbf{x}_{k+1} &= f(\mathbf{x}_k, \mathbf{u}_k) + \mathbf{w}_k \quad \text{（非线性动力学）} \\
+\mathbf{y}_k &= h(\mathbf{x}_k) + \mathbf{v}_k \quad \text{（非线性测量）}
+\end{align}
+
+\textbf{雅可比矩阵——它是什么，为什么需要它。}\;卡尔曼滤波的协方差传播公式（$P_{k|k-1} = A P_{k-1|k-1} A^T + Q$）需要一个\emph{矩阵} $A$。但非线性系统没有单一的 $A$——$f$ 的"斜率"处处不同。解决办法就是用\textbf{雅可比矩阵（Jacobian）}，它是导数在多变量情况下的自然推广。
+
+回忆高数：对于标量函数 $y = f(x)$，导数 $f'(x_0)$ 给出了在 $x_0$ 附近的最佳线性近似：$f(x) \approx f(x_0) + f'(x_0)(x - x_0)$。雅可比矩阵对\emph{多元向量值}函数做同样的事。若 $\mathbf{f}: \mathbb{R}^n \to \mathbb{R}^m$，雅可比矩阵是所有偏导数组成的 $m \times n$ 矩阵：
+\[
+F = \frac{\partial \mathbf{f}}{\partial \mathbf{x}} = \begin{bmatrix}
+\frac{\partial f_1}{\partial x_1} & \cdots & \frac{\partial f_1}{\partial x_n} \\
+\vdots & \ddots & \vdots \\
+\frac{\partial f_m}{\partial x_1} & \cdots & \frac{\partial f_m}{\partial x_n}
+\end{bmatrix}.
+\]
+每一行告诉你某个输出分量相对于所有输入的变化率。在特定点 $\mathbf{x}_0$ 处求值后，雅可比矩阵给出最佳局部线性近似：$\mathbf{f}(\mathbf{x}) \approx \mathbf{f}(\mathbf{x}_0) + F(\mathbf{x} - \mathbf{x}_0)$——这正是 EKF"假装系统局部线性"所需要的那一步。
+
+\textbf{EKF 算法：}
+
+\textit{预测：}
+\begin{align}
+\hat{\mathbf{x}}_{k|k-1} &= f(\hat{\mathbf{x}}_{k-1|k-1}, \mathbf{u}_{k-1}) \\
+F_k &= \left.\frac{\partial f}{\partial \mathbf{x}}\right|_{\hat{\mathbf{x}}_{k-1|k-1}} \quad \text{（动力学雅可比矩阵）} \\
+P_{k|k-1} &= F_k P_{k-1|k-1} F_k^T + Q
+\end{align}
+
+\textit{更新：}
+\begin{align}
+H_k &= \left.\frac{\partial h}{\partial \mathbf{x}}\right|_{\hat{\mathbf{x}}_{k|k-1}} \quad \text{（测量雅可比矩阵）} \\
+K_k &= P_{k|k-1} H_k^T (H_k P_{k|k-1} H_k^T + R)^{-1} \\
+\hat{\mathbf{x}}_{k|k} &= \hat{\mathbf{x}}_{k|k-1} + K_k \left(\mathbf{y}_k - h(\hat{\mathbf{x}}_{k|k-1})\right) \\
+P_{k|k} &= (I - K_k H_k) P_{k|k-1}
+\end{align}
+
+\textbf{与标准卡尔曼滤波器的唯一区别：}
+\begin{enumerate}
+    \item 预测使用\textit{非线性}函数 $f(\cdot)$ 代替矩阵 $A$。
+    \item 测量残差使用\textit{非线性}函数 $h(\cdot)$ 代替矩阵 $C$。
+    \item 协方差传播使用（在当前估计处求值的）\textit{雅可比矩阵} $F_k$ 和 $H_k$，代替常数矩阵 $A$ 和 $C$。
+\end{enumerate}
+
+其余所有部分——卡尔曼增益公式、协方差更新、预测-更新循环——都\textit{完全相同}。
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{案例研究：基于 EKF 的 6-DOF IMU 位姿估计}
+
+\vspace{0.3em}
+比赛机器人里最常见的 EKF 应用：用六轴 IMU（三轴加速度计 + 三轴陀螺仪）估计机器人的三维姿态（横滚、俯仰、偏航）。
+
+\textbf{状态向量：} $\mathbf{x} = [\phi, \theta, \psi, b_x, b_y, b_z]^T$
+\begin{itemize}[nosep]
+    \item $\phi$：横滚，$\theta$：俯仰，$\psi$：偏航（弧度制欧拉角）
+    \item $b_x, b_y, b_z$：陀螺仪偏差（rad/s）——EKF 自动估计这些偏差
+\end{itemize}
+
+\textbf{动力学模型 $f(\mathbf{x}, \mathbf{u})$：} 经过偏差补偿后的陀螺仪角速度通过运动学方程驱动欧拉角：
+\begin{align}
+\omega_x &= \text{gyro}_x - b_x, \quad \omega_y = \text{gyro}_y - b_y, \quad \omega_z = \text{gyro}_z - b_z \\[3pt]
+\dot{\phi} &= \omega_x + \sin\phi \tan\theta \cdot \omega_y + \cos\phi \tan\theta \cdot \omega_z \\
+\dot{\theta} &= \cos\phi \cdot \omega_y - \sin\phi \cdot \omega_z \\
+\dot{\psi} &= \frac{\sin\phi}{\cos\theta} \cdot \omega_y + \frac{\cos\phi}{\cos\theta} \cdot \omega_z \\[3pt]
+\dot{b}_x &= 0, \quad \dot{b}_y = 0, \quad \dot{b}_z = 0 \quad \text{（偏差建模为随机游走）}
+\end{align}
+
+雅可比矩阵 $F = \frac{\partial f}{\partial \mathbf{x}}$ 是一个含三角函数元素的 $6 \times 6$ 矩阵，必须在每个时间步重新计算（这就是「扩展」的部分）。
+
+\textbf{测量模型 $h(\mathbf{x})$：} 加速度计测量重力方向，从而给出横滚和俯仰（但\textbf{不能}给出偏航）：
+\begin{align}
+h(\mathbf{x}) = \begin{bmatrix} \phi \\ \theta \end{bmatrix} = \begin{bmatrix} \arctan2(a_y, a_z) \\ \arctan2(-a_x, \sqrt{a_y^2 + a_z^2}) \end{bmatrix}
+\end{align}
+
+雅可比矩阵很简单：$H = \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 \end{bmatrix}$。
+
+\textbf{关键设计决策：}
+\begin{itemize}[nosep]
+    \item \textbf{偏航不可观测}——单靠六轴 IMU，重力无法告诉你哪个方向是北。偏航完全依赖陀螺仪。要纠正偏航漂移，需要添加磁力计（九轴 IMU）或外部航向参考。
+    \item \textbf{$Q$ 矩阵调参：} 角度对应的对角元素（$Q_{00}, Q_{11}, Q_{22}$）代表每步陀螺仪积分的漂移程度。越大 = 越不信任陀螺仪。偏差项（$Q_{33}, Q_{44}, Q_{55}$）代表偏差随机游走速率——通常很小（$10^{-4}$ 到 $10^{-6}$）。
+    \item \textbf{$R$ 矩阵调参：} 代表加速度计噪声。在振动或线性加速期间，加速度计读数会被污染。在高加速度机动时增大 $R$（自适应 EKF），避免信任不良的加速度计数据。
+    \item \textbf{万向锁（Gimbal Lock）：} 当俯仰角 $= \pm 90$\textdegree{} 时，运动学方程中的 $\tan\theta$ 和 $1/\cos\theta$ 项趋于无穷大。对于可能倾斜超过 $\pm 60$\textdegree{} 的机器人，使用\textbf{四元数表示}代替欧拉角（EKF 结构相同，状态参数化不同）。
+\end{itemize}
+\end{mdframed}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{ekf_imu_6dof.pdf}
+\caption{EKF 6-DOF IMU 位姿估计，配合自动调参的连续自适应 $R$。使用平滑指数缩放 $R = R_\text{base} \cdot (1 + \alpha \, e^{\beta \cdot \Delta a})$，横滚和俯仰分别有独立的 $R_\text{base}$，并加入俯仰专用的 $x$ 轴加速度偏差检测。参数通过离线网格搜索确定，最小化加权 RMSE。顶行：横滚（RMSE 0.17\textdegree）、俯仰（0.28\textdegree）、偏航（1.54\textdegree）。振动期间（$t = 5$--$7$s，阴影区域），自适应 $R$ 指数增大，拒绝被污染的加速度计数据。偏航漂移仅靠偏差估计得以限制（无航向参考）。底行：陀螺仪偏差平稳收敛至真实值。}
+\end{figure}
+
+\textbf{EKF 之外：} 当状态不确定性较大或非线性较强时，EKF 的线性化可能不准确。替代方案：
+\begin{itemize}
+    \item \textbf{无迹卡尔曼滤波器（Unscented Kalman Filter，UKF）：} 不进行线性化，而是将「sigma 点」（一组精心选取的样本状态）通过非线性函数传播。对高度非线性系统比 EKF 更准确，但略微昂贵（每步需要 $2n+1$ 次函数求值，$n$ 为状态维度）。
+    \item \textbf{误差状态卡尔曼滤波器（Error-State Kalman Filter，ESKF）：} 估计围绕名义轨迹的\textit{小误差}，而不是完整状态。在基于 IMU 的系统中很流行，因为误差状态保持较小（线性化准确），且避免了四元数奇异性。这是大多数生产级 IMU 融合库内部所使用的方法。
+    \item \textbf{互补滤波器（Complementary Filter）：} 对于计算资源极其有限的简单横滚/俯仰估计，互补滤波器（第 2 节）仍然是一个可行的单行代码替代方案。
+\end{itemize}
+
+\subsubsection{基于四元数的 EKF：避免万向锁}
+
+前面的欧拉角 EKF 在俯仰角 $\pm 60$\textdegree{} 以内跑得挺好。但俯仰角接近 $\pm 90$\textdegree{} 时，运动学方程直接炸了：$\tan\theta \to \infty$，$1/\cos\theta \to \infty$。这就是\textbf{万向锁（Gimbal Lock）}——数学上的奇异性，不是物理上的。机器人好好的，是你的公式坏了。
+
+解决方法是用\textbf{单位四元数} $\mathbf{q} = \begin{bmatrix} q_w & q_x & q_y & q_z \end{bmatrix}^T$ 代替欧拉角来表示姿态。四元数没有奇异性，结构紧凑（4 个数，相比旋转矩阵的 9 个），并且可以高效地合成旋转。
+
+\textbf{状态向量：} $\mathbf{x} = \begin{bmatrix} \mathbf{q}^T & \boldsymbol{\beta}^T \end{bmatrix}^T \in \mathbb{R}^7$，其中 $\boldsymbol{\beta} = \begin{bmatrix} \beta_x & \beta_y & \beta_z \end{bmatrix}^T$ 为陀螺仪偏差。
+
+\textbf{预测步骤：} 给定陀螺仪测量值 $\boldsymbol{\omega}_m$，经偏差修正后的角速度为 $\boldsymbol{\omega} = \boldsymbol{\omega}_m - \boldsymbol{\beta}$。四元数运动学方程为：
+\begin{equation}
+\dot{\mathbf{q}} = \frac{1}{2}\mathbf{q} \otimes \begin{bmatrix} 0 \\ \boldsymbol{\omega} \end{bmatrix}
+= \frac{1}{2}\Omega(\boldsymbol{\omega})\,\mathbf{q}
+\end{equation}
+
+其中 $\otimes$ 是四元数乘法，$\Omega(\boldsymbol{\omega})$ 是 $4\times 4$ 斜对称矩阵：
+\begin{equation}
+\Omega(\boldsymbol{\omega}) = \begin{bmatrix}
+0 & -\omega_x & -\omega_y & -\omega_z \\
+\omega_x & 0 & \omega_z & -\omega_y \\
+\omega_y & -\omega_z & 0 & \omega_x \\
+\omega_z & \omega_y & -\omega_x & 0
+\end{bmatrix}
+\end{equation}
+
+离散时间预测（一阶近似）：
+\begin{equation}
+\mathbf{q}_{k+1} = \left(I + \frac{\Delta t}{2}\Omega(\boldsymbol{\omega}_k)\right)\mathbf{q}_k, \qquad
+\boldsymbol{\beta}_{k+1} = \boldsymbol{\beta}_k
+\end{equation}
+
+预测后，将 $\mathbf{q}$ \textbf{归一化}为单位长度：$\mathbf{q} \leftarrow \mathbf{q}/\|\mathbf{q}\|$。
+
+\textbf{测量模型：} 加速度计测量体坐标系中的重力方向。给定四元数 $\mathbf{q}$，体坐标系中预测的重力方向为：
+\begin{equation}
+\mathbf{g}_{\text{pred}} = R(\mathbf{q})^T \begin{bmatrix} 0 \\ 0 \\ g \end{bmatrix}
+= g\begin{bmatrix}
+2(q_x q_z - q_w q_y) \\
+2(q_y q_z + q_w q_x) \\
+q_w^2 - q_x^2 - q_y^2 + q_z^2
+\end{bmatrix}
+\end{equation}
+
+测量雅可比矩阵 $H = \partial \mathbf{g}_{\text{pred}} / \partial \mathbf{x}$ 是一个 $3\times 7$ 矩阵（3 个加速度计分量，4 个四元数 + 3 个偏差状态）。偏差列为零，因为加速度计读数与陀螺仪偏差不直接相关。
+
+\textbf{更新步骤：} 标准 EKF 更新照常进行。残差为 $\boldsymbol{\nu} = \mathbf{a}_{\text{meas}} - \mathbf{g}_{\text{pred}}$，更新后再次将 $\mathbf{q}$ 归一化。
+
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{欧拉角与四元数：何时用哪个}
+
+\vspace{0.3em}
+\begin{itemize}[nosep]
+    \item \textbf{欧拉角}：若你的机器人在俯仰角 $\pm 60$\textdegree{} 范围内工作（地面车辆、大多数炮塔、正常飞行的大多数无人机），欧拉角完全可行。数学更直观，也更容易调试。
+    \item \textbf{四元数}：对于可能翻转、翻滚或垂直指向的机器人（特技无人机、水下 ROV、机械臂腕部附近的奇异点），四元数是必要的。
+    \item \textbf{提示：} 你可以在内部使用四元数进行所有计算，仅在显示和人类可读的日志中转换为欧拉角：$\phi = \text{atan2}(2(q_w q_x + q_y q_z),\; 1 - 2(q_x^2 + q_y^2))$，等等。
+    \item \textbf{误差状态方法（ESKF）} 避免在 EKF 状态中直接使用 4 元素四元数。它改为估计 3 元素旋转误差 $\delta\boldsymbol{\theta}$，并在每次更新后将其应用到四元数上。这使协方差矩阵 $P$ 保持 $6\times 6$ 而非 $7\times 7$，并避免了单位范数约束问题。大多数生产级 IMU 库（如 PX4 的 EKF2、VINS-Mono）内部使用 ESKF。
+\end{itemize}
+\end{mdframed}
+
+\subsubsection{自适应 EKF（Adaptive EKF）：在线自动调整 \texorpdfstring{$Q$}{Q} 和 \texorpdfstring{$R$}{R}}
+
+EKF 效果好不好，很大程度上取决于噪声协方差 $Q$（过程噪声）和 $R$（测量噪声）。实际中这两个矩阵通常靠手调——一个磨人的试错过程。更麻烦的是，真实噪声在运行中\textit{会变}：装在振动底盘上的 IMU 和静止时的噪声特性根本不一回事。固定的 $Q$、$R$ 应付不了这种情况。
+
+\textbf{自适应 EKF（Adaptive EKF）}方法能够\textit{在线}估计或调整 $Q$ 和 $R$，自动进行。以下是几种方法，从简单到复杂。
+
+\textbf{方法一：基于残差的自适应估计（Innovation-Based Adaptive Estimation，IAE）}
+
+最简单也最实用的一种方法。核心思路：\textbf{残差序列} $\boldsymbol{\nu}_k = \mathbf{y}_k - h(\hat{\mathbf{x}}_{k|k-1})$（测量值减去预测值）里就藏着 $Q$ 和 $R$ 到底对不对的信息。
+
+\textit{判断依据：}滤波器调对了的话，残差应该是均值为零的白噪声，协方差 $S_k = H_k P_{k|k-1} H_k^T + R$。残差老是比预期大？要么 $Q$ 太小（太信模型了），要么 $R$ 太小（太信传感器了）。
+
+\textbf{算法：} 使用最近 $N_w$ 个残差的滑动窗口估计实际残差协方差：
+\begin{equation}
+\hat{S}_k = \frac{1}{N_w} \sum_{j=k-N_w+1}^{k} \boldsymbol{\nu}_j \boldsymbol{\nu}_j^T
+\end{equation}
+
+然后更新 $R$ 使其匹配：
+\begin{equation}
+\hat{R}_k = \hat{S}_k - H_k P_{k|k-1} H_k^T
+\end{equation}
+
+若 $\hat{R}_k$ 出现负特征值（在 $N_w$ 较小时可能发生），将其截断到最小值。典型窗口大小：$N_w = 20$--$100$ 个样本。
+
+\textbf{代码：}
+\begin{verbatim}
+    // After computing innovation nu = z - h(x_pred):
+    // Accumulate outer product in sliding window
+    innov_buffer[buf_idx] = nu;
+    buf_idx = (buf_idx + 1) % N_WINDOW;
+
+    if (samples_seen >= N_WINDOW) {
+        // Estimate innovation covariance
+        Mat<NZ,NZ> S_hat = Mat<NZ,NZ>::zeros();
+        for (int j = 0; j < N_WINDOW; j++) {
+            S_hat = S_hat + innov_buffer[j] * innov_buffer[j].T();
+        }
+        S_hat = S_hat * (1.0f / N_WINDOW);
+
+        // Adapt R
+        R = S_hat - H * P_pred * H.T();
+        // Clamp diagonal to minimum (prevent negative/zero variance)
+        for (int i = 0; i < NZ; i++)
+            if (R(i,i) < R_min) R(i,i) = R_min;
+    }
+\end{verbatim}
+
+\textbf{方法二：基于状态残差的 $Q$ 自适应}
+
+IAE 方法用于自适应 $R$，而过程噪声 $Q$ 可以使用\textbf{状态残差}（预测状态与更新状态之差）来自适应：
+\begin{equation}
+\hat{Q}_k = \frac{1}{N_w} \sum_{j} (K_j \boldsymbol{\nu}_j)(K_j \boldsymbol{\nu}_j)^T + P_{k|k} - F_k P_{k-1|k-1} F_k^T
+\end{equation}
+
+这比 IAE 更复杂，数值稳定性也更差。在实践中，许多系统只自适应 $R$ 而保持 $Q$ 固定，因为 $R$ 变化更大（传感器噪声随环境变化），而 $Q$ 主要由模型不确定性决定（更为恒定）。
+
+\textbf{方法三：衰减记忆（指数遗忘）}
+
+最简单的「自适应」技巧：将预测协方差乘以\textbf{遗忘因子} $\alpha > 1$：
+\begin{equation}
+P_{k|k-1} = \alpha \cdot (F_k P_{k-1|k-1} F_k^T + Q)
+\end{equation}
+
+这在每步人为地增大不确定性，使滤波器「忘记」旧数据，更信任新测量值。这等效于在不显式改变 $Q$ 的情况下让 $Q$ 变大。
+
+\begin{itemize}
+    \item $\alpha = 1.0$：标准 EKF（不遗忘）。
+    \item $\alpha = 1.01$--$1.05$：轻度自适应——滤波器对突然变化反应更快。
+    \item $\alpha > 1.1$：非常激进——滤波器几乎忽略模型，跟着测量值走。仅在已知扰动期间使用。
+\end{itemize}
+
+\textbf{何时使用：} 当你预期会有偶发的突然模型变化时（例如，机械臂拾取了未知负载——惯性瞬间改变）。衰减记忆防止滤波器「锁定」在过时的动力学上。
+
+\textbf{代码（在标准 EKF 中增加一行）：}
+\begin{verbatim}
+    P_pred = F * P * F.T() + Q;
+    P_pred = P_pred * alpha;   // <-- fading memory, alpha = 1.01
+\end{verbatim}
+
+\textbf{方法四：多模式自适应 EKF（适用于 IMU）}
+
+对于比赛机器人，最实用的方法是简单的\textbf{模式切换}策略，而不是连续自适应：
+
+\begin{verbatim}
+    // Compute acceleration magnitude
+    float accel_mag = sqrt(ax*ax + ay*ay + az*az);
+    float accel_err = fabs(accel_mag - 9.81f);
+
+    if (accel_err < 0.5f) {
+        // Stationary or slow motion: trust accelerometer
+        ekf.R(0,0) = 0.05f;  ekf.R(1,1) = 0.05f;
+    } else if (accel_err < 2.0f) {
+        // Moderate motion: reduce trust
+        ekf.R(0,0) = 0.5f;   ekf.R(1,1) = 0.5f;
+    } else {
+        // High acceleration / vibration: mostly ignore accelerometer
+        ekf.R(0,0) = 10.0f;  ekf.R(1,1) = 10.0f;
+    }
+\end{verbatim}
+
+\textbf{逻辑：} 当 $|\mathbf{a}| \approx g$（9.81 m/s$^2$）时，机器人没有线性加速度，加速度计确实在测量重力——信任它（$R$ 小）。当 $|\mathbf{a}|$ 偏离 $g$ 时，存在线性加速度或振动污染读数——不信任它（$R$ 大）。
+
+数学上不优雅？无所谓。实战中\textbf{极其好使}。不少冠军机器人用的就是这套。鲁棒、好调（就三个阈值），计算量几乎为零。
+
+\textbf{总结：用哪种方法？}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+\textbf{方法} & \textbf{自适应对象} & \textbf{复杂度} & \textbf{最适用场景} \\
+\midrule
+多模式切换 & $R$（离散） & 极简 & 移动机器人上的 IMU \\
+衰减记忆 & 等效 $Q$ & 一行代码 & 突发模型变化 \\
+IAE（基于残差） & $R$（连续） & 中等 & 传感器噪声变化 \\
+基于状态残差 & $Q$ 和 $R$ & 高 & 科研/离线场合 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{一句警告：} 若实现不当，自适应方法可能使滤波器\textit{发散}。务必将自适应后的 $Q$ 和 $R$ 截断到合理范围，使用最小窗口大小（$N_w \geq 20$），并在部署到硬件之前在记录的数据上进行验证。
+
+\subsubsection{龙伯格观测器与卡尔曼滤波器：全面对比}
+
+两种观测器都学了，放在一起比一下，看看什么场景用哪个。
+
+\begin{center}
+\begin{tabular}{p{3.5cm}p{5.5cm}p{5.5cm}}
+\toprule
+\textbf{方面} & \textbf{龙伯格观测器} & \textbf{卡尔曼滤波器} \\
+\midrule
+\textbf{设计输入} & 期望极点位置（你来选择） & 噪声协方差 $Q_n$、$R_n$（来自物理或调参） \\
+\textbf{增益计算} & 一次性极点配置 & 递推（每步更新 $P$ 和 $K_k$）或稳态 \\
+\textbf{最优性} & 非最优——你选择「合理」的极点 & 最优（对线性高斯系统最小化均方误差） \\
+\textbf{噪声处理} & 无显式噪声模型——增益固定 & 显式建模过程噪声和测量噪声 \\
+\textbf{自适应性} & 增益 $L$ 固定——在所有条件下相同 & 增益 $K_k$ 随不确定性 $P$ 的演化而自适应 \\
+\textbf{计算代价} & 极低（仅矩阵乘法） & 较高（每步矩阵乘法 + 求逆） \\
+\textbf{调参难度} & 中等（选择极点位置） & 中等（选择 $Q_n$、$R_n$） \\
+\textbf{置信度输出} & 无 & $P$ 矩阵告诉你估计的置信程度 \\
+\textbf{传感器融合} & 可行但需手动 & 自然——只需扩展 $C$ 矩阵 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{它们之间的深层联系：}到了稳态（$k \to \infty$），卡尔曼增益 $K_k$ 收敛到常数 $K_\infty$。这时候卡尔曼滤波器\textit{就是}一个龙伯格观测器，取 $L = K_\infty$。差别在于：卡尔曼是从噪声统计特性里\textit{最优地算出}这个 $L$ 的，而龙伯格需要你凭直觉或极点配置来选。
+
+再深挖一层：稳态卡尔曼增益 $K_\infty$ 是观测器 Riccati 方程的解——恰好是 LQR 那个控制器 Riccati 方程的对偶。对称性到此闭合：
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+ & \textbf{控制（输入）侧} & \textbf{估计（输出）侧} \\
+\midrule
+手动设计 & 配置 $K$ 的极点 & 龙伯格：配置 $L$ 的极点 \\
+最优设计 & LQR：最小化 $\int (\mathbf{x}^TQ\mathbf{x} + \mathbf{u}^TR\mathbf{u})\,dt$ & 卡尔曼：最小化 $E[\|\mathbf{x} - \hat{\mathbf{x}}\|^2]$ \\
+Riccati 变量 & $P$（控制代价函数） & $P$（估计不确定性） \\
+调参旋钮 & $Q$ 对比 $R$（状态惩罚对比控制代价） & $Q_n$ 对比 $R_n$（模型信任对比传感器信任） \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{LQG（线性二次高斯控制器）}
+
+LQR（最优控制器）和卡尔曼滤波器（最优观测器）都有了，把它们拼在一起就是 LQG。\textbf{LQG（Linear Quadratic Gaussian，线性二次型高斯控制器）}就是将两者结合的结果：LQR负责控制，卡尔曼滤波器负责估计，而分离原理（separation principle）保证了这种组合的稳定性。
+
+\textbf{LQG架构：}
+\begin{align}
+\text{卡尔曼滤波器：} \quad \dot{\hat{\mathbf{x}}} &= A\hat{\mathbf{x}} + B\mathbf{u} + L(\mathbf{y} - C\hat{\mathbf{x}}) \\
+\text{LQR控制器：} \quad \mathbf{u} &= -K\hat{\mathbf{x}}
+\end{align}
+
+其中 $K$ 来自控制Riccati方程（最小化状态代价），$L$ 来自估计Riccati方程（最小化估计误差）。控制器从不接触真实状态——它作用于卡尔曼估计值。
+
+\textbf{为什么LQG在MIMO/噪声系统中优于PID：}
+\begin{enumerate}
+    \item \textbf{最优噪声处理：}PID通过微分项放大噪声。LQG的卡尔曼滤波器提供最小方差状态估计——为控制器提供尽可能干净的信号。
+    \item \textbf{天然适合MIMO：}PID本质上是SISO的。对于4状态平衡机器人，PID需要层叠的多个回路和手工调整的交叉耦合。LQG用一个 $K$ 矩阵处理所有状态。
+    \item \textbf{状态估计：}PID无法估计未测量的状态。LQG的卡尔曼滤波器可从部分测量（例如仅位置传感器）重建完整状态（包括速度）。
+    \item \textbf{系统化整定：}PID每个回路有3个旋钮。LQG有 $Q$、$R$（控制代价）和 $Q_n$、$R_n$（噪声模型）——物理含义明确的矩阵。
+\end{enumerate}
+
+\textbf{LQG的鲁棒性警告：}纯LQR具有保证的稳定裕度（增益裕度 $\geq$ 6 dB，相位裕度 $\geq$ 60°）。当你加入卡尔曼滤波器构成LQG时，这些保证\textit{消失了}。LQG控制器可以有任意小的稳定裕度。这就是著名的\textbf{Doyle反例}（1978年）——它推动了 $H_\infty$ 鲁棒控制的发展。
+
+\textbf{实践含义：}当模型准确且噪声特性明确时，LQG效果良好。若存在显著的模型不确定性（未知摩擦、变化载荷），可考虑：
+\begin{itemize}
+    \item \textbf{LQG/LTR（回路传递恢复，Loop Transfer Recovery）：}修改卡尔曼滤波器整定，在被控对象输入处恢复LQR的鲁棒性裕度。
+    \item \textbf{$H_\infty$ 控制：}针对最坏情况的模型不确定性进行设计，而非平均噪声。
+    \item \textbf{实用做法：}在 $\pm 30\%$ 参数变化的仿真中验证LQG。如果保持稳定，通常足够在比赛中使用。
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{lqg_comparison.pdf}
+\caption{LQG（蓝色）与直接带噪反馈（红色）在平衡机器人上的对比（$t=2$s 处有扰动）。两者使用相同的LQR增益，但红色使用原始噪声测量加数值微分，蓝色使用卡尔曼滤波器。LQG恢复更快（左上），位置维持更好（右上），控制量更平滑（左下），RMS误差更低（右下）。这展示了卡尔曼滤波器的价值：相同增益、相同结构，性能却天壤之别。}
+\end{figure}
+
+\textbf{实用决策树：}
+\begin{enumerate}
+    \item \textbf{你根本需要状态估计吗？} 若你能直接测量所有状态（例如，编码器同时给出位置和速度），则完全跳过观测器。
+    \item \textbf{你的模型准确，且噪声不是主要问题？} 使用龙伯格观测器。它更简单，实现和调试更容易。
+    \item \textbf{传感器噪声显著，或需要传感器融合？} 使用卡尔曼滤波器。它最优地处理噪声，并自然地融合多个传感器。
+    \item \textbf{你的系统是非线性的？} 使用扩展卡尔曼滤波器（EKF）。它在每步线性化，对「轻度」非线性系统（如 IMU 姿态估计）效果良好。
+    \item \textbf{系统高度非线性或 EKF 发散？} 使用无迹卡尔曼滤波器（UKF），或考虑粒子滤波器（超出本文范围）。
+\end{enumerate}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{案例研究：IMU 倾斜角估计——卡尔曼滤波器与互补滤波器}
+
+\vspace{0.3em}
+你在做一个自平衡机器人，需要实时、准确地知道倾斜角 $\theta$。手头两个传感器：
+
+\begin{itemize}[nosep]
+    \item \textbf{加速度计：} 测量重力方向 $\to$ 给出 $\theta_{\text{accel}} = \arctan(a_x / a_z)$。平均而言准确，但有噪声，并且会被任何线性加速度污染（机器人移动时，它会「看到」虚假的倾斜）。
+    \item \textbf{陀螺仪：} 测量角速度 $\dot{\theta}_{\text{gyro}}$。短期内非常干净，但\textit{随时间漂移}，因为你在积分：$\theta_{\text{gyro}}(t) = \theta_0 + \int \dot{\theta}_{\text{gyro}} \, dt$。0.1\textdegree/s 的微小偏差一分钟后会积累为 6\textdegree{} 的误差。
+\end{itemize}
+
+\textbf{关键：}加速度计低频好（静态倾斜），高频差（振动、加速度干扰）。陀螺仪高频好（快速旋转），低频差（漂移）。天然\textit{互补}。
+
+\textbf{方案一：互补滤波器（快速而粗糙的方法）}
+\[
+\theta[n] = \alpha \cdot (\theta[n-1] + \dot{\theta}_{\text{gyro}} \cdot T_s) + (1 - \alpha) \cdot \theta_{\text{accel}}
+\]
+
+这字面上就是对陀螺仪施加高通滤波，对加速度计施加低通滤波，取 $\alpha \approx 0.98$。对于一行代码而言，效果出奇地好。
+
+\textbf{方案二：卡尔曼滤波器（正规方法）}
+
+状态：$\mathbf{x} = \begin{bmatrix} \theta \\ \dot{\theta}_{\text{bias}} \end{bmatrix}$（角度和陀螺仪偏差）。
+
+模型：角度由（经偏差修正的）陀螺仪角速度驱动：
+\[
+\begin{bmatrix} \theta \\ \dot{\theta}_{\text{bias}} \end{bmatrix}_{k+1} =
+\begin{bmatrix} 1 & -T_s \\ 0 & 1 \end{bmatrix}
+\begin{bmatrix} \theta \\ \dot{\theta}_{\text{bias}} \end{bmatrix}_k +
+\begin{bmatrix} T_s \\ 0 \end{bmatrix} \dot{\theta}_{\text{gyro},k}
+\]
+
+测量：加速度计给出 $\theta$ 的有噪声观测：
+\[
+y_k = \begin{bmatrix} 1 & 0 \end{bmatrix} \mathbf{x}_k + v_k
+\]
+
+\textbf{卡尔曼滤波器能做到而互补滤波器做不到的事：}
+\begin{itemize}[nosep]
+    \item 自动\textbf{估计并修正陀螺仪偏差}（$\dot{\theta}_{\text{bias}}$）。无需手动标定即可消除漂移。
+    \item 根据噪声统计特性\textbf{动态调整信任比例}，而不是使用固定的 $\alpha$。
+    \item 提供状态的\textbf{置信度估计}（$P$ 矩阵），让你知道对输出的信任程度。
+    \item 通过扩展状态向量，可轻松推广到三维姿态（横滚、俯仰、偏航）。
+\end{itemize}
+
+\textbf{互补滤波器何时「足够好」？} 对于简单的平衡机器人或机器人不会大幅加速的云台。互补滤波器只有一行代码，不需要矩阵运算。
+
+\textbf{何时需要卡尔曼滤波器？} 当机器人有显著的线性加速度（快速行驶的哨兵机器人、无人机）时，当需要陀螺仪偏差估计时，或当融合两个以上传感器（添加磁力计用于偏航、添加车轮编码器用于速度）时。
+
+\textbf{比赛建议：} 从互补滤波器开始。如果在激进机动时观察到漂移或性能不佳，升级到卡尔曼滤波器。互补滤波器也是一个很好的「健全性检查」——如果你的卡尔曼滤波器给出了完全不同的答案，说明你的模型有问题。
+\end{mdframed}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{kalman_filter.pdf}
+\caption{顶部：IMU 倾斜角估计对比。纯陀螺仪积分（橙色）严重漂移。加速度计（红色，浅）有噪声。互补滤波器（紫色）和卡尔曼滤波器（蓝色）都能跟踪真实角度（黑色虚线），但卡尔曼更平滑。底部：卡尔曼滤波器自动估计并收敛到 1.5\textdegree/s 的真实陀螺仪偏差。}
+\end{figure}
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{案例研究：LQR 平衡机器人——从方程到实际驾驭}
+
+\vspace{0.3em}
+给一个两轮自平衡机器人（类似 Segway）设计控制器。这是现代控制的"Hello World"，能很直观地展示为什么 MIMO 系统用 LQR + 卡尔曼比 PID 更顺手。
+
+\textbf{系统：} 一个两轮平台，有一个高耸的机身，必须在保持直立的同时跟踪期望位置。
+
+\textbf{状态：} $\mathbf{x} = \begin{bmatrix} \theta & \dot{\theta} & x & \dot{x} \end{bmatrix}^T$，其中 $\theta$ 是倾斜角，$x$ 是车轮位置。
+
+\textbf{MIMO 的麻烦：}要往前走，机器人得先向\textit{前}倾（就像人要先弯腰才能迈步）。但倾斜恰恰是我们要避免的！位置控制和平衡\textbf{耦合且矛盾}。PID 至少要两个嵌套环路，还得小心处理耦合。LQR 一个增益矩阵 $K = [k_1, k_2, k_3, k_4]$ 全部搞定：
+\[
+u = -k_1 \theta - k_2 \dot{\theta} - k_3 (x - x_{\text{ref}}) - k_4 \dot{x}
+\]
+
+\textbf{通过 Q 和 R 调参：}
+\begin{itemize}[nosep]
+    \item 想要激进的平衡？增大 $Q_{11}$（惩罚倾斜角）。
+    \item 想要精确的位置跟踪？增大 $Q_{33}$（惩罚位置误差）。
+    \item 电机功率不足？增大 $R$（惩罚控制代价）。
+\end{itemize}
+
+一个典型的起始点：$Q = \text{diag}(100, 1, 10, 1)$，$R = 1$。意思是："倾斜角我比速度在乎 100 倍，位置比速度在乎 10 倍。"MATLAB 里跑一行 \texttt{K = lqr(A, B, Q, R)}，四个增益往下灌，机器人就能立起来了。
+
+\textbf{完整系统：}
+\begin{enumerate}[nosep]
+    \item \textbf{卡尔曼滤波器} 从 IMU + 车轮编码器估计 $[\theta, \dot{\theta}, x, \dot{x}]$。
+    \item \textbf{LQR 控制器} 从估计状态计算电机力矩。
+    \item 两者均以 500--1000 Hz 在 STM32 上运行。
+\end{enumerate}
+
+卡尔曼 + LQR，这个组合就是平衡机器人、无人机姿态控制以及一切多状态耦合系统的标配。
+\end{mdframed}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{lqr_balance.pdf}
+\caption{LQR 平衡机器人仿真。从 8.6\textdegree{} 的初始倾斜开始，控制器将四个状态全部恢复到零。左上：倾斜角在约 1 秒内收敛。右上：角速度。左下：车轮向后移动以承接下落的机身，然后归位。右下：控制力——注意初始的大幅脉冲，随后平稳衰减。}
+\end{figure}
+
+\newpage
+
+\subsection{轨迹生成（Trajectory Generation）：告诉电机去哪里}
+
+直接把指令从 $0°$ 跳到 $90°$，别指望有好结果——电机又不会瞬移。你需要一条平滑的\textbf{参考轨迹}，位置、速度、加速度都得规划好，而且要尊重执行器的物理极限。没有轨迹规划，PID 上来就饱和，积分往死里攒，等电机好不容易靠近 $90°$，控制器已经在跟自己打架了。轨迹生成，就是"我的炮塔能用"和"我的炮塔跟强队一个水平"之间的分水岭。
+
+\subsubsection{梯形速度曲线（Trapezoidal Velocity Profile）}
+
+梯形曲线是运动控制的主力。给定移动距离 $d$、最大速度 $v_{\max}$ 和最大加速度 $a_{\max}$，产生三个阶段：
+
+\begin{enumerate}[nosep]
+    \item 从静止以 $a_{\max}$ \textbf{加速}至 $v_{\max}$
+    \item 以 $v_{\max}$ \textbf{匀速}行驶
+    \item 以 $-a_{\max}$ \textbf{减速}回到静止
+\end{enumerate}
+
+\textbf{时间与距离：}
+\begin{align}
+t_{\text{加速}} &= \frac{v_{\max}}{a_{\max}}, \qquad
+d_{\text{加速}} = \frac{1}{2}a_{\max}t_{\text{加速}}^2, \qquad
+d_{\text{匀速}} = d - 2\,d_{\text{加速}}
+\end{align}
+
+如果 $d_{\text{匀速}} < 0$，距离不足以达到 $v_{\max}$。曲线变为\textbf{三角形}：电机加速至峰值速度 $v_{\text{peak}} = \sqrt{a_{\max}\,d}$ 后立即减速，没有匀速阶段。
+
+\textbf{时刻 $t$ 的参考信号：}
+
+令 $t_1 = t_{\text{加速}}$，$t_2 = t_1 + d_{\text{匀速}}/v_{\max}$，$t_3 = t_2 + t_{\text{加速}}$。
+
+\begin{equation}
+\theta_{\text{ref}}(t) = \begin{cases}
+\tfrac{1}{2}a_{\max}t^2 & 0 \le t < t_1 \quad \text{（加速段）}\\[4pt]
+d_{\text{加速}} + v_{\max}(t - t_1) & t_1 \le t < t_2 \quad \text{（匀速段）}\\[4pt]
+d - \tfrac{1}{2}a_{\max}(t_3-t)^2 & t_2 \le t \le t_3 \quad \text{（减速段）}
+\end{cases}
+\end{equation}
+
+\begin{equation}
+\dot{\theta}_{\text{ref}}(t) = \begin{cases}
+a_{\max}\,t & 0 \le t < t_1 \\
+v_{\max} & t_1 \le t < t_2 \\
+a_{\max}(t_3 - t) & t_2 \le t \le t_3
+\end{cases}
+\qquad
+\ddot{\theta}_{\text{ref}}(t) = \begin{cases}
++a_{\max} & 0 \le t < t_1 \\
+0 & t_1 \le t < t_2 \\
+-a_{\max} & t_2 \le t \le t_3
+\end{cases}
+\end{equation}
+
+这三个信号是实现完整前馈增强控制器所需的全部内容（更多内容见下面的实践框）。
+
+\subsubsection{S形速度曲线（S-Curve Profile）}
+
+梯形曲线的加速度是不连续的——瞬间从 $0$ 跳变到 $a_{\max}$。这种突然的冲击（jerk）会激励机械共振，磨损齿轮，引起振动。\textbf{S形曲线}（或限制冲击的曲线）增加了第七个约束：加速度的变化率（冲击，$j_{\max}$）受到限制。
+
+这将三段式梯形曲线变为七段式曲线：
+\begin{enumerate}[nosep]
+    \item 冲击增加（加速度从0增加到 $a_{\max}$）
+    \item 恒定加速度 $a_{\max}$
+    \item 冲击减小（加速度从 $a_{\max}$ 减小到0）
+    \item 以 $v_{\max}$ 匀速行驶
+    \item 冲击减小（加速度变为 $-a_{\max}$）
+    \item 恒定减速度 $-a_{\max}$
+    \item 冲击增加（回到零加速度）
+\end{enumerate}
+
+结果是一个处处二阶连续可微的位置曲线——平滑到云台和精密机构几乎感觉不到运动开始。数学推导较为复杂，但实践中你很少需要从头实现：运动控制库（WPILib的 \texttt{TrapezoidProfile}、REV的Motion Magic等）已经帮你处理好了。
+
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{实践：如何选择曲线类型}
+
+\vspace{0.3em}
+\textbf{梯形曲线}适合90\%的竞赛应用：
+\begin{itemize}[nosep]
+    \item 驱动轮、飞轮、炮塔旋转
+    \item 实现和调试简单——三段、分段公式
+    \item 足够好用，除非你听到齿轮震颤或看到快速运动时的振荡
+\end{itemize}
+
+\textbf{S形曲线}适用于对平滑性要求严苛的场合：
+\begin{itemize}[nosep]
+    \item 云台和双轴稳定平台
+    \item 精密定位机构（相机滑轨、基于编码器的机械臂）
+    \item 任何担心齿轮磨损或振动的场合
+\end{itemize}
+
+\textbf{跟踪轨迹炮塔的完整前馈链：}
+
+在每个控制时间步，轨迹规划器输出三个数：$\theta_{\text{ref}}$、$\dot{\theta}_{\text{ref}}$、$\ddot{\theta}_{\text{ref}}$。全部利用起来：
+\[
+u = \underbrace{K_p\bigl(\theta_{\text{ref}} - \theta\bigr) + K_i\int(\cdot)\,dt + K_d\dot{e}}_{\text{外位置PID}}
+  + \underbrace{k_v\,\dot{\theta}_{\text{ref}}}_{\text{速度前馈}}
+  + \underbrace{k_a\,\ddot{\theta}_{\text{ref}}}_{\text{加速度前馈}}
+\]
+
+加速度前馈来自旋转的牛顿第二定律：$\tau = J\alpha$，因此 $k_a \approx J / k_{\tau}$，其中 $k_\tau$ 是电机的力矩常数。位置PID只需消除小的跟踪误差；前馈承担主要工作。
+\end{mdframed}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{trajectory_profiles.pdf}
+\caption{90°运动的梯形曲线（左）与S形曲线（右）对比。梯形曲线的加速度不连续（突然跳变），而S形曲线限制冲击以实现更平滑的运动。两者都生成用于前馈控制的位置、速度和加速度参考信号。}
+\end{figure}
+
+\subsubsection{B\'{e}zier 曲线与样条插值}
+
+梯形曲线和S形曲线适用于单段点到点运动，但许多应用场景需要在二维或三维空间中沿多个路径点生成平滑轨迹。\textbf{B\'{e}zier 曲线}和\textbf{三次样条}是实现该目标的两种常用工具。
+
+\paragraph{B\'{e}zier 曲线。}
+$n$ 次 B\'{e}zier 曲线由 $n+1$ 个\textbf{控制点} $\mathbf{P}_0, \mathbf{P}_1, \ldots, \mathbf{P}_n$ 定义，其参数化形式为（$t \in [0,1]$）：
+\[
+\mathbf{B}(t) = \sum_{i=0}^{n} \binom{n}{i}(1-t)^{n-i}\,t^{i}\,\mathbf{P}_i
+\]
+最常用的是\textbf{三次 B\'{e}zier 曲线}（$n=3$），使用四个控制点。曲线经过 $\mathbf{P}_0$（$t=0$）和 $\mathbf{P}_3$（$t=1$），而 $\mathbf{P}_1$ 和 $\mathbf{P}_2$ 控制曲线形状但不在曲线上。其关键性质在于：曲线在 $\mathbf{P}_0$ 处的切线指向 $\mathbf{P}_1$，在 $\mathbf{P}_3$ 处的切线从 $\mathbf{P}_2$ 方向出发——这为进出方向提供了直观的控制手段。B\'{e}zier 曲线适用于需要平滑曲线且可控进出方向的\textbf{路径点规划}场景（如全向驱动路径、机械臂末端执行器轨迹等）。
+
+\paragraph{三次样条插值。}
+若需经过一组路径点 $\{q_0, q_1, \ldots, q_N\}$，可采用在路径点处拼接的\textbf{分段三次多项式}。每段的形式为：
+\[
+q_i(t) = a_i + b_i\,t + c_i\,t^2 + d_i\,t^3
+\]
+在各拼接点处，\textbf{连续性条件}要求相邻段的位置、速度和加速度相匹配，从而获得 $C^2$ 连续性（直到二阶导数连续）。常用的边界条件有两种：
+\begin{itemize}
+    \item \textbf{自然样条}：两端点处的二阶导数为零。
+    \item \textbf{固定样条}：在两端点处指定速度（一阶导数）。
+\end{itemize}
+与 B\'{e}zier 曲线相比，三次样条\textbf{保证经过所有路径点}——B\'{e}zier 曲线仅经过首尾两个控制点。与梯形曲线相比，三次样条在全程提供\textbf{光滑的速度和加速度}，不存在不连续点。
+
+\paragraph{适用场景对比。}
+\begin{itemize}
+    \item \textbf{梯形/S形曲线}：具有明确速度和加速度限制的单段点到点运动。
+    \item \textbf{B\'{e}zier 曲线}：需要形状控制的平滑二维/三维路径（如全向驱动路径、末端执行器轨迹）。
+    \item \textbf{三次样条}：需要经过每个路径点的多点轨迹（如自主导航序列）。
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{bezier_spline.pdf}
+\caption{左图：三次 B\'{e}zier 曲线由四个控制点 $P_0$--$P_3$ 定义，曲线经过 $P_0$ 和 $P_3$，$P_1$ 和 $P_2$ 控制曲线形状。绿色和红色箭头表示端点处的切线方向。右图：三次样条插值保证经过所有路径点（红点），而 B\'{e}zier 曲线仅经过首尾两个控制点。}
+\end{figure}

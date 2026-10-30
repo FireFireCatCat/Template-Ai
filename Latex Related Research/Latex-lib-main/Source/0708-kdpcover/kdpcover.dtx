@@ -1,0 +1,516 @@
+% \iffalse meta-comment
+% SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
+% SPDX-License-Identifier: MIT
+% \fi
+
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+
+% \GetFileInfo{kdpcover.dtx}
+% \DoNotIndex{\endgroup,\begingroup,\let,\else,\fi,\newcommand,\newenvironment}
+
+% \iffalse
+%<*driver>
+\ProvidesFile{kdpcover.dtx}
+%</driver>
+%<class>\NeedsTeXFormat{LaTeX2e}
+%<class>\ProvidesClass{kdpcover}
+%<*class>
+[2026-10-16 0.7.1 Cover for Kindle Direct Publishing books]
+%</class>
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{lmodern}
+\usepackage{fail-fast}
+\usepackage{microtype}
+\AddToHook{env/verbatim/begin}{\microtypesetup{protrusion=false}}
+\PassOptionsToPackage{hyperindex=false}{hyperref}
+\usepackage{href-ul}
+\usepackage{bookmark}
+\renewcommand{\RerunFileCheck}[3]{\AddToHook{enddocument/info}{#2}}
+\usepackage[dtx,margin=0,small]{docshots}
+\usepackage{graphicx}
+\PageIndex
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+	\DocInput{kdpcover.dtx}
+	\PrintChanges
+	\PrintIndex
+\end{document}
+%</driver>
+% \fi
+
+% \title{\includegraphics[width=0.75in]{yb-book-logo.pdf} \\ |kdpcover|: \LaTeX{} Class \\ for Amazon Book Covers\thanks{The sources are on GitHub at \href{https://github.com/yegor256/kdpcover}{yegor256/kdpcover}}}
+% \author{Yegor Bugayenko \\ \texttt{yegor256@gmail.com}}
+% \date{\filedate, \fileversion}
+%
+% \maketitle
+%
+% \section{Introduction}
+%
+
+% \changes{v0.5.0}{2022/11/29}{The \texttt{docshots} package is used to render the documentation.}
+% This class produces a book cover suitable for Kindle Direct Publishing (KDP).
+% The author employs it for \href{https://amzn.to/2WMTXWF}{a number of his books}.
+% A \LaTeX{} document conforming to this class takes the following form:
+% \begin{docshot}[prerequisite=cactus.pdf]
+% \documentclass[pages=200,6x9]{kdpcover}
+% \begin{document}
+% \putSpine{kdpcover, a LaTeX class for KDP books}
+% \putVolume{1}
+% \putVersion{0.7.1}
+% \putPrice{\$0.00}
+% \putCopyright{\the\year}{Yegor Bugayenko}
+% \putTitle{kdpcover}
+% \putAuthor{Yegor Bugayenko}
+% \putTLDR{This book recounts
+%   an interesting story!}
+% \putPicture{cactus.pdf}
+% \end{document}
+% \end{docshot}
+
+% The problem addressed by this class is the necessity of adjusting the size of
+% the cover PDF in accordance with the number of pages within the book---the more
+% voluminous the book, the broader its spine must be. The class performs the
+% requisite calculations on the fly by means of the |qpdf| tool, which must
+% therefore be installed. The |pdflatex| processor must furthermore be invoked
+% with the |--shell-escape| option, so that \LaTeX{} may execute |qpdf|.
+
+% \section{Class Options}
+
+% \begin{macro}{pages}
+% By means of |pages|, the total number of pages within the book may be specified:
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\documentclass[pages=120]{kdpcover}
+\begin{document}
+\end{document}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+% \end{macro}
+
+% \begin{macro}{pdf}
+% The |pages| option is best avoided in favour of letting the class compute
+% the size of the book from the PDF file (by means of the |qpdf| command-line
+% tool, which must be installed):
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\documentclass[pdf=book.pdf]{kdpcover}
+\begin{document}
+\end{document}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+% \end{macro}
+
+% \begin{macro}{6x9}
+% This option sets the page dimensions to 6x9 inches.
+% A custom size may likewise be defined as follows:
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\documentclass[6x9]{kdpcover}
+\setlength\kdpxsize{8.1in}
+\setlength\kdpysize{12.7in}
+\begin{document}
+\end{document}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+% \end{macro}
+
+% \begin{macro}{7x10}
+% \begin{macro}{8x10}
+% The |7x10| and |8x10| options set the page dimensions to 7x10 and 8x10
+% inches respectively; |6x9| is the default.
+% \end{macro}
+% \end{macro}
+
+% \begin{macro}{barless}
+% To eliminate the black bar at the centre of the page, the |barless|
+% option suffices:
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\documentclass[barless]{kdpcover}
+\begin{document}
+\end{document}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+% \end{macro}
+
+% \section{Commands}
+
+% \begin{macro}{\putSpine}
+% The |\putSpine| command places a vertical black spine line containing two
+% white elements: the text at the top and the logo at the bottom. The optional
+% argument names the file with the logo, |kdpcover-signature| by default. The
+% text should be sufficiently short to avoid contact with the logo. It is sound
+% practice to record the volume number at the end of the text whenever more
+% than one volume exists, e.g.\ ``my book, vol.\ 1''. The use of small caps
+% within the text alone is recommended.
+% \end{macro}
+
+% \begin{macro}{\putVolume}
+% This command renders the volume figure. It is deliberately rendered at large
+% size to ensure conspicuousness. Only volumes from 1 to 4 are supported, since
+% the class ships the figures as |kdpcover-vol-1.pdf| through |kdpcover-vol-4.pdf|.
+% \end{macro}
+
+% \begin{macro}{\putVersion}
+% This command prints the version and additionally appends the date of the
+% latest Git commit in the current directory. Should the directory not
+% constitute a Git repository, the date is omitted.
+% \end{macro}
+
+% \begin{macro}{\putPrice}
+% This command prints the price, the inclusion of which is, in the author's
+% view, sound practice.
+% \end{macro}
+
+% \begin{macro}{\putCopyright}
+% This command prints a brief copyright notice, comprising the year and the
+% name of the author.
+% \end{macro}
+
+% \begin{macro}{\putTitle}
+% This command prints the title of the book.
+% \end{macro}
+
+% \begin{macro}{\putAuthor}
+% This command prints the author.
+% \end{macro}
+
+% \begin{macro}{\putTLDR}
+% This command prints the TL;DR paragraph, which summarises the central message
+% of the entire book.
+% \end{macro}
+
+% \begin{macro}{\putPicture}
+% This command prints the front-cover picture. The file |cactus.pdf| may be employed.
+% \end{macro}
+
+% \begin{macro}{\putBack}
+% This command prints the text on the back of the book; the author generally
+% recommends omitting it and leaving the back empty and white.
+% \end{macro}
+
+% \StopEventually{}
+
+% \section{Implementation}
+
+% \changes{v0.2.0}{2021/07/14}{Initial version}
+
+% First, we load our parent class:
+% \changes{v0.5.0}{2022/11/29}{The base class is now \texttt{article}.}
+%    \begin{macrocode}
+\LoadClass{article}
+%    \end{macrocode}
+
+% Then, we define a few internal commands:
+%    \begin{macrocode}
+\makeatletter
+\newcount\kdp@pages
+  \kdp@pages=100
+\newlength\kdpxsize
+  \setlength\kdpxsize{6in}
+\newlength\kdpysize
+  \setlength\kdpysize{9in}
+\makeatother
+%    \end{macrocode}
+
+% Then, we include |iexec| for being able to execute |qpdf| and |git|:
+%    \begin{macrocode}
+\RequirePackage{iexec}
+%    \end{macrocode}
+
+% Then, we parse class options with the help of the |pgfopts| package:
+% \changes{v0.6.1}{2025/03/02}{If the PDF file is absent, an error is printed.}
+%    \begin{macrocode}
+\RequirePackage{pgfopts}
+\makeatletter
+\pgfkeys{
+  /kdp/.cd,
+  barless/.store in = \kdp@barless,
+  pdf/.code = {
+    \IfFileExists{#1}
+      {}
+      {\ClassError{kdpcover}{The "#1" file is absent}{}}%
+    \iexec[trace,quiet,stdout=kdpcover-pages-count.txt]
+      {qpdf --show-npages --no-warn #1 | tr -d '[[:space:]]'}
+    \openin1=kdpcover-pages-count.txt
+    \read1 to \temp
+    \closein1
+    \kdp@pages=\temp
+  },
+  6x9/.code = {
+    \setlength\kdpxsize{6in}
+    \setlength\kdpysize{9in}
+  },
+  7x10/.code = {
+    \setlength\kdpxsize{7in}
+    \setlength\kdpysize{10in}
+  },
+  8x10/.code = {
+    \setlength\kdpxsize{8in}
+    \setlength\kdpysize{10in}
+  },
+  pages/.code = {
+    \kdp@pages=#1
+  }
+}
+\ProcessPgfPackageOptions{/kdp}
+\makeatother
+%    \end{macrocode}
+
+% Then, we include a few useful packages:
+%    \begin{macrocode}
+\RequirePackage{anyfontsize}
+\RequirePackage{tikz}
+\RequirePackage{microtype}
+\RequirePackage{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage{calc}
+%    \end{macrocode}
+
+% Then, we set spacing using |setspace|:
+%    \begin{macrocode}
+\RequirePackage{setspace}
+  \setstretch{1.2}
+%    \end{macrocode}
+
+% Then, we declare the lengths of the page.
+% The height is |\kdpysize| plus 0.125 inches of ``bleed'' on top and
+% on the bottom, see \href{https://kdp.amazon.com/en_US/help/topic/G201953020}{this}.
+% The width is twice |\kdpxsize| plus 0.125 inches of ``bleed'' on each side,
+% plus the ``spine,'' whose width depends on the number of pages in the book.
+%    \begin{macrocode}
+\makeatletter
+\newlength\kdp@height
+\newlength\kdp@width
+\makeatother
+%    \end{macrocode}
+
+% Then, right before the document begins, we calculate the lengths, set
+% the size of the page, using |geometry|, and split the page into a 16 by 16
+% grid of |textpos|, which must happen after the size is known:
+% \changes{v0.6.2}{2026/10/16}{The \texttt{textpos} grid is computed from the cover size instead of the letter paper.}
+%    \begin{macrocode}
+\RequirePackage{geometry}
+\makeatletter
+\AddToHook{begindocument/before}{%
+  \setlength\kdp@height{0.125in + \kdpysize + 0.125in}%
+  \setlength\kdp@width{
+    0.125in + \kdpxsize
+    + 0.125in + \kdpxsize
+    + 0.0025in * \kdp@pages}%
+  \geometry{
+    paperwidth=\kdp@width,
+    paperheight=\kdp@height,
+    left=0pt,
+    right=0pt,
+    top=0pt,
+    bottom=0pt
+  }%
+  \TPGrid{16}{16}%
+}
+\makeatother
+%    \end{macrocode}
+
+% Then, we load |textpos| with absolute coordinates:
+%    \begin{macrocode}
+\PassOptionsToPackage{absolute}{textpos}
+\RequirePackage{textpos}
+%    \end{macrocode}
+
+% \begin{macro}{\putSpine}
+% Then, we define |\putSpine|:
+%    \begin{macrocode}
+\makeatletter
+\newcommand\putSpine[2][kdpcover-signature]{%
+  \ifdefined\kdp@barless\else%
+    \begin{textblock}{2.4}[0.5,0](8,0)%
+      \begin{tikzpicture}%
+        \node [rectangle, inner sep=0em, fill=black,
+        minimum width=2.4\TPHorizModule,
+        minimum height=16\TPVertModule] at (0,0) {};
+      \end{tikzpicture}%
+    \end{textblock}%
+  \fi%
+  \begin{textblock}{1}[0.5,0](8,2)%
+    \begin{tikzpicture}%
+      \node [color=white, inner sep=0cm, outer sep=0cm,
+        rotate=270, minimum height=\TPHorizModule] at (0,0) {
+        \Large #2%
+      };
+    \end{tikzpicture}%
+  \end{textblock}%
+  \begin{textblock}{2.4}[0.5,1](8,14)%
+    \centerline{\includegraphics[width=0.32in]{#1}}%
+  \end{textblock}%
+}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\putPicture}
+% Then, we define |\putPicture|:
+%    \begin{macrocode}
+\newcommand\putPicture[1]{%
+  \begin{textblock}{4}(10,2)%
+    \includegraphics[width=\textwidth]{#1}
+  \end{textblock}%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\putVolume}
+% Then, we define |\putVolume|:
+%    \begin{macrocode}
+\newcommand\putVolume[1]{%
+  \begin{textblock}{2}[1,1](15,14)%
+    \raggedleft%
+    \includegraphics[height=0.4in]{kdpcover-vol-#1}%
+  \end{textblock}%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\putPrice}
+% Then, we define |\putPrice|:
+%    \begin{macrocode}
+\newcommand\putPrice[1]{%
+  \begin{textblock}{4}[0,1](1,2)%
+    \small #1%
+  \end{textblock}%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\putBack}
+% Then, we define |\putBack|:
+%    \begin{macrocode}
+\newcommand\putBack[1]{%
+  \begin{textblock}{5}[0,0](1,3)%
+    \small #1%
+  \end{textblock}%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\putTitle}
+% Then, we define |\putTitle|:
+%    \begin{macrocode}
+\newcommand\putTitle[1]{%
+  \begin{textblock}{5}(10,9)%
+    \fontsize{32}{32}\selectfont #1%
+  \end{textblock}%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\putAuthor}
+% Then, we define |\putAuthor|:
+%    \begin{macrocode}
+\newcommand\putAuthor[1]{%
+  \begin{textblock}{4}(10,10)%
+    \large by #1%
+  \end{textblock}%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\putTLDR}
+% Then, we define |\putTLDR|:
+%    \begin{macrocode}
+\newcommand\putTLDR[1]{%
+  \begin{textblock}{5}(10,11)%
+    TL;DR #1%
+  \end{textblock}%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\putVersion}
+% Then, we define |\putVersion|. The date is printed when the current
+% directory is a Git repository, which means that |.git| is either a
+% directory with |HEAD| inside or, in a worktree or a submodule, a plain
+% file. Since kpathsea refuses to open directories, |.git| is checked twice:
+% \changes{v0.6.2}{2026/10/16}{The Git date is printed when \texttt{.git} is a directory, not only when it is a file.}
+%    \begin{macrocode}
+\makeatletter
+\newcommand\kdp@gitdate{%
+  \quad\iexec{git log -n 1 --pretty='format:\%ad' --date='format:\%e-\%b-\%Y'}%
+}
+\newcommand\putVersion[1]{%
+  \begin{textblock}{4}[0,1](10,14)%
+    #1%
+    \IfFileExists{.git/HEAD}
+      {\kdp@gitdate}
+      {\IfFileExists{.git}{\kdp@gitdate}{}}%
+  \end{textblock}%
+}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\putCopyright}
+% Then, we define |\putCopyright|:
+%    \begin{macrocode}
+\newcommand\putCopyright[2]{%
+  \begin{textblock}{4}[0,1](1,14)%
+    \small (c)~%
+    #1 #2%
+  \end{textblock}%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% Finally, a few layout instructions:
+%    \begin{macrocode}
+\AtBeginDocument{%
+  \ttfamily%
+  \raggedright%
+  \setlength\parindent{0pt}%
+  \setlength\parskip{0pt}%
+  \interfootnotelinepenalty=10000%
+}
+\endinput
+%    \end{macrocode}
+
+% \Finale
+
+%\clearpage
+%
+%\PrintChanges
+%\clearpage
+%\PrintIndex

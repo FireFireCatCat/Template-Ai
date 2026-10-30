@@ -1,0 +1,18 @@
+% Family wall calendar -- github:ArneMeier/famcal, MPL-2.0 (verified in the
+% repo's own LICENSE file, full Mozilla Public License 2.0 text). Not in TeX
+% Live (kpsewhich famcal.cls: not found) -- starter bundles famcal.cls, a
+% single self-contained class file with no further dependencies beyond core
+% LaTeX + tikz/pgfcalendar + xcolor. No fontspec -- pdflatex-safe (upstream
+% README states PDFLaTeX and LuaLaTeX compatibility; pdflatex used here).
+%
+% Distinct design from the already-shipped monthly-calendar (wallcalendar, a
+% single-owner year grid): famcal's actual feature is a SHARED family
+% calendar with a named column per household member plus colour-coded
+% vacation ranges via \makeFamCal{year}{names}{vacations}, so this starter
+% uses four invented family members and real vacation date ranges rather
+% than the single-name case.
+\documentclass{famcal}
+
+\begin{document}
+\makeFamCal{2026}{Mireille, Tobias, Elin, Noah}{2026-02-14/2026-02-22,2026-07-27/2026-08-14,2026-12-23/2027-01-04}
+\end{document}

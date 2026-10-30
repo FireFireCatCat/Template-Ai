@@ -1,0 +1,194 @@
+%%
+%% arabdoc-setup.sty — One-line Arabic RTL setup for XeLaTeX
+%%
+%% Author: Dr Nibras Abo Alzahab <nibras.abo.alzahab@gmail.com>
+%% Version: 1.0.0
+%% Date: 2025/01/15
+%% License: LPPL 1.3c
+%%
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3c
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%%
+
+\def\arabdocsetupversion{1.0.0}
+\def\arabdocsetupdate{2025/01/15}
+\ProvidesPackage{arabdoc-setup}[\arabdocsetupdate\space v\arabdocsetupversion\space One-line Arabic RTL setup for XeLaTeX]
+
+%% ============================================
+%% Options (using plain DeclareOption)
+%% ============================================
+
+% Default option values
+\def\arabicsetup@font{amiri}
+\def\arabicsetup@numerals{maghrib}
+\def\arabicsetup@calendar{gregorian}
+\def\arabicsetup@englishfont{TeX Gyre Termes}
+\def\arabicsetup@monofont{Amiri-Regular.ttf}
+\def\arabicsetup@sections{default}
+\def\arabicsetup@captions{false}
+\def\arabicsetup@colorlinks{false}
+
+\DeclareOption{amiri}{\def\arabicsetup@font{amiri}}
+\DeclareOption{scheherazade}{\def\arabicsetup@font{scheherazade}}
+\DeclareOption{lateef}{\def\arabicsetup@font{lateef}}
+\DeclareOption{custom}{\def\arabicsetup@font{custom}}
+
+\DeclareOption{maghrib}{\def\arabicsetup@numerals{maghrib}}
+\DeclareOption{arabicdigits}{\def\arabicsetup@numerals{arabicdigits}}
+
+\DeclareOption{gregorian}{\def\arabicsetup@calendar{gregorian}}
+\DeclareOption{islamic}{\def\arabicsetup@calendar{islamic}}
+
+\DeclareOption{default-sections}{\def\arabicsetup@sections{default}}
+\DeclareOption{legal-sections}{\def\arabicsetup@sections{legal}}
+
+\DeclareOption{captions}{\def\arabicsetup@captions{true}}
+\DeclareOption{colorlinks}{\def\arabicsetup@colorlinks{true}}
+
+% Pass through any unknown options (e.g., to geometry)
+\DeclareOption*{\PackageWarning{arabdoc-setup}{Unknown option `\CurrentOption'}}
+
+\ProcessOptions
+
+%% ============================================
+%% String comparison helper
+%% ============================================
+
+\RequirePackage{pdftexcmds}
+\let\arabicsetup@strcmp\pdfstrcmp
+
+%% ============================================
+%% Standard packages (load ALL before bidi)
+%% ============================================
+
+\RequirePackage{array}
+\RequirePackage{booktabs}
+\RequirePackage{tabularx}
+\RequirePackage{enumitem}
+\RequirePackage{float}
+\RequirePackage{titlesec}
+\RequirePackage{fancyhdr}
+\RequirePackage{setspace}
+\RequirePackage[table]{xcolor}
+
+%% ============================================
+%% BIDI (must come before polyglossia)
+%% ============================================
+
+\RequirePackage{bidi}
+
+%% ============================================
+%% Font specification (requires bidi)
+%% ============================================
+
+\RequirePackage[no-math]{fontspec}
+
+% Set fonts based on option
+\ifnum\arabicsetup@strcmp{\arabicsetup@font}{amiri}=0
+  \setmainfont[Scale=1]{Amiri-Regular.ttf}%
+  \newfontfamily\arabicfont[Script=Arabic,Scale=0.95]{Amiri-Regular.ttf}%
+\else\ifnum\arabicsetup@strcmp{\arabicsetup@font}{scheherazade}=0
+  \setmainfont[Scale=1]{ScheherazadeNew-Regular.ttf}%
+  \newfontfamily\arabicfont[Script=Arabic,Scale=0.95]{ScheherazadeNew-Regular.ttf}%
+\else\ifnum\arabicsetup@strcmp{\arabicsetup@font}{lateef}=0
+  \setmainfont[Scale=1]{Lateef-Regular.ttf}%
+  \newfontfamily\arabicfont[Script=Arabic,Scale=0.95]{Lateef-Regular.ttf}%
+\else
+  % custom — user must set \setmainfont and \arabicfont manually
+\fi\fi\fi
+
+\newfontfamily\englishfont[Scale=0.95]{\arabicsetup@englishfont}
+\setmonofont{\arabicsetup@monofont}
+
+%% ============================================
+%% Polyglossia (language support)
+%% ============================================
+
+\RequirePackage[quiet]{polyglossia}
+
+% Set default language with calendar and numerals options
+\ifnum\arabicsetup@strcmp{\arabicsetup@calendar}{islamic}=0
+  \ifnum\arabicsetup@strcmp{\arabicsetup@numerals}{arabicdigits}=0
+    \setdefaultlanguage[calendar=islamic,hijricorrection=1,numerals=arabicdigits]{arabic}%
+  \else
+    \setdefaultlanguage[calendar=islamic,hijricorrection=1,numerals=maghrib]{arabic}%
+  \fi
+\else
+  \ifnum\arabicsetup@strcmp{\arabicsetup@numerals}{arabicdigits}=0
+    \setdefaultlanguage[calendar=gregorian,hijricorrection=1,numerals=arabicdigits]{arabic}%
+  \else
+    \setdefaultlanguage[calendar=gregorian,hijricorrection=1,numerals=maghrib]{arabic}%
+  \fi
+\fi
+
+\setotherlanguage[variant=british]{english}
+
+%% ============================================
+%% Hyperref (always last)
+%% ============================================
+
+\ifnum\arabicsetup@strcmp{\arabicsetup@colorlinks}{true}=0
+  \RequirePackage[breaklinks,colorlinks,linkcolor=blue,urlcolor=blue]{hyperref}%
+\else
+  \RequirePackage[breaklinks,hidelinks]{hyperref}%
+\fi
+
+%% ============================================
+%% Arabic caption overrides
+%% ============================================
+
+\ifnum\arabicsetup@strcmp{\arabicsetup@captions}{true}=0
+  \addto\captionsarabic{%
+    \renewcommand{\contentsname}{الفهرس}%
+    \renewcommand{\figurename}{الشكل}%
+    \renewcommand{\tablename}{الجدول}%
+    \renewcommand{\refname}{المراجع}%
+    \renewcommand{\abstractname}{الملخص}%
+    \renewcommand{\appendixname}{الملحق}%
+    \renewcommand{\indexname}{الفهرس الموضوعي}%
+    \renewcommand{\chaptername}{الفصل}%
+    \renewcommand{\partname}{القسم}%
+    \renewcommand{\listfigurename}{قائمة الأشكال}%
+    \renewcommand{\listtablename}{قائمة الجداول}%
+  }
+\fi
+
+%% ============================================
+%% Section formatting
+%% ============================================
+
+\ifnum\arabicsetup@strcmp{\arabicsetup@sections}{legal}=0
+  \titleformat{\section}{\large\bfseries}{المادة \thesection}{0.7em}{}
+\else
+  \titleformat{\section}{\Large\bfseries}{\thesection}{0.7em}{}
+\fi
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.4ex plus 0.4ex}{0.9ex plus 0.3ex}
+\titlespacing*{\subsection}{0pt}{1.0ex plus 0.3ex}{0.7ex plus 0.2ex}
+
+%% ============================================
+%% Table column types
+%% ============================================
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+%% ============================================
+%% Convenience: default spacing
+%% ============================================
+
+\setstretch{1.5}
+\setlist[itemize]{topsep=0.3em, itemsep=0.15em, parsep=0pt}
+\setlist[enumerate]{topsep=0.3em, itemsep=0.15em, parsep=0pt}
+
+%% ============================================
+%% End of package
+%% ============================================
+\endinput

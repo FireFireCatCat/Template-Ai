@@ -1,0 +1,1086 @@
+%% exercisesheets.tex
+%% Copyright 2008-2024 Sebastian Kuhnert, Frank Fuhlbrück
+%
+% This work may be distributed and/or modified under the conditions
+% of the LaTeX Project Public License, either version 1.3c of this
+% license or (at your option) any later version. The latest version
+% of this license is in https://www.latex-project.org/lppl.txt and
+% version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Frank Fuhlbrück.
+%
+% This work consists of the files listed in README.
+
+\documentclass[DIV12,BCOR0mm]{scrartcl}
+
+\usepackage{arev}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[activate]{microtype}
+\usepackage{csquotes}
+\usepackage{xspace}
+\usepackage{xcolor}
+\usepackage{calc}
+\usepackage{listings}
+\lstloadlanguages{TeX}
+\lstset{%
+  language=[LaTeX]TeX,
+  basicstyle=\ttfamily\color{blue!50!black},
+  texcs={def,let,renewcommand,long,begin,end,usepackage,ifdef},
+  texcsstyle=\color{blue!60!gray},
+  keywordstyle=\bfseries,
+  keywords={
+    beamersolution,
+    exshset,
+    exercise,
+    hint,
+    includeexercise,
+    inexlabel,
+    ifnonoralsolutions,
+    iforalsolutions,
+    ifsamplesolutions,
+    ifsolutions,
+    Lexercise,
+    loadexercise,
+    maintask,
+    newframe,
+    points,
+    restatetask,
+    restatetaskbeamer,
+    sheet,
+    solution,
+    subexnref,
+    subexlref,
+    subtask,
+    subtasks,
+    TODO,
+  },
+  keywordstyle=[2]\optionstyle,
+  keywords=[2]{
+    bonus,
+    firstline,
+    framed,
+    inplace,
+    name,
+    only,
+    optional,
+    options,
+    oral,
+    strings,
+    solutionsby,
+  },
+  identifierstyle=,%{}\color{red!60!gray},
+  texcl,
+  commentstyle=\itshape,
+  showstringspaces=false,
+  breaklines,
+  breakatwhitespace,
+  columns=flexible,
+  escapeinside={(*}{*)},
+  mathescape=false,
+}
+
+\usepackage[pdfusetitle,colorlinks]{hyperref}
+
+\newcommand{\exsh}{\texttt{exercisesheets}\xspace}
+
+\newcommand{\param}[1]{$\langle${\normalfont\itshape #1\/}$\rangle$}
+\newcommand{\maybe}[1]{\textcolor{green!50!black}{#1}}
+\newcommand{\mand}[1]{\textcolor{blue!50!black}{#1}}
+\newcommand{\codestyle}{\normalfont\ttfamily\color{blue!50!black}}
+\newcommand{\optionstyle}{\normalfont\ttfamily\color{red!50!black}}
+\newcommand{\option}[1]{{\optionstyle #1}}
+\newcommand{\optitem}[1][]{\item[{\codestyle #1}]}
+\newcommand{\vers}[1]{{\normalfont\ttfamily\color{black!90} #1}}
+\newcommand{\versitem}[1][]{\item[v. \vers{#1}]}
+\newcommand{\filename}[1]{{\normalfont\ttfamily\color{magenta!80!black}#1}}
+\newcommand{\binary}[1]{{\normalfont\ttfamily\color{yellow!50!black}#1}}
+\newcommand{\luadisp}[1]{{\normalfont\ttfamily\color{cyan!50!black}#1}}
+
+\usepackage[english,iso]{isodate}
+\title{The \exsh Package}
+\author{Sebastian Kuhnert\and Frank Fuhlbrück}
+\date{Version 0.17, \printdateTeX{2024/04/23}}
+
+\begin{document}
+\maketitle
+
+The \exsh package provides a way to typeset exercise sheets as used in university courses and school classes. It evolved from a set of macros an environments that were finally combined into this package. Starting from Version \vers{0.7}, there was an alternative variant designed for use with the beamer class, which is integrated into the main package since version \vers{0.11}. Not all combinations of options have been tested with the beamer variant. From version \vers{0.16} on, there is an embedded mode that allows using exercise in lecture notes etc. without requiring page breaks. Since the package includes a loading mechanism for exercises in external files, the same exercises can be reused in different contexts.
+
+
+\subsection*{Licence}
+Copyright \textcopyright{} 2008--2024 Sebastian Kuhnert and Frank Fuhlbrück.
+Permission is granted to copy, distribute and/or modify this software under the
+terms of the \LaTeX{} Project Public Licence, version 1.3c or later. This
+package is maintained, the Current Maintainer is
+Frank Fuhlbrück
+\footnote{\href{mailto:frank@fuhlbrueck.net}{frank@fuhlbrueck.net}}.
+
+
+\section{Reading this Document}
+
+\begin{itemize}
+  \item All macros and environments defined by this package are
+    printed in bold like this: \lstinline|\points| and
+    \lstinline|\begin{sheet}\end{sheet}|.
+  \item Key-value style options with a mandatory argument are
+    printed like this: {\codestyle \option{only}=\param{list of ranges}}, while optional (usually boolean) arguments
+    look like this: {\codestyle \option{embedded}\maybe{=\param{true/false}}}.
+\end{itemize}
+
+
+
+
+\section{Related Classes and Packages}
+
+\subsection{Packages with Similar Functionality}
+\begin{itemize}
+ \item The \texttt{exercise} package offers similar functionality, though the
+  concept is a bit different: That package provides explicit commands for
+  sub-exercises while \exsh (in its standard setting)
+  relies on other means like the \texttt{enumerate}
+  environment for this. An advantage of the \texttt{exercise} package is that
+  answers can be delayed. On the other hand \exsh's environment based user
+  interface is a bit cleaner and you have to care less about package internals.
+  \item The \texttt{xsim} (and its predecessor \texttt{exsheets}) package also offers a similar set of features for the average user. It also has a mechanism for hiding certain exercises and solutions that works a bit differently than the mechanism of
+  this package. There is (to my knowledge) no explicit beamer support.
+\end{itemize}
+
+\subsection{Recommended Additional Packages}
+\begin{itemize}
+ \item The use of \texttt{hyperref} is encouraged. Please use the options
+  \texttt{pdfusetitle}, \texttt{plainpages=false} and \texttt{pdfpagelabels} for
+  optimal results.
+ \item If the \texttt{babel} package is loaded, the appropriate
+  \option{language=\param{lang}}-option is automatically derived and can be
+  omitted.
+ \item The use of \texttt{enumitem} or \texttt{paralist} is recommended. Top
+  level enumerating lists are then modified to have the form (a), (b), \dots{},
+  which is useful in exercise definitions (you can override this).
+ \item If the \texttt{varioref} package is used, appropriate label formats are
+  installed for exercises and sub-exercises.
+ \item If the \texttt{xcolor} package is loaded, to-do markers generated with
+  \lstinline|\TODO| are printed in red.
+\end{itemize}
+
+\subsection{Packages Loaded by \exsh}
+\begin{itemize}
+ \item \texttt{etoolbox} (at least version
+  1.7)
+ \item \texttt{scrlfile} (part of \KOMAScript{})
+ \item \texttt{pgfkeys} (part of PGF 2.0)
+ \item \texttt{ifthen}
+ \item \texttt{amsmath} (for \lstinline|\numberwithin|)
+ \item \texttt{iflualatex}
+ \item \texttt{refcount} (for \lstinline|\getrefnumber|)
+\end{itemize}
+
+
+\section{Basic Usage}
+
+\subsection{Package Loading}
+The beamer variant is integrated now and automatically activated
+if the current document class is beamer.
+
+\begin{lstlisting}
+\usepackage(*\maybe{[\param{options}]}*){exercisesheets}
+\end{lstlisting}
+
+The following options are available:
+\begin{description}
+ \optitem[{\option{only}=\mand{\param{list of ranges}}}] When given, only the mentioned
+  sheets will be included in the output. This is useful to speed up compilation
+  times for big documents. Some efforts are made that sheet and exercise
+  numbering remain consistent and references to exercises and enumerated lists
+  on skipped sheets still work as expected. References to other objects are
+  broken though (they currently point to the exercise or item containing them).
+  The \param{list of ranges} is a comma separated list of sheet numbers and
+  sheet ranges. If a comma is included in the range, it has to be protected with
+  a pair of braces. The special sheet \enquote{number} \texttt{last} stands for
+  the last sheet in the document (this may require an additional \LaTeX{} run).
+  Examples:
+  \begin{description}
+   \optitem[{\option{only}=3}] Only include the 3rd sheet of the document.
+   \optitem[{\option{only}=\{1,3,5,7\}}] Only include the sheets 1, 3, 5 and 7.
+   \optitem[{\option{only}=last}] Only include the last sheet of the document.
+   \optitem[{\option{only}=\{3-5,8-last\}}] Exclude the sheets 1, 2, 6 and 7.
+   \optitem[{\option{only}=\{-2,5-\}}] Exclude the sheets 3 and 4.
+  \end{description}
+ \optitem[{\option{all}}] Typeset all sheets (equivalent to \option{only=-}). This is
+  the default.
+ \optitem[{\option{solutions\maybe{=\param{true/false/oral/nonoral/sample oral/sample nonoral/sample all}}}}] By default,
+  solutions (provided in the \texttt{solution} environment) are not included in
+  the output. By providing the option \option{solutions=true} (or just
+  \option{solutions}) this can be changed. Choosing \option{solutions=oral}
+  shows only solutions for exercises marked \option{oral} (useful for printouts
+  taken to class). Choosing \option{solutions=nonoral} shows only solutions for
+  exercises that are not marked \option{oral} (useful for correcting).
+  If you want to provided sample solutions for your students but only for some
+  of your exercises you can use the \texttt{sample} key to select those
+  exercises along with any options starting with sample here.
+  Note that non-sample exercises are skipped completely (not only their solutions) if you
+  choose an option starting with sample.
+ \optitem[{\option{gradingguides\maybe{=\param{true/false}}}}]
+  Within \texttt{gradingguide} environments (usually used inside \texttt{solution}) you can
+  specify e.g. the amount of points to assign for certain solutions. This option
+  controls whether or not to include this guides in the output (e.g. solutions for
+  correcting contain them, but sample solutions for students don't).
+ \optitem[{\option{solutionsby}=\mand{\param{name/names}}}] Use this to give the authors of the
+  solutions. They are credited at the beginning of each sheet, if the solutions
+  are included in the output.
+ \optitem[{\option{language}=\mand{\param{lang}}}] Set the language of the sheet and
+  exercise heads to \param{lang}. If the \texttt{babel} package is loaded this
+  is not necessary, as the main document language will be automatically
+  detected. Currently \option{english}, \option{german} and \option{ngerman} are
+  supported. Other translations are welcome: Please contact the author.
+ \optitem[{\option{pointsfloatright}}] Use an alternative mechanism to place points for Sub-Exercises.
+  If this option is used, the points label for a Sub-Exercise is placed at the (right) end of the current line.
+  It is especially useful if used in a context like \texttt{$\backslash$item$\backslash$points$\{3\}$}.
+  This option exploits (and partially breaks) RTL-Support.
+ \optitem[{\option{exercisespath}}] Set the (relative) path of the
+  directory containing exercises to be included via
+  \lstinline|\includeexercise|.
+ \optitem[{\option{patchenumerate}\maybe{=\param{true/false}}}] Sets
+  enumerate item labels for the first four levels, starting with
+  a), b) etc. for the top-level (sub-exercises). Depending on other
+  loaded packages (\lstinline|enumitem|, \lstinline|paralist|) the mechanism
+  slightly differs. This option is active by default.
+ \optitem[{\option{settitle}\maybe{=\param{true/false}}}] If set to true
+  (which is the default),
+  the document \lstinline|\title| will be automatically set to the value
+  of \option{strings/sheets} and the value of \option{strings/solutions} will be
+  appended if \option{solutions} is not \lstinline|false|.
+ \optitem[{\option{patchpagenumbers}\maybe{=\param{true/false}}}] If true
+  (default), pages will be numbered within sheets and page numbers
+  get a prefix of the form ``{\codestyle\param{sheet number}-}''.
+ \optitem[{\option{usestartsection}\maybe{=\param{true/false}}}] If true
+  (default), the command \lstinline|\@startsection| is used to create
+  the header of any exercise as a section, which (among other
+  things) adds an entry to the TOC (if existent) at level 1
+  (usually corresponding to \lstinline|\section|).
+ \optitem[{\option{embedded}\maybe{=\param{true/false}}}] Default: false.
+  Embedded mode allows for exercise ``sheets'' which do not
+  interfere with a surrounding document. More explicitly, it does
+  not interfere with \lstinline|secnumdepth|, defines special counters
+  \lstinline|exshsheet| and \lstinline|exshexercise| to use them for
+  \option{sheet counter} and \option{exercise counter},
+  respectively and sets all of \option{patchenumerate},
+  \option{settitle}, \option{patchpagenumbers} and
+  \option{usestartsection} to \lstinline|false|.
+  An internally defined macro which basically does no extra
+  formatting or adding anything to the TOC is used as
+  \option{sheet sectioning cmd} instead of the usual \lstinline|\part|.
+  Finally,
+  the \option{sheet start page action} and the
+  \option{sheet end page action} are both set to \lstinline|\relax|.
+  If you want to override any of this, do it after setting
+  \option{embedded} to \lstinline|true|.
+ \item{\option{minskips\maybe{=\param{true/false}}}} Default: false.
+  If true, the values of
+  \option{above sheet title skip},
+  \option{below sheet header skip},
+  \option{above first exercise skip} and
+  \option{below exercise title skip} are all set to 0pt.
+ \optitem[{\option{showtodos} / \option{hidetodos}}]
+  \lstinline|\TODO| markers
+  are hidden by default, this option switches their behavior. This
+  option is usually set within \lstinline|\ifsamplesolutions| or
+  similar.
+ \optitem[{\option{beamercompatibility}\maybe{=\param{true/false}}}]
+  This option (which only is effective in the non-beamer version)
+  defines several beamer macros with as trivial
+  effects as possible, e.g., \lstinline|\pause| becomes \lstinline|\relax|
+  and overlay specifications are mostly ignored. Be careful to use
+  this option after loading \lstinline|enumitem| etc. as the enumerate
+  and itemize environment are defined to swallow overlay
+  specifications without effect, this also holds for
+  \lstinline|\item<1->|. If you load \lstinline|exercisesheets| before them
+  use \lstinline|\exshset| afterwards.
+  The current list of redefinitions is as
+  follows:
+\begin{lstlisting}
+  \let\pause\relax
+  \def\frame{}
+  \renewcommand{\frame}[1][]{}
+  \let\endframe\relax
+  \def\onslide<##1>{}
+  \def\only<##1>##2{##2}
+  \def\uncover<##1>##2{##2}
+  \def\visible<##1>##2{##2}
+  \def\invisible<##1>##2{##2}
+  \long\def\alt<##1>##2##3{##2}
+  \long\def\temporal<##1>##2##3##4{##3}
+  \let\exsh@origitem\item
+  \def\exsh@ovrlitem<##1>{\exsh@origitem}
+  \def\item{\@ifnextchar<\exsh@ovrlitem\exsh@origitem}
+  \let\exsh@origitemize\itemize
+  \def\exsh@ovrlitemize[##1]{\exsh@origitemize}
+  \def\itemize{\@ifnextchar[\exsh@ovrlitemize\exsh@origitemize}
+  \let\exsh@origenumerate\enumerate
+  \def\exsh@ovrlenumerate[##1]{\exsh@origenumerate}
+  \def\enumerate{%
+    \@ifnextchar[\exsh@ovrlenumerate\exsh@origenumerate}
+\end{lstlisting}
+
+\optitem[{\option{filenameasexercisename}\maybe{=\param{true/false}}}]
+This option (set to false by default) causes
+\lstinline|\includeexercise| to
+set the name of an exercise as the filename (without extension).
+This has two purposes: If you have nice file names you can
+automatically name the exercise. On the other hand this is helpful
+during exercise sheet composition because it shows the name of
+the corresponding file in the compiled file.
+\end{description}
+
+\subsection{Supplying Meta-Data}
+
+The following commands are enhanced (or provided) to set the options controlling
+the sheet headers (see Section~\ref{sec:sheet}):
+\begin{lstlisting}
+\subject{(*\param{subject}*)}
+\author{(*\param{author}*)}
+\date{(*\param{semester}*)}
+\end{lstlisting}
+
+If one of these commands is omitted (and the corresponding option is not used
+either), a warning is issued.
+
+Please do not include a \lstinline|\title| in your document, as \exsh will
+automatically generate an appropriate one (this may require an additional
+\LaTeX{} run). If you want to set the title yourself, set the
+option \option{settitle} to \lstinline|false|.
+
+All this information is included in the PDF meta-data if the \texttt{hyperref}
+package is loaded with the option \texttt{pdfusetitle}.
+
+There is also a related option:
+\begin{description}
+ \optitem[{\option{exauthor}=\mand{\param{list of names}}}] If you want to use the
+ \lstinline|\author| macro for the general author of a course but
+ there are different authors for individual exercises or all
+ exercises in general, you can set this key. Currently only
+ exercisesheets-baemer uses this for the footline, while
+ \option{author} is used for the headline.
+\end{description}
+
+\subsection{Defining Exercise Sheets}
+\label{sec:sheet}
+\begin{lstlisting}
+\begin{sheet}(*\maybe{[\param{options}]}*)
+  (*\param{sheet contents}*)
+\end{sheet}
+\end{lstlisting}
+
+Insert a sheet into the document. This environment can be repeated to combine
+several sheets in a single \LaTeX{} file. For each sheet, a new page is started
+and an appropriate header is generated. The \param{sheet contents} can be
+anything but will usually consist of several \texttt{exercise} environments (see
+Section~\ref{sec:exercises-solutions}).
+
+The following \param{options} are supported:
+\begin{description}
+ \optitem[{\option{date}=\mand{\param{date}}}] Set the date the sheet was/will be issued. This
+  information is included in the sheet header. By default, this information is
+  omitted. See also the \option{semester} option.
+ \optitem[{\option{note}=\mand{\param{note}}}] Include \param{note} in the sheet header.
+  Useful to inform students when the sheet is due. If you want a note consisting
+  of more than one line split at a particular position, use
+  \lstinline|\protect\linebreak|.
+ \optitem[{\option{title}=\mand{\param{title}}}]
+  Directly set the sheet title. When this option is used, different
+  page numbering conventions are used. This is useful to
+  typeset exams (combined with the next option).
+ \optitem[{\option{number within sheet\maybe{=\param{true/false}}}}]
+  Deviate from the usual numbering theme and
+  restart from one for exercises on the sheet. The previous
+  counter value is restored after the sheet, so you can insert
+  a special sheet.
+ \optitem[{\option{author}=\mand{\param{author}}}] Set the author included in the sheet
+  head. By default, the value passed to \lstinline|\author| is used.
+ \optitem[{\option{exauthor}=\mand{\param{exauthor}}}] Only used by the beamer
+ variant, see above.
+ \optitem[{\option{subject}=\mand{\param{subject}}}] Set the subject included in the sheet
+  head. By default, the value passed to \lstinline|\subject| is used.
+ \optitem[{\option{semester}=\mand{\param{semester}}}] Set the semester included in the
+  sheet head. By default, the value passed to \lstinline|\date| is used.
+ \optitem[{\option{beamerwithheadline\maybe{=\param{true/false}}}}] Controls whether a headline with author, subject etc. is shown on beamer slides, similar to the regular sheets. This options is off by default as headlines (and footers) take a considerable amount
+ off space. If you specify the embedded option the current default headers and footers will be used if you omit this option. Otherwise omitting it will imply an empty headline.
+ \optitem[{\option{beamerwithfootline\maybe{=\param{true/false}}}}]
+ The same for the footer.
+ \optitem[{\option{beameruseblocks\maybe{=\param{true/false}}}}]
+ Controls whether the exercise title is shown inside a
+ beamer block (\param{true}) or a simple colorbox
+ (\param{false}, the default). Depending on your style a
+ block might look fancier, but it usually consume more space.
+\end{description}
+
+
+\subsection{Defining Exercises and Solutions}
+\label{sec:exercises-solutions}
+\begin{lstlisting}
+\begin{exercise}(*\maybe{[\param{options}]}*)
+  (*\param{exercise text}*)
+  \begin{solution}(*\maybe{[\param{solution options}]}*)
+    (*\param{solution text}*)
+  \end{solution}
+  \begin{beamersolution}(*\maybe{[\param{solution options}]}*)
+    (*\param{solution text}*)
+  \end{beamersolution}
+\end{exercise}
+\end{lstlisting}
+
+This inserts an exercise into the current document. All
+\lstinline|beamersolution|s are ignored, if the
+\exsh package with any class but beamer, but using beamer
+\exsh also processes
+normal solutions by default (set option \option{beamersolution}
+to turn this off).
+
+The following options are
+supported:
+\begin{description}
+ \optitem[{\option{name}=\mand{\param{text}}}] Use \param{text} as the name of the exercise.
+  Useful for exercises that prove a famous theorem.
+ \optitem[{\option{firstline}=\mand{\param{text}}}] Save some space by text \param{text}
+  behind the exercise title.
+ \optitem[{\option{savetasks\maybe{=\param{true/false}}}}] Saves the main task and each sub task
+  for later use with \lstinline|\restatetask[|%
+  \param{which}], where \param{which} is either \lstinline|main|
+  (default) or the number of a sub task.
+ \optitem[{\option{points}=\mand{\param{number/oral/sum}}}] Assign this
+  exercise \param{number} points. By default, exercises are
+  unlabelled. \param{oral} works the same way as the option
+  \option{oral}. The value \param{sum} displays the sum of all
+  occurrences of \lstinline|\points| within the exercise: Ordinary and
+  bonus points are treated separately. If there are only bonus
+  points, the option \option{bonus} is automatically triggered. To
+  undo this, either delete the \filename{.aux} file or explicitly use
+  \lstinline|\points[bonus=false]{\param{number}}| for at least one
+  subexercise. Points can be summed up also during a single pass
+  by using the Lua interface.
+ \optitem[{\option{oral}}] Label this exercise as \emph{oral}. This supersedes and is
+  superseded by the option \option{points}.
+ \optitem[{\option{pointsinfo}=\mand{\param{text}}}] Supply \param{text} as additional
+  information to be displayed after the points.
+ \optitem[{\option{optional}}] Shortcut for \option{pointsinfo=optional} with
+  automatic translation and abbreviation (if requested).
+ \optitem[{\option{bonus}}] Change \enquote{points} to \enquote{bonus points} (with
+  automatic translation and abbreviation).
+  \optitem[{\option{abbrev}}] Use abbreviated labels.
+ \optitem[{\option{exercisemark}=\mand{\param{symbol}}}] Mark the exercise
+  with \param{symbol} in the left margin.
+ \optitem[{\option{difficult}}] Shortcut for \option{exercisemark=*}.
+ \optitem[{\option{solutions\maybe{=\param{true/false/oral/nonoral/...}}}}] Use this to override the
+  document (or sheet) default.
+ \optitem[{\option{sample}}] Include this exercise (and its solution) in while compiling
+ sample solutions.
+ \optitem[{\option{beamersolution}}] For beamer variant only. If this option
+ is set all normal solutions will not be included and only
+ \lstinline|beamersolution|s are typeset.
+ \optitem[{\option{framed}}] For beamer variant only, simply ignored
+ elsewhere. If this option
+ is set for a normal solution, its content will be put on one or
+ more frames. Use \lstinline|\newframe| to start a new frame. This
+ option is especially helpful if you provide your own definitions
+ of \lstinline|\only| etc. and/or use the \option{beamercompatibility}.
+ for non-beamer compilation. \lstinline|\newframe|
+ is already defined as \lstinline|\relax| in  non-beamer \exsh,
+ even without invoking \option{beamercompatibility}.
+ \optitem[{\option{fragile}}] For beamer variant only and only
+ used combined with framed, simply ignored elsewhere. Frames are
+ declared as \texttt{fragile} und parsing of \lstinline|\newframe|
+ etc. is done via Lua\LaTeX. Thus Lua\LaTeX is required
+ (and this requires font setup via fontspec etc.), but
+ you do not have to use any Lua code yourself. Mostly useful
+ for listings and other verbatim stuff within solutions.
+\end{description}
+
+Solutions are only typeset, if the \option{solutions} option is in effect. There
+can be multiple solution environments within a single exercise environment; this
+is useful if the exercise consists of several sub-exercises. Sub-exercises can
+simply be defined with an \texttt{enumerate} or \texttt{compactenum}
+environment.
+
+\section{Utilities}
+
+\subsection{Loading Excercises From Files}
+\begin{lstlisting}
+\includeexercise(*\param{file name}*)
+\includeexercise*(*\param{file name}*)
+\end{lstlisting}
+
+Both load the exercise from exercisespath/\param{file name}. Note
+that the exercise environment must be contained in the file. The
+starred version is helpful for faster skipping of unused exercises.
+In this case, the file is not opened to search for labels. Whenever
+the exercise is not skipped and you use the starred version and also
+use labels within the exercise file, \exsh outputs an error. This is
+done to ensure that references are not overlooked when the exercise
+is actually skipped later.
+
+\subsection{Including Hints}
+
+\begin{lstlisting}
+\begin{hint}(*\maybe{[\param{options}]}*)
+  (*\param{hint text}*)
+\end{hint}
+\end{lstlisting}
+
+\begin{lstlisting}
+\begin{hint*}(*\maybe{[\param{options}]}*)
+  (*\param{hint text}*)
+\end{hint*}
+\end{lstlisting}
+
+These environments include hints in the exercise definition. The first form
+starts a new paragraph, the second one puts the hint in parenthesis.
+
+\subsection{TODO Markers}
+
+You can use the following to include a red TODO marker in your document. This is
+useful to mark places where work is still in progress. A warning is issued at
+each place. TODO markers can also contain an optional description
+of the task that needs to be done. If you switch off displaying
+TODO markers (s.a.) the warning will be issued nevertheless.
+
+\begin{lstlisting}
+\TODO[what needs to be done]
+\end{lstlisting}
+
+\subsection{Annotating Points for Sub-Exercises}
+\begin{lstlisting}
+\begin{exercise}[(*\option{points}*)=sum]%sum produces 4+6
+  \begin{enumerate}
+   \item Part 1 \points{oral}
+   \item Part 2 \points[optional]{oral}
+   \item Part 3 \points{4}
+   \item Part 4 \points[bonus]{6}
+  \end{enumerate}
+  Sub-Exercises within continuous text can be annotated like this \points[inplace]{3} without adding space.
+\end{exercise}
+\end{lstlisting}
+
+\subsection{Explicitly Stating Tasks}
+In principle, \exsh aims to be very lightweight and there is not
+much mandatory structure inside exercises. Furthermore, the
+\lstinline|enumi| counter is used for sub-exercise. There are, however,
+situations where we want more explicit structure, for instance to
+have special font for the main task or the subtasks or to reuse
+some of the tasks later. This is especially handy if using the
+beamer variant where the original task and a part of the solution might be on different slides. In the future it might be possible to
+use other counters then \lstinline|enumi|, which is also only possible
+if sub-exercises are not simply \lstinline|\item|s in
+\lstinline|enumerate|. If you want to reuse the main or any subtasks
+you may use \lstinline|\restatetask| or \lstinline|\restatetaskbeamer|
+(this shows noting if not compiled with beamer). There is also
+a starred version (\lstinline|\restatetask*| /
+\lstinline|\restatetaskbeamer*|) for each of them, which adds a newline.
+All four have an optional argument that allows to restate
+a subtask instead of the main task. This argument is either
+\lstinline|main|, a number of a \textbf{previous} subtask or
+\lstinline|cur| for the current subtask. Using \option{headerrestate}
+for your solution will automatically restate the current
+task within the beamer solution header (does noting without
+beamer).
+
+
+
+\begin{lstlisting}
+\begin{exercise}[(*\option{points}*)=oral]
+  \begin{maintask}
+    A and B are true.
+  \end{maintask}
+  \begin{subtasks}
+    \subtask{A is true}
+      \begin{solution}[framed]
+        We want to show: \restatetask %A and B are true.
+        \newframe
+        Out first step is to show: \restatetask[cur] %A is true
+      \end{solution}
+    \subtask{If A is true, B is true.}
+      \begin{solution}[framed]
+        Obvious (i.e.: homework).
+      \end{solution}
+    \subtask{B is true}
+      \begin{solution}[framed]
+        We already know: \restatetask[1] and
+        \restatetask[2], therefore B is also true.
+      \end{solution}
+  \end{subtasks}
+\end{exercise}
+\end{lstlisting}
+
+\subsection{Labels and References within an Exercise}
+While the global reference labels set via varioref (if loaded)
+are nice for references to subexercises far away, always mentioning
+the exercise number seems superfluous. Furthermore, for usage in indices etc. you might want to use the arabic representation instead. This is what the commands \lstinline|\subexnref| and
+\lstinline|\subexlref| are designed for. However, both of them still
+require an ordinary label, which is not allowed in
+exercises loaded with \lstinline|\loadexercise*|.
+For this purpose \lstinline|\inexlabel| can be used which is just a
+normal label that is not redefined to produce an error.
+Furthermore, we define a counter \lstinline|subex| (which is
+currently just an alias for enumi, but this might change). You can
+use this counter (alias) with common commands like
+\lstinline|\arabic| or \lstinline|\alph|.
+
+\begin{lstlisting}
+\begin{exercise}
+  \begin{enumerate}
+    \item \inexlabel{subex:xisseven} Let $x_{\thesubex}=7$.
+    \item Compute $x_{\subexnref{subex:xisseven}}+3$.
+    \begin{solution}
+      From \subexlref{subex:xisseven} %(a)
+      we know that $x_{\subexnref{subex:xisseven}}$ is $7$ and
+      thus the sum is $10$.
+    \end{solution}
+  \end{enumerate}
+\end{exercise}
+\end{lstlisting}
+
+
+
+\section{Advanced Usage}
+
+\subsection{Setting Options}
+
+Options can be given at different places.
+\begin{enumerate}
+ \item As local options to one of the environments.
+ \item As package options: This is convenient for global options but suffers
+  from shortcomings in way \LaTeX{} processes options: Macros are expanded and
+  spaces are stripped.
+ \item By the independent \lstinline|\exshset| command. This is especially useful in
+  the preamble to set options that would be garbled by the \LaTeX{} option
+  handling routine. It also allows to change an option for the rest of the
+  current scope.
+\end{enumerate}
+
+Example: Change the solution authors of the following sheets:
+\begin{lstlisting}
+(*\param{some sheets}*)
+\exshset{solutionsby=(*\param{other authors}*)}
+(*\param{more sheets}*)
+\end{lstlisting}
+
+\subsection{Changing Strings}
+
+For some languages, predefined sets of strings are provided and automatically
+activated. If your language is not supported or if you want to change (some of)
+the used strings, you can do so with the following options:
+\begin{description}
+ \optitem[{\option{strings/sheet}=\mand{\param{string}}}]
+ \optitem[{\option{strings/sheets}=\mand{\param{string}}}]
+ \optitem[{\option{strings/solutions}=\mand{\param{string}}}]
+ \optitem[{\option{strings/solutionsby}=\mand{\param{string}}}]
+ \optitem[{\option{strings/exercise}=\mand{\param{string}}}]
+ \optitem[{\option{strings/solution}=\mand{\param{string}}}]
+ \optitem[{\option{strings/hint}=\mand{\param{string}}}]
+ \optitem[{\option{strings/oral}=\mand{\param{string}}}]
+ \optitem[{\option{strings/oral abbrev}=\mand{\param{string}}}]
+ \optitem[{\option{strings/point}=\mand{\param{string}}}]
+ \optitem[{\option{strings/points}=\mand{\param{string}}}]
+ \optitem[{\option{strings/points abbrev}=\mand{\param{string}}}]
+ \optitem[{\option{strings/bonus point}=\mand{\param{string}}}]
+ \optitem[{\option{strings/bonus points}=\mand{\param{string}}}]
+ \optitem[{\option{strings/bonus points abbrev}=\mand{\param{string}}}]
+ \optitem[{\option{strings/optional}=\mand{\param{string}}}]
+ \optitem[{\option{strings/optional abbrev}=\mand{\param{string}}}]
+\end{description}
+
+Example: Give an introduction that should only be included in the version with
+solutions:
+
+\begin{lstlisting}
+\begin{solution}[(*\option{strings/solution}*)=Introduction]
+  (*\param{introduction text}*)
+\end{solution}
+\end{lstlisting}
+
+
+\subsection{Changing Fonts}
+
+The package \exsh comes with its own way to change the used fonts. Each font can
+be changed in the following way:
+\begin{lstlisting}
+\exshset{(*\param{font element}=\param{font specification}*)}
+\end{lstlisting}
+The available \param{font element}s are listed below together with their default
+values:
+\begin{description}
+ \optitem[{\option{sheet header font}}] The basic font for subject, author, semester,
+  date, note and solution authors in the sheet headers.\\
+  Default: \lstinline|\normalfont\normalsize|
+ \optitem[{\option{subject font}}] The font for the subject in the sheet header.\\
+  Default: \lstinline|\scshape|
+ \optitem[{\option{author font}}] The font for the author in the sheet header.\\
+  Default: \lstinline|\scshape|
+ \optitem[{\option{semester font}}] The font for the semester in the sheet header.\\
+  Default: empty, i.\,e.\ no change.
+ \optitem[{\option{date font}}] The font for the date in the sheet header.\\
+  Default: empty, i.\,e.\ no change.
+ \optitem[{\option{solutionsby font}}] The font for the information who has produced
+  the solutions provided below the sheet title.\\
+  Default: \lstinline|\itshape|
+ \optitem[{\option{sheet note font}}] The font for the note provided below the sheet
+  title.\\
+  Default: \lstinline|\itshape\bfseries|
+ \optitem[{\option{sheet title font}}] The font for the sheet title itself.\\
+  Default: \lstinline|\Large\bfseries|
+ \optitem[{\option{exercise title font}}] The font for the exercise title.\\
+  Default: \lstinline|\bfseries|
+ \optitem[{\option{points font}}] The font for the number of points in the exercise
+  head (relative to the exercise title) and for \lstinline|\points|.\\
+  Default: \lstinline|\itshape|
+ \optitem[{\option{main task font}}] The font for the
+  \lstinline|maintask| environment.\\
+  Default: empty, i.\,e.\ no change.
+ \optitem[{\option{subtask font}}] The font for each
+  \lstinline|\subtask|.\\
+  Default: empty, i.\,e.\ no change.
+ \optitem[{\option{task restate font}}] The font used for
+  \lstinline|\restatetask|.\\
+  Default: \lstinline|\itshape|
+ \optitem[{\option{hint font}}] The font for hints. \\
+  Default: empty, i.\,e.\ no change.
+ \optitem[{\option{hint title font}}] The font for the string \enquote{Hint:}.\\
+  Default: \lstinline|\itshape|
+ \optitem[{\option{solution font}}] The font for solutions.\\
+  Default: empty, i.\,e.\ no change.
+ \optitem[{\option{solution title font}}] The font for the string
+  \enquote{Solution:}\\
+  Default: \lstinline|\bfseries|
+ \optitem[{\option{grading guide font}}] The font for grading guides.\\
+  Default: \lstinline|\itshape|
+ \optitem[{\option{todo marker font}}] The font for the string \enquote{TODO}.\\
+  Default: \lstinline|\ifdef{\color}{\color{red}}{}\bfseries|
+\end{description}
+
+\subsection{Controlling the Spacing, Page Handling and Separations between Elements}
+
+The following options allow fine-tuning of the spacing:
+\begin{description}
+ \optitem[{\option{below slide headline skip}=\mand{\param{dimen}}}] The distance between
+ haedline (if present) and slide content. Only used by beamer
+ variant, ignored elsewhere.\\
+  Default: \texttt{0mm}
+ \optitem[{\option{above sheet title skip}=\mand{\param{dimen}}}] The distance between
+  author/date and sheet title.\\
+  Default: \texttt{4ex}
+ \optitem[{\option{above sheet note skip}=\mand{\param{dimen}}}] The distance above the
+  sheet note.\\
+  Default: \texttt{.7ex}
+ \optitem[{\option{above solutionsby skip}=\mand{\param{dimen}}}] The distance above the
+  solution author.\\
+  Default: \texttt{1ex}
+ \optitem[{\option{below sheet header skip}=\mand{\param{dimen}}}] The distance below the
+  sheet header.\\
+  Default: \texttt{4ex plus 1ex minus .5ex}
+ \optitem[{\option{above exercise skip}=\mand{\param{dimen}}}] The distance above
+  exercises.\\
+  Default: \texttt{3ex plus 1ex minus .5ex}
+ \optitem[{\option{below exercise title skip}=\mand{\param{dimen}}}] The distance below
+  exercise titles.\\
+  Default: \texttt{\textbackslash parskip}
+ \optitem[{\option{above solution skip}=\mand{\param{dimen}}}] The distance above
+  solutions.\\
+  Default: \texttt{1ex}
+ \optitem[{\option{above hint skip}=\mand{\param{dimen}}}] The distance above hints.\\
+  Default: \texttt{1ex}
+\end{description}
+
+The following two options control the page handling at the beginning and
+at the end of each sheet:
+\begin{description}
+ \optitem[{\option{sheet start page action}=\mand{\param{macro}}}] Executed at the beginning
+  of each sheet.\\
+  Default: \lstinline|\clearpage|
+ \optitem[{\option{sheet end page action}=\mand{\param{macro}}}] Executed at the end
+  of each sheet.\\
+  Default: \lstinline|\clearpage|
+\end{description}
+
+The following option controls what follows after the string
+\option{strings/solution} within a solution header. Using this, you can disable a solution header completely or, for instance, add
+a horizontal bar below each solution title.
+\begin{description}
+ \optitem[{\option{solution title separator}=\mand{\param{content}}}] Inserted directly after \option{strings/solution} in a solution title:\\
+  Default: \lstinline|:\par|
+\end{description}
+
+\subsection{Controlling the Sectioning (beta)}
+
+By default, exercises are sections and sheets are parts. They use
+the respective counters and commands. This is impractical, if you
+want to include exercise ``sheets'' as, e.g., a subsection within
+a section of a book or article. While the page handling options
+already allow to dismiss page breaks, sectioning commands might
+still break your layout or structure. Since version \vers{0.15} you
+can use your own counters and commands to start sheets and
+(to a certain degree) exercises. Exercises are currently still
+started by \lstinline|\@startsection| with the counter set to
+\option{exercise counter}, but the level set to 1 (e.g. section).
+This will likely change with one of the next versions, but needs
+some testing. Thus, if you use any of these options, watch for
+undesired consequences and report them via gitlab if possible.
+
+\begin{description}
+ \optitem[{\option{sheet sectioning cmd}=\mand{\param{macro}}}] This macro is
+ called only in one place in the following way:
+ \lstinline|\macro[short title]{long title}|, so it
+ must take one argument in [brackets] and one normal argument.\\
+  Default: \lstinline|\part|
+ \optitem[{\option{sheet counter}=\mand{\param{counter}}}] This counter will be
+ incremented wit every sheet. There was always an internal counter
+ \lstinline|sheetid| used to distinguish sheets for hyperref even if
+ \lstinline|part|s value changed. Do not use this counter here, as it will have strange effects (incremented twice).\\
+  Default: \lstinline|part|
+ \optitem[{\option{exercise counter}=\mand{\param{counter}}}] This counter will
+ be incremented wit every exercise (usually within each sheet).
+  Default: \lstinline|section|
+\end{description}
+
+\subsection{Special Code for Solutions}
+\begin{lstlisting}
+\ifsolutions{(*\param{if true}*)}{(*\param{if false}*)}
+\iforalsolutions{(*\param{if true}*)}{(*\param{if false}*)}
+\ifnonoralsolutions{(*\param{if true}*)}{(*\param{if false}*)}
+\ifsamplesolutions{(*\param{if true}*)}{(*\param{if false}*)}
+\end{lstlisting}
+
+There are also special options for conditionals to be used in the arguments of
+the environments defined by this package:
+\begin{description}
+ \item[\option{ifsolutions=\{\param{options if true}\}\{\param{options if
+      false}\}}] Execute \param{options if true} if solutions are included in
+  the current document, \param{options if false} otherwise.
+ \item[\option{iforalsolutions=\{\param{options if true}\}\{\param{options if
+      false}\}}] Execute \param{options if true} if solutions for oral exercises
+  are included in the current document, \param{options if false} otherwise.
+ \item[\option{ifnonoralsolutions=\{\param{options if true}\}\{\param{options if
+      false}\}}] Execute \param{options if true} if solutions for non-oral
+  exercises are included in the current document, \param{options if false}
+  otherwise.
+ \item[\option{ifsamplesolutions=\{\param{options if true}\}\{\param{options if
+      false}\}}] Execute \param{options if true} if sample solutions for marked
+  exercises are included in the current document, \param{options if false}
+  otherwise.
+\end{description}
+
+Example 1: Only include points for sub-exercises when solutions are typeset:
+\begin{lstlisting}
+\ifsolutions{}{\renewcommand{\points}[2][]{}}
+\end{lstlisting}
+
+Example 2: Modify the sheet header spacing in the non-solution version:
+\begin{lstlisting}
+\begin{sheet}[(*\option{ifsolutions}*)={}{(*\option{above title skip}*)=2ex}]% usually 4ex
+  \dots
+\end{sheet}
+\end{lstlisting}
+
+\subsection{Using Hooks}
+There are several hooks used by \exsh:
+\begin{description}
+ \optitem[{\option{every sheet}}] This is used at the beginning of every sheet.
+ \optitem[{\option{every exercise}}] This is used at the beginning of every exercise.
+ \optitem[{\option{every solution}}] This is used at the beginning of every solution.
+ \optitem[{\option{every hint}}] This is used at the beginning of every hint.
+\end{description}
+
+Hooks can be used to influence the behaviour of the respective environments.
+Users of \texttt{tikz} should be familiar with the concept.
+
+\subsection{Control Skipping of Custom Macros in Skipped Exercises}
+\begin{description}
+ \optitem[{\option{custom skip macro}=\mand{\param{macro}}}]
+\end{description}
+
+If an exercise is not printed, some macros like \lstinline|\label{}|
+are processed nevertheless. However, if you define your own macro
+using one of these, then this macro will be completely ignored
+if the exercise containing it is skipped. This option allows to
+define a custom handler for your macros. The most common use
+checks for your custom macros with
+nested \lstinline|\ifstrequal|s and then either
+executes a custom skipper, replaces your macro with
+the standard version or uses \lstinline|\expandafter| to
+deliver the expanded version of your macro to
+\lstinline|\exshskipcontinue|.
+
+Example:
+\begin{lstlisting}
+\def\mylabel#1{...}
+\def\myitem{...}
+\def\myitemtwo{...}
+\def\skipmylabel#1{...\exshskipcontinue}
+\long\def\customskip#1{
+  \ifstrequal{#1}{\mylabel}
+    {\skipmylabel}
+    {\ifstrequal{#1}{\myitem}
+      {\exshskipcontinue\item}
+      {\ifstrequal{#1}{\myitemtwo}
+        {\expandafter\exshskipcontinue\myitemtwo}
+        {\exshskipcontinue}
+      }
+    }
+}
+\exshset{custom skip macro={\customskip}}
+\end{lstlisting}
+
+\section{The Lua Interface}
+\label{sec:lua}
+
+Since version \vers{0.11} there is a Lua interface for the exercise
+environment. This interface will offer roughly the same features.
+Its main purpose will be allowing to reorder sub-exercises more
+easily and to offer more dynamic options for the display of
+solutions (one combined solution or single after each sub-%
+exercise). %TODO finish
+
+\begin{lstlisting}
+\begin{Lexercise}
+  --use [[]] if you need \ or escape it in "": "\\"
+  firstline = [[Assume $\pi=4$.]],
+  points=10,
+  name="Pragmatic",
+  options=[[main task font={\itshape}]],
+  task  = [[
+    This is the main task specified via the Lua
+    interface.
+  ]],
+  solution=[[
+    This is a solution for the main task.
+  ]],
+\end{Lexercise}
+\end{lstlisting}
+
+\section{Usage Tips}
+\label{sec:usage-tips}
+
+\subsection{Seperate Solution File}
+\label{sec:seper-solut-file}
+
+If you do not want to temporarily comment out the \option{solutions} option in
+your main file, say \texttt{exercises.tex}, you can create an additional file
+\texttt{solutions.tex} with the following contents:
+\begin{lstlisting}
+\PassOptionsToPackage{solutions}{exercisesheets}
+\input{exercises.tex}
+\end{lstlisting}
+If you leave out the \option{solutions} option in you main file, running
+\texttt{pdflatex exercises.tex} will create \texttt{exercises.pdf} without
+solutions and \texttt{pdflatex solutions.tex} will create \texttt{solutions.pdf}
+with solutions.
+
+This also works well in combination with a makefile that generates
+\texttt{solutions.tex} as a temporary file.
+
+\subsection{Compatibilty with make4ht and tex4ebook}
+Since version \vers{0.15} this package can be used with make4ht and tex4ebook in non-beamer mode. Some code for the sheet and exercise header already provides a similar alignment as when producing PDF files. If your goal is an exercise (or solution) document within a single HTML file that looks as similar to the PDF as possible, consider \url{https://tex.stackexchange.com/questions/605478/}, \url{https://tex.stackexchange.com/questions/662445} and \url{https://tex.stackexchange.com/questions/630992}.
+
+\section{Changelog}
+\label{sec:changelog}
+
+\begin{itemize}
+    \versitem[0.17:]  2024-04-23
+      \begin{itemize}
+        \item Make embedded mode work better with beamer. This
+        includes not overriding headlines and footlines and
+        incrementing the frame counter for non-frames.
+        \item issue an explicit warning if \string\subtask is outside of a subtasks environment
+        \item clearify documentation and use consistent styling
+        \item additional example for embedding exercises
+      \end{itemize}
+    \versitem[0.16:]  2024-03-07
+      \begin{itemize}
+        \item Embedded mode and most of the additional options it
+        automatically sets.
+      \end{itemize}
+    \versitem[0.15.1:]  2023-12-14
+      \begin{itemize}
+        \item bugfix: beamer support was broken in \vers{0.15} due to
+        a missing macro.
+      \end{itemize}
+    \versitem[0.15:]  2023-11-30
+      \begin{itemize}
+        \item new option \option{solution title separator}
+        (initially set to\lstinline|:\par|). Among other things, this
+        allows for solutions without any caption or header by
+        setting \option{solution title separator},~
+        \option{solution title font} as well as
+        \option{strings/solution} to \lstinline|\relax|.
+        \item initial support for \binary{make4ht} and
+        \binary{tex4ebook} by avoiding certain behavior when these
+        modes are used. Note that both are incompatible with beamer
+        mode.
+        \item initial decoupling of exercise and sheet from
+        sections and parts using the new options (defaults in
+        parenthesis) \option{sheet sectioning cmd} (\lstinline|\part|),
+        \option{sheet counter} (\lstinline|part|) and
+        \option{exercise counter} (\lstinline|section|).
+      \end{itemize}
+    \versitem[0.14:]  2023-02-06
+      \begin{itemize}
+        \item new option \option{headerrestate} to restate
+        the current (if in subexercise) or main task within
+        a solutions header
+        \item bugfix: \lstinline|\restatetask| etc. give meaningful error if \option{savetasks} is not set.
+      \end{itemize}
+    \versitem[0.13.1:]  2022-11-22
+      \begin{itemize}
+        \item bugfix: \lstinline|\detokenize| filenames when
+          \option{filenameasexercisename} is active as otherwise,
+          e.g., underscores would not be allowed in filenames.
+      \end{itemize}
+    \versitem[0.12.2:]  2022-10-20
+    \versitem[0.13:]  2022-11-07
+      \begin{itemize}
+        \item bugfix: \lstinline|\begingroup| and \lstinline|\endgroup|
+          within \lstinline|\subtask| now contain everything up to the
+          next \lstinline|\subtask|.
+        \item \lstinline|\restatetask| has now a starred version that
+          adds a newline and beamer versions for both the
+          regular and the starred version. Furthermore, there
+          is an argument \option{cur} to restate the current
+          subtask (the one just given before). This is only
+          defined within the aforementioned group, i.e.,
+          throws an error after \lstinline|\end{subtasks}|.
+      \end{itemize}
+    \versitem[0.12.2:]  2022-10-20
+      \begin{itemize}
+        \item bugfix: \luadisp{dofile} with
+        \luadisp{kpse.find\_file}
+        \item docs: document option \option{fragile}
+      \end{itemize}
+  \versitem[0.12.1:]  2022-10-19
+      \begin{itemize}
+        \item bugfix for \lstinline|\begin{enumerate}[<+->]|
+      \end{itemize}
+  \versitem[0.12:]  2022-09-02
+      \begin{itemize}
+        \item new option \option{beamerwithfootline}
+      \end{itemize}
+  \versitem[0.11:]  2022-02-11
+      \begin{itemize}
+        \item Local references and the subex counter
+        \item Lua interface (not documented yet, see example and example file)
+        \item Framed solutions can now be fragile, however this
+        also requires Lua\LaTeX (but not using the Lua Interface).
+        \item beamer version is now included (no separate package)
+        \item some bug fixes
+      \end{itemize}
+\end{itemize}
+
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+
+%%% Local IspellDict: british

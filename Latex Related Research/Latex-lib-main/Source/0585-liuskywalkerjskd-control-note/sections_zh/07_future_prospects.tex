@@ -1,0 +1,284 @@
+%=============================================================================
+\section{展望：数据驱动与基于学习的控制}
+%=============================================================================
+
+你部署了精心调好的 LQR。三个小时后，电机发热，参数漂移，你的完美模型变成了谎言。前述所有方法------PID、状态空间、LQR、卡尔曼滤波、MPC------均假设已知被控对象的\emph{模型}。然而在实际工程中，获取精确模型往往是最困难的环节。新一代技术试图绕过或增强建模步骤，直接从数据中学习控制策略。本章概览这些前沿方向，并讨论它们与经典控制理论的关系。
+
+\subsection{数据驱动控制}
+
+\subsubsection{动机：从``先建模再控制''到``直接从数据控制''}
+
+传统流程是：采集数据 $\to$ 系统辨识 $\to$ 建立模型 $\to$ 设计控制器。每一步都会引入误差，误差会逐级放大。我们自然会问：\emph{能否跳过建模，直接从数据设计控制器？}
+
+\subsubsection{Willems 基本引理}
+
+这一切的理论基础是 \textbf{Willems 基本引理}（\href{https://arxiv.org/abs/2206.00397}{Willems et al., 2005；现代综述见 Markovsky \& Dörfler, 2021}）：对于线性时不变系统，若一条长度为 $T$ 的输入--输出轨迹具有足够阶数的\emph{持续激励（persistent excitation）}特性，则系统的\emph{所有}可能轨迹均可表示为该数据 Hankel 矩阵各列的线性组合：
+\[
+\begin{bmatrix} U_- \\ X_- \\ U_+ \\ X_+ \end{bmatrix} g = \begin{bmatrix} u_{\mathrm{ini}} \\ x_{\mathrm{ini}} \\ u \\ x \end{bmatrix},
+\]
+其中 $U_-, X_-$ 为历史数据构成的 Hankel 矩阵，$g$ 为待求的系数向量。
+
+\textbf{直觉解读：}一条足够丰富的轨迹``编码''了系统的全部动力学信息，与知道 $(A, B)$ 矩阵等价。
+
+\subsubsection{数据驱动 LQR}
+
+利用 Willems 引理，LQR 问题
+\[
+\min_{K}\; \sum_{k=0}^{\infty} \bigl(x_k^\top Q\, x_k + u_k^\top R\, u_k\bigr)
+\]
+可以直接基于 Hankel 矩阵构建的数据一致性约束来求解，\emph{无需辨识} $A$ 或 $B$。
+
+\textbf{局限性：}
+\begin{itemize}[nosep]
+    \item 数据必须满足持续激励条件------随机噪声不够，输入信号需足够丰富。
+    \item 对测量噪声较为敏感。
+    \item 目前仅适用于线性系统（非线性扩展是活跃的研究方向）。
+\end{itemize}
+
+\subsubsection{数据驱动 MPC（DeePC）}
+
+DeePC（\href{https://arxiv.org/abs/1811.05890}{Coulson et al., 2019}）将 Willems 引理与 MPC 结合：用数据 Hankel 矩阵替代预测模型，直接在数据空间中求解预测控制问题。这使得 MPC 的约束处理能力得以保留，同时无需显式系统辨识。
+
+\subsubsection{Koopman 算子理论}
+
+上述方法适用于线性系统。对于非线性系统，有一个优雅的思路：将非线性动力学\textbf{提升}到更高维空间使其变为线性，然后套用全套经典线性工具。
+
+\textbf{Koopman 算子}是一个作用于状态的\emph{可观测函数}（而非状态本身）的无穷维线性算子。给定非线性系统 $x_{k+1} = f(x_k)$，Koopman 算子 $\mathcal{K}$ 满足 $\mathcal{K} g = g \circ f$（对任意可观测函数 $g$）。即使 $x$ 的动力学是非线性的，$g(x)$ 的动力学却是\emph{线性}的。
+
+实际中，我们选择一组有限的可观测函数字典 $\psi(x) = [\psi_1(x), \ldots, \psi_N(x)]^\top$，用数据拟合矩阵 $K$ 使得 $\psi(x_{k+1}) \approx K \psi(x_k)$。最常用的算法是\textbf{扩展动态模态分解（EDMD）}（\href{https://arxiv.org/abs/1408.4408}{Williams et al., 2015}），本质上是在轨迹数据上做最小二乘。
+
+\textbf{为什么重要：}拿到提升空间中的线性模型后，LQR、卡尔曼滤波、凸 MPC 均可直接应用于\emph{真正的非线性系统}——无需雅可比线性化，不受工作点限制。
+
+\textbf{近期进展（2024--2025）：}可逆 Koopman 网络使用可逆神经网络同时学习提升映射及其逆，解决了从提升坐标重构真实状态这一长期难题。在安全关键控制方面，基于 Koopman 的 MPC 与控制屏障函数结合，将非线性安全约束化为提升空间中的简单 QP。硬件验证案例已覆盖四旋翼 SE(3) Koopman-MPC 和自动驾驶中的实时轮胎动力学建模。
+
+\textbf{与已学知识的联系：}Koopman 方法可以理解为雅可比线性化的数据驱动推广。雅可比线性化只在一个工作点附近有效；Koopman 提升在数据覆盖的整个区域内有效。
+
+\subsection{自适应控制}
+
+前面学到的所有控制器都使用\emph{固定}参数。但如果被控对象在运行中发生变化呢？无人机拾起了负载、机械臂举起未知物体、电机摩擦系数随温度变化……\textbf{自适应控制}能在线调整控制器参数以适应变化。
+
+\subsubsection{模型参考自适应控制（MRAC）}
+
+核心思想很简单：定义一个\textbf{参考模型} $\dot{x}_m = A_m x_m + B_m r$，代表你期望的闭环行为；然后设计自适应律来更新控制器增益，使被控对象的输出跟踪参考模型的输出。
+
+自适应律通常由\textbf{Lyapunov 稳定性论证}推导——与现代控制章节中使用的工具完全相同。构造候选 Lyapunov 函数 $V(e, \tilde{\theta})$（$e = x - x_m$ 为跟踪误差，$\tilde{\theta} = \theta - \theta^*$ 为参数误差），然后选择增益更新律使 $\dot{V} \leq 0$。
+
+\subsubsection{L1 自适应控制}
+
+经典 MRAC 有一个根本矛盾：自适应越快跟踪越好，但可能引起高频振荡。\textbf{L1 自适应控制}通过在自适应估计与控制信号之间插入一个\emph{低通滤波器}来解决这一问题，将自适应速率与控制带宽解耦，提供\emph{有保证的瞬态性能界}——这是经典 MRAC 做不到的。
+
+其架构由三个你已经见过的组件构成：
+\begin{enumerate}[nosep]
+    \item \textbf{状态预测器}（本质上是龙伯格观测器），
+    \item 快速\textbf{自适应律}来估计不确定性，
+    \item \textbf{低通滤波器}在信号到达被控对象前进行平滑。
+\end{enumerate}
+
+\subsubsection{何时用什么}
+
+\begin{center}
+\small
+\begin{tabular}{l l}
+\toprule
+\textbf{场景} & \textbf{推荐方法} \\
+\midrule
+不确定性有界且预先已知 & 鲁棒控制（$H_\infty$、$\mu$-综合） \\
+参数缓慢漂移，结构已知 & MRAC \\
+需要快速自适应，同时带宽必须有界 & L1 自适应控制 \\
+完全无模型，仿真数据充足 & 强化学习 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{强化学习与控制}
+
+自适应控制在线调整固定结构控制器的参数；强化学习（RL）更进一步，连控制策略的\emph{结构}本身都可以学。它将最优控制推广到具有任意代价函数和约束的非线性系统。
+
+\subsubsection{核心概念}
+
+我们先来建立直觉。RL 的世界观可以用三个概念概括，每一个都有控制论中的对应物。\textbf{策略} $\pi(s) \to a$ 是从状态到动作的映射------用控制的语言说，它\emph{就是}控制器。在线性二次情形下，$\pi(x) = -Kx$ 退化为 LQR。\textbf{值函数} $V^\pi(s) = \mathbb{E}\bigl[\sum_{t=0}^{\infty} \gamma^t r_t \mid s_0 = s\bigr]$ 衡量从某状态出发的期望累积奖励，类比动态规划中的最优代价函数（cost-to-go）。\textbf{策略梯度}则沿 $\nabla_\theta J(\theta)$ 方向更新策略参数 $\theta$，使期望奖励最大化。
+
+\subsubsection{两种范式}
+
+\textbf{无模型 RL}（\href{https://arxiv.org/abs/1707.06347}{PPO}、\href{https://arxiv.org/abs/1801.01290}{SAC} 等）通过试错直接学习策略，不需要动力学模型，通用性强，但\emph{样本效率}极低------通常需要数百万次交互，仅在仿真中可行，部署时需进行 sim-to-real 迁移。与之相对，\textbf{基于模型的 RL}（\href{https://arxiv.org/abs/1906.08253}{MBPO}、\href{https://arxiv.org/abs/1912.01603}{Dreamer} 等）先从数据中学习动力学模型，再利用该模型进行规划或策略优化，样本效率更高，也更接近传统控制的思路。
+
+\subsubsection{Sim-to-Real 迁移}
+
+RL 策略通常在仿真中训练，但仿真与真实系统之间存在差距（sim-to-real gap）。弥合这一差距有三种常用策略。\textbf{域随机化（Domain Randomization）}在训练时随机化物理参数（质量、摩擦系数、延迟等），迫使策略学习对参数变化具有鲁棒性的行为。\textbf{系统辨识与高保真仿真}则从另一端入手，通过精确标定仿真参数来缩小仿真与真实之间的差距。最后，\textbf{微调（Fine-tuning）}将两者结合：先在仿真中预训练，再在真实系统上用少量数据进行微调。
+
+\subsubsection{成功案例与现状}
+
+RL 在科研领域取得了显著成果。在足式运动方面，MIT Mini Cheetah（\href{https://arxiv.org/abs/2208.07855}{Margolis et al., 2022}）和 ANYmal（\href{https://arxiv.org/abs/2109.11978}{Miki et al., 2022}）等四足机器人通过 RL 学会了在崎岖地形上行走和奔跑；在灵巧操控方面，OpenAI 的魔方求解和谷歌的机器人抓取展示了 RL 处理复杂接触的能力；在无人机竞速方面，苏黎世联邦理工 Swift 系统甚至超越了人类冠军（\href{https://arxiv.org/abs/2310.08984}{Kaufmann et al., 2023}）。
+
+\textbf{但在工程竞赛和工业场景中 RL 仍然罕见。}训练需要高保真仿真环境，开发成本高；学习到的策略是``黑箱''，调试极其困难；竞赛周期通常不足以完成 RL 的开发迭代；安全性和可解释性保证也远未成熟。
+
+\subsection{轨迹优化与最优控制}
+
+最优控制的目标是寻找 $u(t)$ 使代价泛函最小化：
+\[
+J = \int_0^T L\bigl(x(t), u(t)\bigr)\,\mathrm{d}t + \Phi\bigl(x(T)\bigr),
+\]
+约束为动力学方程 $\dot{x} = f(x, u)$。
+
+\subsubsection{两类求解策略}
+
+\textbf{间接法}（庞特里亚金极大值原理）推导伴随方程得到必要条件，求解两点边值问题，数学上优雅，但对复杂约束系统的实现难度大。与之相对，\textbf{直接法}（配点法、多重打靶法）将轨迹离散化为决策变量，转化为大规模非线性规划（NLP），更具实用性------现代轨迹优化工具普遍采用此策略。
+
+\subsubsection{iLQR 与 DDP}
+
+\textbf{迭代 LQR（iLQR）}与\textbf{微分动态规划（DDP）}是现代机器人轨迹优化的主力算法：在标称轨迹处线性化非线性动力学，求解对应的 LQR 子问题获得修正量，更新轨迹后重复迭代。
+
+\textbf{与 MPC 的联系：}模型预测控制本质上是在每个时间步以滚动时域方式重复求解轨迹优化。当动力学为非线性时，MPC 内部常使用 iLQR 或 NLP 求解器。
+
+\textbf{常用工具：}\href{https://web.casadi.org/}{CasADi}、\href{https://drake.mit.edu/}{Drake}、\href{https://arxiv.org/abs/2007.01850}{ALTRO}、\href{https://github.com/loco-3d/crocoddyl}{Crocoddyl}、MATLAB \texttt{fmincon}。
+
+\subsection{神经网络与控制的融合}
+
+\subsubsection{神经网络作为控制器组件}
+
+神经网络不一定要替代整个控制器，更实用的方式是将其嵌入经典控制框架的特定模块中，常见的有三种模式。第一种是\textbf{学习动力学模型}：用神经网络拟合 $\dot{x} = f_\theta(x, u)$，然后在 MPC 或 iLQR 中使用该模型。第二种是\textbf{学习残差动力学}：$\dot{x} = f_{\mathrm{phys}}(x, u) + f_\theta(x, u)$，让神经网络补偿物理模型未能捕捉的部分。第三种是\textbf{学习代价函数}：从人类演示中学习任务目标（逆强化学习）。
+
+\subsubsection{Neural ODE 与物理信息神经网络}
+
+\textbf{Neural ODE}（\href{https://arxiv.org/abs/1806.07366}{Chen et al., 2018}）将状态导数直接参数化为神经网络：$\dot{x} = f_\theta(x, t, u)$，用标准 ODE 求解器（如 Runge-Kutta）前向积分。这给出了一个从数据学习的连续时间状态空间模型，其结构\emph{天然满足} ODE 形式——与我们在状态空间章节中的 $\dot{x} = f(x, u)$ 框架完全相同，只不过 $f$ 是学出来的而非从物理推导出来的。
+
+\textbf{物理信息神经网络（PINNs）}更进一步：将已知物理定律（微分方程、守恒律、对称性）作为软约束嵌入损失函数：
+\[
+\mathcal{L} = \underbrace{\mathcal{L}_{\text{data}}}_{\text{拟合测量数据}} + \lambda \underbrace{\mathcal{L}_{\text{physics}}}_{\text{ODE/PDE 残差} \to 0}.
+\]
+这使得模型在训练数据之外仍能保持物理一致性——不会违反能量守恒，也不会预测出负质量。
+
+\textbf{实际影响：}Neural ODE 和 PINN 可以作为 MPC 的内部模型，同时替代第一性原理推导\emph{和}传统系统辨识。近期工作（2024--2025）已在化工过程、油井控制和 Van der Pol 振荡器上验证了基于 PINN 的 MPC，推理速度比数值 ODE 求解器更快（因为只需一次前向传播）。
+
+\subsubsection{扩散策略（Diffusion Policy）}
+
+机器人模仿学习的一个突破来自意想不到的方向：\textbf{扩散模型}——与 Stable Diffusion 等图像生成器背后相同的生成式模型。
+
+\textbf{Diffusion Policy}（\href{https://arxiv.org/abs/2303.04137}{Chi et al., 2023}）将动作生成视为去噪过程：从动作空间中的纯高斯噪声出发，以视觉观测为条件逐步去噪，直到生成干净的动作轨迹。相比标准行为克隆，其关键优势在于能表示\textbf{多模态}动作分布——当完成任务有多种有效方式时（从障碍物左边还是右边绕？），模型保留所有模态，而非将它们平均成一个（往往无效的）动作。
+
+\textbf{成果：}在 12 个操控基准任务上，Diffusion Policy 平均超越此前最优方法 46.9\% 的成功率。真实世界演示包括双臂装配和叠衣服。One-Step Diffusion Policy（2025）将迭代过程蒸馏为单次前向传播，实现 50+ Hz 实时控制。
+
+\textbf{与经典控制的联系：}去噪过程类似于 MPC/iLQR 中的迭代轨迹优化——从粗略计划（噪声）出发逐步精化，只不过这里的"模型"是从示教数据中学到的，而非从物理推导。
+
+\subsubsection{机器人基础模型（VLA）}
+
+机器人学习的最新浪潮利用了\textbf{视觉-语言-动作（VLA）}模型：在互联网规模的图文数据上预训练大型神经网络，然后微调以输出机器人动作。给定相机图像和自然语言指令（"拿起红色杯子"），VLA 直接输出关节指令。
+
+\textbf{关键里程碑：}
+\begin{itemize}[nosep]
+    \item \textbf{RT-2}（\href{https://arxiv.org/abs/2307.15818}{Brohan et al., 2023}）：首次证明 VLM 可微调用于机器人控制，展现了涌现式推理能力——例如从未在训练中见过的抽象指令也能推断该抓哪个物体。
+    \item \textbf{Octo}（\href{https://arxiv.org/abs/2405.12213}{Ghosh et al., 2024}）：开源通用策略，在 22 种不同机器人平台的 100 万+轨迹上训练。
+    \item \textbf{$\pi_0$}（\href{https://arxiv.org/abs/2410.24164}{Black et al., 2024}）：30 亿参数 VLA，使用流匹配（扩散的连续时间推广）实现 50 Hz 实时控制。展示了折叠衣物、组装包装盒等灵巧双臂任务。权重已开源。
+    \item \textbf{$\pi_{0.5}$}（Physical Intelligence, 2025）：展示了向训练时完全未见过的新环境泛化的能力。
+\end{itemize}
+
+\textbf{实用层级：}VLA 充当高层任务规划器，经典控制器（PID、阻抗控制）仍然执行底层关节指令。这与第 4 章的串级控制架构如出一辙：VLA = 外环（任务级语义），经典控制器 = 内环（关节级动力学）。
+
+\subsubsection{安全约束与可验证性}
+
+将学习方法与安全保证结合是当前的热点研究方向：
+\begin{itemize}[nosep]
+    \item \textbf{控制屏障函数（CBF）}：为学习到的策略添加安全约束层，确保系统状态不离开安全集合。数学上，CBF $h(x)$ 定义安全集合 $\{x : h(x) \geq 0\}$，并对控制输入施加约束 $\dot{h}(x) + \alpha h(x) \geq 0$——一个可以追加到任何 QP 控制器上的线性不等式。
+    \item \textbf{Lyapunov 神经网络}：训练神经网络同时学习控制器和 Lyapunov 函数，从而提供稳定性证明。
+    \item \textbf{可达性分析}：计算系统在学习策略下的可达集合，验证其是否满足安全要求。
+\end{itemize}
+
+\subsection{事件触发控制}
+
+本书中所有控制器都以\emph{固定}采样率 $T_s$ 运行。但真的有必要吗？如果系统在平衡点附近什么都没变化，每毫秒算一次新控制量是在浪费 CPU 周期、总线带宽和电池。
+
+\textbf{事件触发控制（ETC）}用\textbf{触发条件}替代固定时钟：仅当状态偏差超过阈值时才触发新的控制计算：
+\[
+\|x(t) - x(t_k)\| \geq \sigma \|x(t)\| + \varepsilon,
+\]
+其中 $t_k$ 为上次触发时刻，$\sigma > 0$ 为相对阈值，$\varepsilon > 0$ 防止 Zeno 行为（有限时间内无穷次触发）。两次触发之间控制输入保持不变——与零阶保持完全一样。
+
+\textbf{自触发控制}是一种主动变体：控制器不是持续监测状态，而是\emph{预测}下一次触发的时间并提前安排，使处理器在间隔期间可以休眠。
+
+\textbf{对机器人的意义：}在 8+ 个电机控制器共享的 CAN 总线上，减少不必要的报文直接改善高优先级环路的最差延迟；在电池供电系统（无人机、移动机器人）上，更少的计算意味着更长的续航；在多智能体系统（无人机编队、多机器人仓库）中，事件触发通信大幅降低网络拥塞。
+
+\textbf{与经典控制的联系：}ETC 是采样数据控制理论的推广。稳定性分析使用现代控制章节中相同的 Lyapunov 工具，但需要额外证明事件间隔有下界（排除 Zeno 行为），证明通常依赖输入-状态稳定性（ISS）论证。
+
+\subsection{方法全景对比}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{方法} & \textbf{需要模型？} & \textbf{处理非线性？} & \textbf{实时？} & \textbf{成熟度} \\
+\midrule
+PID & 否（经验调参） & 局部 & 是 & 工业标准 \\
+LQR & 是（线性） & 否 & 是 & 成熟 \\
+MPC（线性） & 是（线性） & 否 & 是 & 成熟 \\
+NMPC & 是（非线性） & 是 & 视情况 & 初步工业应用 \\
+MRAC / L1 自适应 & 部分（结构） & 有限 & 是 & 成熟（航空航天） \\
+数据驱动 LQR & 否（仅数据） & 否 & 是 & 学术前沿 \\
+DeePC & 否（仅数据） & 有限 & 视情况 & 学术前沿 \\
+Koopman + MPC & 否（数据提升） & 是（经提升） & 是 & 科研验证 \\
+基于模型的 RL & 学习所得 & 是 & 离线训练 & 科研验证 \\
+无模型 RL & 否 & 是 & 离线训练 & 科研验证 \\
+iLQR / DDP & 是（非线性） & 是 & 准实时 & 科研/初步工业 \\
+Neural ODE / PINN & 混合 & 是 & 准实时 & 学术前沿 \\
+扩散策略 & 否（示教） & 是 & 准实时 & 科研验证 \\
+VLA（$\pi_0$ 等） & 否（示教 + VLM） & 是 & 是（50 Hz） & 学术前沿 \\
+事件触发 & 同底层控制器 & 同底层控制器 & 降低负载 & 成熟（理论） \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{给读者的建议}
+
+\begin{mdframed}
+\textbf{全局视角。}\;控制理论与机器学习之间的边界正在消融。数据驱动方法带来了自适应能力，基于学习的方法带来了处理复杂性的能力。但本文所涵盖的基础内容------状态空间建模、稳定性分析、观测器设计、最优控制------仍然是这一切的\emph{根基}。
+
+\textbf{实用路线图：}
+\begin{enumerate}[nosep]
+    \item \textbf{先掌握经典方法。}PID、LQR、MPC、卡尔曼滤波------这些工具在绝大多数机器人应用中足够使用，且可靠、可调试、有理论保证。
+    \item \textbf{当经典方法遇到瓶颈时，引入数据驱动技术。}系统难以建模？尝试数据驱动 LQR/MPC。环境变化大？考虑自适应控制。
+    \item \textbf{RL 用于``经典方法做不到的事''。}极端敏捷运动、高维灵巧操控、复杂接触交互------这些场景下 RL 的优势才真正显现。
+    \item \textbf{永远保留安全层。}无论控制器多么``智能''，添加控制屏障函数或硬件安全限位，确保系统不会做出危险动作。
+\end{enumerate}
+
+深入理解经典基础，将使你成为更优秀的高级方法使用者，而非被取代者。
+
+\textbf{一句忠告。}\;不要为了"用新算法"而用新算法。做工程，能稳定 work 的就是好方案。复杂度是成本，不是功绩。
+\end{mdframed}
+
+\subsection{延伸阅读}
+
+本章提到的关键论文与资源（可点击跳转）。
+
+\subsubsection*{数据驱动控制}
+\begin{itemize}[nosep]
+    \item \href{https://arxiv.org/abs/2206.00397}{Markovsky \& Dörfler (2021)} --- 行为系统理论与 Willems 基本引理：教程
+    \item \href{https://arxiv.org/abs/1811.05890}{Coulson et al.\ (2019)} --- 数据驱动预测控制（DeePC）
+    \item \href{https://arxiv.org/abs/1408.4408}{Williams et al.\ (2015)} --- 扩展动态模态分解（EDMD）与 Koopman 算子近似
+\end{itemize}
+
+\subsubsection*{强化学习}
+\begin{itemize}[nosep]
+    \item \href{https://arxiv.org/abs/1707.06347}{Schulman et al.\ (2017)} --- 近端策略优化（PPO）
+    \item \href{https://arxiv.org/abs/1801.01290}{Haarnoja et al.\ (2018)} --- 软演员-评论家（SAC）
+    \item \href{https://arxiv.org/abs/1906.08253}{Janner et al.\ (2019)} --- 基于模型的策略优化（MBPO）
+    \item \href{https://arxiv.org/abs/1912.01603}{Hafner et al.\ (2020)} --- Dream to Control: Dreamer
+    \item \href{https://arxiv.org/abs/2208.07855}{Margolis et al.\ (2022)} --- 快速运动 via RL（MIT Mini Cheetah）
+    \item \href{https://arxiv.org/abs/2109.11978}{Miki et al.\ (2022)} --- 鲁棒感知运动学习（ANYmal）
+    \item \href{https://arxiv.org/abs/2310.08984}{Kaufmann et al.\ (2023)} --- 冠军级无人机竞速 via 深度 RL（Swift）
+\end{itemize}
+
+\subsubsection*{轨迹优化}
+\begin{itemize}[nosep]
+    \item \href{https://arxiv.org/abs/2007.01850}{Howell et al.\ (2020)} --- ALTRO：约束轨迹优化快速求解器
+    \item \href{https://github.com/loco-3d/crocoddyl}{Crocoddyl} --- 高效多接触最优控制（开源）
+    \item \href{https://web.casadi.org/}{CasADi} --- 非线性优化与最优控制的符号框架
+\end{itemize}
+
+\subsubsection*{神经网络与学习控制}
+\begin{itemize}[nosep]
+    \item \href{https://arxiv.org/abs/1806.07366}{Chen et al.\ (2018)} --- 神经常微分方程（Neural ODE）
+    \item \href{https://arxiv.org/abs/2303.04137}{Chi et al.\ (2023)} --- Diffusion Policy：基于动作扩散的视觉运动策略学习
+    \item \href{https://arxiv.org/abs/2307.15818}{Brohan et al.\ (2023)} --- RT-2：视觉-语言-动作模型
+    \item \href{https://arxiv.org/abs/2405.12213}{Ghosh et al.\ (2024)} --- Octo：开源通用机器人策略
+    \item \href{https://arxiv.org/abs/2410.24164}{Black et al.\ (2024)} --- $\pi_0$：通用机器人控制的视觉-语言-动作流模型
+\end{itemize}
+

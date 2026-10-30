@@ -1,0 +1,197 @@
+%%% Load options early.
+\PassOptionsToPackage{svgnames}{xcolor}
+\PassOptionsToPackage{usenames,dvipsnames}{color}
+%%% Maybe it makes sense to use memoir class instead, but this needs some serious adjustments to the template.
+\documentclass[10pt, twoside, openright]{book}
+
+%%%%% Packages required for the template. %%%%%
+
+%%% Swedish G5 thesis format
+\usepackage[papersize={169mm,239mm},top=10mm, bottom=10mm, textwidth=125mm, includehead, includefoot, marginparwidth = 2.5cm]{geometry}
+
+%%% Set up font.
+\usepackage[T1]{fontenc}
+\usepackage{plex-sans}
+
+%%% Generally useful typesetting packages.
+\usepackage{mathtools,amssymb,amsfonts,amsthm}
+\usepackage{newpxtext}
+\usepackage{newpxmath}
+\usepackage[sectionbib]{chapterbib}
+\usepackage{xspace}
+\usepackage{fancyhdr}
+\usepackage{pageslts}
+\usepackage{moresize}
+\usepackage[fit]{truncate}
+\usepackage{epigraph}
+\setlength{\epigraphwidth}{0.9\textwidth}
+\setlength{\epigraphrule}{0pt}
+\usepackage{appendix}
+\usepackage{afterpage}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage[all]{nowidow}
+\usepackage[hyphens]{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage[textfont ={it},labelfont={bf, sf}]{caption}
+\usepackage[svgnames]{xcolor}
+\usepackage[capitalise, noabbrev]{cleveref}
+\newcommand{\creflastconjunction}{, and\nobreakspace}
+\usepackage{tocloft}
+\usepackage{sectsty}
+\usepackage{float}
+
+
+%%% todo notes setup
+\usepackage{todonotes}
+%%% To disable todo notes, replace the line \usepackage{todonotes} above by the line below
+% \usepackage[disable]{todonotes}
+
+
+%%% You can include your own packages down here.
+
+
+\let\oldsection\section% Store \section
+\renewcommand{\section}{% Update \section
+  \renewcommand{\theequation}{\arabic{equation}}% Update equation number
+  \oldsection}% Regular \section
+\let\oldsubsection\subsection% Store \subsection
+\renewcommand{\subsection}{% Update \subsection
+  \renewcommand{\theequation}{\arabic{equation}}% Update equation number
+  \oldsubsection}% Regular \subsection
+
+
+%%% Thesis macros for template %%%
+\counterwithin{chapter}{part}
+\input{macros}
+
+%%% Custom macros %%%
+\input{macros-thesis}
+
+%%% Set abstract early to be used in the datasheet.
+\input{kappa/abstract}
+
+
+
+%%% Set data of the thesis:
+%%% TODO: Fill the following command out.
+\newcommand{\titlenameshort}{\textcolor{red}{Define titlenameshort}}
+\newcommand{\myMainTitle}{\textcolor{red}{Define myMainTitle}}
+\newcommand{\mySubtitle}{\textcolor{red}{Define mySubtitle}}
+\newcommand{\titlename}{\myMainTitle\xspace\mySubtitle}
+\newcommand{\myName}{\textcolor{red}{Define myName}}
+\newcommand{\myEmail}{\textcolor{red}{Define myEmail}}
+\newcommand{\myWebsite}{\textcolor{red}{Define myWebsite}}
+\newcommand{\myYear}{\textcolor{red}{Define myYear}} % year of defence
+\newcommand{\myFormDefenceDate}{\textcolor{red}{Define myFormDefenceDate}} % date of defence
+\newcommand{\myFormSignDate}{\textcolor{red}{Define myFormSignDate}} % usually the date of printing
+\newcommand{\myTitle}{\titlename}
+\newcommand{\myFaculty}{\textcolor{red}{Define myFaculty}} % e.g., Faculty of Engineering
+\newcommand{\myDepartment}{\textcolor{red}{Define myDepartment}} % e.g., Department of Computer Science
+\newcommand{\myAddress}{\textcolor{red}{Define myAddress}} % Adress of university e.g., Box 118\\SE--221 00 LUND\\Sweden
+\newcommand{\myFormKeywords}{\textcolor{red}{Define myFormKeywords}}
+\newcommand{\myISBNpdf}{\textcolor{red}{Define myISBNpdf}} % electronic version ISBN
+\newcommand{\myISBNprint}{\textcolor{red}{Define myISBNprint}} % printed version ISBN
+\newcommand{\myISSN}{\textcolor{red}{Define myISSN}}
+\newcommand{\myDissertationNumber}{\textcolor{red}{Define myDissertationNumber}}
+\newcommand{\myLuCsDissNumber}{\textcolor{red}{Define myLuCsDissNumber}}
+\newcommand{\myPages}{\lastpageref{LastPages}}
+\newcommand{\myFundingOrganization}{\textcolor{red}{Define myFundingOrganization}} % Funding information for your PhD position, e.g., WASP
+\newcommand{\myDegree}{\textcolor{red}{Define myDegree}} % The degree that you want, e.g., Doctor of Philosophy
+\newcommand{\myAdvisors}{\textcolor{red}{Define myAdvisors}} % List of your advisors
+\newcommand{\myOpponent}{\textcolor{red}{Define myOpponent}}
+\newcommand{\myDefenceAnnouncement}{
+  To be presented, with the permission of the
+	\myFaculty\xspace of Lund University, for public criticism in {room??} at the \myDepartment\xspace on {date??}, \myYear\xspace at {time??}.
+} % You need to fill in date, time, and room for your defence.
+
+% For faster compilation you can select to only recompile specific chapters.
+% \includeonly{kappa/main}
+
+
+\begin{document}
+
+\frontmatter
+
+%------------------------------------
+% title page
+%------------------------------------
+\input{frontpage.tex}
+%------------------------------------
+
+
+
+% -----------------------------------
+% ------- GENERAL STATEMENTS --------
+% -----------------------------------
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\cftsetindents{chapter}{0em}{2.5em}
+{
+	\hypersetup{linkcolor=black}
+	\tableofcontents
+	% \listoffigures
+	% \listoftables
+}
+
+\input{kappa/acknowledgements}
+\input{kappa/popular-summary}
+\input{kappa/contributionstatement}
+
+
+\mainmatter
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thefigure}{\arabic{figure}}
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand{\theequation}{\arabic{equation}}
+
+% Add right margin marks for chapters.
+%-------------------------------------------------------
+\newlength{\apa}
+\setlength{\spiff}{0cm}
+\renewcommand{\markmargin}{%
+	\vspace*{\spiff}
+	\marginpar{\raggedright \rule{5mm}{0mm}
+		\begin{tikzpicture}
+			\node[rectangle, fill=black, minimum width=6cm, minimum height=2cm, inner sep=0pt,draw=black](rec){};
+			\node[left of = rec,node distance=2.7cm,text width=2cm,text centered, font=\sffamily\bfseries\small,rotate=90]{\color{white}{Paper \thechapter}};
+		\end{tikzpicture}\rule{1pt}{\apa}}%
+	\vspace*{-\spiff}
+	\addtolength{\spiff}{2cm}
+}
+\renewcommand{\markmarginKappa}{%
+	\vspace*{\spiff}
+	\marginpar{\raggedright \rule{5mm}{0mm}
+		\begin{tikzpicture}
+			\node[rectangle, fill=black, minimum width=6cm, minimum height=2cm, inner sep=0pt,draw=black](rec){};
+			\node[left of = rec,node distance=2.7cm,text width=2cm,text centered, font=\sffamily\bfseries\small,rotate=90]{\color{white}{Kappa}};
+		\end{tikzpicture}\rule{1pt}{\apa}}%
+	\vspace*{-\spiff}
+	\addtolength{\spiff}{2cm}
+}
+%-------------------------------------------------------
+
+% --------------------------------
+% --------- KAPPA ----------------
+% --------------------------------
+\include{kappa/main}
+
+
+
+\renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand{\chaptername}{Paper}
+\setcounter{rtaskno}{0}
+
+% --------------------------------
+% --------- PAPERS ---------------
+% --------------------------------
+
+\part{Included Papers}
+%%% TODO: Include the main files of your included papers here.
+
+\include{papers/one/main}
+
+\include{papers/two/main}
+
+\end{document}

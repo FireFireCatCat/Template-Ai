@@ -1,0 +1,1141 @@
+% \iffalse
+%
+% Copyright 2023, Boris Veytsman
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3 of this license or (at your option) any 
+% later version.
+% The latest version of the license is in
+%    http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of
+% LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Boris Veytsman,
+% <borisv@lk.net> 
+%
+% This work consists of the file amnestyreport.dtx and the
+% derived file amnestyreport.cls.
+%
+%
+%
+% \fi 
+% \CheckSum{0}
+%
+%
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~} 
+%
+%\iffalse
+% Taken from xkeyval.dtx
+%\fi
+%\makeatletter
+%\def\DescribeOption#1{\leavevmode\@bsphack
+%              \marginpar{\raggedleft\PrintDescribeOption{#1}}%
+%              \SpecialOptionIndex{#1}\@esphack\ignorespaces}
+%\def\PrintDescribeOption#1{\strut\emph{option}\\\MacroFont #1\ }
+%\def\SpecialOptionIndex#1{\@bsphack
+%    \index{#1\actualchar{\protect\ttfamily#1}
+%           (option)\encapchar usage}%
+%    \index{options:\levelchar#1\actualchar{\protect\ttfamily#1}\encapchar
+%           usage}\@esphack}
+%\def\DescribeOptions#1{\leavevmode\@bsphack
+%  \marginpar{\raggedleft\strut\emph{options}%
+%  \@for\@tempa:=#1\do{%
+%    \\\strut\MacroFont\@tempa\SpecialOptionIndex\@tempa
+%  }}\@esphack\ignorespaces}
+%\makeatother
+%
+% \MakeShortVerb{|}
+% \GetFileInfo{amnestyreport.dtx}
+% % \changes{v1.1}{2023/12/31}{Documentation update}
+% \newcommand{\progname}[1]{\textsf{#1}}
+% \title{\LaTeX{} Class for \emph{Amnesty International}
+% Reports\thanks{\copyright 2023, Boris Veytsman}} 
+% \author{Boris Veytsman\thanks{%
+% \href{mailto:borisv@lk.net}{\texttt{borisv@lk.net}},
+% \href{mailto:boris@varphi.com}{\texttt{boris@varphi.com}}}} 
+% \date{\filedate, \fileversion}
+% \maketitle
+% \begin{abstract}
+%   This package provides a class for typesetting Reports for
+%   \emph{Amnesty International}
+% \end{abstract}
+% \tableofcontents
+%
+% \clearpage
+% \section{Introduction}
+% \label{sec:intro}
+%
+% \emph{Amnesty International} house style is describes in the Amnesty
+% International brand hub, \url{https://brandhub.amnesty.org}.  Most
+% reports for \emph{Amnesty International} were made using word
+% processing software or typesetting software like \emph{InDesign}.
+% The onset of reports made with \TeX, or \textsl{R} using
+% \textsl{knitr} or \textsl{Rmarkdown} made necessary to recreate the
+% house style in \TeX.  This file provides such style.
+%
+% I am grateful to Richard Swingler and Jule Krueger for their testing
+% and helpful comments.
+%
+% To use the style, you need the files |amnestyreport.cls|, the fonts
+% and the logos.  They can be downloaded from
+% \url{https://brandhub.amnesty.org/} (note that you need to have a
+% special permission to use the font).  You need to rename the file
+% with the logo into |Amnesty_logo.png|.
+%
+% To use the style just say
+% \begin{quote}
+%   |\usepackage|\oarg{options}|{amnestyreports}|
+% \end{quote}
+%
+%
+% The option |amnestyfonts| (the default) selects the font Amnesty
+% Trade Gothic
+% (\url{https://brandhub.amnesty.org/visual-design/our-typeface/}) for
+% the report.  The researchers working with Amnesty International may
+% download this font.  If you are a student of work on a
+% self-initiated project, use the option |freefonts| to use free fonts
+% similar to Amnesty Trade Gothic.
+%
+% The option |nologo| suppresses the use of Amnesty International
+% logo.  It is automatically chosen if \LaTeX\ cannot find the file
+% |Amnesty_logo.png| in the search path.
+% 
+% The paper size options currently supported are |letterpaper| and
+% |a4paper| (the later is the default).
+%
+%
+%
+%\subsection{Use of the styles with Rmarkdown}
+%\label{sec:Rmarkdown}
+%
+% If you use the style with the \emph{Rmarkdown} package, you need to
+% include the file \path{amnestytemplate.tex}, which accompanies this
+% release.  The YAML syntax for the commands is easy to get from the
+% the example \path{sample.Rmd}:
+% \begin{verbatim}
+% ---
+% title: "RMarkdown report example"
+% subtitle: "An example report for Amnesty output"
+% titleimage: "BoschFragment"
+% titleimagecaption: "The Garden of Earthly Delights is the modern title
+% given to a triptych oil painting on oak panel painted by the Early
+% Netherlandish master Hieronymus Bosch, between 1490 and 1510, when
+% Bosch was between 40 and 60 years old. It has been housed in the
+% Museo del Prado in Madrid, Spain since 1939.\n\n
+% \\textcopyright{} Image: Public domain.\n\n
+% \\textcopyright{} Caption:  Wikipedia contributors, 2023, released
+% under  Creative Commons Attribution-ShareAlike License 4.0"
+% copyrightyear: 2023
+% firstpublicationyear: 2022
+% reportindex: ABXC/AAAA/2022
+% 
+% output: 
+%   pdf_document:
+%     template: amnestytemplate.tex
+%     latex_engine: xelatex
+%     toc: true
+%     keep_tex: true
+%     citation_package: natbib
+% header-includes:
+%   - \renewcommand{\thesection}{\Alph{section}}
+% bibliography: "examplereferences.bib"
+% ---
+% 
+% \end{verbatim}
+%
+% Some notes:
+% \begin{enumerate}
+% \item The file names for bibliography and title images should not
+% include underscores or spaces.
+% \item  In multiline strings use |\n\n| for paragraph breaks and two
+% backslashes 
+% for \TeX\ commands.
+% \end{enumerate}
+%
+% There is an accompanying R package \textsl{amnestyreportR}.  It
+% helps to create plots and tables in the style of Amnesty Report.
+% See the sample file for an example of use.  You may download the
+% package from the Amnesty International site or CRAN.  
+%
+%
+%\subsection{Front matter}
+%\label{sec:ug_frontmatter}
+%
+% \DescribeMacro{\maketitle}%
+% Front matter is the part of the report that includes title, half
+% title (the back of the title page), table of contents, glossary,
+% foreword, etc.  Some of it is typeset automatically by the command
+% \cs{maketitle}, which must be preceded by a number of commands that
+% set the information to be typeset.
+%
+% \DescribeMacro{\titleimage}%
+% \DescribeMacro{\titleimagecaption}%
+% The command \cs{titleimage}\marg{filename} defines the image on the
+% title page.  This file must be square.  It will be resized
+% automatically to the standard size
+% $\qty{18.17}{\centi\meter}\times\qty{18.17}{\centi\meter}$.  The
+% command \cs{titleimagecaption}\marg{caption} describes the image.
+% It should have copyright information; you may use the command
+% \cs{textcopyright} for the copyright symbol. 
+%
+% \DescribeMacro{\title}%
+% \DescribeMacro{\subtitle}%
+% The command \cs{title} is similar to the one in standard classes. An
+% additional command \cs{subtitle} is used to set the subtitle of the
+% report.  
+%
+% \DescribeMacro{\copyrightyear}%
+% \DescribeMacro{\firstpublicationyear}%
+% The commands \cs{copyrightyear}\marg{year} and
+% \cs{firstpublicationyear}\marg{year} set 
+% the year when the report was copyrighted and first published.  The
+% default is the current year.
+%
+% \DescribeMacro{\reportyear}%
+% \DescribeMacro{\reportmonth}%
+% Sometimes the report year or month might be different from the
+% copyright year.  You can set them with the commands
+% \cs{reportyear}\marg{year} and \cs{reportmonth}\marg{month}.  The
+% default is the copyright year and the current month.
+%
+% \DescribeMacro{\reportindex}%
+% The index of the report is set by the command
+% \cs{reportindex}\marg{index}.  
+%
+% \DescribeMacro{\blurb}%
+% Amnesty International reports include a short blurb up to 200~words.
+% The macro \cs{blurb}\marg{blurb text} sets them.
+%
+%\subsection{Main matter}
+%\label{sec:ug_mainmatter}
+%
+% \DescribeMacro{\mainmatter}%
+% The main section starts with the command \cs{mainmatter}.  The R
+% template provides it automatically.
+%
+%\subsection{Colors}
+%\label{sec:ug_colors}
+%
+% The class defines the following colors
+% \begin{enumerate}
+% \item |AmnestyYellow|, the primary color.
+% \item |AmnestyGray1|, |AmnestyGray2|, |AmnestyGray3|,
+%   |AmnestyGray4|, |AmnestyGray5|, the grayscale from the lightest to
+%   the darkest.
+% \end{enumerate}
+%
+%
+%
+%\subsection{Glossary}
+%\label{sec:ug-glossary}
+%
+% \DescribeEnv{AmnestyGlossary}%
+% Amnesty international reports may be accompanied by a glossary.  A
+% glossary is introduced by the environment |AmnestyGlossary|.  It has one
+% optional parameter: the maximal size of the word defined in the
+% table, by default 5em.  The glossary entries are |tabular| entries:
+% the word to be defined is separated from the definition by |&|, and
+% definitions are ended by |\\|, for example (from
+% \url{https://www.amnesty.org/en/latest/campaigns/2015/07/beginners-guide-human-rights-jargon/}): 
+% \begin{verbatim}
+% \begin{AmnestyGlossary}[3em]
+%   Commute &
+%   Commute means to replace a punishment, usually a death
+%   sentence, with a less severe one. For example, Amnesty called for
+%   the USA to commute to time served the 35-year jail sentence of
+%   whistleblower Chelsea Manning, who had been arrested after leaking
+%   classified government material. \\
+%   Crimes against humanity &
+%   When certain acts---including murder, torture and slavery---form
+%   part of a widespread attack on a civilian population by a state or
+%   organization. Unlike war crimes, they can take place at times of
+%   peace as well as during conflict. The Rwandan genocide of 1994 is
+%   one example of a crime against humanity. \\
+%   Extrajudicial executions & 
+%   Unlawful killings ordered by a government, or committed with its
+%   knowledge and support. They can be carried out by the military,
+%   police, or by civilians working with government forces. For
+%   example, Hamas forces in Gaza committed serious human rights
+%   abuses, including extrajudicial executions, torture and
+%   abductions, during the 2014 Gaza/Israel conflict. \\
+%   Freedom of expression &
+%   The right to seek, receive and share information and ideas,
+%   without fear or interference. It is closely linked with freedom of
+%   association (the right to meet with anyone you choose, for
+%   example, to form and join clubs, societies or trade unions) and
+%   the right to take part in a peaceful assembly, such as a
+%   demonstration or public meeting. \\
+% \end{AmnestyGlossary}
+% \end{verbatim}
+%
+%
+%\subsection{Quotation styles}
+%\label{sec:ug_quotation}
+%
+% \DescribeEnv{quote}%
+% \DescribeMacro{attribution}%
+% There are several quotations styles used by Amnesty International
+% style. The most ubiquitous one is ``display quotes'', which is used
+% by the |quote| environment.  This is the
+% style that is translated from the Markdown quotation style, with |>|
+% marks. It has a special command \cs{attribution}, which should be
+% used at the end of the quote, for example,
+% \begin{verbatim}
+% \begin{quote}
+%   All human beings are born free and equal in dignity and
+%   rights. They are endowed with reason and conscience and should act
+%   towards one another in a spirit of brotherhood.
+%
+%   \attribution{Universal Declaration of Human Rights}
+% \end{quote}
+% \end{verbatim}
+%
+% The equivalent Markdown syntax is
+% \begin{verbatim}
+% >  All human beings are born free and equal in dignity and
+% >  rights. They are endowed with reason and conscience and should act
+% >  towards one another in a spirit of brotherhood.
+% >
+% >  \attribution{Universal Declaration of Human Rights}
+% \end{verbatim}
+%
+%
+%
+%\subsection{Figures and tables}
+%\label{sec:ug_floats}
+%
+% Figures and tables by default are typeset with the `here` placement
+% option.  You should put the caption of a table \emph{before} the
+% table, and the caption of a figure \emph{after} the figure.  You can
+% use \cs{FloatBarrier} command to stop figures and tables from
+% moving.  
+%
+% \DescribeMacro{\sideTableCaptions}%
+% \DescribeMacro{\sideFigureCaptions}%
+% \DescribeMacro{\normalTableCaptions}%
+% \DescribeMacro{\normalFigureCaptions}%
+% The style allows figures and tables with right side captions.  The
+% commands \cs{sideTableCaptions} and \cs{sideFigureCaptions} switch
+% to this style, while the commands \cs{normalTableCaptions} and
+% \cs{normalFigureCaptions} switch to the standard style. 
+%
+%
+% \clearpage
+% \StopEventually
+%
+%\section{Implementation}
+%\label{sec:impl}
+%
+%\subsection{Identification}
+%\label{sec:ident}
+%
+% We start with the declaration who we are.  Most |.dtx| files put
+% driver code in a separate driver file |.drv|.  We roll this code into the
+% main file, and use the pseudo-guard |<gobble>| for it.
+%    \begin{macrocode}
+%<class>\NeedsTeXFormat{LaTeX2e}
+%<*gobble>
+\ProvidesFile{amnestyreport.dtx}
+%</gobble>
+%<class>\ProvidesClass{amnestyreport}
+[2024/01/12 v1.2 Typesetting articles for Amnesty International]
+%    \end{macrocode}
+%
+%
+%
+% And the driver code:
+%    \begin{macrocode}
+%<*gobble>
+\documentclass{ltxdoc}
+\usepackage[breaklinks,colorlinks,linkcolor=black,citecolor=black,
+pagecolor=black,urlcolor=black,hyperindex=false]{hyperref}
+\usepackage{siunitx}
+\PageIndex
+\CodelineIndex
+\RecordChanges
+\EnableCrossrefs
+\begin{document}
+  \DocInput{amnestyreport.dtx}
+\end{document}
+%</gobble> 
+%<*class>
+%    \end{macrocode}
+%
+%\subsection{Options}
+%\label{sec:options}
+%
+% We pass paper size to \textsl{geometry}
+%    \begin{macrocode}
+\DeclareOption{a4paper}{\PassOptionsToPackage{\CurrentOption}{geometry}}
+\DeclareOption{letterpaper}{\PassOptionsToPackage{\CurrentOption}{geometry}}
+%    \end{macrocode}
+%
+% \begin{macro}{\ifamnesty@fonts}
+% \changes{v1.1}{2023/11/28}{Introduced macro}
+% The switch whether to use Amensty proprietary font
+%    \begin{macrocode}
+\newif\ifamnesty@fonts
+\amnesty@fontstrue
+%    \end{macrocode}
+% \end{macro}
+%
+% Setting the font
+%    \begin{macrocode}
+\DeclareOption{amnestyfonts}{\amnesty@fontstrue}
+\DeclareOption{freefonts}{\amnesty@fontsfalse}
+%    \end{macrocode}
+% 
+% \begin{macro}{\ifamnesty@logo}
+% \changes{v1.1}{2023/11/28}{Introduced macro}
+% Whether we have the logo
+%    \begin{macrocode}
+\newif\ifamnesty@logo
+\amnesty@logotrue
+%    \end{macrocode}
+% \end{macro}
+%
+% Setting the logo
+%    \begin{macrocode}
+\DeclareOption{logo}{\amnesty@logotrue}
+\DeclareOption{nologo}{\amnesty@logofalse}
+%    \end{macrocode}
+%
+% And executing the options
+%    \begin{macrocode}
+\ExecuteOptions{a4paper,amnestyfonts}
+\ProcessOptions\relax
+%    \end{macrocode}
+%
+% Sanity check whether logo exists
+%    \begin{macrocode}
+\IfFileExists{Amnesty_logo.png}{}{\amnesty@logofalse}
+%    \end{macrocode}
+% 
+%
+%\subsection{Loading Class and Packages}
+%\label{sec:loading}
+%
+% We start with the base class
+%    \begin{macrocode}
+\LoadClass{article}
+%    \end{macrocode}
+%
+% Geometry to set up margins
+%    \begin{macrocode}
+\RequirePackage[top=1.02in, bottom=1.38in,
+left=1.26in, right=1.26in, footskip=40pt]{geometry}
+%    \end{macrocode}
+%
+% We suppress hyphenation
+%    \begin{macrocode}
+\usepackage[none]{hyphenat}
+%    \end{macrocode}
+%
+% URLs
+%    \begin{macrocode}
+\RequirePackage[colorlinks=false]{hyperref}
+\def\UrlFont{}
+\def\sectionautorefname{Section}
+\def\subsectionautorefname{Section}
+\def\subsubsectionautorefname{Section}
+%    \end{macrocode}
+%
+% We need graphics
+%    \begin{macrocode}
+\RequirePackage{graphicx}
+%    \end{macrocode}
+%
+% We use biblatex
+%    \begin{macrocode}
+\RequirePackage[backend=bibtex]{biblatex}
+%    \end{macrocode}
+%
+% Due to the way Rmarkdown works, we add \cs{citep} and \cs{citet}
+% commands
+% \begin{macro}{\citep}
+%    \begin{macrocode}
+\RequirePackage{xparse}
+\NewDocumentCommand{\citep}{oom}{%
+  \IfNoValueTF{#2}{%
+    \IfNoValueTF{#1}{\footfullcite{#3}}{\footfullcite[][#1]{#3}}}{%
+    \footfullcite[#1][#2]{#3}}}
+\let\citet\citep
+%    \end{macrocode}
+% \end{macro}
+%
+% We need \cs{FloatBarrier} command
+%    \begin{macrocode}
+\RequirePackage{placeins}
+%    \end{macrocode}
+%
+% We need framed for splitting leftbar boxes
+%    \begin{macrocode}
+\RequirePackage{framed}
+%    \end{macrocode}
+%
+% \changes{v1.2}{2024/01/14}{Added sidecap package}
+% We need sidecap to typeset sidewise captions.
+%    \begin{macrocode}
+\RequirePackage[rightcaption]{sidecap}
+\def\SC@figure@vpos{t}
+%    \end{macrocode}
+%
+%\subsection{Fonts}
+%\label{sec:fonts}
+%
+% \changes{v1.2}{2024/01/02}{Added Inconsolata as monofont}
+%
+%    \begin{macrocode}
+\RequirePackage{fontspec}
+\ifamnesty@fonts
+  \ClassInfo{amnestyreport}{Using Amnesty International fonts}
+  \setmainfont{AmnestyTradeGothic-Light.ttf}[
+  BoldFont=AmnestyTradeGothic-Bd2.ttf,
+  ItalicFont=AmnestyTradeGothic-LightObl.ttf,
+  BoldItalicFont=AmnestyTradeGothic-Bd2Obl.ttf]
+
+  \newfontfamily\condensed{AmnestyTradeGothic-Cn18.ttf}[
+  BoldFont=AmnestyTradeGothic-BdCn20.ttf,
+  ItalicFont=AmnestyTradeGothic-Cn18Obl.ttf,
+  BoldItalicFont=AmnestyTradeGothic-BdCn20Ob.ttf]
+\else
+  \ClassInfo{amnestyreport}{Using free fonts}
+  \setmainfont{texgyreadventor-regular.otf}[
+  BoldFont=texgyreadventor-bold.otf,
+  ItalicFont=texgyreadventor-italic.otf,
+  BoldItalicFont=texgyreadventor-bolditalic.otf]
+
+  \newfontfamily\condensed{QTHelvetCnd-Light.otf}[
+  BoldFont=QTHelvetCnd.otf,
+  ItalicFont=QTHelvetCnd-Light.otf,
+  BoldItalicFont=QTHelvetCnd.otf]
+\fi  
+\setmonofont[StylisticSet={1,2,3}]{Inconsolatazi4-Regular.otf}[
+  BoldFont=Inconsolatazi4-Bold.otf]
+\RequirePackage{fontawesome5}
+%    \end{macrocode}
+%
+%
+%\subsection{Paragraphing}
+%\label{sec:paragraphing}
+%
+% The base size is 9pt.  This is taken from size9.clo
+%    \begin{macrocode}
+\renewcommand\normalsize{%
+   \@setfontsize\normalsize\@ixpt\@xipt%
+   \abovedisplayskip 8\p@ \@plus4\p@ \@minus4\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 5\p@ \@plus3\p@ \@minus3\p@
+   \belowdisplayskip \abovedisplayskip
+   \let\@listi\@listI}
+\renewcommand\small{%
+   \@setfontsize\small\@viiipt\@ixpt%
+   \abovedisplayskip 5\p@ \@plus2\p@ \@minus2\p@
+   \abovedisplayshortskip \z@ \@plus1\p@
+   \belowdisplayshortskip 3\p@ \@plus\p@ \@minus2\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 3\p@ \@plus\p@ \@minus\p@
+               \parsep 2\p@ \@plus\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip
+}
+\renewcommand\footnotesize{%
+   \@setfontsize\footnotesize\@viipt\@viiipt
+   \abovedisplayskip 4\p@ \@plus2\p@ \@minus2\p@
+   \abovedisplayshortskip \z@ \@plus1\p@
+   \belowdisplayshortskip 2.5\p@ \@plus\p@ \@minus\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 3\p@ \@plus\p@ \@minus\p@
+               \parsep 2\p@ \@plus\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip
+}
+\renewcommand\scriptsize{\@setfontsize\scriptsize\@vipt\@viipt}
+\renewcommand\tiny{\@setfontsize\tiny\@vpt\@vipt}
+\renewcommand\large{\@setfontsize\large\@xpt\@xiipt}
+\renewcommand\Large{\@setfontsize\Large\@xipt{13}}
+\renewcommand\LARGE{\@setfontsize\LARGE\@xiipt{14}}
+\renewcommand\huge{\@setfontsize\huge\@xivpt{18}}
+\renewcommand\Huge{\@setfontsize\Huge\@xviipt{22}}
+\setlength\parskip{6pt}
+\setlength\parindent\z@
+%    \end{macrocode}
+%
+%
+%\subsection{Colors}
+%\label{sec:colors}
+%
+%    \begin{macrocode}
+\RequirePackage{xcolor}
+\definecolor{AmnestyYellow}{RGB/cmyk}{255,255,0/0,0,1,0}
+\definecolor{AmnestyGray1}{RGB/cmyk}{228,228,228/0,0,0,15}
+\definecolor{AmnestyGray2}{RGB/cmyk}{178,178,178/0,0,0,32}
+\definecolor{AmnestyGray3}{RGB/cmyk}{118,118,118/0,0,0,64}
+\definecolor{AmnestyGray4}{RGB/cmyk}{82,82,82/0,0,0,79}
+\definecolor{AmnestyGray4}{RGB/cmyk}{37,37,37/0,0,0,97}
+\RequirePackage{soul}
+\sethlcolor{AmnestyYellow}
+%    \end{macrocode}
+%
+%
+%\subsection{Setting up top matter}
+%\label{sec:top_matter}
+%
+% \begin{macro}{\titleimage}
+%   The title image
+%    \begin{macrocode}
+\newcommand\titleimage[1]{\def\@titleimage{#1}}
+\titleimage{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\titleimagecaption}
+%   The caption for the image
+%    \begin{macrocode}
+\newcommand\titleimagecaption[1]{\def\@titleimagecaption{#1}}
+\titleimagecaption{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\subtitle}
+% The subitle
+%    \begin{macrocode}
+\newcommand\subtitle[1]{\def\@subtitle{#1}}
+\subtitle{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\copyrightyear}
+% The copyright year
+%    \begin{macrocode}
+\newcommand\copyrightyear[1]{\def\@copyrightyear{#1}}
+\copyrightyear{\the\year}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\firstpublicationyear}
+% The publication year
+%    \begin{macrocode}
+\newcommand\firstpublicationyear[1]{\def\@firstpublicationyear{#1}}
+\firstpublicationyear{\@copyrightyear}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\reportyear}
+% The report year
+%    \begin{macrocode}
+\newcommand\reportyear[1]{\def\@reportyear{#1}}
+\reportyear{\@copyrightyear}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\reportmonth}
+% The report month
+%    \begin{macrocode}
+\newcommand\reportmonth[1]{\def\@reportmonth{#1}}
+\reportmonth{\ifcase\month\or
+  January\or February\or March\or April\or May\or June\or
+  July\or August\or September\or October\or November\or December\fi}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\reportindex}
+% The index
+%    \begin{macrocode}
+\newcommand\reportindex[1]{\def\@reportindex{#1}}
+\reportindex{XXXX XX/XX/XXX}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\blurb}
+% The blurb
+%    \begin{macrocode}
+\newcommand\blurb[1]{\def\@blurb{#1}}
+\blurb{}
+%    \end{macrocode}
+% \end{macro}
+% 
+%
+%\subsection{Typesetting top matter}
+%\label{sec:maketitle}
+%
+% \begin{macro}{\frontmatter}
+%   We use empty page style for the front matter
+%    \begin{macrocode}
+\newcommand\frontmatter{%
+  \pagenumbering{arabic}%
+  \pagestyle{empty}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\maketitle}
+%   The \cs{maketitle} command\ldots
+%    \begin{macrocode}
+\renewcommand{\maketitle}{%
+  \newgeometry{top=0.55in, bottom=1.18in,
+    left=0.55in, right=0.55in, footskip=20pt}%
+  \pagestyle{titlepage}%
+    \ifx\@titleimage\@empty
+    \ClassWarningNoLine{amnestyreport}{You did not define the title
+      image}%
+    \else
+    \includegraphics[width=18.17cm]{\@titleimage}\par
+    \fi
+    \ifx\@title\@empty\else
+    {\condensed\bfseries\fontsize{48pt}{48pt}\selectfont
+      \hl{\MakeUppercase{\@title}}\par}%
+    \fi
+    \ifx\@subtitle\@empty\else
+    {\condensed\fontsize{22pt}{22pt}\selectfont
+      \MakeUppercase{\@subtitle}\par}%
+    \fi
+    \clearpage
+      \thispagestyle{backtitlepage}%
+    {\condensed\bfseries\fontsize{22pt}{22pt}\selectfont
+      \hl{Amnesty International is a movement of 10 million people  
+ which mobilizes the humanity in everyone and campaigns  
+ for change so we can all enjoy our human rights. Our vision  
+ is of a world where those in power keep their promises,  
+ respect international law and are held to account. We are 
+ independent of any government, political ideology, economic 
+ interest or religion and are funded mainly by our  membership 
+ and individual donations. We believe that acting in solidarity 
+ and compassion with people everywhere can change our 
+ societies for the better.}\par}
+\vfill
+\parbox[t]{0.48\textwidth}{\condensed\footnotesize
+  \textcopyright~Amnesty International~\@copyrightyear
+
+Except where otherwise noted, content in this document is licensed
+under a Creative Commons (attribution, non-commercial, no derivatives,
+international 4.0) licence. 
+\url{https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode}.
+
+For more information please visit the permissions page on our website:
+\href{https://www.amnesty.org}{www.amnesty.org}.
+
+Where material is attributed to a copyright owner other than Amnesty International this 
+material is not subject to the Creative Commons licence.
+
+First published in \@firstpublicationyear\\
+by Amnesty International Ltd\\
+Peter Benenson House, 1 Easton Street\\
+London WC1X 0DW, UK}\hfill
+\parbox[t]{0.48\textwidth}{\condensed\footnotesize
+  \ifx\@titleimagecaption\@empty\else
+  $\leftarrow$\faEye[regular] \raggedright\itshape\textbf{Cover photo:} \@titleimagecaption\fi}
+\restoregeometry
+\pagestyle{empty}}
+     
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%\subsection{Main matter}
+%\label{sec:mainmatter}
+%
+% \begin{macro}{\mainmatter}
+% THe main matter
+\newcommand\mainmatter{\cleardoublepage
+  \pagestyle{main}%
+}
+% \end{macro}
+% 
+%
+%\subsection{Page styles}
+%\label{sec:page_styles}
+%
+% \begin{macro}{\amnesty@logo@graphics}
+% \changes{v1.1}{2023/11/28}{Introduced macro}
+% Either AI logo or a strut
+%    \begin{macrocode}
+\def\amnesty@logo@graphics{%
+  \ifamnesty@logo
+    \includegraphics[height=0.5in]{Amnesty_logo}%
+  \else
+    \rule{0pt}{0.5in}%
+  \fi}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\RequirePackage{fancyhdr}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{titlepage}{%
+  \fancyhf{}%
+  \fancyfoot[R]{\raisebox{-\height}{\amnesty@logo@graphics}}%
+}
+\fancypagestyle{backtitlepage}{%
+  \fancyhf{}%
+  \fancyfoot[L]{\bfseries Index: \@reportindex\\
+    Original language: English\\
+    \large\href{https://amnesty.org}{amnesty.org}}%
+  \fancyfoot[R]{\raisebox{-\height}{\amnesty@logo@graphics}}%
+}
+\fancypagestyle{main}{%
+  \fancyhf{}%
+  \fancyfoot[L]{\condensed\footnotesize\textbf{\MakeUppercase{\@title}}\par
+    \ifx\@subtitle\@empty\else\condensed\MakeUppercase{\@subtitle}\par\fi
+    Amnesty International
+  }%
+  \fancyfoot[R]{\normalsize\normalfont\thepage\hspace{1in}}%
+}
+\fancypagestyle{backcoverpage}{%
+  \fancyhf{}%
+  \fancyfoot[L]{\normalsize\normalfont
+      INDEX: \mbox{\@reportindex}\\
+    \MakeUppercase{\@reportmonth~\@reportyear}\\
+    LANGUAGE: ENGLISH\\
+    \LARGE\bfseries\href{https://amnesty.org}{amnesty.org}}%
+  \fancyfoot[R]{\raisebox{-\height}{\amnesty@logo@graphics}\hspace{1in}}%
+}
+%    \end{macrocode}
+%
+%
+%
+%\subsection{Sectioning}
+%\label{sec:sectioning}
+%
+% \begin{macro}{\section}
+% The section
+%    \begin{macrocode}
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+                                   {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                   {.5ex \@plus.2ex}%
+                                   {\condensed\fontsize{45pt}{45pt}\selectfont\bfseries\raggedright\MakeUppercase}} 
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\subsection}
+%   Subsection
+%    \begin{macrocode}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+                                     {-3.25ex\@plus -1ex \@minus -.2ex}%
+                                     {0.5ex \@plus .2ex}%
+                                     {\condensed\fontsize{21pt}{21pt}\selectfont\bfseries\raggedright\MakeUppercase}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\subsubsection}
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+                                     {-3.25ex\@plus -1ex \@minus -.2ex}%
+                                     {0.5ex \@plus .2ex}%
+                                     {\condensed\fontsize{16pt}{16pt}\selectfont\bfseries\raggedright\MakeUppercase}}
+% \end{macro}
+%
+% \begin{macro}{\paragraph}
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+                                    {3.25ex \@plus1ex \@minus.2ex}%
+                                    {1sp}%
+                                    {\condensed\fontsize{11pt}{11pt}\selectfont\bfseries\raggedright\MakeUppercase}}
+% \end{macro}
+%
+%
+%\subsection{Table of contents formatting}
+%\label{sec:toc}
+%
+% TOC formatting
+% \begin{macro}{\l@section}
+% Section formatting
+%    \begin{macrocode}
+\renewcommand*\l@section[2]{%
+  \ifnum \c@tocdepth >\z@
+    \addpenalty\@secpenalty
+    \addvspace{1.0em \@plus\p@}%
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \def\numberline##1{##1~}%
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \condensed\fontsize{11pt}{11pt}\selectfont\bfseries
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      \MakeUppercase{#1}\nobreak\hfil
+      \nobreak\hb@xt@\@pnumwidth{\hss #2%
+                                 \kern-\p@\kern\p@}\par
+    \endgroup
+  \fi}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l@subsection}
+% Subsection formatting
+%    \begin{macrocode}
+\renewcommand*\l@subsection[2]{%
+  \ifnum \c@tocdepth >1
+    \addvspace{0.5em \@plus\p@}%
+    \setlength\@tempdima{2em}%
+    \begingroup
+      \def\numberline##1{##1~}%
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \condensed\fontsize{10pt}{10pt}\selectfont
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      \MakeUppercase{#1}\nobreak\hfil
+      \nobreak\hb@xt@\@pnumwidth{\hss #2%
+                                 \kern-\p@\kern\p@}\par
+    \endgroup
+  \fi}
+%    \end{macrocode}
+% \end{macro}
+% 
+% \begin{macro}{\l@subsubsection}
+% Subsubsection formatting
+%    \begin{macrocode}
+\renewcommand*\l@subsubsection[2]{%
+  \ifnum \c@tocdepth >2
+    \addvspace{0.5em \@plus\p@}%
+    \setlength\@tempdima{2.5em}%
+    \begingroup
+      \def\numberline##1{##1~}%
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \condensed\fontsize{9pt}{9pt}\selectfont
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      \MakeUppercase{#1}\nobreak\hfil
+      \nobreak\hb@xt@\@pnumwidth{\hss #2%
+                                 \kern-\p@\kern\p@}\par
+    \endgroup
+  \fi}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%\subsection{Figures and tables}
+%\label{sec:floats}
+%
+% We use the caption package for the formatting
+%    \begin{macrocode}
+\RequirePackage[font=it]{caption}
+\DeclareCaptionLabelFormat{table}{$\downarrow$\faEye[regular]\itshape~
+  #1 #2}
+\DeclareCaptionLabelFormat{figure}{$\uparrow$\faEye[regular]\itshape~
+  #1 #2}
+\DeclareCaptionLabelFormat{side}{$\leftarrow$\faEye[regular]\itshape~
+  #1 #2}
+\captionsetup[table]{labelformat=table}
+\captionsetup[figure]{labelformat=figure}
+\captionsetup[SCfigure]{labelformat=side}
+\captionsetup[SCtable]{labelformat=side}
+\def\fps@figure{hb}
+\def\fps@table{hb}
+\def\fps@SCfigure{hb}
+\def\fps@SCtable{hb}
+%    \end{macrocode}
+%
+% \begin{macro}{\sideTableCaptions}
+% \changes{v1.2}{2024/01/14}{Added macro}
+% Switching to the sideways tables.
+%    \begin{macrocode}
+\let\table@AI@Orig\table
+\let\endtable@AI@Orig\endtable
+\def\sideTableCaptions{%
+  \def\table{\SCtable[50]}%
+  \def\endtable{\endSCtable}}
+%    \end{macrocode}
+% \end{macro}
+% 
+% \begin{macro}{\normalTableCaptions}
+% \changes{v1.2}{2024/01/14}{Added macro}
+% Switching to the normal tables.
+%    \begin{macrocode}
+\def\normalTableCaptions{%
+  \def\table{\table@AI@Orig}%
+  \def\endtable{\endtable@AI@Orig}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\if@AI@sideFigures}
+% \changes{v1.2}{2024/01/14}{Added macro}
+% Since the typesetting of photos depends on the typesetting of
+% figures, we need the switch
+%    \begin{macrocode}
+\newif\if@AI@sideFigures
+\@AI@sideFiguresfalse
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\sideFigureCaptions}
+% \changes{v1.2}{2024/01/14}{Added macro}
+% Switching to the sideways figures.
+%    \begin{macrocode}
+\let\figure@AI@Orig\figure
+\let\endfigure@AI@Orig\endfigure
+\def\sideFigureCaptions{%
+  \@AI@sideFigurestrue
+  \def\figure{\SCfigure[50]}%
+  \def\endfigure{\endSCfigure}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\normalFigureCaptions}
+% \changes{v1.2}{2024/01/14}{Added macro}
+% Switching to the normal figures.
+%    \begin{macrocode}
+\def\normalFigureCaptions{%
+  \@AI@sideFiguresfalse
+  \def\figure{\figure@AI@Orig}%
+  \def\endfigure{\endfigure@AI@Orig}}
+%    \end{macrocode}
+% \end{macro}
+%
+%\subsection{Footnotes}
+%\label{sec:footnotes}
+%
+% \begin{macro}{\@makefntext}
+% Our footnotes are not indented
+%    \begin{macrocode}
+\renewcommand\@makefntext[1]{%
+  \raggedright\parindent\z@\hangindent2em%
+  \noindent
+    \@makefnmark\,#1}
+%    \end{macrocode}
+% \end{macro}
+%
+%\subsection{Backmatter}
+%\label{sec:back}
+%
+% \begin{macro}{\backmatter}
+% The end of the report
+%    \begin{macrocode}
+\newcommand\backmatter{%
+  \cleardoublepage
+  \thispagestyle{empty}%
+  \setbox\@tempboxa\vbox{\hsize=5in\condensed\fontsize{40pt}{40pt}\selectfont\bfseries
+  AMNESTY INTERNATIONAL 
+  IS A GLOBAL MOVEMENT 
+  FOR HUMAN RIGHTS. 
+  WHEN INJUSTICE HAPPENS 
+  TO ONE PERSON, IT 
+  MATTERS TO US ALL.}%
+\textcolor{AmnestyYellow}{\rule{10pt}{\ht\@tempboxa}}\hspace{5pt}\box\@tempboxa
+\vfill
+
+\parbox[t]{0.45\textwidth}{\setlength{\parskip}{6pt}%
+  \condensed\fontsize{16pt}{16pt}\selectfont
+  CONTACT US
+
+\normalsize\normalfont
+\faEnvelope~\href{mailto:info@amnesty.org}{info@amnesty.org}
+
+\faPhone*~+44 (0)20 7413 5500}\hspace{0.05\textwidth}%
+\parbox[t]{0.45\textwidth}{\setlength{\parskip}{6pt}%
+  \condensed\fontsize{16pt}{16pt}\selectfont
+  JOIN THE CONVERSATION
+
+\normalsize\normalfont
+\faFacebook~\href{https://www.facebook.com/AmnestyGlobal}{www.facebook.com/AmnestyGlobal}
+
+\faTwitter~@Amnesty}\clearpage
+\thispagestyle{backcoverpage}%
+{\condensed\fontsize{28pt}{28pt}\bfseries\hl{\MakeUppercase{\@title}}\par}%
+\ifx\@subtitle\@empty\else
+{\condensed\fontsize{16pt}{16pt}\MakeUppercase{\@subtitle}\par}%
+\fi
+\bigskip
+\@blurb
+}
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%\subsection{Glossary}
+%\label{sec:glossary}
+%
+% Some packages for the glossary
+%    \begin{macrocode}
+\RequirePackage{longtable, booktabs}
+\newdimen\@tempdimAI
+%    \end{macrocode}
+%
+% \begin{macro}{\AmnestyGlossary}
+% \changes{v1.0}{2023/10/15}{Added macro}
+% Now glossary.
+%    \begin{macrocode}
+\newenvironment{AmnestyGlossary}[1][5em]{%
+  \clearpage
+  \section*{Glossary}
+  \bgroup
+  \setlength\extrarowheight{1pt}%
+  \rowcolors{1}{AmnestyGray1}{white}%
+  \setlength\@tempdimAI{\textwidth}%
+  \addtolength\@tempdimAI{-2\tabcolsep}%
+  \addtolength\@tempdimAI{-#1}%
+  \begin{longtable}{p{#1}<{\raggedright}p{\@tempdimAI}<{\raggedright}}}{%
+    \end{longtable}\egroup}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%\subsection{Lists}
+%\label{sec:lists}
+%
+% \begin{macro}{\quote}
+% \changes{v1.1}{2023/12/12}{Redefined macro}
+% Quotes have a special setup here.  This is just ``leftbar'' from
+% framed.sty 
+%    \begin{macrocode}
+\renewenvironment{quote}{%
+  \def\FrameCommand{\vrule width 6pt \hspace{10pt}}%
+  \MakeFramed {\advance\hsize-\width \FrameRestore}%
+  \vskip0pt\Huge\bfseries\condensed\raggedright\strut\relax}%
+{\strut\vskip5pt\endMakeFramed}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\attribution}
+% \changes{v1.1}{2023/12/12}{Introduced macro}
+% Attribution for quotations
+%    \begin{macrocode}
+\def\attribution#1{\par\normalfont\mdseries\normalsize\raggedright #1}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tightlist}
+% \changes{v1.2}{2024/01/12}{Introduced macro}
+% Pandoc defines `tightlist`, which it uses for |*|-defined lists
+%    \begin{macrocode}
+\def\tightlist{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+%    \end{macrocode}
+% \end{macro}
+%
+%\subsection{End of Class}
+%\label{end}
+%
+%
+%    \begin{macrocode}
+\normalsize\normalfont\raggedright
+\frontmatter
+%</class>
+%    \end{macrocode}
+%
+%\Finale
+%\clearpage
+%
+%\PrintChanges
+%\clearpage
+%\PrintIndex
+%
+\endinput

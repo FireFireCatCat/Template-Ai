@@ -1,0 +1,129 @@
+%!TEX root = ../thesis.tex
+%*******************************************************************************
+%****************************** Second Chapter *********************************
+%*******************************************************************************
+
+\chapter{My second chapter}
+\label{ch:my-second-chapter}
+
+\ifpdf
+    \graphicspath{{Chapter2/Figs/Raster/}{Chapter2/Figs/PDF/}{Chapter2/Figs/}}
+\else
+    \graphicspath{{Chapter2/Figs/Vector/}{Chapter2/Figs/}}
+\fi
+
+
+\section[Short title]{Reasonably long section title}
+
+% Uncomment this line, when you have siunitx package loaded.
+%The SI Units for dynamic viscosity is \si{\newton\second\per\metre\squared}.
+I'm going to randomly include a picture Figure~\ref{fig:minion}.
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[width=1.0\textwidth]{PlaceholderC}
+\caption[Placeholder figure]{This is just a long figure caption for a placeholder figure, to show how a long caption wraps}
+\label{fig:minion}
+\end{figure}
+
+
+\section*{Enumeration}
+LaTeX gives you three standard ways to lay out a list: numbered
+(\texttt{enumerate}), bulleted (\texttt{itemize}), and labelled
+(\texttt{description}). Each nests inside the others, so a numbered list
+can contain a bulleted sub-list and vice versa, and the numbering or
+bullet style at each nesting level changes automatically to keep the
+levels visually distinct.
+
+Which one to use is mostly a matter of what the list means: use
+\texttt{enumerate} when the order or count of items matters (steps in a
+procedure, ranked results), \texttt{itemize} when it does not (a set of
+related observations), and \texttt{description} when each item needs a
+short label of its own (terms and their definitions). The three examples
+below show a two-level list of each kind.
+\begin{enumerate}
+\item The first topic is dull
+\item The second topic is duller
+\begin{enumerate}
+\item The first subtopic is silly
+\item The second subtopic is stupid
+\end{enumerate}
+\item The third topic is the dullest
+\end{enumerate}
+Morbi bibendum est aliquam, hendrerit dolor ac, pretium sem. Nunc molestie, dui in euismod finibus, nunc enim viverra enim, eu mattis mi metus id libero. Cras sed accumsan justo, ut volutpat ipsum. Nam faucibus auctor molestie. Morbi sit amet eros a justo pretium aliquet. Maecenas tempor risus sit amet tincidunt tincidunt. Curabitur dapibus gravida gravida. Vivamus porta ullamcorper nisi eu molestie. Ut pretium nisl eu facilisis tempor. Nulla rutrum tincidunt justo, id placerat lacus laoreet et. Sed cursus lobortis vehicula. Donec sed tortor et est cursus pellentesque sit amet sed velit. Proin efficitur posuere felis, porta auctor nunc. Etiam non porta risus. Pellentesque lacinia eros at ante iaculis, sed aliquet ipsum volutpat. Suspendisse potenti.
+
+Ut ultrices lectus sed sagittis varius. Nulla facilisi. Nullam tortor sem, placerat nec condimentum eu, tristique eget ex. Nullam pretium tellus ut nibh accumsan elementum. Aliquam posuere gravida tellus, id imperdiet nulla rutrum imperdiet. Nulla pretium ullamcorper quam, non iaculis orci consectetur eget. Curabitur non laoreet nisl. Maecenas lacinia, lorem vel tincidunt cursus, odio lorem aliquet est, gravida auctor arcu urna id enim. Morbi accumsan bibendum ipsum, ut maximus dui placerat vitae. Nullam pretium ac tortor nec venenatis. Nunc non aliquet neque. 
+
+\section*{Itemize}
+\begin{itemize}
+\item The first topic is dull
+\item The second topic is duller
+\begin{itemize}
+\item The first subtopic is silly
+\item The second subtopic is stupid
+\end{itemize}
+\item The third topic is the dullest
+\end{itemize}
+
+\section*{Description}
+\begin{description}
+\item[The first topic] is dull
+\item[The second topic] is duller
+\begin{description}
+\item[The first subtopic] is silly
+\item[The second subtopic] is stupid
+\end{description}
+\item[The third topic] is the dullest
+\end{description}
+
+
+\clearpage
+
+\tochide\section{Hidden section}
+\textbf{A section can be hidden from the table of contents} while
+remaining a normal, numbered section in the body text, using the
+\texttt{\textbackslash tochide} command shown above. This is useful for
+short, purely organisational headings -- a "Notes on notation" aside, or
+a one-off worked example -- that would otherwise clutter the contents
+page without helping a reader navigate the thesis. The section number
+and cross-references to it still work exactly as normal; only the
+contents-page entry is suppressed.
+
+A footnote is added with \texttt{\textbackslash footnote\{...\}} right
+after the word or sentence it applies to\footnote{Like this one -- it
+prints at the bottom of the current page, numbered automatically, and
+renumbers itself if you add or remove an earlier footnote.}. Keep
+footnotes short: a citation, a brief aside, or a definition. Anything
+longer usually belongs in the main text or an appendix instead, since a
+long footnote breaks the reader's flow more than it helps.
+
+
+\begin{landscape}
+
+\section*{Subplots}
+I can cite one placeholder (see Fig.~\ref{fig:WallE}) and another (Fig.~\ref{fig:Minnion}) or I can cite the whole figure as Fig.~\ref{fig:animations}
+
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{PlaceholderB}
+    \caption{Placeholder A}
+    \label{fig:TomJerry}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{PlaceholderA}
+    \caption{Placeholder B}
+    \label{fig:WallE}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{PlaceholderC}
+    \caption{Placeholder C}
+    \label{fig:Minnion}
+  \end{subfigure}
+  \caption{Placeholder Figures}
+  \label{fig:animations}
+\end{figure}
+
+
+\end{landscape}

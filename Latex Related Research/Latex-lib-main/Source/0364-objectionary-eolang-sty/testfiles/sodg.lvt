@@ -1,0 +1,84 @@
+% SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
+% SPDX-License-Identifier: MIT
+
+\input{regression-test.tex}
+\documentclass{article}
+\usepackage{eolang}
+\begin{document}
+
+\START
+\showboxbreadth=-1
+\showboxdepth=-1
+
+\input{sodg-cache.tex}
+\sodgSaveTo{cached-sodg.tex}
+\input{sodg-cache.tex}
+\begin{tabular}{l}
+\vbox{\input{cached-sodg.tex}} \\
+\end{tabular}
+
+\sodgSaveTo{a.tex}
+\begin{sodg}
+v0
+v1 xy:v0,1,1
+\end{sodg}
+\begin{tabular}{l}
+\vbox{\input{a.tex}} \\
+\end{tabular}
+
+\begin{sodg}
+v0
+v1 xy:v0,1,1
+v0->v1
+v0+a xy:v0,2,2
+v2a xy:v1a,3,3
+v0a+b xy:v0,4,4
+v3b xy:v2b,5,5
+\end{sodg}
+
+\begin{sodg}
+v0
+v1 xy:v0,.7,1
+v0->v1
+v0+a xy:v0,1,1
+v2a xy:v1a,1,1
+v2a->v1a
+v0a+b xy:v0,1,1
+v3b xy:v1b,1,1
+v3b->v1b
+\end{sodg}
+
+\begin{sodg}
+% start comment
+v0 \\ v0!A
+v1 xy:v0,-.5,+1 data:|42|
+v0->v1 a:$x$ rho
+v2 xy:v0,1,+1 atom:$\xi.x+1$
+v1->v2 a:|hi| bend:-15
+% second graph
+===>v2
+v2->v0 pi bend:10
+v1=>
+v3 xy:v0,.5,+.2 tag:v_{3_i}
+v0=>v3
+v2->v3 a:\varphi
+v3->v0 break:45 a:q
+v3->v2 break:35 a:t
+
+v0+a xy:v0,4,2
+
+v3a xy:v0a,1,1
+v5a xy:v3a,0,4
+v5a->v0a a:x'
+v6a xy:v5a,1,1
+v6a->v5a a:\psi{}
+
+v0a+b xy:v0a,10,6
+v0b=>
+v1b xy:v0b,1,1
+v0b->v1b a:\sigma
+% end comment
+\end{sodg}
+
+\end{document}
+\END

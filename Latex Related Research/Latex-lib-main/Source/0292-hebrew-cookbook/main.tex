@@ -1,0 +1,31 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[margin=20mm]{geometry}
+\usepackage{fontspec}
+\setmainfont{FreeSerif}
+\usepackage{polyglossia}
+\setmainlanguage{english}\setotherlanguage{hebrew}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\definecolor{olive}{HTML}{6D7041}\definecolor{pomegranate}{HTML}{A63D40}
+\pagestyle{empty}\setlist{nosep,leftmargin=*}
+\setlength{\emergencystretch}{3em}
+\sloppy
+% XeTeX's bidi shaping reports the Hebrew cell's natural-width adjustment as
+% an 18pt box overrun even though the rendered glyphs stay inside the table.
+\hfuzz=20pt
+\newcommand{\dish}[3]{\noindent\textcolor{pomegranate}{\rule{\linewidth}{1pt}}\par
+  {\Large\bfseries #1}\hfill\textcolor{olive}{#2}\par\smallskip
+  \begin{tabularx}{\linewidth}{@{}p{0.34\linewidth}X@{}}
+    \textbf{מצרכים}\\[-1pt]\textbf{Ingredients} & \textbf{הכנה}\\[-1pt]\textbf{Method}\tabularnewline[2pt]
+    \begin{minipage}[t]{\linewidth}#3\end{minipage} & \begin{minipage}[t]{\linewidth}Mix, cook gently, and taste before serving. Add fresh herbs at the end.\end{minipage}
+  \end{tabularx}\par\medskip}
+\begin{document}
+\begin{center}{\Huge\bfseries\color{pomegranate} טעמים של הבית}\par\vspace{2mm}{\Large Flavours of Home}\par\smallskip\textcolor{olive}{A bilingual family cookbook starter}\end{center}
+\bigskip
+\dish{סלט עשבי תיבול}{Serves 4}{%
+  tomatoes\\cucumber\\parsley and mint\\olive oil\\lemon and salt}
+\dish{מרק עדשים}{Serves 4}{%
+  red lentils\\onion and carrot\\vegetable stock\\cumin\\lemon}
+\begin{center}\small\textit{Replace these bilingual headings and ingredient lists with your own family recipes.}\end{center}
+\end{document}

@@ -1,0 +1,99 @@
+\documentclass[a5paper,10pt,idxtotoc]{labbook}
+% A5, small pocket-notebook trim size for a bench book that travels with you
+% between instruments, as opposed to a full-page desk notebook.
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage[margin=1.6cm]{geometry}
+
+\newexperiment{calib}{Oscilloscope probe calibration}
+\newexperiment{filter}{Low-pass filter characterisation}
+\newexperiment{amp}{Op-amp gain stage}
+
+\title{Bench Notebook --- Analogue Filter Board}
+\author{R.\ Voss}
+\date{Notebook 3}
+
+\begin{document}
+
+\frontmatter
+\title{Bench Notebook --- Analogue Filter Board}
+\author{R.\ Voss}
+\date{Notebook 3}
+\maketitle
+\printindex
+\tableofcontents
+
+\mainmatter
+
+\labday{9 June}
+
+\experiment{calib}
+Compensated both scope probes against the built-in 1\,kHz square wave before
+starting: probe~1 needed a small trim (slightly overcompensated out of the
+box), probe~2 was fine as received.
+
+\experiment{filter}
+Built the first-pass RC low-pass on the breadboard: R = 1.6\,k$\Omega$,
+C = 100\,nF, giving a calculated corner of
+
+\[
+  f_c = \frac{1}{2\pi RC} \approx 995\text{ Hz}.
+\]
+
+Swept the input from 100\,Hz to 10\,kHz at 1\,V\textsubscript{pp} and logged
+the output amplitude:
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{rr}
+    \toprule
+    Freq. (Hz) & Output (V\textsubscript{pp}) \\
+    \midrule
+    100  & 0.99 \\
+    500  & 0.94 \\
+    1000 & 0.70 \\
+    2000 & 0.44 \\
+    5000 & 0.19 \\
+    10000 & 0.10 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Filter sweep, first breadboard pass}
+\end{table}
+
+Measured corner (--3\,dB point, $0.707\,V_{pp}$) lands close to 1\,kHz,
+consistent with the calculated value.
+
+\labday{10 June}
+
+\experiment{amp}
+Added the op-amp gain stage after the filter. Target gain 10 V/V using
+R\textsubscript{f} = 10\,k$\Omega$, R\textsubscript{g} = 1\,k$\Omega$ in a
+non-inverting configuration.
+
+Measured DC offset at the output with no input: 4\,mV, well within spec for
+this part. Gain measured at 1\,kHz: 9.7 V/V, close enough to the 10 V/V
+target that the 1\% resistor tolerance accounts for the gap.
+
+\experiment{filter}
+Re-ran the sweep with the amplifier stage in place to check for interaction
+between the two stages. Corner frequency unchanged; the amplifier's input
+impedance is high enough not to load the filter.
+
+\textit{Follow-up:} move from breadboard to a soldered prototype before the
+next set of measurements --- breadboard parasitic capacitance may be
+softening the roll-off above 5\,kHz.
+
+\labday{12 June}
+
+\experiment{amp}
+Soldered prototype on stripboard. Re-measured gain: 9.8 V/V, DC offset
+3\,mV. Noise floor visibly lower than the breadboard version on the scope.
+
+\experiment{calib}
+Probe~1 drifted slightly since the 9th; re-trimmed compensation before
+today's measurements.
+
+\end{document}

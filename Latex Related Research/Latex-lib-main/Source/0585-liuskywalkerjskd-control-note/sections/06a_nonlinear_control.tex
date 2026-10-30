@@ -1,0 +1,507 @@
+%=============================================================================
+\section{Nonlinear Control Basics}
+%=============================================================================
+
+LQR and MPC from the previous chapter are powerful, but they rest on a linear model. What happens when your robot operates far from the equilibrium point? An inverted pendulum near the upright position is approximately linear---but during swing-up, the $\sin(\theta)$ nonlinearity dominates and linear methods fail completely. This chapter gives you the tools to handle nonlinearity directly.
+
+We will build up four techniques---feedback linearization, sliding mode control, gain scheduling, and Lyapunov-based design---and then show how they combine in a real swing-up-to-stabilization controller. The math is heavier than PID tuning, but the payoff is enormous: these methods let you control systems that linear theory simply cannot touch.
+
+You do not need to master all four methods. Understanding the \textit{idea} behind each one---and knowing when to reach for which---is more valuable than memorizing every derivation. That said, we will work through the derivations where they illuminate the design, because ``plug in the formula'' is not enough when something goes wrong at 2 AM before a competition.
+
+%-----------------------------------------------------------------------------
+\subsection{Why Linear Methods Fail}
+%-----------------------------------------------------------------------------
+
+Every linear controller you have seen so far relies on the same trick: approximate a nonlinear system by its Jacobian at an operating point, then design a controller for the resulting linear model. This is \textit{linearization}, and it works beautifully---as long as you stay close to that operating point.
+
+Consider the inverted pendulum. Its full dynamics are:
+\begin{equation}
+ml^2 \ddot{\theta} + mgl\sin(\theta) = \tau
+\end{equation}
+
+Near the upright equilibrium ($\theta = \pi$, $\dot{\theta} = 0$), we can write $\theta = \pi + \delta$ with $\delta$ small. Then $\sin(\theta) = \sin(\pi + \delta) = -\sin(\delta) \approx -\delta$, and the linearized dynamics become $ml^2 \ddot{\delta} - mgl\delta = \tau$---a linear system. LQR can stabilize this easily.
+
+But the phase portrait tells the full story. The pendulum has two equilibria: the \textbf{hanging position} ($\theta = 0$) which is stable (a center in the conservative case, a stable node with damping), and the \textbf{upright position} ($\theta = \pi$) which is unstable (a saddle point). Between them, \textbf{separatrices} divide the phase plane into regions with qualitatively different behavior.
+
+To visualize this, plot $\dot{\theta}$ versus $\theta$. Near $\theta = \pi$, the trajectories form closed orbits (for the uncontrolled, undamped case) that correspond to the pendulum oscillating near the top. The separatrices are the trajectories that pass through the saddle point with exactly zero velocity---they separate swinging motions from full rotations. Linear LQR designs a controller valid inside a small neighborhood of $(\theta = \pi, \dot{\theta} = 0)$, but this neighborhood is bounded by the separatrices.
+
+Inside the basin of attraction around $\theta = \pi$, LQR works. Outside it, the controller demands impossible torques, or simply cannot swing the pendulum up---the linearized model predicts behavior that has nothing to do with reality.
+
+The key insight: \textit{linear control is a special case of nonlinear control, not the other way around}. Every real system is nonlinear; linear models are convenient local approximations. When you need global behavior---swing-up, large maneuvers, operation across a wide range---you need nonlinear tools.
+
+How far ``from the equilibrium'' can you go before linear control breaks down? There is no universal answer; it depends on the system. For the pendulum, linearization is reasonable within about $\pm 15°$ of the upright position. For a wheeled robot driving straight, the linear model can be valid over a large speed range because the nonlinearities (tire slip, aerodynamic drag) grow slowly. The phase portrait and simulation are your best friends for answering this question in practice.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{phase_portrait_pendulum.pdf}
+  \caption{Phase portrait of the inverted pendulum (with light damping). The hanging position ($\theta = 0$) is a stable node (green circle); the upright position ($\theta = \pi$) is an unstable saddle (red square). Dashed lines are separatrices---the boundary between oscillation and rotation. The blue shaded region near $\theta = \pi$ is where linearization is valid and LQR works. Outside it, nonlinear tools are needed.}
+\end{figure}
+
+%-----------------------------------------------------------------------------
+\subsection{Feedback Linearization}
+%-----------------------------------------------------------------------------
+
+\subsubsection{The Idea: Cancel the Nonlinearity}
+
+The first tool in our nonlinear toolkit is conceptually the simplest: if you know the nonlinearity, just cancel it.
+
+Suppose your system has the \textbf{input-affine} form:
+\begin{equation}
+\ddot{x} = f(x, \dot{x}) + g(x)\,u
+\end{equation}
+where $f$ captures the nonlinear drift dynamics and $g$ is the input coupling. Many mechanical systems fit this form: the nonlinear terms (gravity, Coriolis, centrifugal forces) enter through $f$, and the actuator input enters multiplicatively through $g$. The idea is breathtakingly simple: choose the control input $u$ to \textit{cancel} the nonlinearity and replace it with whatever linear dynamics you want.
+
+Set:
+\begin{equation}
+u = \frac{v - f(x, \dot{x})}{g(x)}
+\end{equation}
+where $v$ is a new ``virtual input'' that we are free to design. Substituting:
+\begin{equation}
+\ddot{x} = f(x, \dot{x}) + g(x) \cdot \frac{v - f(x, \dot{x})}{g(x)} = v
+\end{equation}
+
+The nonlinearity is gone. The system is now a pure \textbf{double integrator}: $\ddot{x} = v$. You can apply any linear controller to design $v$---PD, LQR, pole placement, whatever you like.
+
+This is \textit{exact} linearization, not an approximation. We have not dropped higher-order terms or assumed small deviations. The cancellation is algebraically perfect (assuming the model is perfect). Two conditions must hold:
+\begin{enumerate}[nosep]
+    \item The functions $f(x, \dot{x})$ and $g(x)$ must be \textbf{known} accurately.
+    \item The input coupling $g(x) \neq 0$ everywhere in the operating region (otherwise we divide by zero).
+\end{enumerate}
+
+\textbf{Comparison with Jacobian linearization.} Jacobian linearization approximates $f$ and $g$ by constants at one point and throws away higher-order terms; the result is only valid locally. Feedback linearization uses the \textit{full} nonlinear $f$ and $g$ in the control law, so the cancellation holds globally (wherever $g \neq 0$). The price is that you must know $f$ and $g$ everywhere, not just at one point.
+
+\textbf{MIMO extension (input-output linearization).} For multi-input systems $\dot{\mathbf{x}} = \mathbf{f}(\mathbf{x}) + G(\mathbf{x})\mathbf{u}$, the idea is the same but the algebra involves Lie derivatives. You differentiate each output until the input appears, stack the results into a matrix equation, and invert. The key concept is \textit{relative degree}: the number of times you must differentiate an output before the input explicitly appears. If the total relative degree equals the system order, the system is \textit{fully} feedback linearizable. If not, there are internal dynamics that remain nonlinear---you must verify that these ``zero dynamics'' are stable (this is the nonlinear analogue of minimum-phase). For competition robots, SISO feedback linearization covers most cases.
+
+\subsubsection{Example: Inverted Pendulum Swing-Up}
+
+Return to the inverted pendulum:
+\begin{equation}
+ml^2 \ddot{\theta} + mgl\sin(\theta) = \tau
+\end{equation}
+
+Rewrite as $\ddot{\theta} = -\frac{g}{l}\sin(\theta) + \frac{1}{ml^2}\tau$. Here $f(\theta) = -\frac{g}{l}\sin(\theta)$ and $g = \frac{1}{ml^2}$.
+
+Choose the feedback linearizing control:
+\begin{equation}
+\tau = mgl\sin(\theta) + ml^2 v
+\end{equation}
+
+The first term cancels the gravity nonlinearity; the second injects the virtual input. The result:
+\begin{equation}
+\ddot{\theta} = -\frac{g}{l}\sin(\theta) + \frac{1}{ml^2}\bigl(mgl\sin(\theta) + ml^2 v\bigr) = v
+\end{equation}
+
+Pure double integrator. Now design $v$ with PD control to drive $\theta \to \pi$ (upright):
+\begin{equation}
+v = -K_p(\theta - \pi) - K_d \dot{\theta}
+\end{equation}
+
+The closed-loop becomes $\ddot{\theta} + K_d \dot{\theta} + K_p(\theta - \pi) = 0$, a stable second-order linear system with natural frequency $\omega_n = \sqrt{K_p}$ and damping ratio $\zeta = K_d / (2\sqrt{K_p})$. Choose $K_p$ and $K_d$ to place the poles wherever you want---the same design freedom as any linear second-order system.
+
+Here is a minimal Python implementation:
+
+\begin{verbatim}
+import numpy as np
+
+def feedback_linearization_controller(theta, theta_dot,
+                                       m, l, g,
+                                       Kp, Kd, theta_ref=np.pi):
+    """Feedback linearizing controller for inverted pendulum."""
+    # Cancel nonlinearity + inject virtual input
+    v = -Kp * (theta - theta_ref) - Kd * theta_dot
+    tau = m * g * l * np.sin(theta) + m * l**2 * v
+    return tau
+\end{verbatim}
+
+\textbf{The catch:} this requires knowing $m$, $l$, and $g$ exactly. If your model says $m = 0.5$ kg but the real mass is $0.55$ kg, the $\sin(\theta)$ term is not perfectly cancelled. A 10\% mass error leaves a 10\% residual nonlinearity that the PD outer loop must handle---and it was not designed for nonlinear disturbances.
+
+To see this explicitly: if the true mass is $\hat{m} = m + \Delta m$, the actual closed-loop dynamics become $\ddot{\theta} = v + \frac{\Delta m}{m} \frac{g}{l}\sin(\theta)$---the residual term grows with the modeling error. For well-characterized systems (carefully measured pendulum in a lab), $\Delta m / m$ is small and the PD loop can absorb it. For a competition robot with unknown payload? Dangerous.
+
+\subsubsection{Limitations}
+
+Feedback linearization is elegant, but it has real weaknesses:
+
+\begin{itemize}[nosep]
+    \item \textbf{Model sensitivity.} Imperfect cancellation leaves residual nonlinear dynamics that the linear outer loop was not designed to handle.
+    \item \textbf{Singularities.} When $g(x) \to 0$, the required control effort $u \to \infty$. For the pendulum, $g$ is constant, so this is not an issue. But for robotic arms near kinematic singularities, it is a showstopper.
+    \item \textbf{No inherent robustness.} Unmodeled dynamics (friction, flexibility, backlash) reappear as disturbances that the controller does not anticipate.
+    \item \textbf{Full state measurement.} The controller needs to evaluate $f(x, \dot{x})$, which means you need to measure (or accurately estimate) the full state. If your state estimator is noisy, the noise feeds directly into the cancellation term and can excite high-frequency dynamics.
+\end{itemize}
+
+Feedback linearization is best for systems where you have a good model and want clean, predictable behavior. For unknown or poorly characterized systems, we need something fundamentally more robust.
+
+%-----------------------------------------------------------------------------
+\subsection{Sliding Mode Control}
+%-----------------------------------------------------------------------------
+
+\subsubsection{The Idea: Robustness Through Discontinuous Switching}
+
+Sliding mode control (SMC) takes a fundamentally different philosophy: instead of cancelling the nonlinearity, \textit{overpower it}. Do not try to model every detail of the disturbance---just know an upper bound on how bad it can be, and hit it harder than that. Design a controller that forces the system onto a chosen surface in state space, then keeps it there regardless of disturbances or model errors.
+
+The setup: define a \textbf{sliding surface} in state space---a manifold where the system has desirable dynamics. Then design a controller that (1) drives the state onto the surface, and (2) keeps it there. Disturbances and model errors cannot kick the state off the surface because the controller continuously corrects.
+
+For a second-order system tracking a reference $x_d(t)$, with error $e = x - x_d$, a natural choice of sliding surface is:
+\begin{equation}
+s = \dot{e} + \lambda e
+\end{equation}
+where $\lambda > 0$ is a design parameter. This is a line in the $(e, \dot{e})$ phase plane.
+
+\textbf{Why this surface?} On the surface ($s = 0$), the error dynamics become:
+\begin{equation}
+\dot{e} + \lambda e = 0 \quad \Longrightarrow \quad e(t) = e(0)\,e^{-\lambda t}
+\end{equation}
+
+The error decays exponentially to zero with time constant $1/\lambda$. These dynamics are \textbf{independent} of the plant model, disturbances, or parameter variations. Once you are on the surface, convergence is guaranteed by a simple first-order ODE.
+
+The control design has two parts:
+\begin{enumerate}
+    \item \textbf{Reaching phase:} Drive the state to the sliding surface in finite time.
+    \item \textbf{Sliding phase:} Keep the state on the surface; the reduced-order dynamics handle the rest.
+\end{enumerate}
+
+For the reaching phase, we need the \textbf{reaching condition}:
+\begin{equation}
+s\,\dot{s} < -\eta\,|s|, \quad \eta > 0
+\end{equation}
+
+This guarantees that $s$ decreases in magnitude regardless of its sign, reaching $s = 0$ in finite time $t_r \leq |s(0)|/\eta$.
+
+\subsubsection{Example: Velocity Control with Unknown Friction}
+
+Consider a motor driving an inertial load:
+\begin{equation}
+J\,\dot{\omega} = \tau - d(t)
+\end{equation}
+where $J$ is the moment of inertia, $\omega$ is the angular velocity, $\tau$ is the control torque, and $d(t)$ is an unknown time-varying friction/disturbance term bounded by $|d(t)| \leq D_{\max}$.
+
+We want to track a reference velocity $\omega_{\text{ref}}$. Define the sliding variable:
+\begin{equation}
+s = \omega - \omega_{\text{ref}}
+\end{equation}
+
+Differentiate: $\dot{s} = \dot{\omega} - \dot{\omega}_{\text{ref}} = \frac{1}{J}(\tau - d(t)) - \dot{\omega}_{\text{ref}}$.
+
+Choose the control law:
+\begin{equation}
+\tau = J\,\dot{\omega}_{\text{ref}} + K\,\mathrm{sign}(s), \quad K > D_{\max}
+\end{equation}
+
+Substituting:
+\begin{equation}
+\dot{s} = \frac{1}{J}\bigl(J\,\dot{\omega}_{\text{ref}} + K\,\mathrm{sign}(s) - d(t)\bigr) - \dot{\omega}_{\text{ref}} = \frac{K\,\mathrm{sign}(s) - d(t)}{J}
+\end{equation}
+
+Check the reaching condition:
+\begin{equation}
+s\,\dot{s} = \frac{s\bigl(K\,\mathrm{sign}(s) - d(t)\bigr)}{J} = \frac{K|s| - s\,d(t)}{J} \geq \frac{(K - D_{\max})|s|}{J} > 0
+\end{equation}
+
+Wait---we need $s\,\dot{s} < 0$ for convergence. Let us fix the sign: $\tau = J\,\dot{\omega}_{\text{ref}} - K\,\mathrm{sign}(s)$. Then:
+\begin{equation}
+s\,\dot{s} = \frac{-K|s| - s\,d(t)}{J} \leq \frac{-(K - D_{\max})|s|}{J} < 0
+\end{equation}
+
+Since $K > D_{\max}$, the reaching condition holds. The state converges to $s = 0$ in finite time, and once there, $\omega = \omega_{\text{ref}}$ exactly---regardless of the unknown friction $d(t)$. This is the power of sliding mode: robustness is \textit{structural}, not dependent on accurate modeling.
+
+\textbf{Phase plane interpretation.} In the $(s, \dot{s})$ phase plane, the sliding surface is the origin line $s = 0$. The reaching condition forces all trajectories to point toward this line, regardless of the disturbance. Once a trajectory hits $s = 0$, it stays there forever---sliding along the surface. The trajectories ``above'' the surface ($s > 0$) are pushed down; those ``below'' ($s < 0$) are pushed up. The result is a funnel that captures all trajectories in finite time.
+
+\textbf{Design parameter $\lambda$.} For higher-order systems (e.g., position tracking where both position error $e$ and velocity error $\dot{e}$ matter), the sliding surface $s = \dot{e} + \lambda e$ introduces one design choice: $\lambda$. A large $\lambda$ means fast convergence on the surface but requires the controller to be aggressive during the reaching phase. A small $\lambda$ gives gentle convergence but slow error decay. A good starting point: set $\lambda$ so that $1/\lambda$ equals the desired settling time on the surface.
+
+\subsubsection{The Chattering Problem}
+
+There is a price for this robustness. The $\mathrm{sign}(s)$ function switches infinitely fast as $s$ crosses zero. In theory, this is fine. In practice, it produces \textbf{chattering}---high-frequency oscillation in the control signal. This is not just annoying; it destroys actuators. Motor coils overheat, gears wear out, and mechanical structures vibrate.
+
+\textbf{Fix 1: Boundary layer.} Replace the discontinuous $\mathrm{sign}(s)$ with a continuous approximation:
+\begin{equation}
+\mathrm{sat}\!\left(\frac{s}{\Phi}\right) = \begin{cases} s/\Phi & \text{if } |s| \leq \Phi \\ \mathrm{sign}(s) & \text{if } |s| > \Phi \end{cases}
+\end{equation}
+where $\Phi > 0$ is the boundary layer width. Inside the layer $|s| < \Phi$, the control is proportional (smooth); outside, it is the original bang-bang. The tradeoff: larger $\Phi$ gives smoother control but allows a steady-state error of order $\Phi$. Smaller $\Phi$ gives better tracking but more chattering. In practice, you tune $\Phi$ to match the actuator bandwidth---there is no point switching faster than the motor can respond.
+
+\textbf{Fix 2: Super-twisting algorithm.} A second-order sliding mode controller that achieves $s = 0$ with a \textit{continuous} control signal:
+\begin{equation}
+u = -k_1 |s|^{1/2}\,\mathrm{sign}(s) + w, \qquad \dot{w} = -k_2\,\mathrm{sign}(s)
+\end{equation}
+
+The integral term $w$ builds up the control effort smoothly, eliminating the discontinuity from the applied torque while retaining finite-time convergence to the sliding surface. Sufficient conditions for convergence are $k_1 > 0$ and $k_2$ sufficiently large relative to the disturbance bound (the exact inequalities depend on the system; see Levant 1993 for the original proof). The super-twisting algorithm is the go-to choice when actuator health matters---which is always, in competition robotics.
+
+\textbf{Practical recommendation.} For most competition applications, start with the boundary layer approach (it is trivial to implement---just replace \texttt{sign(s)} with \texttt{s/max(abs(s), phi)} in code). If you find that tracking precision is insufficient, try the super-twisting algorithm. The extra integrator state is easy to add, and the improvement in control smoothness is dramatic.
+
+%-----------------------------------------------------------------------------
+\subsection{Gain Scheduling}
+%-----------------------------------------------------------------------------
+
+Sometimes the theoretically elegant approach is not the practical one. If your system is nonlinear but changes ``slowly'' with the operating point, you do not necessarily need the full machinery of feedback linearization or sliding mode. Gain scheduling is the engineer's pragmatic workaround: design multiple linear controllers, each tuned for a different operating point, and switch or interpolate between them based on the current state. It is the most widely used nonlinear control technique in industry---and often the least recognized as such.
+
+\textbf{Example: motor speed controller.} A DC motor behaves differently at low speed versus high speed:
+\begin{itemize}[nosep]
+    \item \textbf{Low speed:} Stiction (static friction) dominates. You need high gains to break free and maintain precise tracking.
+    \item \textbf{High speed:} Back-EMF provides natural damping. High gains cause overshoot and oscillation. Low gains suffice.
+\end{itemize}
+
+The simplest implementation is a lookup table:
+
+\begin{verbatim}
+// Gain scheduling lookup table (C)
+typedef struct { float speed; float Kp; float Ki; } GainEntry;
+
+static const GainEntry table[] = {
+    {   0.0f, 8.0f, 4.0f },   // low speed: high gains
+    { 500.0f, 5.0f, 2.5f },   // mid speed
+    {1000.0f, 2.0f, 1.0f },   // high speed: low gains
+};
+
+// Interpolate Kp, Ki based on current speed
+void get_gains(float speed, float *Kp, float *Ki) {
+    int i = 0;
+    while (i < 2 && speed > table[i+1].speed) i++;
+    float alpha = (speed - table[i].speed)
+                / (table[i+1].speed - table[i].speed);
+    if (alpha < 0.0f) alpha = 0.0f;
+    if (alpha > 1.0f) alpha = 1.0f;
+    *Kp = table[i].Kp + alpha * (table[i+1].Kp - table[i].Kp);
+    *Ki = table[i].Ki + alpha * (table[i+1].Ki - table[i].Ki);
+}
+\end{verbatim}
+
+\textbf{Advantages:}
+\begin{itemize}[nosep]
+    \item Simple to implement, easy to tune experimentally.
+    \item No new math---each operating point uses familiar PID or LQR.
+    \item Works well when the nonlinearity is ``slow'' (parameters change gradually).
+    \item Easy to verify: test each operating point independently.
+\end{itemize}
+
+\textbf{Disadvantages:}
+\begin{itemize}[nosep]
+    \item No formal stability guarantee during transitions between operating points. If the system moves faster than the gain schedule anticipates, transient instability is possible.
+    \item Requires extensive testing at many operating points. Miss one region and you have an untuned controller lurking in your state space.
+    \item Does not handle fast, coupled nonlinearities well.
+    \item The interpolation between gain sets can produce unexpected behavior if the gain surfaces are not smooth (e.g., a convex combination of two stable gain sets is not guaranteed to be stable).
+\end{itemize}
+
+Gain scheduling is the right tool when your system is ``mildly nonlinear''---the dynamics change with operating point, but smoothly and predictably. For violent nonlinearities (like swing-up), use the other methods in this chapter.
+
+\textbf{A practical note on implementation.} In competition robots, gain scheduling often appears informally: teams tune PID gains at low speed, find they oscillate at high speed, reduce the gains for high speed, and glue the two together with an \texttt{if} statement. This \textit{is} gain scheduling---just without the fancy name. Making it systematic (a proper lookup table with interpolation, tested at intermediate points) costs little effort and prevents the ``weird behavior at 60\% speed'' problems that plague ad-hoc approaches.
+
+%-----------------------------------------------------------------------------
+\subsection{Lyapunov-Based Design}
+%-----------------------------------------------------------------------------
+
+\subsubsection{Energy Shaping for Swing-Up}
+
+The most beautiful approach to nonlinear control is to think in terms of \textbf{energy}. Instead of cancelling nonlinearities or overpowering disturbances, reshape the system's energy landscape so that the desired state is the natural energy minimum. This is Lyapunov-based design: find a scalar ``energy-like'' function, and design the controller to make it always decrease. If you can do that, stability follows automatically---no linearization, no switching, no gain tables.
+
+For the inverted pendulum, this approach is particularly natural because the system already has a well-defined energy function. The inverted pendulum has a total energy (kinetic plus potential):
+\begin{equation}
+E = \frac{1}{2}ml^2\dot{\theta}^2 - mgl\cos(\theta)
+\end{equation}
+
+At the hanging position ($\theta = 0$, $\dot{\theta} = 0$): $E_{\text{hang}} = -mgl$.
+
+At the upright position ($\theta = \pi$, $\dot{\theta} = 0$): $E_{\text{up}} = mgl$.
+
+The goal is to pump energy into the system until $E = E_{\text{up}} = mgl$, then hold it there. Define the energy error:
+\begin{equation}
+\tilde{E} = E - E_{\text{up}} = \frac{1}{2}ml^2\dot{\theta}^2 - mgl\cos(\theta) - mgl
+\end{equation}
+
+\textbf{Lyapunov function:} Choose $V = \frac{1}{2}\tilde{E}^2 \geq 0$. This is zero only when $E = E_{\text{up}}$, which is exactly what we want.
+
+Differentiate:
+\begin{equation}
+\dot{V} = \tilde{E}\,\dot{E}
+\end{equation}
+
+The time derivative of energy for the pendulum with torque input $\tau$ is:
+\begin{equation}
+\dot{E} = ml^2\dot{\theta}\ddot{\theta} + mgl\sin(\theta)\dot{\theta} = \dot{\theta}\bigl(ml^2\ddot{\theta} + mgl\sin(\theta)\bigr) = \dot{\theta}\,\tau
+\end{equation}
+
+So $\dot{V} = \tilde{E}\,\dot{\theta}\,\tau$. We need $\dot{V} \leq 0$ (Lyapunov stability requires the ``energy of the energy error'' to decrease). Choose:
+\begin{equation}
+\tau = k\,\tilde{E}\,\dot{\theta}\cos(\theta), \quad k > 0
+\end{equation}
+
+Then:
+\begin{equation}
+\dot{V} = \tilde{E}\,\dot{\theta}\,k\,\tilde{E}\,\dot{\theta}\cos(\theta) = k\,\tilde{E}^2\,\dot{\theta}^2\cos(\theta)
+\end{equation}
+
+Hmm---this is not always negative. The $\cos(\theta)$ factor changes sign. The standard fix is to use the unsigned version of energy pumping:
+\begin{equation}
+\tau = k\,\tilde{E}\,\dot{\theta}
+\end{equation}
+
+Then $\dot{V} = k\,\tilde{E}^2\,\dot{\theta}^2 \geq 0$---wait, that is non-negative, not non-positive. We need to be more careful. Let us revisit: we want $\tilde{E} \to 0$, so define:
+
+\begin{equation}
+\tau = -k\,\tilde{E}\,\dot{\theta}, \quad k > 0
+\end{equation}
+
+Now $\dot{V} = \tilde{E}\,\dot{\theta}\,(-k\,\tilde{E}\,\dot{\theta}) = -k\,\tilde{E}^2\,\dot{\theta}^2 \leq 0$.
+
+This is \textit{negative semidefinite}---it equals zero when $\dot{\theta} = 0$ or $\tilde{E} = 0$. By LaSalle's invariance principle, the system converges to the largest invariant set where $\dot{V} = 0$. The set $\{\dot{\theta} = 0\}$ includes the upright equilibrium ($\theta = \pi$) and the hanging equilibrium ($\theta = 0$), but the hanging equilibrium has $\tilde{E} \neq 0$, so the controller will continue to inject energy there---it is not an invariant set of the closed-loop system. The only invariant set where both $\dot{V} = 0$ and the dynamics are consistent is $\tilde{E} = 0$.
+
+In practice, the controller swings the pendulum with increasing amplitude until $E \approx E_{\text{up}}$, at which point the pendulum is near the upright position---ready for a linear controller to take over. The gain $k$ controls how aggressively energy is pumped: larger $k$ means faster swing-up but higher peak torques. With torque limits, choose $k$ small enough that the controller does not saturate, or the Lyapunov argument breaks down.
+
+\textbf{Key insight:} The energy-shaping controller does not try to follow a specific trajectory. It just ensures the energy converges to the right level. The pendulum finds its own way to the top, swinging back and forth with gradually increasing amplitude. This is robust and elegant.
+
+\textbf{Two-phase control.} Energy shaping alone cannot stabilize the upright equilibrium---when $\tilde{E} = 0$ and $\dot{\theta} = 0$ at $\theta = \pi$, the control output is zero, but the equilibrium is unstable. Any perturbation sends the pendulum away. The solution: use energy shaping to get \textit{near} the upright position, then switch to a linear controller (LQR) that is designed for the linearized upright dynamics. This two-phase strategy is how real pendulum swing-up is done, and it generalizes to many other problems.
+
+\textbf{Why Lyapunov?} The Lyapunov approach is more general than the pendulum example suggests. The recipe is: (1) identify a positive-definite function $V(\mathbf{x})$ that is zero at the desired equilibrium; (2) choose the control input to make $\dot{V} \leq 0$; (3) invoke LaSalle's invariance principle to conclude convergence. This works for any system where you can find a suitable $V$---the hard part is finding one. For mechanical systems, physical energy is a natural starting point. For other systems, constructing Lyapunov functions is an art (and sometimes aided by sum-of-squares programming or other computational tools).
+
+%-----------------------------------------------------------------------------
+\subsection{Nonlinear MPC (NMPC)}
+%-----------------------------------------------------------------------------
+
+In the previous chapter we saw that linear MPC solves a quadratic program (QP) at each time step using a linear model $\mathbf{x}_{k+1} = A_d \mathbf{x}_k + B_d \mathbf{u}_k$. This works well near a single operating point. \textbf{Nonlinear MPC} extends the same receding-horizon idea to the full nonlinear dynamics:
+\begin{equation}
+\min_{\mathbf{u}[k], \ldots, \mathbf{u}[k+N-1]} \sum_{i=0}^{N-1} \ell\bigl(\mathbf{x}[k+i],\, \mathbf{u}[k+i]\bigr) + \ell_f\bigl(\mathbf{x}[k+N]\bigr)
+\end{equation}
+subject to:
+\begin{align}
+\mathbf{x}[k+i+1] &= f\bigl(\mathbf{x}[k+i],\, \mathbf{u}[k+i]\bigr) \quad \text{(\textbf{nonlinear} dynamics)} \\
+\mathbf{g}\bigl(\mathbf{x}[k+i],\, \mathbf{u}[k+i]\bigr) &\leq 0 \quad \text{(general nonlinear constraints)}
+\end{align}
+
+The cost $\ell(\cdot)$ and constraints $\mathbf{g}(\cdot)$ can also be nonlinear---penalizing geodesic distance on $\mathrm{SO}(3)$, enforcing collision avoidance with curved obstacles, etc.
+
+\textbf{The key difference:} Linear MPC solves a \textit{convex} QP---guaranteed global optimum in polynomial time. NMPC solves a \textit{nonconvex} nonlinear program (NLP)---there may be multiple local minima, and the solver may converge to a suboptimal one. This makes NMPC fundamentally harder but also fundamentally more capable.
+
+\textbf{Solution methods.} The most common approach is \textbf{Sequential Quadratic Programming (SQP)}: linearize the nonlinear dynamics and constraints around the current trajectory guess, solve the resulting QP (identical to a linear MPC subproblem), update the trajectory, and repeat. This is the same idea as iLQR/DDP from the Outlook chapter, but with inequality constraints handled via the QP. An alternative is \textbf{direct collocation}: transcribe the entire trajectory as decision variables of a large NLP and hand it to a solver like IPOPT.
+
+\vspace{0.5em}
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Worked Example: Linear MPC vs NMPC on a Differential-Drive Robot}
+
+\vspace{0.3em}
+Consider a differential-drive robot tracking a circular path of radius $R = 2$~m. The nonlinear kinematics are:
+\[
+\dot{x} = v\cos\theta, \quad \dot{y} = v\sin\theta, \quad \dot{\theta} = \omega
+\]
+with inputs $u = [v,\, \omega]^T$ (linear and angular velocity).
+
+\textbf{Linear MPC approach.} Linearize around the current heading $\theta_0$:
+\[
+A = \begin{bmatrix} 0 & 0 & -v_0 \sin\theta_0 \\ 0 & 0 & v_0 \cos\theta_0 \\ 0 & 0 & 0 \end{bmatrix}, \quad
+B = \begin{bmatrix} \cos\theta_0 & 0 \\ \sin\theta_0 & 0 \\ 0 & 1 \end{bmatrix}
+\]
+This linearization is only valid when $\theta$ stays close to $\theta_0$. On a straight path or gentle curve, linear MPC works fine.
+
+\textbf{Where linear MPC fails.} On a tight circle ($R = 2$~m, $v = 1$~m/s), the heading changes by $\Delta\theta \approx v \cdot N \cdot T_s / R$ over the prediction horizon. With $N = 20$ and $T_s = 50$~ms, $\Delta\theta \approx 0.5$~rad ($\sim$29\textdegree). The linearized $\cos\theta_0$ and $\sin\theta_0$ are stale for the later prediction steps. The optimizer ``sees'' a straight-line model but the real trajectory curves---under-steering on the inside, over-steering on the outside.
+
+\textbf{NMPC approach.} Use the full nonlinear model directly. The optimizer propagates nonlinear kinematics forward, correctly capturing curvature. Result: much smaller cross-track error.
+
+\textbf{Numerical comparison (typical):}
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+& \textbf{Linear MPC} & \textbf{NMPC} \\
+\midrule
+Cross-track error (tight circle) & 15--25 cm & $<$ 3 cm \\
+Heading tracking error & 5--10\textdegree & $<$ 1\textdegree \\
+Computation time per step (STM32H7) & 0.2 ms (QP) & 2--5 ms (SQP, 3 iters) \\
+Computation time per step (laptop) & $<$ 0.1 ms & 0.5--1 ms \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{The tradeoff:} NMPC gives 5--10$\times$ better tracking on nonlinear trajectories, but costs 10--25$\times$ more computation. For straight lines and gentle turns, linear MPC is sufficient. For tight maneuvers, nonlinear constraints, or large-angle control, NMPC is worth the cost.
+\end{mdframed}
+
+\textbf{When to use linear MPC vs NMPC.}\;Use \textbf{linear MPC} when the system operates near a fixed equilibrium or when computation is severely limited (bare-metal MCU at 1~kHz). Use \textbf{NMPC} when the system traverses a wide operating range, constraints are nonlinear, or you have sufficient computation (co-processor, or 50--200~Hz control loop).
+
+\textbf{Practical tools:} \href{https://web.casadi.org/}{CasADi} (symbolic NLP, Python/MATLAB/C++), \href{https://docs.acados.org/}{acados} (fast embedded NMPC with ARM code generation), MATLAB \texttt{fmincon}. For competition robotics, acados with code generation is the most practical path to real-time NMPC on an STM32.
+
+%-----------------------------------------------------------------------------
+\subsection{When to Use What: A Decision Guide}
+%-----------------------------------------------------------------------------
+
+With multiple nonlinear control tools available, choosing the right one matters. Here is a practical guide:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llllll@{}}
+\toprule
+\textbf{Method} & \textbf{Model Required?} & \textbf{Robustness} & \textbf{Complexity} & \textbf{Best For} \\
+\midrule
+PID & No & Low & Low & Simple SISO, near linear \\
+LQR & Yes (linear) & Medium & Medium & MIMO, near equilibrium \\
+Feedback lin. & Yes (nonlinear) & Low & Medium & Known nonlinear systems \\
+Sliding mode & Partial (bounds) & High & Medium & Unknown disturbances \\
+Gain scheduling & Yes (multi-linear) & Medium & Low & Wide operating range \\
+MPC & Yes (any) & Medium & High & Constraints, trajectories \\
+\bottomrule
+\end{tabular}
+\caption{Decision guide for control method selection. ``Partial'' means you need bounds on uncertainty, not a full model.}
+\end{table}
+
+A few rules of thumb:
+\begin{itemize}[nosep]
+    \item If you have a good model and want clean math: \textbf{feedback linearization}.
+    \item If you need robustness and can tolerate some implementation complexity: \textbf{sliding mode} (with boundary layer or super-twisting).
+    \item If the system is ``mostly linear'' but operates over a wide range: \textbf{gain scheduling}.
+    \item If you need to swing up or transition between equilibria: \textbf{Lyapunov / energy shaping}.
+    \item If you have hard constraints (torque limits, angle limits): \textbf{MPC}.
+    \item If in doubt, start with PID and add complexity only when it fails.
+\end{itemize}
+
+In competition settings, the most common pattern is gain-scheduled PID for ``routine'' control (drivetrain, shooter wheels) and a combination of energy shaping plus LQR for the ``spectacular'' moves (swing-up, balancing, aggressive maneuvers). Sliding mode appears less frequently in student robotics but is invaluable when you face unpredictable loads or environmental disturbances---for example, a mechanism that must apply consistent force despite varying contact conditions.
+
+%-----------------------------------------------------------------------------
+% Case Study
+%-----------------------------------------------------------------------------
+
+\begin{mdframed}[linewidth=1pt, innertopmargin=10pt, innerbottommargin=10pt]
+\textbf{Case Study: Inverted Pendulum---From Swing-Up to Stabilization}
+
+\vspace{0.5em}
+This case study ties together the chapter by showing how nonlinear and linear control work together on a single system.
+
+\textbf{Phase 1: Energy shaping (Lyapunov-based swing-up).}
+
+The pendulum starts at $\theta = 0$ (hanging down), at rest. The energy at this configuration is $E = -mgl$, which is $2mgl$ below the target $E_{\text{up}} = mgl$. The energy-shaping controller $\tau = -k\,\tilde{E}\,\dot{\theta}$ pumps energy into the system. On each swing, the pendulum goes a little higher. The controller does not prescribe a trajectory---it just ensures the energy approaches $E_{\text{up}} = mgl$. After several swings (typically 3--5, depending on $k$ and torque limits), the pendulum reaches the neighborhood of the upright position.
+
+\textbf{Phase 2: LQR stabilization (from Chapter 6).}
+
+When the angle error $|\theta - \pi| < 15°$ (about 0.26 rad), switch to the LQR controller designed for the linearized upright equilibrium. The LQR gains were computed offline assuming the linearized model $\ddot{\delta} = \frac{g}{l}\delta + \frac{1}{ml^2}\tau$, and they stabilize the pendulum precisely at the upright position.
+
+\textbf{Switching logic:}
+
+\begin{verbatim}
+if abs(theta - pi) < 0.26 and abs(theta_dot) < 2.0:
+    tau = -K_lqr @ np.array([theta - np.pi, theta_dot])
+else:
+    E = 0.5 * m * l**2 * theta_dot**2 - m * g * l * np.cos(theta)
+    E_tilde = E - m * g * l
+    tau = -k_swing * E_tilde * theta_dot
+\end{verbatim}
+
+The velocity condition $|\dot{\theta}| < 2.0$ rad/s prevents switching when the pendulum is passing through the upright position at high speed (where LQR would immediately lose control).
+
+\textbf{The full trajectory:}
+\begin{enumerate}[nosep]
+    \item $t = 0$: Pendulum hangs at $\theta = 0$, $\dot{\theta} = 0$.
+    \item $t \approx 0$--$2$ s: Energy shaping swings the pendulum with increasing amplitude.
+    \item $t \approx 2$--$3$ s: Pendulum reaches $|\theta - \pi| < 15°$ with low velocity; controller switches to LQR.
+    \item $t > 3$ s: LQR stabilizes the pendulum at the upright position. Small oscillations decay exponentially.
+\end{enumerate}
+
+\textbf{The lesson:} This two-phase approach generalizes far beyond pendulums. Many robots use a ``rough'' nonlinear controller to reach the neighborhood of the desired operating point, then switch to a precise linear controller for the final stabilization. Quadrotors recovering from large attitude errors, legged robots transitioning between gaits, robotic arms reaching into tight workspaces---the pattern is the same: nonlinear control for the big moves, linear control for the fine adjustments.
+
+\textbf{Implementation tip:} Add hysteresis to the switching condition. If you switch to LQR at $|\theta - \pi| < 15°$ and back to energy shaping at $|\theta - \pi| > 15°$, noise near the boundary causes rapid switching (``Zeno behavior''). Instead, switch to LQR at $15°$ but only switch back to energy shaping at $20°$. This small dead band eliminates the chatter.
+\end{mdframed}
+
+\vspace{1em}
+
+Looking ahead: rotation dynamics are inherently nonlinear---composing rotations is \textit{not} a linear operation, and the Euler angle singularity at $\pm 90°$ is a nonlinear phenomenon. The tools in this chapter explain \textit{why} quaternions and rotation matrices behave the way they do, and why attitude control requires the nonlinear thinking we have developed here. Feedback linearization shows up in computed-torque control of robotic arms; sliding mode appears in robust attitude controllers; Lyapunov methods underpin almost every stability proof in rotational dynamics. The next chapter builds that foundation.
+
+\textbf{Summary of key ideas:}
+\begin{itemize}[nosep]
+    \item Linear control is local; nonlinear control can be global.
+    \item Feedback linearization: cancel what you know. Elegant but fragile.
+    \item Sliding mode: overpower what you do not know. Robust but chattery (fixable).
+    \item Gain scheduling: the practical engineer's interpolation. Simple but unproven at transitions.
+    \item Lyapunov / energy shaping: think in energy, not trajectories. Beautiful and powerful.
+    \item In practice, combine them: nonlinear for the big moves, linear for the fine adjustments.
+\end{itemize}

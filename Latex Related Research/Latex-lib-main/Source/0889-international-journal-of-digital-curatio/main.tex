@@ -1,0 +1,82 @@
+%% International Journal of Digital Curation (IJDC) article starter, using
+%% the official ijdc-v14 class from the dccpaper bundle.
+%%
+%% VENDORED: ijdc-v14.cls and dccpaper-base.sty are NOT in this pipeline's
+%% TeX Live image (only the sibling ijdc-v9/idcc classes were checked and
+%% also absent), so both are bundled here, extracted from the upstream
+%% dccpaper.dtx via docstrip in the pinned compiler itself -- byte-identical
+%% to what a full TeX Live install would produce.
+%%
+%% dccpaper-by.pdf is ALSO bundled: the class's own \maketitle unconditionally
+%% stamps a Creative Commons Attribution 4.0 badge and notice onto every
+%% article's title page (it licenses the OUTPUT ARTICLE, not the class
+%% itself -- the class text is LPPL-1.3c). Without the image file the
+%% \includegraphics call in dccpaper-base.sty fails.
+%%
+%% BIBLIOGRAPHY: dccpaper-base.sty supports both biblatex and apacite. This
+%% starter uses apacite (classic bibtex-based) rather than biblatex, because
+%% this pipeline's compile loop runs bibtex, not biber.
+%%
+%% Class documentation: https://ctan.org/pkg/dccpaper
+%% Licence: dccpaper is LPPL-1.3c, (c) Digital Curation Centre, University of
+%% Edinburgh. The bundled dccpaper-by.pdf is Creative Commons' own badge
+%% image, used here exactly as the class intends: to mark the OUTPUT
+%% article's licence, not to relicense this template.
+\documentclass[conference]{ijdc-v14}
+\usepackage[bibnewpage,numberedbib]{apacite}
+
+\title{Preserving Reproducibility in Long-Running Simulation Studies}
+\author{Ada Lovelace}
+\affil{Digital Curation Institute, Institute of Analytical Engines}
+\author{Alan Turing}
+\affil{School of Computing Machinery}
+\correspondence{Ada Lovelace, Digital Curation Institute, 1 Analytical
+  Engines Walk, Cambridge, UK. Email: \email{ada@example.edu}}
+
+\conference*{the International Digital Curation Conference IDCC26,
+  16-18 February 2026}
+\submitted{1 September 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Replace this with your own abstract. State the curation problem you address,
+what you did, and what you found.
+\end{abstract}
+
+\section{Introduction}
+Start here. Cite things like this \cite{knuth1984texbook}.
+
+\section{Related Work}
+Summarise prior curation work relevant to your study.
+
+\section{Method}
+Describe your curation and preservation workflow.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Example dataset inventory.}
+  \label{tab:example}
+  \begin{tabular}{lrr}
+    \hline
+    Dataset & Files & Size (GB) \\
+    \hline
+    Run A & 1,204 & 18.3 \\
+    Run B & 3,981 & 62.7 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+Table~\ref{tab:example} shows the dataset inventory.
+
+\section{Conclusions}
+The text of the conclusions starts here.
+
+\section{Acknowledgements}
+Any acknowledgements should be placed here.
+
+\bibliographystyle{apacite}
+\bibliography{references}
+
+\end{document}

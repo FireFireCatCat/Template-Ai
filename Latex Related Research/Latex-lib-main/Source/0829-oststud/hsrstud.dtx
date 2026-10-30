@@ -1,0 +1,619 @@
+% \iffalse meta-comment
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Headers
+
+%<*package>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hsrstud}[2021/08/04 v0.2 HSR-Stud Macros]
+%</package>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Documentation 
+%<*doc>
+\documentclass[a4paper]{ltxdoc}
+
+\usepackage{hypdoc}
+
+%% https://tex.stackexchange.com/questions/95882/avoid-multicol-error-error-saving-partial-page
+%% \setlength\IndexMin{100pt}
+
+\usepackage[left=4cm, right=4cm, top=3cm, bottom=3cm]{geometry}
+
+\usepackage{\jobname}
+
+\usepackage{fancyvrb}
+\usepackage{enumitem}
+\usepackage{framed}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{xargs}
+\usepackage{bookmark}
+
+\usepackage[
+    type={CC},
+    modifier={by-sa},
+    version={4.0},
+]{doclicense}
+
+\CodelineIndex
+\EnableCrossrefs
+\RecordChanges
+
+\makeatletter
+\newlength\excodewidth
+\newenvironment{example}{%
+    \leftbar\VerbatimEnvironment%
+    \global\excodewidth=.5\linewidth%
+    \begin{VerbatimOut}{\jobname.vrb}%
+}{%
+    \end{VerbatimOut}%
+    \noindent%
+    \minipage[c]{\excodewidth}%
+        \vspace{0pt}\input{\jobname.vrb}%
+    \endminipage%
+    \minipage[c]{\dimexpr\linewidth-\excodewidth-2\fboxsep-2\fboxrule-\FrameSep\relax}%
+        \vspace{0pt}\lstinputlisting{\jobname.vrb}%
+    \endminipage%
+    \endleftbar%
+}
+
+\newenvironment{hexample}{%
+    \leftbar\VerbatimEnvironment%
+    \begin{VerbatimOut}{\jobname.vrb}%
+}{%
+    \end{VerbatimOut}%
+    \noindent%
+    \begingroup\centering%
+    \hspace{5pt}%
+    \minipage[t]{\linewidth}%
+        \vspace{0pt}\input{\jobname.vrb}%
+    \endminipage\\
+    \hspace{5pt}%
+    \minipage[t]{\linewidth}%
+        \vspace{0pt}\lstinputlisting{\jobname.vrb}%
+    \endminipage%
+    \endgroup%
+    \endleftbar%
+}
+
+
+\makeatother
+
+\begin{document}
+\GetFileInfo{\jobname.sty}
+\title{^^A
+  \texttt{\textcolor{hsr-blue}{hsr}stud} --- HSR-Stud Style and Macros\thanks{^^A
+    This file describes version \fileversion, last revised \filedate.^^A
+  }^^A
+}
+\author{Naoki Pross \texttt{<naoki.pross@ost.ch>}}
+\date{Released \filedate}
+\maketitle
+\tableofcontents
+
+\changes{v0.2}{2021/08/05}{Remove legacy code and update notation}
+\changes{v0.1}{2020/02/16}{Initial draft}
+
+\section{Purpose of this package}
+This package is made for the HSR Studenten organization to provide an easy to 
+use interface to give a more consistent look and feel for the works produced by 
+its the members. A secondary objective of this package is to eliminate the
+\emph{many} dispersed duplicate .tex files that fill the repositories of the 
+HSR-Stud org.
+
+
+\section{Package Options} \label{sec:options}
+\begin{description}[align=right]
+   \item[|dontrenew|] Do not renew existing \LaTeX{} commands and
+       environments. This is useful when the package is loaded on a document
+        that is already partially written.
+
+   \item[|arrowvec|] Tells the package to use a vector notation with a small
+       arrow over the variables, as it were handwritten.
+
+   \item[|textvecdiff|] Disables the ``Nabla'' or ``Del'' notation for vector
+       derivatives. Instead the symbols \(\vec{\nabla}, \vec{\nabla}\dotp,
+        \vec{\nabla}\crossp, \nabla^2, \vec{\nabla}^2\) are be replaced with
+        grad, div, curl and div grad.
+\end{description}
+
+\section{Summary notation}
+
+\section{Default Theming}
+\subsection{Links with \texttt{hyperref}}
+
+\begin{example}
+Colors from 
+\cite{bib:hsrcolors} see \\
+\url{https://intranet.hsr.ch}
+\end{example}
+
+\subsection{Source Code with \texttt{listings}}
+
+\begin{hexample}
+\begin{lstlisting}[language=C++]
+int main(int argc, char *argv[], char *envp[]) {
+   std::cout << "hello world" << std::endl;
+}
+\end{lstlisting}
+\end{hexample}
+
+\section{Mathematics}
+\subsection{Vectors}
+
+\begin{macro}{\vec}
+
+Vectors notation. Aliases: \cs{v}, \cs{vc}. If the option \texttt{arrowvec}
+described in \S \ref{sec:options} is enabled, the notation with a small
+arrow over the varible will be used \(\hsrvecarrow{x}\), otherwise the
+vector is bold \(\hsrvecbold{x}\). Takes one option \marg{letter}. \cs{v}
+is renamed to \cs{vaccent} and \cs{vec} to \cs{oldvec}.
+
+\begin{example}
+\[ \vec{F} = m\vec{a} \]
+\end{example}
+\end{macro}
+
+\begin{macro}{\uvec}
+Unit vector notation. Alias \cs{uv}. Takes \marg{letter}. It is implemented
+in terms of \cmd{\vec}, which means that the style is inherited.
+\begin{example}
+\[ \uvec{x} = \vec{x}/x \]
+\end{example}
+\end{macro}
+
+\subsubsection{Products}
+\begin{macro}{\dotp}
+Dot product between vectors.
+\begin{example}
+\[ \vec{u}\dotp\vec{v} \]
+\end{example}
+\end{macro}
+
+\begin{macro}{\crossp}
+Cross product between vectors.
+\begin{example}
+\[ \vec{u}\crossp\vec{v} \]
+\end{example}
+\end{macro}
+
+
+\subsection{Matrices}
+
+\begin{macro}{\mx}
+Matrix notation. Takes \marg{letter}.
+
+\begin{example}
+\[
+    \mx{J} = \begin{pmatrix}
+                0 & 1 \\
+                1 & 0
+              \end{pmatrix}
+\]
+\end{example}
+\end{macro}
+
+\subsection{Equalities}
+
+\begin{macro}{\heq}
+ L'H\^opital limit equality symbol.
+\begin{hexample}
+\[
+    \lim_{x\to\infty} \frac{x}{x^2 - 1}
+        \heq \lim_{x\to\infty} \frac{1}{2x}
+        = 0
+\]
+\end{hexample}
+\end{macro}
+
+\subsection{Derivatives}
+\subsubsection{Differentials}
+
+\begin{macro}{\dd}
+The differential element. It needs a \marg{var} and has the optional 
+argument \oarg{order}.
+\begin{example}
+\[ \dd{x} \qquad \dd[4]{x} \]
+\end{example}
+\end{macro}
+
+\begin{macro}{\di}
+This is the same as \cs{dd} but with a small space in front, it is 
+intended to be used in integrals for a nicer typesetting.
+\begin{hexample}
+\begin{align*}
+    I &= \int \vec{J}\dotp\dd{\vec{s}} \\
+      &= \iint \vec{J}\dotp\uvec{n}\di{x}\di{y}
+\end{align*}
+\end{hexample}
+\end{macro}
+
+\subsubsection{Scalar functions}
+
+\begin{macro}{\deriv}
+The derivative has arguments \marg{function}, \marg{var} and the optional 
+argument \oarg{order}.
+\begin{example}
+\[
+    \deriv{y}{x} \qquad
+    \deriv[3]{y}{x}
+\]
+\end{example}
+\end{macro}
+
+%% TODO: add mixed partial derivatives (probably using xparse)
+\begin{macro}{\pderiv}
+The partial derivative has arguments \marg{function}, \marg{var} and the 
+optional argument \oarg{order}.
+\begin{example}
+\[
+    \pderiv{y}{x} \qquad
+    \pderiv[3]{y}{x}
+\]
+\end{example}
+\end{macro}
+
+\subsubsection{Vector functions}
+
+\begin{macro}{\grad}
+The gradient vector operator.
+\begin{example}
+\[ \grad f \]
+\end{example}
+\end{macro}
+
+\begin{macro}{\div}
+The divergence operator, \cs{div} is renamed to \cs{divsymb}. If the option 
+|donotrenew| is used \cs{divg} is also available.
+\begin{example}
+\[ \div \vec{f} \]
+\end{example}
+\end{macro}
+
+\begin{macro}{\curl}
+The curl operator.
+\begin{example}
+\[ \curl \vec{f} \]
+\end{example}
+\end{macro}
+
+\begin{macro}{\laplacian}
+The laplacian operator.
+\begin{example}
+\[
+    \laplacian f
+\]
+\end{example}
+\end{macro}
+
+\begin{macro}{\vlaplacian}
+The vector laplacian operator operator.
+\begin{example}
+\[
+    \vlaplacian \vec{F}
+\]
+\end{example}
+\end{macro}
+
+
+\section{Colors}
+\begin{center}
+\begin{tikzpicture}
+   \foreach \color/\y in {%
+       hsr-blue/7,
+       hsr-mauve/6,
+       hsr-lakegreen/5,
+       hsr-reed/4,
+       hsr-petrol/3,
+       hsr-basswood/2,
+       hsr-lightgrey/1,
+       hsr-black/0}{
+       \foreach \x/\a in {0/,1/80,2/60,3/40,4/20}{
+           \node[anchor=east] at (-.5,\y) {\texttt{\color}};
+           \fill[color=\color\a] (\x,\y-.25) rectangle ++(1,.5);
+           \node[anchor=west] at (\x,\y) {\texttt{\a}};
+       }
+   }
+\end{tikzpicture}
+\end{center}
+
+\section{License}
+\doclicenseThis
+
+\begin{thebibliography}{3}
+    \bibitem{bib:hsrcolors}
+        HSR Intern: Corporate Design / Farben,
+        \textit{Hochschule f\"ur Technik Rapperswil},
+        \url{https://intranet.hsr.ch/Farben.7715.0.html}
+\end{thebibliography}
+
+\PrintChanges
+\PrintIndex
+
+\DocInput{\jobname.dtx}
+
+\end{document}
+
+%</doc>
+%\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \appendix
+%    \section{Implementation}
+%    |hsrstud| package implementation with inline documentation
+
+%\iffalse
+%<*package>
+%\fi
+
+%    \subsection{Dependencies}
+%    \begin{macrocode}
+%% Dependencies ((
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{bm}
+
+\RequirePackage{esint}
+\PassOptionsToPackage{b}{esvect}
+\RequirePackage{esvect}
+
+\RequirePackage{xcolor}
+\RequirePackage{hyperref}
+\RequirePackage{listings}
+
+\RequirePackage{iftex}
+\RequirePackage{kvoptions}
+%% ))
+%    \end{macrocode}
+
+%    \subsection{Package options}
+%    \begin{macrocode}
+\SetupKeyvalOptions{
+    family=hsr,
+    prefix=hsr@
+}
+
+%% Do not renew LaTeX Macros
+\DeclareBoolOption[false]{dontrenew}
+
+%% Vector style
+\DeclareBoolOption[false]{arrowvec}
+\DeclareComplementaryOption{boldvec}{arrowvec}
+
+%% Vector derivative style
+\DeclareBoolOption[false]{textvecdiff}
+\DeclareComplementaryOption{delvecdiff}{textvecdiff}
+
+
+%% Process options
+\ProcessLocalKeyvalOptions*
+%    \end{macrocode}
+
+
+%    \subsection{Summary notation}
+%    \begin{macrocode}
+%% TODO: change letters in german
+\newcommand{\bookref}[1]{\texttt{\textcolor{hsr-mauve}{P.#1}}}
+\newcommand{\notesref}[1]{\texttt{\textcolor{hsr-blue}{S.#1}}}
+\newcommand{\lectureref}[1]{\texttt{\textcolor{hsr-lakegreen}{L.#1}}}
+%    \end{macrocode}
+
+%    \subsection{Default theming}
+%    \begin{macrocode}
+%% Theming for hyperref and listings ((
+\hypersetup{
+    colorlinks=true,
+    linkcolor=hsr-black,
+    citecolor=hsr-mauve,
+    filecolor=hsr-black,
+    urlcolor=hsr-blue,
+}
+
+%% Common listings settings
+\lstdefinestyle{hsr-base}{
+    belowcaptionskip=\baselineskip,
+    breaklines=true,
+    frame=none,
+    inputencoding=utf8,
+    % margin
+    xleftmargin=\parindent,
+    % numbers
+    numbers=left,
+    numbersep=5pt,
+    numberstyle=\ttfamily\footnotesize\color{hsr-black40},
+    % background
+    backgroundcolor=\color{white},
+    showstringspaces=false,
+    % default language
+    language=[LaTeX]TeX,
+    % break long lines, and show an arrow where the line was broken
+    breaklines=true,
+    postbreak=\mbox{\textcolor{hsr-blue}{$\hookrightarrow$}\space},
+    % font
+    basicstyle=\ttfamily\small,
+    identifierstyle=\color{hsr-black},
+    keywordstyle=\color{hsr-blue},
+    commentstyle=\color{hsr-black40},
+    stringstyle=\color{hsr-mauve80},
+}
+
+%% Define missing languages / aliases
+\lstdefinelanguage{LaTeX}{
+    language=[LaTeX]Tex
+}
+
+%% Set style
+\lstset{style=hsr-base, escapechar=`}
+%%))
+%    \end{macrocode}
+
+%    \subsection{Mathematics}
+%    \subsubsection{Vectors}
+%    \begin{macrocode}
+%% Vector ((
+\newcommand{\hsrvecbold}[1]{\mathbf{\bm{#1}}}
+\newcommand{\hsrvecarrow}[1]{\vv{\mathrm{#1}}} % from esvect
+
+\newcommand{\@hsrvecf}[1]{\hsrvecbold{#1}}
+\ifhsr@arrowvec
+    \renewcommand{\@hsrvecf}[1]{\hsrvecarrow{#1}}
+\fi
+
+\newcommand{\vc}{\@hsrvecf}
+\ifhsr@dontrenew\else
+    % save previous command
+    \newcommand{\vaccent}{\v}
+    \newcommand{\oldvec}{\vec}
+    % redefine
+    \renewcommand{\v}[1]{\@hsrvecf{#1}}
+    \renewcommand{\vec}[1]{\@hsrvecf{#1}}
+\fi
+%%))
+
+%% Unit vector ((
+\newcommand{\hsruvecbold}[1]{\vec{\hat{#1}}}
+\newcommand{\hsruvecarrow}[1]{\hat{\mathrm{#1}}}
+\newcommand{\@hsruvecf}[1]{\hsruvecbold{#1}}
+\ifhsr@arrowvec
+    \renewcommand{\@hsruvecf}[1]{\hsruvecarrow{#1}}
+\fi
+
+\newcommand{\uv}[1]{\@hsruvecf{#1}}
+\newcommand{\uvec}[1]{\@hsruvecf{#1}}
+%%))
+
+%% Products ((
+\newcommand{\dotp}{\boldsymbol\cdot}
+\newcommand{\crossp}{\boldsymbol\times}
+%%))
+%    \end{macrocode}
+
+%    \subsubsection{Matrices and Tensors}
+%    \begin{macrocode}
+\newcommand{\mx}[1]{\bm{\mathrm{#1}}}
+%    \end{macrocode}
+
+%    \subsubsection{Equalities}
+%    \begin{macrocode}
+\newcommand{\heq}{\stackrel{\hat{\texttt{H}}}{=}}
+%    \end{macrocode}
+
+%    \subsection{Derivatives}
+%    \subsubsection{Differentials}
+%    \begin{macrocode}
+\newcommand{\dd}[2][]{\mathrm{d}^{#1} #2}
+\newcommand{\di}[2][]{\,\dd[#1]{#2}}
+%    \end{macrocode}
+
+%    \subsubsection{Derivatives}
+%    \begin{macrocode}
+\newcommand{\deriv}[3][]{\frac{\dd[#1]{#2}}{\dd[]{#3^{#1}}}}
+\newcommand{\pderiv}[3][]{\frac{\partial^{#1} #2}{\partial #3^{#1}}}
+%    \end{macrocode}
+
+%    \subsubsection{Vector derivatives}
+%    \begin{macrocode}
+%% Gradient ((
+\ifhsr@textvecdiff
+    \DeclareMathOperator{\grad}{grad}
+\else
+    \newcommand{\grad}{\vec{\nabla}}
+\fi
+%% ))
+
+%% Divergence ((
+\ifhsr@textvecdiff
+    \newcommand{\@hsrdivf}{div}
+\else
+    \newcommand{\@hsrdivf}{\vec{\nabla}\dotp}
+\fi
+
+\DeclareMathOperator{\divg}{\@hsrdivf}
+\ifhsr@dontrenew\else
+    \let\divsymb=\div
+    \renewcommand{\div}{\operatorname{\@hsrdivf}}
+\fi
+%% ))
+
+%% Curl ((
+\ifhsr@textvecdiff
+    \DeclareMathOperator{\curl}{curl}
+\else
+    \DeclareMathOperator{\curl}{\vec{\nabla}\crossp}
+\fi
+%% ))
+
+%% laplacian ((
+\ifhsr@textvecdiff
+    \DeclareMathOperator{\laplacian}{div grad}
+\else
+    \DeclareMathOperator{\laplacian}{\nabla^2}
+\fi
+
+\ifhsr@textvecdiff
+    \DeclareMathOperator{\vlaplacian}{div grad}
+\else
+    \DeclareMathOperator{\vlaplacian}{\vec{\nabla}^2}
+\fi
+%% ))
+%    \end{macrocode}
+
+%    \subsection{Colors}
+%    \begin{macrocode}
+\definecolor{hsr-blue}{HTML}{0065A3}
+\definecolor{hsr-blue80}{HTML}{3384B5}
+\definecolor{hsr-blue60}{HTML}{66A3C8}
+\definecolor{hsr-blue40}{HTML}{99C1DA}
+\definecolor{hsr-blue20}{HTML}{CCE0ED}
+
+\definecolor{hsr-mauve}{HTML}{6E1C50}
+\definecolor{hsr-mauve80}{HTML}{8B4973}
+\definecolor{hsr-mauve60}{HTML}{A87796}
+\definecolor{hsr-mauve40}{HTML}{C5A4B9}
+\definecolor{hsr-mauve20}{HTML}{E2D2DC}
+
+\definecolor{hsr-lakegreen}{HTML}{548C86}
+\definecolor{hsr-lakegreen80}{HTML}{76A39E}
+\definecolor{hsr-lakegreen60}{HTML}{98BAB6}
+\definecolor{hsr-lakegreen40}{HTML}{BBD1CF}
+\definecolor{hsr-lakegreen20}{HTML}{DDE8E7}
+
+\definecolor{hsr-reed}{HTML}{7B6951}
+\definecolor{hsr-reed80}{HTML}{958774}
+\definecolor{hsr-reed60}{HTML}{B0A597}
+\definecolor{hsr-reed40}{HTML}{CAC3B9}
+\definecolor{hsr-reed20}{HTML}{E5E1DC}
+
+\definecolor{hsr-petrol}{HTML}{00738D}
+\definecolor{hsr-petrol80}{HTML}{338FA4}
+\definecolor{hsr-petrol60}{HTML}{66ABBB}
+\definecolor{hsr-petrol40}{HTML}{99C7D1}
+\definecolor{hsr-petrol20}{HTML}{CCE3E8}
+
+\definecolor{hsr-basswood}{HTML}{BABD5D}
+\definecolor{hsr-basswood80}{HTML}{C8CA7D}
+\definecolor{hsr-basswood60}{HTML}{D6D79E}
+\definecolor{hsr-basswood40}{HTML}{E3E5BE}
+\definecolor{hsr-basswood20}{HTML}{F1F2DF}
+
+\definecolor{hsr-lightgrey}{HTML}{C6C7C8}
+\definecolor{hsr-lightgrey80}{HTML}{D1D2D3}
+\definecolor{hsr-lightgrey60}{HTML}{DDDDDE}
+\definecolor{hsr-lightgrey40}{HTML}{E8E8E9}
+\definecolor{hsr-lightgrey20}{HTML}{F4F4F4}
+
+\definecolor{hsr-black}{HTML}{1A171B}
+\definecolor{hsr-black80}{HTML}{484549}
+\definecolor{hsr-black60}{HTML}{767476}
+\definecolor{hsr-black40}{HTML}{A4A2A4}
+\definecolor{hsr-black20}{HTML}{D1D1D1}
+%    \end{macrocode}
+
+%    \iffalse
+%    \begin{macrocode}
+%</package>
+%    \end{macrocode}
+%    \fi
+%
+%\Finale

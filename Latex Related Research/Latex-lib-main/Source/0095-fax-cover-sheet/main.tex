@@ -1,0 +1,61 @@
+% Fax Cover Sheet — facsimile.cls
+%
+% A genuinely different document TYPE from the correspondence letters
+% elsewhere in this batch: not a message body between two people, but a
+% transmission cover sheet — to/from boxes, a page-count line resolved via
+% \pageref{LastPage} (needs the lastpage package), and an optional
+% "note" box. \makefaxtitle renders the boxed header; \opening/\closing
+% below it are the same primitives as the classic letter class.
+\documentclass[english,12pt]{facsimile}
+\usepackage[T1]{fontenc}
+\usepackage{lastpage}
+
+% VERSION-SKEW PATCH: facsimile.cls (2003) reads \r@LastPage via \@cdr,
+% a kernel car/cdr helper that no longer exists in the TeX Live 2025
+% LaTeX2e kernel (removed upstream) and was built for the OLD 2-field
+% \newlabel{name}{{page}{page}} format besides. The current kernel writes
+% newlabel with 5 fields (\newlabel{LastPage}{{}{2}{}{}{}}), so even a
+% literal port of the old extraction would grab an EMPTY first field
+% instead of the page number. Either way \ifcase\@lstpgno hard-errors
+% with "Missing number, treated as zero" and the compile fails. Replaced
+% with a plain delimited-argument extractor that pulls the SECOND
+% brace group (where the page number lives in the current \newlabel
+% format) — verified against the actual \newlabel{LastPage}{...} this
+% pipeline's lastpage package writes. Without this every fax silently
+% fails to compile.
+\makeatletter
+\def\f@x@secondgroup#1#2#3\@nil{#2}
+\renewcommand*{\@lstpgno}{%
+  \@ifundefined{r@LastPage}{0}{%
+    \expandafter\f@x@secondgroup\r@LastPage\@nil}%
+}
+\makeatother
+
+\author{Priya Nakamura} % printed as the "from" name in the running header
+\faxto{Chris Reddy\\Riverside Legal Partners\\Fax: +1 (415) 555-0199}
+\faxfrom{Priya Nakamura\\Alder \& Finch LLP\\Fax: +1 (415) 555-0142}
+\faxsubject[Estoppel cert. -- 44 Birchwood]{Tenant Estoppel Certificate}
+\renewcommand{\faxnotetext}{Please countersign page 2 and return by fax before 5pm Friday. Call
+  +1 (415) 555-0140 if any page did not transmit clearly.}
+
+\begin{document}
+\makefaxtitle
+
+\opening{Chris,}
+
+Attached is the tenant estoppel certificate for the Birchwood Avenue
+lease we discussed on Tuesday. The figures on page 2 match the rent
+roll you sent last week; please confirm the deposit balance in
+Section 4 before signing.
+
+\closing{Thanks,}
+
+\newpage
+\thispagestyle{fancy}
+\textbf{Section 4 --- Deposit Balance}
+
+Security deposit on file: \$2{,}400.00. No deductions recorded as of
+this transmission date. Please initial next to this figure on your
+copy before returning.
+
+\end{document}

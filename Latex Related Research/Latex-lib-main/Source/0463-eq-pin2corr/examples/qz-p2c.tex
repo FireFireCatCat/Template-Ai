@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage[designv]{web} %,forcolorpaper
+\usepackage{exerquiz}[2021/02/17]
+\usepackage[!showscore]{eq-pin2corr}
+
+%\previewOn\pmpvOn
+
+\useBeginQuizButton[\CA{Begin}]
+\useEndQuizButton[\CA{End}]
+\showCreditMarkup  % optional
+\let\uif\textsf
+\useMCCircles      % optional
+
+%
+% When building your own quiz document, decide on a PIN number
+% then use the utility document get-hash-string.pdf to acquire
+% the corresponding hash string. Place your own PIN and hash string
+% in the two arguments of \declPINId.
+\declPINId{5243}{02JRVZdRgYgCA-Rtje8VkD} % PIN number, hash string
+% So instructor can bypass entering the PIN.
+\classPINVar{_PinCode1}
+
+\parindent0pt
+\parskip6pt
+
+\begin{document}
+
+\section*{PIN Security for Quizzes}
+
+This demo file implements a feature that prevents students from
+correcting their own quiz. The \uif{Correct} button appears at the end of
+the quiz, but a PIN number is needed for it to execute. For the purpose of
+this demo files, the PIN number is given to the right of the \uif{Correct}
+button; of course, the PIN is not given to the student. \verb~:-{)~ Test it
+out: (1) take the test; (2) press the \uif{End} button; (3) save and close
+the document; (4) open the document and press the \uif{Correct} button, the
+graded quiz should be reported. \textsf{Adobe Reader DC} (or \textsf{Adobe
+Acrobat}) is required for the document to function as designed.
+
+\usePINCorrBtn
+
+\begin{quiz*}{qz1}
+Solve each, passing is 100\%.
+\begin{questions}
+    \item The sum of 1 and 1 is \dots
+\begin{answers}{8}
+\bChoices
+  \Ans0 0\eAns
+  \Ans0 1\eAns
+  \Ans1 2\eAns
+  \Ans0 3\eAns
+  \Ans0 4\eAns
+\eChoices
+\end{answers}
+  \item $ \cos(\pi) = \RespBoxMath{-1}{1}{.0001}{[0,1]}\cgBdry\kern1bp
+\CorrAnsButton{-1} $
+
+\item $\displaystyle\frac{d}{dx}{\sin(x)}=\RespBoxMath{cos(x)}{4}{.0001}{[0,1]}\cgBdry\kern1bp
+\CorrAnsButton{cos(x)} $
+\end{questions}
+\end{quiz*}\quad\ScoreField[\rectW{2.25in}]\currQuiz\olBdry\CorrButton{\currQuiz} (PIN: \numPINId)
+
+\noindent
+Answers: \AnswerField\currQuiz
+
+% remove this \end{document} and recompile. This next quiz has no PIN security.
+\end{document}
+
+\section*{No PIN security}
+
+To restore the default definition of the \verb|\CorrButton| action, expand
+the freshly defined macro \verb|\restoreCorrBtnJS|.
+
+% restore the Correct button to its normal/default behavior: the student
+% can get his/her score and the quiz is marked up.
+\restoreCorrBtn
+
+\begin{quiz*}{qz2}
+Solve each, passing is 100\%.
+\begin{questions}
+    \item The sum of 1 and 1 is \dots
+\begin{answers}{8}
+\bChoices
+  \Ans0 0\eAns
+  \Ans0 1\eAns
+  \Ans1 2\eAns
+  \Ans0 3\eAns
+  \Ans0 4\eAns
+\eChoices
+\end{answers}
+  \item $ \cos(\pi) = \RespBoxMath{-1}{1}{.0001}{[0,1]}\cgBdry\kern1bp
+\CorrAnsButton{-1} $
+
+\item $\displaystyle\frac{d}{dx}{\sin(x)}=\RespBoxMath{cos(x)}{4}{.0001}{[0,1]}\cgBdry\kern1bp
+\CorrAnsButton{cos(x)} $
+\end{questions}
+\end{quiz*}\quad\PointsField{\currQuiz}\olBdry\CorrButton{\currQuiz}
+
+\end{document}

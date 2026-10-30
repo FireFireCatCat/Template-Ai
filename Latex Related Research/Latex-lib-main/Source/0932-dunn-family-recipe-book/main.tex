@@ -1,0 +1,20 @@
+\documentclass[11pt,a4paper,openany]{book}
+\usepackage[margin=23mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\definecolor{plum}{HTML}{70435C}\definecolor{leaf}{HTML}{627A4A}
+\pagestyle{fancy}\fancyhf{}\fancyhead[LE,RO]{\small\textcolor{plum}{DUNN FAMILY RECIPES}}\fancyfoot[C]{\thepage}
+\setlist{nosep,leftmargin=*}\setlength{\emergencystretch}{3em}\sloppy
+\newcommand{\recipe}[5]{\section*{#1}\addcontentsline{toc}{section}{#1}\textcolor{leaf}{#2\hfill#3}\par\medskip\begin{minipage}[t]{0.32\linewidth}\textbf{Ingredients}\par\smallskip#4\end{minipage}\hfill\begin{minipage}[t]{0.62\linewidth}\textbf{Method}\par\smallskip#5\end{minipage}\par\bigskip\textcolor{plum}{\rule{\linewidth}{0.5pt}}\par\medskip}
+\begin{document}
+\frontmatter\begin{titlepage}\centering\vspace*{35mm}{\Huge\color{plum}\sffamily\bfseries The Dunn Family Recipe Book\par}\vspace{8mm}{\Large Recipes collected around one table\par}\vfill{\large A data-friendly cookbook starter\par}\end{titlepage}\tableofcontents\mainmatter
+\chapter{Family favourites}
+\recipe{Sunday Tomato Sauce}{Makes 6 cups}{Prep 15 min; simmer 45 min}{\begin{itemize}\item 2 kg ripe tomatoes\item 2 onions\item 4 garlic cloves\item olive oil\item basil and salt\end{itemize}}{Soften the onions in olive oil, then add garlic and tomatoes. Simmer uncovered until thick and glossy. Season with salt, tear in basil, and preserve or serve over pasta.}
+\recipe{Maple Oat Cookies}{Makes 18}{Prep 15 min; bake 12 min}{\begin{itemize}\item 120 g rolled oats\item 100 g flour\item 90 g butter\item 80 g maple syrup\item 1 egg\end{itemize}}{Heat the oven to 180\textdegree C. Cream the butter and syrup, beat in the egg, and fold in the oats and flour. Spoon onto a tray and bake until the edges are golden.}
+\chapter{The data behind the book}
+This starter is intentionally easy to connect to a structured recipe collection. The accompanying `recipes.json` file demonstrates the small schema used by the upstream project; replace the sample entries and generate or edit the corresponding recipe sections in this document.
+\end{document}

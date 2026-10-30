@@ -1,0 +1,105 @@
+% !TeX program = xelatex
+%
+% This starter is original content written for latextemplates.com; it is not
+% the upstream repository's own example deck, which is separately licensed
+% CC-BY-NC-SA (non-commercial) and not reused here. Only the theme .sty files
+% and the SJTU visual-identity assets (Apache-2.0 / SJTU VI, per LICENSE) are
+% vendored from github.com/sjtug/SJTUBeamer.
+\documentclass[xcolor=table,aspectratio=169]{ctexbeamer}
+\usetheme{sjtubeamer}
+
+\usepackage{booktabs}
+
+\title{学术报告模板}
+\subtitle{基于 SJTUBeamer 主题的中英文演示}
+\author{王小明}
+\institute{上海交通大学 计算机科学与工程系}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{目录}
+  \tableofcontents
+\end{frame}
+
+\section{研究背景}
+
+\begin{frame}{为什么要做这项研究}
+  \begin{itemize}
+    \item 现有方法在大规模场景下计算开销过高
+    \item 缺乏统一的评测基准，结果难以横向比较
+    \item 本工作提出一套轻量级、可复现的评测框架
+  \end{itemize}
+\end{frame}
+
+\section{方法}
+
+\begin{frame}{总体流程}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \textbf{数据准备}
+      \begin{itemize}
+        \item 采集 12 类真实场景数据
+        \item 统一标注格式
+        \item 划分训练 / 验证 / 测试集
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{Method Overview}
+      \begin{itemize}
+        \item Feature extraction
+        \item Lightweight scoring model
+        \item Reproducible evaluation harness
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{实验结果}
+  \begin{table}
+    \centering
+    \begin{tabular}{lrr}
+      \toprule
+      方法 (Method) & 准确率 (\%) & 耗时 (ms) \\
+      \midrule
+      基线 (Baseline) & 71.2 & 340 \\
+      本文方法 (Ours) & 89.6 & 118 \\
+      \bottomrule
+    \end{tabular}
+    \caption{在测试集上的性能对比}
+  \end{table}
+\end{frame}
+
+\section{讨论}
+
+\begin{frame}{关键发现}
+  \begin{block}{主要结论}
+    在保持较低计算开销的前提下，本文方法将准确率提升了 18.4 个百分点。
+  \end{block}
+  \begin{itemize}
+    \item 在小样本场景下依然保持稳定表现
+    \item 对噪声标注具有一定鲁棒性
+  \end{itemize}
+\end{frame}
+
+\section{总结}
+
+\begin{frame}{总结与展望}
+  \begin{itemize}
+    \item 提出了一套轻量级评测框架，兼顾准确率与效率
+    \item 后续工作将扩展至多模态场景
+    \item 代码与数据集将在论文录用后开源
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{谢谢 / Thank You}
+  \centering
+  \Large 欢迎提问 \\
+  \normalsize wang.xiaoming@sjtu.edu.cn
+\end{frame}
+
+\end{document}

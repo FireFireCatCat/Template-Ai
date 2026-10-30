@@ -1,0 +1,27 @@
+% SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
+% SPDX-License-Identifier: MIT
+
+\input{regression-test.tex}
+\documentclass{article}
+\usepackage[nocomments]{eolang}
+\begin{document}
+
+\START
+
+$x->y$
+
+\phiq{}
+\phiq{x := [ \alpha_0 -rqst> ? ]}
+\phiq{& -> ^.$.|alpha|(42)}
+\phiq{0/g->x}
+\phiq{0/|foo|->x}
+\phiq{<< a, b >> == 7}
+\phiq{x.save}
+\phiq{[[x -> Q.a.^]]}
+
+\begin{tabular}{ll}
+\phiq{x->y} & \phiq{y->x} \\
+\end{tabular}
+
+\end{document}
+\END

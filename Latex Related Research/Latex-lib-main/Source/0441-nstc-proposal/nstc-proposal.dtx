@@ -1,0 +1,480 @@
+% \iffalse
+% nstc-proposal.dtx
+% Copyright 2024–2026 Liang-Ting Chen
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2008 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Liang-Ting Chen (陳亮廷).
+%
+% This work consists of the files nstc-proposal.dtx and nstc-proposal.ins
+% and the derived files nstc-cm03.cls, nstc-cm302.cls, nstc-report.cls,
+% example/proposal.tex, example/bibliography.tex, and example/report.tex.
+%
+%<cm03|cm302|report>\NeedsTeXFormat{LaTeX2e}[2023-11-01]
+%<cm03>\ProvidesClass{nstc-cm03}
+%<cm302>\ProvidesClass{nstc-cm302}
+%<report>\ProvidesClass{nstc-report}
+%<cm03|cm302|report>   [2026-10-19 v1.1 LaTeX document classes for NSTC proposals and reports]
+%
+%<*driver>
+\ProvidesFile{\jobname.dtx}
+  [2026/10/19 v1.1 NSTC proposals and reports]
+\documentclass{ltxdoc}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{pdfpages}
+\onehalfspacing
+\usepackage{xltxtra}
+\usepackage[CJKspace]{xeCJK}
+\usepackage{titlesec,zhnumber}
+\renewcommand\labelenumi{(\zhnum{enumi})}
+\renewcommand\theenumi\labelenumi
+\setmainfont{bkai00mp.ttf}[AutoFakeBold=2.5]
+\setCJKmainfont{bkai00mp.ttf}[AutoFakeBold=2.5]
+\zhnumsetup{style=Traditional}
+\begin{document}
+  \DocInput{\jobname.dtx}
+%%  \PrintChanges
+\end{document}
+%</driver>
+% \fi
+%
+% \changes{v1.0}{2024/11/05}{初始版本}
+% \changes{v1.1}{2026/10/19}{新增進度及成果報告格式 nstc-report}
+% \GetFileInfo{\jobname.dtx}
+% \title{\textsf{nstc-proposal} 套件\thanks{GitHub 專案網站：\url{https://github.com/L-TChen/nstc-proposal}}}
+% \author{陳亮廷}
+% \date{\zhdate{2026/10/19} \fileversion}
+% \maketitle
+% 本套件針對國科會專題研究計畫申請書表 CM03、CM302，以及進度與成果報告的排版需求，提供支援中英混排的文件格式 |nstc-cm03|、|nstc-cm302| 與 |nstc-report|。\footnote{三種文件格式皆使用 \texttt{setspace} 的 \texttt{\textbackslash onehalfspacing} 設定行距，以配合國科會 Word 範例中「單行間距」的版面。}
+%
+% \titleformat{\section}{\bfseries\Large}{\zhnum{section}、}{0em}{}
+% \section{使用方式}
+% 本套件提供 CM03/CM302 申請書及進度與成果報告的版面設定與中文標題。
+%
+%
+% \subsection{文件格式}
+% 以下三種文件格式皆以 \LaTeX 內建的 |article| 為基礎，可透過 |\documentclass| 選用。
+% 採 A4、12 點，並以 |\onehalfspacing| 配合 Word 範例的「單行間距」。
+% 頁面邊界左右與上方設為 2 公分，下方則略為增加至 2.4 公分保持版面平衡。
+% 皆支援 pdf\LaTeX 與 \XeLaTeX。
+%
+% \DescribeMacro{nstc-cm03}
+% 適用於表 CM03 研究計畫內容。
+%
+% \DescribeMacro{nstc-cm302}
+% 適用於表 CM302 著作目錄。
+%
+% \DescribeMacro{nstc-report}
+% 適用於進度及成果報告。
+%
+% |nstc-report| 另提供進度及成果報告格式。
+% 撰寫格式未指定頁面邊界，可用 |\geometry| 調整。
+% 預設使用阿拉伯數字頁碼，從第 1 頁開始；若需要目錄，可用 |\frontmatter| 產生以大寫羅馬數字編頁的目錄。
+%
+% \subsection{文件格式選項}
+% 以下說明三種文件格式的共用選項：
+% 
+% \DescribeMacro{libertine}
+% 將英文字型更換為 Linux Libertine，並使用相應的數學字型，較適合搭配楷體漢字。
+% 
+% \DescribeMacro{kaiti}
+% 使用 \XeLaTeX 時，將中文字型更換為 macOS 的「楷體-繁」（|Kaiti TC|），該字型具備粗體字重。此選項在 pdf\LaTeX 下不改變中文字型。
+%
+% \DescribeMacro{draft oneside twoside fleqn leqno}
+% 這些選項繼承自 |article|，作用請參考其說明。三種文件格式均會警告並忽略明列為不相容的選項；其餘選項交由 |article| 處理。
+%
+% 
+% \subsection{指令} \label{sec:commands}
+% 本套件以 |article| 的指令為基礎，依各表單需求調整。以下四個指令僅由 |nstc-cm03| 提供，用來產生表 CM03 的章節標題及說明文字。
+%
+% \DescribeMacro{\ProposalBackground}
+% 「研究計畫之背景\quad 請詳述本研究計畫\dots\dots」
+%
+% \DescribeMacro{\ProposalMethod}
+% 「研究方法、進行步驟及執行進度\quad 請分年列述：\dots\dots」
+%
+% \DescribeMacro{\ProposalPlan}
+% 「預期完成之工作項目及成果\quad 請分年列述：\dots\dots」
+%
+% \DescribeMacro{\ProposalIntegration}
+% 「整合型研究計畫說明\quad 如為整合型研究計畫\dots\dots」
+%
+% \DescribeMacro{\frontmatter}
+% 僅由 |nstc-report| 提供。在正文之前使用一次，即可另起一頁，以大寫羅馬數字
+% （I、II、III、\dots）從第 I 頁開始產生目錄，再另起一頁，將正文頁碼重設為阿拉伯數字第 1 頁。
+% 此指令已包含 |\tableofcontents| 及頁碼切換；不需要目錄時，省略即可。
+% 目錄項目及頁碼需編譯至少兩次才會更新。
+%
+% \DescribeMacro{\maketitle}
+% 在 |nstc-report| 中，僅排印 |\title{...}| 設定的標題，不顯示作者或日期，也不保留其空間。
+%
+% \subsection{預載套件}
+% 
+% 除 |amsmath| 和 |amsthm| 外，僅預載版面及字型設定所需的套件；其他套件請自行載入。
+% \subsection{範例}
+% 以下為原始檔範例；本說明最後附有 CM03 與 CM302 範例的編譯結果。
+% \subsubsection{CM03 研究計畫}
+% 下列範本可產生接近國科會範例的版面；若另載入 |hyperref|，可產生對應章節的 PDF 書籤：
+%    \begin{macrocode}
+%<*proposal.tex>
+\documentclass[libertine]{nstc-cm03}
+\usepackage{microtype}
+\begin{document}
+
+\ProposalBackground
+\ProposalMethod
+\ProposalPlan
+\ProposalIntegration
+
+\bibliographystyle{plain}
+\bibliography{sample}
+\end{document}
+%</proposal.tex>
+%    \end{macrocode}
+%
+% \subsubsection{CM302 著作目錄}
+% 著作目錄可用 |\nocite{*}| 列出 |.bib| 檔內的所有文獻，例如：
+%    \begin{macrocode}
+%<*bibliography.tex>
+\documentclass{nstc-cm302}
+\usepackage[hidelinks]{hyperref}
+\usepackage{doi}
+\usepackage{microtype}
+\begin{document}
+
+\nocite{*}
+
+\bibliographystyle{abbrv}
+\bibliography{sample}
+\end{document}
+%</bibliography.tex>
+%    \end{macrocode}
+% 
+% \subsubsection{進度及成果報告}
+% |\frontmatter| 產生目錄並自動切回正文的阿拉伯數字頁碼；不需要目錄時可省略。
+% 中英文摘要及關鍵詞於國科會成果報告系統填寫。參考文獻及附錄延續正文頁碼。
+% 此範例僅示範結構，篇幅不代表符合報告的頁數要求。
+%    \begin{macrocode}
+%<*report.tex>
+\documentclass{nstc-report}
+\usepackage[hidelinks]{hyperref}
+\begin{document}
+\frontmatter
+\section{前言}
+說明研究背景。
+\section{研究目的}
+說明研究問題與目標。
+\section{文獻探討}
+評述相關研究，並引用參考文獻。
+\section{研究方法}
+說明研究設計與執行方式。
+\section{結果與討論}
+\subsection{研究成果}
+說明主要發現、參與人員之貢獻、工作完成情形及成果發表狀況。
+\subsection{結論與建議}
+說明結論、建議及後續研究方向。
+\subsection{執行困難與阻礙}
+說明執行計畫過程遇到之困難或阻礙。
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{\refname}
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{sample}
+\clearpage
+\appendix
+\section{補充資料}
+附上與本計畫相關之補充資料，頁碼接續正文。
+\end{document}
+%</report.tex>
+%    \end{macrocode}
+%
+% \section{後記}
+% 
+% 理工領域學者在學術寫作中常使用英文，專題研究計畫申請書則仍常使用中文。
+% 本套件最初為申請書設計，旨在支援中英混排，並使版面與申請書其他部分協調一致，另有以下設計目標：
+% 
+% \begin{enumerate}
+%   \item 支援透過 |hyperref| 產生對應章節的 PDF 書籤
+%   \item 字型使用需合法
+%   \item 需相容 pdf\LaTeX
+% \end{enumerate}
+% 
+% 在 |nstc-cm03| 中，|\section| 對應中文標題（如「研究計畫之背景」），章節編號採中文數字（如「（一）」、「（二）」、「（三）」）。|\section|、|\subsection| 與 |\subsubsection| 均採行內標題，正文緊接在標題後方。由於沿用標準的 \LaTeX 章節指令，載入 |hyperref| 後即可產生對應章節的 PDF 書籤。
+
+% 國科會 CM03 範例中的章節文字，可透過 |\ProposalBackground| 等指令（見第~\ref{sec:commands}~節）印出，但不會自動產生。除首頁固定顯示的「三、研究計畫內容（以中文或英文撰寫）：」外，使用者可自行撰寫各節標題。
+% 
+% 為配合計畫文件其他頁面的字型，\XeLaTeX 預設優先使用標楷體；若找不到指定的系統字型，則使用 \TeX 發行版提供的「文鼎 PL 中楷」。標楷體的粗體由軟體模擬，部分筆畫間的留白可能較少。macOS 的「楷體-繁」則具有對應的粗體字重，因此提供 |kaiti| 選項，供已安裝該字型的使用者選用。
+% 
+% 英文字型預設使用 Times 風格的 TeX Gyre Termes，作為 Times New Roman 的替代字型。Times 的筆畫收尾較為尖銳細長，與中文明體的風格較接近；同為襯線字型的 Linux Libertine 則較圓潤，與楷體的風格較為一致，因此另提供 |libertine| 選項。
+% 
+% 本套件亦支援 pdf\LaTeX，不要求使用者一定以 \XeLaTeX 編譯中文。在 pdf\LaTeX 下，中文由 |CJKutf8| 處理，使用 |arphic| 套件提供的 Type~1「文鼎 PL 中楷」字型\footnote{授權聲明：\url{https://www.arphic.com.tw/2022/01/21/plfont/}}，搭配 C70 編碼。Type~1 是字型格式，與 T1 字型編碼不同。
+% \paragraph{致謝} 特別感謝柯向上博士\footnote{柯博士的個人網頁：\url{https://josh-hs-ko.github.io}}；本套件最初以他提供的頁面設定為基礎發展而成。
+%
+% \appendix
+%
+% \StopEventually{}
+%
+% \titleformat{\section}{\bfseries\Large}{附錄\Alph{section}、}{0em}{}
+% \section{實作}
+%
+% 本節說明實作細節，供後續維護與修改時參考。
+% 
+% \subsection{文件格式選項}
+% 三種文件格式共用選項、套件及中英文字型設定，由 DocStrip 標籤區分版面。
+% 三種文件格式均會將不相容選項從全域清單移除，避免 |article| 再次套用。
+% \begin{macro}{}
+% 若使用下列明列為不相容的 |article| 選項，編譯時會發出警告。
+%    \begin{macrocode}
+%<*cm03|cm302|report>
+%<cm03>\def\cmthree@class{nstc-cm03}
+%<cm302>\def\cmthree@class{nstc-cm302}
+%<report>\def\cmthree@class{nstc-report}
+\newcommand{\cmthree@info}[1]{\ClassInfo{\cmthree@class}{#1}}
+\newcommand{\cmthree@warning}{%
+  \ClassWarning{\cmthree@class}{Option `\CurrentOption' ignored;
+    documents use A4, 12pt, and one column}%
+  \@expandtwoargs\@removeelement{\CurrentOption}{\@classoptionslist}%
+    \@classoptionslist
+  \@expandtwoargs\@removeelement{\CurrentOption}{\@raw@classoptionslist}%
+    \@raw@classoptionslist}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{}
+% 以下是不相容的選項：
+%    \begin{macrocode}
+\DeclareOption{landscape}{\cmthree@warning}
+\DeclareOption{titlepage}{\cmthree@warning}
+\DeclareOption{notitlepage}{\cmthree@warning}
+\DeclareOption{10pt}{\cmthree@warning}
+\DeclareOption{11pt}{\cmthree@warning}
+\DeclareOption{letterpaper}{\cmthree@warning}
+\DeclareOption{a5paper}{\cmthree@warning}
+\DeclareOption{b5paper}{\cmthree@warning}
+\DeclareOption{executivepaper}{\cmthree@warning}
+\DeclareOption{legalpaper}{\cmthree@warning}
+\DeclareOption{twocolumn}{\cmthree@warning}
+\DeclareOption{openright}{\cmthree@warning}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{libertine,kaiti}
+% 另提供 |libertine| 與 |kaiti| 兩個選項以切換字型：
+%    \begin{macrocode}
+\DeclareOption{libertine}{\let\@libertine\relax}
+\DeclareOption{kaiti}{\let\@kaiti\relax}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{}
+% 其餘選項傳入 |article|，並依文件格式設定頁面、字型大小與行距：
+%    \begin{macrocode}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
+\ProcessOptions\relax
+%<cm03|cm302|report>\LoadClass[a4paper,12pt,onecolumn,twoside]{article}
+%<cm03|cm302|report>\RequirePackage[margin=2cm,bottom=2.4cm]{geometry}
+\RequirePackage{setspace}
+\onehalfspacing
+%<report>\setlength{\parskip}{0pt}
+
+\RequirePackage{iftex,xifthen}
+\RequirePackage{amsmath,amsthm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{中文字型處理}
+% \begin{macro}{}
+% 中文字型設定依編譯引擎而異。此處以 |iftex| 的 |\iftutex| 區分 Unicode 引擎與傳統引擎。此條件也會對 Lua\TeX 成立，但下方的 |xeCJK| 分支僅支援 \XeTeX；本套件不提供 Lua\LaTeX 支援。
+%    \begin{macrocode}
+\iftutex
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{}
+% 使用 \XeLaTeX 時，載入 |xeCJK| 處理中文排版。若指定 |kaiti| 選項，則載入系統字型「楷體-繁」（|Kaiti TC|）：
+%    \begin{macrocode}
+\RequirePackage[PunctStyle=plain,no-math]{xeCJK}
+\ifx\@kaiti\relax
+  \setCJKmainfont{Kaiti TC}[BoldFont = *-Bold]
+  \setCJKsansfont{Heiti TC}
+  \cmthree@info{使用楷體作為中文字型}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{}
+% 若未指定 |kaiti|，則依序檢查系統上是否有 |BiauKai| 或 |BiauKaiTC|，並使用第一個找到的字型。這些是不同版本標楷體使用的字型名稱：
+%    \begin{macrocode}
+\else
+\IfFontExistsTF{BiauKai}{
+  \setCJKmainfont{BiauKai}[AutoFakeBold=2.5]
+  \cmthree@info{使用標楷體 (BiauKai) 作為中文字型}
+}{
+  \IfFontExistsTF{BiauKaiTC}{
+  \setCJKmainfont{BiauKaiTC}[AutoFakeBold=2.5]
+  \cmthree@info{使用標楷體繁 (BiauKaiTC) 作為中文字型}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{}
+% 若找不到 |BiauKai| 或 |BiauKaiTC|，則使用 |arphic-ttf| 套件的「文鼎 PL 中楷」（|AR PL KaitiM Big5|）：
+%    \begin{macrocode}
+}{
+  \setCJKmainfont{bkai00mp.ttf}[AutoFakeBold=2.5]
+  \cmthree@info{使用 AR PL KaitiM Big5 作為中文字型}
+}}
+\fi
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{}
+% 使用 pdf\LaTeX 時，載入 |CJKutf8|，並使用 |arphic| 套件的「文鼎 PL 中楷」。另定義 |zh| 環境以處理中文，並透過文件鉤子將整份文件包覆於此環境中：
+%    \begin{macrocode}
+\else
+  \RequirePackage{CJKutf8}
+  \newenvironment{zh}{\begin{CJK*}{UTF8}{bkai}}{\end{CJK*}}
+  \input{c70bkai.fd}
+  \DeclareFontShape{C70}{bkai}{b}{n}{<-> CJKb * bkaiu}{\CJKbold}
+  \AddToHook{begindocument/end}{\begin{zh}}
+  \AddToHook{enddocument}{\end{zh}}
+\fi
+%    \end{macrocode}
+% \end{macro}
+% \subsection{英文字型處理}
+% \begin{macro}{}
+%    \begin{macrocode}
+\ifx\@libertine\relax
+  \RequirePackage[tt=false]{libertine}
+  \iftutex
+    \RequirePackage{unicode-math}
+    \setmathfont[Scale=MatchUppercase]{LibertinusMath-Regular.otf}
+  \else
+    \RequirePackage[libertine]{newtxmath}
+  \fi
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{}
+% 未指定 |libertine| 時，使用 |newtxtext| 載入 \textsf{TeX Gyre Termes} 系列字型。由於 |newtxtext| 會設定 |fontspec| 的預設字型特性，此處在 Unicode 引擎下以 |\defaultfontfeatures{}| 清除這些設定，方便使用者後續調整字型：
+%    \begin{macrocode}
+\else
+  \RequirePackage{newtxtext}
+  \iftutex
+    \defaultfontfeatures{} 
+  \fi
+  \RequirePackage{newtxmath}
+\fi
+%</cm03|cm302|report>
+%<*cm03|cm302>
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{}
+% \subsection{頁面文字}
+% 設定 CM03 的行內章節標題格式：
+%    \begin{macrocode}
+%<cm03>\RequirePackage{zhnumber,titlesec}
+%<cm03>\titleformat{\section}[runin]%
+%<cm03>  {\bfseries\normalsize}{（\zhnum{section}）}{0em}{}
+%<cm03>\titleformat{\subsection}[runin]%
+%<cm03>  {\bfseries\normalsize}{\thesubsection}{0.5em}{}
+%<cm03>\titleformat{\subsubsection}[runin]%
+%<cm03>  {\bfseries\normalsize}{\thesubsubsection}{0.5em}{}
+%
+%    \end{macrocode}
+% \end{macro}
+% 設定表 CM03/CM302 首頁標題：
+% \begin{macro}{}
+%    \begin{macrocode}
+%<cm302>\def\cmthree@heading{五、著作目錄（建議呈現與計畫相關之著作目錄，頁數以~2~頁為限）：}
+%<cm302>\def\cmthree@footer{表\;CM302}
+%<cm03>\def\cmthree@heading{三、研究計畫內容（以中文或英文撰寫）：}
+%<cm03>\def\cmthree@footer{表\;CM03}
+\AddToHook{begindocument/end}{\par%
+  \everypar={{\setbox0=\lastbox}\everypar{}}%
+  \begingroup\large\bfseries\cmthree@heading\endgroup\par}
+
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{}
+% 設定頁尾格式：
+%    \begin{macrocode}
+\RequirePackage{lastpage,fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead{}
+\iftutex
+  \lfoot{\cmthree@footer}
+\else
+  \lfoot{\begin{zh}\cmthree@footer\end{zh}}
+\fi
+\cfoot{}
+\iftutex
+  \rfoot{共~\pageref{LastPage}~頁%
+  \hspace{1em}第~\thepage~頁}
+\else
+  \rfoot{\begin{zh}共~\pageref{LastPage}~頁%
+  \hspace{1em}第~\thepage~頁\end{zh}}
+\fi
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{}
+% CM03 將參考文獻標題改為中文；CM302 則將 |\section| 重定義為接收兩個引數但不輸出內容，以抑制 |\section*{...}| 形式的參考文獻標題及其留白。此重定義也會影響其他 |\section| 呼叫：
+%    \begin{macrocode}
+%<cm302>\AddToHook{begindocument/end}{\renewcommand{\section}[2]{}}
+%<cm03>\AddToHook{begindocument/end}{\renewcommand{\refname}{參考文獻}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\zhsection}
+% |\zhsection| 輸出章節標題與說明，並在後方加入 1em 的垂直間距。
+%    \begin{macrocode}
+%<cm03>\newcommand{\zhsection}[2]{\section{#1}#2\vskip1em}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\ProposalBackground, \ProposalMethod, \ProposalPlan, \ProposalIntegration}
+% 設定表 CM03 各節標題文字與說明：
+%    \begin{macrocode}
+%<cm03>\newcommand{\ProposalBackground}{\zhsection{研究計畫之背景}{請詳述本研究計畫所要探討或解決的問題、研究原創性、重要性、預期影響性及國內外有關本計畫之研究情況、重要參考文獻之評述等。如為連續性計畫應說明上年度研究進度。}}
+%<cm03>\newcommand{\ProposalMethod}{\zhsection{研究方法、進行步驟及執行進度}{請分年列述：1. 本計畫採用之研究方法與原因及其創新性。2. 預計可能遭遇之困難及解決途徑。3. 重要儀器之配合使用情形。4. 如為須赴國外或大陸地區研究，請詳述其必要性以及預期效益等。}}
+%<cm03>\newcommand{\ProposalPlan}{\zhsection{預期完成之工作項目及成果}{請分年列述：1. 預期完成之工作項目。2. 對於參與之工作人員，預期可獲之訓練。3. 預期完成之研究成果（如實務應用績效、期刊論文、研討會論文、專書、技術報告、專利或技術移轉等質與量之預期成果）。4. 學術研究、國家發展及其他應用方面預期之貢獻。}}
+%<cm03>\newcommand{\ProposalIntegration}{\zhsection{整合型研究計畫說明}{如為整合型研究計畫請就以上各點分別說明與其他子計畫之相關性。}}
+%</cm03|cm302>
+%    \end{macrocode}
+% \end{macro}
+% \subsection{進度及成果報告文件格式}
+% 報告格式共用前述字型及套件設定，在此設定報告專用的標題及頁碼。
+% pdf\LaTeX 使用 |CJKutf8| 與文鼎 PL 中楷；\XeLaTeX 優先使用標楷體，並提供文鼎 PL 中楷作為備援。
+% 英文預設使用 |newtxtext| 與 |newtxmath|，亦支援 |libertine| 與 |kaiti| 選項。
+% |plain| 頁面樣式將頁碼置於頁尾中央，不加申請書表號或總頁數。
+% 預設沿用 |article| 的阿拉伯數字頁碼；|\frontmatter| 僅在產生目錄時使用大寫羅馬數字。
+% 換頁在改變頁碼格式之前執行，確保前一頁與浮動物件使用原頁碼。
+%    \begin{macrocode}
+%<*report>
+\renewcommand{\@maketitle}{%
+  \newpage
+  \null
+  \vskip 2em%
+  \begin{center}%
+    \let\footnote\thanks
+    {\LARGE \@title \par}%
+  \end{center}%
+  \par
+  \vskip 1.5em}
+\pagestyle{plain}
+\newcommand{\frontmatter}{%
+  \clearpage
+  \pagenumbering{Roman}%
+  \tableofcontents
+  \clearpage
+  \pagenumbering{arabic}}
+%</report>
+%    \end{macrocode}
+%
+% \includepdfmerge[nup=2x1, landscape]{./example/proposal.pdf, ./example/bibliography.pdf}
+%
+% \Finale
+

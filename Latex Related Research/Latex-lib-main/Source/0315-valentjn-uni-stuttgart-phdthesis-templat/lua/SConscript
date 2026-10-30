@@ -1,0 +1,12 @@
+import os
+
+Import("env")
+env = env.Clone()
+
+# install *.lua files in tex directory
+# (necessary for LuaLaTeX to be in the same directory)
+lua = env.Glob("*.lua")
+luaInstalled = env.Install(
+    os.path.join(env["BUILD_DIR"].abspath, "..", "tex"), lua)
+
+Return("luaInstalled")

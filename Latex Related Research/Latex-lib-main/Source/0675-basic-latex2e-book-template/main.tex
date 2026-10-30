@@ -1,0 +1,109 @@
+% Basic LaTeX2e Book Template — a plain `book`-class starter with the
+% package/macro scaffolding an author actually reaches for: ntheorem-based
+% examples, algorithm/algpseudocode, booktabs+dcolumn tables, natbib citations
+% and microtype. Adapted from albertopessia/latex-book-template (public
+% domain, Unlicense): dropped the upstream's dev-only packages (lipsum
+% placeholder text, refcheck margin labels, lineno line numbers) since this is
+% a document you ship, not one you are still drafting.
+\documentclass[a4paper]{book}
+
+\input{lib/packages.tex}
+\input{lib/macros.tex}
+
+\title{Notes on Algorithmic Number Theory}
+\author{Alan Turing}
+\date{}
+
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\chapter{Preface}
+These notes began as a set of lectures on algorithmic number theory,
+written for students who already know basic abstract algebra but have not
+yet seen how those ideas become running code. Each chapter pairs a short
+piece of theory with the algorithm it justifies.
+
+\chapter{Acknowledgements}
+Thanks to the students of the original course for catching more errors in
+early drafts than the author would like to admit.
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{Introduction}
+\label{ch:introduction}
+
+Modular arithmetic is the setting for most of what follows.
+Definition~\ref{ex:modexp} recalls fast exponentiation, the workhorse
+behind RSA and Diffie--Hellman alike \citep{cormen2009algorithms}.
+
+\begin{example}[Fast modular exponentiation]
+\label{ex:modexp}
+To compute $a^n \bmod m$, write $n$ in binary and square-and-multiply:
+repeated squaring reduces an $O(n)$-multiplication computation to
+$O(\log n)$ multiplications modulo $m$.
+\end{example}
+
+Algorithm~\ref{alg:modexp} makes this precise.
+
+\begin{algorithm}
+\caption{Modular exponentiation by repeated squaring}
+\label{alg:modexp}
+\begin{algorithmic}
+\Input{$a, n, m \in \mathbb{Z}$, $n \geq 0$}
+\Output{$a^n \bmod m$}
+\State $r \gets 1$
+\State $b \gets a \bmod m$
+\While{$n > 0$}
+  \If{$n \bmod 2 = 1$}
+    \State $r \gets (r \cdot b) \bmod m$
+  \EndIf
+  \State $b \gets (b \cdot b) \bmod m$
+  \State $n \gets \lfloor n / 2 \rfloor$
+\EndWhile
+\State \Return $r$
+\end{algorithmic}
+\end{algorithm}
+
+Table~\ref{tab:complexity} summarises the running time of the operations
+this chapter introduces.
+
+\begin{table}[htbp]
+\centering
+\caption{Running time of basic modular operations, $n$-bit inputs}
+\label{tab:complexity}
+\begin{tabular}{l l}
+\toprule
+Operation & Bit complexity \\
+\midrule
+Addition mod $m$       & $O(n)$ \\
+Multiplication mod $m$ & $O(n^{1.58})$ \\
+Exponentiation mod $m$ & $O(n^{2.58})$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\chapter{Primality}
+\label{ch:primality}
+
+\begin{example}[Fermat witness]
+\label{ex:fermat}
+If $\gcd(a, n) = 1$ and $a^{n-1} \not\equiv 1 \pmod{n}$, then $n$ is
+composite and $a$ is called a \emph{Fermat witness} for $n$.
+\end{example}
+
+The Miller--Rabin test refines Example~\ref{ex:fermat} into a
+probabilistic algorithm with one-sided error, described
+in~\citet{cormen2009algorithms} and analysed asymptotically
+in~\citet{knuth1997art}.
+
+\backmatter
+
+\bibliographystyle{abbrvnat}
+\bibliography{lib/biblio}
+
+\end{document}

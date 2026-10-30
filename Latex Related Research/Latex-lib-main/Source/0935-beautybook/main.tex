@@ -1,0 +1,157 @@
+% beautybook — decorative book class with coloured theorem boxes and a
+% two-tone chapter-heading treatment, adapted from the CTAN/GitHub
+% BeautyLaTeX/latex-template package.
+%
+% Simplified from upstream: the upstream ships four cover styles (cn/en/
+% enfig/birkar) and a 36MB set of photographic chapter-corner decorations
+% (inner_pics/titleimages/, Pixabay-style stock photos with no separate
+% licence grant of their own). This starter uses ONLY the text-only "en"
+% cover (no background photo) and a small self-drawn abstract mark
+% (inner_pics/beautybook-mark.png, original artwork made for this starter)
+% in place of every upstream photo, so nothing here carries an unverified
+% third-party image licence.
+\documentclass[lang=en,12pt]{beautybook}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{times}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{microtype}
+\RequirePackage[round]{natbib}
+
+\definecolor{coverbgcolor}{HTML}{e0e0e0}
+\definecolor{coverfgcolor}{HTML}{1f3134}
+\definecolor{coverbar}{HTML}{7c9092}
+\definecolor{bottomcolor}{HTML}{2c4f54}
+\definecolor{nuanbai}{HTML}{f5f5f5}
+\coverstyle={
+    cover-choose=en,
+}
+\mathstyle={
+    math-font=plain,
+}
+
+\mynewtheorem{
+    defi={\textbf{Definition}}[section]{interior style={left color=ReD!8,right color=ReD!5!CyaN!50}, borderline west={1.5mm}{0mm}{ReD}},
+    thm={\textbf{Theorem}}[section]{interior style={left color=CyaN!80!black!20,right color=CyaN!80!black!15!CyaN!50}, borderline west={1.5mm}{0mm}{CyaN!80!black}},
+    lem={\textbf{Lemma}}[section]{interior style={left color=BluE!8,right color=BluE!5!CyaN!50}, borderline west={1.5mm}{0mm}{BluE}},
+    prop={\textbf{Proposition}}[section]{interior style={left color=OrangE!8,right color=OrangE!5!CyaN!50}, borderline west={1.5mm}{0mm}{OrangE}},
+    exam={\textbf{Example}}[chapter]{interior style={left color=DarkGreen!8,right color=DarkGreen!5!CyaN!50}, borderline west={1.5mm}{0mm}{DarkGreen}},
+}
+\newtheorem*{remark}{\textbf{Remark}}
+
+\begin{document}
+\thispagestyle{empty}
+\title{An Introduction to Graph Colouring}
+\subtitle{A first course}
+\edition{First Edition}
+\bookseries{}
+\author{Grace Hopper}
+\pressname{beautybook}
+\presslogo{inner_pics/beautybook-mark.png}
+\makecover
+
+\makeatletter
+\definecolor{bg}{HTML}{e0e0e0}
+\definecolor{fg}{HTML}{2c4f54}
+\colorlet{outermarginbgcolor}{bg}
+\colorlet{outermarginfgcolor}{fg}
+\oddoutermargin{\sffamily \leftmark}
+\evenoutermargin{\sffamily\@title}
+\chapimage{inner_pics/beautybook-mark.png}
+\makeatother
+
+\colorlet{framegolden}{fg}
+\colorlet{framegray}{bg!50}
+
+\frontmatter
+\pagenumbering{Roman}
+
+{\thispagestyle{empty}
+\chapter*{Preface}
+This short book collects the definitions and first theorems of graph
+colouring, aimed at a reader who has seen basic graph theory but not yet
+chromatic numbers.
+
+\hfill
+\begin{tabular}{lr}
+    &-- Grace Hopper\\
+    & 2026
+\end{tabular}
+\clearpage}
+
+\thispagestyle{empty}
+\tableofcontents\let\cleardoublepage\clearpage
+
+\mainmatter
+\pagenumbering{arabic}
+
+\partabstract{\hspace*{2em} The first part develops the basic vocabulary
+of graph colouring and proves the elementary upper bounds every later
+result builds on.}
+\part{Foundations}
+
+\chapter{Proper Colourings}
+\label{ch:colourings}
+
+\section{Definitions}
+
+\begin{defi}[Proper colouring]
+\label{def:colouring}
+A \emph{proper $k$-colouring} of a graph $G = (V, E)$ is a function
+$c \colon V \to \{1, \dots, k\}$ such that $c(u) \neq c(v)$ whenever
+$uv \in E$.
+\end{defi}
+
+\begin{defi}[Chromatic number]
+\label{def:chromatic}
+The \emph{chromatic number} $\chi(G)$ is the least $k$ for which $G$
+admits a proper $k$-colouring.
+\end{defi}
+
+\begin{thm}[Greedy bound]
+\label{thm:greedy-bound}
+For any graph $G$ with maximum degree $\Delta$, $\chi(G) \leq \Delta + 1$.
+\end{thm}
+
+\begin{proof}
+Order the vertices arbitrarily and colour them in that order, at each step
+assigning the least colour not used by an already-coloured neighbour.
+Each vertex has at most $\Delta$ neighbours, so at most $\Delta$ colours
+are forbidden, leaving one of the first $\Delta + 1$ colours free.
+\end{proof}
+
+\begin{exam}[An odd cycle]
+\label{exam:cycle}
+The cycle $C_5$ has $\Delta = 2$, so Theorem~\ref{thm:greedy-bound} gives
+$\chi(C_5) \leq 3$. In fact $\chi(C_5) = 3$: two colours are never enough
+for a cycle of odd length, since the colours would have to alternate and
+cannot close up consistently.
+\end{exam}
+
+\begin{lem}[Bipartite graphs]
+\label{lem:bipartite}
+A graph $G$ is bipartite if and only if $\chi(G) \leq 2$.
+\end{lem}
+
+\begin{remark}
+Lemma~\ref{lem:bipartite} makes $2$-colourability and bipartiteness the
+same question, and both can be checked in linear time by breadth-first
+search.
+\end{remark}
+
+\chapter{The Four Colour Theorem}
+\label{ch:four-colour}
+
+\begin{prop}[Planar upper bound]
+\label{prop:planar-bound}
+Every planar graph satisfies $\chi(G) \leq 4$.
+\end{prop}
+
+Proposition~\ref{prop:planar-bound} is the Four Colour Theorem, first
+proved by computer-assisted case analysis
+by~\citet{appel1977four}, and later given a more tractable
+proof by~\citet{robertson1997four}.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

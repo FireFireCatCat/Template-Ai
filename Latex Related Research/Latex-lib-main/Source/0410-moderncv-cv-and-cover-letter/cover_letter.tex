@@ -1,0 +1,47 @@
+% moderncv's matching cover letter — same class, same personal-info block as
+% main.tex, but using the LETTER commands (\recipient, \opening, \closing)
+% instead of the CV commands (\cventry, \section). Compile this file on its
+% own: it produces its own PDF, separate from the CV.
+\documentclass[11pt,a4paper,sans]{moderncv}
+
+\moderncvstyle{classic}
+\moderncvcolor{blue}
+
+\usepackage[scale=0.85]{geometry}
+
+\firstname{Elena}
+\familyname{Kowalczyk}
+\address{14 Boren Ave}{Seattle, WA 98104}{USA}
+\phone[mobile]{+1~206~555~0148}
+\email{elena.kowalczyk@example.com}
+
+% Recipient and letter-specific fields.
+\recipient{Hiring Committee}{Lucid Analytics Inc.\\401 Terry Ave N\\Seattle, WA 98109}
+\date{\today}
+\subject{Application for Senior Data Engineer}
+\opening{Dear Hiring Committee,}
+\closing{Sincerely,}
+\enclosure[Enclosure]{Curriculum Vitae}
+
+\begin{document}
+
+\makelettertitle
+
+I am writing to apply for the Senior Data Engineer role advertised on your
+careers page. I currently lead the data-platform team at Orbital Analytics,
+where I rebuilt our event-ingestion pipeline onto Kafka and dbt, cutting
+p99 latency from 40 seconds to under 3 at 200 million events a day — the
+kind of throughput problem your job posting describes.
+
+Before that, at Northlight Retail, I replaced a nightly full-refresh
+warehouse job with an incremental-load framework on Airflow and Snowflake,
+which is directly relevant to the migration your team is planning off a
+similar batch architecture.
+
+I have attached my CV with the full detail of both roles. I would welcome
+the chance to talk about how that experience applies to your team's
+current rebuild.
+
+\makeletterclosing
+
+\end{document}

@@ -1,0 +1,65 @@
+# SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
+# SPDX-License-Identifier: MIT
+---
+# yamllint disable rule:line-length
+name: l3build
+'on':
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  l3build:
+    timeout-minutes: 15
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2025]
+    env:
+      TERM: linux
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get -y update
+        if: matrix.os == 'ubuntu-24.04'
+      - run: sudo apt-get install --yes inkscape
+        if: matrix.os == 'ubuntu-24.04'
+      - run: sudo apt-get install --yes ghostscript
+        if: matrix.os == 'ubuntu-24.04'
+      - run: brew install ghostscript
+        if: matrix.os == 'macos-15'
+      - if: matrix.os == 'windows-2025'
+        shell: pwsh
+        run: |
+          choco install --yes --no-progress ghostscript
+          $gs = Get-ChildItem 'C:\Program Files\gs' -Recurse -Filter gswin64c.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $gs) { throw 'gswin64c.exe not found after install' }
+          Write-Host "Ghostscript at $($gs.DirectoryName)"
+          Add-Content -Path $env:GITHUB_PATH -Value $gs.DirectoryName
+      - run: sed -E 's/^(hard|soft)[[:space:]]+//' DEPENDS.txt > .texlive-packages.txt
+      - uses: zauguin/install-texlive@v4.4.0
+        with:
+          package_file: .texlive-packages.txt
+          texlive_version: 2026
+      - run: l3build ctan --show-log-on-error --halt-on-error
+      - if: failure()
+        run: |
+          echo '::group::huawei.log'
+          cat build/doc/huawei.log 2>/dev/null || echo 'no build/doc/huawei.log'
+          echo '::endgroup::'
+      - run: |
+          mkdir build/gh-pages
+          cp build/distrib/tds/tex/latex/huawei/huawei.cls build/gh-pages
+          sed -i "s/0\.0\.0/$(date +%H.%M.%S)/g" build/gh-pages/huawei.cls
+          sed -i "s|0000-00-00|$(date +%Y-%m-%d)|g" build/gh-pages/huawei.cls
+        if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-24.04'
+      - uses: JamesIves/github-pages-deploy-action@v4.9.0
+        with:
+          branch: gh-pages
+          folder: build/gh-pages
+          clean: true
+        if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-24.04'

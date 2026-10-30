@@ -1,0 +1,72 @@
+%%
+%% arabdoc-glossary.sty — Arabic glossary and acronym styles
+%%
+%% Author: Dr Nibras Abo Alzahab <nibras.abo.alzahab@gmail.com>
+%% Version: 1.0.0
+%% Date: 2025/01/15
+%% License: LPPL 1.3c
+%%
+%% Usage:
+%%   \usepackage{arabdoc-glossary}
+%%   \newarabicacronym{bci}{BCI}{Brain-Computer Interface}{ترابط الدماغ–الحاسوب}
+%%   \newarabicterm{neuron}{Neuron}{العَصَبُون: الوحدة الوظيفية الأساسية للجهاز العصبي}
+%%
+%% Then in text:
+%%   \acrfull{bci}    → BCI (Brain-Computer Interface) - ترابط الدماغ–الحاسوب
+%%   \gls{neuron}     → Neuron: العَصَبُون...
+%%
+
+\def\arabdocglossaryversion{1.0.0}
+\def\arabdocglossarydate{2025/01/15}
+\ProvidesPackage{arabdoc-glossary}[\arabdocglossarydate\space v\arabdocglossaryversion\space Arabic glossary and acronym styles]
+
+\RequirePackage[acronym,toc]{glossaries}
+
+%% ============================================
+%% Arabic names for glossary sections
+%% ============================================
+
+\renewcommand*{\acronymname}{الاختصارات}
+\renewcommand*{\glossaryname}{المصطلحات}
+
+%% ============================================
+%% Simplified acronym command for Arabic documents
+%%
+%% \newarabicacronym{key}{ABBR}{English Full}{Arabic Full}
+%%
+%% Produces: \newacronym{key}{\LR{ABBR}}{\textarabic{Arabic Full} - \LR{English Full}}
+%% ============================================
+
+\newcommand{\newarabicacronym}[4]{%
+  \newacronym{#1}{\LR{#2}}{\textarabic{#4} - \LR{#3}}%
+}
+
+%% ============================================
+%% Simplified glossary term command for Arabic documents
+%%
+%% \newarabicterm{key}{English Name}{Arabic Description}
+%%
+%% Produces: \newglossaryentry{key}{name=\LR{English Name}, description={Arabic Description}}
+%% ============================================
+
+\newcommand{\newarabicterm}[3]{%
+  \newglossaryentry{#1}{%
+    name=\LR{#2},%
+    description={#3}%
+  }%
+}
+
+%% ============================================
+%% Bilingual glossary term (Arabic name + English name + Arabic description)
+%%
+%% \newbilingualterm{key}{Arabic Name}{English Name}{Arabic Description}
+%% ============================================
+
+\newcommand{\newbilingualterm}[4]{%
+  \newglossaryentry{#1}{%
+    name={#3 \LR{(#2)}},%
+    description={#4}%
+  }%
+}
+
+\endinput

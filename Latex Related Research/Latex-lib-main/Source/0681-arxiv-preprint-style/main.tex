@@ -1,0 +1,79 @@
+%% arXiv preprint starter — the widely used NeurIPS-derived preprint style.
+%%
+%% arxiv.sty IS bundled with this download: it is a standalone styling
+%% package (not a CTAN package), distributed from its own GitHub repo, so
+%% there is no TeX Live copy to fall back to.
+%%
+%% Source: https://github.com/kourgeorge/arxiv-style
+%% Licence: MIT, (c) George Kour -- verified in the repo's own License.txt.
+%%
+%% This is a \usepackage, not a document class: it restyles the plain
+%% article class rather than replacing it.
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{arxiv}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
+
+\title{Your Title Here}
+
+\author{
+  Ada Lovelace \\
+  Institute of Analytical Engines\\
+  London, United Kingdom \\
+  \texttt{ada@example.edu} \\
+  \And
+  Second Author \\
+  Another University\\
+  Springfield, USA \\
+  \texttt{second@example.org} \\
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Replace this with your abstract. A good abstract states the problem, what
+you did, and what you found --- in that order, and without citations.
+\end{abstract}
+
+\keywords{First keyword \and Second keyword \and Third keyword}
+
+\section{Introduction}
+Start here. Cite things like this~\citep{knuth1984texbook}.
+
+\section{Method}
+\label{sec:method}
+Describe what you did.
+
+\begin{table}[htbp]
+  \caption{A caption goes above the table.}
+  \label{tab:example}
+  \centering
+  \begin{tabular}{lrr}
+    \toprule
+    Condition & Count & Rate \\
+    \midrule
+    Baseline  & 120   & 0.42 \\
+    Ours      & 118   & 0.71 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Results}
+Table~\ref{tab:example} shows the numbers.
+
+\section{Conclusion}
+Say what it means.
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

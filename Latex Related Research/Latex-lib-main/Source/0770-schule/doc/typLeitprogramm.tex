@@ -1,0 +1,47 @@
+\section{Leitprogramm}
+\label{typ:Leitprogramm}
+Als Leitprogramm wird eine Grundlage für den Unterricht bezeichnet, mit dem \SuS sich ein größeres Thema erarbeiten können. Ein Leitprogramm enthält dafür erklärende Texte sowie Aufgaben mit Hinweisen und Lösungen. Diese werden von Elemente werden von den Lernenden selbstständig gelesen und bearbeitet. Zum Abschluss eines Kapitels gehört in der Regel ein Kapiteltest. Dieses holen sich die \SuS bei der Lehrkraft ab um ihn zu bearbeiten und ihn anschließend direkt von der Lehrkraft kontrollieren zu lassen. Dieser Test wird dabei nur auf Grundlage des Erlernten und ohne direktes Hinzunehmen des Leitprogramms absolviert.
+
+Der Dokumententyp Leitprogramm, als Typ ist \verbcode|leit| anzugeben, stellt die layouttechnischen Grundlagen bereit und sorgt für die Verknüpfungen zwischen den Aufgaben und den dazugehörenden Hinweisen und Lösungen. Der Dokumententyp lässt sich aber auch für ein Skript nutzen, dass aus verschiedenen Kapiteln besteht. Die empfohlene Dokumentklasse ist \cls{scrreprt}. Ein Beispiel ist unter \prettyref{example:beispiel-leitprogramm} aufgeführt.
+
+\subsection{Paketoptionen}
+Beim Leitprogramm werden standardmäßig von der Aufgabe Links zu möglichen vorhanden Lösungen oder Bearbeitungshinweisen gesetzt. Da dieses Schaltflächen auch angezeigt werden, wenn die Lösungen bzw. Hinweise nicht eingebunden wurden, kann die Anzeige über Paketoptionen ausgeschaltet werden.
+\begin{options}
+    \opt{hinweisLinkVerbergen} verbirgt Links bei der Aufgabe zu möglichen Bearbeitungshinweisen.
+    \opt{loesungLinkVerbergen} verbirgt Links bei der Aufgabe zu möglichen Lösungen.
+\end{options}
+
+\subsection{Befehle}
+\begin{commands}
+    \command{TextFeld}[\marg{Höhe}] Erstellt ein Formularfeld mit der angegebenen Höhe und der aktuellen Spaltenbreite. Mit passenden Anzeigeprogrammen kann dann an dieser Stelle im PDF-Dokument Text eingegeben werden.
+    \command{monatWort}[\marg{Monatszahl}] Übersetzt den als Zahl angegeben Monat in den deutschen Namen. Sollte die Zahl nicht erkannt werden, wird \enquote{unbekannter Monat} ausgegeben.
+\end{commands}
+
+\subsection{Umgebungen}
+Für das Leitprogramm werden verschiedene Boxen und eine neue Form für Aufgaben definiert.
+
+\paragraph{Boxen}
+Die Boxen erzeugen jeweils eine hervorgehobenen Bereich, der mit einem entsprechenden Symbol und einer Überschrift als Titel ausgezeichnet ist.
+\begin{environments}
+    \environment{hinweisBox} Hat ein Ausrufezeichen als Symbol und den Titel Hinweis.
+
+    \environment{lernkontrolleBox} Hat als Symbol  ein Ausrufezeichen und ein Fragezeichen, sowie Lernkontrolle als Titel. \sinceversion{0.11.0}
+
+    \environment{lernzieleBox} Hat als Symbol eine Zielflagge und Lernziele als Titel. \sinceversion{0.11.0}
+
+    \environment{loesungenBox} Hat als Symbol eine Glühlampe und trägt als Titel Lösungen \sinceversion{0.11.0}
+
+    \environment{nothelferBox} Hat einen Krankenwagen als Symbol und trägt den Titel Nothelfer. \sinceversion{0.11.0}
+
+    \environment{theorieBox} Hat ein Buch als Symbol und Theorie als Titel. \sinceversion{0.11.0}
+
+    \environment{uebersichtBox} Hat ein Wegweise als Symbol und  Übersicht als Titel.\sinceversion{0.11.0}
+\end{environments}
+
+\paragraph{Aufgaben}\sinceversion{0.11.0}
+Um unabhängig von den normalen Aufgaben in einem Leitprogramm zusätzliche Aufgaben für die Lernkontrolle zu haben, gibt es auch die \verbcode|kontrollaufgabe| mit entsprechenden Lösungen dazu.
+\begin{environments}
+    \environment{kontrollaufgabe} Erstellt eine Aufgabe, die eine für die Lernkontrolle gedacht ist und eine extra Zählung hat.
+
+    \environment{kontrollloesung} Die Angabe der Lösungen für \verbcode|kontrollaufgabe| erfolgen in dieser Umgebung.
+\end{environments}

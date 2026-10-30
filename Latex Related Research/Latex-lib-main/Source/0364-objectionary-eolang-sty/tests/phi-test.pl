@@ -1,0 +1,67 @@
+#!/usr/bin/perl
+# SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
+# SPDX-License-Identifier: MIT
+
+package eolang;
+
+use strict;
+use warnings;
+use lib('tests');
+use test_tools;
+use File::Temp qw/ tempdir /;
+use File::Basename;
+use File::Spec;
+
+# Checks whether rewriting happens for \phiq.
+sub rewrites_phiq {
+  my ($temp, $from, $to) = @_;
+  my $src = $temp . '/foo.tex';
+  savefile($src, $from);
+  my $stdout = `perl '$temp/_eolang/article-phi.pl' phiq '$src' 2>&1`;
+  if (index($stdout, $to) eq -1) {
+    error("Didn't rewrite:\n");
+    error("--- from: ---\n");
+    error($from);
+    error("\n--- expected: ---\n");
+    error($to);
+    error("\n--- received: ---\n");
+    error($stdout);
+    error("\n---\n");
+    exit(1);
+  }
+  info('OK!');
+}
+
+my $temp = tempdir(CLEANUP => 1);
+my $self = dirname(dirname(File::Spec->rel2abs($0)));
+debug(`cd '$temp' && cp '$self/eolang.ins' . && cp '$self/eolang.dtx' . && pdflatex eolang.ins 2>&1`);
+my $article = $temp . '/article.tex';
+savefile($article, '\documentclass{article}\usepackage{./eolang}\begin{document}\end{document}');
+debug(`cd '$temp' && pdflatex -halt-on-error -shell-escape -interaction=batchmode article.tex 2>&1`);
+
+rewrites_phiq($temp, 'a -> b', '\(a \mathbin{\phiTerminal{\mapsto}} b\)');
+rewrites_phiq($temp, '42 : @', '\(42 \mathord{\phiTerminal{:}} \phiTerminal{\upvarphi{}}\)');
+rewrites_phiq($temp, 'x \leadsto_{\nameref{r:copy}} y', '\(x \leadsto_{\nameref{r:copy}} y\)');
+rewrites_phiq($temp, '\ref{a:b} -> \eqref{c:d}', '\ref{a:b} \mathbin{\phiTerminal{\mapsto}} \eqref{c:d}');
+rewrites_phiq($temp, 'x -> \phinoAgain{a:1}', 'x \mathbin{\phiTerminal{\mapsto}} \phinoAgain{a:1}');
+rewrites_phiq($temp, '\phinoMeet{b-c:2}{ [[ x -> ? ]] }', '\phinoMeet{b-c:2}{ \phiTerminal{\llbracket} x \mathbin{\phiTerminal{\mapsto}} \phiTerminal{\varnothing{}} \phiTerminal{\rrbracket{}} }');
+rewrites_phiq($temp, 'x -> ^', '\phiTerminal{\uprho{}}');
+rewrites_phiq($temp, 'x -> $', '\phiTerminal{\upxi{}}');
+rewrites_phiq($temp, '[[ L> y ]]', '\phiTerminal{\uplambda{}} \mathbin{\phiTerminal{\phiDotted}}');
+rewrites_phiq($temp, '[[ ~7 -> y ]]', '\phiTerminal{\upalpha_{7}}');
+rewrites_phiq($temp, '\rho -> \xi', '\(\uprho \mathbin{\phiTerminal{\mapsto}} \upxi\)');
+rewrites_phiq($temp, '\lambda -> \alpha_3', '\(\uplambda \mathbin{\phiTerminal{\mapsto}} \upalpha_3\)');
+rewrites_phiq($temp, '\varphi -> \rhox', '\(\upvarphi \mathbin{\phiTerminal{\mapsto}} \rhox\)');
+rewrites_phiq($temp, 'a -> \textbf{b}', 'a \mathbin{\phiTerminal{\mapsto}} \textbf{b}');
+rewrites_phiq($temp, '|a| -> b', '\textnormal{\texttt{a}}{} \mathbin{\phiTerminal{\mapsto}} b');
+rewrites_phiq($temp, '|--|', '\textnormal{\texttt{-{}-}}{}');
+rewrites_phiq($temp, '|a---b|', '\textnormal{\texttt{a-{}-{}-b}}{}');
+rewrites_phiq($temp, '[[ x -> |3.14| ]]', '\textnormal{\texttt{3.14}}{}');
+rewrites_phiq($temp, '|a,b:c|', '\textnormal{\texttt{a,b:c}}{}');
+rewrites_phiq($temp, '[\ccc]', '[\ccc]');
+rewrites_phiq($temp, '\char 44{}', '\(\char 44{}\)');
+rewrites_phiq($temp, '\char44{}', '\(\char44{}\)');
+
+info('SUCCESS');
+
+1;

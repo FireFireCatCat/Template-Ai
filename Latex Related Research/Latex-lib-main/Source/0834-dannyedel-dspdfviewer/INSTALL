@@ -1,0 +1,39 @@
+How to install the dspdfviewer
+==============================
+
+
+
+System-specific installation instructions
+-----------------------------------------
+
+Please refer to the project's website for installation instructions,
+broken down by operating system.
+
+At least for Debian, Ubuntu, Gentoo, Arch, MacOS and Windows the website
+contains specific installation instructions. For some systems,
+ready-made binaries are provided.
+
+http://dspdfviewer.danny-edel.de
+
+
+
+Installation from source (generic cmake)
+----------------------------------------
+dspdfviewer requires the following build-time dependencies:
+  * cmake
+  * boost
+  * qt5
+  * poppler-qt5
+
+From inside the source directory, execute the following steps:
+
+mkdir build
+cd build
+cmake ..
+make
+(as root) make install
+
+Note that there is no make uninstall, so please redirect the make install
+step through your system's package management utility. The
+"cmake" step will respect --prefix= parameters, and "make install"
+will respect DESTDIR.

@@ -1,0 +1,279 @@
+% Ein barrierefreies PDF (PDF/UA-2): LaTeX schreibt Sprache, Titel und die
+% Struktur ins PDF -- was Überschrift ist, was Tabelle, was Abbildung. Diese
+% Zeile muss vor \documentclass stehen. Jede Abbildung braucht dann einen
+% Alternativtext (alt=...). Siehe Anleitung, Abschnitt »Barrierefreie PDFs«.
+\DocumentMetadata{lang=de, pdfversion=2.0, pdfstandard=ua-2, tagging=on}
+% =====================================================================
+%  Beispiel einer Abschlussarbeit mit der Klasse nxtthesis.
+%
+%  Übersetzen:  make        (im Verzeichnis Beispielthesis/)
+%  oder von Hand:
+%      lualatex BeispielthesisNXT
+%      biber    BeispielthesisNXT
+%      makeindex BeispielthesisNXT
+%      lualatex BeispielthesisNXT
+%      lualatex BeispielthesisNXT
+%
+%  Die Abbildungen, Tabellen und Zahlen dieser Arbeit werden aus den
+%  Programmen in Code/ erzeugt (make daten). Im Text steht deshalb keine
+%  Zahl, die von der Rechnung abweichen könnte -- alle Werte kommen als
+%  Makro aus Tabellen/kennzahlen.tex.
+%
+%  Layout: Ohne Klassenoption wird die »schöne« Variante gesetzt. Mit der
+%  Option »richtlinie« gelten stattdessen die Vorgaben der Fakultät NXT
+%  (11 pt, 1,5-zeilig, Flattersatz, Rand links 3 cm). Siehe Anleitung.
+% =====================================================================
+\documentclass[german,libertinus,logo]{nxtthesis}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Angaben für die Titelseite
+\title{Optimierung des Mitarbeitereinsatzes in der Lohnfertigung}
+% Der Untertitel ist optional; ohne \subtitle bleibt die Titelseite gleich.
+\subtitle{Vergleichende Analyse in der metallverarbeitenden Industrie}
+\author{Jean Dujardin}
+\adresse{Wegstraße 123, 72764 Reutlingen}
+\matrikelnummer{1234567}
+\akademischergrad{Bachelor of Science}
+\studiengang{Nachhaltige Technologie}
+\abgabedatum{24. Dezember 2026}
+\ort{Reutlingen}
+\erstpruef{Prof.~Dr.~Katharina Erstmal}
+\erstpruefbezeichnung{Erstprüferin}
+\zweitpruef{Prof.~Dr.~Kornelius Hurtig}
+\zweitpruefbezeichnung{Zweitprüfer}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Pakete. amsmath, booktabs und longtable lädt die Klasse bereits.
+\usepackage{pdflscape}          % einzelne Seiten im Querformat
+\usepackage{graphicx}
+\usepackage{rotating}           % \rotatebox in Tabellenköpfen
+\usepackage{luamplib}           % MetaPost direkt aus LuaLaTeX
+% luamplib ruft \tag_mc_reset_box:N auf. Dieses Makro gibt es nur, wenn
+% die Tagging-Testphase von latex-lab geladen ist; sonst bricht jede
+% mplibcode-Umgebung mit »Undefined control sequence« ab. Ohne Tagging
+% ist ein wirkungsloses Makro die richtige Ergänzung.
+\ExplSyntaxOn
+\cs_if_exist:NF \tag_mc_reset_box:N
+  { \cs_new_protected:Npn \tag_mc_reset_box:N #1 { } }
+\ExplSyntaxOff
+\usepackage{tikz}
+% Den TikZ-Schlüssel »alt« gibt es nur mit aktivem Tagging. Ohne die
+% \DocumentMetadata-Zeile oben übersetzt die Arbeit dank dieses
+% wirkungslosen Ersatzes trotzdem.
+\pgfkeysifdefined{/tikz/alt/.@cmd}{}{\tikzset{alt/.code={}}}
+\usetikzlibrary{calc,positioning}
+\usepackage{listings}
+\usepackage{csquotes}
+
+% siunitx richtet Zahlen am Dezimalkomma aus -- die Richtlinie verlangt
+% genau das für Zahlenwerte in Tabellen.
+\usepackage{siunitx}
+\sisetup{
+  output-decimal-marker = {,},
+  group-digits          = integer,
+  group-minimum-digits  = 4,
+  group-separator       = {\,},
+  table-align-text-post = false,
+  detect-all,
+}
+
+\usepackage[backend=biber,style=apa]{biblatex}
+\addbibresource{literatur.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Abkürzungen. NXT und HSRT bringt die Klasse schon mit.
+\akronym{MILP}{Mixed Integer Linear Programming}
+\akronym{SA}{Simulated Annealing}
+\akronym{LPT}{Longest Processing Time}
+\akronym{CNC}{Computerized Numerical Control}
+\akronym{ERP}{Enterprise Resource Planning}
+\akronym{GLPK}{GNU Linear Programming Kit}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Symbole. \Symbol[Einheit]{Kürzel}{Zeichen}{Bedeutung}; ausgegeben mit
+% \printsymbols. Die Zeichen erscheinen im Mathematiksatz, nicht in
+% Kapitälchen -- anders als die Abkürzungen.
+\Symbol{I}{I}{Menge der Mitarbeitenden}
+\Symbol{J}{J}{Menge der Arbeitsgänge}
+\Symbol{Z}{Z}{Menge der zulässigen Paare aus Mitarbeiter und Arbeitsgang}
+\Symbol[min]{cmax}{C_{\max}}{Gesamtdauer eines Fertigungsloses (Makespan)}
+\Symbol[min]{pij}{p_{ij}}{Bearbeitungszeit des Arbeitsgangs \texorpdfstring{$j$}{j} durch Mitarbeiter \texorpdfstring{$i$}{i}}
+\Symbol[min]{gj}{g_j}{Grundzeit des Arbeitsgangs \texorpdfstring{$j$}{j}}
+\Symbol{eiq}{e_i(q)}{Effizienz des Mitarbeiters \texorpdfstring{$i$}{i} in der Qualifikation \texorpdfstring{$q$}{q}}
+\Symbol{qj}{q_j}{Qualifikation, die der Arbeitsgang \texorpdfstring{$j$}{j} verlangt}
+\Symbol{xij}{x_{ij}}{Zuordnungsvariable; \texorpdfstring{$1$}{1}, falls \texorpdfstring{$i$}{i} den Arbeitsgang \texorpdfstring{$j$}{j} übernimmt}
+\Symbol[min]{ai}{a_i(x)}{Auslastung des Mitarbeiters \texorpdfstring{$i$}{i} in der Zuordnung \texorpdfstring{$x$}{x}}
+\Symbol{E}{E(x)}{Energie einer Lösung im Verfahren}
+\Symbol{lambda}{\lambda}{Gewicht des Glättungsterms in der Energie}
+\Symbol{Tk}{T_k}{Temperatur im Schritt \texorpdfstring{$k$}{k}}
+\Symbol{alpha}{\alpha}{Abkühlfaktor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Quelltexte: Farben aus der NXT-Palette, damit auch der Code zum
+% übrigen Dokument passt.
+\lstdefinestyle{nxt}{
+  basicstyle       = \ttfamily\footnotesize,
+  keywordstyle     = \color{nxtgreen}\bfseries,
+  commentstyle     = \color{nxt.gray4}\itshape,
+  stringstyle      = \color{nxt.orange},
+  numberstyle      = \tiny\color{nxt.gray3},
+  numbers          = left,
+  numbersep        = 8pt,
+  breaklines       = true,
+  showstringspaces = false,
+  frame            = leftline,
+  rulecolor        = \color{nxt.gray1},
+  framesep         = 6pt,
+  xleftmargin      = 10pt,
+  captionpos       = b,
+  columns          = fullflexible,
+  keepspaces       = true,
+  upquote          = true,
+}
+\lstset{style=nxt}
+
+% MathProg kennt listings nicht; die Sprache wird hier nachgereicht.
+\lstdefinelanguage{mathprog}{
+  morekeywords     = {set,param,var,binary,integer,minimize,maximize,s.t.,
+                      subject,to,solve,printf,for,sum,within,end,data,
+                      display,in,if,then,else},
+  morecomment      = [s]{/*}{*/},
+  morecomment      = [l]{\#},
+  morestring       = [b]",
+  sensitive        = true,
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Die Kennzahlen der Rechnung als Makros (\Optimum, \MakespanSA, ...).
+% Erzeugt von Code/tabellen.py.
+\input{Tabellen/kennzahlen}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Nur für dieses Beispiel, nicht für eine echte Arbeit: ein Wasserzeichen
+% auf jeder Seite. shipout/background ist ein Haken des LaTeX-Kerns; er
+% zeichnet hinter den Seiteninhalt, der Ursprung liegt oben links.
+\AddToHook{shipout/background}{%
+  \put(0.5\paperwidth,-0.5\paperheight){%
+    \makebox(0,0){\rotatebox{55}{%
+      \fontsize{64pt}{64pt}\selectfont\sffamily\bfseries
+      \textcolor{nxt.red!12}{KEINE ECHTE THESIS}}}}}
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Nur für dieses Beispiel: der Hinweis auf Seite 2.
+\vspace*{\fill}
+\begingroup
+\setlength{\fboxrule}{1.5pt}
+\setlength{\fboxsep}{12pt}
+\noindent
+\fcolorbox{nxt.red}{nxt.red!5}{%
+  \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}{%
+    \color{nxt.red}
+    {\Large\bfseries Keine echte Abschlussarbeit\par}
+    \medskip
+    Dieses Dokument ist ein Beispiel für die Klasse \textsf{nxtthesis}.
+    Es zeigt, was die Klasse typografisch kann: Titelseite, Verzeichnisse,
+    Abkürzungen und Symbole, Tabellen, Abbildungen, Formeln, Quelltext,
+    Literatur und Index.\par
+    \medskip
+    Die Erpolino Metallverarbeitung GmbH, alle Personen und alle Angaben
+    zum Unternehmen sind frei erfunden. Die Rechnungen sind echt, sie
+    beziehen sich aber auf kein reales Unternehmen. Das Dokument ist keine
+    Prüfungsleistung und darf nicht als solche verwendet oder zitiert
+    werden.}}
+\endgroup
+\vspace*{\fill}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter*{Kurzfassung}
+\addcontentsline{toc}{chapter}{Kurzfassung}
+
+Die Arbeitsvorbereitung der
+\index{Erpolino Metallverarbeitung GmbH}Erpolino Metallverarbeitung GmbH
+verteilt die Arbeitsgänge eines Fertigungsloses bislang nach Erfahrung
+auf die Mitarbeitenden. Diese Arbeit formuliert die Verteilung als
+Optimierungsproblem, das die Gesamtdauer minimiert, und vergleicht ein
+exaktes Verfahren mit einer Metaheuristik.
+
+Für das betrachtete Los aus \ZahlAufgaben{} Arbeitsgängen und
+\ZahlMitarbeiter{} Mitarbeitenden liefert das exakte Verfahren in
+\MilpSekunden{} Sekunden eine beweisbar optimale Gesamtdauer von
+\Optimum{} Minuten. Die bisherige Praxis entspricht ungefähr einer
+Greedy-Regel und benötigt \MakespanGreedy{} Minuten. \ac{sa} erreicht im
+Mittel \SaMittel{} Minuten und trifft im besten Lauf das Optimum,
+braucht dafür aber mehr Rechenzeit als das exakte Verfahren.
+
+Das wesentliche Ergebnis ist damit ein negatives: In der heutigen
+Größenordnung lohnt sich die Heuristik nicht. Ein Skalierungsversuch
+zeigt, dass sich das Verhältnis erst jenseits von etwa 60~Arbeitsgängen
+umkehrt.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Verzeichnisse. Reihenfolge nach Abschnitt 3.7 der Richtlinie:
+% Inhalt, Tabellen, Abbildungen, Abkürzungen.
+\tableofcontents
+\listoftables
+\listoffigures
+\printacronyms
+\printsymbols
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ab hier arabische Seitenzahlen, beginnend bei 1.
+\hauptteil
+
+\input{Kapitel/01-einleitung}
+\input{Kapitel/02-grundlagen}
+\input{Kapitel/03-modell}
+\input{Kapitel/04-erpolino}
+\input{Kapitel/05-umsetzung}
+\input{Kapitel/06-ergebnisse}
+\input{Kapitel/07-zusammenfassung}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printbibliography[heading=bibintoc]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+
+\chapter{Quelltext des Verfahrens}
+\label{anh:quelltext}
+
+Der vollständige Quelltext liegt dem \Index{ergänzenden Material} bei.
+Wiedergegeben ist hier der Kern des Verfahrens.
+
+\lstinputlisting[
+  language = Python,
+  caption  = {Nachbarschaft und Abkühlung des Verfahrens (Auszug aus \texttt{Code/sa.py})},
+  label    = {lst:sa},
+  linerange= {nachbar-anfang-nachbar-ende},
+]{Code/sa.py}
+
+\chapter{Modell in MathProg}
+\label{anh:mathprog}
+
+\lstinputlisting[
+  language = mathprog,
+  caption  = {Das vollständige Modell in \Index{MathProg} (\texttt{Code/erpolino.mod})},
+  label    = {lst:mod},
+]{Code/erpolino.mod}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\printindex
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Die Richtlinie verlangt, erlaubt genutzte KI-Tools der Arbeit
+% anzufügen; die Erklärung mit ki=kennzeichnung verweist darauf.
+\addchap{Verwendete KI-Tools}
+
+Für diese Arbeit wurden Werkzeuge der künstlichen Intelligenz zur
+sprachlichen Überarbeitung einzelner Absätze eingesetzt. Modellbildung,
+Implementierung, Auswertung und Bewertung der Ergebnisse stammen von der
+Verfasserin beziehungsweise vom Verfasser.
+
+% Die Erklärung ist der letzte Bestandteil der Arbeit. ki= ist Pflicht:
+% keine, kennzeichnung oder ohnekennzeichnung (Richtlinie, Kapitel 7).
+\eigenständigkeitserklärung[ki=kennzeichnung]
+\end{document}

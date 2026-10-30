@@ -1,0 +1,148 @@
+% vienna-cs-thesis — a University of Vienna Faculty of Computer
+% Science-style thesis, on plain `report`. The upstream template's own
+% custom UniVieCS_Thesis class (title-page variants, glossaries package
+% wired to an external makeglossaries pass) is not vendored — see
+% README.md — so this starter reproduces the front matter / chapter /
+% back matter shape by hand, including a plain acronym table in place
+% of the glossaries package (this pipeline runs no makeglossaries pass,
+% so a real glossaries-package acronym list would render empty).
+\documentclass[a4paper,11pt]{report}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+% english loaded LAST so it is babel's default/main language — babel
+% activates the last-listed language outside explicit \selectlanguage
+% blocks. Loading ngerman last leaked a German-formatted \today onto
+% the (English) title page in an earlier draft of this starter.
+\usepackage[ngerman,english]{babel}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage[hidelinks]{hyperref}
+
+\title{Thesis Title}
+\author{Student Name}
+\date{\today}
+
+\begin{document}
+
+% --- Front matter ---
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\LARGE Faculty of Computer Science\par}
+{\large University of Vienna\par}
+\vspace{3cm}
+{\Huge\bfseries Thesis Title\par}
+\vspace{2cm}
+{\large Master's Thesis\par}
+\vspace{1cm}
+{\large submitted in partial fulfillment of the requirements\\
+for the degree of\par}
+\vspace{0.5cm}
+{\large Master of Science\par}
+\vspace{2cm}
+{\large by\par}
+{\Large Student Name\par}
+\vfill
+{\large Supervisor: Supervisor Name\par}
+\vspace{1cm}
+{\large \today\par}
+\end{titlepage}
+
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+Thank supervisors, funders, and anyone else who supported the work.
+
+\begin{abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+A concise summary of the thesis's problem, method, and findings, in
+English.
+\end{abstract}
+
+\selectlanguage{ngerman}
+\chapter*{Kurzfassung}
+\addcontentsline{toc}{chapter}{Kurzfassung}
+Die deutsche Zusammenfassung der Arbeit kommt hier hin.
+\selectlanguage{english}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\chapter*{List of Acronyms}
+\addcontentsline{toc}{chapter}{List of Acronyms}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Acronym} & \textbf{Meaning} \\
+\midrule
+CS & Computer Science \\
+API & Application Programming Interface \\
+\bottomrule
+\end{tabular}
+
+% --- Main matter ---
+\chapter{Introduction}
+\label{ch:intro}
+Motivate the thesis topic and state the research question, then
+outline how the remaining chapters answer it.
+
+\chapter{Background}
+\label{ch:background}
+Cover the prior work and technical background the thesis builds on.
+
+\section{Tables}
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}lr@{}}
+\toprule
+Metric & Value \\
+\midrule
+Accuracy & 0.94 \\
+Latency (ms) & 12 \\
+\bottomrule
+\end{tabular}
+\caption{An example results table}
+\label{tab:example}
+\end{table}
+
+\section{Code Listings}
+\begin{lstlisting}[language=Python, caption={An example listing}]
+def hello():
+    print("Hello, thesis!")
+\end{lstlisting}
+
+\section{Algorithms}
+\begin{algorithm}
+\caption{An example algorithm}
+\begin{algorithmic}
+\State $x \gets 0$
+\While{$x < 10$}
+    \State $x \gets x + 1$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+\chapter{Method}
+\label{ch:method}
+Describe the approach taken and why it was chosen over alternatives.
+
+\chapter{Evaluation}
+\label{ch:evaluation}
+Present the evaluation setup and results, referring back to
+Table~\ref{tab:example} where useful.
+
+\chapter{Conclusion}
+\label{ch:conclusion}
+Summarise the contribution and outline future work.
+
+% --- Back matter ---
+\appendix
+\chapter{Supplementary Material}
+Additional data, proofs, or configuration details that support the
+main chapters without interrupting their flow.
+
+\end{document}

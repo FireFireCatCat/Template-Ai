@@ -1,0 +1,26 @@
+\documentclass[a4paper,landscape]{article}
+\usepackage[margin=15mm]{geometry}
+\usepackage{xcolor}
+\usepackage{mhchem}
+\usepackage{array}
+\pagestyle{empty}
+\newcommand{\warning}[2]{\fcolorbox{#1}{#1!10}{\begin{minipage}[t]{.43\linewidth}
+  \centering\sffamily\bfseries\Large #2\end{minipage}}}
+\begin{document}
+\begin{center}
+{\sffamily\bfseries\fontsize{36}{40}\selectfont CHEMICAL STORAGE\par}
+\vspace{3mm}
+{\sffamily\large Editable warning board using \texttt{mhchem}\par}
+\vspace{10mm}
+\warning{red}{OXIDISER\\[4pt]\ce{H2O2}\\[4pt]\normalsize Keep away from heat and combustible materials.}
+\hfill
+\warning{orange}{CORROSIVE\\[4pt]\ce{H2SO4}\\[4pt]\normalsize Wear suitable gloves and eye protection.}
+\vspace{12mm}
+\fcolorbox{black}{gray!10}{\begin{minipage}{.84\linewidth}\centering\sffamily
+  \textbf{Substance:} \rule{42mm}{.4pt}\quad
+  \textbf{Location:} \rule{42mm}{.4pt}\quad
+  \textbf{Owner:} \rule{35mm}{.4pt}\\[4pt]
+  Review this sign against the container label and the latest safety data sheet.
+\end{minipage}}
+\end{center}
+\end{document}

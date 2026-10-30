@@ -1,0 +1,248 @@
+% From mitthesis package
+% Version: 1.24, 2026/08/21
+% Documentation: https://ctan.org/pkg/mitthesis
+
+
+\chapter{Introduction}
+
+\lipsum[1-2] Postremo aliquos futuros suspicor, qui me ad alias litteras vocent, genus hoc scribendi, etsi sit elegans, personae tamen et dignitatis esse negent~\cite{DKE1969,ww1920,kirk2288a,churchill1948,gibbs1863}.
+
+\newcommand*{\Jpsi}{\ifpdftex\mathord{\bm{J}/\bm{\psi}}\else\mathord{\symbfit{J/\psi}}\fi} % works with either pdftex or lualatex
+
+\section[A section discussing the first issue: \(J/\psi\)]{A section discussing the first issue: \( \Jpsi \) }
+
+We begin with some ideas from the literature \cite{Fong2015,sharpe1}. 
+\begin{equation}
+\frac{\partial}{\partial t}\left[\rho\bigl(e + \lvert\vec{u}\rvert^2\big/2\bigr)\right]  + \nabla\cdot\left[\rho\bigl(h + \lvert\vec{u}\rvert^2\big/2 \bigr)\vec{u}\right]
+ ={}-\nabla \cdot \vec{q} +  \rho \vec{u}\cdot\vec{g}+ \frac{\partial}{\partial x_j}\bigl(d_{ji}u_i\bigr)
+\end{equation}
+ \lipsum[3]
+
+\lipsum[4] And more citations~\cite{sharpe1,GSL}.  Then we write some more and include our citations~\cite{Swaminathan2017IDABRO,dlmf,amsmath}. The configuration is shown in Figs.\ \ref{fig:golden} and~\ref{fig:golden1}.
+
+%%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t]
+% sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
+\begin{subfigure}[t]{0.495\textwidth}
+{\centering{\includegraphics[alt={A large letter C inside a rectangle},width=0.99\textwidth]{example-image-c.jpg}}}%
+\subcaption{\label{fig:golden} Postremo aliquos futuros suspicor, qui me ad alias litteras vocent, genus hoc scribendi.}
+\end{subfigure}
+%%%%%%%% don't leave a break here
+\begin{subfigure}[t]{0.495\textwidth}
+{\centering{\includegraphics[alt={A large letter C inside a rectangle},width=0.99\textwidth]{example-image-c.jpg}}}%
+\subcaption{\label{fig:golden1} Second subfigure.}%
+\end{subfigure}%
+\caption{A figure with two subfigures.\label{fig:4}}\label{fig:golden2}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\lipsum[4]
+
+%% note use of \ref* here to avoid placing a nested link in the table of contents
+\subsection[Subsection~eqn.~(\ref*{eqn:WT1})]{Subsection~eqn.~\eqref{eqn:WT1}}
+\lipsum[5-6]
+
+\subsubsection{A subsubsection}
+\lipsum[7]
+
+\newcommand*{\boldA}{\ifpdftex\mathbf{A}\else\symbfup{A}\fi}% to get the right symbol with either pdftex or unicode-math
+
+\begin{equation}\label{eqn:WT1}
+L(\boldA) = \begin{pmatrix}
+\dfrac\varphi{(\varphi_1,\varepsilon_1)}			& 0 												 & \ldots 									& \ldots & \ldots& 0 \\[4\jot]
+\dfrac{\varphi k_{2,1}}{(\varphi_2,\varepsilon_1)}	& \dfrac\varphi{(\varphi_2,\varepsilon_2)}			 & 0 										& \ldots & \ldots& 0 \\[4\jot]
+\dfrac{\varphi k_{3,1}}{(\varphi_3,\varepsilon_1)}	& \dfrac{\varphi k_{3,2}}{(\varphi_3,\varepsilon_2)} & \dfrac\varphi{(\varphi_3,\varepsilon_3)}	& 0 	 & \ldots& 0 \\[4\jot]
+\vdots 												& \vdots 											 & \mbox{ } & \ddots & \mbox{ } & \vdots \\[\jot]
+\dfrac{\varphi k_{n-1, 1}}{(\varphi_{n-1},\varepsilon_1)}		& \dfrac{\varphi k_{n-1, 2}}{(\varphi_{n-1},\varepsilon_2)} & \ldots & 
+\dfrac{\varphi k_{n-1,n-2}}{(\varphi_{n-1},\varepsilon_{n-2})}	& \dfrac{\varphi}{(\varphi_{n-1},\varepsilon_{n-1})} 		& 0 \\[4\jot]
+\dfrac{\varphi k_{n,1}}{(\varphi_n,\varepsilon_1)}				& \dfrac{\varphi k_{n,2}}{(\varphi_n,\varepsilon_2)}		& \ldots & \ldots	&
+\dfrac{\varphi k_{n,n-1}}{(\varphi_n,\varepsilon_{n-1})} 		& \dfrac{\varphi}{(\varphi_n,\varepsilon_n)}
+\end{pmatrix}
+\end{equation}
+
+%% This version looks nicer, but it does not produce proper html under current tagpdf (2025/10/31)
+%
+%\begin{equation}\label{eqn:WT1} 
+%L(\boldA) = \begin{pmatrix}
+%\dfrac\varphi{(\varphi_1,\varepsilon_1)}			& 0 												 & \hdotsfor{3} 							& 0 \\[4\jot]
+%\dfrac{\varphi k_{2,1}}{(\varphi_2,\varepsilon_1)}	& \dfrac\varphi{(\varphi_2,\varepsilon_2)}			 & 0 										& \hdotsfor{2} & 0 \\[4\jot]
+%\dfrac{\varphi k_{3,1}}{(\varphi_3,\varepsilon_1)}	& \dfrac{\varphi k_{3,2}}{(\varphi_3,\varepsilon_2)} & \dfrac\varphi{(\varphi_3,\varepsilon_3)}	& 0 & \hdotsfor{1} & 0 \\[\jot]
+%\vdots 												&  													 &  & \smash{\rotatebox{15}{$\ddots$}} &  & \vdots \\[\jot]
+%\dfrac{\varphi k_{n-1, 1}}{(\varphi_{n-1},\varepsilon_1)}		& \dfrac{\varphi k_{n-1, 2}}{(\varphi_{n-1},\varepsilon_2)} & \cdots        & 
+%	\dfrac{\varphi k_{n-1,n-2}}{(\varphi_{n-1},\varepsilon_{n-2})}	& \dfrac{\varphi}{(\varphi_{n-1},\varepsilon_{n-1})} 		& 0 \\[4\jot]
+%\dfrac{\varphi k_{n,1}}{(\varphi_n,\varepsilon_1)}				& \dfrac{\varphi k_{n,2}}{(\varphi_n,\varepsilon_2)}		& \hdotsfor{2}	&
+%	\dfrac{\varphi k_{n,n-1}}{(\varphi_n,\varepsilon_{n-1})} 		& \dfrac{\varphi}{(\varphi_n,\varepsilon_n)}
+%\end{pmatrix}
+%\end{equation}
+
+%\begin{equation}
+%\int_{\Gamma^h_s}\frac{\partial}{\partial n_x}\int_{\Gamma^a_\xi} \mkern-3mu b(\xi) \frac{\partial E(x|\xi)}{\partial n_\xi} \,dl_\xi \Bigg\vert_{x\to s}\,dl_s = 0 
+%\end{equation}
+
+\section{Description our paradigm}\label{ch1:theidea}
+
+\lipsum[8] No dissertation is complete without footnotes.\footnote{First footnote. $a_h = F_m$ See section~\ref{sec:stratified-flow}.}\footnote{Another interesting detail.}\footnote{And another really important idea to have in mind~\cite{reynolds1958,clauser56,lienhard2020,johnson1980,johnson1965,mpl}.} 
+
+\begin{figure}[t]
+% sample image is from mwe package, but should be found by latex in the tex tree w/o loading that package
+\centering\includegraphics[alt={A large letter B inside a rectangle},width=6.67cm]{example-image-b.jpg} 
+\caption{Caption text~\cite{GSL}.}\label{example-image-b}
+\end{figure}
+
+
+\subsection{Conversion to a metaheuristic}
+
+\lipsum[11-12] This concept is discussed further in section~\ref{sec:stratified-flow}, and Refs.~\cite{euler1740,fourier1822}.
+
+
+\section{Other generalizations}
+
+\lipsum[7] And another citation, so that our sources will be unambiguous~\cite{montijano2014}.
+
+\subsection{The most general case}
+\lipsum[13]  But, according to Lord Brouncker (1655),
+\begin{equation}
+\frac{4}{\pi} = 1+ \cfrac{1^2}{2+
+                     \cfrac{3^2}{2+
+                       \cfrac{5^2}{2+
+                         \cfrac{7^2}{2+
+                           \cfrac{9^2}{2+\dotsb
+}}}}}
+\end{equation}
+
+\section{Baroclinic generation of vorticity}\label{sec:stratified-flow}
+
+Substitution of the particle acceleration and application Stokes theorem leads to the \textit{Kelvin-Bjerknes circulation theorem}, for
+$\rho \neq \textrm{fn}(p)$:
+\begin{align}
+\frac{d\Gamma}{dt} &{}= \frac{d}{dt} \int_{\mathcal{C}} \mathbf{u} \cdot d\mathbf{r}\\
+				   &{}= \int_{\mathcal{C}} \frac{D\mathbf{u}}{Dt} \cdot d\mathbf{r} + \underbrace{\int_{\mathcal{C}} \mathbf{u}\cdot d\biggl( \frac{d\mathbf{r}}{dt}\biggr)}_{=\, 0} \\[-2pt]
+                   &{}= \iint_{\mathcal{S}} \nabla \times \frac{D\mathbf{u}}{Dt}  \cdot d\mathbf{A}\\
+                   &{}= \iint_{\mathcal{S}}  \nabla p \times \nabla \left( \frac{1}{\rho}\right) \cdot d\mathbf{A}
+\end{align}
+
+Baroclinic generation of vorticity accounts for the sea breeze and various other atmospheric currents in which temperature, rather than pressure, creates density gradients. Further, this phenomenon accounts for ocean currents in straits joining more and less saline seas, with surface currents flowing from the fresher to the saltier water and with bottom current going oppositely.
+
+\paragraph{Weak shock wave.} A weak shock wave travelling in a perfect gas is described by the following Burgers equation derived from approximations due to G. I. Taylor (1910)
+\begin{equation}
+u_t + \left(a_0 + \tfrac12(\gamma + 1)u\right) u_x = \frac{\delta}{2}u_{xx}
+\end{equation}
+Here, $\gamma$ is the specific heat capacity ratio, $\delta$ is the diffusivity of sound, $u_1$ is the downstream speed, $u_2 < u_1$ is the upstream speed, and $a_0$ is the undisturbed sound speed.  The  travelling-wave, or Taylor shock, solution of this equation is
+\begin{equation}
+\frac{u - u_2}{u_1-u_2} = \frac12\left[ 1 -\tanh\left( \frac{\gamma+1}{4\delta}(u_1-u_2)(x-ct) \right) \right]
+\end{equation}
+where $c = a_0 + (\gamma+1)(u_1+u_2)/4$. This solution exists for a compressive wave, $u_1 > u_2$.
+
+
+%%%%%%%%%%%%%%% begin table %%%%%%%%%%%%%%%%%% 
+\begin{table}[t]
+\caption{The error function and complementary error function\label{tab:1}}%
+\addvspace{0.5em}% backward compatibility for a pre-2026 class file
+\centering{%
+\tagpdfsetup{table/header-rows={1}}
+\begin{tabular*}{0.8\textwidth}{@{\hspace*{1.5em}}@{\extracolsep{\fill}}ccc!{\hspace*{3.em}}ccc@{\hspace*{1.5em}}}
+\toprule
+\multicolumn{1}{@{\hspace*{1.5em}}c}{$x$\rule{0pt}{8pt}} &
+$\erf{x}$ &
+\multicolumn{1}{c!{\hspace*{3.em}}}{$\erfc{x}$} &
+$x$       &
+$\erf{x}$ &
+\multicolumn{1}{c@{\hspace*{1.5em}}}{$\erfc{x}$} \\ \midrule
+0.00 & 0.00000 & 1.00000 & 1.10 & 0.88021 & 0.11980 \\
+0.05 & 0.05637 & 0.94363 & 1.20 & 0.91031 & 0.08969 \\
+0.10 & 0.11246 & 0.88754 & 1.30 & 0.93401 & 0.06599 \\
+0.15 & 0.16800 & 0.83200 & 1.40 & 0.95229 & 0.04771 \\
+0.20 & 0.22270 & 0.77730 & 1.50 & 0.96611 & 0.03389 \\
+0.30 & 0.32863 & 0.67137 & 1.60 & 0.97635 & 0.02365 \\
+0.40 & 0.42839 & 0.57161 & 1.70 & 0.98379 & 0.01621 \\
+0.50 & 0.52050 & 0.47950 & 1.80 & 0.98909 & 0.01091 \\
+0.60 & 0.60386 & 0.39614 & 1.82\makebox[0pt][l]{14} & 0.99000 & 0.01000 \\
+0.70 & 0.67780 & 0.32220 & 1.90 & 0.99279 & 0.00721 \\
+0.80 & 0.74210 & 0.25790 & 2.00 & 0.99532 & 0.00468 \\
+0.90 & 0.79691 & 0.20309 & 2.50 & 0.99959 & 0.00041 \\
+1.00 & 0.84270 & 0.15730 & 3.00 & 0.99998 & 0.00002 \\
+\bottomrule
+\end{tabular*}
+}%
+\end{table}
+%%%%%%%%%%%%%%%% end table %%%%%%%%%%%%%%%%%%% 
+
+%%%%%%%%%%%%%%% begin more complicated table %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% note column set as a 3 cm wide paragraph with 1 em hanging indentation. See array package documentation.
+% note numbers centered on "." (with d{3.3}) and on "," (with ,{3.3}).  See dcolumn package documentation.
+\begin{table}[t]
+\caption{Table with more complicated columns: $\Delta T_m = \delta\theta/\Theta_0$\label{table:2a}}%
+\addvspace{0.5em}% backward compatibility for a pre-2026 class file
+\centering{%
+\tagpdfsetup{table/header-rows={1}}%
+\begin{tabular}{!{\hspace*{0.5cm}} >{\raggedright\hangindent=1em} p{5cm} d{3.3} @{\hspace*{1cm}} d{3.3} !{\hspace*{0.5cm}}}
+\toprule
+Experiment & \multicolumn{1}{c@{\hspace*{1cm}}}{$u$ [m/s]} & \multicolumn{1}{c!{\hspace*{0.5cm}}}{$T$ [\textdegree C]} \\
+\midrule
+The first test we ran this morning   & 124.3     &   68.3   \\
+The second test we ran this morning  &  82.50    &  103.46  \\
+Our competitor's test                &  72.321   &  141.384 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+%%%%%%%%%%%%%%%% end table  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+%%%%%%%%%%%%%%% begin table %%%%%%%%%%%%%%%%%% 
+
+\begin{table*}[t]
+\caption{Brinkman number at which liquid dissipation makes $<5\%$ or $<1\%$ contribution to $\theta_{b}$ or $q_{w}$ from the Graetz solution at the points where $\theta_{b}$ equals 0.05, 0.02, or 0.01.\label{table:3a}}%
+\addvspace{0.5em}% backward compatibility for a pre-2026 class file
+\centering{%
+\tagpdfsetup{table/header-rows={1,2}}%
+\begin{tabular}{d{1.2}!{\hspace*{0.3em}}d{1.5}d{1.4}>{$}c<{$}>{$}c<{$}>{$}c<{$}>{$}c<{$}}
+\toprule
+&&& \multicolumn{4}{c}{$\vert\textrm{Br}\vert$} \\
+\cmidrule(l{0.5em}){4-7}
+\multicolumn{1}{c}{$\theta_{b}$} & \multicolumn{1}{!{\hspace*{0.3em}}c}{$x^{+}$} & \multicolumn{1}{c}{$q_{w}D_{h}/k\Delta T$} & 
+		\textrm{5\% of $\theta_{b}$} & \textrm{1\%  of $\theta_{b}$} &  \textrm{5\% of $q_{w}$} & \textrm{1\% of $q_{w}$} 
+\\
+\midrule
+0.05 & 0.09621 & 0.3770  & 3.646\times 10^{-3} & 7.292\times 10^{-4} & 1.571\times 10^{-3}& 3.142\times 10^{-4} \\
+0.02 & 0.1266  & 0.1508  & 1.458\times 10^{-3} & 2.917\times 10^{-4} & 6.824\times 10^{-4}& 1.257\times 10^{-4} \\
+0.01 & 0.1496  & 0.07541 & 7.292\times 10^{-4} & 1.458\times 10^{-4} & 3.142\times 10^{-4}& 6.284\times 10^{-5} \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}
+
+%%%%%%%%%%%%%%%%% end table  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
+\section{Summary}
+\lipsum[14-16]
+
+%%	Nomenclature list is optional
+%
+%	This environment takes four optional arguments:
+%		[1] adjust space between symbol and definition
+%		[2] name (heading) of the nomenclature list
+%		[3] level - can be "section" or "chapter" depending on whether you
+%			have one nomenclature list for whole thesis or one for each
+%			chapter. 
+%		[4] style. The default matches the style of [3], but you can 
+%			instead choose [frontmatter] or [backmatter] if desired.
+%
+%	For a single-column nomenclature list, use \begin{nomenclature}
+%	For a two-column nomenclature list, use \begin{nomenclature*} AND
+%		**put \usepackage{multicol}** in your preamble (in the main .tex file)
+%
+	\newcommand*{\boldomega}{\ifpdftex\mathord{\bm{\omega}}\else\mathord{\symbfup{\omega}}\fi} % works with pdftex or lualatex
+%
+\begin{nomenclature*}[2em][Nomenclature for Chapter 1][section]
+\EntryHeading{Roman letters}
+\entry{$\mathcal{C}$}{material curve}
+\entry{$\mathbf{r}$}{material position [m]}
+\entry{$\mathbf{u}$}{velocity [m s$^{-1}$]}% this more cumbersome superscripting is [arguably..] better for html translation than $^{-1}$.
+\EntryHeading{Greek letters}
+\entry{$\Gamma$}{circulation [m$^2$ s$^{-1}$]}
+\entry{$\rho$}{mass density [kg m$^{-3}$]}
+\entry{$\boldomega$}{vorticity [s$^{-1}$]} 
+\end{nomenclature*}

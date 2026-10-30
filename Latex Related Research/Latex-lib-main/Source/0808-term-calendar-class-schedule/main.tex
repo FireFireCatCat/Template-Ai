@@ -1,0 +1,49 @@
+% Term calendar (class schedule planner) -- ctan:termcal. Licence: the
+% package README ships "License: LPPL version 1 or any later version." (the
+% termcal.sty header itself carries no licence text, only "For the copyright
+% see the source file" -- the README is that source-distribution file).
+% Ships with TeX Live under tex/latex/termcal -- starter does not bundle it.
+%
+% One \calday per weekday column; \skipday advances the internal date
+% without printing a column, used here to skip weekends. \caltexton{N}{...}
+% attaches text to the Nth day printed by the environment (1-indexed across
+% the whole term, not per week) -- but ONLY for days where \classday was
+% executed via \calday[..]{\classday}: \caltexton ultimately keys off
+% \ifclassday, which is false by default, and silently prints nothing (no
+% error, no warning) if you forget it on every \calday call. Learned this by
+% shipping a first draft with correctly-aligned but completely empty boxes.
+\documentclass[12pt]{article}
+\usepackage[margin=1.5cm]{geometry}
+\usepackage{termcal}
+
+\title{CS 301: Compilers --- Spring 2026 Term Calendar}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\noindent Lecture days (Mon/Wed/Fri), weeks 1--6 of term, starting Monday
+26 January 2026.
+
+\begin{calendar}{1/26/2026}{6}
+  \calday[Mon]{\classday}\calday[Wed]{\classday}\calday[Fri]{\classday}\skipday\skipday
+  \caltexton{1}{\textbf{Syllabus \& intro}}
+  \caltexton{2}{Lexical analysis}
+  \caltexton{3}{Regular expressions \& NFAs}
+  \caltexton{4}{NFA $\to$ DFA, minimisation}
+  \caltexton{5}{Context-free grammars}
+  \caltexton{6}{Top-down parsing}
+  \caltexton{7}{LL(1) parse tables}
+  \caltexton{8}{\textbf{Homework 1 due}}
+  \caltexton{9}{Bottom-up parsing}
+  \caltexton{10}{LR(0) items}
+  \caltexton{11}{SLR \& LALR tables}
+  \caltexton{12}{Syntax-directed translation}
+  \caltexton{13}{Abstract syntax trees}
+  \caltexton{14}{Type checking}
+  \caltexton{15}{Symbol tables \& scope}
+  \caltexton{16}{\textbf{Project 1 due}}
+  \caltexton{17}{Intermediate representations}
+  \caltexton{18}{Three-address code}
+\end{calendar}
+\end{document}

@@ -1,0 +1,75 @@
+\documentclass[compress]{beamer}
+\usetheme{hitszbeamer}
+\usepackage{booktabs}
+
+\title[Underwater Control]{Robust Control for Underwater Vehicles\\[2mm] 水下机器人鲁棒控制}
+\author[Li Ming]{Li Ming\\[3mm] {\small liming@hit.edu.cn}}
+\institute[HITSZ]{\small School of Mechanical Engineering \\
+  哈尔滨工业大学（深圳）机电工程学院}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+\tableofcontents
+\end{frame}
+
+\section{Introduction 引言}
+
+\begin{frame}{Motivation 研究动机}
+  \begin{itemize}
+    \item Underwater currents introduce unmodelled disturbances
+    \item 水下扰动难以精确建模
+    \item Robust control keeps tracking error bounded despite this
+  \end{itemize}
+\end{frame}
+
+\section{Method 方法}
+
+\begin{frame}{Comparison 对比结果}
+  \begin{table}
+    \centering
+    \begin{tabular}{lcc}
+      \toprule
+      控制器 Controller & 跟踪误差 Tracking error & 收敛时间 Settling time \\
+      \midrule
+      PID & 0.42 m & 8.1 s \\
+      滑模 Sliding mode & 0.18 m & 5.4 s \\
+      $H_\infty$ 鲁棒 & 0.11 m & 6.0 s \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Two columns 两栏}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \textbf{优点 Strengths}
+      \begin{itemize}
+        \item 抗扰动能力强 Strong disturbance rejection
+        \item 无需精确模型 No precise model needed
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{局限 Limitations}
+      \begin{itemize}
+        \item 计算开销较大 Higher compute cost
+        \item 参数整定复杂 Complex tuning
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Conclusion 结论}
+
+\begin{frame}{谢谢 Thank you}
+  \begin{center}
+    \Large 欢迎提问 Questions welcome
+  \end{center}
+\end{frame}
+
+\end{document}

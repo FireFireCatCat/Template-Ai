@@ -1,0 +1,139 @@
+%% main.tex — UnBTeX starter (English mode)
+%%
+%% ABNT-compliant academic work at the University of Brasilia. ABNT NBR
+%% 14724 requires a Portuguese-language abstract (Resumo) even for a work
+%% written in English, alongside the English one, so both are present below
+%% — this is an institutional requirement, not a mistake.
+%%
+%% Compile: pdflatex main, bibtex main, pdflatex main, pdflatex main.
+
+\documentclass[
+    oneside,
+    idioma=english,
+    bib=alf,
+    refback,
+    num=tradicional,
+]{unbtex}
+
+\usepackage{lscape}
+\usepackage{afterpage}
+
+\graphicspath{{figures}}
+
+\begin{document}
+
+\titulo{Efficient Query Planning for Sensor Time-Series Databases}
+\tituloestrangeiro{}
+
+\autori[]{Camila}{Duarte}
+\autorii[]{}{}
+
+\numerocutter{}
+
+\orientador[Advisor]{Prof. Dr.}{Ricardo}{Almeida}
+\coorientador[Co-advisor]{}{}{}
+
+\tipotrabalho{Master's Dissertation}
+\tipocurso{Programa de P\'os-Gradua\c{c}\~ao em Engenharia El\'etrica}
+\preambulo{Master's Dissertation submitted to the Graduate Program in Electrical Engineering of the University of Bras\'ilia as part of the requirements for the degree of Master.}
+\publicacao{}
+
+\instituicao[Universidade de Bras\'ilia]{Faculdade de Tecnologia}{Departamento de Engenharia El\'etrica}
+
+\local{Bras\'ilia}
+\dia{20}
+\mes{maio}
+\ano{2026}
+
+\membrodabancai{Prof. Dr. Ricardo Almeida\\ UnB/FT/ENE}
+\membrodabancaifuncao{Advisor}
+\membrodabancaii{Prof. Dr. Fernanda Lima\\ UnB/FT/ENE}
+\membrodabancaiifuncao{Internal examiner}
+\membrodabancaiii{Prof. Dr. Tiago Novaes\\ UnB/CIC}
+\membrodabancaiiifuncao{External examiner}
+\membrodabancaiv{}
+\membrodabancaivfuncao{}
+\membrodabancav{}
+\membrodabancavfuncao{}
+
+\begin{Resumo}
+Bancos de dados de s\'eries temporais de sensores crescem rapidamente em
+volume, o que torna o planejamento eficiente de consultas essencial para
+aplica\c{c}\~oes de monitoramento em tempo real. Esta disserta\c{c}\~ao
+prop\~oe uma estrat\'egia de planejamento de consultas que explora a
+regularidade temporal desses dados para reduzir o custo de varredura,
+avaliada sobre tr\^es conjuntos de dados de sensoriamento ambiental de
+grande escala.
+\end{Resumo}
+
+\begin{Abstract}
+Sensor time-series databases grow rapidly in volume, which makes efficient
+query planning essential for real-time monitoring applications. This
+dissertation proposes a query planning strategy that exploits the temporal
+regularity of such data to reduce scan cost, evaluated on three large-scale
+environmental sensing datasets. The proposed planner reduces average query
+latency substantially relative to a generic range-scan baseline, with the
+largest gains on queries that aggregate across many sensors over long time
+windows.
+\end{Abstract}
+
+\pchavei{Banco de dados}
+\pchaveii{S\'eries temporais}
+\pchaveiii{Planejamento de consultas}
+\pchaveiv{Sensoriamento}
+\pchavev{}
+
+\kwordi{Database}
+\kwordii{Time series}
+\kwordiii{Query planning}
+\kwordiv{Sensing}
+\kwordv{}
+
+\idiomaagradecimentos{english}
+
+\begin{AgradecimentosAutorI}
+I thank my advisor for the guidance and patience shown throughout this
+project, and my committee members for their careful reading of this work.
+Thanks also to the members of the Distributed Systems Lab for many helpful
+discussions, and to the university's High-Performance Computing center for
+providing access to the compute resources used in the evaluation.
+\end{AgradecimentosAutorI}
+
+\begin{AgradecimentosAutorII}
+\end{AgradecimentosAutorII}
+
+\begin{DedicatoriaAutorI}
+To everyone who ever waited patiently for a query to finish.
+\end{DedicatoriaAutorI}
+
+\begin{DedicatoriaAutorII}
+\end{DedicatoriaAutorII}
+
+\pretextual
+
+\imprimirfolhaderosto*
+
+\imprimirfolhadeaprovacao
+
+\imprimirdedicatoria
+
+\imprimiragradecimentos
+
+\imprimirresumos
+
+\imprimirlistadefiguras
+
+\imprimirlistadetabelas
+
+\imprimirsumario
+
+\textual
+
+\include{chapter1}
+\include{chapter2}
+
+\postextual
+
+\bibliography{references}
+
+\end{document}

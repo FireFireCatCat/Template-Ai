@@ -1,0 +1,106 @@
+% Coursepaper Essay — coursepaper.cls
+%
+% A complete course-paper example with the class's course metadata and
+% double-spaced final layout.  The document is intentionally self-contained:
+% the coursepaper class is supplied by TeX Live and is not bundled here.
+\documentclass[final]{coursepaper}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\title{Designing Trustworthy Queueing Systems}
+\author{Jordan Ellis}
+\date{29 August 2026}
+\college{Northbridge College of Applied Science}
+\coursename{Operations and Service Design}
+\coursenumber{OSD 302}
+\coursesection{Section 02}
+\studentnumber{NB-20418}
+\instructor{Dr. Mira Shah}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This essay examines how a small service team can reduce waiting time without
+optimising one queue at the expense of the whole customer journey.  A simple
+queueing model is paired with an operational policy: measure arrival and
+service variability, publish a transparent priority rule, and review the
+result against equity and reliability measures.  The example shows why a
+slightly lower average utilisation can produce a substantially more dependable
+service.
+\end{abstract}
+
+\section{The operational question}
+
+Queueing decisions are often framed as a choice between adding capacity and
+asking customers to wait.  That framing is incomplete.  A clinic, repair
+desk, or public help line is a system of linked queues, hand-offs, and
+decisions.  Improving one station can simply move congestion to the next one.
+The useful question is therefore not ``How fast can this station work?'' but
+``What experience does the complete service promise?''
+
+\section{A small model}
+
+Consider a single-server desk with a mean arrival rate of
+$\lambda=18$ requests per hour and a mean service rate of
+$\mu=24$ requests per hour.  The utilisation is
+\[
+  \rho = \frac{\lambda}{\mu}=0.75.
+\]
+In an idealised M/M/1 model, the expected number of requests in the system is
+$L=\rho/(1-\rho)=3$, and Little's law gives an expected time in the system of
+$W=L/\lambda=10$ minutes.  These figures are not a forecast: real arrivals
+come in bursts, service times are not memoryless, and a second specialist may
+be required.  They are a baseline that makes the effect of variability
+visible.
+
+\begin{table}[ht]
+  \centering
+  \caption{Illustrative operating points for the same desk.}
+  \begin{tabular}{lrrr}
+    \toprule
+    Scenario & Arrival rate & Service rate & Utilisation \\
+    \midrule
+    Quiet planning hour & 12/h & 24/h & 0.50 \\
+    Typical hour        & 18/h & 24/h & 0.75 \\
+    Busy hour            & 21/h & 24/h & 0.875 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Policy and measurement}
+
+The desk should reserve a small portion of capacity for urgent cases while
+keeping the rule visible to everyone.  A daily dashboard can record arrival
+rate, service-time percentiles, abandonment, and the fraction of requests
+resolved without a second hand-off.  The service owner should inspect the
+90th-percentile wait alongside the mean: the mean can improve while a small
+group experiences an unacceptable delay.
+
+Three safeguards make the policy auditable.  First, record the reason for each
+priority decision.  Second, publish a weekly sample of anonymised outcomes.
+Third, change one operational parameter at a time so that a claimed
+improvement has a plausible cause.  These practices turn a mathematical
+model into a learning loop rather than a promise of exact prediction.
+
+\section{Conclusion}
+
+The model makes a simple point: as utilisation approaches one, variability is
+converted into waiting.  A trustworthy queueing policy therefore values
+headroom, clear priority rules, and distributional measures of service quality.
+The result is not merely a shorter average queue; it is a service whose
+performance can be explained and improved.
+
+\begin{thebibliography}{9}
+\bibitem{little1961}
+J. D. C. Little, ``A proof for the queuing formula: L = $\lambda$ W,''
+\emph{Operations Research}, vol.~9, no.~3, pp.~383--387, 1961.
+
+\bibitem{hopp2011}
+W. J. Hopp and M. L. Spearman, \emph{Factory Physics}, 3rd ed.
+Waveland Press, 2011.
+\end{thebibliography}
+
+\end{document}

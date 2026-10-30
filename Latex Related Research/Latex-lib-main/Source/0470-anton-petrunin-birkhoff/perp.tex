@@ -1,0 +1,502 @@
+\chapter{Perpendicular lines}\label{chap:perp}
+
+\section{Right, acute and obtuse angles}
+
+\begin{itemize}
+\item If $|\measuredangle A O B|=\tfrac\pi2$, we say that $\angle A O B$ is \index{right!angle}\emph{right};
+%\item If $\measuredangle A O B\ne\pm\tfrac\pi2$, we say that the angle $\angle A O B$ is \index{angle!oblique angle}\emph{oblique};
+\item If $|\measuredangle A O B|<\tfrac\pi2$, we say that $\angle A O B$ is 
+\index{acute}\emph{acute};
+\item If $|\measuredangle A O B|>\tfrac\pi2$, we say that $\angle A O B$ is \index{angle!right, acute, and obtuse angles}\index{obtuse}\emph{obtuse}.
+\end{itemize}
+
+\begin{wrapfigure}[2]{r}{25mm}
+\vskip-25mm
+\centering
+\includegraphics{mppics/pic-46}
+\end{wrapfigure}
+
+Right angles will be marked with a small square, as shown.
+
+If $\angle A O B$ is right, we may also say that $[O A)$ is \index{perpendicular}\emph{perpendicular} to $[O B)$.
+This can be written as \index{38@$\perp$}$[O A)\z\perp [O B)$.
+
+Theorem~\ref{thm:straight-angle} allows us to call two lines $(O A)$ and $(O B)$ {}\emph{perpendicular} if $[O A)\z\perp [O B)$; so, we can write $(O A)\z\perp (O B)$.
+
+\begin{thm}{Exercise}\label{ex:acute-obtuce}
+Assume that point $O$ lies between $A$ and $B$ and $X\ne O$.
+Show that 
+$\angle XOA$ is acute if and only if 
+$\angle XOB$ is obtuse.
+\end{thm}
+
+\section{Perpendicular bisector}
+
+Assume $M$ is the midpoint of the segment $[AB]$;
+equivalently, $M\in(A B)$ and $A M \z= M B$.
+
+The line $\ell$ thru $M$ and perpendicular to $(AB)$ is called the \index{bisector!perpendicular bisector}\index{perpendicular!bisector}\emph{perpendicular bisector} of the segment~$[AB]$.
+
+\begin{thm}[\abs]{Theorem}\label{thm:perp-bisect}
+Given distinct points $A$ and $B$,
+all points that are equidistant from $A$ and $B$ and no
+others lie on the perpendicular bisector of~$[A B]$.
+\end{thm}
+
+\parit{Proof.} Let $M$ be the midpoint of~$[A B]$.
+Assume $P A= P B$ and $P\ne M$.
+According to SSS (\ref{thm:SSS}),
+$\triangle A M P \z\cong\triangle B M P$.
+Hence
+$\measuredangle A M P=\pm \measuredangle B M P$.
+Since $A\not=B$, we have ``$-$'' in this formula.
+
+\begin{wrapfigure}[8]{o}{34mm}
+\centering
+\includegraphics{mppics/pic-48}
+\end{wrapfigure}
+
+Furthermore,
+\begin{align*}
+\pi
+&=
+\measuredangle A M B
+\equiv
+\\
+&\equiv\measuredangle A M P+\measuredangle P M B
+\equiv
+\\
+&\equiv
+2\cdot \measuredangle A M P.
+\end{align*}
+That is, $\measuredangle A M P
+=
+\pm
+\tfrac\pi2$. 
+Therefore, $P$ lies on the perpendicular bisector.
+
+
+To prove the converse, 
+suppose $P$ 
+is any point on the perpendicular bisector of $[A B]$ and $P\z\ne M$.
+Then $\measuredangle A M P=\pm \tfrac\pi2$, 
+$\measuredangle B M P=\pm \tfrac\pi2$ and
+$A M\z=B M$.
+By SAS, $\triangle A M P\cong \triangle B M P$;
+in particular, $A P\z= B P$.
+\qeds
+
+
+\begin{thm}[!]{Exercise}\label{ex:pbisec-side}
+Let $\ell$ be a perpendicular bisector of $[A B]$, and $X$ be an arbitrary point in the plane.
+Show that 
+$AX<BX$ if and only if $X$ and $A$ lie on the same side of~$\ell$.
+\end{thm}
+
+\begin{thm}[!]{Exercise}\label{ex:side-angle}
+Let $ABC$ be a nondegenerate triangle.
+Show that 
+\[AC>BC\iff|\measuredangle ABC|>|\measuredangle CAB|.\] 
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:pbisec-motion}
+A motion has a fixed point $F$ and maps a point $X$ to another point $Y$.
+Show that $F$ lies on the perpendicular bisector of $[XY]$.
+\end{thm}
+
+
+
+
+\section{Uniqueness of a perpendicular}
+
+\begin{thm}[\abs]{Theorem}\label{perp:ex+un}
+There is one and only one line that passes thru a given point $P$ and is perpendicular to a given line~$\ell$.
+\end{thm}
+
+According to the theorem above, 
+there is a unique point $Q\in\ell$ such that $(QP)\perp\ell$.
+This point $Q$ is called the \index{footpoint}\emph{footpoint} of $P$ on~$\ell$. 
+
+\parit{Proof.} 
+If $P\in\ell$, then both existence and uniqueness follow from Axiom~\ref{def:birkhoff-axioms:2}.
+
+{
+
+\begin{wrapfigure}{r}{30mm}
+\vskip-4mm
+\centering
+\includegraphics{mppics/pic-50}
+\end{wrapfigure}
+
+\parit{Existence for $P\not\in\ell$.} 
+Let $A$ and $B$ be two distinct points on~$\ell$. 
+Choose $P'$ so that $AP'\z=AP$ and $\measuredangle  BAP' \equiv -\measuredangle   BAP$.
+According to Axiom~\ref{def:birkhoff-axioms:3}, $\triangle A P' B\z\cong\triangle A P B$.
+In particular, $A P= A P'$ and $B P= B P'$.
+
+According to Theorem~\ref{thm:perp-bisect}, $A$ and $B$ lie on the perpendicular bisector of~$[P P']$.
+In particular, $(P P')\perp (A B)=\ell$.
+
+}
+
+
+\parit{Uniqueness for $P\not\in\ell$.} 
+From above we can choose a point $P'$ in such a way that $\ell$ is the perpendicular bisector of~$[PP']$.
+
+Assume $m\perp \ell$ and $m\ni P$.
+Then $m$ is a perpendicular bisector of some segment $[Q Q']$ of $\ell$;
+in particular, $P Q= P Q'$.
+
+{
+
+\begin{wrapfigure}{r}{37mm}
+\centering
+\includegraphics{mppics/pic-52}
+\end{wrapfigure}
+
+Since $\ell$ is the perpendicular bisector of $[P P']$,
+we get that $PQ= P'Q$ and $PQ' \z= P'Q'$.
+Therefore, 
+$$P' Q=P Q=P Q'= P' Q'.$$
+By Theorem~\ref{thm:perp-bisect}, 
+$P'$ lies on the perpendicular bisector of $[QQ']$, which is~$m$.
+By Axiom~\ref{def:birkhoff-axioms:1}, $m=(P P')$.
+\qeds
+
+}
+
+\begin{thm}[!]{Exercise}\label{ex:construction-perpendicular}
+Describe a ruler-and-compass construction of a line thru a given point that is perpendicular to a given line.
+\end{thm}
+
+\section{Reflection across a line}
+
+Assume the point $P$ and the line $(AB)$ are given.
+To find the \index{reflection!across a line}\emph{reflection} $P'$ of $P$ across $(AB)$,
+one drops a perpendicular from $P$ onto $(AB)$, 
+and continues it to the same distance on the other side.
+
+{
+
+\begin{wrapfigure}{o}{37mm}
+\vskip-2mm
+\centering
+\includegraphics{mppics/pic-54}
+\end{wrapfigure}
+
+According to Theorem~\ref{perp:ex+un}, $P'$ is uniquely determined by~$P$.
+Note that $P=P'$ if and only if $P\in(AB)$.
+
+\begin{thm}[\abs]{Proposition}\label{prop:reflection}
+Assume $P'$ is the reflection of $P$ across $(AB)$.
+Then $AP'=AP$, 
+and if $A\ne P$, 
+then
+$\measuredangle BAP'\equiv -\measuredangle BAP$.
+\end{thm}
+
+
+\parit{Proof.} 
+If $P\in (AB)$, 
+then $P\z=P'$. 
+By Corollary~\ref{cor:degenerate=pi}, $\measuredangle BAP\z=0$ or~$\pi$.
+Hence the statement follows.
+
+}
+
+If $P\notin (AB)$, then~$P'\ne P$.
+By the construction of $P'$, 
+the line $(AB)$ is a perpendicular bisector of~$[PP']$.
+Therefore, according to Theorem~\ref{thm:perp-bisect}, $AP'\z=AP$ and $BP'\z=BP$.
+In particular, 
+$\triangle ABP'\z\cong \triangle ABP$.
+Therefore, $\measuredangle BAP'=\pm \measuredangle BAP$.
+
+Since $P'\ne P$ and $AP'=AP$,
+we get that $\measuredangle BAP'\ne \measuredangle BAP$.
+That is, we are left with the case $\measuredangle BAP'\equiv-\measuredangle BAP$.
+\qeds
+
+
+
+\begin{thm}{Exercise}\label{ex:2-reflections}
+Let $X$ and $Y$ be the reflections of $P$ across the lines $(AB)$ and $(BC)$ respectively.
+Show that $\measuredangle XBY\equiv 2\cdot \measuredangle ABC$.
+
+\end{thm}
+
+
+\begin{thm}[\abs]{Corollary}\label{cor:reflection+angle}
+A reflection across a line is a motion of the plane. 
+Moreover,
+$\measuredangle Q'P'R'\equiv -\measuredangle QPR$
+if $\triangle P'Q'R'$ is the reflection of $\triangle PQR$.
+\end{thm}
+
+
+\parit{Proof.}
+The composition of two reflections across the same line
+is the identity map.
+In particular, any reflection is a bijection.
+
+Fix a line $(AB)$ and two points $P$ and $Q$;
+denote their reflections across $(AB)$ by $P'$ and $Q'$.
+Let us show that
+$$P'Q'=PQ;\eqlbl{eq:P'Q'=PQ}$$
+that is, the reflection is distance-preserving,
+
+\begin{wrapfigure}{r}{33mm}
+\centering
+\vskip-15mm
+\includegraphics{mppics/pic-56}
+\end{wrapfigure}
+
+Without loss of generality, we may assume that the points $P$ and $Q$ are distinct from $A$ and~$B$.
+By Proposition~\ref{prop:reflection}, we get that
+\begin{align*}
+\measuredangle BAP'&\equiv -\measuredangle BAP,
+&
+\measuredangle BAQ'&\equiv -\measuredangle BAQ,
+\\
+AP'&=AP,
+&
+AQ'&=AQ.
+\end{align*}
+It follows that
+\[\measuredangle P'AQ'\equiv -\measuredangle PAQ.\eqlbl{eq:P'AQ'=PAQ}\]
+By SAS, 
+$\triangle P'AQ'\cong\triangle PAQ$
+and \ref{eq:P'Q'=PQ} follows.
+Moreover, we also get that 
+\[\measuredangle AP'Q'\equiv\pm\measuredangle APQ.\]
+From \ref{eq:P'AQ'=PAQ} and the theorem on the signs of angles of triangles (\ref{thm:signs-of-triug}) we get
+\[\measuredangle AP'Q'\equiv-\measuredangle APQ.\eqlbl{eq:AP'Q'=APQ}\]
+
+Repeating the same argument for a pair of points $P$ and $R$,
+we get that
+$$\measuredangle AP'R'\equiv-\measuredangle APR.\eqlbl{eq:AP'R'=APR}$$
+Subtracting \ref{eq:AP'R'=APR} from \ref{eq:AP'Q'=APQ},
+we get that
+$\measuredangle Q'P'R'\equiv-\measuredangle QPR$.
+\qedsf
+
+
+\section{Direct and indirect motions}
+\label{direct motion}
+
+\begin{thm}[!]{Classroom exercise}\label{ex:3-reflections}
+Show that every motion of the plane can be presented as a
+composition of at most three reflections across lines.
+\end{thm}
+
+A motion $X\mapsto X'$ is called \index{direct motion}\emph{direct} if 
+$$\measuredangle Q'P'R'= \measuredangle QPR$$ 
+for any triangle $PQR$;
+if instead we always have 
+$$\measuredangle Q'P'R'\equiv -\measuredangle QPR,$$ 
+then the motion $f$ is called \index{indirect motion}\emph{indirect}.
+
+By Corollary~\ref{cor:reflection+angle}, any reflection across a line is an indirect motion.
+Note that the composition of two reflections is a direct motion.
+More generally, the composition of two indirect motions is direct,
+the composition of two direct motions is direct,
+and the composition of direct and indirect motions is indirect.
+In particular, the exercise above implies the following.
+
+\begin{thm}{Proposition}\label{prop:direct-indirect}
+Any motion of the plane is either direct or indirect.
+\end{thm}
+
+
+\section{The perpendicular is shortest}
+\label{sec:perp<oblique}
+
+\begin{thm}[\abs]{Lemma}\label{lem:perp<oblique}
+Assume $Q$ is the footpoint of $P$ on the line~$\ell$.
+Then 
+$$PX>PQ$$
+for every point $X$ on $\ell$ distinct from~$Q$.
+\end{thm}
+
+If $P$, $Q$, and $\ell$ are as above, 
+then $PQ$ is called the \label{distance!from a point to a line}\index{distance!from a point to a line}\emph{distance from $P$ to~$\ell$}. 
+
+\parit{Proof.}
+If $P\in \ell$, 
+then the result follows since $PQ=0$.
+So, we can assume that $P\notin \ell$.
+
+\begin{wrapfigure}{o}{24mm}
+\centering
+\vskip-4mm
+\includegraphics{mppics/pic-58}
+\vskip0mm
+\end{wrapfigure}
+
+Let $P'$ be the reflection of $P$ across the line~$\ell$.
+Note that $Q$ is the midpoint of $[PP']$
+and $\ell$ is the perpendicular bisector of $[PP']$.
+Therefore
+$$PX=P'X
+\quad
+\text{and}
+\quad
+PQ=P'Q=\tfrac12\cdot PP'.$$
+
+The line $\ell$ meets $[PP']$ only at the point $Q$.
+Therefore, $X\notin [PP']$.
+By the triangle inequality and Corollary~\ref{cor:degenerate-trig}, we have 
+$$PX+P'X>PP',$$
+and hence the result: $PX>PQ$.
+\qeds
+
+\begin{thm}{Classroom exercise}\label{ex:right-acute}
+Show that
+\begin{enumerate}[(a)]
+\item If $\triangle ABC$ has a right angle at $C$, then its other angles are acute.
+\item If $\triangle ABC$ has an obtuse angle at $C$, then its other angles are acute.
+\end{enumerate}
+\end{thm}
+
+This exercise is closely related to Proposition~\ref{prop:2sum}.
+
+If a triangle has an obtuse or right angle, then it is called \index{triangle!right, acute, and obtuse triangle}\index{obtuse}\emph{obtuse} or \index{triangle!right triangle}\index{right!triangle}\emph{right}, respectively.
+Otherwise, if all its angles are acute, it is called an \index{acute}\emph{acute triangle}.
+
+\begin{thm}[!]{Exercise}\label{ex:obtuce}
+Suppose that point $X$ lies between $V$ and $W$.
+Show that for every point $P$, we have $PX < PV$ or $PX < PW$.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:PMQ}
+Assume that points $P$ and $Q$ lie on one side of line~$\ell$.
+Let $M\in \ell$ be the point that minimizes the sum $PM+MQ$.
+Show that $M\in (P'Q)$, where $P'$ is the reflection of $P$ across $\ell$.
+\end{thm}
+
+
+
+\section{Circles}
+
+Recall that a circle with radius $r$ and center $O$ is the set of all points at distance $r$ from $O$.
+We say that a point $P$ lies \index{inside!a circle}\emph{inside} the circle if $OP<r$;
+if $OP>r$, we say that $P$ lies \index{outside a circle}\emph{outside} of the circle.
+\label{def:circle}
+
+\begin{thm}[!]{Exercise}\label{ex:inside-outside}
+Let $\Gamma$ be a circle and $P\notin \Gamma$.
+Assume a line $\ell$ passes thru the point $P$
+and intersects $\Gamma$ at two distinct points, $X$ and~$Y$.
+Show that $P$ is inside $\Gamma$ if and only if $P$ lies between $X$ and~$Y$.
+\end{thm}
+
+A segment between two points on a circle is called a \index{chord}\emph{chord} of the circle.
+A chord passing thru the center of the circle is called its \index{diameter}\emph{diameter}.
+
+\begin{thm}{Exercise}\label{ex:chord-perp}
+Assume two distinct circles $\Gamma$ and $\Gamma'$ have a common chord~$[A B]$.
+Show that the line between the centers of $\Gamma$ and $\Gamma'$ is a perpendicular bisector of~$[A B]$.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:center}
+Describe a ruler-and-compass construction of the center
+of a given circle.
+\end{thm}
+
+{
+
+\begin{wrapfigure}[4]{r}{54mm}
+\vskip-8mm
+\centering
+\includegraphics{mppics/pic-60}
+\end{wrapfigure}
+
+\begin{thm}[\abs]{Lemma}\label{lem:line-circle}
+A line and a circle can have at most two points of intersection.
+\end{thm}
+
+
+\parit{Proof.} Assume $A$, $B$, and $C$ are distinct points that lie on a line $\ell$ and a circle $\Gamma$ with the center~$O$.
+Then $OA=OB=OC$; in particular, $O$ lies on the perpendicular bisectors 
+$m$ and $n$ to $[A B]$ and $[B C]$ respectively.
+Note that the midpoints of $[AB]$ and $[BC]$ are distinct.
+Therefore, $m$ and $n$ are distinct.
+The latter contradicts the uniqueness of the perpendicular (Theorem~\ref{perp:ex+un}).
+\qeds
+
+}
+
+\begin{thm}[!]{Exercise}\label{ex:two-circ}
+Show that two distinct circles can have at most two points of intersection.
+\end{thm}
+
+As a consequence of the above lemma, 
+a line $\ell$ and a circle $\Gamma$ might have 2, 1, or 0 points of intersection.
+In the first two cases, the line is called \index{secant line}\emph{secant} or \index{tangent!line}\emph{tangent} respectively;
+if $P$ is the only point of intersection of $\ell$ and $\Gamma$,
+we say that \textit{$\ell$ is tangent to $\Gamma$ at $P$}. 
+
+Similarly, according to Exercise~\ref{ex:two-circ},
+two distinct circles might have 2, 1, or 0 points of intersection.
+If $P$ is the only point of intersection of circles $\Gamma$ and $\Gamma'$,
+we say that \index{tangent!circles}\emph{$\Gamma$ is tangent to $\Gamma'$ at $P$}; we also assume that a circle is tangent to itself at each of its points.
+
+\begin{thm}[\abs]{Lemma}\label{lem:tangent}
+Let $\ell$ be a line and $\Gamma$ be a circle centered at~$O$.
+Assume $P$ is a common point of $\ell$ and~$\Gamma$. 
+Then $\ell$ is tangent to $\Gamma$ at $P$ if and only if $(PO)\perp \ell$.
+\end{thm}
+
+\parit{Proof.}
+Let $Q$ be the footpoint of $O$ on~$\ell$.
+
+Assume~$P\ne Q$.
+Let $P'$ be the reflection of $P$ across~$(OQ)$.
+Note that $P'\in\ell$ and $(OQ)$ is the perpendicular bisector of~$[PP']$.
+Therefore, $OP=OP'$.
+Hence $P,P'\in \Gamma\cap \ell$;
+that is, $\ell$ is secant to~$\Gamma$.
+
+If $P=Q$, 
+then according to Lemma~\ref{lem:perp<oblique},
+$OP<OX$ for each point $X\in \ell$ distinct from~$P$.
+Hence $P$ is the only point at the intersection $\Gamma\cap\ell$;
+that is, $\ell$ is tangent to $\Gamma$ at~$P$. 
+\qeds
+
+\begin{thm}{Exercise}\label{ex:tangent-circles}
+Let $\Gamma$ and $\Gamma'$ be two circles with centers at $O$ and $O'$, and radiuses $r$ and~$r'$, respectively.
+Show that $\Gamma$ is tangent to $\Gamma'$ if and only if one of the following conditions holds:
+\begin{enumerate}[(a)]
+\item\label{ex:tangent-circles:a} The circles meet at a point~$P$ that lies on the same line with $O$ and~$O'$.
+\item\label{ex:tangent-circles:b} The circles meet at a point~$P$ and share a common tangent line at this point.
+\item\label{ex:tangent-circles-2} $OO' = r + r'$ or $OO' = |r - r'|$.
+\end{enumerate}
+
+\end{thm}
+
+
+{
+
+\begin{wrapfigure}{r}{20mm}
+\vskip-10mm
+\centering
+\includegraphics{mppics/pic-62}
+\end{wrapfigure}
+
+\begin{thm}{Exercise}\label{ex:tangent-circles-3}
+Assume three circles have two points in common.
+Prove that their centers lie on the same line.
+\end{thm}
+
+}
+
+\begin{thm}{Exercise}\label{ex:tangent}
+Describe a ruler-and-compass construction of lines tangent to a given circle that pass thru a given point.
+\end{thm}
+
+\begin{thm}{Exercise}\label{ex:tangent-circle}
+Given two circles $\Gamma_1$ and $\Gamma_2$ and a segment $[AB]$
+describe a ruler-and-compass construction of a circle with radius $AB$
+that is tangent to each circle $\Gamma_1$ and~$\Gamma_2$.
+\end{thm}

@@ -1,0 +1,67 @@
+%% SMF (Societe mathematique de France) article starter — smfart class.
+%%
+%% The smfart class itself is NOT included in this download: it ships with
+%% every modern TeX distribution (and with latextemplates.com's compiler),
+%% so bundling a copy would only risk pinning you to an older version than
+%% your own system already has.
+%%
+%% Class documentation: https://ctan.org/pkg/smflatex
+%% Licence: CTAN tags smflatex LPPL-1.3c (Societe mathematique de France,
+%% 1999-2021; maintainer Antoine Chambert-Loir). No licence/copyright grant
+%% text was found in any vendored file in this pipeline's TeX Live image
+%% (smfart.cls, smfbook.cls or the smf*.sty support files) -- shipped on
+%% CTAN's own attested licence and holder, flagged per this batch's brief
+%% on the TSV's ~10% licence-tag error rate.
+%%
+%% [english] is REQUIRED (or [french]/[francais]): the class sets no
+%% default language before processing its own options, so \smf@language is
+%% otherwise left undefined.
+\documentclass[english]{smfart}
+
+%% Unlike amsart, smfart does not auto-provide theorem environments --
+%% declare what you need explicitly.
+\newtheorem{theorem}{Theorem}
+
+\title{Your Title Here}
+\author{Ada Lovelace}
+\address{Institute of Analytical Engines, London, United Kingdom}
+\email{ada@example.edu}
+
+%% \subjclass takes ONE mandatory brace group only (plain \def, no xparse
+%% optional-argument support) -- amsart's \subjclass[2020]{...} year-bracket
+%% syntax does NOT work here: the stray "[2020]" leaks into the preamble as
+%% ordinary text and breaks with "Missing \begin{document}".
+\subjclass{Primary 11A41; Secondary 11N05}
+\keywords{first keyword, second keyword, third keyword}
+
+\begin{document}
+
+\begin{abstract}
+Replace this with your abstract. A good abstract states the problem, what
+you did, and what you found --- in that order, and without citations.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+Start here. Cite things like this~\cite{knuth1984texbook}.
+
+\section{Main results}
+\label{sec:results}
+
+\begin{theorem}
+\label{thm:main}
+State your main result here.
+\end{theorem}
+
+\begin{proof}
+Prove it here.
+\end{proof}
+
+\section{Conclusion}
+Say what it means.
+
+\bibliographystyle{smfplain}
+\bibliography{references}
+
+\end{document}

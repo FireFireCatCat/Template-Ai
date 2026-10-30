@@ -1,0 +1,125 @@
+\documentclass[aspectratio=169]{beamer} % for 16:9
+% \documentclass{beamer} % for 4:3
+\usepackage{ctex, hyperref}
+\usepackage[T1]{fontenc}
+
+% other packages
+\usepackage{latexsym,amsmath,xcolor,multicol,booktabs,calligra}
+\usepackage{graphicx,pstricks,listings,stackengine}
+\usepackage[super, square]{natbib}
+\usepackage{fontawesome5}
+\usepackage{multirow, makecell, diagbox}
+
+% \author{葛忠鑫}
+\author[xxx \hspace{1em} xxxx级硕士/博士研究生]{
+    \begin{tabular}{@{}r@{：}c@{}}
+        答辩学生 & xxx \hspace{0.5em} 2022级硕士 \\
+        指导老师 & xxx \hspace{0.8em} 研究员 \\
+        % 专\hspace{2em}业 & 计算机科学与技术 \\
+        所在部门 & xxxx研究中心 \\
+    \end{tabular}
+}
+\title{中文标题\\English Title}
+\subtitle{硕士/博士学位论文答辩}
+% \institute{\color{white} 中国科学院大学 / 中国科学院计算技术研究所}
+% \date{}
+\date{xxxx年xx月xx日}
+\usepackage{ICT-theme}
+
+% Find your favorite theme
+% \usetheme{Madrid}
+% \usetheme{CambridgeUS}
+% \usetheme{AnnArbor}
+
+% defs
+\def\cmd#1{\texttt{\color{red}\footnotesize $\backslash$#1}}
+\def\env#1{\texttt{\color{blue}\footnotesize #1}}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+\definecolor{halfgray}{gray}{0.55}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\bfseries\color{deepblue},
+    emphstyle=\ttfamily\color{deepred},    % Custom highlighting style
+    stringstyle=\color{deepgreen},
+    numbers=left,
+    numberstyle=\small\color{halfgray},
+    rulesepcolor=\color{red!20!green!20!blue!20},
+    frame=shadowbox,
+}
+
+\begin{document}
+
+\kaishu
+\begin{frame}
+    \titlepage
+    \vspace{-7em}
+    \begin{center}
+        \begin{minipage}{0.45\linewidth}
+            \raggedleft
+            \includegraphics[width=0.7\linewidth]{logos/UCAS_logo.pdf}
+        \end{minipage}
+        \hspace{0em}
+        \begin{minipage}{0.45\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{logos/ICT_logo.pdf}
+        \end{minipage}
+    \end{center}
+\end{frame}
+% ---------------------------------------- %
+
+\begin{frame}
+    \tableofcontents[sectionstyle=show,subsectionstyle=show/shaded/hide,subsubsectionstyle=show/shaded/hide]
+\end{frame}
+% ---------------------------------------- %
+
+\input{chapters/Chap1_Intro}
+\input{chapters/Chap2_Related}
+% ......
+\section{研究内容一}
+\begin{frame}
+\frametitle{研究内容一}
+\end{frame}
+% ---------------------------------------- %
+\section{研究内容二}
+\begin{frame}
+\frametitle{研究内容二}
+\end{frame}
+% ---------------------------------------- %
+\section{研究内容三}
+\begin{frame}
+\frametitle{研究内容三}
+\end{frame}
+% ---------------------------------------- %
+% ......
+\input{chapters/Chap6_Sum}
+
+
+
+\begin{frame}[allowframebreaks]
+\frametitle{参考文献}
+    \nocite{*}
+    \scriptsize
+    % \bibliographystyle{alpha}
+    % \bibliographystyle{apalike}
+    % \bibliographystyle{plain}
+    % \bibliographystyle{unsrt}
+    % \bibliographystyle{siam}
+    \bibliographystyle{ieeetr}
+    \bibliography{ref}
+\end{frame}
+% ---------------------------------------- %
+
+\section*{致谢}
+\begin{frame}
+    \begin{center}
+        {\Huge\calligra Thanks!}
+    \end{center}
+\end{frame}
+% ---------------------------------------- %
+
+\input{chapters/Appendix.tex}
+
+\end{document}

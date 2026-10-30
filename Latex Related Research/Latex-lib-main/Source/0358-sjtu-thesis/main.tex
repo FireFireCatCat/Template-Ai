@@ -1,0 +1,53 @@
+% !TeX program = xelatex
+\documentclass[type=master,lang=en]{sjtuthesis}
+
+\sjtusetup{
+  info = {
+    en / title      = {A Sample Document for the SJTU Thesis Template},
+    en / keywords    = {SJTU, thesis template, XeLaTeX},
+    en / author      = {Mo Mo},
+    id               = {0010900990},
+    en / supervisor  = {Prof. Mou Mou},
+    en / department  = {Department of Computer Science and Engineering},
+    en / major       = {Computer Science and Technology},
+    en / degree      = {Master of Engineering},
+    en / date        = {\today},
+  },
+}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+\begin{document}
+
+\maketitle
+\copyrightpage
+
+\frontmatter
+
+\begin{abstract}[en]
+  This thesis demonstrates the SJTU Thesis template compiled with the main
+  language set to English. It covers the standard front matter, two content
+  chapters with sections, a table, a figure, and a resolved bibliography
+  using \texttt{natbib} and \texttt{bibtex}, since the template itself does
+  not mandate biblatex.
+\end{abstract}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\mainmatter
+
+\input{chapters/introduction}
+\input{chapters/results}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\backmatter
+
+\input{chapters/acknowledgements}
+
+\end{document}

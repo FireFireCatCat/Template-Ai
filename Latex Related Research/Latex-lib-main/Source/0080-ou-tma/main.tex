@@ -1,0 +1,75 @@
+\documentclass[a4paper,12pt]{article}
+% [roman] numbers questions as 1(ii)(c); the default [alph] numbers as
+% 1(b)(iii). [pdfbookmark] adds a PDF bookmark per question.
+\usepackage[roman,pdfbookmark]{ou-tma}
+
+\myname{Alex Morgan}
+\mypin{A1234567}
+\mycourse{M208: Pure Mathematics}
+\mytma{03}
+
+\begin{document}
+\maketitle
+
+\begin{question}
+\qpart
+Prove, by induction on $n$, that
+\[
+  \sum_{k=1}^{n} k^2 = \frac{n(n+1)(2n+1)}{6}
+\]
+for all $n \geq 1$.
+
+\emph{Base case.} For $n=1$, the left side is $1$ and the right side is
+$\frac{1\cdot 2\cdot 3}{6} = 1$, so the statement holds.
+
+\emph{Inductive step.} Assume the identity holds for some $n \geq 1$.
+Adding the next term,
+\[
+  \sum_{k=1}^{n+1} k^2 = \frac{n(n+1)(2n+1)}{6} + (n+1)^2
+  = \frac{(n+1)(n+2)(2n+3)}{6},
+\]
+which is exactly the claimed formula evaluated at $n+1$. By induction the
+identity holds for all $n \geq 1$. \hfill\qed
+
+\qpart
+Use the formula above to evaluate $\sum_{k=1}^{10} k^2$.
+
+Substituting $n=10$ gives
+$\frac{10 \cdot 11 \cdot 21}{6} = 385$.
+
+\end{question}
+
+\begin{question}
+Solve the second-order linear differential equation
+\[
+  \deriv{^2y}{x^2} - 5\deriv{y}{x} + 6y = 0.
+\]
+
+The auxiliary equation is $\lambda^2 - 5\lambda + 6 = 0$, which factorises
+to $(\lambda - 2)(\lambda - 3) = 0$, giving roots $\lambda = 2$ and
+$\lambda = 3$. Since these are real and distinct, the general solution is
+\[
+  y = A\e^{2x} + B\e^{3x}.
+\]
+
+\end{question}
+
+\begin{question}[4]
+\qsubpart
+Find the eigenvalues of the matrix
+$\begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix}$.
+
+The characteristic equation is
+$(4-\lambda)(3-\lambda) - 2 = 0$, i.e.\ $\lambda^2 - 7\lambda + 10 = 0$,
+which factorises to $(\lambda-2)(\lambda-5)=0$. The eigenvalues are
+$\lambda = 2$ and $\lambda = 5$.
+
+\qsubpart
+Find an eigenvector corresponding to the smaller eigenvalue.
+
+For $\lambda = 2$: $(4-2)v_1 + v_2 = 0 \Rightarrow v_2 = -2v_1$, so an
+eigenvector is $\begin{pmatrix} 1 \\ -2 \end{pmatrix}$.
+
+\end{question}
+
+\end{document}

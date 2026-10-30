@@ -1,0 +1,57 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2.6cm]{geometry}
+\usepackage{amsmath,booktabs,siunitx}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Simple lab report}
+\rhead{\thepage}
+\title{Measuring the Cooling of Hot Water}
+\author{Your Name}
+\date{\today}
+\begin{document}
+\maketitle
+\section{Question}
+How does the temperature of a cup of hot water change during the first ten
+minutes after pouring?
+
+\section{Prediction}
+Newton's cooling model suggests that the rate of cooling is approximately
+proportional to the difference between the water and room temperatures:
+\[
+  \frac{dT}{dt}=-k(T-T_\mathrm{room}).
+\]
+
+\section{Method}
+Pour \SI{200}{mL} of hot water into an uncovered cup. Measure the temperature
+with the same probe every two minutes, keeping the probe depth and cup position
+constant. Record room temperature at the start and end.
+
+\section{Results}
+\begin{table}[ht]
+\centering
+\caption{Temperature observations.}
+\begin{tabular}{@{}S[table-format=2.0] S[table-format=2.1] S[table-format=2.1]@{}}
+\toprule
+{$t$ (min)} & {$T$ (\si{\celsius})} & {$T-T_\mathrm{room}$ (\si{\celsius})}\\
+\midrule
+0 & 86.0 & 64.0\\
+2 & 77.4 & 55.4\\
+4 & 70.3 & 48.3\\
+6 & 64.2 & 42.2\\
+8 & 59.0 & 37.0\\
+10 & 54.6 & 32.6\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Interpretation}
+Plot $\ln(T-T_\mathrm{room})$ against time, estimate the gradient, and compare
+the fitted model with the observations. Mention convection, evaporation, probe
+response time, and any reading that was taken late.
+
+\section{Conclusion}
+The fitted cooling constant is $k=\rule{0.25\linewidth}{0.4pt}$ per minute.
+The prediction was \rule{0.2\linewidth}{0.4pt}; the strongest evidence is
+\rule{0.4\linewidth}{0.4pt}.
+\end{document}

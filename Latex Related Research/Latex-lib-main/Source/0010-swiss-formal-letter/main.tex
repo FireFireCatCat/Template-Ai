@@ -1,0 +1,48 @@
+% Swiss Formal Letter — chletter.cls
+%
+% Distinct from the other letter templates in this batch: chletter is a Swiss
+% national convention, not a DIN 5008 layout. It sets its own address-window
+% geometry (\addresswidth, \titlehead) and adds a `foldmark` class option that
+% prints a small crop mark at the correct C5/DL fold height for a Swiss
+% window envelope — visible in the compiled preview as a short horizontal
+% tick in the left margin at roughly 1/3 page height. `leftwin` swaps the
+% address window to the left side of the sheet, the Swiss default.
+\documentclass[a4paper,10pt,foldmark,leftwin]{chletter}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+\name{Élise Vuillemin}
+\signature{Élise Vuillemin}
+\location{Lausanne, le \today}
+\address{Cabinet Vuillemin \& Associés\\
+  Rue de Bourg 12\\
+  CH-1003 Lausanne\\
+  Suisse}
+\telephone{+41 21 555 04 12}
+
+\begin{document}
+\begin{letter}{Office fédéral des assurances sociales\\
+  Effingerstrasse 20\\
+  CH-3003 Berne\\
+  Suisse}
+
+\opening{Madame, Monsieur,}
+
+Par la présente, nous confirmons la réception de votre courrier du 3
+mars 2026 concernant le dossier référencé AVS/2026-0417. Nous avons
+transmis les pièces justificatives demandées à notre mandante, Mme
+Vuillemin, qui vous répondra dans le délai imparti de trente jours.
+
+Nous restons à votre disposition pour tout complément d'information
+et vous prions d'agréer, Madame, Monsieur, l'expression de nos
+salutations distinguées.
+
+\closing{Veuillez agréer, Madame, Monsieur, l'expression de nos
+salutations distinguées.}
+
+\ps{P.S. Une copie du présent courrier a été versée au dossier
+client.}
+
+\end{letter}
+\end{document}

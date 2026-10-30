@@ -1,0 +1,787 @@
+%% aidisclose-doc.tex --- Utilities for Generative AI disclosure checklist and statements
+%%
+%% Copyright (C) 2025-26 by João M. Lourenço <joao.lourenco@fct.unl.pt>
+%%
+%% This file may be distributed and/or modified under the conditions of
+%% the LaTeX Project Public License, either version 1.3c of this license
+%% or (at your option) any later version.
+%%
+%% The latest version of this license is in:
+%%    http://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2006/05/20 or later.
+%%
+\documentclass[11pt]{article}
+
+% \usepackage[portuguese]{babel} % Example: Uncomment to test language support
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 1. Basic Utilities & Formatting
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage{xurl}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{minted}
+% \usepackage{lmodern}
+\usepackage{newpx}
+% \usepackage[rm]{roboto}
+% \usepackage{fontspec}\setmainfont{QTKorrin}
+% \usepackage{fontspec}\setmainfont{QTSchoolCentury}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 2. Tables
+%% MUST load before biblatex to avoid "Patching 'tabularx' failed" error
+\usepackage{tabularx}
+\usepackage{xltabular}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 3. Bibliography
+\usepackage{biblatex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 4. This Package
+%% Options: [autobib=true|false] (default: true)
+\usepackage[autobib=true,nocite=true]{aidisclose}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 5. Hyperlinks
+\usepackage[colorlinks,allcolors=blue!70!black]{hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 6. Customization for LaTeX pretty print
+\definecolor{latexbg}{HTML}{F5F5EE}
+\newminted{latex}{
+  bgcolor=latexbg,
+  fontsize=\small,
+  breaklines,
+  tabsize=2,
+  autogobble,
+  % frame=single,
+  % framesep=3mm,
+  % rulecolor=black!20,
+}
+\newmintinline{latex}{}
+\newenvironment{ltx}
+  {\VerbatimEnvironment
+   \begin{minted}[
+    bgcolor=latexbg,
+    fontsize=\small,
+    breaklines,
+    tabsize=2,
+    autogobble,
+    % frame=single,
+    % framesep=3mm,
+    % rulecolor=black!20,
+   ]{latex}}
+  {\end{minted}}
+
+
+\begin{document}
+
+\title{The \texttt{aidisclose} package}
+\author{João M. Lourenço\\\url{https://github.com/joaomlourenco/aidisclose}}
+\date{2026-02-21~(\aidversion)}
+\maketitle
+
+\begin{abstract}
+    The \AIDpackageName\ package implements and extension of the \emph{GAIDeT (Generative AI Delegation Taxonomy)}~\cite{Suchikova:2025:GAIDeT} to automate Generative AI disclosure statements and checklists.
+    The package is supported by a companion website at \url{https://aidisclose.org}, which allows interactive generation of the LaTeX code to add to your document.
+\end{abstract}
+
+\begin{multicols}{2}
+  \footnotesize
+\tableofcontents
+\end{multicols}
+
+\section{Introduction}
+\label{sec:introduction}
+
+The \AIDpackageName\ is designed to support emerging ethical, institutional, and publisher requirements concerning AI-assisted content creation.
+It allows \LaTeX\ authors to:
+
+\begin{itemize}
+    \item Select specific tasks delegated to Generative~AI (AID) from an extension to the GAIDeT taxonomy~\cite{Suchikova:2025:GAIDeT} (e.g., idea generation, data cleaning, text summarization).
+    \item List the specific AID tools used (e.g., ChatGPT, Gemini, Claude).
+    \item Add optional explanatory comments (numbered or unnumbered).
+    \item Automatically generate a formatted “\emph{Disclosure of Delegation to Generative AI}” section/chapter.
+    \item Automatically handle citations for the taxonomy and the package itself.
+\end{itemize}
+
+\subsection*{Companion web generator}
+
+\begingroup
+\slshape
+A companion web interface is available at \url{https://aidisclose.org}.
+It provides an interactive generator for \AIDpackageName-based Generative AI disclosure statements, following the GAIDeT taxonomy~\cite{Suchikova:2025:GAIDeT}.
+The website can be used to (i) select delegated tasks, (ii) declare AID tools (or explicitly declare none),
+(iii) add multiple numbered or unnumbered comments (with reordering and numbering preview),
+and (iv) generate either a complete minimal \LaTeX{} document or a ready-to-paste configuration snippet.
+The generated code can be copied to the clipboard and incorporated into your manuscript.
+\endgroup
+
+\section{Package Loading and Options}
+\label{sec:loading}
+
+Load the package in your document preamble:
+
+\begin{ltx}
+\usepackage[<options>]{aidisclose}
+\end{ltx}
+
+% \subsection{Options}
+The package currently supports the following \textbf{key-value options}:
+
+\begin{description}
+    \item[\texttt{autobib\,=\,true\,|\,false}] (Default: \texttt{true})\\
+    When enabled, the package automatically:
+    \begin{enumerate}
+        \item Writes a \texttt{aidisclose.bib} file containing the references for GAIDeT~\cite{Suchikova:2025:GAIDeT} and this package~\cite{Lourenco:2025:aidisclose}.
+        \item Loads this bibliography resource (compatible with \texttt{biblatex} and standard \texttt{BibTeX}).
+    \end{enumerate}
+    Set this to \texttt{false} if you wish to manage these citations manually in your own \texttt{.bib} file.
+    \item[\texttt{nocite=true|false}] (Default: \texttt{true})\\
+    This option only affects the Generative AI disclosure statement: When disabled, the package automatically:
+    \begin{enumerate}
+        \item Add citations to the GAIDeT taxonomy paper~\cite{Suchikova:2025:GAIDeT} and the aidisclose manual~\cite{Lourenco:2025:aidisclose}.
+    \end{enumerate}
+    Set this to \texttt{false} if you are willing to give credit to the authors.
+\end{description}
+
+\section{Internationalization}
+\label{sec:i18n}
+
+The package automatically detects the document language (via \texttt{babel} or \texttt{polyglossia}) and loads the corresponding translation file (\texttt{.ldf}).
+\paragraph{Currently (v\aidversion) Supported Languages:}~
+
+\begin{itemize}[
+    itemsep = 1\itemsep,
+    parsep = 1\parsep,
+    before = \raggedcolumns\begin{multicols}{3}\raggedright,
+    after = \end{multicols}
+  ]
+    \item English (\texttt{en}) \\— Default
+    \item Catalan (\texttt{cat})
+    \item Czech (\texttt{cz})
+    \item Danish (\texttt{dk})
+    \item Dutch (\texttt{nl})
+    \item French (\texttt{fr})
+    \item German (\texttt{de})
+    \item Greek (\texttt{gr})
+    \item Italian (\texttt{it})
+    \item Polish (\texttt{pl})
+    \item Portuguese (\texttt{pt})
+    \item Slovak (\texttt{sk})
+    \item Spanish (\texttt{es})
+    \item Ukrainian (\texttt{uk})
+\end{itemize}
+
+If the detected language is not supported, the package falls back to English.
+
+\subsection{Utilities and Internals}
+
+The following commands are typically used internally but are available for advanced users who need to customize the package behavior or integrate it with other workflows.
+
+\begin{description}
+    \item[\latexinline{\AIDloadLanguage{<code>}}] \hfill \\
+    Manually forces the loading of a specific language definition file, overriding the auto-detection.
+    \begin{ltx}
+\AIDloadLanguage{pt} % Force Portuguese strings
+    \end{ltx}
+
+    \item[\latexinline{\AIDpackageName}] \hfill \\
+    Typesets the package name (\AIDpackageName). If \texttt{hyperref} is loaded, it links to the package's GitHub repository.
+
+    \item[\latexinline{\AIDGetString{<key>}}] \hfill \\
+    Returns the localized string associated with a specific internal key.
+    \begin{ltx}
+The title is: \AIDGetString{title_long}
+    \end{ltx}
+
+    \item[\latexinline{\aidversion}] \hfill \\
+    A macro containing the current version number of the package (e.g., \texttt{\aidversion}).
+
+    \item[\latexinline{\CiteLaTeX}, \latexinline{\CiteGAIDeT}] \hfill \\
+    Macros that add citations to the \LaTeX{} project and the GAIDeT taxonomy, respectively.
+    They are automatically handled based on the \texttt{nocite} option.
+\end{description}
+
+
+\section{Usage}
+\label{sec:usage}
+
+The declaration process consists of two steps: \textbf{Configuration} (defining what was done) and \textbf{Rendering} (printing the declaration).
+
+\subsection{Configuration}
+
+Configuration commands can be placed in the preamble or in the document body before the rendering command is called.
+
+\textbf{Tip (Interactive Generator):} You can use the companion website \url{https://aidisclose.org} to visually select tasks and tools.
+The website will automatically generate the configuration code (the \latexinline|\AIDactivate| and \latexinline|\AIDtoolsUsed| commands) which you can simply copy and paste into your document.
+
+\subsubsection{Activating Taxonomy Items}
+Use \latexinline|\AIDactivate{}| to check specific items in the taxonomy. See Section~\ref{sec:taxonomy-keys} for all available keys.
+\textbf{Note:} The keys use a colon (\texttt{:}) to separate the category prefix from the specific item.
+
+\begin{ltx}
+% Example: Activating "Idea generation" and "Code optimization"
+\AIDactivate{c:idea}
+\AIDactivate{s:opt}
+\end{ltx}
+
+\subsubsection{Specifying Tools}
+Use \latexinline|\AIDtoolsUsed{}| to list the AI tools employed.
+The package handles formatting (singular/plural) automatically.
+
+\begin{ltx}
+% Example 1: No tools used
+\AIDtoolsUsed{}
+
+% Example 2: Multiple tools
+\AIDtoolsUsed{ChatGPT-4, Gemini Advanced, Claude 3}
+\end{ltx}
+
+\subsubsection{Adding Comments}
+Use the \texttt{AIDcomment} (numbered) and \texttt{AIDcomment*} (unnumbered) environments for details.
+Comments may contain multiple paragraphs.
+
+\begin{ltx}
+\begin{AIDcomment}
+The AI was used primarily for refining the code in Section 3.
+\end{AIDcomment}
+
+\begin{AIDcomment*}
+No AID tools were used for data analysis.
+\end{AIDcomment*}
+\end{ltx}
+
+\subsubsection{Customizing the Title}
+Change the default section title and hierarchy level using \latexinline|\AIDdiscloseTitle|.
+
+\begin{ltx}
+\AIDdiscloseTitle[Short Title]{Full Title}[section-level]
+\end{ltx}
+
+\begin{itemize}
+    \item \textbf{section-level}: Defaults to \latexinline|\chapter| if defined, otherwise \latexinline|\section|.
+\end{itemize}
+You can verify the current titles using \latexinline|\AIDdiscloseTitleLong| and \latexinline|\AIDdiscloseTitleShort|.
+
+\subsubsection{Visual Customization}
+
+\begin{itemize}
+    \item \textbf{Checkmark Symbol:} \latexinline|\AIDcheckmarkSymbol{\texttimes}| (default is \latexinline|\checkmark|).
+    \item \textbf{Font Size:} \latexinline|\AIDchecklistFontSize{\small}|
+    (default is \latexinline|\smaller|, meaning: \emph{slightly smaller than the current font size}).
+
+    \item \textbf{Colors:} You can configure the colors for various elements using standard \texttt{xcolor} names:
+    \begin{ltx}
+% Set text color for selected (active) and unselected (inactive) items
+% Default: black and black!50
+\AIDusedColor{blue!60!black}
+\AIDunusedColor{gray!40}
+
+% Set the color of the square box lines
+% Default: black and black!50
+\AIDboxUsedColor{blue!60!black}
+\AIDboxUnusedColor{gray!40}
+
+% Set the color of the checkmark symbol
+% Default: black
+\AIDcheckmarkColor{red}
+    \end{ltx}
+\end{itemize}
+
+
+\subsection{Advanced Configuration}
+
+The package provides several commands to control the order and content of the disclosure sections.
+
+\subsubsection{Reordering Sections}
+Use \latexinline|\AIDorder| to define the sequence of the disclosure components.
+The available components are: \texttt{preamble}, \texttt{tools}, \texttt{taxonomy}, and \texttt{comments}.
+
+\begin{ltx}
+% Default order
+\AIDorder{preamble, tools, taxonomy, comments}
+\end{ltx}
+
+\subsubsection{Inserting Custom Text}
+You can insert arbitrary text or commands before or after specific sections using the following macros:
+
+\begin{ltx}
+\AIDpreTools{Text appearing before the tools list.}
+\AIDpostTools{Text appearing after the tools list.}
+
+\AIDpreTaxonomy{Text appearing before the checklist.}
+\AIDpostTaxonomy{Text appearing after the checklist.}
+
+\AIDpreComments{Text appearing before the comments section.}
+\AIDpostComments{Text appearing after the comments section.}
+\end{ltx}
+
+\subsubsection{Customizing Strings and Preamble}
+You can modify internal strings using \latexinline|\AIDstrings| and the main preamble paragraph using \latexinline|\AIDpreamble|.
+
+\begin{ltx}
+\AIDstrings{
+  tools_used = {Generative AI Tools employed:},
+  none_used  = {No generative AI tools were used.}
+}
+
+% Replaces the default preamble text.
+% Use <author>, <AUTHOR-LIST>, <declares>, <acknowledges> and <accept> as placeholders.
+\AIDpreamble{<author> (<AUTHOR-LIST>) <declares> the use of AI\ldots}
+\end{ltx}
+
+\subsubsection{Unified Configuration Interface}
+\label{sec:unified-config}
+
+For convenience, the package provides two unified commands to handle configuration dynamically using key-value lists.
+
+\paragraph{Package Options (\texttt{\textbackslash AIDset})}
+The \latexinline|\AIDset| command allows you to change package load-time options dynamically in the preamble.
+
+\begin{ltx}
+\AIDset{
+  autobib = true,  % Generate .bib file automatically
+  nocite  = false  % Enable visible citations in the footnote
+}
+\end{ltx}
+
+\paragraph{General Configuration (\texttt{\textbackslash AIDconfig})}
+The \latexinline|\AIDconfig| command is a universal setter for content, visuals, and strings. It accepts the following keys:
+
+\begin{description}
+  \item[\texttt{tools}] Equivalent to \latexinline|\AIDtoolsUsed|.
+  \item[\texttt{title}] Equivalent to \latexinline|\AIDdiscloseTitle|.
+  \item[\texttt{order}] Sets the order of sections (see \latexinline|\AIDorder|).
+  \item[\texttt{checkmark}] Sets the checkmark symbol.
+  \item[\texttt{fontsize}] Sets the font size for the checklist.
+  \item[\texttt{color\_used / color\_unused}] Sets text colors.
+  \item[\texttt{color\_box\_used / color\_box\_unused}] Sets checkbox border colors.
+  \item[\texttt{pre\_tools / post\_tools}] Text before/after the tools list.
+  \item[\texttt{pre\_taxonomy / post\_taxonomy}] Text before/after the checklist.
+  \item[\texttt{pre\_comments / post\_comments}] Text before/after the comments.
+\end{description}
+
+\begin{ltx}
+% Example of unified configuration
+\AIDconfig{
+  tools     = {ChatGPT, Copilot},
+  color_used = blue!80!black,
+  checkmark = {$\star$},
+  order     = {preamble, taxonomy, tools, comments}
+}
+\end{ltx}
+
+\subsection{Rendering the Declaration}
+
+Place the \latexinline|\AIDrenderDeclaration|
+command where you want the disclosure to appear (e.g., after the Conclusion or before References).
+
+\begin{ltx}
+\AIDrenderDeclaration[<options>]{<authors>}
+\AIDrenderDeclaration*[<options>]{<authors>}
+\end{ltx}
+
+\begin{itemize}
+    \item \textbf{Star variant (*):} Renders the checklist \emph{without} the section heading.
+    \item \textbf{<options>:} Key-value options for rendering (default: \texttt{ncols=3}):
+        \begin{description}
+            \item[\texttt{ncols = <int>}] Number of columns for the checklist.
+            \item[\texttt{lang  = <iso>}] Override the language for this declaration.
+            \item[\texttt{label = <str>}] Assign a \LaTeX{} label to the section.
+        \end{description}
+    \item \textbf{<authors>:} Comma-separated list of (document) authors declaring the use of AI.
+\end{itemize}
+
+\section{Taxonomy Keys}
+\label{sec:taxonomy-keys}
+
+Use these keys with \latexinline|\AIDactivate{}|.
+The keys are derived from our extension to the GAIDeT taxonomy~\cite{Suchikova:2025:GAIDeT} and organized by research phase.
+\textbf{Note:} Keys use colons (\texttt{:}) as separators.
+
+\newenvironment{gaikeys}
+  {%
+    \renewcommand\item[1][]{\\##1 &}%
+    \renewcommand\baselinestretch{1.4}%
+    \tabularx{\textwidth}{p{5.5em}X}
+    \toprule
+    \textbf{Key} & \textbf{Description}\\\midrule
+    ~\\[-5.5ex]
+  }
+  {%
+    \\
+    \bottomrule
+    \endtabularx
+    \smallskip
+  }
+
+\subsection*{1. Conceptualization (\texttt{c:*})}
+\begin{gaikeys}
+    \item[c:idea] Idea generation
+    \item[c:obj]  Defining the research objective
+    \item[c:rq]   Formulating research questions and hypotheses
+    \item[c:feas] Feasibility assessment and risk evaluation
+    \item[c:pre]  Hypothesis viability assessment
+    \item[c:sim]  Simulated debate and argument testing
+\end{gaikeys}
+
+\subsection*{2. Literature Review (\texttt{l:*})}
+\begin{gaikeys}
+    \item[l:srch]  Search and Discovery
+    \item[l:sum]   Literature summarization and synthesis
+    \item[l:map]   Concept Mapping and Systematization
+    \item[l:pat]   Market/patent landscape analysis
+    \item[l:gaps]  Gap Identification and Novelty Evaluation
+    \item[l:trans] Cross-lingual literature comprehension
+\end{gaikeys}
+
+\subsection*{3. Methodology (\texttt{m:*})}
+\begin{gaikeys}
+    \item[m:des]   Experimental Design Optimization
+    \item[m:proto] Development of experimental or research protocols
+    \item[m:meth]  Methodological Instrument Selection
+\end{gaikeys}
+
+\subsection*{4. Software Development and Automation (\texttt{s:*})}
+\begin{gaikeys}
+    \item[s:gen]   Code Generation
+    \item[s:opt]   Refactoring and Optimization
+    \item[s:debug] Debugging and Repair
+    \item[s:auto]  Process automation
+    \item[s:algs]  Algorithm design
+    \item[s:doc]   Code documentation and comment generation
+\end{gaikeys}
+
+\subsection*{5. Data Management and Analysis (\texttt{d:*})}
+\begin{gaikeys}
+    \item[d:coll]  Data collection and scraping
+    \item[d:val]   Data validation and quality check
+    \item[d:cln]   Data cleaning and preprocessing
+    \item[d:cur]   Data curation and organization
+    \item[d:anl]   Data analysis
+    \item[d:viz]   Visualization
+    \item[d:rep]   Reproducibility testing
+    \item[d:lbl]   Data labeling and annotation assistance
+    \item[d:syn]   Synthetic data generation
+    \item[d:anon]  De-identification and anonymization support
+    \item[d:trans] Audio-to-text transcription and diarization
+\end{gaikeys}
+
+\subsection*{6. Visuals and Multimedia (\texttt{v:*})}
+\begin{gaikeys}
+    \item[v:gen]   Synthetic Asset Generation
+    \item[v:edit]  Image Enhancement and Editing
+    \item[v:chart] Diagrammatic and Schematic Design
+\end{gaikeys}
+
+\subsection*{7. Writing and Editing (\texttt{w:*})}
+\begin{gaikeys}
+    \item[w:draft] Drafting Text
+    \item[w:poly]  Polishing and Editing
+    \item[w:sum]   Abstract and Executive Summary Generation
+    \item[w:con]   Formulation of conclusions
+    \item[w:tone]  Tone Adjustment
+    \item[w:tra]   Translation
+    \item[w:ref]   Citation formatting and bibliography management
+    \item[w:prs]   Press releases and outreach materials
+    \item[w:title] Title Generation
+\end{gaikeys}
+
+\subsection*{8. Ethics Review (\texttt{e:*})}
+\begin{gaikeys}
+    \item[e:bias] Bias analysis and discrimination assessment
+    \item[e:risk] Ethical risk analysis
+    \item[e:comp] Monitoring compliance with ethical standards
+    \item[e:conf] Data confidentiality monitoring
+\end{gaikeys}
+
+\subsection*{9. Quality Assurance (\texttt{sup:*})}
+\begin{gaikeys}
+    \item[sup:qa]  Simulated Peer Review
+    \item[sup:trd] Consistency checking against field trends
+    \item[sup:lim] Identification of limitations
+    \item[sup:rec] Publication strategy and journal selection
+    \item[sup:pub] Publication support
+\end{gaikeys}
+
+
+\printbibliography
+
+% Rendering
+\clearpage
+% =========================================================
+% APPENDIX: TAXONOMY DEFINITIONS
+% =========================================================
+
+\appendix
+
+\begingroup
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+  {3.25ex \@plus1ex \@minus.2ex}% % Space before
+  {-1em}%                         % Space after (negative means run-in)
+  {\normalfont\normalsize\bfseries\color{blue!80!black}}} % <--- Color added here!
+\makeatother
+
+\setlist[description]{font=\normalfont\bfseries\color{green!50!black}}
+
+\section{Appendix: Detailed Taxonomy Descriptions}
+\label{app:taxonomy}
+
+This appendix provides a detailed breakdown of the \AIDpackageName\ taxonomy.
+For each category, we define the \textbf{Objective} (the high-level goal of using AI in this phase) and the \textbf{Scope} (what is generally included or excluded).
+
+\subsection*{1. Conceptualization}
+\paragraph{Objective:} To use AI as a thought partner for brainstorming, refining the research direction, and establishing the theoretical foundation before empirical work begins.
+\paragraph{Scope:} Includes ideation, hypothesis formation, and feasibility checks. Excludes the actual execution of experiments or data collection.
+\paragraph{Keys:}
+\begin{description}
+    \item[Idea generation:] Using AI to brainstorm new research topics, interdisciplinary connections, or novel angles on existing problems.
+    \item[Objective refinement:] Refining vague goals into concrete, actionable research objectives.
+    \item[Research questions:] Drafting and iterating on specific research questions (RQs) to ensure they are clear and answerable.
+    \item[Feasibility check:] Assessing whether the proposed study is viable regarding resources, time, and data availability.
+    \item[Preliminary research:] Conducting quick background checks or “pre-studies” to see if the idea has already been solved.
+    \item[Simulation/Scenarios:] Using AI to conceptualize theoretical models, simulate persona responses, or design hypothetical scenarios.
+\end{description}
+
+\subsection*{2. Literature Review}
+\paragraph{Objective:} To accelerate the discovery, synthesis, and organization of existing knowledge.
+\paragraph{Scope:} Includes searching, summarizing, and translating papers.
+Excludes the final critical argumentation (which remains the author's responsibility).
+\paragraph{Keys:}
+\begin{description}
+    \item[Search \& Discovery:] Using AI tools (e.g., semantic search) to find relevant papers that keyword searches might miss.
+    \item[Summarization:] Generating summaries or abstracts of long papers to quickly assess relevance.
+    \item[Mapping:] Visualizing connections, citation networks, or thematic clusters in the literature.
+    \item[Pattern recognition:] Identifying trends or recurring themes across a large corpus of text.
+    \item[Gap identification:] Using AI to suggest areas where current research is lacking or contradictory.
+    \item[Translation:] Translating foreign-language literature to make it accessible for the review.
+\end{description}
+
+\subsection*{3. Methodology}
+\paragraph{Objective:} To assist in the structural design of the research study.
+\paragraph{Scope:} Includes experimental design and instrument creation.
+Excludes the physical conduct of experiments.
+\paragraph{Keys:}
+\begin{description}
+    \item[Experimental design:] Designing the logic, control groups, and variables of the study.
+    \item[Prototyping:] Creating early drafts of survey instruments, interview guides, or experimental apparatus designs.
+    \item[Method selection:] Suggesting appropriate statistical methods or qualitative frameworks for the data.
+\end{description}
+
+\subsection*{4. Software Development and Automation}
+\paragraph{Objective:} To facilitate the creation, optimization, and maintenance of code used in the research.
+\paragraph{Scope:} Includes coding, debugging, and documentation.
+\paragraph{Keys:}
+\begin{description}
+    \item[Code generation:] Generating boilerplate code, scripts, or functions from natural language descriptions.
+    \item[Optimization:] Refactoring code for better performance or readability.
+    \item[Debugging:] Identifying syntax errors or logical bugs in scripts.
+    \item[Automation:] Writing scripts to automate file management, backups, or batch processing.
+    \item[Algorithm design:] Assisting in the logic and mathematical formulation of algorithms.
+    \item[Documentation:] Generating docstrings, comments, and README files for research software.
+\end{description}
+
+\subsection*{5. Data Management}
+\paragraph{Objective:} To handle the data lifecycle from collection to reporting.
+\paragraph{Scope:} Includes cleaning, analysis, and synthetic generation.
+Excludes the fabrication of results (which is ethical misconduct, distinct from declared synthetic data).
+\paragraph{Keys:}
+\begin{description}
+    \item[Collection:] Writing scrapers or using AI agents to gather public data.
+    \item[Validation:] Checking data for consistency, outliers, or errors.
+    \item[Cleaning:] Automating the formatting, parsing, and repair of messy datasets.
+    \item[Curation:] Organizing and categorizing large datasets.
+    \item[Analysis:] Suggesting or performing statistical tests and interpreting raw outputs.
+    \item[Visualization:] Generating code for plots, graphs, and data dashboards.
+    \item[Reporting:] Summarizing data findings in textual or tabular format.
+    \item[Labeling:] Using LLMs to annotate or classify text/image datasets (zero-shot/few-shot labeling).
+    \item[Synthesis:] Generating synthetic datasets to preserve privacy or augment small samples.
+    \item[Anonymization:] Detecting and removing Personally Identifiable Information (PII).
+    \item[Translation:] Translating textual data (e.g., survey responses) into the analysis language.
+\end{description}
+
+\subsection*{6. Visuals and Multimedia}
+\paragraph{Objective:} To create or enhance non-data visual elements.
+\paragraph{Scope:} Includes illustrative diagrams and image editing.
+Excludes scientific data plots (covered in Data Management).
+\paragraph{Keys:}
+\begin{description}
+    \item[Generation:] Creating conceptual images, illustrations, or diagrams from scratch.
+    \item[Editing:] Enhancing, cropping, or modifying existing images (e.g., removing background).
+    \item[Charts/Infographics:] Creating flowcharts, process diagrams, or high-level infographics.
+\end{description}
+
+\subsection*{7. Writing and Editing}
+\paragraph{Objective:} To assist in the textual articulation of the research.
+\paragraph{Scope:} Includes drafting, polishing, and translation.
+Note: Authors remain accountable for accuracy.
+\paragraph{Keys:}
+\begin{description}
+    \item[Drafting:] Generating initial text for sections based on bullet points or notes.
+    \item[Polishing:] Correcting grammar, spelling, and punctuation.
+    \item[Summarizing:] Creating the abstract or plain-language summary.
+    \item[Conclusions:] Synthesizing the discussion into a final concluding statement.
+    \item[Tone adjustment:] Rewriting text to be more formal, concise, or accessible.
+    \item[Translation:] Translating the manuscript from the author's native language to the publication language.
+    \item[References:] Formatting citations and bibliography styles.
+    \item[Presentation:] Drafting slide decks or conference poster text.
+    \item[Title generation:] Brainstorming catchy and accurate titles for the work.
+\end{description}
+
+\subsection*{8. Ethics Review}
+\paragraph{Objective:} To act as a check on the ethical integrity of the work.
+\paragraph{Scope:} Includes bias detection and risk assessment.
+\paragraph{Keys:}
+\begin{description}
+    \item[Bias detection:] Scanning text or study designs for potential cultural or gender bias.
+    \item[Risk assessment:] Identifying potential dual-use concerns or societal risks.
+    \item[Compliance:] Checking against specific ethical guidelines or checklists.
+    \item[Confidentiality:] Ensuring no private data is inadvertently leaked in the text.
+\end{description}
+
+\subsection*{9. Quality Assurance (Supervisor Role)}
+\paragraph{Objective:} To use AI as a critical reviewer or “devil's advocate.”
+\paragraph{Scope:} Includes simulated peer review and limitation checking.
+\paragraph{Keys:}
+\begin{description}
+    \item[Simulated Peer Review:] Using AI as a reviewer to identify unclear sections or potential critiques.
+    \item[Field Trends \& Consistency:] Checking the manuscript against current research trends and ensuring internal consistency.
+    \item[Limitations:] Identifying weaknesses or limitations in the study that the authors missed.
+    \item[Publication strategy:] Suggesting suitable journals or conferences and helping with the submission strategy.
+    \item[Publication support:] Assisting in drafting cover letters, responses to reviewers, or other publication-related materials.
+\end{description}
+
+\endgroup
+
+%—————————————————————————————————————————————————————————————————
+% Example Usage
+%—————————————————————————————————————————————————————————————————
+
+\section{Example Output}
+
+Appendix~\ref{sec:aid_declaration} depicts a rendered declaration.
+It was generated with the command
+\begin{ltx}
+\AIDrenderDeclaration[ncols=3]{Jane Doe, John Smith}
+\end{ltx}
+
+And the used configuration was:
+
+\begin{ltx}
+\AIDtoolsUsed{ChatGPT-4o, Gemini 1.5 Pro, GitHub Copilot}
+
+% 1 — Conceptualization
+\AIDactivate{c:obj}         % Defining the research objective
+\AIDactivate{c:feas}        % Feasibility assessment and risk evaluation
+% 2 — Literature Review
+\AIDactivate{l:map}         % Concept Mapping and Systematization
+% 3 — Methodology
+\AIDactivate{m:meth}        % Methodological Instrument Selection
+% 4 — Software Development and Automation
+\AIDactivate{s:debug}       % Debugging and Repair
+\AIDactivate{s:auto}        % Process automation
+% 5 — Data Management
+\AIDactivate{d:cur}         % Data curation and organization
+\AIDactivate{d:viz}         % Quantitative Plotting and Charting
+\AIDactivate{d:trans}       % Audio-to-text transcription and diarization
+% 6 — Visuals and Multimedia
+\AIDactivate{v:edit}        % Image Enhancement and Editing
+% 7 — Writing and Editing
+\AIDactivate{w:prs}         % Press releases and outreach materials
+% 8 — Ethics Review
+\AIDactivate{e:bias}        % Bias analysis and discrimination assessment
+% 9 — Quality Assurance
+\AIDactivate{sup:qa}        % Simulated Peer Review
+\AIDactivate{sup:rec}       % Publication strategy and journal selection
+
+\begin{AIDcomment}
+AI was used for refining code structure in Section~4.
+\end{AIDcomment}
+\end{ltx}
+
+
+
+\clearpage
+
+\AIDtoolsUsed{ChatGPT-4o, Gemini 1.5 Pro, GitHub Copilot}
+
+% 1 — Conceptualization
+% \AIDactivate{c:idea}        % Idea generation
+\AIDactivate{c:obj}         % Defining the research objective
+% \AIDactivate{c:rq}          % Formulating research questions and hypotheses
+\AIDactivate{c:feas}        % Feasibility assessment and risk evaluation
+% \AIDactivate{c:pre}         % Hypothesis viability assessment
+% \AIDactivate{c:sim}         % Simulated debate and argument testing
+% 2 — Literature Review
+% \AIDactivate{l:srch}        % Search and Discovery
+% \AIDactivate{l:sum}         % Literature summarization and synthesis
+\AIDactivate{l:map}         % Concept Mapping and Systematization
+% \AIDactivate{l:pat}         % Market/patent landscape analysis
+% \AIDactivate{l:gaps}        % Gap Identification and Novelty Evaluation
+% \AIDactivate{l:trans}       % Cross-lingual literature comprehension
+% 3 — Methodology
+% \AIDactivate{m:des}         % Experimental Design Optimization
+% \AIDactivate{m:proto}       % Development of experimental or research protocols
+\AIDactivate{m:meth}        % Methodological Instrument Selection
+% 4 — Software Development and Automation
+% \AIDactivate{s:gen}         % Code Generation
+% \AIDactivate{s:opt}         % Refactoring and Optimization
+\AIDactivate{s:debug}       % Debugging and Repair
+\AIDactivate{s:auto}        % Process automation
+% \AIDactivate{s:algs}        % Algorithm design
+% \AIDactivate{s:doc}         % Code documentation and comment generation
+% 5 — Data Management
+% \AIDactivate{d:coll}        % Data collection
+% \AIDactivate{d:val}         % Validation
+% \AIDactivate{d:cln}         % Data cleaning
+\AIDactivate{d:cur}         % Data curation and organization
+% \AIDactivate{d:anl}         % Data analysis
+\AIDactivate{d:viz}         % Quantitative Plotting and Charting
+% \AIDactivate{d:rep}         % Reproducibility and rerun checks
+% \AIDactivate{d:lbl}         % Data labeling and annotation assistance
+% \AIDactivate{d:syn}         % Synthetic data generation
+% \AIDactivate{d:anon}        % De-identification and anonymization support
+\AIDactivate{d:trans}       % Audio-to-text transcription and diarization
+% 6 — Visuals and Multimedia
+% \AIDactivate{v:gen}         % Synthetic Asset Generation
+\AIDactivate{v:edit}        % Image Enhancement and Editing
+% \AIDactivate{v:chart}       % Diagrammatic and Schematic Design
+% 7 — Writing and Editing
+% \AIDactivate{w:draft}       % Drafting Text
+% \AIDactivate{w:poly}        % Polishing and Editing
+% \AIDactivate{w:sum}         % Abstract and Executive Summary Generation
+% \AIDactivate{w:con}         % Formulation of conclusions
+% \AIDactivate{w:tone}        % Tone Adjustment
+% \AIDactivate{w:tra}         % Translation
+% \AIDactivate{w:ref}         % Citation formatting and bibliography management
+\AIDactivate{w:prs}         % Press releases and outreach materials
+% \AIDactivate{w:title}       % Title Generation
+% 8 — Ethics Review
+\AIDactivate{e:bias}        % Bias analysis and discrimination assessment
+% \AIDactivate{e:risk}        % Ethical risk analysis
+% \AIDactivate{e:comp}        % Monitoring compliance with ethical standards
+% \AIDactivate{e:conf}        % Data confidentiality monitoring
+% 9 — Quality Assurance
+\AIDactivate{sup:qa}        % Simulated Peer Review
+% \AIDactivate{sup:trd}       % Consistency checking against field trends
+% \AIDactivate{sup:lim}       % Identification of limitations
+\AIDactivate{sup:rec}       % Publication strategy and journal selection
+% \AIDactivate{sup:pub}       % Publication support
+
+
+
+\begin{AIDcomment}
+The keys for this example were selected randomly.
+\end{AIDcomment}
+
+\AIDrenderDeclaration[ncols=3,label=sec:aid_declaration, lang=en]{Jane Doe, John Smith}
+% \AIDrenderDeclaration[ncols=3]{Jane Doe}
+
+\end{document}

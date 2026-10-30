@@ -1,0 +1,33 @@
+% Full-year wall calendar (TikZ-drawn, one wide grid) -- ctan:tikz-kalender.
+% Licence: verified directly in the vendored tikz-kalender.cls header
+% ("License: Creative Commons attribution license (CC-BY-SA)") -- NOTE this
+% is CC-BY-SA generic, not the CC-BY-SA-1.0 the research brief flagged as a
+% possibly-stale record; the class itself is current (v0.6b, 2026/02/17,
+% confirmed via kpsewhich against the pinned image), so the "stale" flag was
+% about old batch metadata, not an abandoned package. Author: Rolf Niepraschk.
+% Ships with TeX Live -- starter does not bundle the class.
+%
+% PATCH NOTE (not a file patch, a usage trap): every option MUST go through
+% \setup{...} in the preamble. Passing them as \documentclass[...] options
+% instead compiles cleanly with zero warnings and silently drops them all --
+% \DeclareOption*{\OptionNotUsed} discards any class option it doesn't
+% recognise, and none of \setup's keys (year/title/events/...) are declared
+% as class options at all. Confirmed by \typeout-ing \RN@events@files: empty
+% via \documentclass[events=...], populated via \setup{events=...}.
+%
+% \makeKalender reads real events from a SEPARATE .events file (declared via
+% the `events` key, without the .events extension) using \period and \event
+% -- those two macros are only valid inside that file, not here; the class's
+% own \event raises a ClassError if called from the document body.
+\documentclass{tikz-kalender}
+\setup{
+  year=2026,
+  title={2026},
+  events={holidays},
+  showweeknumbers,
+  saturdayColor=bright,
+  sundayColor=medium,
+}
+\begin{document}
+\makeKalender
+\end{document}

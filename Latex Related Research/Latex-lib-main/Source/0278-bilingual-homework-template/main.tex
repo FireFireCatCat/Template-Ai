@@ -1,0 +1,82 @@
+%% Bilingual Homework Template starter -- homework.cls by Yuzheng Cai,
+%% itself built on Josh Davis's well-known latex-homework-template
+%% (credited in the class and in references.bib).
+%%
+%% homework.cls IS BUNDLED here (not left to the system) because a
+%% DIFFERENT, unrelated CTAN class -- Jinwen Xu's 2023-2025
+%% homework.cls -- already ships in every modern TeX distribution
+%% under the SAME filename (the same collision hit math-homework
+%% elsewhere in this batch). A bare \documentclass{homework} on a
+%% stock TeX Live install silently resolves to that unrelated class
+%% instead -- confirmed by probing this pipeline's own pinned image.
+%%
+%% Source: https://github.com/YZ-Cai/LatexHomeworkTemplate
+%% Licence: MIT, (c) 2022 Yuzheng Cai.
+%%
+%% engine.txt: xelatex (required -- the class \usepackage{ctex}
+%% unconditionally, for xeCJK, regardless of the E/C header-language
+%% toggle below).
+%%
+%% This class's chrome language (cover page, running header/footer --
+%% "English"/"Chinese") is chosen by editing homework.cls itself
+%% (line 5 vs 6), not by a \documentclass option. Left at the class's
+%% own default (English chrome) here: this class is explicitly
+%% documented as "English template, but ALSO SUPPORTS CHINESE IN THE
+%% DOCUMENT BODY" -- i.e. genuinely bilingual within one document,
+%% which this starter demonstrates directly (English problem
+%% statements, Chinese worked solutions) rather than switching all
+%% chrome to Chinese.
+\documentclass{homework}
+
+\newcommand{\hmwkTitle}{Homework \#4}
+\newcommand{\hmwkDueDate}{January 8, 2027}
+\newcommand{\hmwkClass}{Natural Language Processing}
+\newcommand{\hmwkAuthorName}{Ada Lovelace}
+
+\begin{document}
+\maketitle
+\if\hmwkCoverPage 1
+    \pagebreak
+\fi
+
+\begin{homeworkProblem}
+Explain why byte-pair encoding (BPE) tokenization can represent
+out-of-vocabulary words that a fixed word-level vocabulary cannot.
+
+\solution
+BPE 从字符级别开始，通过统计训练语料中相邻符号对的出现频率，反复合并最高频的符号对，
+逐步构建一个包含子词单元的词表。由于任意单词都可以被拆分为若干个已知的子词片段
+（在最坏情况下可以退化到单个字符），因此即使某个完整单词从未在训练语料中出现过，
+BPE 分词器仍然可以用已知的子词单元将其表示出来，而不会产生“未登录词”（OOV）问题。
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+Given the bigram counts $C(\text{the}, \text{cat}) = 12$ and
+$C(\text{the}) = 400$, compute the maximum-likelihood estimate of
+$P(\text{cat} \mid \text{the})$, and explain one drawback of using raw
+MLE counts for language modeling.
+
+\solution
+The maximum-likelihood bigram probability is
+\begin{equation}
+    P(\text{cat} \mid \text{the}) = \frac{C(\text{the}, \text{cat})}{C(\text{the})}
+    = \frac{12}{400} = 0.03.
+\end{equation}
+一个主要缺陷是：任何在训练语料中从未共现过的二元组都会被赋予概率 0，
+这会导致模型在遇到测试集中真实存在但训练时未见过的词对时，将整句话的概率计算为 0
+（数据稀疏问题）。常见的缓解方法包括加一平滑（Laplace smoothing）和 Kneser-Ney 平滑等。
+\end{homeworkProblem}
+
+\begin{homeworkProblem}
+Try citation. For example, thanks Josh Davis for his original work on
+the latex-homework-template project \cite{LatexHomeworkTemplate}.
+
+\solution
+Citations use plain \verb|bibtex| via \verb|\bibliographystyle{abbrv}|
+and \verb|\bibliography{references.bib}| at the end of the document.
+\end{homeworkProblem}
+
+\bibliographystyle{abbrv}
+\bibliography{references.bib}
+
+\end{document}

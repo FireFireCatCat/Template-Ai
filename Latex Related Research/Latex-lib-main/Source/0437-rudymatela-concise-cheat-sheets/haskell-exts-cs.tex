@@ -1,0 +1,153 @@
+%% haskell-exts-cs.tex
+%
+% Copyright 2018  Rudy Matela
+%
+% This text is available under (at your option):
+%   * Creative Commons Attribution-ShareAlike 3.0 Licence
+%   * GNU Free Documentation License version 1.3 or Later
+%
+
+\documentclass{refcard}
+\usepackage[T1]{fontenc}
+\usepackage{rotating}
+\usepackage{amssymb}
+
+\renewcommand{\familydefault}{\sfdefault}
+\newcommand{\la}{\textbackslash}
+
+
+\title{Haskell Extensions Cheat Sheet}
+
+\cright{
+	Copyright 2018-2019, Rudy Matela --
+	Compiled on \today{} \\
+	Upstream: \texttt{https://github.com/rudymatela/concise-cheat-sheets}
+}{
+	This text is available under
+	the Creative Commons Attribution-ShareAlike 3.0 Licence, \\
+	\textbf{or} (at your option), the GNU Free Documentation License version 1.3 or Later.
+}
+\version[~\\]{0.0}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Type Families (Type Functions)
+  \hfill\C{\normalsize TypeFamilies}}
+
+\begin{ldesc}
+	\li[enabling] \C{\{-\# LANGUAGE TypeFamilies \#-\}}
+\end{ldesc}\\[1em]
+\begin{tabularlc}{r@{\s$\equiv$\s}l}
+	type family          & type function \\	
+	type family instance & type function pattern match \\
+\end{tabularlc} \\[1em]
+\begin{ldesc}
+	\li[declaring]             type family \I{Family} a
+	\li[instantiating]         type instance \I{Family} \I{TypeA} = \I{TypeB} \li
+
+	\li[declaring (data)]      data family \I{DataFam} a
+	\li[instantiating (data)]  data instance \I{DataFam} \I{Type} = \I{Conses...} \li
+
+	\li[declaring (class)]
+	class \I{Class} a where \li
+	~~type \I{Family} a \li
+	~~fun ::~...~->~\I{Family}~a~->~... \li
+
+	\li[instantiating (class)]
+	instance \I{Class} \I{TypeA} where \li
+	~~type \I{Family} \I{TypeA}  =  \I{TypeB} \li
+	~~fun ...~= ... \li
+\end{ldesc}
+
+
+\section{Tuple Sections
+  \hfill\C{\normalsize TupleSections}}
+
+\begin{ldesc}
+	\li[enabling] \C{\{-\# LANGUAGE TupleSections \#-\}}
+\end{ldesc}\\[1em]
+
+\begin{tabularlc}{C@{\s$\equiv$\s}C}
+	~~(x,)    & \la{}y -> (x,y) \\
+	~~(,y)    & \la{}x -> (x,y) \\
+	~(x,{},)  & \la{}y z -> (x,y,z) \\
+	~(,y,)    & \la{}x z -> (x,y,z) \\
+	~(,{},z)  & \la{}x y -> (x,y,z) \\
+	(x,y,)   & \la{}z -> (x,y,z) \\
+	(x,{},z) & \la{}y -> (x,y,z) \\
+	(,y,z)   & \la{}x -> (x,y,z) \\
+\end{tabularlc} \\[1em]
+
+\begin{tabularlc}{C@{\s$\equiv$\s}C}
+	~~~~~~~~~~~~~~~~(0,{},2) 1     &  (0,1,2) \\
+	~~~~~~~~~~~(False,) True  &  (False,True) \\
+	(False,{},0,{},{},) True 1 2 3 & (False,True,0,1,2,3) \\
+\end{tabularlc} \\[1em]
+
+\section{Lambda Case
+  \hfill\C{\normalsize LambdaCase}}
+
+\begin{ldesc}
+	\li[enabling] \C{\{-\# LANGUAGE LambdaCase \#-\}}
+\end{ldesc}\\[1ex]
+
+\newcommand{\thead}[1]{\textnormal{\textbf{#1}}}
+\newcommand{\theads}[2]{\multicolumn{1}{C@{\s$\approx$\s}}{\thead{#1}} & \thead{#2} \\}
+\begin{tabular}{CC}
+\theads{lambda case}{explicit lambda case}
+\la{}case & \la{}\I{x} -> case~\I{x}~of \\
+~~\I{pat1} -> \I{exA}~~~~ & ~~\T{x}~~~~~\I{pat1} -> \I{exA} \\
+~~\I{pat1} -> \I{exA} & ~~\T{x}~~~~~\I{pat2} -> \I{exB} \\
+~~\_\T{at2} -> \I{exC} & ~~\T{x}~~~~~\_\T{at2} -> \I{exC} \\[1ex]
+\end{tabular}
+
+\section{Generalized Algebraic Datatypes
+  \hfill\C{\normalsize GADTs}}
+
+\begin{ldesc}
+	\li[enabling] \C{\{-\# LANGUAGE GADTs\#-\}}
+\end{ldesc}\\[1ex]
+\begin{tabular}{CC}
+\theads{GADT}{regular data definition}
+\\
+data Maybe a where~~~~~~~~~~ & data~Maybe~a \\
+~~Nothing~::~Maybe~a         & ~~=~Nothing  \\
+~~Just~~~~::~a~->~Maybe~a    & ~~|~Just~a   \\
+\\
+data List a where                & data List a         \\
+~~Nil~~::~List a                 & ~~= Nil             \\
+~~Cons~::~a -> List a -> List a  & ~~| Cons a (List a) \\
+\\
+data [a] where                   & data [a] = [] | a:[a] \\
+~~[]~~::~[a]                     & ~~\rotatebox{90}{$\Rsh$}\textnormal{\footnotesize ~(not real Haskell)} \\
+~~(:)~::~a -> [a] -> [a]         & \\
+\\
+data Thing a where            & \textnormal{regular defn.~impossible} \\
+~~Thing ::~a -> Thing a       & \\
+~~AnInt ::~Int -> Thing Int   & \\
+~~ABool ::~Bool -> Thing Bool & \\
+\\
+data Nat where      & data Nat = Z | S Nat \\
+~~Z~::~Nat & \\
+~~S~::~Nat -> Nat & \\
+\\
+data Vec n a where & \textnormal{regular defn.~impossible} \\
+~~Nil~~~::~Vec Z a & \\
+~~(:::)~::~a -> Vec n a -> Vec (S n) a \hspace{-8ex} & \\
+\end{tabular}
+
+
+\section{Rank-2 and Rank-N Types
+  \hfill\C{\normalsize Rank2Types, RankNTypes}}
+
+\begin{tabularlc}{C@{\s$\equiv$\s}C}
+x~::~a          &  x~::~forall a.~a        \\
+xs~::~{}[a]     &  xs~::~forall a.~[a]     \\
+mx~::~Maybe a   &  mx~::~forall a.~Maybe a \\
+f~::~a~->~b     &  f~::~forall~a~b.~a~->~b
+\end{tabularlc} \\[1em]
+
+\end{document}

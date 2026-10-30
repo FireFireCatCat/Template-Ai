@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sdapsarray package &#8212; sdaps-class 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/sdapstex.css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="sdapsbase package" href="sdapsbase.html" />
+    <link rel="prev" title="sdapspdf package" href="sdapspdf.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="sdapsbase.html" title="sdapsbase package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sdapspdf.html" title="sdapspdf package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sdapsarray package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sdapsarray-package">
+<h1>sdapsarray package<a class="headerlink" href="#sdapsarray-package" title="Permalink to this headline">¶</a></h1>
+<p>This is a base package for “array” like environments. It really is similar to a
+tabularx environment to some extend. Its purpose is much more specialized compared
+to tabularx. It is less flexible in the types of layouts that can be realized but
+a lot more powerful otherwise. The <cite>sdapsarray</cite> environment has the following
+features:</p>
+<ul class="simple">
+<li><p>All <a class="reference internal" href="#sdapsarray" title="sdapsarray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">sdapsarray</span></code></a> environments in the document can be aligned to each other</p></li>
+<li><p>The environment can span multiple pages</p></li>
+<li><p>Headers will be repeated when page splits are encountered</p></li>
+<li><p>The rows/columns can be swapped on the fly</p></li>
+<li><p>Different <code class="docutils literal notranslate"><span class="pre">layouter</span></code> can be plugged in to modify the rendering</p></li>
+<li><p>Fragile content can be used without further preparation</p></li>
+<li><p>Contained content is executed exactly once (important for metadata generation)</p></li>
+</ul>
+<p>Things that are <em>not</em> possible currently:</p>
+<ul class="simple">
+<li><p>Row or column backgrounds</p></li>
+<li><p>Grid lines</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <a class="reference internal" href="#sdapsarray" title="sdapsarray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">sdapsarray</span></code></a> is <strong>not</strong> a <code class="docutils literal notranslate"><span class="pre">tabular</span></code> like environment. It behaves
+in similar ways, but there are fundamental differences, causing some issues:</p>
+<ul class="simple">
+<li><p>You <strong>must not</strong> add a trailing <code class="docutils literal notranslate"><span class="pre">\\</span></code> to the last row.</p></li>
+</ul>
+</div>
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-10" class="tab-code" name="tab-group-10" ><label for="tab-code-10" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-10" class="tab-rendering" name="tab-group-10" checked><label for="tab-rendering-10" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span>The following two <span class="k">\texttt</span><span class="nb">{</span>sdapsarray<span class="nb">}</span> environments are almost identical. They
+are both aligned to each other because the <span class="k">\texttt</span><span class="nb">{</span>align<span class="nb">}</span> option is set to
+the same value. In the second environment the rows and columnes are swapped
+by setting the <span class="k">\texttt</span><span class="nb">{</span>flip<span class="nb">}</span> option.
+
+<span class="k">\begin</span><span class="nb">{</span>sdapsarray<span class="nb">}</span>[align=testing]
+  row header <span class="nb">&amp;</span> colum header <span class="nb">&amp;</span> colum header <span class="k">\\</span>
+  row header <span class="nb">&amp;</span> cell 1 <span class="nb">&amp;</span> cell 2 <span class="k">\\</span>
+  row header <span class="nb">&amp;</span> cell 3 <span class="nb">&amp;</span> cell 4
+<span class="k">\end</span><span class="nb">{</span>sdapsarray<span class="nb">}</span>
+
+<span class="k">\hrule</span>
+
+<span class="k">\begin</span><span class="nb">{</span>sdapsarray<span class="nb">}</span>[flip,align=testing]
+  row header <span class="nb">&amp;</span> colum header <span class="nb">&amp;</span> colum header <span class="k">\\</span>
+  row header <span class="nb">&amp;</span> cell 1 <span class="nb">&amp;</span> cell 2 <span class="k">\\</span>
+  row header <span class="nb">&amp;</span> cell 3 <span class="nb">&amp;</span> cell 4
+<span class="k">\end</span><span class="nb">{</span>sdapsarray<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-8135129e3e381ce7e0709470caae15933f3f1578.svg" alt="The following two \texttt{sdapsarray} environments are almost identical. They
+are both aligned to each other because the \texttt{align} option is set to
+the same value. In the second environment the rows and columnes are swapped
+by setting the \texttt{flip} option.
+
+\begin{sdapsarray}[align=testing]
+  row header &amp; colum header &amp; colum header \\
+  row header &amp; cell 1 &amp; cell 2 \\
+  row header &amp; cell 3 &amp; cell 4
+\end{sdapsarray}
+
+\hrule
+
+\begin{sdapsarray}[flip,align=testing]
+  row header &amp; colum header &amp; colum header \\
+  row header &amp; cell 1 &amp; cell 2 \\
+  row header &amp; cell 3 &amp; cell 4
+\end{sdapsarray}" /></p>
+</div></div><p class="caption">Example of a sdapsarray environment</p></div><div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-11" class="tab-code" name="tab-group-11" ><label for="tab-code-11" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-11" class="tab-rendering" name="tab-group-11" checked><label for="tab-rendering-11" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>multicols<span class="nb">}{</span>2<span class="nb">}</span>
+    <span class="k">\begin</span><span class="nb">{</span>sdapsarray<span class="nb">}</span>[align=testing,layouter=rotated]
+      colum header 0 <span class="nb">&amp;</span> colum header 1 <span class="nb">&amp;</span> colum header 2 <span class="k">\\</span>
+      row header 1 <span class="nb">&amp;</span> cell 1 <span class="nb">&amp;</span> cell 2 <span class="k">\\</span>
+      row header 2 <span class="nb">&amp;</span> cell 3 <span class="nb">&amp;</span> cell 4 <span class="k">\\</span>
+      row header 3 <span class="nb">&amp;</span> cell 5 <span class="nb">&amp;</span> cell 6 <span class="k">\\</span>
+      row header 4 <span class="nb">&amp;</span> cell 7 <span class="nb">&amp;</span> cell 8 <span class="k">\\</span>
+      row header 5 <span class="nb">&amp;</span> cell 9 <span class="nb">&amp;</span> cell 10 <span class="k">\\</span>
+      row header 6 <span class="nb">&amp;</span> cell 11 <span class="nb">&amp;</span> cell 12
+    <span class="k">\end</span><span class="nb">{</span>sdapsarray<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>multicols<span class="nb">}</span>
+</pre></div>
+Required code in preamble:<div class="highlight"><pre><span></span><span class="k">\usepackage</span><span class="nb">{</span>multicol<span class="nb">}</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-8e319298bf95b525fb49d3908de87f9b64b7a1b7.svg" alt="\begin{multicols}{2}
+    \begin{sdapsarray}[align=testing,layouter=rotated]
+      colum header 0 &amp; colum header 1 &amp; colum header 2 \\
+      row header 1 &amp; cell 1 &amp; cell 2 \\
+      row header 2 &amp; cell 3 &amp; cell 4 \\
+      row header 3 &amp; cell 5 &amp; cell 6 \\
+      row header 4 &amp; cell 7 &amp; cell 8 \\
+      row header 5 &amp; cell 9 &amp; cell 10 \\
+      row header 6 &amp; cell 11 &amp; cell 12
+    \end{sdapsarray}
+\end{multicols}" /></p>
+</div></div><p class="caption">Example of a sdapsarray environment split over two columns using multicols</p></div><div class="section" id="layout-and-formatting-considerations">
+<h2>Layout and formatting considerations<a class="headerlink" href="#layout-and-formatting-considerations" title="Permalink to this headline">¶</a></h2>
+<p>The following hold true inside the environment:</p>
+<ul class="simple">
+<li><p>The row headers are set into a <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\vtop</span></code> with the left over width from
+the cells. This vertical box is later re-set into a <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\vbox</span></code>. The
+effect is that the interrow skip is calculated between the last element of
+the previous row and the first element of the next row. this means you must
+be careful to not insert invisible content at the start of the vertical box.
+(e.g. by adding a <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\leavevmode</span></code>).</p></li>
+<li><p>The exception to the above rule is the start of the environment (i.e. the
+header row) for which the top baseline information is (currently) discarded!</p></li>
+<li><p>Each cell is set into an <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\hbox</span></code> with the last skip in the box removed
+again (i.e. trailing space). You can use <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\hfill</span></code> to align the box to
+the left/right but need to prevent the <code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\hfill</span></code> to be removed again
+for left alignment (e.g. by adding a <code class="docutils literal notranslate"><span class="pre">\kern</span> <span class="pre">0pt</span></code>).</p></li>
+<li><p>Column headers behave like cells but a special layouter can be assigned to
+them.</p></li>
+<li><p>Row headers and column headers will usually be set on a common baseline. The
+exception to this is if the column header contains multiple boxes/lines. In
+that case the cells will be centered ignoring the baselines of both cells
+and row header.</p></li>
+<li><p>A penalty of 10 is inserted between rows.</p></li>
+</ul>
+</div>
+<div class="section" id="sdapsarray-environment">
+<h2>sdapsarray environment<a class="headerlink" href="#sdapsarray-environment" title="Permalink to this headline">¶</a></h2>
+<dl class="tex environ">
+<dt id="sdapsarray">
+<em class="property">\begin{</em><code class="sig-name descname">sdapsarray</code><em class="property">}</em><span class="sig"> <span class="sig-paren">[</span><em>kwargs</em><span class="sig-paren">]</span></span><br/><span class="sig">  content with cells delimitted with &amp; and \
+</span><br/><em class="property">\end{</em><code class="sig-name descname">sdapsarray</code><em class="property">}</em><a class="headerlink" href="#sdapsarray" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flip</strong> – Transpose array making rows to columns (default: <code class="docutils literal notranslate"><span class="pre">false</span></code>)</p></li>
+<li><p><strong>layouter</strong> – <p>The layouter to use. New layouters can be defined, the following
+exists by default:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">default</span></code>: Simple layout centering cells and giving all leftover space to the row
+header which will line break automatically (this is the default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rotated</span></code>: Similar to default but rotates the column headers</p></li>
+</ul>
+</p></li>
+<li><p><strong>angle</strong> – The angle of the header when in <code class="docutils literal notranslate"><span class="pre">rotated</span></code> mode</p></li>
+<li><p><strong>align</strong> – An arbitrary string to align multiple <a class="reference internal" href="#sdapsarray" title="sdapsarray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">sdapsarray</span></code></a> environments
+to each other. All environments with the same string will be
+aligned. (default: no alignment)</p></li>
+<li><p><strong>keepenv</strong> – Do not modify the parser to consume <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> and <code class="docutils literal notranslate"><span class="pre">\\</span></code> for alignment.
+Instead, the user must use <a class="reference internal" href="#\sdaps_array_alignment:" title="\sdaps_array_alignment:"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\sdaps_array_alignment:</span></code></a> and <a class="reference internal" href="#\sdaps_array_newline:" title="\sdaps_array_newline:"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\sdaps_array_newline:</span></code></a>.
+This is only useful for writing custom environments which use <a class="reference internal" href="#sdapsarray" title="sdapsarray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">sdapsarray</span></code></a> internally.
+Normal users should simply put any nested <cite>array</cite> environment into <a class="reference internal" href="#\sdapsnested" title="\sdapsnested"><code class="xref tex tex-macro docutils literal notranslate"><span class="pre">\sdapsnested</span></code></a>
+to prevent issues (see below).</p></li>
+<li><p><strong>no_header</strong> – Disable column header handling and repeating. Note that this
+setting is independent of whether the <code class="docutils literal notranslate"><span class="pre">flip</span></code> option is set. As such, one may
+need to take its value into account when setting it. (default: <code class="docutils literal notranslate"><span class="pre">false</span></code>)</p></li>
+<li><p><strong>colsep</strong> – Spacing added on the left/right of every cell. This defaults to <cite>6pt</cite>.</p></li>
+<li><p><strong>rowsep</strong> – Extra spacing added between rows. This defaults to <cite>0pt</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The <code class="docutils literal notranslate"><span class="pre">keepenv</span></code> option should usually not be used by an end user writing a document, it is very useful
+when writing environments which use <a class="reference internal" href="#sdapsarray" title="sdapsarray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">sdapsarray</span></code></a> internally (like <a class="reference internal" href="sdapslayout.html#choicearray" title="choicearray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">choicearray</span></code></a>).</p>
+<dl class="tex macro">
+<dt id="\sdapsnested">
+<code class="sig-name descname">\sdapsnested</code><span class="sig"> <span class="sig-paren">{</span><em>content</em><span class="sig-paren">}</span></span><a class="headerlink" href="#\sdapsnested" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverts the <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> and <code class="docutils literal notranslate"><span class="pre">\\</span></code> to their original meaning. Content in an
+<a class="reference internal" href="#sdapsarray" title="sdapsarray"><code class="xref tex tex-environ docutils literal notranslate"><span class="pre">sdapsarray</span></code></a> environment can be wrapped with this if it requires
+these characters to be active (i.e. you can use the <code class="docutils literal notranslate"><span class="pre">array</span></code> environment
+this way for example).</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_array_alignment:">
+<code class="sig-name descname">\sdaps_array_alignment:</code><a class="headerlink" href="#\sdaps_array_alignment:" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative to using the <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> delimiter between cells. This is useful together
+with the <code class="docutils literal notranslate"><span class="pre">keepenv</span></code> kwarg argument. In particular when creating custom environments
+which use sdapsarray internally.</p>
+</dd></dl>
+
+<dl class="tex macro">
+<dt id="\sdaps_array_newline:">
+<code class="sig-name descname">\sdaps_array_newline:</code><a class="headerlink" href="#\sdaps_array_newline:" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alternative to using the <code class="docutils literal notranslate"><span class="pre">\\</span></code> delimiter between cells. This is useful together
+with the <code class="docutils literal notranslate"><span class="pre">keepenv</span></code> kwarg argument. In particular when creating custom environments
+which use sdapsarray internally.</p>
+</dd></dl>
+
+<div class="figure">
+<div class="tabs">
+<input type="radio" id="tab-code-12" class="tab-code" name="tab-group-12" ><label for="tab-code-12" class="label-code">Example LaTeX code</label><input type="radio" id="tab-rendering-12" class="tab-rendering" name="tab-group-12" checked><label for="tab-rendering-12" class="label-rendering">Result</label><div class="content-code">
+<div class="highlight"><pre><span></span><span class="k">\begin</span><span class="nb">{</span>multicols<span class="nb">}{</span>2<span class="nb">}</span>
+    <span class="k">\begin</span><span class="nb">{</span>sdapsarray<span class="nb">}</span>
+       <span class="nb">&amp;</span> col 1 <span class="nb">&amp;</span> col 2 <span class="k">\\</span>
+      row header 1 <span class="nb">&amp;</span> <span class="k">\sdapsnested</span><span class="nb">{</span><span class="s">$</span><span class="nb"> </span><span class="nv">\begin</span><span class="nb">{array}{cc} a &amp; b </span><span class="nv">\\</span><span class="nb"> c &amp; d </span><span class="nv">\end</span><span class="nb">{array}</span><span class="s">$</span><span class="nb">}</span> <span class="nb">&amp;</span> cell 2 <span class="k">\\</span>
+      <span class="k">\verb</span><span class="nb">^</span>row<span class="nb">_</span>header<span class="nb">^</span> <span class="nb">&amp;</span> cell 3 <span class="nb">&amp;</span> cell 4
+    <span class="k">\end</span><span class="nb">{</span>sdapsarray<span class="nb">}</span>
+
+    <span class="k">\begin</span><span class="nb">{</span>sdapsarray<span class="nb">}</span>[keepenv]
+       <span class="k">\sdapsalignment</span> col 1 <span class="k">\sdapsalignment</span> col 2 <span class="k">\sdapsnewline</span>
+      row header 1 <span class="k">\sdapsalignment</span> <span class="s">$</span><span class="nb"> </span><span class="nv">\begin</span><span class="nb">{array}{cc} a &amp; b </span><span class="nv">\\</span><span class="nb"> c &amp; d </span><span class="nv">\end</span><span class="nb">{array}</span><span class="s">$</span> <span class="k">\sdapsalignment</span> cell 2 <span class="k">\sdapsnewline</span>
+      <span class="k">\verb</span><span class="nb">^</span>row<span class="nb">_</span>header<span class="nb">^</span> <span class="k">\sdapsalignment</span> cell 3 <span class="k">\sdapsalignment</span> cell 4
+    <span class="k">\end</span><span class="nb">{</span>sdapsarray<span class="nb">}</span>
+<span class="k">\end</span><span class="nb">{</span>multicols<span class="nb">}</span>
+</pre></div>
+Required code in preamble:<div class="highlight"><pre><span></span><span class="k">\usepackage</span><span class="nb">{</span>multicol<span class="nb">}</span>
+<span class="c">% Wrap the commands with _ as we cannot use them directly. This needs to</span>
+<span class="c">% be a \def and not a \let because they are redefined dynamically internally.</span>
+<span class="k">\ExplSyntaxOn</span>
+<span class="k">\def\sdapsalignment</span><span class="nb">{</span><span class="k">\sdaps</span><span class="nb">_</span>array<span class="nb">_</span>alignment:<span class="nb">}</span>
+<span class="k">\def\sdapsnewline</span><span class="nb">{</span><span class="k">\sdaps</span><span class="nb">_</span>array<span class="nb">_</span>newline:<span class="nb">}</span>
+<span class="k">\ExplSyntaxOff</span>
+</pre></div>
+</div><div class="content-rendering">
+<p><img src="_images/sdaps-f7dfb3852940c0fc6d67392eafbf34972f585f86.svg" alt="\begin{multicols}{2}
+    \begin{sdapsarray}
+       &amp; col 1 &amp; col 2 \\
+      row header 1 &amp; \sdapsnested{$ \begin{array}{cc} a &amp; b \\ c &amp; d \end{array}$} &amp; cell 2 \\
+      \verb^row_header^ &amp; cell 3 &amp; cell 4
+    \end{sdapsarray}
+
+    \begin{sdapsarray}[keepenv]
+       \sdapsalignment col 1 \sdapsalignment col 2 \sdapsnewline
+      row header 1 \sdapsalignment $ \begin{array}{cc} a &amp; b \\ c &amp; d \end{array}$ \sdapsalignment cell 2 \sdapsnewline
+      \verb^row_header^ \sdapsalignment cell 3 \sdapsalignment cell 4
+    \end{sdapsarray}
+\end{multicols}" /></p>
+</div></div><p class="caption">Two sdapsarray environments each with a nested array, in one case using the keepenv option.</p></div></dd></dl>
+
+</div>
+<div class="section" id="defining-a-custom-layouter">
+<h2>Defining a custom layouter<a class="headerlink" href="#defining-a-custom-layouter" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is an advanced feature and its use a good or even in depth knowledge of how TeX processes boxes and input!</p>
+</div>
+<p>It is possible to register further <code class="docutils literal notranslate"><span class="pre">layouter</span></code>
+which can subsequently used throughout the document. These layouters need to
+adhere to a number of rules which will not be explained in detail here.</p>
+<p>The following code is a copy of the two predefined layouter not showing the
+implementation of the different macros. Visible here is that they only differ
+in the method to render the column header <code class="docutils literal notranslate"><span class="pre">colhead</span></code>, all other methods are
+identical.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>\<span class="n">prop_gput</span><span class="p">:</span><span class="n">Nnn</span> \<span class="n">g__sdaps_array_layouter_prop</span> <span class="p">{</span> <span class="n">default</span> <span class="p">}</span> <span class="p">{</span>
+  <span class="n">begin</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_begin_default</span><span class="p">:</span> <span class="p">},</span>
+  <span class="n">row_start</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_row_start_default</span><span class="p">:</span> <span class="p">},</span>
+  <span class="n">rowhead</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_rowhead_default</span><span class="p">:</span><span class="n">Nw</span> <span class="p">},</span>
+  <span class="n">colhead</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_cell_default</span><span class="p">:</span><span class="n">Nw</span> <span class="p">},</span>
+  <span class="n">cell</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_cell_default</span><span class="p">:</span><span class="n">Nw</span> <span class="p">},</span>
+  <span class="n">row</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_row_ltr</span><span class="p">:</span><span class="n">NNNN</span> <span class="p">},</span>
+  <span class="n">end</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_end_default</span><span class="p">:</span> <span class="p">},</span>
+<span class="p">}</span>
+
+\<span class="n">prop_gput</span><span class="p">:</span><span class="n">Nnn</span> \<span class="n">g__sdaps_array_layouter_prop</span> <span class="p">{</span> <span class="n">rotated</span> <span class="p">}</span> <span class="p">{</span>
+  <span class="n">begin</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_begin_default</span><span class="p">:</span> <span class="p">},</span>
+  <span class="n">row_start</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_row_start_default</span><span class="p">:</span> <span class="p">},</span>
+  <span class="n">rowhead</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_rowhead_default</span><span class="p">:</span><span class="n">Nw</span> <span class="p">},</span>
+  <span class="n">colhead</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_cell_rotated</span><span class="p">:</span><span class="n">Nw</span> <span class="p">},</span>
+  <span class="n">cell</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_cell_default</span><span class="p">:</span><span class="n">Nw</span> <span class="p">},</span>
+  <span class="n">row</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_row_ltr</span><span class="p">:</span><span class="n">NNNN</span> <span class="p">},</span>
+  <span class="n">end</span> <span class="o">=</span> <span class="p">{</span> \<span class="n">_sdaps_array_end_default</span><span class="p">:</span> <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If you consider modifying the layouter, then please have a look at the relevant
+parts of <code class="docutils literal notranslate"><span class="pre">sdapsarray.dtx</span></code>. Also, please consider submitting modifications for
+upstream inclusion so that other people can benefit from new features.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">sdapsarray package</a><ul>
+<li><a class="reference internal" href="#layout-and-formatting-considerations">Layout and formatting considerations</a></li>
+<li><a class="reference internal" href="#sdapsarray-environment">sdapsarray environment</a></li>
+<li><a class="reference internal" href="#defining-a-custom-layouter">Defining a custom layouter</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sdapspdf.html"
+                        title="previous chapter">sdapspdf package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sdapsbase.html"
+                        title="next chapter">sdapsbase package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/sdapsarray.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="sdapsbase.html" title="sdapsbase package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sdapspdf.html" title="sdapspdf package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">sdaps-class 0.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">sdapsarray package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, Benjamin Berg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
+    </div>
+  </body>
+</html>

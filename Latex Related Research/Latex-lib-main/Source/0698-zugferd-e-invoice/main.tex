@@ -1,0 +1,104 @@
+% ZUGFeRD / Faktur-X e-invoice -- ctan:zugferd, github:TeXhackse/LaTeX-ZUGFeRD.
+% Two research/merged.tsv rows ("ZUGFeRD" and "ZUGFeRD e-Invoice") describe the
+% SAME upstream package; only one is shipped here. LPPL-1.3c per merged.tsv;
+% the shipped zugferd.sty carries only a bare copyright line with no grant
+% text (the same trap flagged for other bare .sty headers in
+% research/README.md), so the licence is verified instead from the GitHub
+% repo's own LICENSE file (full LPPL-1.3c text, confirmed via GitHub's own
+% licence detection). Ships with TeX Live (tex/latex/zugferd) -- starter does
+% not bundle the class.
+%
+% engine.txt: lualatex. The class embeds the ZUGFeRD XML as a PDF/A-3
+% attachment via the l3pdf/pdfmanagement machinery (\pdf_object_ref:n, AF
+% catalog entry) -- this did not compile cleanly under pdflatex in this image,
+% matching merged.tsv's own engine column.
+%
+% Adapted from the upstream project's own DEMO-rechnung-zugferd.tex, using the
+% higher-level zugferd-invoice wrapper (KOMA-Script \letter integration)
+% rather than the bare expl3 zugferd package directly. Kept as a GERMAN
+% invoice rather than translated to English: the wrapper's own
+% \PrintInvoiceTabular hardcodes "MwSt."/"Summe (Netto)"/"Summe (Brutto)"
+% column labels and a literal € sign (\TableCurrency = \,€) regardless of the
+% `currency` key or document language -- it says so itself
+% ("this integrates a lot with the visual structure of your invoice... may be
+% an example for your own package", ptxcd/zugferd warning on load). Setting
+% currency=GBP still tags the embedded XML correctly but leaves a
+% pound-denominated invoice showing German labels and a euro sign on the
+% printed page, which is worse than just being honest that this wrapper is
+% German-centric and building a real German invoice against it. Real content
+% is an invented Hamburg IT-consulting firm's invoice, not the demo's
+% placeholder "Käufer Name"/project-XX text.
+\DocumentMetadata{
+  pdfversion=1.7,
+  pdfstandard=a-3b,
+  lang=de,
+}
+\documentclass[parskip=half-,german]{scrartcl}
+
+\usepackage[format=xrechnung3.0]{zugferd-invoice}
+
+\setkomavar{invoice}{2026:0842}
+\setkomavar{date}{{\InsertZUGFeRDData[set-today]{date}\today}}
+\setkomavar{title}{Rechnung}
+
+\begin{document}
+
+% \SetZUGFeRDData must come AFTER \begin{document}: called from the preamble
+% with 2+ \AddInvoiceItem calls downstream, expl3's key-setting throws a
+% spurious "Missing \begin{document}" error (from code that peeks at
+% document-state macros not yet defined) even though the PDF still compiles
+% correctly -- confirmed by bisection against the upstream demo, which calls
+% it from the preamble but only ever has ONE invoice line. Moving it here
+% avoids the bug outright rather than shipping a starter with an unexplained
+% compiler error in its own log.
+\SetZUGFeRDData{
+  id=komavar,
+  subject=komavar,
+  fromaddress=komavar,
+  unit=hour,
+  seller/name = {Alster Systemberatung GmbH},
+  seller/postcode = {20099},
+  seller/city = {Hamburg},
+  seller/country = DE,
+  seller/address = {Steindamm 45},
+  seller/vatid = {DE234567891},
+  seller/contact = {Jonas Weber, +49 40 555 0142},
+  seller/email = {rechnung@alster-systemberatung.de},
+  buyer/reference = {PO-88213},
+  buyer/name = {Nordholt Handelsgruppe GmbH},
+  buyer/postcode = {80331},
+  buyer/city = {M\"unchen},
+  buyer/country = DE,
+  buyer/address = {Marienplatz 6},
+  buyer/vatid = {DE876543219},
+  buyer/email = {buchhaltung@nordholt-handel.de},
+  currency=EUR,
+  payment-terms={Zahlbar innerhalb von 14 Tagen},
+  due-date={20260910},
+  payment-means / type = 58,
+  payment-means / iban = DE68430609671013251700,
+  payment-means / account-holder = Alster Systemberatung GmbH,
+  payment-means / bic = GENODEM1GLS
+}
+
+\begin{letter}{\InsertZUGFeRDData[AddressData]{buyer}}
+
+\opening{Sehr geehrte Damen und Herren,}
+
+hiermit stelle ich Ihnen meine Beratungsleistung im Rahmen der
+Kassensystem-Migration im August 2026 in Rechnung.
+
+\AddInvoiceItem{18}{Anforderungsworkshops und Migrationsplanung}{95}
+\AddInvoiceItem{1}{Pauschale: Testlauf der Umstellung}{450}
+\AddInvoiceItem{22.5}{Entwicklung und Test der Migrationsskripte}{95}
+\AddInvoiceItem{4}{Unterst\"utzung bei Inbetriebnahme (au{\ss}erhalb der Regelarbeitszeit)}{140}
+
+\PrintInvoiceTabular
+
+Ich bitte Sie, den oben genannten Betrag innerhalb von 14 Tagen auf das unten
+genannte Konto zu \"uberweisen.
+
+\closing{Mit freundlichen Gr\"u{\ss}en,}
+
+\end{letter}
+\end{document}

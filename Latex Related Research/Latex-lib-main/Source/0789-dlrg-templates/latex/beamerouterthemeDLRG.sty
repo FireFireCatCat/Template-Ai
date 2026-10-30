@@ -1,0 +1,79 @@
+%Markro zum setzten des Links im Footer
+\def\footerLink#1{\gdef\@footerLink{#1}}
+
+\newcommand{\get@footerlink}{
+    \ifthenelse{\isundefined{\@footerLink}}%
+        {\href{https://dlrg.de}{\color{yellow}dlrg.de}}%
+        {\href{https://\@footerLink}{\color{yellow}\@footerLink}}%
+}
+
+\mode<presentation>
+
+\setbeamercolor*{author in head/foot}{parent=palette tertiary}
+\setbeamercolor*{title in head/foot}{parent=palette secondary}
+\setbeamercolor*{date in head/foot}{parent=palette primary}
+
+\setbeamercolor*{section in head/foot}{parent=palette tertiary}
+\setbeamercolor*{subsection in head/foot}{parent=palette primary}
+
+\setbeamerfont{frametitle}{parent=structure,size=\LARGE,series=\bfseries}
+\setbeamerfont{title}{parent=structure,size=\LARGE,series=\bfseries}
+\setbeamertemplate{frametitle}{\vspace{0.5cm}\insertframetitle}
+\setbeamerfont{link in foot}{size=\scriptsize,series=\bfseries}
+
+\IfFileExists{dlrg_wortmarke.pdf}
+{\pgfdeclareimage[height=0.34cm]{dlrg_wortmarke}{dlrg_wortmarke.pdf}}
+{\pgfdeclareimage[height=0.34cm]{dlrg_wortmarke}{dlrg_wortmarke_platzhalter.pdf}}
+
+\defbeamertemplate*{footline}{dlrg theme}{
+    \begin{tikzpicture}[remember picture,overlay]%
+        \filldraw[red] ($(current page.south west) + (0,1.12cm)$) rectangle ($(current page.south east) + (0,0.56cm)$);
+        \node [xshift=-0.336cm,yshift=.68cm, above left, anchor=base east] at (current page.south east) {\pgfuseimage{dlrg_wortmarke}};
+        \node [xshift=0.336cm,yshift=.784cm, above right, anchor=base west] at (current page.south west) {\usebeamercolor[fg]{link in foot}\usebeamerfont{link in foot}\get@footerlink{}};
+    \end{tikzpicture}%
+\leavevmode%
+\hbox{%
+    \begin{beamercolorbox}[wd=.66cm,ht=10ex,dp=1ex,left]{}%
+    \end{beamercolorbox}
+\begin{beamercolorbox}[wd=3.83cm,ht=2.25ex,left]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshorttitle\newline\insertshortdate
+\end{beamercolorbox}%
+\begin{beamercolorbox}[wd=3.83cm,ht=2.25ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshortauthor\newline\insertinstitute
+\end{beamercolorbox}%
+\begin{beamercolorbox}[wd=3.83cm,ht=2.25ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot} Seite \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} \newline
+\end{beamercolorbox}}%
+\vskip0pt%
+}
+
+\defbeamertemplate*{headline}{dlrg theme}{
+    \ifnum \insertframenumber>1
+    \begin{tikzpicture}[remember picture,overlay]%
+        \draw[thick, red] ($(current page.north west) - (0,1.5)$) -- ($(current page.north east) - (0,1.5)$);
+    \end{tikzpicture}%
+    \fi
+}%
+
+\defbeamertemplate*{title page}{customized} {
+    \ifthenelse{\equal{\dlrg@beamertitelbild}{}}{
+        \freigestellterAdlerWasserzeichen[opacity=.40,scale=0.43](-0.1cm,3.5cm)
+    }{
+        \begin{tikzpicture}[remember picture,overlay]
+            \node[anchor=north west, inner sep=0pt] at (current page.north west) {
+                \includegraphics[width=\paperwidth]{\dlrg@beamertitelbild}};
+        \end{tikzpicture}
+    }
+    \setbeamercolor{title}{fg=\dlrg@beamertitelcolor}
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[shift={(0.5cm,-0.2cm)},anchor=north west,align=left,text width=\textwidth] at (current page.north west){
+            \usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\vspace{0.2cm}\par
+                \usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par
+        };
+    \end{tikzpicture}
+}
+
+\setbeamersize{text margin left=0.66cm,text margin right=0.66cm}
+
+\mode
+<all>

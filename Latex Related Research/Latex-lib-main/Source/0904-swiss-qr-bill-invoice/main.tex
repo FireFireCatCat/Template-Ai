@@ -1,0 +1,107 @@
+% Swiss QR-bill invoice -- ctan:qrbill / github:peitex/qrbill, dual
+% BSD-3-Clause + LPPL-1.3c (verified in the shipped qrbill.sty header: "This
+% work may be distributed and/or modified under the conditions of the LaTeX
+% Project Public License, either version 1.3c ..."). Ships with TeX Live
+% (tex/latex/qrbill) -- starter does not bundle the class.
+%
+% The `font` key's INITIAL value is "Liberation Sans" (not empty), so the
+% class always takes its fontspec branch unless the font key is cleared. This
+% image has no Liberation Sans registered with fontconfig even under xelatex,
+% so \qrbillsetup{font/custom} (which clears the internal font token list and
+% falls back to plain \normalfont, no fontspec at all) is required to get a
+% pdflatex-safe, image-safe compile -- not a stylistic choice.
+%
+% The payment slip itself uses the real Swiss QR-bill field scheme
+% (swiss.qrbill-cfg.tex): IBAN-derived QR-IBAN, structured creditor reference
+% (QRR), and the mandatory receipt + payment part layout a Swiss bank
+% actually expects, not a generic invoice mocked up to look similar.
+\documentclass[a4paper]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage[font/custom]{qrbill}
+\usepackage{array,booktabs}
+\pagestyle{empty}
+
+\begin{document}
+
+% ---- ordinary invoice body (page 1) --------------------------------------
+\begin{minipage}[t]{0.5\textwidth}
+  \textbf{Bergli Kaffeerösterei GmbH}\\
+  Seefeldstrasse 12\\
+  8008 Zürich\\
+  Switzerland\\
+  UID: CHE-114.211.955
+\end{minipage}\hfill
+\begin{minipage}[t]{0.4\textwidth}
+  \raggedleft
+  \textbf{Invoice 2026-0114}\\
+  Date: 2026-08-27\\
+  Due: 2026-09-26\\[1em]
+  \textbf{Bill to:}\\
+  Cafe Lindenhof AG\\
+  Fortunagasse 3\\
+  8001 Zürich
+\end{minipage}
+
+\vspace{1.5em}
+
+\begin{tabular}{@{}p{7.2cm}rrr@{}}
+  \toprule
+  \textbf{Item} & \textbf{Qty} & \textbf{Unit (CHF)} & \textbf{Total (CHF)} \\
+  \midrule
+  House Blend, 1kg whole bean & 40 & 18.50 & 740.00 \\
+  Espresso Roast, 1kg whole bean & 25 & 19.80 & 495.00 \\
+  Decaf Blend, 500g ground & 15 & 11.20 & 168.00 \\
+  Branded paper cups, box of 500 & 6 & 24.90 & 149.40 \\
+  \midrule
+  \multicolumn{3}{r}{Subtotal} & 1552.40 \\
+  \multicolumn{3}{r}{VAT (8.1\%)} & 125.74 \\
+  \multicolumn{3}{r}{\textbf{Total due (CHF)}} & \textbf{1678.14} \\
+  \bottomrule
+\end{tabular}
+
+\vspace{1.5em}
+Payment terms: 30 days net. Please use the QR-bill on the following page,
+or transfer to the IBAN below quoting invoice 2026-0114.
+
+\clearpage
+
+% ---- QR-bill payment slip (page 2) ---------------------------------------
+\qrbillsetdata{
+  QRType=SPC,
+  Version=0200,
+  CodingType=1,
+  Account=CH4431999123000889012,
+  CR-AddressType=S,
+  CR-Name=Bergli Kaffeerösterei GmbH,
+  CR-Address1=Seefeldstrasse 12,
+  CR-Address2=,
+  CR-PostalCode=8008,
+  CR-City=Zürich,
+  CR-Country=CH,
+  UCR-AddressType=S,
+  UCR-Name=Cafe Lindenhof AG,
+  UCR-Address1=Fortunagasse 3,
+  UCR-Address2=,
+  UCR-ZIP=8001,
+  UCR-City=Zürich,
+  UCR-Country=CH,
+  Amount=1678.14,
+  Currency=CHF,
+  UD-AddressType=S,
+  UD-Name=Cafe Lindenhof AG,
+  UD-Address1=Fortunagasse 3,
+  UD-Address2=,
+  UD-PostalCode=8001,
+  UD-City=Zürich,
+  UD-Country=CH,
+  ReferenceType=QRR,
+  Reference=210000000003139471430009017,
+  Message=Invoice 2026-0114,
+  invoicenum=2026-0114,
+  invoicedate=20260827,
+  vat=8.1,
+  conditions=30
+}
+\QRbill
+
+\end{document}

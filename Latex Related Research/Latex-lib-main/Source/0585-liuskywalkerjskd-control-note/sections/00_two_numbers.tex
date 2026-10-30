@@ -1,0 +1,88 @@
+%=============================================================================
+\section*{Two Numbers That Run the World: $e$ and $\pi$}
+\addcontentsline{toc}{section}{Two Numbers That Run the World: $e$ and $\pi$}
+%=============================================================================
+
+Before we dive into filters, transfer functions, and all the machinery of control, let us spend a moment with the two irrational numbers that quietly power nearly everything in this book: $\pi$ and $e$.
+
+You have met them in calculus. You may have memorized their digits. But here is the one-sentence version of \textit{why they matter in engineering}:
+
+\begin{mdframed}
+\textbf{$\pi$ is the language of things that repeat.}\\
+\textbf{$e$ is the language of things that grow or decay.}
+\end{mdframed}
+
+That is it. Almost every equation you will see in this book is built on one of these two ideas---or both at the same time.
+
+%---------------------------------------------------------------------
+\subsection*{$\pi$\,: The Heartbeat of Periodicity}
+%---------------------------------------------------------------------
+
+Spin a wheel. Watch a pendulum swing. Listen to a tuning fork hum. All of these are \textit{periodic}---they trace the same path over and over again. $\pi$ is the number that connects the geometry of a circle to the algebra of repetition.
+
+Consider a point moving around a unit circle at constant speed. Its horizontal position at time $t$ is $\cos(t)$ and its vertical position is $\sin(t)$. One full trip around the circle takes exactly $2\pi$ units of time. That is not a coincidence---it is the \textit{definition} of where $\pi$ comes from. A circle's circumference is $2\pi r$; dividing by the radius gives $2\pi$, the ``natural period'' of rotation.
+
+In control engineering, periodic phenomena are everywhere:
+\begin{itemize}[nosep]
+  \item The vibration of a mechanical structure,
+  \item The AC voltage from a power supply,
+  \item The oscillation of an under-damped step response (when a system overshoots its target and rings back and forth before settling---we will study this in detail later),
+  \item The sampling clock of your microcontroller.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{circle_sinusoid.pdf}
+  \caption{A point on the unit circle traces out $\cos t$ and $\sin t$. One full revolution takes $2\pi$.}
+\end{figure}
+
+Whenever you write $\sin(\omega t)$ or $\cos(\omega t)$, $\pi$ is hiding inside $\omega = 2\pi f$. The Fourier transform---our main tool for understanding signals---decomposes \textit{any} signal into a sum of sinusoids, each carrying a factor of $\pi$. So $\pi$ is not just about circles; it is the universal currency of ``how often does this repeat?''
+
+%---------------------------------------------------------------------
+\subsection*{$e$\,: The Meter of Growth and Decay}
+%---------------------------------------------------------------------
+
+Now imagine something very different: a capacitor discharging through a resistor. The voltage does not oscillate---it simply fades. You measure it every second and notice that it always loses the \textit{same fraction} of whatever is left. Half-life in radioactive decay works the same way: what matters is not how much you lose in absolute terms, but what \textit{proportion} remains.
+
+This ``constant proportional change'' is exactly what $e$ captures. Formally, $e$ is the unique number for which the function $f(x) = e^x$ is its own derivative:
+\[
+  \frac{d}{dx}\,e^{x} = e^{x}.
+\]
+In plain language: the rate of change of $e^x$ at any point equals its current value. That makes $e^x$ the natural solution to the equation ``the speed of change is proportional to the current state''---which is precisely the differential equation $\dot{x} = ax$.
+
+When $a > 0$, $x(t) = e^{at}$ grows exponentially---like compound interest, or an unstable system running away. When $a < 0$, $x(t) = e^{at}$ decays exponentially---like that discharging capacitor, or a stable system returning to equilibrium.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{exponential_growth_decay.pdf}
+  \caption{Exponential curves $e^{at}$. Positive $a$: unstable growth. Negative $a$: stable decay.}
+\end{figure}
+
+In control theory, the sign of $a$ (or more precisely, the real part of a system's poles) decides everything about stability. A pole in the left half-plane means $e^{at}$ with $a<0$: the response dies out. A pole in the right half-plane means $a>0$: the response blows up. This single idea---does the exponential grow or shrink?---is the foundation of stability analysis.
+
+%---------------------------------------------------------------------
+\subsection*{When They Join Forces: $e^{j\theta}$}
+%---------------------------------------------------------------------
+
+The real magic happens when $e$ and $\pi$ meet. Euler's formula ties them together:
+\[
+  e^{j\theta} = \cos\theta + j\sin\theta,
+\]
+where $j = \sqrt{-1}$. This single equation is arguably the most important identity in all of engineering mathematics. It says that the \textit{complex exponential} is simultaneously an exponential and a sinusoid---growth/decay and oscillation, unified in one expression.
+
+When a system has complex poles $\sigma \pm j\omega$, the time response is
+\[
+  e^{\sigma t}\bigl(\cos\omega t + j\sin\omega t\bigr).
+\]
+The factor $e^{\sigma t}$ (the $e$ part) controls the \textbf{envelope}---whether the oscillation is growing, shrinking, or staying constant. The factor $\cos\omega t$ (the $\pi$ part, since $\omega = 2\pi f$) controls the \textbf{frequency}---how fast the system oscillates.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.82\textwidth]{damped_oscillation.pdf}
+  \caption{A damped oscillation $e^{\sigma t}\cos(\omega t)$: the envelope decays ($e$) while the signal oscillates ($\pi$).}
+\end{figure}
+
+In other words: \textbf{$e$ tells you how fast, $\pi$ tells you how often}. Every second-order system you will study in this book---from a mass-spring-damper to a PID-controlled motor---is just these two numbers doing their respective jobs.
+
+\vspace{1em}
+\noindent With $\pi$ and $e$ in your toolkit, you are ready for everything that follows.

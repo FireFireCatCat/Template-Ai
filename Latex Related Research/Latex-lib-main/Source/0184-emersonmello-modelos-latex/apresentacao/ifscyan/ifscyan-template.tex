@@ -1,0 +1,307 @@
+% ------------------------------------------------------------%
+% 2015-2021 - Emerson Ribeiro de Mello <mello@ifsc.edu.br>
+% ------------------------------------------------------------%
+\documentclass[aspectratio=169]{beamer}
+% -------------------------------------------------%
+%  Package options
+% -------------------------------------------------%
+% 
+% textbgcolor   - frametitle background color. default: 0d4f4d
+% textfgcolor   - frametitle foreground color. default: ffffff
+% slidebgcolor  - slide background color. default: eef1ec
+% slidefgcolor  - slide text foreground color. default: 000000
+% authorfgcolor - author, institute and date color. default: 000000
+% itemsep - space between items (itemize, enumerate). default: 7pt
+\usepackage[textbgcolor=0d4f4d,textfgcolor=ffffff,itemsep=7pt]{beamerthemeifscyan}
+% -------------------------------------------------%
+
+% A good place to get some colors
+% https://material.io/resources/color/#!/?view.left=0&view.right=0&primary.color=0d4f4d
+% cyan: #0D4F4D, light: #417b79,  dark: #002625
+% IFSC green: normal: #32A041, light: #69d26f, dark: #007013
+% IFSC red: normal: #C8191E, light: #ff5747, dark: #8f0000 
+% Other colors for textbgcolor
+% purple 4527a0, blue 0d47a1, grey 546e7a, redwine 880e4f, brown 6d4c41, yelllow (bg=#fbc02d, fg=000000)
+
+% Logo
+\pgfdeclareimage[height=.4\paperheight]{ifsclogo}{img/ifsclogo.pdf}
+
+
+% -------------------------------------------------%
+%              Título 
+% -------------------------------------------------%
+\title{Tema IFSCyan para~\LaTeX~Beamer}
+\subtitle{Nova organização para possibilitar personalizações}
+
+\author{Prof. Emerson Ribeiro de Mello, Dr.}
+\institute{%
+\url{mello@ifsc.edu.br}%
+}%
+\date{16/07/2021}
+% -------------------------------------------------%
+
+
+
+% -------------------------------------------------%
+%  Início do documento 
+% -------------------------------------------------%
+\begin{document}
+
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+\begin{frame}[plain, noframenumbering]{Licenciamento}
+    \licenciamentoLivre
+\end{frame}
+
+\begin{frame}[plain, noframenumbering]{Sumário}
+    \tableofcontents
+\end{frame}
+
+
+
+\section{Listas}
+
+
+\begin{frame}{Lista de itens}
+    \begin{enumerate}
+        \item Primeiro item
+        \begin{itemize}
+            \item \Myhref{https://emersonmello.me}{Aqui tem um exemplo de \textit{link} para um \textit{site} usando o comando \texttt{Myhref}}
+            \item Segundo item
+        \end{itemize}
+        \item Segundo item
+        \item Terceiro item 
+        \begin{itemize}
+            \item Neste linha é apresentado um item que tem um texto grande que deverá ocupar mais de uma linha no slide. Assim, espera-se mostrar como será o alinhamento na margem esquerda
+            \item Segundo item
+        \end{itemize}
+    \end{enumerate}
+\end{frame}
+
+\subsection{Animações}
+
+\begin{frame}{Animação com lista de itens}
+\begin{itemize}[<+->]
+    \item Primeiro item
+    \item Segundo item
+    \item Terceiro item
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Uso do \texttt{alert}}
+    \begin{itemize}
+        \item<1-| alert@1> Aparecerá desde do slide 1 e receberá destaque no slide 1
+        \item<1-| alert@2> Aparecerá desde do slide 1 e receberá destaque no slide 2
+        \item<1-| alert@3> Aparecerá desde do slide 1 e receberá destaque no slide 3
+        \item<4-| alert@4> Aparecerá desde do slide 4 e receberá destaque no slide 4
+    \end{itemize} 
+\end{frame}
+
+\subsection{Colunas}
+
+\begin{frame}{Listas em colunas}
+    \begin{columns}[t, onlytextwidth]
+        \column{0.5\textwidth}
+            \begin{itemize}
+                \item Item 1
+                \begin{itemize}
+                    \item Subitem 1.1
+                    \item Subitem 1.2
+                \end{itemize}
+                \item Item 2
+                \item Item 3
+            \end{itemize}
+        
+        \column{0.5\textwidth}
+            \begin{enumerate}
+                \item First
+                \item Second
+                \begin{enumerate}
+                    \item Sub-first
+                    \item Sub-second
+                \end{enumerate}
+                \item Third
+            \end{enumerate}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Listas e figuras}
+\begin{columns}
+    \column{.5\linewidth}
+     \begin{center}
+        \includegraphics[width=\linewidth]{figs/4x3.png}
+     \end{center}
+    \column{.5\linewidth}
+    \begin{itemize}
+        \item Item 1
+        \begin{itemize}
+            \item Subitem 1.1
+            \item Subitem 1.2
+        \end{itemize}
+        \item Item 2
+        \item Item 3
+    \end{itemize}
+\end{columns} 
+\end{frame}
+
+
+\section{Blocos}
+
+
+\begin{frame}{Blocos}
+    \begin{block}{Esse é um bloco}
+        Isso é um teste
+    \end{block}
+    \begin{block}{}
+    Bloco sem título	
+    \end{block}
+    \begin{alertblock}{Alerta}
+        Esse é um alerta
+    \end{alertblock}
+\end{frame}
+
+
+\begin{frame}{Blocos personalizados}
+
+    \begin{informacao}
+    Isso é uma mensagem de informação
+    \end{informacao}
+    
+    \begin{informacaoazul}
+        Isso é uma mensagem de informação
+    \end{informacaoazul}
+
+    \begin{atencao}
+        Isso é uma mensagem de atenção
+    \end{atencao}
+    
+    \begin{cuidado}
+        Isso é uma mensagem de cuidado
+    \end{cuidado}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Blocos personalizados}{Inspirados nos blocos Markdown do GitHub}
+\begin{nota}
+    Para apresentar uma informação útil
+\end{nota}
+
+\begin{tip}
+    Para apresentar uma dica
+\end{tip}
+
+\begin{important}
+    Informação importante que precisa ser destacada
+\end{important}
+
+\begin{warning}
+    Algo que precisa ser observado com atenção
+\end{warning}
+
+\begin{caution}
+    Para chamar a atenção do leitor para algo que pode ser perigoso
+\end{caution}
+\end{frame}
+
+
+\begin{frame}{Horários}
+    {Veja outros ícones em \url{https://ctan.org/pkg/fontawesome}}
+    \begin{itemize}
+        \item Horário das aulas 
+        \begin{caixa}[azul]{white}{\faCalendarDays[regular]}
+            \begin{itemize}
+                \item 15:40 -- 17:30 - quarta-feira
+                \item 13:30 -- 15:20 - quinta-feira
+            \end{itemize}
+        \end{caixa}
+        \item Atendimento extraclasse
+        \begin{caixa}[azul]{white}{\faCalendarDays[regular]}
+            \begin{itemize}
+                \item 10:00 -- 12:00 - sexta-feira
+            \end{itemize}
+        \end{caixa}
+    \end{itemize}
+\end{frame}
+
+
+\section{Figuras}
+
+\begin{frame}{Figura 4x3}
+    \begin{center}
+        \includegraphics[height=.7\paperheight]{figs/4x3.png}
+    \end{center}
+\end{frame}
+    
+
+\begin{frame}{Figura 16x9}
+\begin{center}
+    \includegraphics[width=.7\linewidth]{figs/16x9.png}
+\end{center}
+\end{frame}
+
+\section{Tabelas}
+
+\begin{frame}{Tabelas}
+\begin{center}
+    \begin{tabular}{l r r}\\\toprule
+        Produto & Quantidade & Valor (R\$) \\\midrule
+        Água    &      100   &   1,50 \\ 
+        Banana  &       10   &   3,00 \\
+        Maça    &        1   &   2,50 \\ \bottomrule
+    \end{tabular}
+\end{center}
+\end{frame}
+
+\section{Equações}
+
+
+
+\begin{frame}{Equações}
+\begin{equation}
+    \int_a^b f(x) dx = F(b) - F(a)
+\end{equation}
+
+\begin{equation}
+    \sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
+\end{equation}
+\end{frame}
+
+\section{Incluindo código fonte}
+
+
+\begin{frame}[fragile]{Olá mundo em C}
+    \lstinputlisting[style=ansic,caption={Olá mundo},label={cod:olac},captionpos=t]{codigos/ola.c}
+\end{frame}
+
+\begin{frame}[fragile]{Olá mundo em Java}
+\begin{lstlisting}[style=java]
+public class App{
+
+    public static void main(String[] args){
+        System.out.println("Olá mundo");
+    }
+
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Referências}
+    \nocite{*}
+    \bibliography{demo_bibliography}
+    \bibliographystyle{plain}
+\end{frame}
+
+\appendix
+
+\section{Slides de backup}
+
+\begin{frame}{Slide de backup}
+    \usebeamercolor[fg]{normal text}
+    Slides de backup são úteis para incluir materiais adicionais, necessários somente para ajudar a responder possíveis perguntas da plateia
+    \vfill
+    O pacote \texttt{appendixnumberbeamer} é usado para não numerar os slides de backup
+\end{frame}
+
+
+\end{document}

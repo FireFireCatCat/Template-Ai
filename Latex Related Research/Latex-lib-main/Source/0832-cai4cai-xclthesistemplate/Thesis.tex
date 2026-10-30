@@ -1,0 +1,78 @@
+% Detect and warn about obsolete latex commands.
+% NAG will check for many common mistakes, and give some hints on
+% what to use instead. However, you should always refer to l2tabu for a
+% more detailed explanation of the whats and whys: it gives more
+% information than can be possibly pressed into two lines of error
+% message. Orthodox checks for pitfalls that are not technically
+% incorrect. If you know what you’re doing, omit orthodox.
+\RequirePackage[l2tabu, orthodox]{nag} 
+
+\documentclass[british,a4paper,11pt,twoside]{ThesisStyle}
+
+\makeatletter
+\title{Lorem Ipsum}\let\thetitle\@title
+\author{Foo von Bar}\let\theauthor\@author
+\makeatother
+
+\input{FormatAndDefsBasic}
+
+% Comment out to remove the draft note
+\newcommand{\draftnote}{\textcolor[gray]{0.5}{\textbf{DRAFT -- \today}}}
+\input{FormatAndDefsThesisExtra}
+
+\addbibresource{JNFull.bib}
+\addbibresource{ThesisBibliography.bib}
+% xampl.bib is for illustration puposes only
+\addbibresource{xampl.bib}
+
+\begin{document}
+
+\frontmatter
+
+\input{TitlePageKCL}
+%\input{TitlePageUCL}
+
+\dominitoc
+
+\copyrightpage{\the\year}{\theauthor}
+\declarationpage{\theauthor}
+
+\cleardoublepage
+\chapter{Abstract}
+\input{Abstract}
+
+\cleardoublepage
+\chapter{Impact statement}
+An impact statement is often required.
+
+\cleardoublepage
+\chapter{Acknowledgments}
+\input{Acknowledgments}
+
+\cleardoublepage
+\tableofcontents
+
+% KCL and UCL want a list of tables and figures
+\clearpage
+\phantomsection
+\mtcaddchapter[\listtablename]
+\listoftables
+
+\clearpage
+\phantomsection
+\mtcaddchapter[\listfigurename]
+\listoffigures
+
+\mainmatter
+
+\include{Introduction}
+
+\include{Methods}
+
+\include{Conclusion}
+
+\backmatter
+
+\printbibliography[heading=bibintoc,env=thesisbibenv]
+
+\end{document}

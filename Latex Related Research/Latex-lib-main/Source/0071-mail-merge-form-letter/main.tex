@@ -1,0 +1,39 @@
+% Mail-Merge Form Letter — formlett.sty
+%
+% A different FEATURE from every other letter in this batch: one letter
+% BODY with numbered placeholder fields (\paras[n]), rendered once per
+% recipient from a plain-text parameter list at the end of the document
+% (\moreletter blocks, ; separated, terminated with !). This starter
+% prints three renewal-notice letters from one body + one data block.
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{formlett}
+\textwidth=5.5in
+
+\begin{document}
+
+\beginletter
+\NOPAGENUMBERS\parindent=0pt
+\noindent{\it\paras[1]}\par
+\blockparas[2]\par\bigskip
+
+Dear \paras[1][2],\par\medskip
+Our records show your membership (no.\ \paras[2][2]) is due for
+renewal on \paras[3][2]. Please return the enclosed form, or renew
+online, before that date to keep your membership active without a
+lapse in benefits.\par\medskip
+Thank you for your continued support.\hfill Membership
+Office\vfill\eject
+\endletter
+
+\moreletter
+  Aiko Tanaka;42 Willow Court, Springfield+Aiko;A-10432;30 September 2026!
+
+\moreletter
+  Marcus Webb;19 Cedar Lane, Riverton+Marcus;A-10577;30 September 2026!
+
+\moreletter
+  Delphine Roy;7 Orchard Row, Milltown+Delphine;A-10689;30 September 2026!
+
+\end{document}

@@ -1,0 +1,34 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install TeX Live
+        run: sudo apt update && sudo apt install biber inkscape latexmk texlive texlive-bibtex-extra texlive-lang-german texlive-latex-extra texlive-luatex
+      - name: Install tikz-uml
+        run: |
+          wget https://perso.ensta.fr/~kielbasi/tikzuml/var/files/src/tikzuml-v1.0-2016-03-29.tbz -P /tmp
+          tar -xjf /tmp/tikzuml-v1.0-2016-03-29.tbz -C /tmp
+          mkdir -p ~/texmf/tex/latex/tikz-uml/
+          cp /tmp/tikzuml-v1.0-2016-03-29/tikz-uml.sty ~/texmf/tex/latex/tikz-uml/
+          texhash ~/texmf
+      - name: Install the arial font
+        run: |
+          echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
+          sudo apt-get install ttf-mscorefonts-installer
+      - name: Set up Git repository
+        uses: actions/checkout@v7
+      - name: Compile LaTeX document
+        run: make build_ci
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: Arbeit.pdf

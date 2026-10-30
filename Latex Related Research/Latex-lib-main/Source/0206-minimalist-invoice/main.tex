@@ -1,0 +1,53 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=1.7cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\definecolor{ink}{HTML}{243447}
+\definecolor{mist}{HTML}{EEF2F5}
+\definecolor{accent}{HTML}{2F7D78}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[L]{Harbor Light Studio · invoice 2026--042}
+\fancyfoot[R]{\thepage\ / \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.3pt}
+\setlength{\tabcolsep}{7pt}
+\begin{document}
+\noindent{\color{accent}\rule{\linewidth}{4pt}}\\[10pt]
+\begin{tabularx}{\linewidth}{@{}Xr@{}}
+  {\Huge\bfseries\color{ink} INVOICE} &
+  \begin{tabular}{r}\textbf{No. 2026--042}\\15 September 2026\end{tabular}
+\end{tabularx}
+\vspace{14pt}
+\begin{tabularx}{\linewidth}{@{}X X@{}}
+  \textbf{FROM}\par Harbor Light Studio\par 18 Alder Street\par Portland, OR 97202\par \href{mailto:billing@example.org}{billing@example.org}
+  &
+  \textbf{BILL TO}\par Northwind Field Services LLC\par 400 Market Street\par Portland, OR 97205\par Purchase order NF--118
+\end{tabularx}
+\vspace{18pt}
+\rowcolors{2}{white}{mist}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X r r r@{}}
+  \rowcolor{ink}\color{white}\textbf{DESCRIPTION} & \color{white}\textbf{QTY} & \color{white}\textbf{RATE} & \color{white}\textbf{AMOUNT}\\
+  Architecture workshop & 8 h & 200.00 & 1,600.00\\
+  Implementation and handover & 12 h & 200.00 & 2,400.00\\
+  Travel expenses & 1 & 180.00 & 180.00\\
+\end{tabularx}
+\vspace{8pt}
+\begin{flushright}\begin{tabular}{lr}
+  Subtotal & 4,180.00\\ VAT (8\%) & 334.40\\[-2pt]
+  \toprule \Large\textbf{TOTAL} & \Large\textbf{4,514.40 USD}
+\end{tabular}\end{flushright}
+\vfill
+\noindent\colorbox{mist}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\textbf{Payment terms}\quad Please pay within 14 days by bank transfer. Include invoice number 2026--042 as the payment reference.\\[3pt]Account: Harbor Light Studio · Routing 021000021 · Account 0042042}}
+\vspace{10pt}
+\noindent\small Thank you for your business. Questions can be sent to billing@example.org.
+\end{document}

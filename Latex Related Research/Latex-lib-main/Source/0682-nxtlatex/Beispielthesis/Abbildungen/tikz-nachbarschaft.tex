@@ -1,0 +1,59 @@
+% Die beiden Nachbarschaftsoperatoren des Verfahrens.
+% Farben aus nxtlatexcolors.sty.
+\begin{tikzpicture}[
+    alt={Zwei Skizzen. Links Verschieben: Eine Aufgabe des Engpasses
+      wandert von Dobrev zu Haas. Rechts Tauschen: Bauer und Ivanov tauschen
+      je eine Aufgabe, was nur geht, wenn beide für die Aufgabe des anderen
+      qualifiziert sind.},
+    font=\footnotesize,
+    person/.style={font=\scriptsize, text=nxt.gray5, anchor=east},
+    aufgabe/.style={
+      draw=none, rounded corners=1pt, minimum height=4mm,
+      font=\scriptsize\color{white}, inner sep=1pt, anchor=west,
+    },
+    pfeil/.style={->, draw=nxt.gray4, line width=.7pt, shorten >=1pt},
+    titel/.style={font=\footnotesize\bfseries},
+    hinweis/.style={font=\scriptsize\itshape, text=nxt.gray5},
+  ]
+
+  % ============ links: Verschieben =====================================
+  \begin{scope}
+    \node[titel] at (1.9,1.5) {Verschieben};
+    \node[hinweis, text width=38mm, align=center] at (1.9,-1.35)
+      {eine Aufgabe des Engpasses\\an eine andere Person};
+
+    \node[person] at (0,0.8) {Dobrev};
+    \node[person] at (0,0.0) {Haas};
+
+    % Dobrev ist der Engpass: langer Balken.
+    \node[aufgabe, fill=nxt.gray3, minimum width=11mm] at (0.15,0.8) {C-310};
+    \node[aufgabe, fill=nxtgreen, minimum width=9mm]  at (1.35,0.8) {C-333};
+    \node[aufgabe, fill=nxt.gray3, minimum width=8mm] at (2.45,0.8) {D-042};
+    \node[aufgabe, fill=nxt.gray3, minimum width=7mm] at (0.15,0.0) {F-078};
+
+    \draw[pfeil] (1.8,0.6) to[out=-90,in=90] (1.35,0.2);
+    \node[aufgabe, fill=nxtgreen, minimum width=9mm, opacity=.28]
+      at (1.05,0.0) {};
+  \end{scope}
+
+  % ============ rechts: Tauschen =======================================
+  \begin{scope}[xshift=62mm]
+    \node[titel] at (1.9,1.5) {Tauschen};
+    \node[hinweis, text width=40mm, align=center] at (1.9,-1.35)
+      {zwei Aufgaben kreuzen --\\nur wenn beide qualifiziert sind};
+
+    \node[person] at (0,0.8) {Bauer};
+    \node[person] at (0,0.0) {Ivanov};
+
+    \node[aufgabe, fill=nxtgreen, minimum width=12mm] at (0.15,0.8) {A-115};
+    \node[aufgabe, fill=nxt.gray3, minimum width=7mm] at (1.45,0.8) {A-134};
+    \node[aufgabe, fill=nxt.orange, minimum width=8mm] at (0.15,0.0) {A-127};
+    \node[aufgabe, fill=nxt.gray3, minimum width=9mm] at (1.15,0.0) {B-245};
+
+    \draw[pfeil] (0.75,0.6) to[out=-70,in=70] (0.55,0.2);
+    \draw[pfeil] (0.55,0.2) to[out=110,in=-110] (0.75,0.6);
+  \end{scope}
+
+  % Trennlinie
+  \draw[draw=nxt.gray1, line width=.5pt] (5.0,-1.6) -- (5.0,1.6);
+\end{tikzpicture}

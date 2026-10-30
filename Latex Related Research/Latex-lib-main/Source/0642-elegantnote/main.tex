@@ -1,0 +1,73 @@
+% ElegantNote — a lightweight lecture/reading-notes class (article-based,
+% not chapter-structured), companion to ElegantBook. Ships with TeX Live;
+% not bundled.
+%
+% backend=bibtex is passed explicitly: the class defaults to biber, which
+% this catalogue's compile loop does not run (only classic bibtex).
+%
+% Class documentation: texdoc elegantnote | https://ctan.org/pkg/elegantnote
+% Licence: LPPL-1.3c or later, (c) Dongsheng Deng, Ran Wang.
+\documentclass[en,blue,a4,10pt,bibtex]{elegantnote}
+
+\title{Notes on Ordinary Differential Equations}
+\author{Priya Anand}
+\institute{Department of Applied Mathematics}
+\version{1.0}
+\date{\today}
+
+\addbibresource[location=local]{reference.bib}
+
+\begin{document}
+\maketitle
+
+\section{First-Order Linear Equations}
+
+A first-order linear ODE has the form $y' + p(x)y = q(x)$. Multiplying
+by the integrating factor $\mu(x) = e^{\int p(x)\,dx}$ turns the left
+side into an exact derivative:
+\[
+\frac{d}{dx}\big[\mu(x) y\big] = \mu(x) q(x).
+\]
+
+\begin{remark}
+This is the single most useful trick for first-order linear equations
+— everything else in this section is a variation on it.
+\end{remark}
+
+\begin{example}
+Solve $y' + 2xy = x$. Here $\mu(x) = e^{x^2}$, so
+$\big(e^{x^2} y\big)' = x e^{x^2}$, giving
+$e^{x^2} y = \tfrac{1}{2} e^{x^2} + C$, i.e.
+$y = \tfrac{1}{2} + C e^{-x^2}$.
+\end{example}
+
+\section{Second-Order Constant-Coefficient Equations}
+
+For $ay'' + by' + cy = 0$, the characteristic equation
+$a\lambda^2 + b\lambda + c = 0$ determines the solution's shape:
+
+\begin{itemize}
+  \item two real roots $\lambda_1 \neq \lambda_2$: $y = C_1 e^{\lambda_1 x} + C_2 e^{\lambda_2 x}$;
+  \item a repeated root $\lambda$: $y = (C_1 + C_2 x) e^{\lambda x}$;
+  \item complex roots $\alpha \pm i\beta$: $y = e^{\alpha x}(C_1 \cos \beta x + C_2 \sin \beta x)$.
+\end{itemize}
+
+\begin{note}
+The repeated-root case is exactly the boundary between oscillation and
+pure exponential decay/growth — it is worth sketching all three cases
+on the same axes to see why.
+\end{note}
+
+\section{Numerical Methods}
+
+When no closed form exists, Euler's method approximates the solution
+of $y' = f(x, y)$, $y(x_0) = y_0$ by stepping
+$y_{n+1} = y_n + h f(x_n, y_n)$. It has local truncation error
+$O(h^2)$ and global error $O(h)$, per \textcite{butcher2016numerical}.
+The classical fourth-order Runge--Kutta method improves this to global
+error $O(h^4)$ at the cost of four function evaluations per step,
+following \textcite{hairer1993solving}.
+
+\printbibliography
+
+\end{document}

@@ -1,0 +1,100 @@
+% SUBSTITUTE for the "Jacobs Landscape Poster" template (originally
+% bardsoftware / Vel, CC-BY-NC-SA — non-commercial, so it cannot be
+% redistributed here).
+%
+% This starter uses the upstream `tikzposter` document class (CTAN,
+% LPPL-1.2) in LANDSCAPE orientation on A0 paper, matching the
+% original's purpose: a large-format academic conference poster. See
+% README.md for the full disclosure.
+%
+% tikzposter is not bundled: it ships in every modern TeX distribution.
+\documentclass[a0paper, landscape]{tikzposter}
+\usepackage{booktabs}
+
+\usetheme{Wave}
+\usecolorstyle[colorPalette=BlueGrayOrange]{Britain}
+
+\title{Predicting Urban Heat Islands from Satellite Land-Cover Data}
+\author{J. Alvarez, M. Kowalski, and R. Chen}
+\institute{Department of Environmental Engineering, Coastal State University}
+
+\begin{document}
+\maketitle
+
+\begin{columns}
+
+\column{0.33}
+
+\block{Motivation}{
+Cities can be several degrees warmer than surrounding rural areas, an
+effect known as the urban heat island (UHI). Fine-grained UHI maps are
+expensive to produce from ground sensors alone, but land-cover
+classification from satellite imagery is cheap and updated regularly.
+We ask whether land-cover fractions predict surface temperature well
+enough to substitute for a sparse sensor network.
+}
+
+\block{Data}{
+\begin{itemize}
+\item Landsat 8 thermal band imagery, 30 m resolution, 42 cities.
+\item Land-cover fractions (impervious surface, tree canopy, water)
+  from the National Land Cover Database.
+\item Ground-truth surface temperature from 1{,}100 weather stations.
+\end{itemize}
+}
+
+\column{0.34}
+
+\block{Method}{
+We fit a gradient-boosted regression tree mapping land-cover fractions
+and time of day to surface temperature, validated with 10-fold
+cross-validation stratified by city.
+
+\begin{itemize}
+\item Features: impervious \%, canopy \%, water \%, elevation,
+  distance to coastline.
+\item Target: land surface temperature (LST), $^\circ$C.
+\item Baseline: linear regression on impervious surface fraction alone.
+\end{itemize}
+}
+
+\block{Results}{
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Model & RMSE ($^\circ$C) & $R^2$ \\
+\midrule
+Linear (impervious only) & 3.8 & 0.41 \\
+Gradient-boosted trees & 1.6 & 0.87 \\
+\bottomrule
+\end{tabular}
+\end{center}
+The full feature set roughly halves prediction error relative to the
+impervious-surface-only baseline, and canopy fraction is the single
+most important feature after impervious surface.
+}
+
+\column{0.33}
+
+\block{Discussion}{
+Land-cover fractions alone explain most of the variance in surface
+temperature across cities of very different sizes and climates,
+suggesting the model transfers reasonably well without per-city
+recalibration. Coastal cities show the largest residual errors,
+plausibly from unmodelled sea-breeze cooling.
+}
+
+\block{Conclusion}{
+Satellite-derived land cover is a practical, low-cost substitute for
+dense ground sensor networks when estimating city-scale heat island
+intensity, particularly for identifying priority neighbourhoods for
+tree-planting interventions.
+}
+
+\block{Contact}{
+j.alvarez@coastalstate.edu \hfill Poster session 4B, Thursday 14:00
+}
+
+\end{columns}
+
+\end{document}

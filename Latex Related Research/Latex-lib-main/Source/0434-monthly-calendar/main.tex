@@ -1,0 +1,24 @@
+% Wall calendar / year planner -- ctan:wallcalendar, github:profound-labs/
+% wallcalendar, LPPL-1.3 (verified in the repo's LICENSE.txt). Ships with TeX
+% Live under tex/lualatex/wallcalendar (kpsewhich confirms) -- starter does
+% not bundle the class. lualatex only: wallcalendar.cls loads `luacode` and
+% its Lua-side CSV/date helpers unconditionally.
+%
+% This starter uses the plain \YearPlannerLandscapeGridPage layout with a
+% real events.csv rather than the class's photo-collage \MonthPage examples:
+% those need bundled photographs of unclear provenance this starter should
+% not ship, whereas the grid page needs no images and still shows the class's
+% actual purpose -- a full year, correctly aligned, with real events marked.
+\documentclass[
+  year = 2026,
+  eventsCsv = ./events.csv,
+  a4PaperLandscape,
+  hMargin = 5mm,
+  topMargin = 5mm,
+  bottomMargin = 5mm,
+]{wallcalendar}
+
+\begin{document}
+\mbox{}
+\YearPlannerLandscapeGridPage
+\end{document}

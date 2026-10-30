@@ -1,0 +1,286 @@
+\documentclass[a4paper, 10pt]{article}
+
+% packages %
+\usepackage{tidyres}
+\usepackage[type = {CC}, modifier = {by}, version = {4.0}]{doclicense}
+\usepackage{cprotect}
+\usepackage{changepage}
+\usepackage{fontspec, unicode-math}
+\hypersetup{colorlinks = True, allcolors = cyan}
+\renewcommand{\contentsname}{\centering Table of Contents}
+\geometry{margin = 1in}
+
+%%% font %%%
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{NewComputerModernMono10}
+\setmathfont{NewComputerModernMath}
+\newfontfamily\textcm{NewComputerModern10}
+\newfontfamily\texttm{TeX Gyre Termes}
+\newfontfamily\texthr{TeX Gyre Heros}
+\unimathsetup{math-style = TeX, bold-style = TeX}
+
+% info %
+\title{{\tt tidyres} for Tidy Formal Resume}
+\author{\itshape Yifan Liang}
+\date{v3.0.0 2026-09-15}
+
+% document %
+\begin{document}
+
+\maketitle
+\tableofcontents
+\thispagestyle{empty}
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{plain}
+
+\section{Introduction}
+
+\subsection{Basic Functions}
+This {\tt tidyres} package aims to provide users with a simple interface to create
+multi-column style formal resume. The package is comprised of the following
+major commands/environments:
+
+\begin{enumerate}[label = \textbullet, leftmargin = 6ex, topsep = 4ex]
+    \item \verb+\restitle+ command
+    \item \verb+ressection+ environment
+    \item \verb+\ressep+ command
+    \item \verb+\hlbox+ command
+    \item \verb+\setcolumnratio+ command
+\end{enumerate}
+
+Users can also incorporate other packages such as \verb+enumitem+ to make
+bullet point in the resume.
+
+\subsection{Notes for v2.0.0}
+As of July 27, 2023, {\tt tidyres} requires the users to use \hologo{XeLaTeX}
+or \hologo{LuaLaTeX} to compile as the additional customization feature on font
+is added, which loads the {\tt fontspec} package.\\
+\\
+Additionally, the \verb+\restitle+ command now accepts key values to make the
+title for your resume.
+
+\subsection{Notes for v3.0.0}
+As of September 15, 2026, the \verb+ressection+ environment now accepts its
+section title via an optional key-value argument, i.e.,
+\verb+\begin{ressection}[title=Education]+, instead of the previous positional
+argument.\\
+\\
+Additionally, the \verb+\hlbox+ command (inline highlighted box with monospaced
+font) and the \verb+\columnratio+ command (customizable column widths) are
+added.\\
+\\
+The \textcolor{red}{\tt restitle} command encounters a {\bf full-revamp} by
+supporting key-value interface. Please refer to the relevant section below for
+more information.
+
+\subsection{License}
+This work is licensed under
+\href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+``Attribution 4.0 International'' license}.\\
+\\
+For detailed information about the license, please visit the Creative Commons'
+website by clicking the \textcolor{Cyan}{cyan text above} or the license image
+below.
+\\
+
+\begin{flushright}
+    \doclicenseImage
+\end{flushright}
+
+\newpage
+
+\section{General Setup Tips}
+
+\subsection{Page Margin}
+For a typical resume, depending on the font style and font size you use, it is
+suggested that you set the page margin between {\bf 0.5 inch} to {\bf 1 inch}.\\
+~\\
+You can set the margin with the {\tt geometry} package using the following code:
+
+\begin{codebox}[title = Page Margin]
+    \usepackage[margin = 0.5in]{geometry}
+\end{codebox}
+
+\vspace{1cm}
+
+\subsection{Font Size}
+Typically, a resume would use {\bf 9pt} to {\bf 11pt} font.\\
+~\\
+I would suggest using the {\tt extarticle} class to set the font size globally:
+
+\begin{codebox}[title = Font Size]
+    \documentclass[9pt]{extarticle}
+    % The extarticle class supports at least 8pt font size.
+\end{codebox}
+
+\subsection{Column Ratio}
+By default, {\tt tidyres} sets the column ratio of the layout to
+{\bf 0.12, 0.88}. You can customize the column widths with the
+\verb+\columnratio+ command in the preamble:
+
+\begin{codebox}[title = Column Ratio]
+    \columnratio{0.15, 0.85}
+\end{codebox}
+
+\newpage
+
+\section{Resume Title}
+
+\subsection{Goal}
+The \verb+\restitle+ command helps user to print the title of the resume, which
+contains key information such as name, location, email, phone, and Linkedin ID.\\
+
+\subsection{Example Code}
+\begin{codebox}[title = Resume Title Example Code]
+    \restitle{
+        name = John Doe,
+        location = New York,
+        email = john.doe@gmail.com,
+        phone = (646) 111-1234,
+        linkedin = johndoe,
+        linkedinurl = http://linkedin.com
+    }
+\end{codebox}
+
+\vspace{1cm}
+
+{\it will produce (on the top of the page):}
+
+\vspace{1cm}
+
+\begin{tcolorbox}[standard jigsaw, opacityback = 0.1, colback = gray, boxrule = 0.5pt]
+    \restitle{
+        name = John Doe,
+        location = New York,
+        email = john.doe@gmail.com,
+        phone = (646) 111-1234,
+        linkedin = johndoe,
+        linkedinurl = http://linkedin.com
+    }
+\end{tcolorbox}
+
+\vspace{1cm}
+
+\subsection{Note}
+The hyperlink color of Linkedin can be set via {\tt hyperref} package. If you
+wish to set it in black, you may use the following code:
+
+\begin{codebox}[title = Color of Hyperlink]
+    \usepackage[hidelinks]{hyperref}
+\end{codebox}
+
+\newpage
+
+\section{Resume Section}
+
+\subsection{Goal}
+The \verb+ressection+ environment helps users set the sections (e.g., Education,
+Experience, Certifications, etc.) of the resume.\\
+~\\
+The section title is set via the optional key-value argument \verb+title+,
+which defaults to {\tt Section} if not specified.\\
+~\\
+You may use {\tt enumerate} or the {\tt itemize} environment within the
+{\tt ressection} environment to create bullet points to specify the specific
+experience/event.\\
+~\\
+The \verb+\ressep+ command separates the experience/event within a section.
+
+\newpage
+
+\subsection{Example Code}
+\begin{codebox}[title = Resume Section Example Code]
+    \begin{ressection}[title = Education]
+        {\bf ABC University}, {\sl College of Arts \& Science}, New York, NY
+        \hfill
+        Feb 2023 - Present
+
+        \begin{enumerate}
+            \item Bachelor of Arts in Economics (Minor in Mathematics)
+            \item Cumulative GPA: 4.0/4.0
+            \item Honors \& Societies: ABC Economics Society
+            \item Related Coursework: ABC Economics 101, ABC Statistics 101
+        \end{enumerate}
+
+        \ressep
+
+        {\bf XYZ High School}, New Jersey, NY
+        \hfill
+        Jan 2021 - Feb 2023
+
+        \begin{enumerate}
+            \item General High School Diploma
+            \item Cumulative GPA: 3.7/4.0
+            \item Honors \& Societies: XYZ Poem Society
+        \end{enumerate}
+    \end{ressection}
+\end{codebox}
+
+\vspace{1cm}
+
+{\it will produce:}
+
+\vspace{1cm}
+
+\begin{ressection}[title = Education]
+    {\bf ABC University}, {\sl College of Arts \& Science}, New York, NY
+    \hfill
+    Feb 2023 - Present
+
+    \begin{enumerate}
+        \item Bachelor of Arts in Economics (Minor in Mathematics)
+        \item Cumulative GPA: 4.0/4.0
+        \item Honors \& Societies: ABC Economics Society
+        \item Related Coursework: ABC Economics 101, ABC Statistics 101
+    \end{enumerate}
+
+    \ressep
+
+    {\bf XYZ High School}, New Jersey, NY
+    \hfill
+    Jan 2021 - Feb 2023
+
+    \begin{enumerate}
+        \item General High School Diploma
+        \item Cumulative GPA: 3.7/4.0
+        \item Honors \& Societies: XYZ Poem Society
+    \end{enumerate}
+\end{ressection}
+
+\vspace{-6cm}
+
+\begin{adjustwidth}{-15pt}{-15pt}
+    \begin{tcolorbox}[standard jigsaw, opacityback = 0.1, colback = gray, boxrule = 0.5pt]
+        \vspace{5cm}
+    \end{tcolorbox}
+\end{adjustwidth}
+
+\newpage
+
+\section{Inline Highlight Box}
+
+\subsection{Goal}
+The \verb+\hlbox{text}+ command renders inline text in a highlighted rounded box
+with a monospaced ({\tt ttfamily}) font, which is useful for keywords,
+technologies, or skills.\\
+~\\
+The optional argument sets the base color of the box, which defaults to
+{\tt gray}.
+
+\subsection{Example Code}
+\begin{codebox}[title = Inline Highlight Box Example Code]
+    Skills: \hlbox[red]{Python} \hlbox[blue]{\LaTeX} \hlbox{SQL}
+\end{codebox}
+
+\vspace{1cm}
+
+{\it will produce:}
+
+\vspace{1cm}
+
+Skills: \hlbox[red]{Python} \hlbox[blue]{\LaTeX} \hlbox{SQL}
+
+\end{document}

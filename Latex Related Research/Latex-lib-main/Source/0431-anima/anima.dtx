@@ -1,0 +1,901 @@
+% \iffalse meta-comment
+% !TEX program  = pdfLaTeX
+%
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+----------------------------------------------------------------
+anima --- Class for creating slideshow with simple animations with TikZ
+E-mail: adriano_gsgs@hotmail.com
+Written by Adriano Gomes de Santana
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+The idea for this package arose from noticing that including the |\pause| command from the |beamer| class within the |\foreach| loop command from the |tikz| package creates a sequence of frames, where each slide presents a step in the construction of the image. The purpose of the |anima| class is to provide macros that simplify the use of this effect for creating animated slide presentations.
+
+Although the functionality of this class can be compared to the transition effects of the |beamer| class, it is not a dependency of the |anima| class. However, the class makes extensive use of the image creation language provided by the |tikz| package. Lastly, it is worth noting a comparison between this class and the |animate| package. The |animate| package can create embedded animations within the document, while the |anima| class produces an animation where each frame corresponds to a page of the document. This distinction highlights the different design goals of the |anima| class.
+%</readme>
+%<*internal>
+\fi
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX\else
+  \expandafter\begingroup
+\fi
+%</internal>
+%<*install>
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+----------------------------------------------------------------
+anima --- Class for creating slideshow with simple animations with TikZ
+E-mail: adriano_gsgs@hotmail.com
+Written by Adriano Gomes de Santana
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+\endpreamble
+\postamble
+
+Copyright (C) 2009 by Adriano Gomes de Santana <adriano_gsgs@hotmail.com>
+
+This work may be distributed and/or modified under the
+conditions of the LaTeX Project Public License (LPPL), either
+version 1.3c of this license or (at your option) any later
+version.  The latest version of this license is in the file:
+
+http://www.latex-project.org/lppl.txt
+
+This work is "maintained" (as per LPPL maintenance status) by
+Adriano Gomes de Santana.
+
+This work consists of the file  anima.dtx
+and the derived files           anima.ins,
+                                anima.pdf and
+                                anima.cls.
+
+\endpostamble
+\usedir{tex/latex/anima}
+\generate{
+  \file{\jobname.cls}{\from{\jobname.dtx}{class}}
+}
+\nopreamble\nopostamble
+\usedir{tex/latex/anima}
+\generate{
+	\file{exemplo.tex}{\from{\jobname.dtx}{example}}
+}
+%</install>
+%<install>\endbatchfile
+%<*internal>
+\usedir{source/latex/anima}
+\generate{
+  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
+}
+\nopreamble\nopostamble
+\usedir{doc/latex/anima}
+\generate{
+  \file{README.txt}{\from{\jobname.dtx}{readme}}
+}
+\ifx\fmtname\nameofplainTeX
+  \expandafter\endbatchfile
+\else
+  \expandafter\endgroup
+\fi
+%</internal>
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[numbered]{hypdoc}
+\usepackage{bookmark}
+\usepackage{amsmath}
+\usepackage{pgf,tikz}
+\usepackage{readprov}
+%\EnableCrossrefs
+%\CodelineIndex
+%\RecordChanges
+\begin{document}
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+% \fi	
+%
+% \ProvidesFile{anima.dtx}[2024/11/18 v1.0 Classe Anima to Animations]
+% \GetFileInfo{\jobname.dtx}
+%
+%\title{
+%  \textsf{anima} --- 
+%	Class for creating slideshow with simple animations with TikZ%
+%	\thanks{
+%   	This file describes version \fileversion, last revised \filedate.
+%  }
+%}
+%\author{Adriano Gomes de Santana\thanks{E-mail: adriano\_gsgs@hotmail.com}}
+%\date{Released \filedate}
+%
+%\maketitle
+%\tableofcontents
+%
+%\changes{v1.0}{2024/11/18}{First public release}
+%
+% \begin{abstract}
+%	The idea for this package arose from noticing that including the |\pause| command from the |beamer| class within the |\foreach| loop command from the |tikz| package creates a sequence of frames, where each slide presents a step in the construction of the image. The purpose of the |anima| class is to provide macros that simplify the use of this effect for creating animated slide presentations.
+
+% Although the functionality of this class can be compared to the transition effects of the |beamer| class, it is not a dependency of the |anima| class. However, the class makes extensive use of the image creation language provided by the |tikz| package. Lastly, it is worth noting a comparison between this class and the |animate| package. The |animate| package can create embedded animations within the document, while the |anima| class produces an animation where each frame corresponds to a page of the document. This distinction highlights the different design goals of the |anima| class.
+% \end{abstract}
+% \changes{v1.1.0}{2024-12-14}{Correções de textos da lingua inglesa}
+% \section{Requirements}
+% This class depends on the |standalone| class and the |tikz| and |pgf| packages, as well as the other classes and packages on which these are dependent.
+%
+% \section{How It Works}
+% Like the |beamer| class, the |anima| class uses the |frame| environment to create slide presentations. The main difference is that this class focuses on using the |tikz| package to create a sequence of frames with images that form an animation as the slides transition sequentially.
+%
+% Each slide in the presentation is a frame with dimensions of 16 cm in width and 9 cm in height (i.e., in a 16:9 aspect ratio), which are commands within the |tikzpicture| environment. A standard document using the |anima| class follows this structure:
+%
+% \begin{macro}{\documentclass\{anima\}}
+% \begin{quote}
+% 	\cs{documentclass}|{anima}|\\
+%	\cs{begin}|{document}|
+%	
+%	\cs{begin}|{frame}|\oarg{n}\\
+%	\hspace*{24pt}	content\\
+%	\cs{end}|{frame}|\\
+%	\cs{end}|{document}|
+% 	\end{quote}
+% \end{macro}
+% 
+%  In ``content,'' any valid commands from the |tikz| environment can be written, such as \cs{draw}, \cs{fill}, \cs{node}, \cs{begin|scope|}, \cs{end|scope|}, \cs{clip}, as well as their respective parameters. The origin, i.e., the point |(0,0)| of this environment, is located at the center of a frame measuring 16 cm in width and 9 cm in height. This means that the points |(-8,-4.5)|, |(-8,4.5)|, |(8,4.5)|, and |(8,-4.5)| are the vertices of this frame.
+%
+% \DescribeMacro{\begin\{frame\}\oarg{n}} The |frame| environment of the |anima| class has an optional parameter \oarg{n}, which specifies the number of frames the transition will include. If this parameter is not provided, the class will assume $n=1$. For example, if $n=5$ and the code in ``content'' is 
+% \begin{quote}
+% 	\cs{draw}|(0,0) circle (1);|\\
+% 	\cs{draw}|[-latex](0,0)--({360*\um}:1);|
+% \end{quote}
+% Then the class will produce a sequence of 5 slides with the following figures centered:
+%\tikz{\draw (0,0) circle (.3);\draw[-latex] (0,0)--(0:.3);}, 
+%\tikz{\draw (0,0) circle (.3);\draw[-latex] (0,0)--(90:.3);}, 
+%\tikz{\draw (0,0) circle (.3);\draw[-latex] (0,0)--(180:.3);}, 
+%\tikz{\draw (0,0) circle (.3);\draw[-latex] (0,0)--(270:.3);} e 
+%\tikz{\draw (0,0) circle (.3);\draw[-latex] (0,0)--(360:.3);}. By increasing or decreasing the value of $n$, the class will produce more or fewer frames, representing the animation of a pointer rotating counterclockwise within the circumference of radius 1.
+%
+% For a quick explanation of the |tikz| package commands and what is happening in the code:  
+%\begin{itemize}
+%	\item The \cs{draw} command draws shapes or lines on the screen based on the parameters provided immediately after it.  
+%	\item The sequence |(a,b) circle (c)| draws a circle centered at the point |(a,b)| with a radius of |c|.  
+%	\item The sequence |P--Q| draws a line from point |P| to point |Q|.  
+%\end{itemize}
+%In |tikz|, a point can be represented by its Cartesian coordinates |(a,b)| or its polar coordinates |(t:r)|, where |t| is the angle (in degrees) and |r| is the distance from the origin (or the reference origin).
+%
+% \DescribeMacro{\um} The command |\um|, which appears in |({360*\um}:1)| in the code above (in Portuguese, "um" means "one"), is a function of the frame number of the transition, $i = 1, 2, \dots, n$, within the interval $[0,1]$.  
+%
+%In summary, |\um| takes the value $0$ on the first frame and the value $1$ on the last frame, progressing through these values in equal intervals across each frame.  Thus, in the example above, when $n = 5$, we have the following values for |360*\um|:  $= 0$ on the first frame,  $= 90$ on the second,  $= 180$ on the third,  $= 270$ on the fourth, and  $= 360$ on the fifth and final frame.
+%
+% \DescribeMacro{\zero} Another useful command to be used in the |anima| class is the command \cs{zero}. This command is defined as |1-\um|. If the code |({360*\um}:1)| produces a pointer rotating counterclockwise in the previous example, replacing this part with |({360*\zero}:1)| will produce the same pointer, but rotating clockwise instead.
+%
+% The commands |\um| and |\zero| are very useful for creating various animations with |tikz|. We have already seen an example of rotation. Another possibility is to move a figure from a point $(a,b)$ to a point $(c,d)$. For example, the following code:
+% \begin{quote}
+% 	\cs{draw}|(2,3)--(4,4);|\\
+% 	\cs{fill}|({2*\zero+4*\um},{3*\zero+4*\um}) circle (.3);|
+% \end{quote}
+% will produce the effect of a sequence of figures.
+% \tikz[scale=.3]{\draw (2,3)--(4,4);\fill ({2*(3/3)+4*(0/3)},{3*(3/3)+4*(0/3)}) circle (.3);},
+% \tikz[scale=.3]{\draw (2,3)--(4,4);\fill ({2*(2/3)+4*(1/3)},{3*(2/3)+4*(1/3)}) circle (.3);},
+% \tikz[scale=.3]{\draw (2,3)--(4,4);\fill ({2*(1/3)+4*(2/3)},{3*(1/3)+4*(2/3)}) circle (.3);} e
+% \tikz[scale=.3]{\draw (2,3)--(4,4);\fill ({2*(0/3)+4*(3/3)},{3*(0/3)+4*(3/3)}) circle (.3);}.
+% The following code
+% \begin{quote}
+% 	\cs{fill}|[opacity={\zero}](0,0) circle (1);|
+% \end{quote}
+% will cause the figure to gradually disappear, as in the example.
+% \tikz[scale=.3]{\fill[opacity=1] (0,0) circle (1);}, 
+% \tikz[scale=.3]{\fill[opacity=.75] (0,0) circle (1);}, 
+% \tikz[scale=.3]{\fill[opacity=.5] (0,0) circle (1);}, 
+% \tikz[scale=.3]{\fill[opacity=.25] (0,0) circle (1);}, 
+% \tikz[scale=.3]{\fill[opacity=0] (0,0) circle (1);}. Already the code
+% \begin{quote}
+% 	\cs{begin}|{scope}[rotate around y={\um}]|\\
+%	\hspace*{24pt} \cs{draw}|[-latex,red] (0,0) -- (1,0);|\\
+%	\hspace*{24pt} \cs{draw}|[-latex,blue] (0,0) -- (0,1);|\\
+%	\hspace*{24pt} \cs{draw}|[-latex,green] (0,0) -- (0,0,1);|\\
+%   \cs{end}|{scope}|
+% \end{quote}
+% will produce
+% \tikz[scale=.6,rotate around y={0}]{
+%   \draw[-latex,red] (0,0) -- (1,0);
+%	\draw[-latex,blue] (0,0) -- (0,1);
+%	\draw[-latex,green] (0,0) -- (0,0,1);
+%},
+% \tikz[scale=.6,rotate around y={30}]{
+	%	\draw[-latex,red] (0,0) -- (1,0);
+	%	\draw[-latex,blue] (0,0) -- (0,1);
+	%	\draw[-latex,green] (0,0) -- (0,0,1);
+	%},
+% \tikz[scale=.6,rotate around y={60}]{
+	%	\draw[-latex,red] (0,0) -- (1,0);
+	%	\draw[-latex,blue] (0,0) -- (0,1);
+	%	\draw[-latex,green] (0,0) -- (0,0,1);
+	%} e 
+% \tikz[scale=.6,rotate around y={90}]{
+	%	\draw[-latex,red] (0,0) -- (1,0);
+	%	\draw[-latex,blue] (0,0) -- (0,1);
+	%	\draw[-latex,green] (0,0) -- (0,0,1);
+	%}.
+%
+% In summary, it is easy to see the many animation possibilities that can be created with |tikz| using the commands |\um| and |\zero| in the |anima| class. At the end of this documentation, an implementation of a model with some other possibilities is presented.
+%
+% \section{Main Commands}
+%
+% \DescribeMacro{\uns\meta{*}\oarg{r}\oarg{s}\marg{a}\marg{b}\marg{c}} \hspace*{2cm}In addition to the commands |\um| and |\zero| presented earlier, there are several other commands implemented by the class to facilitate animation creation. One such command is |\uns|\marg{a}\marg{b}\marg{c}. This command is a function that divides the interval $[0,1]$ into three parts proportional to the ratio |a:b:c| and performs the animation in the intermediate part. The behavior of this command can be represented by its graph.
+%\begin{center}
+%\begin{tikzpicture}[scale=2]
+%	\foreach \i in {-.4,0,...,2.4}
+%	\draw (\i,-.05) -- (\i,.05);
+%	\draw[-latex] (-.4,0)--(2.6,0);
+%	\foreach \i in {-.2,0,...,1.2}
+%	\draw (-.05,\i) -- (.05,\i);
+%	\draw[-latex] (0,-.2)--(0,1.4);
+%   \draw[blue,line width=.8pt] (0,0)--(.8,0)--(1.7,1)--(2,1);
+%	\draw[latex-latex,red] (0,-.1)--node[below]{$a$} (.8,-.1);
+%	\draw[latex-latex,red] (.8,-.1)--node[below]{$b$} (1.7,-.1);
+%	\draw[latex-latex,red] (1.7,-.1)--node[below]{$c$} (2,-.1);
+%\end{tikzpicture}
+%\end{center}
+% This command was created to produce successive animations without the need to create the same slide multiple times using the |\um| command. For example, if we want a figure to move to the right and then consecutively to the left, we can use the following code:
+% \begin{quote}
+%	\cs{fill}|[-latex,blue] ({\uns011},{\uns110}) circle (1);|\\
+% \end{quote}
+%
+% If the option \meta{*} is passed to the \cs{uns} command, the animation will have a variable speed, starting at zero velocity with positive acceleration, reversing the acceleration midway through the animation, and bringing the velocity back to zero at the end. This option gives the animations a more natural appearance.
+%
+% \DescribeMacro{\zeros\marg{a}\marg{b}\marg{c}} The command |\zeros| is defined as |1-\uns|. By substituting one command for the other, using the same parameters, we will always obtain the inverse animation.
+%
+% \DescribeMacro{block} Just like in the |beamer| class, in the |anima| class we have the |block| environment implemented to insert information such as text into the slide presentation. To use the |block| environment, we write the following code:
+% \begin{quote}
+% 	\cs{begin}|{block}|\oarg{post}\marg{Title}\oarg{width}\oarg{conf}\oarg{conf}\\
+%	\hspace*{24pt}	content\\
+%	\cs{end}|{block}|
+%\end{quote}
+% 
+% The mandatory parameter \marg{Title} is the title of the block, and it accepts a text value. The parameter \oarg{post} specifies the position of the top center of the |block|, and it must receive a point such as $(a,b)$ or $(t:r)$. Each new block inserted into the slide is placed directly below the previous one. The parameter \oarg{width} determines the length of the block. Finally, the \oarg{conf} and \oarg{conf} parameters are the configurations for the text of the title and the "content," respectively. Any valid parameters for the |\node| command from the |tikz| package can be used here.
+%
+% \DescribeMacro{alertblock}\DescribeMacro{exampleblock}\DescribeMacro{anotherblock} The environments |alertblock|, |exampleblock|, and |anotherblock| work similarly to the |block| environment, but with a different color scheme.
+%
+% \DescribeMacro{notitleblock} The |notitleblock| environment is similar to the |block| environment, but without the title bar.
+%
+% \DescribeMacro{\animaColorTheme\marg{c1}...\marg{c6}} The command \cs{animaColorTheme}\marg{c1}...\marg{c6} defines the color palette for the slide presentation. The colors should be inserted using their HTML codes, such as |FFFFFF| or |FF4500|, without the \# character. The parameter \marg{c1} defines the background color of the frame, and the second parameter \marg{c2} defines the primary color for texts and figures in the presentation. These first two colors can be used by the user with the names \it{boardColor} and \it{textColor}, respectively. The remaining colors are auxiliary colors that determine the colors for the |block|, |alertblock|, |exampleblock|, and |anotherblock| environments, respectively. These last four colors can be used under the names \it{animaColor1}, \it{animaColor2}, \it{animaColor3}, and \it{animaColor4}, respectively.
+%
+% \DescribeMacro{\animaFormatText\marg{conf}} The command |\animaFormatText|\marg{conf} is used to modify the formatting of the block titles.
+%
+%
+% \DescribeMacro{\animaFormatTitle\marg{conf}} The command |\animaFormatTitle|\marg{conf} is used to modify the formatting of the block content texts.
+%
+%
+% \DescribeMacro{\animaFrameTitle\marg{t}\marg{n}\marg{c}\marg{y}} \hspace*{2cm}The command |\animaFrameTitle|\marg{t}\marg{n}\marg{c}\marg{y} can be used to create a title slide for the presentation. In comparison with |beamer|, it is similar to the command |\makeframetitle|. The mandatory parameters \marg{t}, \marg{n}, \marg{c}, and \marg{y} are texts representing the "Title" of the presentation, the "Name" of the author, the "City" or location, and the "Year" or date.
+%
+%
+% \DescribeMacro{\animaBoardDimension\marg{w}\marg{h}} With the command |\animaBoardDimension|\marg{w}\marg{h}, it is possible to modify the dimensions of the presentation. The parameters \marg{w} and \marg{h} represent the width and height of the presentation, respectively. 
+%
+% \DescribeMacro{\nFrame} The command \cs{nFrame} is the counter that indicates which frame of the animation is currently being displayed. The internal counter of the class is \cs{anima@FrameCount}. 
+%
+% \DescribeMacro{\animaStyle\marg{style}} This command provides style options for slide presentations using the |anima| class. In version v1.1, the available styles are |anima| and |default|. Any option not listed in the code for the argument *style* will default to the |default| option.
+%
+% \DescribeMacro{\animaColor\marg{palette}} This command internally uses the \cs{animaColorTheme} command to provide color palette options for slide presentations using the |anima| class. In version v1.1, the available color palettes are |browntext|, |greenboard|, |blackboard|, |graytext|, |nf|, and |default|. Any option not listed in the code for the *pallet* argument will default to the |default| option.
+%
+% \DescribeMacro{\animaTheme\marg{theme}} This command provides theme options for slide presentations using the |anima| class. In version v1.1, the available themes are |plane| and |default|. The |plane| theme removes the grid from the background of the slides. Any option not listed in the code for the *theme* argument will default to the |default| option.
+%
+% \section{Implementation}
+%    \begin{macrocode}
+%<*class>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{anima}[2024/11/12 Classe Anima para Animations]
+\LoadClass[multi=page]{standalone}
+
+\RequirePackage{pgf,tikz}[1994/06/01]
+\usetikzlibrary{positioning}
+
+\newcommand\animaFormatText{\large}
+\newcommand\animaFormatTitle{\large\bf}
+\newcommand{\animaFrameTitle}[4]{
+	\begin{anima}
+		\node (centro) at (0,0) {};
+		\begin{block}{\huge\vphantom{Íq} #1}
+			[(\anima@BoardWidth-.15)*1cm]
+			[above = of centro,
+			align = center]
+			[node distance = 0.5cm, below = of animaPosBlock]
+			\\\Large #2
+		\end{block}
+		\node[
+			text width = {(2*\anima@BoardWidth-0.25)*1cm},
+			node distance = 3.5cm,
+			below = of centro]
+			{#3\hfill #4};
+	\end{anima}
+}
+
+
+% Dimensões do Slide
+\newcommand\animaBoardDimension[2]{
+	\def\anima@BoardWidth{(#1/2)}
+	\def\anima@BoardHeight{(#2/2)}
+}
+\animaBoardDimension{16}{9}
+
+% Definião de cores
+\newcommand{\animaColorTheme}[6]{
+	\definecolor{anima@BoardColor}	{HTML}{#1}
+	\definecolor{boardColor}		{HTML}{#1}
+	\definecolor{anima@TextColor}	{HTML}{#2}
+	\definecolor{textColor}			{HTML}{#2}
+	\definecolor{anima@Color1}  	{HTML}{#3}
+	\definecolor{animaColor1}		{HTML}{#3}
+	\definecolor{anima@Color2}  	{HTML}{#4}
+	\definecolor{animaColor2}		{HTML}{#4}
+	\definecolor{anima@Color3}  	{HTML}{#5}
+	\definecolor{animaColor3}		{HTML}{#5}
+	\definecolor{anima@Color4}  	{HTML}{#6}
+	\definecolor{animaColor4}		{HTML}{#6}
+}
+
+\def\animaColorThemeI{
+	\animaColorTheme{FFFFFF}
+	{000000}
+	{0000FF}
+	{FF0000}
+	{00FF00}
+	{FFFF00}
+}
+\def\animaColorThemeII{
+	\animaColorTheme{FFFFFF}
+	{660907}
+	{016BBF}
+	{FF0000}
+	{00FFFF}
+	{FFD16A}
+
+}
+
+\animaColorThemeI
+
+\newcommand\animaBackgroud{
+	\draw[dotted, opacity=.2,line width = .3pt] %
+	({-\anima@BoardWidth},{-\anima@BoardHeight}) grid %
+	({\anima@BoardWidth},{\anima@BoardHeight});
+}
+
+%    \end{macrocode}
+%\begin{macro}{\uns}
+% As próximas linhas implementam o comando |\uns{a}{b}{c}|. Este comando é uma função de [1,0] em [0,1] definida por partes da seguinte forma
+%$$\backslash uns(x)=\begin{cases}
+%	0 &\mbox{ se } x< \frac{a}{a+b+c}\\
+%	1 &\mbox{ se } x> \frac{a+b}{a+b+c}\\
+%	\frac{a+b+c}{b}x-\frac{a}{b} &\mbox{ nos demais casos}
+%\end{cases}$$
+%\end{macro}
+%\changes{v1.1.0}{2024-12-14}{Modificação do comando |uns| acrescentando mais opções e corrigindo bugs de possíveis divisões por zero.}
+%    \begin{macrocode}
+\NewExpandableDocumentCommand
+{\uns}{s o o m m m}{
+    %\IfNoValueTF{#2}{
+    % Não há #2 nem #3   
+        \ifnum#5=0
+            (\um*(#4+#6)>=#4?1:0)
+        \else
+           \IfBooleanTF{#1}{
+               (\um*(#4+#5+#6)<#4?0:
+                (\um*(#4+#5+#6)>=#4+#5?1:
+                (
+                    -((2*(#6+#5+#4)^3)/#5^3)*(\um)^3+
+                    ((3*(#5+2*#4)*(#6+#5+#4)^2)/#5^3)*(\um)^2+
+                    -((6*#4*(#5+#4)*(#6+#5+#4))/#5^3)*\um+
+                    ((#4^2*(3*#5+2*#4))/#5^3)
+                )
+                )) 
+            }{
+               (\um*(#4+#5+#6)<#4?0:
+                (\um*(#4+#5+#6)>=#4+#5?1:
+                (((#4+#5+#6)/#5)*\um-#4/#5)
+                )) 
+            }
+        \fi        
+    %}{
+    %    \IfNoValueTF{#3}{
+    %        % Há #2, mas não há #3
+    %        \ifnum#4=0
+    %            \ifnum#5=0
+    %                1
+    %            \else
+    %                1
+    %            \fi
+    %        \else
+    %            \ifnum#5=0
+    %                1
+    %            \else
+    %                1
+    %            \fi
+    %        \fi
+    %    }{
+    %        \ifnum#4=0
+    %            \ifnum#5=0
+    %                1
+    %            \else
+    %                1
+    %            \fi
+    %        \else
+    %            \ifnum#5=0
+    %                1
+    %            \else
+    %                1
+    %            \fi
+    %        \fi
+    %    }
+    %}
+}
+\newcommand{\zeros}[3]{(1-\uns{#1}{#2}{#3})}
+
+% Ambiente anima
+%    \end{macrocode}
+%\changes{v1.1.0}{2024-12-14}{Mudança no ponto de Referência dos Blocks}
+%    \begin{macrocode}
+\newcount\anima@FrameCount
+\newcount\nFrame
+\NewDocumentEnvironment{anima}{+O{1} +b}{
+	\ifnum #1 = 1
+	\def\um{1}
+	\def\zero{0}
+	\begin{page}%
+		\begin{tikzpicture}[color=anima@TextColor,line width=1.5pt]
+		\clip ({-\anima@BoardWidth},{-\anima@BoardHeight}) 
+			rectangle ({\anima@BoardWidth},{\anima@BoardHeight});
+		\fill[color=anima@BoardColor]
+			({-\anima@BoardWidth},{-\anima@BoardHeight}) 
+			rectangle ({\anima@BoardWidth},{\anima@BoardHeight});
+		\animaBackgroud
+		\node (animaPosBlock) at \anima@PositionBlock{};
+			#2
+		\end{tikzpicture}%
+	\end{page}
+	\else
+	\anima@FrameCount = 0
+	\loop
+	\nFrame = \anima@FrameCount
+	\def\um{(\the\anima@FrameCount/(#1-1))}
+	\def\zero{(1-\um)}
+	\begin{page}%
+		\begin{tikzpicture}[color=anima@TextColor,line width=1.0pt]
+		\clip 
+		({-\anima@BoardWidth},{-\anima@BoardHeight}) rectangle 
+		({\anima@BoardWidth},{\anima@BoardHeight});
+		\fill[color=anima@BoardColor] 	
+		({-\anima@BoardWidth},{-\anima@BoardHeight}) rectangle 
+		({\anima@BoardWidth},{\anima@BoardHeight});
+		\animaBackgroud
+		\node (animaPosBlock) at \anima@PositionBlock {};
+			#2
+		\end{tikzpicture}%
+	\end{page}
+	\advance \anima@FrameCount +1
+	\ifnum \anima@FrameCount < #1 \repeat
+	\fi
+}{}
+
+\renewenvironment{frame}[1][1]{\begin{anima}[#1]}{\end{anima}}
+
+%comando textblock
+\def\anima@PositionBlock{(0,{\anima@BoardHeight})}
+\def\anima@WhidthBlock{\anima@BoardWidth*0.9875 cm}
+
+%\changes{v1.1.0}{2024-12-14}{Criação de Temas}
+\tikzstyle{anima@themeBlock}=[
+		draw,
+		bottom color = BlockColor,
+		top color    = BlockColor!50!anima@BoardColor
+]
+
+\newcommand{\animaStyle}[1]{
+	\def\anima@NameStyle{#1}
+	\def\anima@animaStyle{anima}
+	\def\anima@defaultStyle{default}
+	\ifx\anima@NameStyle\anima@animaStyle
+		\tikzstyle{anima@themeBlock}=[
+			draw = BlockColor,
+			bottom color = BlockColor,
+			top color    = BlockColor!50!anima@BoardColor,
+			rounded corners=1.4pt
+		]
+	\else
+		\tikzstyle{anima@themeBlock}=[
+			draw,
+			bottom color = BlockColor,
+			top color    = BlockColor!50!anima@BoardColor
+		]
+	\fi
+}
+\newcommand{\animaColor}[1]{
+	\def\anima@NameColor{#1}
+	\def\anima@browntextColor{browntext}
+	\def\anima@greenboardColor{greenboard}
+	\def\anima@blackboardColor{blackboard}
+	\def\anima@graytextColor{graytext}
+	\def\anima@nfColor{nf}
+	\def\anima@defaultColor{default}
+	\ifx\anima@NameColor\anima@browntextColor
+		\animaColorTheme
+			{FFFFFF}{660907}{016BBF}
+			{FF0000}{00FFFF}{FFD16A}
+	\else\ifx\anima@NameColor\anima@greenboardColor
+		\animaColorTheme
+			{00542C}{FFFFFF}{2222FF}
+			{FF3333}{00FF00}{FFFF00}
+	\else\ifx\anima@NameColor\anima@blackboardColor
+		\animaColorTheme
+			{252B26}{FFFFFF}{2BA8D9}
+			{F23030}{2EA662}{F28322}
+	\else\ifx\anima@NameColor\anima@graytextColor
+		\animaColorTheme
+			{FFFFFF}{252B26}{2BA8D9}
+			{F23030}{2EA662}{F28322}
+	\else\ifx\anima@NameColor\anima@nfColor
+		\animaColorTheme
+			{252B26}{FFFFFF}{2BA8D9}
+			{F23030}{2EA662}{EEEE44}%{F28322}
+	\else
+		\animaColorTheme%
+			{FFFFFF}{000000}{0000FF}%
+			{FF0000}{00FF00}{FFFF00}
+	\fi\fi\fi\fi
+
+}
+
+\newcommand{\animaTheme}[1]{
+	\def\anima@NameTheme{#1}
+	\def\anima@defaultTheme{default}
+	\def\anima@LTbarTheme{LTbar}
+	\def\anima@planeTheme{plane}
+	\ifx\anima@NameTheme\anima@LTbarTheme
+		\renewcommand\animaBackgroud{
+			\draw[dotted, opacity=.2,line width = .3pt] %
+				({-\anima@BoardWidth},{-\anima@BoardHeight}) grid %
+				({\anima@BoardWidth},{\anima@BoardHeight});
+			\fill[
+				anima@Color3,
+				draw=anima@Color3!50!anima@BoardColor,
+				opacity=.7]
+				({-\anima@BoardWidth},{-\anima@BoardHeight}) rectangle 
+				({-0.7*\anima@BoardWidth},{\anima@BoardHeight});
+			\fill[
+				anima@Color3,
+				draw=anima@Color3!50!anima@BoardColor,
+				opacity=.5]
+				({-\anima@BoardWidth+2.4},{\anima@BoardHeight}) rectangle 
+				({\anima@BoardWidth},{0.7*\anima@BoardHeight});
+			\node at (-5,4.5) [anchor=north west]{\begin{minipage}{14cm}\color{anima@TextColor} \small
+					\textbf{\@title}\vspace{-5pt}
+					
+					\@author
+				\end{minipage}};
+		}
+	\else\ifx\anima@NameTheme\anima@planeTheme
+		\renewcommand\animaBackgroud{}
+	\else
+		\renewcommand\animaBackgroud{
+			\draw[dotted, opacity=.2,line width = .3pt] %
+			({-\anima@BoardWidth},{-\anima@BoardHeight}) grid %
+			({\anima@BoardWidth},{\anima@BoardHeight});
+		}
+	\fi\fi
+}
+
+\NewDocumentEnvironment{block}
+{+O{animaPosBlock} +m +O{\anima@WhidthBlock} +O{} +O{} +b}
+{
+	\colorlet{BlockColor}{anima@Color1}
+	\node[
+		anima@themeBlock,
+		text width = {2*#3-0.25cm},
+		node distance = 0.0cm,
+		below = of {#1}, #4]
+		(animaPosBlock) {\animaFormatTitle\vphantom{Íq} #2};
+		\node[	text width = {2*#3-0.25cm},
+		node distance = 0.0cm,
+		below = of animaPosBlock,#5]
+	(animaPosBlock) {\animaFormatText #6};
+}{}
+
+\NewDocumentEnvironment{alertblock}
+{+O{animaPosBlock} +m +O{\anima@WhidthBlock} +O{} +O{} +b}
+{
+	\colorlet{BlockColor}{anima@Color2}
+	\node[
+		anima@themeBlock,
+		text width = {2*#3-0.25cm},
+		node distance = 0.0cm,
+		below = of {#1}, #4]
+		(animaPosBlock) {\animaFormatTitle\vphantom{Íq} #2};
+	\node[	text width = {2*#3-0.25cm},
+		node distance = 0.0cm,
+		below= of animaPosBlock,#5]
+		(animaPosBlock) {\animaFormatText #6};
+}{}
+
+\NewDocumentEnvironment{exampleblock}
+{+O{animaPosBlock} +m +O{\anima@WhidthBlock} +O{} +O{} +b}
+{
+	\colorlet{BlockColor}{anima@Color3}
+	\node[
+		anima@themeBlock,
+		text width = {2*#3-0.25cm},
+		node distance = 0.0cm,
+		below = of {#1}, #4]
+		(animaPosBlock) {\animaFormatTitle\vphantom{Íq} #2};
+	\node[	text width = {2*#3-0.25cm},
+		node distance = 0.0cm,
+		below= of animaPosBlock,
+		#5]
+		(animaPosBlock) {\animaFormatText #6};
+}{}
+
+\NewDocumentEnvironment{anotherblock}
+{+O{animaPosBlock} +m +O{\anima@WhidthBlock} +O{} +O{} +b}
+{
+	\colorlet{BlockColor}{anima@Color4}
+	\node[
+		anima@themeBlock,
+		text width = {2*#3-0.25cm},
+		node distance = 0.0cm,
+		below = of {#1}, #4]
+		(animaPosBlock) {\animaFormatTitle\vphantom{Íq} #2};
+	\node[	text width = {2*#3-0.25cm},
+		node distance = 0.0cm,
+		below= of animaPosBlock,
+		#5]
+		(animaPosBlock) {\animaFormatText #6};
+}{}
+
+\NewDocumentEnvironment{notitleblock}
+	{+O{animaPosBlock} +O{\anima@WhidthBlock} +O{} +b}
+{
+	\node[
+		text width = {2*#2-0.25cm},
+		node distance = 0.0cm,
+		below= of animaPosBlock,
+		#3]
+		(animaPosBlock) {\animaFormatText #4};
+}{}
+
+\newcommand{\animaExemplo}{\large
+	\begin{block}[(0,4.2)]{LAYOUT EXAMPLE WITH BLOCK OF TITLE}[7.9cm]
+	\end{block}
+	
+	\begin{exampleblock}[(-4,3)]{EXAMPLE BLOCK}[3.9cm]
+		A example of block with a equation
+		$$f(x)=2\sin(.57x)$$
+	\end{exampleblock}
+	
+	\begin{alertblock}{ALERT BLOCK}[3.9cm]
+	\end{alertblock}
+	
+	\begin{scope}[
+		shift={(4,-2)},
+		scale=1.3,
+		rotate around x= {360*\uns011},
+		rotate around y= {360*\uns110}]
+		\draw[animaColor1,-latex] (0,0)--(1,0)node[anchor=north]{$x$};
+		\draw[animaColor2,-latex] (0,0)--(0,1)node[anchor=east]{$y$};
+		\draw[animaColor4] (-1,-1,-1)--(1,-1,-1)--(1,1,-1)--(-1,1,-1)--cycle;
+		\draw[animaColor4] (-1,-1,1)--(1,-1,1)--(1,1,1)--(-1,1,1)--cycle;
+		\draw[animaColor4] (-1,-1,-1)--(-1,-1,1) (1,-1,-1)--(1,-1,1)
+		(1,1,-1)--(1,1,1) (-1,1,-1)--(-1,1,1);
+		\draw[anima@Color3,-latex] (0,0)--(0,0,1)node[anchor=south]{$z$};
+	\end{scope}
+	
+	\node at (0,3) [anchor=north west]{
+		\begin{minipage}{7.25cm}\animaFormatText
+			{\color{textColor} Text in the color textColor}\\
+			{\color{animaColor1} Text in the color animaColor1}\\
+			{\color{animaColor2} Text in the color animaColor2}\\
+			{\color{animaColor3} Text in the color animaColor3}\\
+			{\color{animaColor4} Text in the color animaColor4}\\
+	\end{minipage}};
+
+	% Gráfico de Função da integral
+	\begin{scope}[shift={(-7,-4)},color=animaColor2]
+		% exios x e y=f(x)
+		\draw[-latex] (-.5,0)--(6,0)node[anchor=north]{$x$};
+		\draw[-latex] (0,-.5)--(0,3)node[anchor=east]{$f(x)$};
+		% Retângulos de soma de Riemann
+		\def\numero{\the\nFrame}
+		\foreach \i in {-1,0,...,\numero}{
+			\fill[color=animaColor4]
+			({1.25+(\i+1)*(4/((\numero)+2))},0)--
+			({1.25+(\i+2)*(4/((\numero)+2))},0)--
+			({1.25+(\i+2)*(4/((\numero)+2))},{2*sin(.6*(1+(\i+2)
+				*(4/((\numero)+2))) r)})--
+			({1.25+(\i+1)*(4/((\numero)+2))},{2*sin(.6*(1+(\i+2)
+				*(4/((\numero)+2))) r)})--
+			cycle;
+		% eixos x e y=f(x)
+		\draw[-latex] (-.5,0)--(6,0)node[anchor=north]{$x$};
+		\draw[-latex] (0,-.5)--(0,3)node[anchor=east]{$f(x)$};
+		% Gráfico da função (pede ser alterada)
+		\draw[color=animaColor3,domain=0:{5.7}] plot (\x,{2*sin(.57*\x r)});
+		\draw[color=animaColor1,domain=0:{5.7*\um}] plot (\x,{2*sin(.57*\x r)});
+	}
+	\end{scope}
+}
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+%</class>
+%    \end{macrocode}
+%
+%\section{Example}
+%    \begin{macrocode}
+%<*example>
+\documentclass{anima}
+
+\animaStyle{anima}
+\animaColor{graytext}
+\animaTheme{plane}
+
+\begin{document}
+
+\animaFrameTitle
+	{PRESENTATIONS WITH ANIMATIONS IN \LaTeX}
+	{Adriano G. Santana}
+	{Toledo-PR}{\today}
+
+\begin{frame}[3]
+	\animaExemplo
+\end{frame}
+
+\begin{frame}[3]
+	
+	\begin{block}[(-5.1,4.4)]{A CLOCK}[2.8cm]
+	\end{block}
+	
+	\draw[-latex] (-5,1.8)--++({90-360*\um}:1.4);
+	\draw[-latex] (-5,1.8) circle (1.4);
+	
+	\begin{alertblock}[(-5.1,0)]{DESCRIPTION}[2.8cm]
+		4 - defines the counter;\\
+		5 - initializes it to zero;\\
+		7 - start of the loop;\\
+		10 - drawing the pointer;\\
+		14 - counter + 1;\\
+		15 - stop condition
+	\end{alertblock}
+	
+	\begin{exampleblock}[(2.9,4.4)]{CODE}[5cm]
+		\normalsize\tt{%
+			1 \textbackslash documentclass[multi=page]\{standalone\}\\
+			2 \textbackslash usepakage\{pgf,tikz\}
+			
+			3 \qquad\textbackslash begin\{document\}
+			
+			4 \qquad\textbackslash newcount\textbackslash nFrame\\
+			5 \qquad\textbackslash nFrame = 0\\
+			6 \qquad\textbackslash def\textbackslash angulo\{90- 36*\textbackslash the\textbackslash nfram\}\\
+			7 \qquad\textbackslash loop\\
+			8 \qquad\qquad	\textbackslash begin\{page\}\%\\
+			9 \qquad\qquad	\textbackslash begin\{tikzpicture\}\\
+			10\qquad\qquad\qquad\textbackslash draw [->] (0,0)--(\{\textbackslash angulo\}:1);\\
+			11\qquad\qquad\qquad\textbackslash draw (0,0) circle (1);\\
+			12\qquad\qquad	\textbackslash end\{tikzpicture\}\%\\
+			13\qquad\qquad	\textbackslash end\{page\}\\
+			14\qquad\textbackslash advance \textbackslash nFrame +1\\
+			15\qquad\textbackslash ifnum \textbackslash nFrame < 11 \textbackslash repeat\\
+			16\textbackslash end\{documento\}}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}[3]
+	
+	\begin{block}[(-5.1,4.4)]{A CLOCK}[2.8cm]
+	\end{block}
+	
+	\draw[-latex] (-5,1.8)--++({90-360*\um}:1.4);
+	\draw[-latex] (-5,1.8) circle (1.4);
+	
+	\begin{alertblock}[(-5.1,0)]{DESCRIPTION}[2.8cm]
+		1 - anima class;\\
+		3 - \textbackslash um default counter\\
+		4 - [10] defines the number of repetitions\\
+		5 and 6 - same command as before
+	\end{alertblock}
+	
+	\begin{exampleblock}[(2.9,4.4)]{CODE WITH ANIMA CLASS}[5cm]
+		Of course, the same result can be achieved by creating a command with \textbf{\textbackslash newcommand} or \textbf{\textbackslash NewDocumentEnvironment}. This is exactly what the \textbf{anima} class does. With this class, the same result can be obtained with the following code. \\\vspace{.5cm}
+		
+		\tt{% \normalsize
+			1 \textbackslash documentclass\{anima\}\\
+			
+			2 \qquad\textbackslash begin\{document\}\\
+			3 \qquad\textbackslash def\textbackslash angulo\{90- 360*\textbackslash um\}\\
+			4 \qquad\qquad	\textbackslash begin\{frame\}[10]\\
+			5 \qquad\qquad\qquad\textbackslash draw [->] (0,0)--(\{\textbackslash angulo\}:1);\\
+			6 \qquad\qquad\qquad\textbackslash draw (0,0) circle (1);\\
+			7 \qquad\qquad	\textbackslash end\{frame\}\\
+			8 \textbackslash end\{documento\}}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}[3]
+	\begin{block}{HOW WORKING}
+		The environment named {\tt frame} produces a screen with a 16:9 aspect ratio, similar to modern computer, smartphone, and other device screens, with the point (0,0) at the center.
+	\end{block}
+	
+	\draw[latex-latex] ({-8*\um},-3.5)--node[above]{16cm}({8*\um},-3.5);
+	\draw[latex-latex] (-7,{-4.5*\um})--node[right]{9cm} (-7,{4.5*\um});
+\end{frame}
+
+\begin{frame}
+	\begin{block}{HOW WORKING}
+		The optional parameter {\tt{\color{animaColor1}[10]}} defines the number of frames in the animation. The command {\tt\textbackslash nFrame} is the counter responsible for the loop within the environment, ranging from 0 to the total number of frames minus 1. The command {\tt{\color{animaColor2}\textbackslash um}} spans the interval from 0 to 1, dividing it into {\tt \textbackslash nFrame} segments.
+		
+		We can insert any code within the \textbf{anima} environment that would typically be used in the \textbf{tikzpicture} environment of TikZ. Additional definitions can be included using the \textbf{scope} environment from TikZ itself.
+	\end{block}
+	\begin{exampleblock}{NEW EXAMPLE}
+		\tt{%
+			1 \textbackslash documentclass\{anima\}\\
+			
+			2 \qquad\textbackslash begin\{document\}\\
+			3 \qquad\textbackslash def\textbackslash angulo\{90- 360*{\color{animaColor2}\textbackslash um}\}\\
+			4 \qquad	\textbackslash begin\{frame\}{\color{animaColor1}[10]}\\
+			5 \qquad\qquad\textbackslash draw [->] (0,0)--(\{\textbackslash angulo\}:1);\\
+			6 \qquad\qquad\textbackslash draw (0,0) circle (1);\\
+			7 \qquad	\textbackslash end\{frame\}\\
+			8 \textbackslash end\{documento\}}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+	\begin{block}{BLOCK, EXAMPLEBLOCK, ALERTBLOCK}
+		To simplify the creation of slide presentations, the \textbf{block}, \textbf{alertblock}, and \textbf{exampleblock} environments from the \textbf{beamer} class have been recreated.\vspace{.5cm}
+		
+		{\tt%
+			1- \textbackslash begin\{block\}\{Title\}\\
+			2-\qquad	Body text\\
+			3- \textbackslash begin\{block\}\\
+		}
+	\end{block}
+	\begin{alertblock}{Alignment}
+		The first block starts at the top of the page, and subsequent blocks are aligned directly below it.
+	\end{alertblock}
+	\begin{exampleblock}{}
+		A title is mandatory, even if left empty.
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+	\begin{block}[(-2,3)]{Basic Block Options}[5.5cm]
+		{\tt%
+			1- \textbackslash begin\{block\}{\color{animaColor2}[(-2,3)]}\{Title\}{\color{animaColor1}[5.5cm]}\\
+			2-\qquad	Body text\\
+			3- \textbackslash begin\{block\}
+		}\\
+		
+		If repositioning or resizing a block is necessary, there are two optional parameters to achieve this:
+		
+		{\tt\color{animaColor1}[(-2,3)]} - defines the position of the top center of the block;\\
+		{\tt\color{animaColor2}[5.5cm]} - defines half the width of the block.
+	\end{block}
+	
+	\draw[-latex,animaColor2] (-2,3.5)--node[above,animaColor2]{5.5cm}++(5.5,0);
+	\draw[-latex,animaColor2] (-2,3.5)--node[above,animaColor2]{5.5cm}++(-5.5,0);
+	\draw[animaColor2] (-2,3.3)--(-2,3.7);~
+	\fill[animaColor1] (-2,3) circle (.2) node[above]{center block};
+	
+	\begin{exampleblock}{NEW BLOCK}[4cm]
+		The next block is always vertically aligned with the previous one. Here, we only need to define its width to ensure it doesn't exceed the screen.
+	\end{exampleblock}
+\end{frame}
+
+\end{document}
+%</example>
+%    \end{macrocode}
+%\Finale \PrintChanges \PrintIndex

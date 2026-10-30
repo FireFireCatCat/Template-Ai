@@ -1,0 +1,357 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeifsclean}[2026/04/17 v3.1 - IFSC Clean Beamer theme]
+\mode<presentation>
+
+
+% -------------------------------------------------%
+% Escolha de fontes
+% -------------------------------------------------%
+\RequirePackage{iftex}
+\ifPDFTeX
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage[utf8]{inputenc}
+  % \RequirePackage{textcomp}
+  % \RequirePackage{gensymb}
+  \usefonttheme{professionalfonts}
+
+  \RequirePackage{helvet}
+  \RequirePackage{mathpazo}
+  \RequirePackage{lmodern} 
+  \RequirePackage{fix-cm}
+\else
+% Se o usuario estiver usando o LuaLaTeX ou o XeLaTeX, use o fontspec para carregar as fontes do sistema. 
+  \RequirePackage{fontspec}
+  \RequirePackage{unicode-math}
+  \usefonttheme{professionalfonts}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase,Renderer=HarfBuzz}
+
+  \RequirePackage{newunicodechar}
+  \newunicodechar{º}{\textordmasculine}
+  \newunicodechar{ª}{\textordfeminine}
+
+  
+  \IfFontExistsTF{Inconsolata}{
+    \setmonofont[
+      % UprightFont    = * Regular,
+      % BoldFont       = * Bold,
+      ItalicFont     = * Regular,
+      BoldItalicFont = * Bold,
+      Scale          = 0.85, %MatchLowercase,
+      Ligatures      = NoCommon,
+      RawFeature     = {wght=300}, % Força a versão light da Inconsolata, que é mais legível em slides
+    ]{Inconsolata}
+  }{
+    \setmonofont{TeX Gyre Cursor}
+  }
+
+  \IfFontExistsTF{Inter}{
+    \setsansfont[
+      UprightFont = * Light,
+      BoldFont = * Bold,
+      ItalicFont = * Light Italic,
+      BoldItalicFont = * Bold Italic,
+    ]{Inter}
+  }{
+    \setsansfont{TeX Gyre Heros}
+  }
+  \IfFontExistsTF{Literata}{%
+      \setmainfont{Literata}
+  }{
+      \setmainfont{TeX Gyre Termes}
+  }
+
+  \IfFontExistsTF{TeX Gyre Termes Math}{
+      \setmathfont{TeX Gyre Termes Math}[Scale=MatchLowercase]
+  }{
+      \setmathfont{Latin Modern Math}[Scale=MatchLowercase]
+  }
+\fi
+
+
+% -------------------------------------------------%
+% Pacotes
+% -------------------------------------------------%
+
+% Estilo de codigo-fonte para o beamer
+\RequirePackage{ifsclean-listings}
+
+
+\RequirePackage{xcolor}
+\RequirePackage{xstring}
+\RequirePackage{kvoptions}
+\RequirePackage{pgf}
+\RequirePackage{relsize}
+\RequirePackage{tikz}
+\usetikzlibrary{calc,math,positioning}
+\RequirePackage{graphicx}
+\RequirePackage{etoolbox} % \BeforeBeginEnvironment
+\RequirePackage{appendixnumberbeamer} % Don't number appendix frames.
+\RequirePackage{fontawesome6}
+\RequirePackage[skins]{tcolorbox}
+\RequirePackage{ccicons}
+% \RequirePackage{caption}
+\RequirePackage{booktabs}
+\RequirePackage{siunitx}
+\RequirePackage{array}
+\RequirePackage{multirow}
+\RequirePackage{soul}
+\urlstyle{sf}
+\RequirePackage{xargs}
+\RequirePackage{siunitx}
+\RequirePackage{ragged2e}
+
+% -------------------------------------------------%
+% Parametros do tema
+% -------------------------------------------------%
+
+% ex: \DeclareStringOption [<init>] {<key>} [<default>]
+\DeclareStringOption[7 pt]{itemsep}[7 pt]
+
+\DeclareStringOption[verde]{foreground}[verde]
+\DeclareStringOption[white]{background}[white]
+\DeclareStringOption[cinzaescuro]{textfg}[cinzaescuro]
+
+\DeclareStringOption[\beamerthemeifsclean@background]{titlefg}[\beamerthemeifsclean@background]
+\DeclareStringOption[\beamerthemeifsclean@foreground]{titlebg}[\beamerthemeifsclean@foreground]
+
+\DeclareStringOption{titlebackground}
+\DeclareStringOption{titlebackgroundopacity}[0.8]
+\DeclareStringOption{logo}
+\DeclareStringOption[3.5cm]{logowidth}[3.5cm]
+
+\DeclareStringOption[\beamerthemeifsclean@background]{sectionfg}[\beamerthemeifsclean@background]
+\DeclareStringOption[\beamerthemeifsclean@foreground]{sectionbg}[\beamerthemeifsclean@foreground]
+
+\DeclareStringOption[\beamerthemeifsclean@foreground]{frametitlefg}[\beamerthemeifsclean@foreground]
+\DeclareStringOption[\beamerthemeifsclean@background]{frametitlebg}[\beamerthemeifsclean@background]
+
+\DeclareStringOption[\beamerthemeifsclean@background]{blocktitlefg}[\beamerthemeifsclean@background]
+\DeclareStringOption[\beamerthemeifsclean@foreground]{blocktitlebg}[\beamerthemeifsclean@foreground]
+\DeclareStringOption[cinzaescuro]{blockbodyfg}[cinzaescuro]
+
+\ProcessKeyvalOptions*
+
+% -------------------------------------------------%
+% Configuracoes dos pacotes
+% -------------------------------------------------%
+
+% Configuracoes para o pacote siunitx
+\sisetup{
+  locale = DE, % Configura o pacote para usar a vírgula como separador decimal
+  output-decimal-marker = {,}, % Define a vírgula como separador decimal na saída
+  group-separator = {.}, % Define o ponto como separador de milhares
+  group-minimum-digits = 4, % Define o número mínimo de dígitos para usar o separador de milhares
+  per-mode = symbol, % Define o formato para unidades por outra unidade (e.g. m/s)
+  detect-all % Detecta o modo matemático ou texto para formatar as unidades de acordo
+}
+
+% Para diminuir o tamanho da fonte do caption da figura
+% \captionsetup[figure]{font=tiny}
+
+\hypersetup{
+  pdffitwindow=false,
+  pdfstartview={FitW},
+  colorlinks=true,
+  linkcolor=.,
+  citecolor=.,
+  filecolor=.,
+  urlcolor=azul
+}
+
+% Aumentando a altura das linhas nas tabelas
+\renewcommand{\arraystretch}{1.2}
+
+% Aumentando a altura das linhas
+\linespread{1.05}
+
+
+% ---------------------------------------
+% Settings
+% ---------------------------------------
+\usefonttheme{ifsclean}
+\usecolortheme{ifsclean}
+\useinnertheme{ifsclean}
+\useoutertheme{ifsclean}
+\setbeamertemplate{navigation symbols}{}
+
+% ---------------------------------------
+\mode<all>
+% ---------------------------------------
+
+% Novos tipos de colunas alinhado: a direita, centralizado ou esquerda e que permita definir a largura
+% pacote ragged2e para usar \RaggedRight, \RaggedLeft e \centering
+\newcolumntype{R}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+% ---------------------------------------
+
+% Use esse comando para fazer links para sites
+\newcommand{\Myhref}[3][azul]{\href{#2}{\color{#1}{#3}}}%
+
+% Comando para incluir um assunto no slide de título
+\def\beamerthemeifsclean@subject{}
+\renewcommand{\subject}[1]{%
+  \def\beamerthemeifsclean@subject{#1}%
+  \hypersetup{pdfsubject={#1}}%
+}
+\newcommand{\insertsubject}{\beamerthemeifsclean@subject}
+
+% -------------------------------------------------%
+% Comando para licenciamento 
+% -------------------------------------------------%
+\newcommand{\licenciamentoLivre}{
+  \begin{center}
+    {\Huge \ccby}
+    \vspace*{1cm} 
+
+    Slides licenciados sob \href{https://creativecommons.org/licenses/by/4.0/deed.pt_BR}{\color{azul}{Creative Commons ``Atribuição 4.0 Internacional''}}
+  \end{center}
+}
+
+
+% ---------------------------------------
+% Baloes de informacao
+% ---------------------------------------
+\newtcolorbox[auto counter,number within=section]{caixainfo}[3][]{%
+  enhanced,
+  colback=#1,colframe=#1,
+  fontupper=\color{#2},
+  leftrule=15mm,
+  underlay unbroken and first={%
+    \node[below,text=#2,anchor=east]
+      at ([xshift=0mm]interior.base west) {\huge  #3};
+  }
+}
+
+\newenvironmentx{caixa}[3][1=verde]
+{
+\usebeamercolor[fg]{item caixa}%
+\setbeamercolor{structure}{bg=bg,fg=white}
+\setbeamercolor{item projected}{fg=black,bg=white} 
+\begin{caixainfo}[#1]{#2}{#3}}{\end{caixainfo}}
+
+\newenvironmentx{informacao}[3][1=verde,2=white,3=\faCircleInfo]
+{\begin{caixa}[#1]{#2}{#3}}{\end{caixa}}
+
+\newenvironmentx{informacaoazul}[3][1=azul,2=white,3=\faCircleInfo]
+{\begin{caixa}[#1]{#2}{#3}}{\end{caixa}}
+
+\newenvironmentx{atencao}[3][1=amarelo,2=black,3=\faTriangleExclamation]
+{\begin{caixa}[#1]{#2}{#3}\usebeamercolor[fg]{item caixaclara}
+}{\end{caixa}}
+
+\newenvironmentx{cuidado}[3][1=vermelho,2=white,3=\faCircleExclamation]
+{\begin{caixa}[#1]{#2}{#3}}{\end{caixa}}
+
+
+% -------------------------------------------------%
+% Ambientes inspirados nos estilos de alertas do Markdown do GitHub
+% -------------------------------------------------%
+\definecolor{notecolor}{RGB}{9,105,218}
+\definecolor{tipcolor}{RGB}{26,127,25}
+\definecolor{importantcolor}{RGB}{130,80,223}
+\definecolor{warningcolor}{RGB}{253,165,15}
+\definecolor{cautioncolor}{RGB}{207,34,46}
+
+\tcbset{alertmarkdown/.style={%
+arc=0mm,boxrule=0mm,leftrule=1mm,left=2mm,top=1mm,parbox=false,enhanced,opacityback=1,opacitybacktitle=1,opacityframe=0}}
+
+\newtcolorbox{nota}{alertmarkdown,colback=notecolor!5!white,colbacktitle=notecolor!5!white,borderline west={3pt}{0pt}{notecolor},coltitle=notecolor,title={\faCircleInfo~~\textbf{Nota}}}
+
+\newtcolorbox{tip}{alertmarkdown,colback=tipcolor!5!white,colbacktitle=tipcolor!5!white,borderline west={3pt}{0pt}{tipcolor},coltitle=tipcolor,title={\faLightbulb[regular]~~\textbf{Dica}}}
+
+\newtcolorbox{important}{alertmarkdown,colback=importantcolor!5!white,colbacktitle=importantcolor!5!white,borderline west={3pt}{0pt}{importantcolor},coltitle=importantcolor,title={\faExclamation~~\textbf{Importante}}}
+
+\newtcolorbox{warning}{alertmarkdown,colback=warningcolor!5!white,colbacktitle=warningcolor!5!white,borderline west={3pt}{0pt}{warningcolor},coltitle=warningcolor,title={\faTriangleExclamation~~\textbf{Atenção}}}
+
+\newtcolorbox{caution}{alertmarkdown,colback=cautioncolor!5!white,colbacktitle=cautioncolor!5!white,borderline west={3pt}{0pt}{cautioncolor},coltitle=cautioncolor,title={\faCircleExclamation~~\textbf{Cuidado}}}
+
+% -------------------------------------------------%
+% IFSC Logo
+% -------------------------------------------------%
+\tikzmath{
+  \dimensao   = .5; %.31
+  \canto =  (.1 * \dimensao);
+  \diametro = 1.05 * \dimensao;
+  \dist = 1.2 * \dimensao; 
+}
+
+\tikzset{roundnode/.style={circle, fill=#1, minimum size=\diametro cm}}%
+
+\tikzset{squarednode/.style={rectangle, fill=#1, minimum size=\dimensao cm,rounded corners=\canto cm, anchor=base, inner sep=0pt}}%
+
+
+\tikzset{fundo/.style={rectangle, fill=black!10!white, minimum size=\dimensao cm,rounded corners=\canto cm, anchor=base, inner sep=0pt }}%
+
+% \tikzset{every node/.append style={font=\sffamily}}
+\tikzset{fontscale/.style = {font=\relsize{#1}}}
+
+\tikzset{%
+    pics/ifsclogotexto/.style n args={3}{
+        code = {
+          \node[roundnode=#1] (11) at (0,6) {};
+          \node[squarednode=#2] (12) [below of=11] {};
+          \node[squarednode=#2] (13) [below of=12] {};
+          \node[squarednode=#2] (14) [below of=13] {};
+
+          \node[squarednode=#2] (21) [right of=11] {};
+          \node[squarednode=#2] (22) [right of=12] {};
+          \node[squarednode=#2] (23) [right of=13] {};
+          \node[squarednode=#2] (24) [right of=14] {};
+
+          \node[squarednode=#2] (31) [right of=21] {};
+          \node[squarednode=#2] (33) [right of=23] {};
+
+          %   \node[fundo] (41) [right of=31] {}; 
+          %   \node[fundo] (42) [below of=41] {};%
+          %   \node[fundo] (43) [below of=42] {};%
+          %   \node[fundo] (44) [below of=43] {};%
+
+          %   \node[fundo] (51) [right of=41] {};
+          %   \node[fundo] (52) [below of=51] {};
+          %   \node[fundo] (53) [below of=52] {};
+          %   \node[fundo] (54) [below of=53] {};
+
+          \node[anchor=west,xshift=-.18cm,fontscale=3.95,#3] at (\dist*3,5.4) {{\textbf{INSTITUTO FEDERAL}}};
+          \node[anchor=west,xshift=-.15cm,fontscale=2.2,#3] at (\dist*3,4.74) {{Santa Catarina}};
+          \node[anchor=west,xshift=-.15cm,fontscale=2.2,#3] at (\dist*3,4.09) {{Campus São José}};
+
+
+          % \draw[gray,step=.1cm,very thin] grid (0,0) grid (4,6);
+          % \draw[blue,very thin] (\dist*3,3) to (\dist*3,6);
+        }
+    }
+}
+
+\tikzset{%
+    pics/ifsclogo/.style n args={2}{
+        code = {
+          \node[roundnode=#1] (11) at (0,6) {};
+          \node[squarednode=#2] (12) [below of=11] {};
+          \node[squarednode=#2] (13) [below of=12] {};
+          \node[squarednode=#2] (14) [below of=13] {};
+
+          \node[squarednode=#2] (21) [right of=11] {};
+          \node[squarednode=#2] (22) [right of=12] {};
+          \node[squarednode=#2] (23) [right of=13] {};
+          \node[squarednode=#2] (24) [right of=14] {};
+
+          \node[squarednode=#2] (31) [right of=21] {};
+          \node[squarednode=#2] (33) [right of=23] {};
+        }
+    }
+}
+
+% Logo na cor do "titlefgcolor" do tema
+\newsavebox\ifsclogo%
+\begin{lrbox}{\ifsclogo}
+  \scalebox{.35}{\tikz[node distance=\dist cm] \pic{ifsclogo={titlefgcolor}{titlefgcolor}};}%
+\end{lrbox}
+
+% Logo na cor do "titlefgcolor" do tema
+\newsavebox\ifsclogotexto%
+\begin{lrbox}{\ifsclogotexto}
+  \resizebox{\beamerthemeifsclean@logowidth}{!}{\tikz[node distance=\dist cm] \pic{ifsclogotexto={titlefgcolor}{titlefgcolor}{titlefgcolor}};}%
+\end{lrbox}
+% -------------------------------------------------%
+

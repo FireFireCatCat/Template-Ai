@@ -1,0 +1,45 @@
+\section{Physik}
+    \label{fach:physik}
+    Das Paket \module{Physik} bindet die Pakete \pkg{units}, \pkg{circuitikz} und \pkg{mhchem}. ein, so dass Formeln und Schaltpläne gesetzt werden können. Außerdem werden in diesem Modul Standardkonstanten für Formeln definiert.
+
+    Durch das Einbinden des Pakets \pkg{ziffer} wird dafür gesorgt, dass das im deutschen gebräuchliche Komma bei Zahlen richtig gesetzt wird. \sinceversion{0.8.3}
+
+    \subsection{Konstanten}
+    Sehr regelmäßig müssen in Formeln physikalische Konstanten eingesetzt werden. Einige werden im Paket definiert, um die Eingabe zu erleichtern. \sinceversion{0.8.3}
+    \begin{commands}
+        \command{elementarladung} Die Elementarladung mit \(\elementarladung\).
+        \command{planckscheEV} Das plancksche Wirkungsquantum mit \(\planckscheEV\).
+        \command{planckscheJ} Das plancksche Wirkungsquantum mit \(\planckscheJ\).
+        \command{elektronenmasse} Die Masse eines Elektrons mit \(\elektronenmasse\).
+        \command{protonenmasse} Die Masse eines Protons mit \(\protonenmasse\).
+        \command{lichtgeschwindigkeit} Die Lichtgeschindigkeit mit \(\lichtgeschwindigkeit\).
+        \command{rydbergfrequenz} Die Rydberg-Frequenz mit \(\rydbergfrequenz\).
+
+        \begin{example}[gobble=12]
+            \[ v = \sqrt{\frac{2 \cdot U\cdot Q}{m}} \]
+            \[ v = \sqrt{\frac{2 \cdot \unit[15000]{V} \cdot \elementarladung}{\protonenmasse}} = \unitfrac[1,70 \cdot 10^{6}]{m}{s} \]
+        \end{example}
+
+    \end{commands}
+
+    \subsection{Schaltpläne}
+    An dieser Stelle ein Beispiel für einen Schaltplan mit \pkg{circuitikz}:
+\begin{example}[gobble=0]
+\begin{circuitikz}
+  \draw
+    (0,0)--(1,0) to[european resistor,l=$47$\,k$\Omega$] (3,0)--(5,0)
+    to[C, l=$470$\,$\mu$F] (7,0) -- (8,0)
+    (4.5,0) to[short, -*] (4.5,0) -- (4.5, -2)
+    (4.5,-2) -- (5,-2) to[voltmeter, l=$U_C$] (7,-2) -- (7.5,-2)
+    (7.5, -2) to[short, -*] (7.5,0)
+    (8,1) node[spdt, rotate=90] (Ums) {}
+    (Ums) node[right=0.4cm] {$WS$}
+    (Ums.out 1) node[left] {1}
+    (Ums.out 2) node[right] {2}
+    (0,0) |- (2,4) to[closing switch, l=$S$] (3,4) to[battery1,
+    l=$U$] (5,4) -| (Ums.out 2)
+    (Ums.in) -- (8,0)
+    (Ums.out 1) |- (0,2) to[short, -*] (0,2)
+  ;
+\end{circuitikz}
+\end{example}

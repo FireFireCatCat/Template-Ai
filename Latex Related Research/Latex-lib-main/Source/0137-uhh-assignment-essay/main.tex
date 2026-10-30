@@ -1,0 +1,81 @@
+% UHH Assignment essay starter — uhhassignment.cls (LPPL-1.3c)
+% The class is supplied by TeX Live; this document is an original example.
+\documentclass[shorttitle,repeatauthor]{uhhassignment}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+\university[Northbridge University]{Northbridge University}
+\course[Environmental Policy]{Environmental Policy and Evidence}
+\teacher{Dr. Lina Okafor}
+\group{B}
+\sheetno{3}
+\author[Jordan Blake]{Jordan Blake \id{j.blake@example.edu}}
+\title{\textsc{Evidence, uncertainty and public decisions}}
+\date{18 September 2026}
+
+\begin{document}
+\maketitle
+
+\task{Framing the decision}
+Public policy arguments often present a forecast as though it were a
+measurement.  This essay distinguishes the two.  A measurement describes
+an observed quantity; a forecast combines observations with a model and
+assumptions about what will happen next.  That difference is not a reason
+to abandon quantitative evidence.  It is a reason to expose the assumptions
+that make the evidence useful.
+
+\subtask{A practical distinction}
+Suppose a city records the daily number of bicycle trips before and after a
+protected lane opens.  The observed change is not, by itself, the effect of
+the lane: weather, fuel prices and a nearby road closure may have changed at
+the same time.  A defensible analysis therefore states a comparison group,
+the time window, and the mechanism by which the intervention is expected to
+change behaviour.
+
+\task{A small model}
+Let $Y_1$ and $Y_0$ be the number of bicycle trips on a representative day
+with and without the lane.  The policy effect is the counterfactual
+
+\[
+  \tau = \mathbb{E}[Y_1-Y_0].
+\]
+
+Only one of the two potential outcomes can be observed for a given day.
+That missing counterfactual is why a comparison design matters.  If a
+nearby untreated route has a stable trend, a difference-in-differences
+estimate can be written as
+
+\[
+ \widehat{\tau}= (\overline{Y}_{\mathrm{treated,after}}
+ -\overline{Y}_{\mathrm{treated,before}})
+ -(\overline{Y}_{\mathrm{control,after}}
+ -\overline{Y}_{\mathrm{control,before}}).
+\]
+
+The estimate is informative only if the two routes would have followed
+parallel trends in the absence of the intervention.  That assumption is a
+claim about the design, not a number produced by the formula.
+
+\subtask{Interpretation}
+\begin{enumerate}[label=\alph*),leftmargin=2em]
+  \item State the target population before calculating an effect.
+  \item Report an uncertainty interval and the number of observations.
+  \item Test whether the result changes under a plausible alternative
+        comparison route.
+\end{enumerate}
+
+\task{Reflection}
+The strongest conclusion available from this small study is conditional:
+if the comparison route captures the city-wide time trend and no other
+route-specific change occurred, the protected lane is associated with an
+increase in cycling.  Calling that association a causal effect without
+checking those conditions would turn a useful model into overconfident
+storytelling.  The assignment's reproducible layout makes those conditions
+visible alongside the argument, which is the point of a good hand-in.
+
+\end{document}

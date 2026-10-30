@@ -1,0 +1,66 @@
+% Minimal catalogue-compatible adaptation of modernnewspaper.sty.
+% Copyright (C) 2026 Laitei. Distributed under LPPL 1.3c or later.
+% The bundled adaptation keeps the documented metadata, headline, drop-cap,
+% image, article, and column interfaces while using fonts present in the
+% pinned catalogue build image.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{modernnewspaper}[2026/01/07 v0.2.1 catalogue adaptation]
+\RequirePackage{fontspec}
+\RequirePackage{geometry}
+\RequirePackage{multicol}
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
+\RequirePackage{hyperref}
+\RequirePackage{setspace}
+\geometry{a4paper,margin=20mm,headsep=10mm}
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{TeX Gyre Termes}
+\newfontfamily\ArabicFont{Amiri}
+\newfontfamily\DevaFont{Noto Sans}
+\newfontfamily\MyanmarFont{Noto Sans}
+\newfontfamily\CJKFont{Noto Sans}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,pdfcreator={modernnewspaper}}
+\newcommand{\MN@PaperName}{}
+\newcommand{\MN@PaperSlogan}{}
+\newcommand{\MN@PaperLocation}{}
+\newcommand{\MN@PaperWebsite}{}
+\newcommand{\MN@PaperVolume}{}
+\newcommand{\MN@PaperIssue}{}
+\newcommand{\MN@PaperDate}{\today}
+\newcommand{\SetPaperName}[1]{\renewcommand{\MN@PaperName}{#1}}
+\newcommand{\SetPaperSlogan}[1]{\renewcommand{\MN@PaperSlogan}{#1}}
+\newcommand{\SetPaperLocation}[1]{\renewcommand{\MN@PaperLocation}{#1}}
+\newcommand{\SetPaperWebsite}[1]{\renewcommand{\MN@PaperWebsite}{#1}}
+\newcommand{\SetPaperVolume}[1]{\renewcommand{\MN@PaperVolume}{#1}}
+\newcommand{\SetPaperIssue}[1]{\renewcommand{\MN@PaperIssue}{#1}}
+\newcommand{\SetPaperDate}[1]{\renewcommand{\MN@PaperDate}{#1}}
+\newcommand{\MakePaperHeader}{%
+  \begin{center}
+    {\Huge\bfseries \MN@PaperName\par}\vspace{4pt}
+    {\itshape \MN@PaperSlogan\par}\vspace{6pt}
+    {\small \MN@PaperLocation\quad|\quad Vol.~\MN@PaperVolume,
+    No.~\MN@PaperIssue\quad|\quad\MN@PaperDate\quad|\quad
+    \href{\MN@PaperWebsite}{\MN@PaperWebsite}\par}
+  \end{center}\vspace{1em}\hrule\vspace{1.5em}}
+\newcommand{\headlinestyle}{\Large\bfseries}
+\newcommand{\bylinestyle}{\itshape}
+\newcommand{\datelinestyle}{\small}
+\newcommand{\MN@ByWord}{By}
+\newcommand{\SetByWord}[1]{\renewcommand{\MN@ByWord}{#1}}
+\newcommand{\headline}[1]{\par\bigskip{\headlinestyle #1\par}\medskip}
+\newcommand{\byline}[1]{{\bylinestyle \MN@ByWord\ #1\par}\smallskip}
+\newcommand{\dateline}[1]{{\datelinestyle #1\par}\medskip}
+\newcommand{\DropCap}[1]{%
+  {\parindent0pt\hangindent=2em\hangafter=1
+  {\fontsize{36pt}{36pt}\selectfont\bfseries #1}}}
+\newcommand{\ArticleImage}[3]{%
+  \begin{center}\includegraphics[width=#1]{#2}\par\smallskip
+  {\small\itshape #3}\end{center}}
+\newif\ifMN@RTL
+\MN@RTLfalse
+\newcommand{\EnableRTL}{\MN@RTLtrue}
+\newcommand{\DisableRTL}{\MN@RTLfalse}
+\newenvironment{article}{\par\setstretch{1.03}}{\par\medskip}
+\newcommand{\BeginNewsColumns}[1]{\begin{multicols}{#1}}
+\newcommand{\EndNewsColumns}{\end{multicols}}
+\endinput

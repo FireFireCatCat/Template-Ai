@@ -1,0 +1,36 @@
+% Response letter to reviewers -- a clean portable starter.
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\definecolor{commentframe}{HTML}{64748B}\definecolor{commentfill}{HTML}{F1F5F9}
+\definecolor{responseframe}{HTML}{0F766E}\definecolor{responsefill}{HTML}{F0FDFA}
+\newtcolorbox{reviewercomment}{colback=commentfill,colframe=commentframe,boxrule=.6pt,arc=2pt,left=8pt,right=8pt,top=6pt,bottom=6pt}
+\newtcolorbox{authorresponse}{colback=responsefill,colframe=responseframe,boxrule=.6pt,arc=2pt,left=8pt,right=8pt,top=6pt,bottom=6pt}
+\newcommand{\reviewcomment}[1]{\begin{reviewercomment}\textbf{Reviewer comment. }#1\end{reviewercomment}}
+\newcommand{\reviewresponse}[1]{\begin{authorresponse}\textbf{Response. }#1\end{authorresponse}}
+\setlist{nosep}\title{Response to Reviewers' Comments}\author{Maya Chen and Alex Morgan}\date{29 August 2026}
+\begin{document}
+\maketitle
+\noindent\textbf{Manuscript:} ``Reliable Data Pipelines for Small Research Teams''\\
+\textbf{Journal:} Journal of Open Methods\\\textbf{Manuscript ID:} JOM-2026-014
+\section*{Cover note to the editor}
+Thank you for the careful and constructive review of our manuscript. We have
+addressed every point below and marked the corresponding changes in the
+revised manuscript. Page and section references refer to the revised version.
+\section*{Reviewer 1}
+\reviewcomment{The evaluation does not explain how the three data sources were selected, so it is difficult to assess whether the results generalise beyond the example workflow.}
+\reviewresponse{We added a source-selection subsection in Section 3.1. It explains the inclusion criteria, reports the number of candidate sources screened, and adds a sensitivity analysis for the smallest source.}
+\reviewcomment{The reproducibility claim would be stronger if the configuration values used in the experiments were visible in the paper.}
+\reviewresponse{We added Table 2 with the complete configuration, including the validation window, retry policy, and random seed. The companion repository now contains the exact machine-readable configuration file.}
+\section*{Reviewer 2}
+\reviewcomment{Please distinguish failures caused by malformed input from failures caused by unavailable network services.}
+\reviewresponse{We agree. Section 4.2 now reports the two failure classes separately, and Figure 3 uses different symbols for input validation and service errors.}
+\section*{Summary of changes}
+\begin{itemize}\item Added source-selection criteria and sensitivity analysis.\item Added a complete experimental configuration table.\item Split malformed-input and network-service failure reporting.\end{itemize}
+\end{document}

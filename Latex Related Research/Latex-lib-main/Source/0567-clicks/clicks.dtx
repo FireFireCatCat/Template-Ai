@@ -1,0 +1,222 @@
+% \iffalse meta-comment
+% SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
+% SPDX-License-Identifier: MIT
+% \fi
+
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+
+% \GetFileInfo{clicks.dtx}
+% \DoNotIndex{\endgroup,\begingroup,\let,\else,\fi,\newcommand,\newenvironment}
+
+% \iffalse
+%<*driver>
+\ProvidesFile{clicks.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{clicks}
+%<*package>
+[2026-10-15 0.4.4 Slide Deck Animation]
+%</package>
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{lmodern}
+\usepackage{fail-fast}
+\usepackage{clicks}
+\PassOptionsToPackage{hyperindex=false}{hyperref}
+\usepackage{href-ul}
+\usepackage{bookmark}
+\renewcommand{\RerunFileCheck}[3]{\AddToHook{enddocument/info}{#2}}
+\PageIndex
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+	\DocInput{clicks.dtx}
+	\PrintChanges
+	\PrintIndex
+\end{document}
+%</driver>
+% \fi
+
+% \title{|clicks|: \LaTeX{} Package \\ for Slide Deck Animation\thanks{The sources are in GitHub at \href{https://github.com/yegor256/clicks}{yegor256/clicks}}}
+% \author{Yegor Bugayenko \\ \texttt{yegor256@gmail.com}}
+% \date{\filedate, \fileversion}
+%
+% \maketitle
+%
+% \section{Introduction}
+%
+% This package facilitates the simulation of animation within PDF documents.
+% Content is placed on a page; a ``click'' then terminates the page while
+% propagating its content onto the next, where additional material may be
+% appended. In the full-screen presentation mode, the resulting effect
+% resembles animation comparable to that produced by MS PowerPoint:
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\documentclass{article}
+\usepackage{clicks}
+\begin{document}
+\print{Here is your wedding plan:}\click
+\print{1. Buy a ring}\click
+\print{2. Propose}\click
+\print{3. Get married}\flush
+\end{document}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+
+% A more compact form is available through the
+% |\plick| and |\plush| commands:
+%\iffalse
+%<*verb>
+%\fi
+\begin{verbatim}
+\documentclass{article}
+\usepackage{clicks}
+\begin{document}
+\plick[2]{Here is your wedding plan:}
+\plick[3]{1. Buy a ring}
+\plick[5]{2. Propose}
+\plush[1]{3. Get married}
+\end{document}
+\end{verbatim}
+%\iffalse
+%</verb>
+%\fi
+
+% The optional parameters of |\plick| and |\plush|
+% denote minutes: namely, the duration intended to be spent on the
+% corresponding animation. These minutes accumulate in the |minutes|
+% counter, which may be displayed, for instance, in the page header,
+% thereby permitting time to be tracked throughout the presentation.
+% The commands |\click| and |\flush| accept the same optional arguments,
+% and all four commands default to one minute.
+
+% \section{Package Options}
+
+% \begin{macro}{static}
+% Should the document be rendered without animation,
+% the |static| package option suffices.
+% \end{macro}
+
+% \StopEventually{}
+
+% \section{Implementation}
+
+% \changes{v0.1.0}{2021/09/13}{Initial version}
+
+% First, we parse package options:
+%    \begin{macrocode}
+\RequirePackage{pgfopts}
+\pgfkeys{
+  /clicks/.cd,
+  static/.store in=\clicks@static,
+}
+\ProcessPgfPackageOptions{/clicks}
+%    \end{macrocode}
+
+% Then, we define a few supplementary commands:
+%    \begin{macrocode}
+\makeatletter
+\newcommand*\clicks@body{}
+\newcommand\clicks@flush{%
+  \clicks@body\vspace*{0pt}\newpage%
+}
+\makeatother
+%    \end{macrocode}
+
+% Then, we declare a counter of minutes:
+%    \begin{macrocode}
+\newcounter{minutes}
+%    \end{macrocode}
+
+% \begin{macro}{\print}
+% Then, we define |\print| command:
+%    \begin{macrocode}
+\RequirePackage{etoolbox}
+\makeatletter
+\newcommand\print[1]{%
+  \gappto\clicks@body{{#1}}%
+  \ifstrempty{#1}{}{\gappto\clicks@body{{\par}}}%
+}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\flush}
+% Then, we define |\flush| command:
+%    \begin{macrocode}
+\makeatletter
+\newcommand\flush[1][1]{%
+  \ifx\clicks@body\empty\else%
+    \clicks@flush%
+    \renewcommand*\clicks@body{}%
+  \fi%
+  \ifdefined\clicks@static\else%
+    \addtocounter{minutes}{#1}%
+  \fi%
+}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\click}
+% Then, we define |\click| command:
+%    \begin{macrocode}
+\makeatletter
+\newcommand\click[1][1]{%
+  \ifdefined\clicks@static\else%
+    \addtocounter{minutes}{#1}%
+    \clicks@flush%
+  \fi%
+}
+\makeatother
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\plush}
+% Then, we define |\plush| command:
+%    \begin{macrocode}
+\newcommand\plush[2][1]{%
+  \print{#2}%
+  \flush[#1]%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\plick}
+% Then, we define |\plick| command:
+%    \begin{macrocode}
+\newcommand\plick[2][1]{%
+  \print{#2}%
+  \click[#1]%
+}
+%    \end{macrocode}
+% \end{macro}
+
+% \Finale
+
+%\clearpage
+%
+%\PrintChanges
+%\clearpage
+%\PrintIndex

@@ -1,0 +1,536 @@
+% \iffalse meta-comment
+%
+% File: muling.dtx
+% ----------------------------------------------------------
+% Class:       muling
+% Author:      निरंजन
+% Description: A class file for the Department of
+%              Linguistics University of Mumbai
+% Repository:  https://git.gnu.org.ua/marathi.git
+% Bugs:        https://puszcza.gnu.org.ua/bugs/?group=muling
+% Licenses:    GPLv3+, GFDLv1.3+
+% ----------------------------------------------------------
+% LaTeX Package muling v0.5
+% Copyright © 2020, 2021, 2023 निरंजन
+%
+% This program is free software: you can redistribute it
+% and/or modify it under the terms of the GNU General Public
+% License as published by the Free Software Foundation,
+% either version 3 of the License, or (at your option) any
+% later version.
+%
+% This program is distributed in the hope that it will be
+% useful, but WITHOUT ANY WARRANTY; without even the implied
+% warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+% PURPOSE. See the GNU General Public License for more
+% details.
+%
+% You should have received a copy of the GNU General Public
+% License along with this program. If not, see
+% <https://www.gnu.org/licenses/>.
+% ---------------------------------------------------------
+% arara: lualatex
+% arara: lualatex
+% arara: clean: {
+% arara: -->      extensions: [
+% arara: -->        log,aux,glo,idx,ist,
+% arara: -->        out,toc,hd
+% arara: -->      ]
+% arara: -->    }
+% ---------------------------------------------------------
+% \fi
+% \iffalse
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+-----------------------------------------------------------
+Class:        muling
+Author:       निरंजन
+Version:      0.5 (2 April, 2023)
+Description:  A class file for the Department of
+              Linguistics, University of Mumbai
+Repository:   https://git.gnu.org.ua/muling.git
+Bug tracker:  https://puszcza.gnu.org.ua/bugs/?group=muling
+License:      GPLv3+, GFDLv1.3+
+-----------------------------------------------------------
+%</readme>
+%<*internal>
+\fi
+%</internal>
+%<*driver>
+\documentclass{l3doc}
+\usepackage{xcolor}
+\usepackage{leipzig}
+\usepackage{fontspec}
+\newfontfamily{\sho}[%
+  Script          = {Devanagari},%
+  Scale           = {0.8}%
+]{Shobhika}
+\usepackage{fontawesome5}
+\usepackage{gfdl}
+\colorlet{myblue}{blue!60!black}
+\colorlet{myred}{red!60!black}
+\colorlet{mygreen}{green!60!black}
+\hypersetup{%
+  unicode,%
+  colorlinks,%
+  linkcolor       = {myred},%
+  citecolor       = {mygreen},%
+  urlcolor        = {myblue},%
+  pdftitle        = {The muling package},%
+  pdfauthor       = {निरंजन},%
+  pdfcreator      = {निरंजन},%
+  pdfsubject      = {%
+    A convenient LaTeX class for the masters students of
+    linguistics at the department of linguistics, university
+    of Mumbai%
+  },%
+  pdfkeywords     = {%
+    LaTeX, Mumbai University, Thesis%
+  }%
+}
+\gfdlcopyrightholders{%
+  \texorpdfstring{{\sho निरंजन}}%
+                 {निरंजन}%
+}
+\gfdlcopyrightdescription{%
+  \texorpdfstring{The \LaTeX\ package \pkg{muling}}%
+                 {The LaTeX package muling}%
+}
+\gfdlcopyrightableyears{2020, 2021, 2023}
+
+\begin{document}
+\DocInput{muling.dtx}
+\end{document}
+%</driver>
+% \fi
+% \title{The \cls{muling} class}
+% \author{{\sho निरंजन}}
+% \date{^^A
+%   Version 0.5---2 April, 2023\\[1ex]^^A
+%   {^^A
+%     \small\faIcon{link}\quad
+%     \url{https://ctan.org/pkg/muling}^^A
+%   }\\^^A
+%   {^^A
+%     \small\faIcon{bug}\quad
+%     \url{https://puszcza.gnu.org.ua/bugs/?group=muling}^^A
+%   }^^A
+% }
+% 
+% \maketitle
+% 
+% \begin{abstract}
+%   This is a class-file written for the students of the
+%   Department of Linguistics, University of Mumbai. It
+%   uses the standard layout prescribed by the university,
+%   loads some necessary packages for typesetting a thesis
+%   in linguistics \textit{\&} adds the declaration needed
+%   by the university from the submitter.
+% \end{abstract}
+% 
+% \tableofcontents
+% 
+% \newpage
+% 
+% \begin{documentation}
+% \section{Provisions}
+% 
+% With this class, a few essential packages are already
+% loaded. If you have a full installation of \TeX\ Live
+% 2023 (or later), you should be able to compile everything
+% without any problem. This package has the following
+% provisions which will make the thesis-writing easier.
+% 
+% \begin{enumerate}
+% \item With this class, we load the |NewCM10-Regular.otf|
+%   font which is a fork of Latin Modern with extended
+%   support for Unicode IPA. Using this font enables us to
+%   print IPA directly from the input text. An additional
+%   advantage of using this font is that it matches with the
+%   TIPA typeface exactly. So whether you use Unicode or
+%   TIPA visually won't make any difference.
+% \item The class pre-loads the following packages commonly
+%   used in linguistics.
+%   \begin{description}
+%   \item[\pkg{leipzig}:] Used for inter-linear glossing.
+%     Using |\Nom| will produce \Nom. While glossing, it is
+%     advised that you use these macros so that all of them
+%     get printed correctly with the |\printglossary|
+%     command pre-loaded by the class. Of course you will be
+%     required to compile the code with the |makeglossaries|
+%     program.
+%   \item[\pkg{biblatex}:] Used for citations. The |apa|
+%     style, required by the department, is used by default.
+%   \item[\pkg{forest}:] Used for syntactic trees.
+%   \item[\pkg{expex}:] Used for finest typesetting of
+%     linguistic examples.
+%   \item[\pkg{csquotes}:] For quoting text. One can use
+%   \cs{enquote}\marg{some text} to produce
+%   \emph{\enquote{some text}}.
+%   \end{description}
+% \end{enumerate}
+% 
+% It is advised that you use the following order on a bash
+% terminal for compiling your code:
+% 
+% \medskip
+% \begin{minipage}{\linewidth}
+% \begin{verbatim}
+% lualatex document         # for Unicode text
+% biber document            # for citations
+% makeglossaries document   # for glossaries
+% lualatex document
+% lualatex document
+% \end{verbatim}
+% \end{minipage}
+%
+% \medskip
+% If you use \pkg{arara}, then you can use the following
+% code somewhere in your document and just compile the code
+% with \pkg{arara}.
+% 
+% \medskip
+% \begin{minipage}{\linewidth}
+% \begin{verbatim}
+% % arara: lualatex
+% % arara: biber
+% % arara: makeglossaries
+% % arara: lualatex
+% % arara: lualatex
+% \end{verbatim}
+% \end{minipage}
+% 
+% \section{Package macros}
+% 
+% This package has the following commands.
+% 
+% \begin{function}{\subtitle}
+%   \begin{syntax}
+%     \cs{subtitle}\marg{a subtitle}
+%   \end{syntax}
+%   The subtitle is printed exactly under the title on the
+%   title-page.
+% \end{function}
+%
+% \begin{function}{\shorttitle}
+%   \begin{syntax}
+%     \cs{shorttitle}\marg{a short title}
+%   \end{syntax}
+%   The short title is printed on the top right corner of
+%   the page with the year of submission.
+% \end{function}
+% 
+% \begin{function}{\supervisor}
+%   \begin{syntax}
+%     \cs{supervisor}\marg{name of the supervisor}
+%   \end{syntax}
+%   Name of the supervisor is printed on the title-page, in
+%   the declaration text and under the name of the
+%   supervisor for the signature.
+% \end{function}
+%
+% \section{Package options}
+% 
+% \begin{function}{digital}
+%   This package option is developed for getting a read-only
+%   version of the thesis. By default the thesis is
+%   formatted as a print-ready document as the per the
+%   university requirements. If you want to submit a digital
+%   copy of the thesis, use this option.
+% \end{function}
+% 
+% \begin{function}{lof}
+%   This package option is developed for getting a list of
+%   figures after the list of tables. Every thesis might not
+%   need a list of figures, therefore it isn't added by
+%   default.
+% \end{function}
+% 
+% \section{Example code}
+% 
+% Try this sample document.
+%
+% \begin{verbatim}
+% \documentclass[digital,lof]{muling}
+% \title{Linguistic profile of Konkani}
+% \author{Niranjan}
+% \supervisor{Dr.\ Renuka Ozarkar}
+% \shorttitle{Konkani}
+% \subtitle{%
+%   Phonological \& morphological description of the Konkani
+%   language%
+% }
+% 
+% \begin{document}
+% \maketitle
+% 
+% \chapter{Test chapter}
+% \pex
+% Department of linguistics
+% \xe
+% 
+% \begin{center}
+%   \begin{forest}
+%     [NP%
+%       [\head{N}\\
+%         Department%
+%       ]%
+%       [PP%
+%         [\head{P}\\%
+%           of%
+%         ]%
+%         [NP%
+%           [\head{N}\\%
+%             linguistics%
+%           ]%
+%         ]%
+%       ]%
+%     ]%
+%   \end{forest}
+% \end{center}
+% \end{document}
+% \end{verbatim}
+% \end{documentation}
+% 
+% \begin{implementation}
+% \section{Implementation}
+%    \begin{macrocode}
+%<*class>
+%    \end{macrocode}
+%    \begin{macrocode}
+\ProvidesClass{muling}[2023/04/02 v0.5
+Department of Linguistics, University of Mumbai]
+\DeclareOption{digital}{\PassOptionsToClass{oneside}{book}}
+\newif\iflof
+\DeclareOption{lof}{\loftrue}
+\ProcessOptions
+\iflof
+\def\@printlof{%
+  \thispagestyle{empty}%
+  \phantomsection
+  \addcontentsline{toc}{section}{List of figures}%
+  \listoffigures
+  \clearpage\pagebreak
+}%
+\else
+\let\@printlof\@empty
+\fi
+\LoadClass{book}
+%    \end{macrocode}
+% This part of code loads the \cls{book} class \textit{\&}
+% provides the option \verb|digital| for typesetting a
+% document with read-only format \textit{\&} option
+% \verb|lof| for automatically adding list of
+% figures. \href{https://topanswers.xyz/tex?q=1500#a1728}{Phelype's
+% answer} helped me for developing this code.
+%    \begin{macrocode}
+\let\@supervisor\@empty
+\def\supervisor#1{%
+  \def\@supervisor{#1}%
+}
+\let\@shorttitle\@empty
+\def\shorttitle#1{%
+  \def\@shorttitle{#1}%
+}
+\let\@subtitle\@empty
+\def\subtitle#1{%
+  \def\@subtitle{#1}%
+}
+%    \end{macrocode}
+% This code enables three additional entries required in the
+% title-page \& in the declaration \textit{\&} at various
+% other places.
+%    \begin{macrocode}
+\RequirePackage{csquotes}
+\RequirePackage[backend=biber,style=apa]{biblatex}
+\RequirePackage[linguistics]{forest}
+\RequirePackage{tipa}
+\RequirePackage{leipzig}
+\RequirePackage{expex}
+\RequirePackage{fancyhdr}
+\RequirePackage{fontspec}
+\RequirePackage{hyperref}%
+\makeglossaries
+\setmainfont[%
+  % Courtesy: https://topanswers.xyz/tex?q=3042#a3083
+  IgnoreFontspecFile,%
+  StylisticSet      = {5},%
+  Renderer          = {Harfbuzz},%
+  ItalicFont        = {NewCM10-Italic.otf},%
+  BoldFont          = {NewCM10-Bold.otf},%
+  BoldItalicFont    = {NewCM10-BoldItalic.otf},%
+  SmallCapsFeatures = {%
+    % Courtesy: https://tex.stackexchange.com/a/107246
+    Numbers         =   {Lining,Monospaced},%
+    Letters         =   {SmallCaps}%
+  }%
+]{NewCM10-Regular.otf}
+\pagestyle{fancy}
+\cfoot{\thepage}
+\rhead{}
+\lhead{%
+  \begin{tabular}{l}%
+    \@author\\%
+    \textsc{%
+    \footnotesize University of Mumbai%
+    }%
+  \end{tabular}%
+  \hfill
+  \@shorttitle, \the\year
+}%
+\AddToHook{begindocument/before}{%
+  \colorlet{mulingred}{red!60!black}
+  \colorlet{mulinggreen}{green!60!black}
+  \colorlet{mulingblue}{blue!60!black}
+  \hypersetup{%
+    unicode,%
+    colorlinks,%
+    linkcolor     = {mulingred},%
+    citecolor     = {mulinggreen},%
+    urlcolor      = {mulingblue},%
+    pdftitle      = {\@title},%
+    pdfauthor     = {\@author},%
+    pdfcreator    = {\@author},%
+    pdfsubject    = {\@subtitle},%
+    pdfkeywords   = {\@shorttitle}%
+  }%
+}
+%    \end{macrocode}
+% This part of code loads some other essential packages for
+% typesetting documents with linguistic content \textit{\&}
+% the name of the author, the name of the university and a
+% short-title with the year of submission at the top right
+% corner of every page.
+% \href{https://tex.stackexchange.com/a/525452/174620}^^A
+% {This} answer helped me for developing this code.
+%    \begin{macrocode}
+\newlength{\shift}
+\setlength{\shift}{0.3in}
+%    \end{macrocode}
+% A new length is created for typesetting the title-page at
+% the center of the page like in the \cls{article}
+% class. \href{https://tex.stackexchange.com/a/514536/174620}%
+% {This} answer helped me for developing this code.
+%    \begin{macrocode}
+\renewcommand{\maketitle}{%
+  \thispagestyle{empty}%
+  \addtolength{\oddsidemargin}{\shift}%
+  \fboxsep3em
+  \noindent\fbox{%
+    \begin{minipage}%
+      [c][\dimexpr\textheight-2\fboxsep-2\fboxrule]%
+      [c]{\dimexpr\linewidth-2\fboxsep-2\fboxrule}%
+      
+      \begin{center}%
+        \bigskip
+        \hrule
+        \vspace{2ex}%
+        \textbf{%
+          {\LARGE \@title}\\%
+          \vspace{0.2cm}%
+          {\textsc\@subtitle}%
+        }%
+        \vspace{2ex}%
+        \hrule
+        \vfill
+        {%
+          \large
+          \textsc{%
+            \@author
+          }%
+        }\\%
+        \vspace{0.5in}%
+        {%
+          \large
+          \textsc{%
+            Supervisor: \@supervisor
+          }%
+        }\\%
+        \vspace{0.5in}%
+        {%
+          \large
+          \textsc{%
+            A dissertation submitted in\\ the partial
+            fulfillment of the requirements for the masters
+            of linguistics%
+          }%
+        }\\%
+        \vspace{0.5in}%
+        \textsc{%
+          Department of Linguistics\\%
+          University of Mumbai, Kalina%
+        }\\%
+        \smallskip
+        \bigskip
+        \textsc{\@date}%
+      \end{center}%
+    \end{minipage}%
+    \addtolength{\oddsidemargin}{-\shift}%
+  }
+  \clearpage\pagebreak
+  \thispagestyle{empty}%
+  \tableofcontents
+  \clearpage\pagebreak
+  \thispagestyle{empty}%
+  \phantomsection
+  \addcontentsline{toc}{section}{Abbreviations}%
+  \printglossary[style=mcolblock]
+  \clearpage\pagebreak
+  \thispagestyle{empty}%
+  \phantomsection
+  \addcontentsline{toc}{section}{List of tables}%
+  \listoftables
+  \clearpage\pagebreak
+  \thispagestyle{empty}%
+  \phantomsection
+  \begin{center}%
+    {%
+      \LARGE
+      Declaration%
+    }
+  \end{center}%
+
+  \bigskip
+  As required by the University Regulation no.: R.\ 1972 I
+  wish to state that the work embodied in this thesis
+  titled \enquote{\@title: \@subtitle{}} forms my own
+  contribution to the research work carried out under the
+  guidance of \@supervisor{} at the University of Mumbai.
+  
+  This work has not been submitted for any other
+  degree of this or any other university. Whenever
+  references have been made to previous works of others,
+  it has been clearly indicated as such and included in
+  the bibliography.
+
+  \bigskip
+  \flushright{%
+    Date: \@date\\%
+    \vspace{0.5in}%
+  }%
+  
+  \noindent Signature of the candidate:\\%
+  \hfill Name: \@author
+  \\%
+
+  \bigskip
+  \flushleft{%
+    Certified by:\\%
+    \vspace{0.5in}%
+    Signature of the guide:\\%
+    Name: \@supervisor
+  }%
+}%
+%    \end{macrocode}
+% This code typesets a customized title-page, adds a table
+% of contents, list of tables\footnote{Having a list of
+% figures is optional as seen earlier.} and the declaration
+% text with all the details filled \textit{\&} some blank
+% space left for the signature.
+%    \begin{macrocode}
+%</class>
+%    \end{macrocode}
+% \end{implementation}
+% \Finale

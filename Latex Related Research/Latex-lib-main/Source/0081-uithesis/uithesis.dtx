@@ -1,0 +1,4112 @@
+%% \iffalse meta-comment
+%%
+%% SPDX-FileCopyrightText: 2026 Ichlasul Affan, et al.
+%% SPDX-License-Identifier: LPPL-1.3c
+%%
+%% This work consists of the files uithesis.dtx, uithesis-doc.dtx, uithesis.ins,
+%% and the derived file uithesis.cls.
+%%
+%% This file may be distributed and/or modified under the conditions of the
+%% LaTeX Project Public License, either version 1.3c of this license or
+%% (at your option) any later version.  The latest version of this license
+%% is in:
+%%
+%%   https://www.latex-project.org/lppl.txt
+%%
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2008 or later.
+%%
+%% \fi
+%%
+%% \iffalse
+%<*driver>
+\documentclass{l3doc}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\usepackage{bookmark}
+\begin{document}
+  \DocInput{uithesis.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+%% \fi
+%%
+%% \section{Implementation}
+%%
+%% \changes{v3.0.0}{2026/08/20}{Initial commit.}
+%    \begin{macrocode}
+%<*class>
+% !BIB program = biber
+%
+% uithesis.cls
+% Kelas Dokumen LaTeX Terpadu untuk Tugas Akhir Universitas Indonesia
+%
+% @author  Ichlasul Affan, et al.
+% @version 3.0.0
+% @date    2026/05/25
+%
+% SPDX-License-Identifier: LPPL-1.3c
+%
+% Karya ini dapat didistribusikan dan/atau dimodifikasi berdasarkan ketentuan
+% LaTeX Project Public License, versi 1.3c atau versi yang lebih baru.
+% Versi terbaru lisensi ini tersedia di:
+%   https://www.latex-project.org/lppl.txt
+%
+% Berdasarkan karya sebelumnya oleh Andreas Febrian, Lia Sadita,
+% Fahrurrozi Rahman, Andre Tampubolon, Erik Dominikus, Azhar Kurnia,
+% Muhammad Aulia Adil Murtito, Daya Adianto, Francis Wibisono,
+% dan Ilma Ainur Rohma.
+% Lihat direktori _attributions/ untuk daftar lengkap kontributor.
+%
+% Penggunaan:
+%   \documentclass[format=monograph, type=Skripsi, jenjang=Sarjana, lang=indonesian]{uithesis}
+%
+% Opsi kelas:
+%   format  : monograph (default) | journal
+%   type    : Skripsi (default) | Tesis | Disertasi
+%             | {Laporan Kerja Praktik} | {Kampus Merdeka}
+%   jenjang : Sarjana (default) | Magister | Doktor
+%   lang    : indonesian (default) | english
+%   columns : 1 (default) | 2
+%             Jumlah kolom konten (khusus format journal).
+%   print   : twoside (default) | oneside
+%             Mode pencetakan (khusus format monograf).
+%   citation: apa (default) | ieee | acm | vancouver | mla | harvard
+%             | chicago | turabian | acs | nature | science | aip
+%             | oscola | custom
+%   spacing : semantic | calibrated (default)
+%   paragraph: noindent (default) | indent
+%   plagiarismcheck: false (default) | true
+%
+% Pintasan tanpa nilai juga tersedia:
+%   \documentclass[monograph, Skripsi, Sarjana]{uithesis}
+%
+
+
+%==============================================================================%
+%  IDENTIFIKASI KELAS
+%==============================================================================%
+
+\NeedsTeXFormat{LaTeX2e}[2020/10/01]
+\ProvidesClass{uithesis}[2026/08/20 v3.0.0 UI Thesis Template]
+
+
+%==============================================================================%
+%  KEBIJAKAN KELAS (policy surface)
+%==============================================================================%
+
+\newif\ifUI@calibratedspacing
+\UI@calibratedspacingtrue
+\newif\ifUI@twosideprint
+\UI@twosideprinttrue
+\newif\ifUI@paragraphindent
+\UI@paragraphindentfalse
+\newif\ifUI@plagiarismcheck
+\UI@plagiarismcheckfalse
+\newcommand{\UI@chapterHeadingStyle}{\singlespacing\centering\rm\bfseries}
+\newcommand{\UI@sectionHeadingStyle}{\normalfont\fontsize{12}{15}\bfseries}
+\newcommand{\UI@journalSectionHeadingStyle}{\normalfont\fontsize{12}{15}\bfseries}
+
+\newcommand{\UI@applyFooterFont}{%
+  \fontsize{10}{12}\selectfont
+  \fontfamily{phv}\selectfont
+  \bfseries
+}
+
+\newcommand{\UI@applyPageNumberFont}{%
+  \fontsize{12}{15}\selectfont
+  \fontfamily{ptm}\selectfont
+}
+
+
+%==============================================================================%
+%  PEMROSESAN OPSI (xkeyval)
+%==============================================================================%
+
+\RequirePackage{xkeyval}
+
+% Penanda format dan bahasa
+\newif\if@UImonograph  \@UImonographtrue  % default: monograph
+\newif\if@UIenglish    \@UIenglishfalse   % default: indonesia
+\newif\if@UItwocolumn  \@UItwocolumnfalse % default: satu kolom
+\newif\ifUI@allowmultiauthor
+\UI@allowmultiauthortrue
+
+\newcommand{\UI@warnUnknownChoice}[3]{%
+  \ClassWarning{uithesis}{#1 tidak dikenal: '#2'. Menggunakan '#3'.}%
+}
+
+% Kunci format
+\define@choicekey+{uithesis.cls}{format}[\val\nr]{monograph,journal}{%
+  \ifnum\nr=0\relax \@UImonographtrue \else \@UImonographfalse \fi
+}{%
+  \UI@warnUnknownChoice{Format}{\val}{monograph}%
+}
+
+% Kunci type
+\def\UI@type{Skripsi}
+\define@choicekey+{uithesis.cls}{type}[\val\nr]%
+  {Skripsi,Tesis,Disertasi,Laporan Kerja Praktik,Kampus Merdeka}{%
+  \edef\UI@type{\val}%
+  \ifnum\nr=0\relax
+    \UI@allowmultiauthortrue
+  \else
+    \UI@allowmultiauthorfalse
+  \fi
+}{%
+  \UI@warnUnknownChoice{Tipe}{\val}{Skripsi}%
+}
+
+% Kunci jenjang
+\def\UI@jenjang{Sarjana}
+\define@choicekey+{uithesis.cls}{jenjang}[\val\nr]{Sarjana,Magister,Doktor}{%
+  \edef\UI@jenjang{\val}%
+}{%
+  \UI@warnUnknownChoice{Jenjang}{\val}{Sarjana}%
+}
+
+% Kunci lang
+\define@choicekey+{uithesis.cls}{lang}[\val\nr]{indonesian,english}{%
+  \ifnum\nr=0\relax \@UIenglishfalse \else \@UIenglishtrue \fi
+}{%
+  \UI@warnUnknownChoice{Bahasa}{\val}{indonesian}%
+}
+
+% Kunci columns (hanya efektif pada format jurnal)
+\define@choicekey+{uithesis.cls}{columns}[\val\nr]{1,2}{%
+  \ifnum\nr=0\relax \@UItwocolumnfalse \else \@UItwocolumntrue \fi
+}{%
+  \UI@warnUnknownChoice{Jumlah kolom}{\val}{1}%
+}
+
+\newcommand{\UI@setspacingpolicyfromindex}[1]{%
+  \ifnum#1=0\relax
+    \UI@calibratedspacingfalse
+  \else
+    \UI@calibratedspacingtrue
+  \fi
+}
+
+% Kunci spacing
+\define@choicekey+{uithesis.cls}{spacing}[\val\nr]{semantic,calibrated}{%
+  \UI@setspacingpolicyfromindex{\nr}%
+}{%
+  \UI@warnUnknownChoice{Spasi}{\val}{calibrated}%
+}
+\define@choicekey+{uithesis.cls}{paragraph}[\val\nr]{noindent,indent}{%
+  \ifnum\nr=0\relax
+    \UI@paragraphindentfalse
+  \else
+    \UI@paragraphindenttrue
+  \fi
+}{%
+  \UI@warnUnknownChoice{Paragraf}{\val}{noindent}%
+}
+\define@key{uithesis.cls}{plagiarismcheck}[true]{%
+  \@ifundefined{UI@plagiarismcheck#1}{%
+    \UI@warnUnknownChoice{Mode cetak uji plagiarisme}{#1}{false}%
+  }{\@nameuse{UI@plagiarismcheck#1}}%
+}
+
+\define@choicekey+{uithesis.cls}{print}[\val\nr]{oneside,twoside}{%
+  \ifnum\nr=0\relax
+    \UI@twosideprintfalse
+  \else
+    \UI@twosideprinttrue
+  \fi
+}{%
+  \UI@warnUnknownChoice{Mode pencetakan}{\val}{twoside}%
+}
+
+% Kunci sitasi biblatex.
+\def\UI@citationpreset{apa}
+\let\UI@citationstyleoverride\@empty
+\let\UI@bibstyleoverride\@empty
+\let\UI@citationmappingoverride\@empty
+\def\UI@biblatexextraoptions{}
+
+% Setter internal yang dipakai saat pemrosesan opsi kelas.
+\newcommand{\UI@setcitationpreset}[1]{\edef\UI@citationpreset{#1}}
+\newcommand{\UI@setcitationstyleoverride}[1]{\def\UI@citationstyleoverride{#1}}
+\newcommand{\UI@setbibstyleoverride}[1]{\def\UI@bibstyleoverride{#1}}
+\newcommand{\UI@setcitationmappingoverride}[1]{\def\UI@citationmappingoverride{#1}}
+\newcommand{\UI@setbiblatexextraoptions}[1]{\gdef\UI@biblatexextraoptions{,#1}}
+
+\define@choicekey+{uithesis.cls}{citation}[\val\nr]{%
+  apa,ieee,acm,vancouver,mla,harvard,chicago,turabian,acs,nature,science,aip,oscola,custom%
+}{%
+  \UI@setcitationpreset{\val}%
+}{%
+  \UI@warnUnknownChoice{Sitasi}{\val}{apa}%
+}
+
+% Pintasan tanpa nilai (pola acmart)
+\DeclareOptionX{monograph}{\setkeys{uithesis.cls}{format=monograph}}
+\DeclareOptionX{journal}{\setkeys{uithesis.cls}{format=journal}}
+\DeclareOptionX{Skripsi}{\setkeys{uithesis.cls}{type=Skripsi}}
+\DeclareOptionX{Tesis}{\setkeys{uithesis.cls}{type=Tesis}}
+\DeclareOptionX{Disertasi}{\setkeys{uithesis.cls}{type=Disertasi}}
+\DeclareOptionX{KP}{\setkeys{uithesis.cls}{type=Laporan Kerja Praktik}}
+\DeclareOptionX{MBKM}{\setkeys{uithesis.cls}{type=Kampus Merdeka}}
+\DeclareOptionX{Sarjana}{\setkeys{uithesis.cls}{jenjang=Sarjana}}
+\DeclareOptionX{Magister}{\setkeys{uithesis.cls}{jenjang=Magister}}
+\DeclareOptionX{Doktor}{\setkeys{uithesis.cls}{jenjang=Doktor}}
+\DeclareOptionX{indonesian}{\setkeys{uithesis.cls}{lang=indonesian}}
+\DeclareOptionX{english}{\setkeys{uithesis.cls}{lang=english}}
+\DeclareOptionX{indent}{\setkeys{uithesis.cls}{paragraph=indent}}
+\DeclareOptionX{noindent}{\setkeys{uithesis.cls}{paragraph=noindent}}
+
+% Teruskan opsi yang tidak dikenal ke kelas report
+\DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{report}}
+\ProcessOptionsX\relax
+
+% Muat kelas dasar
+\LoadClass[12pt,a4paper,onecolumn,twoside,final]{report}
+\raggedbottom
+
+\newcommand{\UI@applyMainSpacing}{%
+  \ifUI@calibratedspacing
+    \setstretch{1.4}%
+  \else
+    \onehalfspacing
+  \fi
+}
+\newcommand{\UI@restoreMainSpacing}{\UI@applyMainSpacing}
+\newcommand{\UI@footerText}{\UI@applyFooterFont Universitas Indonesia}
+\newcommand{\UI@pageNumberText}{\UI@applyPageNumberFont\thepage}
+\newcommand{\UI@applyParagraphLayout}{%
+  \ifUI@paragraphindent
+    \setlength{\parindent}{1.5em}%
+    \setlength{\parskip}{0pt}%
+  \else
+    \setlength{\parindent}{0pt}%
+    \setlength{\parskip}{12pt}%
+  \fi
+}
+
+
+%==============================================================================%
+%  KONFIGURASI BIBLATEX
+%==============================================================================%
+
+\def\UI@biblatexcitestyle{apa}
+\def\UI@biblatexbibstyle{apa}
+\def\UI@biblatexmapping{british-apa}
+
+\newcommand{\UI@bibSetProfile}[3]{%
+  \gdef\UI@biblatexcitestyle{#1}%
+  \gdef\UI@biblatexbibstyle{#2}%
+  \gdef\UI@biblatexmapping{#3}%
+}
+
+\newcommand{\UI@bibWarnMissingPackage}[3]{%
+  \ClassWarning{uithesis}{%
+    Paket '#1' tidak ditemukan.\MessageBreak
+    Fallback ke '#2'.\MessageBreak
+    Install via: tlmgr install #3%
+  }%
+}
+
+\newcommand{\UI@bibEnsurePackage}[1]{%
+  \@ifpackageloaded{#1}{}{\RequirePackage{#1}}%
+}
+
+\newcommand{\UI@bibApplyPresetWithFallback}[8]{%
+  \IfFileExists{#1}{%
+    \UI@bibSetProfile{#2}{#3}{#6}%
+  }{%
+    \UI@bibEnsurePackage{#7}%
+    \IfFileExists{#1}{%
+      \UI@bibSetProfile{#2}{#3}{#6}%
+    }{%
+      \UI@bibWarnMissingPackage{#7}{#8}{#7}%
+      \UI@bibSetProfile{#4}{#5}{#6}%
+    }%
+  }%
+}
+
+\newcommand{\UI@bibDefinePreset}[4]{%
+  \expandafter\newcommand\csname UI@applycitationpreset@#1\endcsname{%
+    \UI@bibSetProfile{#2}{#3}{#4}%
+  }%
+}
+
+\newcommand{\UI@bibDefinePresetWithFallback}[9]{%
+  \expandafter\newcommand\csname UI@applycitationpreset@#1\endcsname{%
+    \UI@bibApplyPresetWithFallback{#2}{#3}{#4}{#5}{#6}{#7}{#8}{#9}%
+  }%
+}
+
+\newcommand{\UI@bibDefineNumericFallbackPreset}[4]{%
+  \UI@bibDefinePresetWithFallback{#1}{#2}{#3}{#3}{numeric-comp}{numeric}{british}{#4}{numeric-comp / numeric}%
+}
+
+\UI@bibDefinePreset{apa}{apa}{apa}{british-apa}
+\UI@bibDefinePreset{ieee}{ieee}{ieee}{british}
+\UI@bibDefinePreset{vancouver}{numeric-comp}{numeric}{british}
+\UI@bibDefinePreset{harvard}{authoryear}{authoryear}{british}
+\UI@bibDefinePreset{custom}{apa}{apa}{british-apa}
+\UI@bibDefinePresetWithFallback{mla}{mla.bbx}{mla}{mla}{authortitle}{authortitle}{british}{biblatex-mla}{authortitle}
+\UI@bibDefinePresetWithFallback{chicago}{chicago-authordate.bbx}{chicago-authordate}{chicago-authordate}{authoryear}{authoryear}{british}{biblatex-chicago}{authoryear}
+\UI@bibDefinePresetWithFallback{turabian}{chicago-notes.bbx}{chicago-notes}{chicago-notes}{chicago-authordate}{chicago-authordate}{british}{biblatex-chicago}{chicago-authordate}
+\UI@bibDefineNumericFallbackPreset{acs}{chem-acs.bbx}{chem-acs}{biblatex-chem}
+\UI@bibDefineNumericFallbackPreset{nature}{nature.bbx}{nature}{biblatex-nature}
+\UI@bibDefineNumericFallbackPreset{science}{science.bbx}{science}{biblatex-science}
+\UI@bibDefineNumericFallbackPreset{aip}{phys.bbx}{phys}{biblatex-phys}
+\UI@bibDefinePresetWithFallback{oscola}{oscola.bbx}{oscola}{oscola}{authortitle}{authortitle}{british}{oscola}{authortitle}
+
+\newif\ifUI@bibacmprofileavailable
+\newcommand{\UI@bibTrySetAcmProfile}{%
+  \IfFileExists{acm.bbx}{%
+    \UI@bibacmprofileavailabletrue
+    \IfFileExists{acm.cbx}{%
+      \UI@bibSetProfile{acm}{acm}{british}%
+    }{%
+      \UI@bibSetProfile{numeric-comp}{acm}{british}%
+    }%
+  }{%
+    \UI@bibacmprofileavailablefalse
+  }%
+}
+
+\newcommand{\UI@applycitationpreset@acm}{%
+  \UI@bibTrySetAcmProfile
+  \ifUI@bibacmprofileavailable\else
+    \UI@bibEnsurePackage{biblatex-acm}%
+    \UI@bibTrySetAcmProfile
+    \ifUI@bibacmprofileavailable\else
+      \UI@bibWarnMissingPackage{biblatex-acm}{numeric-comp / numeric}{biblatex-acm}%
+      \UI@bibSetProfile{numeric-comp}{numeric}{british}%
+    \fi
+  \fi
+}
+
+\newcommand{\UI@bibResolveConfiguration}{%
+  \ifcsname UI@applycitationpreset@\UI@citationpreset\endcsname
+    \csname UI@applycitationpreset@\UI@citationpreset\endcsname
+  \else
+    \ClassWarning{uithesis}{Sitasi preset '\UI@citationpreset' tidak dikenal. Menggunakan 'apa'.}%
+    \UI@applycitationpreset@apa
+  \fi
+  \ifx\UI@citationstyleoverride\@empty\else
+    \gdef\UI@biblatexcitestyle{\UI@citationstyleoverride}%
+  \fi
+  \ifx\UI@bibstyleoverride\@empty\else
+    \gdef\UI@biblatexbibstyle{\UI@bibstyleoverride}%
+  \fi
+  \ifx\UI@citationmappingoverride\@empty\else
+    \gdef\UI@biblatexmapping{\UI@citationmappingoverride}%
+  \fi
+}
+
+% Perintah publik konfigurasi biblatex lanjutan.
+\let\setuicitationpreset\UI@setcitationpreset
+\let\setuicitestyle\UI@setcitationstyleoverride
+\let\setuibibstyle\UI@setbibstyleoverride
+\let\setuicitationmapping\UI@setcitationmappingoverride
+\let\setuibiblatexoptions\UI@setbiblatexextraoptions
+\newcommand{\setuibiblatexstyle}[1]{%
+  \UI@setcitationstyleoverride{#1}%
+  \UI@setbibstyleoverride{#1}%
+}
+
+\UI@bibResolveConfiguration
+
+
+%==============================================================================%
+%  IMPOR PAKET DEPENDENSI
+%==============================================================================%
+
+%--- Tipografi & Tata Letak Halaman ---%
+\RequirePackage{pslatex}           % Times New Roman
+\RequirePackage{setspace}
+  \UI@applyMainSpacing
+\AtBeginDocument{\sloppy}
+\if@UImonograph
+  \RequirePackage[paper=a4paper,headheight=14.5pt,%
+    left=3cm,top=3cm,right=3cm,bottom=3cm]{geometry}
+\else
+  % Journal layout: wider text block, closer to common two-column templates.
+  \RequirePackage[paper=a4paper,headheight=14.5pt,%
+    left=2cm,top=3cm,right=2cm,bottom=3cm]{geometry}
+\fi
+\addtolength{\topmargin}{-14.5pt}
+\if@UIenglish
+  \RequirePackage[indonesian,english]{babel}  % english aktif
+\else
+  \RequirePackage[english,indonesian]{babel}  % indonesian aktif
+\fi
+\RequirePackage{changepage}
+  \strictpagecheck
+\setlength{\emergencystretch}{1.5em}
+
+%--- Struktur Dokumen ---%
+\RequirePackage{tocbibind}         % tambahkan pustaka dll. ke ToC
+\RequirePackage[titles]{tocloft}   % daftar isi kustom
+\RequirePackage{fancyhdr}          % header dan footer
+\RequirePackage{pdfpages}          % menyisipkan berkas PDF
+
+%--- Tautan & Referensi ---%
+\RequirePackage{hyperref}
+\RequirePackage{url}
+  \urlstyle{same}
+
+%--- Tabel ---%
+\RequirePackage{booktabs}
+\RequirePackage{multirow}
+\RequirePackage{longtable}
+\RequirePackage{supertabular}
+\RequirePackage{array}
+\RequirePackage{tabularx}
+\RequirePackage{multicol}
+\RequirePackage{colortbl}
+\RequirePackage[most]{tcolorbox}
+
+%--- Gambar & Figur ---%
+\RequirePackage{graphicx}
+
+% Keep images within the current text measure (column in two-column mode).
+\def\UI@maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\setkeys{Gin}{width=\UI@maxwidth,keepaspectratio}
+
+\RequirePackage{wrapfig}
+\RequirePackage{float}
+\RequirePackage{tikzpagenodes}
+\RequirePackage{tikz}
+  \usetikzlibrary{positioning}
+  \usetikzlibrary{chains}
+
+%--- Matematika ---%
+\RequirePackage{amsmath}
+\RequirePackage{amsfonts}
+\RequirePackage{amssymb}
+
+%--- Kode Program ---%
+\RequirePackage{listings}
+\RequirePackage[dvipsnames]{xcolor}
+\RequirePackage{xparse}
+%--- Sitasi (biblatex + biber) ---%
+\RequirePackage[utf8]{inputenc}    % harus dimuat sebelum biblatex
+\RequirePackage{csquotes}          % direkomendasikan biblatex bersama babel
+\RequirePackage[%
+  backend     = biber,%
+  citestyle   = \UI@biblatexcitestyle,%
+  bibstyle    = \UI@biblatexbibstyle,%
+  natbib      = true,%
+  url         = true,%
+  doi         = true,%
+  language    = british,%
+  alldates    = long,%
+  texencoding = utf8%
+  \UI@biblatexextraoptions
+]{biblatex}
+
+% \bibliography{file,...} -> deklarasi berkas .bib (dipanggil di preamble dokumen utama).
+% Nama berkas tanpa ekstensi .bib; pisahkan beberapa berkas dengan koma.
+% Contoh: \bibliography{config/references}
+%         \bibliography{main,supplement}
+% Berkas dengan ekstensi .bib juga diterima secara otomatis.
+\renewcommand{\bibliography}[1]{%
+  \@for\@bibfile:=#1\do{%
+    \filename@parse{\@bibfile}%
+    \ifx\filename@ext\relax
+      \addbibresource{\@bibfile.bib}%
+    \else
+      \addbibresource{\@bibfile}%
+    \fi
+  }%
+}
+
+% Terjemahan string sitasi ke Bahasa Indonesia -> hanya aktif bila lang=indonesian.
+% Untuk lang=english, string British asli digunakan.
+\if@UIenglish\else
+  \begingroup
+    \edef\UI@tmp{\endgroup
+      \noexpand\DeclareLanguageMapping{indonesian}{\UI@biblatexmapping}}%
+  \UI@tmp
+  \newcommand{\UI@reformatBibDates}[1]{%
+    % Disable ordinal suffixes
+    \DefineBibliographyExtras{#1}{%
+      \protected\def\mkbibordinal##1{##1}%
+      \protected\def\mkbibmascord##1{##1}%
+      \protected\def\mkbibfemord##1{##1}%
+      \protected\def\mkbibneutord##1{##1}%
+    }%
+    % Define Indonesian month names and other strings
+    \DefineBibliographyStrings{british}{%
+      retrieved  = {Diakses pada tanggal},%
+      from       = {dari},%
+      january    = {Januari},%
+      february   = {Februari},%
+      march      = {Maret},%
+      april      = {April},%
+      may        = {Mei},%
+      june       = {Juni},%
+      july       = {Juli},%
+      august     = {Agustus},%
+      september  = {September},%
+      october    = {Oktober},%
+      november   = {November},%
+      december   = {Desember},%
+    }%
+  }%
+  % Apply to common English language variants
+  \UI@reformatBibDates{british}%
+  \UI@reformatBibDates{american}%
+  \UI@reformatBibDates{english}%
+  \UI@reformatBibDates{canadian}%
+  \UI@reformatBibDates{australian}%
+  \UI@reformatBibDates{newzealand}%
+\fi
+
+%--- Utilitas ---%
+\RequirePackage{enumitem}
+\RequirePackage{everyshi}
+\RequirePackage{environ}           % environment pengumpul konten
+\RequirePackage{etoolbox}          % hook environment (default centering table)
+\RequirePackage{subcaption}        % subfigure/subtable (dipakai di kedua format)
+\RequirePackage{bm}
+\RequirePackage{pdflscape}
+
+%--- Paket Spesifik Format ---%
+\if@UImonograph
+  % automake diperlukan agar makeglossaries dijalankan otomatis.
+  \RequirePackage[automake,acronyms,symbols,nonumberlist,nomain]{glossaries-extra}
+  \makeglossaries
+\else
+  % Pada format jurnal, glossaries dimuat tanpa automake karena \makeglossaries
+  % tidak dipanggil (tidak ada halaman Daftar Istilah pada format jurnal).
+  \RequirePackage[acronyms,symbols,nonumberlist,nomain]{glossaries-extra}
+  \ifUI@paragraphindent
+    \RequirePackage{indentfirst}
+  \fi
+  \if@UItwocolumn
+    % improve full-width float behavior (top/bottom) in two-column journal.
+    \RequirePackage{dblfloatfix}
+    % allow mid-page full-width blocks in two-column journal.
+    \RequirePackage{cuted}
+    % provide explicit \balance/\nobalance controls for forced page breaks.
+    \RequirePackage{balance}
+    % balance columns on the last page so empty space sits at the bottom.
+    \RequirePackage{flushend}
+  \fi
+\fi
+
+%--- Dukungan Multi-Bahasa (CJK) ---%
+\RequirePackage{CJKutf8}
+
+
+%==============================================================================%
+%  KONFIGURASI PAKET
+%==============================================================================%
+
+%--- Hyperref ---%
+\hypersetup{%
+  a4paper,%
+  colorlinks=false,%
+  pdfborder=0 0 0,%
+  linkcolor=blue,%
+  citecolor=black,%
+  bookmarksopen=false,%
+  bookmarksnumbered=true,%
+  plainpages=false,%
+  pdfpagelabels=true,%
+  hypertexnames=false,%
+  pdfstartview=FitH,%
+  pdfview=FitH%
+  }%
+\def\contentsline#1#2#3#4{%
+  \ifx\\#4\\%
+    \csname l@#1\endcsname{#2}{#3}%
+  \else
+    \csname l@#1\endcsname{%
+      \hyper@linkstart{link}{#4}{#2}\hyper@linkend
+    }{%
+      \hyper@linkstart{link}{#4}{#3}\hyper@linkend
+    }%
+  \fi
+}
+
+%--- Konfigurasi Gaya Kode Program ---%
+% Warna dasar (semua memenuhi rasio kontras WCAG AA >= 4.5:1 pada latar putih)
+\definecolor{codegreen}{rgb}{0,0.50,0}     % hijau tua, kontras ~5.1:1
+\definecolor{codegray}{rgb}{0.35,0.35,0.35}% abu tua (nomor baris), kontras ~9.3:1
+\definecolor{codepurple}{rgb}{0.58,0,0.82} % ungu, kontras ~6.5:1
+% Palet warna bersama untuk definisi bahasa pemrograman bawaan:
+\colorlet{keywordcolor}{NavyBlue}          % kata kunci: ~5.1:1
+\colorlet{typecolor}{teal}                 % tipe data: ~4.5:1
+\colorlet{greencomments}{OliveGreen}       % komentar: ~4.8:1
+\lstdefinestyle{uistyle}{%
+  commentstyle=\color{codegreen},%
+  keywordstyle=\color{NavyBlue},%
+  numberstyle=\footnotesize\color{codegray},%
+  stringstyle=\color{codepurple},%
+  identifierstyle=\color{black},%
+  basicstyle=\ttfamily\small,%
+  breakatwhitespace=false,%
+  breaklines=true,%
+  breakindent=1em,%
+  columns=fullflexible,%
+  captionpos=b,%
+  keepspaces=true,%
+  numbers=left,%
+  numbersep=5pt,%
+  showspaces=false,%
+  showstringspaces=false,%
+  showtabs=false,%
+  tabsize=2%
+}
+\lstset{style=uistyle}
+
+%--- Penimpaan Senar Babel ---%
+\addto\captionsindonesian{%
+  \renewcommand{\figurename}{Gambar}%
+  \renewcommand{\tablename}{Tabel}%
+  \renewcommand{\lstlistingname}{Kode}%
+}
+\addto\captionsenglish{%
+  \renewcommand{\figurename}{Figure}%
+  \renewcommand{\tablename}{Table}%
+  \renewcommand{\lstlistingname}{Code}%
+}
+
+% Pengaturan umum untuk semua jenis caption, termasuk lstlisting.
+% Redefinisikan justifikasi centering agar \parfillskip=0pt sehingga baris
+% terakhir kalimat yang panjang juga rata tengah (LaTeX \centering default
+% membiarkan \parfillskip=0pt+1fil sehingga baris terakhir bergeser ke kanan).
+\DeclareCaptionJustification{centering}{%
+  \centering\parfillskip\z@skip}
+\DeclareCaptionFont{uicaption}{\fontsize{12}{15}\selectfont}
+\captionsetup{labelfont=normalfont,textfont=normalfont,font=uicaption,justification=centering,parindent=0pt}
+
+
+%==============================================================================%
+%  TATA LETAK ISI: GAYA JUDUL BAB (ConnyRevised, diadaptasi dari fncychap v1.34)
+%==============================================================================%
+%  Karya ini diadaptasi dari fncychap.sty oleh Ulf A. Lindgren (LPPL).
+%  Hanya konfigurasi ConnyRevised yang diperlukan; gaya lain dihilangkan.
+%  Kustomisasi khusus UI (v2.2.0) diterapkan di bagian ConnyRevised.
+%==============================================================================%
+% Deklarasi \newif dan sentinel \if@mainmatter dipindah ke luar \if@UImonograph.
+% Dalam skip-mode (misal: type=journal), TeX menghitung pasangan \if...\fi;
+% token yang tidak terdefinisi tidak dihitung, sehingga dapat menyebabkan \fi
+% menutup blok terlalu cepat. Semua kondisional yang dipakai di tubuh definisi
+% di dalam blok harus sudah terdefinisi sebelum blok ini dimulai.
+\newif\ifUCN \UCNfalse
+\newif\ifLCN \LCNfalse
+\newif\ifinapp \inappfalse
+\newif\ifUCT \UCTfalse
+\newif\ifLCT \LCTfalse
+% Penamaan historis fncychap:
+% - UCN/LCN: mode huruf chapter name (uppercase/lowercase)
+% - UCT/LCT: mode huruf chapter title (uppercase/lowercase)
+% \if@mainmatter didefinisikan oleh book.cls, bukan report.cls; definisikan
+% secara eksplisit sehingga sudah dikenal oleh skip-mode sebelum blok di bawah.
+\@ifundefined{@mainmatter}{\newif\if@mainmatter \@mainmattertrue}{}
+\@ifundefined{@chapapp}{\let\@chapapp\chaptername}{}
+\if@UImonograph
+  % CNV = Chapter Name Variant (gaya teks label "BAB/CHAPTER").
+  \newcommand{\CNV}{\huge\bfseries}
+  \newcommand{\ChNameVar}[1]{\renewcommand{\CNV}{#1}}
+  % CNoV = Chapter Number Variant (gaya angka bab).
+  \newcommand{\CNoV}{\huge\bfseries}
+  \newcommand{\ChNumVar}[1]{\renewcommand{\CNoV}{#1}}
+  \def\ChNameLowerCase{\LCNtrue\UCNfalse}
+  \def\ChNameUpperCase{\UCNtrue\LCNfalse}
+  \def\ChNameAsIs{\UCNfalse\LCNfalse}
+  \renewcommand\appendix{\par
+    \setcounter{chapter}{0}%
+    \setcounter{section}{0}%
+    \inapptrue%
+    \renewcommand\@chapapp{\appendixname}%
+    \renewcommand\thechapter{\@Alph\c@chapter}}
+  % FmN = Format Name (format teks label "BAB/CHAPTER" dengan opsi huruf besar/kecil/default).
+  \newcommand{\FmN}[1]{%
+    \ifUCN{\MakeUppercase{#1}}\LCNfalse
+    \else\ifLCN{\MakeLowercase{#1}}\UCNfalse\else#1\fi\fi}
+  % CTV = Chapter Title Variant (gaya teks judul bab).
+  \newcommand{\CTV}{\Huge\bfseries}
+  \newcommand{\ChTitleVar}[1]{\renewcommand{\CTV}{#1}}
+  \newlength{\RW}
+  \setlength{\RW}{1pt}
+  \newcommand{\ChRuleWidth}[1]{\setlength{\RW}{#1}}
+  \def\ChTitleLowerCase{\LCTtrue\UCTfalse}
+  \def\ChTitleUpperCase{\UCTtrue\LCTfalse}
+  \def\ChTitleAsIs{\UCTfalse\LCTfalse}
+  % FmTi = Format Title (format teks judul bab dengan opsi huruf besar/kecil/default).
+  \newcommand{\FmTi}[1]{%
+    \ifUCT{\MakeUppercase{#1}}\LCTfalse
+    \else\ifLCT{\MakeLowercase{#1}}\UCTfalse\else{#1}\fi\fi}
+  \newlength{\mylen}
+  \newlength{\myhi}
+  \newlength{\px}
+  \newlength{\py}
+  \newlength{\pyy}
+  \newlength{\pxx}
+  \def\mghrulefill#1{\leavevmode\leaders\hrule\@height #1\hfill\kern\z@}
+  % DOCH = baris "BAB/CHAPTER" + nomor bab pada heading bernomor.
+  \newcommand{\DOCH}{%
+    \CNV\FmN{\@chapapp}\space \CNoV\thechapter
+    \par\nobreak
+    \vskip 20\p@}
+  % DOTI = baris judul bab bernomor.
+  \newcommand{\DOTI}[1]{\CTV\FmTi{#1}\par\nobreak \vskip 40\p@}
+  % DOTIS = baris judul bab tak bernomor (mis. daftar isi, lampiran tanpa nomor bab).
+  \newcommand{\DOTIS}[1]{\CTV\FmTi{#1}\par\nobreak \vskip 40\p@}
+  %--- Setelan ConnyRevised (UI 2017 v2.2.0) ---%
+  \ChNameUpperCase
+  \ChTitleUpperCase
+  \ChNameVar{\UI@chapterHeadingStyle}
+  \ChNumVar{\rm\bfseries}
+  \ChTitleVar{\UI@chapterHeadingStyle}
+  \renewcommand{\DOCH}{%
+    % Jarak negatif untuk menaikkan blok "BAB/CHAPTER" mendekati tepi atas.
+    \vspace*{-4.5em}%
+    \CNV\FmN{\@chapapp}\space\CNoV
+    % Rapatkan jarak antara label bab dan angka bab.
+    \vspace*{-1em}%
+    \thechapter
+    \par\nobreak
+    % Tarik judul sedikit ke atas agar kompak seperti gaya UI lama.
+    \vskip -0.5\baselineskip}
+  \renewcommand{\DOTI}[1]{%
+    \CTV\FmTi{#1}\par\nobreak
+    \vskip 20\p@}
+  \renewcommand{\DOTIS}[1]{%
+    % Varian tanpa nomor: kompensasi vertikal agar ritme sama dengan heading bernomor.
+    \vspace*{-4em}%
+    \CTV\FmTi{#1}\par\nobreak
+    \vspace*{-1em}}
+  %--- Makro pembentuk kepala bab ---%
+  \def\@makechapterhead#1{%
+    \vspace*{10\p@}%
+    {\parindent \z@ \raggedright \normalfont
+      \ifnum \c@secnumdepth >\m@ne
+        \if@mainmatter
+          \DOCH
+        \fi
+      \fi
+      \interlinepenalty\@M
+      \if@mainmatter
+        \DOTI{#1}%
+      \else
+        \DOTIS{#1}%
+      \fi}}
+  \def\@schapter#1{%
+    \if@twocolumn
+      \@makeschapterhead{#1}%
+    \else
+      \@makeschapterhead{#1}%
+      \@afterheading
+    \fi}
+  \def\@makeschapterhead#1{%
+    {\parindent \z@ \centering
+      \UI@chapterHeadingStyle
+      \interlinepenalty\@M
+      \MakeUppercase{#1}%
+      \vskip 20\p@}}
+\fi % end \if@UImonograph (gaya judul bab)
+
+
+%==============================================================================%
+%  TATA LETAK ISI: HALAMAN & TIPOGRAFI FORMAT
+%==============================================================================%
+
+% Sentinel kosong untuk logika kondisional
+\def\blank{}
+
+% Pembantu kondisional: satu penulis vs. lebih dari satu.
+% Gunakan: \UI@IfSingleAuthor{jika-satu-penulis}{jika-lebih}
+% Hanya Skripsi yang mendukung lebih dari satu penulis.
+\newcommand{\UI@IfSingleAuthor}[2]{%
+  \ifUI@allowmultiauthor
+    \ifx\blank\npmDua#1\else#2\fi
+  \else
+    #1%
+  \fi
+}
+\newcommand{\UI@IfThirdAuthor}[2]{%
+  \ifUI@allowmultiauthor
+    \ifx\blank\npmTiga#2\else#1\fi
+  \else
+    #2%
+  \fi
+}
+% Tambahkan penulis/NPM tambahan hanya bila isinya ada.
+\newcommand{\UI@AppendIfPresent}[2]{\ifx#1\blank\else{~/~#2}\fi}
+
+% Logo default
+\def\UI@makaraimage{uithesis-makara.png}
+
+% Perbandingan string murni LaTeX2e. \strcompare{STRING}{MACRO}{sama}{beda}
+% Argumen #2 harus berupa makro dengan isi karakter biasa; \edef mengembangkannya.
+\newcommand{\strcompare}[4]{%
+  \def\UI@strcmp@a{#1}\edef\UI@strcmp@b{#2}%
+  \ifx\UI@strcmp@a\UI@strcmp@b
+    \expandafter\@firstoftwo
+  \else
+    \expandafter\@secondoftwo
+  \fi
+  {#3}{#4}%
+}
+
+\if@UImonograph
+  %--- Gaya Monograf ---%
+  \UI@applyParagraphLayout
+  \setlist[itemize]{nosep,leftmargin=*}
+  \setlist[enumerate]{nosep,leftmargin=*}
+
+  \renewcommand{\chaptername}{BAB}
+  \setcounter{secnumdepth}{3}
+  \setcounter{tocdepth}{3}
+
+  \renewcommand\section{\@startsection{section}{1}{\z@}%
+    {0pt}{1pt \@plus -1pt \@minus 1pt}{\UI@sectionHeadingStyle}}
+  \renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+    {0pt}{1pt \@plus -1pt \@minus 1pt}{\UI@sectionHeadingStyle}}
+  \renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+    {0pt}{1pt \@plus -1pt \@minus 1pt}{\UI@sectionHeadingStyle}}
+  \renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+    {0pt}{1pt \@plus -1pt \@minus 1pt}{\UI@sectionHeadingStyle}}
+  \renewcommand\subparagraph{\@startsection{subparagraph}{5}{\z@}%
+    {0pt}{1pt \@plus -1pt \@minus 1pt}{\UI@sectionHeadingStyle}}
+
+  % Penghitung halaman per bab untuk logika internal bab.
+  \newcounter{chapterpagecount}[chapter]
+  % Penghitung halaman fisik global (tidak terpengaruh reset \pagenumbering).
+  % Digunakan untuk penentuan sisi kanan/kiri pada mode twoside.
+  \newcounter{UI@physicalpage}
+  \EveryShipout{\stepcounter{chapterpagecount}\stepcounter{UI@physicalpage}}
+
+
+\else
+  %--- Gaya Jurnal ---%
+  \UI@applyParagraphLayout
+  \ifUI@paragraphindent\else\setlength{\parskip}{0pt}\fi
+  \renewcommand{\chaptername}{}
+  \setcounter{secnumdepth}{-1}
+  \setcounter{tocdepth}{3}
+
+  % Stub counter agar \thechapterpagecount tidak error.
+  \newcounter{chapterpagecount}
+
+  % \clearchapter no-op pada format jurnal.
+  \newcommand{\clearchapter}{}
+  \newcommand{\forceclearchapter}{}
+
+  % Pertahankan alur jurnal inline tanpa \@topnewpage.
+  \newlength{\UI@journal@chapterbeforeskip}
+  \newlength{\UI@journal@chapterafterskip}
+  \setlength{\UI@journal@chapterbeforeskip}{1.2\baselineskip}
+  \setlength{\UI@journal@chapterafterskip}{6\p@}
+
+  \renewcommand\chapter{%
+    \par
+    \addvspace{\UI@journal@chapterbeforeskip}%
+    \thispagestyle{plain}%
+    \global\@topnum\z@
+    \@afterindentfalse
+    \secdef\@chapter\@schapter
+  }
+
+  \def\@chapter[#1]#2{%
+    \ifnum \c@secnumdepth >\m@ne
+      \refstepcounter{chapter}%
+      \typeout{\@chapapp\space\thechapter.}%
+      \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}%
+    \else
+      \addcontentsline{toc}{chapter}{#1}%
+    \fi
+    \@makechapterhead{#2}%
+    \@afterheading
+  }
+
+  \def\@schapter#1{%
+    \@makeschapterhead{#1}%
+    \@afterheading
+  }
+
+  % Judul bab jurnal: TNR 12pt tebal, tanpa nomor, mengikuti alur teks.
+  \def\@makechapterhead#1{%
+    {\parindent\z@\normalfont\fontsize{12}{15}\bfseries
+      \MakeUppercase{#1}\par}%
+    \vskip \UI@journal@chapterafterskip
+  }
+  % Bab bertanda (*) menggunakan layout yang sama dengan bab bernomor.
+  \let\@makeschapterhead\@makechapterhead
+  \renewcommand\section{\@startsection{section}{0}{\z@}%
+    {-1.5ex \@plus -.5ex \@minus -.1ex}%
+    {1.0ex \@plus.1ex}%
+    {\UI@journalSectionHeadingStyle}}
+  \renewcommand\subsection{\@startsection{subsection}{1}{\z@}%
+    {-1.0ex \@plus -.3ex \@minus -.1ex}%
+    {0.8ex \@plus .1ex}%
+    {\UI@journalSectionHeadingStyle}}
+  \let\oldsection\section
+  \let\oldsubsection\subsection
+  \RenewDocumentCommand{\section}{s o m}{%
+    \par\nopagebreak[4]%
+    \IfBooleanTF{#1}{%
+      \phantomsection
+      \oldsection*{#3}%
+      \IfValueTF{#2}{%
+        \addcontentsline{toc}{section}{#2}%
+      }{%
+        \addcontentsline{toc}{section}{#3}%
+      }%
+    }{%
+      \IfValueTF{#2}{%
+        \oldsection[#2]{#3}%
+      }{%
+        \oldsection{#3}%
+      }%
+    }%
+  }
+  \RenewDocumentCommand{\subsection}{s o m}{%
+    \par\nopagebreak[4]%
+    \IfBooleanTF{#1}{%
+      \phantomsection
+      \oldsubsection*{#3}%
+      \IfValueTF{#2}{%
+        \addcontentsline{toc}{subsection}{#2}%
+      }{%
+        \addcontentsline{toc}{subsection}{#3}%
+      }%
+    }{%
+      \IfValueTF{#2}{%
+        \oldsubsection[#2]{#3}%
+      }{%
+        \oldsubsection{#3}%
+      }%
+    }%
+  }
+\fi
+
+% Format jurnal harus mengalir kontinu antarbab/subberkas.
+\if@UImonograph\else
+  \let\include\input
+\fi
+
+% Override path/logo Makara dari preamble pengguna.
+\newcommand{\setmakaraimage}[1]{\gdef\UI@makaraimage{#1}}
+
+% Penempatan figur dan tabel secara paksa (H)
+\floatplacement{figure}{H}
+\floatplacement{table}{H}
+
+% Selalu pusatkan isi float tabel lintas format (monograf/jurnal 1-2 kolom).
+\AtBeginEnvironment{table}{\centering}
+\AtBeginEnvironment{table*}{\centering}
+% Pusatkan longtable di dalam kolom teks (atur LTleft/LTright ke fill).
+% Ini memengaruhi semua longtable, termasuk backend UIlongtable mode monograf.
+\AtBeginEnvironment{longtable}{%
+  \setlength{\LTleft}{0pt plus 1fill}%
+  \setlength{\LTright}{0pt plus 1fill}}
+
+
+%==============================================================================%
+%  TATA LETAK ISI: PEMBANTU FORMAT JURNAL DUA KOLOM
+%==============================================================================%
+%  Environment-environment ini hanya aktif ketika format=journal.
+%  Tiga mode tersedia:
+%    Mode A (UIwidetable, UIwidefigure) -> float penuh-halaman di atas/bawah
+%    Mode B (UIwideblock)               -> blok penuh-halaman non-float di tengah
+%    Mode C (UIlandscape)               -> halaman landscape dengan penjaga lebar
+%  Pada format monograf, environment ini berfungsi sebagai table/figure biasa.
+%  Bergantung pada: xparse (keduanya); cuted/strip (UIwideblock, hanya dua-kolom).
+%==============================================================================%
+
+% Mode A: float penuh-halaman (atas/bawah) di konfigurasi satu/dua-kolom.
+\NewDocumentEnvironment{UIwidetable}{ O{tbp} }{%
+  \if@UItwocolumn
+    \begin{table*}[#1]
+  \else
+    \begin{table}[#1]
+  \fi
+  \centering
+}{%
+  \if@UItwocolumn
+    \end{table*}
+  \else
+    \end{table}
+  \fi
+}
+
+\NewDocumentEnvironment{UIwidefigure}{ O{tbp} }{%
+  \if@UItwocolumn
+    \begin{figure*}[#1]
+  \else
+    \begin{figure}[#1]
+  \fi
+  \centering
+}{%
+  \if@UItwocolumn
+    \end{figure*}
+  \else
+    \end{figure}
+  \fi
+}
+
+% Mode B: blok penuh-halaman non-float di tengah halaman dua-kolom.
+% Bergantung pada paket cuted (hanya dimuat jika format=journal dan columns=2).
+\newif\ifUI@instrip
+\NewDocumentEnvironment{UIwideblock}{ O{\textwidth} }{%
+  \UI@instripfalse
+  \if@UItwocolumn
+    \if@twocolumn
+      \UI@instriptrue
+      \begin{strip}
+    \fi
+  \fi
+  \begin{center}
+  \begin{minipage}{#1}
+}{%
+  \end{minipage}
+  \end{center}
+  \ifUI@instrip
+    \end{strip}
+    \UI@instripfalse
+  \fi
+}
+
+% Mode C: pembantu untuk konten multi-halaman (mis. longtable) di jurnal dua-kolom.
+\newif\ifUI@fullwidthpageswitched
+\newenvironment{UIfullwidthpages}{%
+  \UI@fullwidthpageswitchedfalse
+  \if@UItwocolumn
+    \if@twocolumn
+      \clearpage
+      \onecolumn
+      \UI@fullwidthpageswitchedtrue
+    \fi
+  \fi
+}{%
+  \ifUI@fullwidthpageswitched
+    \clearpage
+    \twocolumn
+    \UI@fullwidthpageswitchedfalse
+  \fi
+}
+
+% Mode C: halaman landscape dengan penjaga UIfullwidthpages di jurnal dua-kolom.
+\newenvironment{UIlandscape}{%
+  \begin{UIfullwidthpages}
+  \begin{landscape}
+}{%
+  \end{landscape}
+  \end{UIfullwidthpages}
+}
+
+% Tabel panjang lintas kolom/halaman.
+% Di mode satu kolom (monograf) menggunakan longtable; di mode dua kolom
+% (jurnal) menggunakan supertabular, yang tidak memiliki batasan
+% "not in 1-column mode" seperti longtable.
+% Tujuh perintah setup berikut harus dipanggil SEBELUM \begin{UIlongtable}.
+\newcommand{\UIlongtablecaption}[1]{\def\UI@lt@caption{#1}}
+\newcommand{\UIlongtablelabel}[1]{\def\UI@lt@label{#1}}
+\newcommand{\UIlongtablecols}[1]{\def\UI@lt@cols{#1}}
+\newcommand{\UIlongtablefirsthead}[1]{\def\UI@lt@firsthead{#1}}
+\newcommand{\UIlongtablehead}[1]{\def\UI@lt@head{#1}}
+\newcommand{\UIlongtabletail}[1]{\def\UI@lt@tail{#1}}
+\newcommand{\UIlongtablelasttail}[1]{\def\UI@lt@lasttail{#1}}
+\def\UI@lt@caption{}\def\UI@lt@label{}\def\UI@lt@cols{}
+\def\UI@lt@firsthead{}\def\UI@lt@head{}\def\UI@lt@tail{}\def\UI@lt@lasttail{}
+
+\NewDocumentEnvironment{UIlongtable}{ m }{%
+  \if@UItwocolumn
+    % Two-column (journal): mpsupertabular wraps each chunk in a \columnwidth
+    % minipage and restores \leftskip/\rightskip from the outer \centering,
+    % so every continuation chunk is properly centerd.  \tablecaption calls
+    % \refstepcounter{table} eagerly, so \label must follow it.
+    \ifx\UI@lt@caption\@empty\else
+      \tablecaption{\UI@lt@caption}%
+      \ifx\UI@lt@label\@empty\else\label{\UI@lt@label}\fi
+    \fi
+    \tablefirsthead{\UI@lt@firsthead}%
+    % Judul sambungan untuk supertabular dua-kolom.
+    % Pakai jarak bawah 10pt agar selaras dengan caption native supertabular.
+    \ifx\UI@lt@cols\@empty
+      \tablehead{\UI@lt@head}%
+    \else
+      \tablehead{%
+        \multicolumn{\UI@lt@cols}{c}{%
+          \makebox[0pt][c]{\strut\tablename~\thetable: \UI@lt@caption~(sambungan)\strut}} \\
+        \noalign{\vskip \UI@lt@continuedCaptionGap}%
+        \UI@lt@head}%
+    \fi
+    \tabletail{\UI@lt@tail}%
+    \tablelasttail{\UI@lt@lasttail}%
+    \par\vspace{\LTpre}%
+    \centering
+    \begin{mpsupertabular}{#1}%
+  \else
+    % One-column (monograph): longtable handles page breaks natively.
+    % \LTleft and \LTright are set via \AtBeginEnvironment{longtable} below.
+    \begin{longtable}{#1}%
+      \ifx\UI@lt@caption\@empty\else
+        \caption{\UI@lt@caption}%
+        \ifx\UI@lt@label\@empty\else\label{\UI@lt@label}\fi
+        \\%
+      \fi
+      \UI@lt@firsthead
+      \endfirsthead
+      % Samakan perilaku dengan longtable asli: pakai caption lanjutan.
+      \ifx\UI@lt@cols\@empty\else
+        \ifx\UI@lt@caption\@empty\else
+          \caption[]{\UI@lt@caption~(sambungan)}\\
+        \fi
+      \fi
+      \UI@lt@head
+      \endhead
+      \UI@lt@tail
+      \endfoot
+      \UI@lt@lasttail
+      \endlastfoot
+  \fi
+}{%
+  \if@UItwocolumn
+    \end{mpsupertabular}%
+    \vspace{\LTpost}%
+  \else
+    \end{longtable}%
+  \fi
+  \def\UI@lt@caption{}\def\UI@lt@label{}\def\UI@lt@cols{}%
+  \def\UI@lt@firsthead{}\def\UI@lt@head{}%
+  \def\UI@lt@tail{}\def\UI@lt@lasttail{}%
+}
+
+%==============================================================================%
+%  TATA LETAK ISI: GAYA HALAMAN (fancyhdr)
+%==============================================================================%
+
+\newcommand{\UI@syncPageStyleWidth}{\setlength{\headwidth}{\textwidth}}
+\UI@syncPageStyleWidth
+
+\renewcommand{\headrulewidth}{0.0pt}
+\fancyhf{}
+
+\fancypagestyle{onlypage}{%
+  \fancyhead[L]{}\fancyhead[C]{}\fancyhead[R]{}%
+  \fancyfoot[L]{}\fancyfoot[C]{\UI@pageNumberText}\fancyfoot[R]{}
+}
+
+\if@UImonograph
+  % Render helper based on physical page side (current page = shipped+1).
+  % This keeps header/footer side placement stable even when some blank pages
+  % are intentionally excluded from logical page numbering.
+  \newcommand{\UI@showOnPhysOdd}[1]{%
+    \ifodd\numexpr\value{UI@physicalpage}+1\relax #1\fi
+  }
+  \newcommand{\UI@showOnPhysEven}[1]{%
+    \ifodd\numexpr\value{UI@physicalpage}+1\relax\else #1\fi
+  }
+
+  \fancypagestyle{plain}{%
+    \fancyhead[L]{}\fancyhead[C]{}\fancyhead[R]{}%
+    \renewcommand{\headrulewidth}{0.0pt}%
+    \fancyfoot[C]{\UI@pageNumberText}%
+    \ifUI@twosideprint\else
+      \fancyfoot[R]{\UI@footerText}%
+    \fi
+    \renewcommand{\footrulewidth}{0.0pt}%
+  }
+  \fancypagestyle{standard}{%
+    \fancyhead[L]{}\fancyhead[C]{}\fancyhead[R]{}%
+    \renewcommand{\headrulewidth}{0.0pt}%
+    \fancyfoot[C]{}%
+    \ifUI@twosideprint
+      \fancyfoot[L]{\UI@showOnPhysEven{\UI@footerText}}%
+      \fancyfoot[R]{\UI@showOnPhysOdd{\UI@footerText}}%
+    \else
+      \fancyfoot[R]{\UI@footerText}%
+    \fi
+    \renewcommand{\footrulewidth}{0.0pt}%
+  }
+  \fancypagestyle{first-pages}{%
+    \fancyhead[L]{}\fancyhead[C]{}\fancyhead[R]{}%
+    \renewcommand{\headrulewidth}{0.0pt}%
+    \fancyfoot[C]{\UI@pageNumberText}%
+    \ifUI@twosideprint
+      \fancyfoot[L]{\UI@showOnPhysEven{\UI@footerText}}%
+      \fancyfoot[R]{\UI@showOnPhysOdd{\UI@footerText}}%
+    \else
+      \fancyfoot[R]{\UI@footerText}%
+    \fi
+    \renewcommand{\footrulewidth}{0.0pt}%
+  }
+
+  \newcommand{\setfirstheaderfooter}{%
+    \fancyhead{}%
+    \fancyfoot{}%
+    \fancyfoot[C]{\UI@pageNumberText}%
+    \fancyfoot[R]{\UI@footerText}%
+  }
+  \newcommand{\setoddevenheader}{%
+    \fancyhead{}%
+    \ifUI@twosideprint
+      \fancyhead[L]{\UI@showOnPhysEven{\UI@pageNumberText}}%
+      \fancyhead[R]{\UI@showOnPhysOdd{\UI@pageNumberText}}%
+    \else
+      \fancyhead[R]{\UI@pageNumberText}%
+    \fi
+  }
+  \newcommand{\setoddevenfooter}{%
+    \fancyfoot{}%
+    \ifUI@twosideprint
+      \fancyfoot[L]{\UI@showOnPhysEven{\UI@footerText}}%
+      \fancyfoot[R]{\UI@showOnPhysOdd{\UI@footerText}}%
+    \else
+      \fancyfoot[R]{\UI@footerText}%
+    \fi
+  }
+
+\else
+  % Jurnal: halaman depan pakai romawi bawah tengah + UI kanan bawah.
+  % Halaman konten: nomor kanan atas (arab, lanjut dari romawi) + UI kanan bawah.
+  % Halaman abstrak/judul: tanpa nomor, UI kanan bawah.
+  % Samakan gaya `plain` dengan halaman konten jurnal agar halaman awal bab
+  % tidak turun ke nomor bawah-tengah.
+  \fancypagestyle{plain}{%
+    \fancyhead[L]{}\fancyhead[C]{}\fancyhead[R]{\UI@pageNumberText}%
+    \renewcommand{\headrulewidth}{0.0pt}%
+    \fancyfoot[L]{}\fancyfoot[C]{}\fancyfoot[R]{\UI@footerText}%
+    \renewcommand{\footrulewidth}{0.0pt}%
+  }
+  \fancypagestyle{standard}{%
+    \fancyhead[L]{}\fancyhead[C]{}\fancyhead[R]{\UI@pageNumberText}%
+    \renewcommand{\headrulewidth}{0.0pt}%
+    \fancyfoot[L]{}\fancyfoot[C]{}\fancyfoot[R]{\UI@footerText}%
+    \renewcommand{\footrulewidth}{0.0pt}%
+  }
+  % Halaman depan romawi (orisinalitas, pengesahan, AI, publikasi)
+  \fancypagestyle{journal-front}{%
+    \fancyhead[L]{}\fancyhead[C]{}\fancyhead[R]{}%
+    \renewcommand{\headrulewidth}{0.0pt}%
+    \fancyfoot[L]{}\fancyfoot[C]{\UI@pageNumberText}\fancyfoot[R]{}%
+    \renewcommand{\footrulewidth}{0.0pt}%
+  }
+  % Halaman abstrak/judul: nomor tengah bawah, UI kanan bawah
+  \fancypagestyle{first-pages}{%
+    \fancyhead[L]{}\fancyhead[C]{}\fancyhead[R]{}%
+    \renewcommand{\headrulewidth}{0.0pt}%
+    \fancyfoot[L]{}\fancyfoot[C]{\UI@pageNumberText}\fancyfoot[R]{\UI@footerText}%
+    \renewcommand{\footrulewidth}{0.0pt}%
+  }
+
+  % Stub format jurnal
+  \newcommand{\setoddevenheader}{}
+  \newcommand{\setfirstheaderfooter}{}
+  \newcommand{\setoddevenfooter}{}
+\fi
+
+\ifUI@plagiarismcheck
+  \fancypagestyle{onlypage}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+  \fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+  \fancypagestyle{standard}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+  \fancypagestyle{first-pages}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+  \fancypagestyle{journal-front}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+\fi
+
+
+%==============================================================================%
+%  TATA LETAK ISI: PENGELOLAAN BAB & HALAMAN
+%==============================================================================%
+
+\newif\ifUI@chapterautoclearenabled
+\UI@chapterautoclearenabledfalse
+\newif\ifUI@chapterstarted
+\UI@chapterstartedfalse
+
+% Jurnal dua kolom: seimbangkan kolom sebelum \clearpage paksa
+% (mis. dari \include dan transisi UIfullwidthpages/UIlandscape).
+\if@UItwocolumn
+  \let\UI@origclearpage\clearpage
+  \renewcommand{\clearpage}{%
+    \if@twocolumn
+      \balance
+      \UI@origclearpage
+      \nobalance
+    \else
+      \UI@origclearpage
+    \fi
+  }
+\fi
+
+\if@UImonograph
+  \newcommand{\clearchapter}{%
+    \clearpage
+    \ifUI@twosideprint
+      % Bugfix: UI@physicalpage now reflects the truly last shipped page (all
+      % pending floats have been flushed by \clearpage above).
+      \ifodd\value{UI@physicalpage}%
+        \null
+        \thispagestyle{empty}%
+        \addtocounter{page}{-1}%
+        \newpage
+      \fi
+    \fi
+    \setoddevenheader
+    \setoddevenfooter
+  }
+  \newcommand{\forceclearchapter}{%
+    \clearpage
+    \ifUI@twosideprint
+      \null
+      \thispagestyle{empty}%
+      \addtocounter{page}{-1}%
+      \newpage
+    \fi
+  }
+  \newcommand{\UI@insertdummyblank}{%
+    \ifUI@twosideprint
+      \ifodd\value{UI@physicalpage}
+        \forceclearchapter
+      \fi
+    \fi
+  }
+  \newcommand{\UI@insertdummyblankonlypage}{%
+    \ifUI@twosideprint
+      \ifodd\value{UI@physicalpage}
+        \forceclearchapter
+        \thispagestyle{onlypage}%
+      \fi
+    \fi
+  }
+
+  % Aktifkan perilaku \\clearchapter otomatis lewat \\chapter setelah frontmatter.
+  \let\UI@basechapter\chapter
+  \renewcommand{\chapter}{%
+    \ifUI@chapterautoclearenabled
+      \ifUI@chapterstarted
+        \clearchapter
+      \else
+        \global\UI@chapterstartedtrue
+      \fi
+    \fi
+    \UI@basechapter
+  }
+\fi
+
+\newcommand\blankpage{%
+  \clearpage
+  \ifUI@twosideprint
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \null
+    \clearpage
+  \fi
+}
+
+
+%==============================================================================%
+% TATA LETAK ISI: DESAIN SPASI VERTIKAL DOKUMEN
+%==============================================================================%
+% Untuk penyesuaian, ubah nilai default pada \UI@setDocumentSpacingDefaults.
+
+%--- Halaman Sampul dan Halaman Judul Dalam ---------------------------------%
+\newlength{\UI@title@metaRowGap}
+\newlength{\UI@coverLogoToUniversityGap}
+\newlength{\UI@coverUniversityToTitleGap}
+\newlength{\UI@coverTitleToSubtitleGap}
+\newlength{\UI@coverSubtitleToAuthorGap}
+\newlength{\UI@titleInsideSubtitleToBodyGap}
+
+%--- Ritme umum halaman wajib (heading dan antar-bagian) --------------------%
+\newlength{\UI@frontpage@topskip}
+\newlength{\UI@frontpage@afterskip}
+\newlength{\UI@frontpage@sectionGapXS}
+\newlength{\UI@frontpage@sectionGapS}
+\newlength{\UI@frontpage@sectionGapM}
+\newlength{\UI@frontpage@sectionGapL}
+
+%--- Ritme blok tanda tangan lintas halaman wajib ---------------------------%
+\newlength{\UI@frontpage@bodyTopGap}
+\newlength{\UI@frontpage@bodyToSignatureGap}
+\newlength{\UI@frontpage@signatureDateGap}
+
+%--- Lembar Pengesahan (metadata, pernyataan, dan tabel dewan) --------------%
+\newlength{\UI@approval@metaToStatementGap}
+\newlength{\UI@approval@statementToBoardGap}
+\newlength{\UI@approvalBoardRuleToNameGap}
+\newlength{\UI@approvalBoardNameToRoleGap}
+\newlength{\UI@approvalBoardHeaderToRowsGap}
+\newlength{\UI@approvalBoardInterRowGap}
+\newlength{\UI@approvalMultiAuthorStudyGap}
+\newlength{\UI@approvalMBKMStatementToBoardGap}
+
+%--- Surat Pernyataan --------------------------------------------------------%
+\newlength{\UI@suratParagraphGap}
+\newlength{\UI@suratHeadingTopskip}
+\newlength{\UI@suratHeadingAfterSkip}
+\newlength{\UI@suratIdentityToMetaGap}
+
+%--- Kata Pengantar ----------------------------------------------------------%
+\newlength{\UI@kataPengantarDateToNameGap}
+\newlength{\UI@kataPengantarSingleAuthorSignGap}
+
+%--- Persetujuan Publikasi ---------------------------------------------------%
+\newlength{\UI@publikasiHeadingAfterGap}
+\newlength{\UI@publikasiRuleInnerGap}
+
+%--- Abstrak/Abstract format jurnal -----------------------------------------%
+\newlength{\UI@journalTitleToStudyGap}
+\newlength{\UI@journalStudyToAbstrakGap}
+\newlength{\UI@journalAbstrakToKeywordsGap}
+\newlength{\UI@journalKeywordsToAbstractGap}
+\newlength{\UI@journalAbstractToKeywordsGap}
+
+%--- Abstrak format monograf -------------------------------------------------%
+\newlength{\UI@abstrakMonoMetaToBodyGap}
+\newlength{\UI@abstrakMonoBodyToKeywordsGap}
+\newlength{\UI@abstrakMonoAfterKeywordsGap}
+
+%--- Abstract format monograf ------------------------------------------------%
+\newlength{\UI@abstractMonoMetaToBodyGap}
+\newlength{\UI@abstractMonoBodyToKeywordsGap}
+\newlength{\UI@abstractMonoAfterKeywordsGap}
+
+%--- Halaman daftar (Daftar Isi/Gambar/Tabel/Kode/Persamaan/Lampiran) -------%
+\newlength{\UI@listChapterSeparatorSkip}
+\newlength{\UI@frontmatterTocPreskip}
+\newlength{\UI@lt@continuedCaptionGap}
+
+%--- Materi belakang: separator lampiran dan header lampiran -----------------%
+\newlength{\UI@lampiranHeaderLineGap}
+\newlength{\UI@appendixSeparatorTopGap}
+
+\newcommand{\UI@setDocumentSpacingDefaults}{%
+  % Halaman Sampul dan Halaman Judul Dalam
+  \setlength{\UI@title@metaRowGap}{0.3cm}%
+  \setlength{\UI@coverLogoToUniversityGap}{-0.25cm}%
+  \setlength{\UI@coverUniversityToTitleGap}{0.5cm}%
+  \setlength{\UI@coverTitleToSubtitleGap}{0.8cm}%
+  \setlength{\UI@coverSubtitleToAuthorGap}{0.5cm}%
+  \setlength{\UI@titleInsideSubtitleToBodyGap}{0.3cm}%
+
+  % Ritme umum halaman wajib (heading dan antar-bagian)
+  \setlength{\UI@frontpage@topskip}{0pt}%
+  \setlength{\UI@frontpage@afterskip}{20\p@}%
+  \setlength{\UI@frontpage@sectionGapXS}{0.1cm}%
+  \setlength{\UI@frontpage@sectionGapS}{0.2cm}%
+  \setlength{\UI@frontpage@sectionGapM}{0.4cm}%
+  \setlength{\UI@frontpage@sectionGapL}{0.6cm}%
+
+  % Ritme blok tanda tangan lintas halaman wajib
+  \setlength{\UI@frontpage@bodyTopGap}{2cm}%
+  \setlength{\UI@frontpage@bodyToSignatureGap}{2.6cm}%
+  \setlength{\UI@frontpage@signatureDateGap}{1.8cm}%
+
+  % Lembar Pengesahan (metadata, pernyataan, dan tabel dewan)
+  \setlength{\UI@approval@metaToStatementGap}{1.0cm}%
+  \setlength{\UI@approval@statementToBoardGap}{1.0cm}%
+  \setlength{\UI@approvalBoardRuleToNameGap}{-0.2em}%
+  \setlength{\UI@approvalBoardNameToRoleGap}{0.8em}%
+  \setlength{\UI@approvalBoardHeaderToRowsGap}{0.3cm}%
+  \setlength{\UI@approvalBoardInterRowGap}{-0.5em}%
+  \setlength{\UI@approvalMultiAuthorStudyGap}{0.2cm}%
+  \setlength{\UI@approvalMBKMStatementToBoardGap}{2cm}%
+
+  % Surat Pernyataan
+  \setlength{\UI@suratParagraphGap}{0.6\baselineskip}%
+  \setlength{\UI@suratHeadingTopskip}{0.15cm}%
+  \setlength{\UI@suratHeadingAfterSkip}{24\p@}%
+  \setlength{\UI@suratIdentityToMetaGap}{0.2cm}%
+
+  % Kata Pengantar
+  \setlength{\UI@kataPengantarDateToNameGap}{0.1cm}%
+  \setlength{\UI@kataPengantarSingleAuthorSignGap}{1.5cm}%
+
+  % Persetujuan Publikasi
+  \setlength{\UI@publikasiHeadingAfterGap}{8\p@}%
+  \setlength{\UI@publikasiRuleInnerGap}{1pt}%
+
+  % Abstrak/Abstract format jurnal
+  \setlength{\UI@journalTitleToStudyGap}{0pt}%
+  \setlength{\UI@journalStudyToAbstrakGap}{0.4cm}%
+  \setlength{\UI@journalAbstrakToKeywordsGap}{0.2cm}%
+  \setlength{\UI@journalKeywordsToAbstractGap}{0.2cm}%
+  \setlength{\UI@journalAbstractToKeywordsGap}{0.2cm}%
+
+  % Abstrak format monograf
+  \setlength{\UI@abstrakMonoMetaToBodyGap}{0.5cm}%
+  \setlength{\UI@abstrakMonoBodyToKeywordsGap}{0.1cm}%
+  \setlength{\UI@abstrakMonoAfterKeywordsGap}{0.2cm}%
+
+  % Abstract format monograf
+  \setlength{\UI@abstractMonoMetaToBodyGap}{0.5cm}%
+  \setlength{\UI@abstractMonoBodyToKeywordsGap}{0.1cm}%
+  \setlength{\UI@abstractMonoAfterKeywordsGap}{0.2cm}%
+
+  % Halaman daftar (Daftar Isi/Gambar/Tabel/Kode/Persamaan/Lampiran)
+  \setlength{\UI@listChapterSeparatorSkip}{10\p@}%
+  \setlength{\UI@frontmatterTocPreskip}{-1em}%
+  \setlength{\UI@lt@continuedCaptionGap}{10\p@}%
+
+  % Materi belakang: separator lampiran dan header lampiran
+  \setlength{\UI@lampiranHeaderLineGap}{1em}%
+  \setlength{\UI@appendixSeparatorTopGap}{6cm}%
+}
+\UI@setDocumentSpacingDefaults
+
+
+%==============================================================================%
+%  TATA LETAK ISI: PENAMAAN & INTERNASIONALISASI
+%==============================================================================%
+
+% \UI@jenjang@display: jenjang dalam bahasa tampilan yang sesuai
+\if@UIenglish
+  \strcompare{Sarjana}{\UI@jenjang}{%
+    \def\UI@jenjang@display{Bachelor's}%
+  }{%
+    \strcompare{Magister}{\UI@jenjang}{%
+      \def\UI@jenjang@display{Master's}%
+    }{%
+      \def\UI@jenjang@display{Doctoral}%
+    }%
+  }%
+\else
+  \let\UI@jenjang@display\UI@jenjang
+\fi
+
+% Metadata bilingual values (Indonesian + English).
+\def\fakultasID{}
+\def\fakultasEN{}
+\def\UI@typeNameID{\UI@type}
+\strcompare{Skripsi}{\UI@type}{%
+  \def\UI@typeNameEN{Bachelor Thesis}%
+}{%
+  \strcompare{Tesis}{\UI@type}{%
+    \def\UI@typeNameEN{Thesis}%
+  }{%
+    \strcompare{Disertasi}{\UI@type}{%
+      \def\UI@typeNameEN{Dissertation}%
+    }{%
+      \strcompare{Laporan Kerja Praktik}{\UI@type}{%
+        \def\UI@typeNameEN{Internship Report}%
+      }{%
+        \strcompare{Kampus Merdeka}{\UI@type}{%
+          \def\UI@typeNameEN{Kampus Merdeka Report}%
+        }{%
+          \let\UI@typeNameEN\UI@type
+        }%
+      }%
+    }%
+  }%
+}%
+
+\if@UIenglish
+  \let\UI@type@display\UI@typeNameEN
+  \def\UI@facultyDisplay{\fakultasEN}
+  \def\UI@label@sampulJudul{\MakeUppercase{\UI@type@display}}%
+  \def\UI@label@halamanJudul{Title Page}
+  \def\UI@label@orisinalitas{Statement of Originality}
+  \def\UI@label@pengesahan{Approval Page}
+  \def\UI@label@pengesahanKP{Internship Supervisor Approval Page}
+  \def\UI@label@pengesahanMBKM{Supervisor Approval Page}
+  \def\UI@label@pernyataanAI{Statement of Artificial Intelligence Use}
+  \def\UI@label@suratPernyataan{Declaration Letter}
+  \def\UI@label@kataPengantar{Preface}
+  \def\UI@label@publikasi{Agreement for Scientific Work Publication}
+  \def\UI@label@abstrak{Abstract}
+  \def\UI@label@orisinalitasHead{Statement of Originality}
+  \def\UI@label@publikasiHead{Agreement for Publication\\of Academic Work for Academic Interests}
+  \def\UI@label@submitted{submitted by}
+  \def\UI@label@gelarText{as one of the requirements to obtain the degree of}
+  \def\UI@label@examBoard{BOARD OF EXAMINERS}
+  \def\UI@label@supervisor{Supervisor}
+  \def\UI@label@coSupervisor{Co-supervisor}
+  \def\UI@label@examiner{Examiner}
+  \def\UI@label@setAt{Set in}
+  \def\UI@label@date{Date}
+  \def\UI@label@signatureDate{Date}
+  \def\UI@label@originBody{This \UI@type@display{}~is the result of \UI@IfSingleAuthor{my}{our}~own work, \\
+    and all sources, whether quoted or referenced, \\
+    have been declared correctly.}
+  \def\UI@label@aiBodyNone{\UI@IfSingleAuthor{I}{We}~declare that in the preparation of this \UI@type@display{}, \UI@IfSingleAuthor{I}{we}~did not \\
+    use any Artificial Intelligence technology in any form.}
+  \def\UI@label@aiBodyUsed{\UI@IfSingleAuthor{I}{We}~declare that in the preparation of this \UI@type@display{}, \\
+    \UI@IfSingleAuthor{I}{We}~used Artificial Intelligence technology on the platform \UI@aiplatform{} \\
+    for the purpose of \UI@tujuanai{} \\
+    and \UI@IfSingleAuthor{I}{we}~take full responsibility for the accuracy, originality, \\
+    and integrity of all content of this \UI@type@display{}.}
+  \def\UI@label@pubBody{As a member of the academic community of Universitas Indonesia,
+    \UI@IfSingleAuthor{I}{we}
+    the undersigned:}
+  \def\UI@label@pubMiddle{for the development of science, agree to grant
+    to Universitas Indonesia a \bo{Non-exclusive Royalty Free Right}
+    over \UI@IfSingleAuthor{my}{our}~academic work entitled:}
+  \def\UI@label@pubEnd{together with the associated tools (if required).
+    Under this Non-exclusive Royalty Free Right, Universitas Indonesia is entitled
+    to store, convert/format, manage in a database, maintain, and publish the final
+    project while still crediting
+    \UI@IfSingleAuthor{me}{us}~as the author/creator and copyright holder.
+    \par\noindent
+    This statement \UI@IfSingleAuthor{I}{we}~make truthfully.}
+  \def\UI@label@pubCity{Made in}
+  \def\UI@label@pubSignDate{On date}
+  \def\UI@label@pubSigner{The undersigned}
+  \def\UI@label@academicYear{Academic Year}
+  \def\UI@label@suratPernyataanBody{The undersigned, \UI@IfSingleAuthor{I}{we} declare:}
+  \def\UI@label@suratPernyataanPlagiarism{that \UI@IfSingleAuthor{I do not}{we do not} commit plagiarism in writing this \MakeLowercase{\UI@type@display} entitled:}
+  \def\UI@label@suratPernyataanSanction{If plagiarism is proven in the future, \UI@IfSingleAuthor{I}{we} will accept the applicable sanctions.}
+  \def\UI@label@suratPernyataanClosing{This declaration is made truthfully.}
+  \def\UI@label@authorName{Name}
+  \def\UI@label@authorNPM{NPM}
+  \def\UI@label@authorSig{Signature}
+  \def\UI@label@studyProgram{Study Program}
+  \def\UI@label@studyProgramOf{Study Program of}
+  \def\UI@label@workType{Type of Work}
+  \def\UI@label@title{Title}
+  % Labels for front-matter bodies
+  \def\UI@label@authorPrefix{Author}
+  \def\UI@label@teamWriters{The Authors}
+  \def\UI@label@promotor{Promotor}
+  \def\UI@label@kopromotor{Co-promotor}
+  \def\UI@label@examinerTeam{Examiners}
+  \def\UI@label@examChair{Chair}
+  \def\UI@label@examMember{Member}
+  \def\UI@label@approvedBody{Has been successfully defended before the Board of Examiners
+    and accepted as part of the requirements to obtain the \UI@jenjang@display{}~degree
+    in the Study Program of \studyProgramSatu, \UI@facultyDisplay,
+    Universitas Indonesia.}
+  \def\UI@label@approvedBodyKP{Has successfully completed the internship report
+    for \UI@facultyDisplay~and presented their internship results
+    as a requirement for the Internship course.}
+  \def\UI@label@kpSupervisorTitle{INTERNSHIP COURSE LECTURER}
+  \def\UI@label@mbkmSubmitted{This Kampus Merdeka Activity Report}
+  \def\UI@label@approvedBodyMBKM{Has successfully completed the \UI@kampusMerdekaType{}
+    program under the Kampus Merdeka scheme, submitted a final report to the
+    \UI@facultyDisplay, and presented their work as a requirement for the
+    transfer of credit units (SKS) from the activity.}
+  \def\UI@label@mbkmSupervisorTitle{Academic Supervisor for}
+  \def\UI@label@source{Source:}
+\else
+  \let\UI@type@display\UI@typeNameID
+  \def\UI@facultyDisplay{\fakultasID}
+  \def\UI@label@sampulJudul{\MakeUppercase{\UI@type@display}}
+  \def\UI@label@halamanJudul{Halaman Judul}
+  \def\UI@label@orisinalitas{Halaman Orisinalitas}
+  \def\UI@label@pengesahan{Halaman Pengesahan}
+  \def\UI@label@pengesahanKP{Halaman Persetujuan Dosen Kerja Praktik}
+  \def\UI@label@pengesahanMBKM{Halaman Persetujuan Penyelia}
+  \def\UI@label@pernyataanAI{Halaman Pernyataan Penggunaan Kecerdasan Artifisial}
+  \def\UI@label@suratPernyataan{Surat Pernyataan}
+  \def\UI@label@kataPengantar{Kata Pengantar}
+  \def\UI@label@publikasi{Halaman Persetujuan Karya Ilmiah}
+  \def\UI@label@abstrak{Abstrak}
+  \def\UI@label@orisinalitasHead{Halaman Pernyataan Orisinalitas}
+  \def\UI@label@publikasiHead{Halaman Pernyataan Persetujuan Publikasi\\Tugas Akhir untuk Kepentingan Akademis}
+  \def\UI@label@submitted{diajukan oleh}
+  \def\UI@label@gelarText{Diajukan sebagai salah satu syarat untuk memperoleh gelar}
+  \def\UI@label@examBoard{DEWAN PENGUJI}
+  \def\UI@label@supervisor{Pembimbing}
+  \def\UI@label@coSupervisor{Pembimbing}
+  \def\UI@label@examiner{Penguji}
+  \def\UI@label@setAt{Ditetapkan di}
+  \def\UI@label@date{Tanggal}
+  \def\UI@label@signatureDate{Tanggal}
+  \def\UI@label@originBody{\UI@type@display{}~ini adalah hasil karya~\UI@IfSingleAuthor{saya}{kami}~sendiri, \\
+    dan semua sumber baik yang dikutip maupun dirujuk \\
+    telah~\UI@IfSingleAuthor{saya}{kami}~nyatakan dengan benar.}
+  \def\UI@label@aiBodyNone{\UI@IfSingleAuthor{Saya}{Kami}~menyatakan bahwa dalam
+    penyusunan \UI@type@display{}~ini, \UI@IfSingleAuthor{saya}{kami}~tidak \\
+    menggunakan teknologi Kecerdasan Buatan dalam bentuk apa pun.}
+  \def\UI@label@aiBodyUsed{\UI@IfSingleAuthor{Saya}{Kami}~menyatakan bahwa dalam penyusunan \UI@type@display{}~ini,
+    \UI@IfSingleAuthor{saya}{kami}~menggunakan teknologi Kecerdasan Buatan dengan
+    platform \UI@aiplatform{}~untuk tujuan \UI@tujuanai{}
+    dan \UI@IfSingleAuthor{saya}{kami}~bertanggung jawab penuh atas keakuratan, orisinalitas,
+    dan integritas seluruh isi \UI@type@display{}~ini.}
+  \def\UI@label@pubBody{Sebagai sivitas akademik Universitas Indonesia,~\UI@IfSingleAuthor{saya}{kami}~yang bertanda
+    tangan di bawah ini:}
+  \def\UI@label@pubMiddle{demi pengembangan ilmu pengetahuan, menyetujui untuk memberikan
+    kepada Universitas Indonesia \bo{Hak Bebas Royalti Noneksklusif
+    (\textit{Non-exclusive Royalty Free Right})}~atas karya ilmiah~\UI@IfSingleAuthor{saya}{kami}~yang berjudul:}
+  \def\UI@label@pubEnd{beserta perangkat yang ada (jika diperlukan). Dengan Hak Bebas Royalti
+    Noneksklusif ini Universitas Indonesia berhak menyimpan,
+    mengalihmedia/formatkan, mengelola dalam bentuk pangkalan data
+    (\textit{database}), merawat, dan memublikasikan tugas akhir~\UI@IfSingleAuthor{saya}{kami}~selama
+    tetap mencantumkan nama~\UI@IfSingleAuthor{saya}{kami}~sebagai penulis/pencipta dan sebagai
+    pemilik Hak Cipta.
+    \par\noindent Demikian pernyataan ini~\UI@IfSingleAuthor{saya}{kami}~buat dengan sebenarnya.}
+  \def\UI@label@pubCity{Dibuat di}
+  \def\UI@label@pubSignDate{Pada tanggal}
+  \def\UI@label@pubSigner{Yang menyatakan}
+  \def\UI@label@academicYear{Tahun Akademik}
+  \def\UI@label@suratPernyataanBody{Yang bertanda tangan di bawah ini, \UI@IfSingleAuthor{saya}{kami}:}
+  \def\UI@label@suratPernyataanPlagiarism{menyatakan bahwa \UI@IfSingleAuthor{saya}{kami} tidak melakukan kegiatan plagiat dalam penulisan \MakeLowercase{\UI@type@display} \UI@IfSingleAuthor{saya}{kami} yang berjudul:}
+  \def\UI@label@suratPernyataanSanction{Apabila suatu saat nanti terbukti \UI@IfSingleAuthor{saya}{kami} melakukan plagiat, maka \UI@IfSingleAuthor{saya}{kami} akan menerima sanksi yang telah ditetapkan.}
+  \def\UI@label@suratPernyataanClosing{Demikian pernyataan ini \UI@IfSingleAuthor{saya}{kami} buat dengan sebenarnya.}
+  \def\UI@label@authorName{Nama}
+  \def\UI@label@authorNPM{NPM}
+  \def\UI@label@authorSig{Tanda Tangan}
+  \def\UI@label@studyProgram{Program Studi}
+  \def\UI@label@studyProgramOf{Program Studi}
+  \def\UI@label@workType{Jenis Karya}
+  \def\UI@label@title{Judul}
+  % Labels for front-matter bodies
+  \def\UI@label@authorPrefix{Penulis}
+  \def\UI@label@teamWriters{Tim Penulis}
+  \def\UI@label@promotor{Promotor}
+  \def\UI@label@kopromotor{Kopromotor}
+  \def\UI@label@examinerTeam{Tim Penguji}
+  \def\UI@label@examChair{Ketua}
+  \def\UI@label@examMember{Anggota}
+  \def\UI@label@approvedBody{Telah berhasil dipertahankan di hadapan Dewan Penguji
+    dan diterima sebagai bagian persyaratan yang diperlukan untuk
+    memperoleh gelar \UI@jenjang~pada \UI@label@studyProgramOf~\programSatu,
+    \UI@facultyDisplay, Universitas Indonesia.}
+  \def\UI@label@approvedBodyKP{Telah berhasil diselesaikan laporan kerja praktik
+    untuk \UI@facultyDisplay~dan dipresentasikan hasil kerja praktiknya
+    sebagai persyaratan yang harus dipenuhi dalam mata kuliah Kerja Praktik.}
+  \def\UI@label@kpSupervisorTitle{DOSEN MATA KULIAH KERJA PRAKTIK}
+  \def\UI@label@mbkmSubmitted{Laporan Kegiatan Kampus Merdeka ini}
+  \def\UI@label@approvedBodyMBKM{Telah berhasil menyelesaikan program \UI@kampusMerdekaType{}
+    di bawah Kampus Merdeka, menyusun laporan akhir untuk \UI@facultyDisplay,
+    dan mempresentasikan hasil pekerjaannya sebagai persyaratan yang harus dipenuhi
+    untuk melaksanakan transfer Satuan Kredit Semester (SKS) dari kegiatan tersebut.}
+  \def\UI@label@mbkmSupervisorTitle{Dosen Pembimbing}
+  \def\UI@label@source{Sumber:}
+\fi
+
+% Override nama tampilan tipe karya per bahasa.
+\newcommand{\namaTipeTesis}[2]{
+  \gdef\UI@typeNameID{#1}
+  \gdef\UI@typeNameEN{#2}
+  \gdef\UI@type@display{%
+    \if@UIenglish%
+      \UI@typeNameEN%
+    \else%
+      \UI@typeNameID%
+    \fi%
+  }%
+}
+
+
+%==============================================================================%
+%  OBJEK ISI: JENIS KOLOM TABEL
+%==============================================================================%
+
+% [P]aragraph -> rata-kiri atas
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+% middle [L]eft -> rata-kiri tengah
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}m{#1}}
+% [B]ottom left -> rata-kiri bawah
+\newcolumntype{B}[1]{>{\raggedright\arraybackslash}b{#1}}
+% [U]pper centered -> tengah atas
+\newcolumntype{U}[1]{>{\centering\arraybackslash}p{#1}}
+% middle [C]enter -> tengah-tengah
+\newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}}
+% l[O]wer centered -> tengah bawah
+\newcolumntype{O}[1]{>{\centering\arraybackslash}b{#1}}
+% north [E]ast -> kanan atas
+\newcolumntype{E}[1]{>{\raggedleft\arraybackslash}p{#1}}
+% middle [R]ight -> kanan tengah
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}m{#1}}
+% [T]enggara -> kanan bawah
+\newcolumntype{T}[1]{>{\raggedleft\arraybackslash}b{#1}}
+
+% Tambahan item tabel bergaya bullet
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+
+
+%==============================================================================%
+%  OBJEK ISI: PERINTAH PENGGUNA
+%==============================================================================%
+
+% Cetak miring
+\newcommand{\f}[1]{\textit{#1}}
+% Cetak tebal-miring
+\newcommand{\bi}[1]{\textbf{\textit{#1}}}
+% Cetak tebal
+\newcommand{\bo}[1]{\textbf{#1}}
+% Matematika tebal
+\newcommand{\m}[1]{\boldmath{ \( #1 \)}}
+\newcommand{\mc}[1]{\boldmath{ \[ #1 \]}}
+% Kode inline
+\newcommand{\code}[1]{\texttt{#1}}
+% Alias untuk \LaTeX
+\newcommand{\latex}{\LaTeX}
+% Alias glossary ringkas: gunakan makro jika tersedia, fallback ke \gls.
+\newcommand{\glo}[1]{\@ifundefined{#1}{\gls{#1}}{\csname #1\endcsname}}
+
+% Catatan @todo
+\newcommand{\todo}[1]{%
+  \if@UImonograph
+    \begin{tabular}{| p{\dimexpr\linewidth-16pt\relax} |}%
+      \rowcolor[rgb]{0.96,0.90,0.90}%
+      \bo{@todo} \\%
+      \rowcolor[gray]{1.}%
+       #1 \\%
+       \\%
+      \hline
+    \end{tabular}%
+  \else
+    {\textcolor[rgb]{0.55,0.00,0.00}{\bo{@todo:} #1}}%
+  \fi
+}
+\newcommand{\todoCite}{%
+  \if@UImonograph
+    \begin{tabular}{| l |}%
+      \rowcolor[rgb]{0.90,0.96,0.90}%
+      \bo{@todo} \\%
+      \rowcolor[gray]{1.}%
+       Referensi \\%
+       \\%
+      \hline
+    \end{tabular}%
+  \else
+    {\textcolor[rgb]{0.00,0.35,0.00}{\bo{@todo:} Referensi}}%
+  \fi
+}
+
+% Sisipkan PDF
+\newcommand{\inpdf}[1]{\includepdf[pages=-,pagecommand={\thispagestyle{fancy}}]{#1.pdf}}
+\newcommand{\putpdf}[1]{\includepdf[pages=-]{#1.pdf}}
+
+% Variabel baru
+\newcommand{\var}[2]{\newcommand{#1}{#2}}
+\newcommand{\Var}[2]{\gdef#1{\MakeUppercase{#2}}}
+
+% Caption dengan sumber. Gunakan justification=centering (custom caption
+% justification) dan \UI@captionpar agar tetap aman dipakai di longtable.
+\newcommand{\UI@captionpar}{\par}
+\newcommand*{\captionsource}[2]{%
+  \captionsetup{justification=centering,singlelinecheck=false}%
+  \caption[{#1}]{#1\UI@captionpar{\fontsize{10}{12}\selectfont(\UI@label@source~#2)}}%
+}
+\newcommand*{\captionsourcecont}[2]{%
+  \captionsetup{justification=centering,singlelinecheck=false}%
+  \caption[]{#1 (sambungan)\UI@captionpar{\fontsize{10}{12}\selectfont(\UI@label@source~#2)}}%
+}
+
+% Alias penamaan objek
+\newcommand{\bab}{Bab}
+\newcommand{\sect}{Subbab}
+\newcommand{\pic}{Gambar}
+\newcommand{\tab}{Tabel}
+\newcommand{\equ}{Persamaan}
+\newcommand{\lst}{Kode}
+\newcommand{\apdx}{Lampiran}
+
+
+%==============================================================================%
+%  FRONT-MATTER LISTS: PEMBANTU DAFTAR ISI (ToC)
+%==============================================================================%
+
+% Save LaTeX's base \addcontentsline before any patching.
+\let\UI@latex@addcontentsline\addcontentsline
+% Save LaTeX's base \addtocontents for controlled filtering.
+\let\UI@latex@addtocontents\addtocontents
+% Save LaTeX's base \@writefile so entry counts can be tracked globally.
+\let\UI@latex@writefile\@writefile
+
+%--- Per-extension entry counters for conditional list pages ---%
+\newcounter{UI@count@lof}   % list of figures
+\newcounter{UI@count@lot}   % list of tables
+\newcounter{UI@count@lol}   % list of listings
+\newcounter{UI@count@loe}   % list of equations
+\newcounter{UI@count@lox}   % list of appendices
+
+\def\UI@listExtRegistry{}
+\newcommand{\UI@registerListExt}[1]{%
+  \ifx\UI@listExtRegistry\@empty
+    \xdef\UI@listExtRegistry{#1}%
+  \else
+    \xdef\UI@listExtRegistry{\UI@listExtRegistry,#1}%
+  \fi
+}
+
+% Front-matter list registry: holds custom lists to render inside \makefrontmatter.
+% Every \newUIlist entry is enrolled automatically so users only define the list type.
+\def\UI@frontmatterListRegistry{}
+
+% Helper macro: iterate front-matter registry and render each registered list
+% with conditional threshold logic. Entries appear in
+% \UI@frontmatterListRegistry as comma-separated extensions.
+\newcommand\UI@renderFrontmatterLists{%
+  \expandafter\UI@FML@loop\UI@frontmatterListRegistry,\relax,\relax
+}
+% Recursively process comma-separated registry: #1=ext, #2=remainder including sentinel
+\def\UI@FML@loop#1,#2\relax{%
+  \ifx\relax#1\relax\else
+    % Render this list if it exists and has entries >= threshold
+    \@ifundefined{UI@UIlist@print@#1}{}{%
+      \UI@condListPage{\csname UI@prev@count@#1\endcsname}%
+        {\@nameuse{UI@UIlist@print@#1}}%
+    }%
+    \ifx\relax#2\relax\else
+      \expandafter\UI@FML@loop#2\relax
+    \fi
+  \fi
+}
+
+\UI@registerListExt{lof}
+\UI@registerListExt{lot}
+\UI@registerListExt{lol}
+\UI@registerListExt{loe}
+\UI@registerListExt{lox}
+\newcommand{\UI@countbyext}[1]{%
+  \edef\UI@cbe@ext{#1}%
+  \@ifundefined{c@UI@count@\UI@cbe@ext}{}{%
+    \global\advance\csname c@UI@count@\UI@cbe@ext\endcsname\@ne
+  }%
+}
+
+%--- Counting-aware addcontentsline versions ---%
+% Contributor note:
+% Count list entries at addcontentsline call-sites (instead of @writefile only)
+% so counters remain stable even if other packages patch file-writing internals.
+\newcommand{\UI@withAddcontentslineFilter}[4]{%
+  \ifinapp
+    \ifstrequal{#1}{toc}{%
+      \ifstrequal{#2}{chapter}{%
+        % Appendix chapter entries are intentionally omitted from ToC
+        % because appendices are listed in Daftar Lampiran (LoX).
+      }{#4}%
+    }{#4}%
+  \else
+    #4%
+  \fi
+}
+\newcommand{\UI@addcontentsline}[3]{%
+  \UI@withAddcontentslineFilter{#1}{#2}{#3}{%
+    \UI@countbyext{#1}%
+    \UI@latex@addcontentsline{#1}{#2}{#3}%
+  }%
+}
+\newcommand{\UI@ADDCONTENTSLINE}[3]{%
+  \UI@withAddcontentslineFilter{#1}{#2}{#3}{%
+    \UI@countbyext{#1}%
+    \UI@latex@addcontentsline{#1}{#2}{\uppercase{#3}}%
+  }%
+}
+
+% Toggle chapter-separator spacing in list pages.
+% Default: enabled for all lists except Daftar Lampiran (LoX).
+\newif\ifUI@listchapterseparatorspacing
+\UI@listchapterseparatorspacingtrue
+\newlength{\UI@tocchapterseparatorskip}
+\setlength{\UI@tocchapterseparatorskip}{\cftbeforechapskip}
+\newcommand{\UI@listChapterSeparatorAddvspace}{\protect\addvspace{\UI@listChapterSeparatorSkip}}
+\newcommand{\UI@applytocchapterseparatorspacing}{%
+  \ifUI@listchapterseparatorspacing
+    \setlength{\cftbeforechapskip}{\UI@tocchapterseparatorskip}%
+  \else
+    \setlength{\cftbeforechapskip}{0pt}%
+  \fi
+}
+\newcommand{\enablechapterseparatorspaceinlists}{%
+  \global\UI@listchapterseparatorspacingtrue
+  \UI@applytocchapterseparatorspacing
+}
+\newcommand{\disablechapterseparatorspaceinlists}{%
+  \global\UI@listchapterseparatorspacingfalse
+  \UI@applytocchapterseparatorspacing
+}
+
+% Chapter-level separator spacing for list files that do not receive it
+% from user content declarations (LoF, LoT, LoL, LoE, and user-defined lists).
+% Exclusions:
+% - lox    : appendix list intentionally has no chapter separator spacing.
+\newcommand{\UI@addchapterlistseparatorspacing}{%
+  \ifUI@listchapterseparatorspacing
+    \@for\UI@ext:=\UI@listExtRegistry\do{%
+      \ifstrequal{\UI@ext}{lox}{}{%
+        \addtocontents{\UI@ext}{\UI@listChapterSeparatorAddvspace}%
+      }%
+    }%
+  \fi
+}
+
+% Counting-aware addtocontents with optional suppression for default chapter
+% separators in ToC/LoF/LoT when list separator spacing is disabled.
+\newcommand{\UI@addtocontents}[2]{%
+  \ifUI@listchapterseparatorspacing
+    \UI@latex@addtocontents{#1}{#2}%
+  \else
+    \ifstrequal{#2}{\UI@listChapterSeparatorAddvspace}{%
+      \ifstrequal{#1}{toc}{}{%
+        \ifstrequal{#1}{lof}{}{%
+          \ifstrequal{#1}{lot}{}{%
+            \UI@latex@addtocontents{#1}{#2}%
+          }%
+        }%
+      }%
+    }{%
+      \UI@latex@addtocontents{#1}{#2}%
+    }%
+  \fi
+}
+
+% Count entries at write time so all producers (figure/table/listings/custom)
+% are captured consistently.
+\newcommand{\UI@writefile}[2]{%
+  \UI@countbyext{#1}%
+  \UI@latex@writefile{#1}{#2}%
+}
+\let\@writefile\UI@writefile
+
+% Install counting version.
+\let\addcontentsline\UI@addcontentsline
+
+\newcommand{\CAPinToC}{\let\addcontentsline\UI@ADDCONTENTSLINE}
+\newcommand{\noCAPinToC}{\let\addcontentsline\UI@addcontentsline}
+
+%--- Previous-run entry counts (populated by \AtEndDocument on later runs) ---%
+\def\UI@prev@count@lof{0}
+\def\UI@prev@count@lot{0}
+\def\UI@prev@count@lol{0}
+\def\UI@prev@count@loe{0}
+\def\UI@prev@count@lox{0}
+\def\UI@prev@count@glossary{0}
+
+%--- Minimum-entries threshold (0 = always generate; N>0 = generate if count >= N) ---%
+\newcounter{UI@minListEntries}
+\setcounter{UI@minListEntries}{0}
+\newcommand{\minimumListEntries}[1]{\setcounter{UI@minListEntries}{#1}}
+
+%--- Glossary entry counter (for conditional glossary page) ---%
+\if@UImonograph
+  \newcounter{UI@count@glossary}
+  \AtBeginDocument{%
+    \let\UI@orig@newglossaryentry\newglossaryentry
+    \renewcommand{\newglossaryentry}[2]{%
+      \stepcounter{UI@count@glossary}%
+      \UI@orig@newglossaryentry{##1}{##2}%
+    }%
+    \let\UI@orig@newacronym\newacronym
+    \renewcommand{\newacronym}[3]{%
+      \stepcounter{UI@count@glossary}%
+      \UI@orig@newacronym{##1}{##2}{##3}%
+    }%
+  }%
+\fi
+
+%--- Conditional list-page wrapper ---%
+% #1 = previous-run count string; #2 = list-page code to execute.
+\newcommand{\UI@condListPage}[2]{%
+  \ifnum\value{UI@minListEntries}=0\relax
+    #2%
+  \else
+    \ifnum\numexpr#1\relax<\value{UI@minListEntries}\relax
+    \else
+      #2%
+    \fi
+  \fi
+}
+
+% Tebal/biasa untuk entri bab di ToC
+\newcommand*{\enableboldchapterintoc}{%
+  \addtocontents{toc}{\string\renewcommand{\protect\cftchapfont}{\protect\normalfont\protect\bfseries}}%
+  \addtocontents{toc}{\string\renewcommand{\protect\cftchappagefont}{\protect\normalfont\protect\bfseries}}%
+  \addtocontents{toc}{\string\renewcommand{\protect\cftchapleader}{\protect\bfseries\protect\cftdotfill{\protect\cftsecdotsep}}}%
+}
+\newcommand*{\disableboldchapterintoc}{%
+  \addtocontents{toc}{\string\renewcommand{\protect\cftchappagefont}{\protect\normalfont}}%
+  \addtocontents{toc}{\string\renewcommand{\protect\cftchapfont}{\protect\normalfont}}%
+  \addtocontents{toc}{\string\renewcommand{\protect\cftchapleader}{\protect\normalfont\protect\cftdotfill{\protect\cftsecdotsep}}}%
+}
+
+% Front-matter ToC entries use a small negative pre-skip to counterbalance
+% chapter separator spacing. Disable this adjustment when separator spacing
+% is turned off, otherwise entries can visually overlap.
+\newcommand{\UI@addfrontmattertocpreskip}{%
+  \ifUI@listchapterseparatorspacing
+    \addtocontents{toc}{\protect\addvspace{\UI@frontmatterTocPreskip}}%
+  \fi
+}
+
+% Tambah entri bab ke ToC (dengan reset penghitung halaman bab)
+\newcommand{\addChapter}[1]{%
+  \setcounter{chapterpagecount}{0}%
+  \UI@addfrontmattertocpreskip
+  \phantomsection
+  \addcontentsline{toc}{chapter}{\uppercase{#1}}%
+}
+% Tambah entri bab ke ToC (tanpa reset)
+\newcommand{\addChapterNoCount}[1]{%
+  \UI@addfrontmattertocpreskip
+  \phantomsection
+  \addcontentsline{toc}{chapter}{\uppercase{#1}}%
+}
+
+% Halaman daftar isi bawaan (ToC, LoF, LoT)
+\newcommand{\addDefaultListPage}[1]{%
+  \UI@addfrontmattertocpreskip
+  \CAPinToC
+  \phantomsection
+  \singlespacing
+  #1%
+  \thispagestyle{first-pages}%
+  \UI@restoreMainSpacing%
+}
+% Halaman daftar konten kustom
+\newcommand{\addCustomListPage}[2]{%
+  \addChapterNoCount{#2}%
+  \singlespacing
+  #1%
+  \thispagestyle{first-pages}%
+  \UI@restoreMainSpacing%
+}
+
+
+%==============================================================================%
+%  FRONT-MATTER LISTS: DAFTAR KONTEN YANG DAPAT DIKUSTOMISASI PENGGUNA
+%  \newUIlist{ext}{commandbase}{singularlabel}{listname}
+%  Contoh: \newUIlist{lotr}{transformationrule}{Aturan Transformasi}
+%                   {Daftar Aturan Transformasi}
+%  Mendefinisikan perintah-perintah:
+%    \<commandbase>                        -> nama jenis objek
+%    \listof<commandbase>                  -> cetak daftar
+%    \listof<commandbase>name              -> judul daftar
+%    \caption<commandbase>{judul}          -> caption + entri ke daftar
+%    \captionsource<commandbase>{j}{s}     -> caption+sumber + entri ke daftar
+%    \caption<commandbase>cont{j}          -> caption sambungan
+%    \captionsource<commandbase>cont{j}{s} -> caption sambungan+sumber
+%==============================================================================%
+
+%--- \newUIlist: register a user-defined list type --------------------------%
+\newcommand{\newUIlist}[4]{%
+  % #1 = ext (file extension, e.g. lotr)
+  % #2 = commandbase (LaTeX name base, e.g. transformationrule)
+  % #3 = singularlabel (display word, e.g. Aturan Transformasi)
+  % #4 = listname (list page title, e.g. Daftar Aturan Transformasi)
+  %
+  % (a) Store list title for the rendering helper.
+  \@namedef{UI@UIlistname@#1}{#4}%
+  %
+  % (b) Entry counter + conditional front-matter support
+  \newcounter{UI@count@#1}%
+  \expandafter\gdef\csname UI@prev@count@#1\endcsname{0}%
+  \UI@registerListExt{#1}%
+  \ifx\UI@frontmatterListRegistry\@empty
+    \xdef\UI@frontmatterListRegistry{#1}%
+  \else
+    \xdef\UI@frontmatterListRegistry{\UI@frontmatterListRegistry,#1}%
+  \fi
+  %
+  % (c) Singular word command: \<commandbase>
+  \@namedef{#2}{#3}%
+  %
+  % (d) Define tocloft list (also defines \listof#2name = #4)
+  \newlistof{#2}{#1}{#4}%
+  \if@UImonograph\counterwithin{#2}{chapter}\fi%
+  %
+  % (e) tocloft formatting (consistent with built-in lists)
+  \expandafter\renewcommand\csname cft#2indent\endcsname{0pt}%
+  % Lebar nomor disesuaikan secara dinamis berdasarkan lebar label + nomor terburuk.
+  \settowidth\@tempdima{\csname #2\endcsname~99.99.}%
+  \addtolength\@tempdima{6pt}%
+  \expandafter\xdef\csname cft#2numwidth\endcsname{\the\@tempdima}%
+  \expandafter\renewcommand\csname cft#2aftersnum\endcsname{.}%
+  \expandafter\renewcommand\csname cft#2presnum\endcsname{\csname #2\endcsname~}%
+  %
+  % (f) \caption<commandbase>{title}
+  \expandafter\newcommand\csname caption#2\endcsname[1]{%
+    \refstepcounter{#2}%
+    \caption*{\csname #2\endcsname~\@nameuse{the#2}:~##1}%
+    \addcontentsline{#1}{#2}%
+      {\protect\numberline{\@nameuse{the#2}}{\ignorespaces ##1}}\par
+  }%
+  %
+  % (g) \captionsource<commandbase>{title}{source}
+  \expandafter\newcommand\csname captionsource#2\endcsname[2]{%
+    \refstepcounter{#2}%
+    \caption*{\centering\csname #2\endcsname~\@nameuse{the#2}:~##1\UI@captionpar
+      {\fontsize{10}{12}\selectfont(\UI@label@source~##2)}\UI@captionpar}%
+    \addcontentsline{#1}{#2}%
+      {\protect\numberline{\@nameuse{the#2}}{\ignorespaces ##1}}\par
+  }%
+  %
+  % (h) \caption<commandbase>cont{title}
+  \expandafter\newcommand\csname caption#2cont\endcsname[1]{%
+    \caption*{\csname #2\endcsname~\@nameuse{the#2}:~##1 (sambungan)}%
+  }%
+  %
+  % (i) \captionsource<commandbase>cont{title}{source}
+  \expandafter\newcommand\csname captionsource#2cont\endcsname[2]{%
+    \caption*{\centering\csname #2\endcsname~\@nameuse{the#2}:~##1 (sambungan)\UI@captionpar
+      {\fontsize{10}{12}\selectfont(\UI@label@source~##2)}\UI@captionpar}%
+  }%
+  %
+  % (j) Store print macro for rendering in \makefrontmatter.
+  \@namedef{UI@UIlist@print@#1}{%
+    \clearpage
+    \addCustomListPage{\csname listof#2\endcsname}{\@nameuse{UI@UIlistname@#1}}%
+  }%
+}
+
+%==============================================================================%
+%  FRONT-MATTER LISTS: JENIS DAFTAR KUSTOM
+%==============================================================================%
+
+%--- Daftar Persamaan Matematis ---%
+\newcommand{\listofequname}{Daftar \equ}
+\newlistof{equ}{loe}{\listofequname}
+\newcommand{\addequtotoc}[2]{%
+  \addcontentsline{loe}{equ}{\protect\numberline{\ref{#1}}{\ignorespaces #2}}\par
+}
+\renewcommand\cftequindent{0pt}
+\renewcommand\cftequnumwidth{75pt}
+\renewcommand\cftequaftersnum{.}
+\renewcommand\cftequpresnum{\equ~}
+
+%--- Daftar Kode Program ---%
+\newcommand{\listoflistings}{%
+  \begingroup
+  \let\UI@orig@addcontentsline\addcontentsline
+  \def\addcontentsline##1##2##3{}%
+  \let\oldnumberline\numberline
+  \renewcommand{\numberline}[1]{\hspace{-1.5em}\lst~\oldnumberline{##1.}}%
+  \lstlistoflistings
+  \let\addcontentsline\UI@orig@addcontentsline
+  \endgroup
+}
+
+
+%==============================================================================%
+%  FRONT MATTER: ENVIRONMENT PENGUMPUL KONTEN
+%==============================================================================%
+%
+%  Pengguna menempatkan isi dari halaman-halaman wajib di environment berikut
+%  SEBELUM \begin{document}. Perintah \makefrontmatter yang kemudian
+%  merangkainya menjadi halaman-halaman tersebut.
+%
+
+\def\UI@content@abstrakID{}
+\def\UI@content@abstractEN{}
+\def\UI@content@kataPengantar{}
+\def\UI@content@orisinalitas{}
+\def\UI@content@publikasi{}
+\def\UI@content@AI{}
+\def\UI@content@suratPernyataan{}
+
+% Kata kunci / keywords (kosong secara bawaan; diisi via \katakunci dan \keywords)
+\def\UI@keywords@ID{}
+\def\UI@keywords@EN{}
+\newcommand{\katakunci}[1]{\gdef\UI@keywords@ID{#1}}
+\newcommand{\keywords}[1]{\gdef\UI@keywords@EN{#1}}
+
+\NewEnviron{abstrakID}{\global\let\UI@content@abstrakID\BODY}
+\NewEnviron{abstractEN}{\global\let\UI@content@abstractEN\BODY}
+\NewEnviron{kataPengantar}{\global\let\UI@content@kataPengantar\BODY}
+\NewEnviron{pernyataanOrisinalitas}{\global\let\UI@content@orisinalitas\BODY}
+\NewEnviron{persetujuanPublikasi}{\global\let\UI@content@publikasi\BODY}
+\NewEnviron{pernyataanAI}{\global\let\UI@content@AI\BODY}
+\NewEnviron{suratPernyataan}{\global\let\UI@content@suratPernyataan\BODY}
+% Helper: heading halaman wajib yang disesuaikan dengan format.
+% Monograf: memanggil \@makeschapterhead langsung (tanpa \clearpage dari \chapter*).
+% Jurnal:   clearpage + judul tengah tebal + jarak vertikal terkendali parameter.
+\newcommand{\UI@frontpageHead}[1]{%
+  \if@UImonograph
+    \thispagestyle{onlypage}%
+    \global\@topnum\z@
+    \@afterindentfalse
+    \vspace*{\UI@frontpage@topskip}%
+    \@makeschapterhead{#1}%
+    \@afterheading
+  \else
+    \clearpage
+    {\parindent\z@\centering\singlespacing\normalfont\bfseries
+      \vspace*{\UI@frontpage@topskip}\par
+      \MakeUppercase{#1}\par
+      \vskip \UI@frontpage@afterskip}%
+    \thispagestyle{journal-front}%
+  \fi
+}
+
+%==============================================================================%
+%  FRONT MATTER: PENYUSUNAN HALAMAN INTERNAL (\UI@typeset@*)
+%==============================================================================%
+
+% Tabel tanda tangan penulis (dipakai ulang pada halaman Orisinalitas dan AI).
+\newcommand{\UI@sigTable}{%
+  \begin{tabular}{l c l}%
+    \UI@IfSingleAuthor{%
+      \bo{\UI@label@authorName} & : & \bo{\penulisSatu} \\
+      \bo{\UI@label@authorNPM}  & : & \bo{\npmSatu} \\
+      \bo{\UI@label@authorSig}  & : & \\
+      & & \\
+      & & \\
+    }{%
+      \bo{\UI@label@authorName~1} & : & \bo{\penulisSatu} \\
+      \bo{\UI@label@authorNPM~1}  & : & \bo{\npmSatu} \\
+      \bo{\UI@label@authorSig~1}  & : & \\
+      & & \\
+      & & \\
+      \bo{\UI@label@authorName~2} & : & \bo{\penulisDua} \\
+      \bo{\UI@label@authorNPM~2}  & : & \bo{\npmDua} \\
+      \bo{\UI@label@authorSig~2}  & : & \\
+      & & \\
+      & & \\
+    }%
+    \UI@IfThirdAuthor{%
+      \bo{\UI@label@authorName~3} & : & \bo{\penulisTiga} \\
+      \bo{\UI@label@authorNPM~3}  & : & \bo{\npmTiga} \\
+      \bo{\UI@label@authorSig~3}  & : & \\
+      & & \\
+      & & \\
+    }{}%
+    \bo{\UI@label@signatureDate} & : & \bo{\tanggalSiapSidang} \\
+  \end{tabular}%
+}
+
+% Counselor rendering on Abstrak/Abstract must follow work-type limits:
+% KP/MBKM: 1, Skripsi/Tesis: up to 2, Disertasi: up to 3.
+% The active renderer is selected once and then used directly by the pages.
+\newcommand{\UI@abstrakCounselorRowsOne}[1]{%
+  #1 & : & \pembimbingSatu \\
+}
+\newcommand{\UI@abstrakCounselorRowsTwo}[1]{%
+  #1 & : & \pembimbingSatu \\
+  \ifx\blank\pembimbingDua\else
+    \ & \ & \pembimbingDua \\
+  \fi
+}
+\newcommand{\UI@abstrakCounselorRowsThree}[1]{%
+  #1 & : & \pembimbingSatu \\
+  \ifx\blank\pembimbingDua\else
+    \ & \ & \pembimbingDua \\
+  \fi
+  \ifx\blank\pembimbingTiga\else
+    \ & \ & \pembimbingTiga \\
+  \fi
+}
+\let\UI@abstrakCounselorRows\UI@abstrakCounselorRowsTwo
+
+\newcommand{\UI@abstrakCounselorInlineOne}{%
+  , \pembimbingSatu%
+}
+\newcommand{\UI@abstrakCounselorInlineTwo}{%
+  , \pembimbingSatu%
+  \ifx\blank\pembimbingDua\else{, \pembimbingDua}\fi%
+}
+\newcommand{\UI@abstrakCounselorInlineThree}{%
+  , \pembimbingSatu%
+  \ifx\blank\pembimbingDua\else{, \pembimbingDua}\fi%
+  \ifx\blank\pembimbingTiga\else{, \pembimbingTiga}\fi%
+}
+\let\UI@abstrakCounselorInline\UI@abstrakCounselorInlineTwo
+
+\newcommand{\UI@setupAbstrakCounselorRenderers}{%
+  \strcompare{Laporan Kerja Praktik}{\UI@type}{%
+    \let\UI@abstrakCounselorRows\UI@abstrakCounselorRowsOne
+    \let\UI@abstrakCounselorInline\UI@abstrakCounselorInlineOne
+  }{%
+    \strcompare{Kampus Merdeka}{\UI@type}{%
+      \let\UI@abstrakCounselorRows\UI@abstrakCounselorRowsOne
+      \let\UI@abstrakCounselorInline\UI@abstrakCounselorInlineOne
+    }{%
+      \strcompare{Disertasi}{\UI@type}{%
+        \let\UI@abstrakCounselorRows\UI@abstrakCounselorRowsThree
+        \let\UI@abstrakCounselorInline\UI@abstrakCounselorInlineThree
+      }{%
+        \let\UI@abstrakCounselorRows\UI@abstrakCounselorRowsTwo
+        \let\UI@abstrakCounselorInline\UI@abstrakCounselorInlineTwo
+      }%
+    }%
+  }%
+}
+\UI@setupAbstrakCounselorRenderers
+
+%--- Sampul ---%
+\newcommand{\UI@typeset@sampul}{%
+  \begin{titlepage}%
+    \begin{singlespace*}%
+    \begin{center}%
+      \begin{figure}%
+        \begin{center}%
+          \includegraphics[width=2.5cm]{\UI@makaraimage}%
+        \end{center}%
+      \end{figure}%
+      \vspace*{\UI@coverLogoToUniversityGap}%
+      \large
+      \bo{UNIVERSITAS INDONESIA}\\[\UI@coverUniversityToTitleGap]%
+      \vfill
+      \bo{\if@UIenglish\JudulInggris\else\Judul\fi}\\[\UI@coverTitleToSubtitleGap]%
+      \bo{\UI@label@sampulJudul}\\[\UI@coverSubtitleToAuthorGap]%
+      \vfill
+      \UI@IfSingleAuthor{%
+        \bo{\PenulisSatu}\\
+        \bo{\npmSatu}\\
+      }{%
+        \bo{\PenulisSatu~/ \npmSatu}\\
+        \bo{\PenulisDua~/ \npmDua}\\
+      }%
+      \UI@IfThirdAuthor{%
+        \bo{\PenulisTiga~/ \npmTiga}\\
+      }{}%
+      \vfill
+      \large
+      \bo{%
+        \Fakultas\\[\UI@title@metaRowGap]%
+        \MakeUppercase{\UI@label@studyProgramOf}~\UI@studyProgramUniqueDisplayUpper\\[\UI@title@metaRowGap]%
+        \MakeUppercase{\UI@kota}\\[\UI@title@metaRowGap]%
+        \MakeUppercase{\bulanTahun}
+      }%
+      \normalsize
+    \end{center}%
+    \end{singlespace*}%
+  \end{titlepage}%
+}
+
+%--- Halaman Judul Dalam ---%%
+\newcommand{\UI@typeset@judulDalam}{%
+  \begin{titlepage}%
+    \begin{singlespace*}%
+    \begin{center}%
+      \begin{figure}%
+        \begin{center}%
+          \includegraphics[width=2.5cm]{\UI@makaraimage}%
+        \end{center}%
+      \end{figure}%
+      \vspace*{\UI@coverLogoToUniversityGap}%
+      \large
+      \bo{UNIVERSITAS INDONESIA}\\[\UI@coverUniversityToTitleGap]%
+      \vfill
+      \bo{\if@UIenglish\JudulInggris\else\Judul\fi}\\[\UI@coverTitleToSubtitleGap]%
+      \bo{\UI@label@sampulJudul}\\[\UI@titleInsideSubtitleToBodyGap]%
+      \normalsize
+      \UI@label@gelarText\\
+      \gelar\\
+      \vfill
+      \large
+      \UI@IfSingleAuthor{%
+        \bo{\PenulisSatu}\\
+        \bo{\npmSatu}\\
+      }{%
+        \bo{\PenulisSatu~/ \npmSatu}\\
+        \bo{\PenulisDua~/ \npmDua}\\
+      }%
+      \UI@IfThirdAuthor{%
+        \bo{\PenulisTiga~/ \npmTiga}\\
+      }{}%
+      \vfill
+      \large
+      \bo{%
+        \Fakultas\\[\UI@title@metaRowGap]%
+        \MakeUppercase{\UI@label@studyProgramOf}~\UI@studyProgramUniqueDisplayUpper\\[\UI@title@metaRowGap]%
+        \MakeUppercase{\UI@kota}\\[\UI@title@metaRowGap]%
+        \MakeUppercase{\bulanTahun}
+      }%
+      \normalsize
+    \end{center}%
+    \end{singlespace*}%
+  \end{titlepage}%
+}
+
+%--- Orisinalitas ---%
+\newcommand{\UI@typeset@orisinalitas}{%
+  \UI@frontpageHead{\UI@label@orisinalitasHead}%
+  \vspace*{\UI@frontpage@bodyTopGap}%
+  \if@UImonograph\pagestyle{onlypage}\else\pagestyle{journal-front}\fi
+  \begin{center}%
+    \doublespacing
+    \bo{\UI@label@originBody}\\
+    \vspace*{\UI@frontpage@bodyToSignatureGap}%
+    \UI@restoreMainSpacing%
+    \ifx\UI@content@orisinalitas\empty
+      \UI@sigTable
+    \else
+      \UI@content@orisinalitas
+    \fi
+  \end{center}%
+  \newpage
+}
+
+%--- Lembar Pengesahan ---%
+\newcommand{\UI@typeset@pengesahan}{%
+  \if@UImonograph\pagestyle{onlypage}\else\pagestyle{journal-front}\fi
+  \strcompare{Laporan Kerja Praktik}{\UI@type}{%
+    % Varian Kerja Praktik
+    \UI@frontpageHead{\UI@label@pengesahanKP}%
+    \if@UImonograph\thispagestyle{onlypage}\else\thispagestyle{journal-front}\fi
+    \vspace*{\UI@frontpage@sectionGapM}%
+    \noindent
+    \begin{tabularx}{\linewidth}{llX}%
+      \multicolumn{3}{l}{\UI@type@display~\UI@label@submitted:} \\
+      \UI@label@authorName   & : & \penulisSatu \\
+      \UI@label@authorNPM    & : & \npmSatu \\
+      \UI@label@studyProgram & : & \UI@studyProgramSatuDisplay \\
+      \UI@label@title        & : & \if@UIenglish\judulInggris\else\judul\fi \\
+    \end{tabularx}\par
+    \vspace*{\UI@approval@metaToStatementGap}%
+    \noindent\bo{\UI@label@approvedBodyKP}\\[\UI@approval@statementToBoardGap]%
+    \begin{center}%
+      \begin{tabularx}{0.75\linewidth}{>{\centering\arraybackslash}X}%
+        \rule{0.85\linewidth}{0.4pt}\\[\UI@approvalBoardRuleToNameGap]
+        (\pembimbingSatu)\\[\UI@approvalBoardNameToRoleGap]
+        \UI@label@kpSupervisorTitle\\
+        \UI@facultyDisplay~Universitas Indonesia%
+      \end{tabularx}%
+    \end{center}%
+    \vfill%
+    \begin{tabular}{ll l}%
+      \UI@label@setAt & : & \UI@kota \\
+      \UI@label@date  & : & \tanggalLulus \\
+    \end{tabular}%
+  }{%
+    \strcompare{Kampus Merdeka}{\UI@type}{%
+      % Varian Kampus Merdeka
+      \UI@frontpageHead{\UI@label@pengesahanMBKM}%
+      \if@UImonograph\thispagestyle{onlypage}\else\thispagestyle{journal-front}\fi
+      \vspace*{\UI@frontpage@sectionGapM}%
+      \noindent
+      \begin{tabularx}{\linewidth}{llX}%
+        \multicolumn{3}{l}{\UI@label@mbkmSubmitted~\UI@label@submitted:} \\
+        \UI@label@authorName   & : & \penulisSatu \\
+        \UI@label@authorNPM    & : & \npmSatu \\
+        \UI@label@studyProgram & : & \UI@studyProgramSatuDisplay \\
+        \UI@label@title        & : & \if@UIenglish\judulInggris\else\judul\fi \\
+      \end{tabularx}\par
+      \vspace*{\UI@approval@metaToStatementGap}%
+      \noindent\bo{\UI@label@approvedBodyMBKM}\\[\UI@approvalMBKMStatementToBoardGap]%
+      \ifx\blank\pembimbingDua
+        \begin{center}%
+          \begin{tabularx}{0.75\linewidth}{>{\centering\arraybackslash}X}%
+            \rule{0.85\linewidth}{0.4pt}\\[\UI@approvalBoardRuleToNameGap]
+            (\pembimbingSatu)\\[\UI@approvalBoardNameToRoleGap]
+            \bo{\UI@label@mbkmSupervisorTitle~\UI@kampusMerdekaType}\\
+            \bo{\UI@facultyDisplay~Universitas Indonesia}%
+          \end{tabularx}%
+        \end{center}%
+      \else
+        \begin{center}%
+          \begin{tabularx}{\linewidth}{>{\centering\arraybackslash}X>{\centering\arraybackslash}X}%
+            \rule{0.85\linewidth}{0.4pt} & \rule{0.85\linewidth}{0.4pt} \\[\UI@approvalBoardRuleToNameGap]
+            (\pembimbingSatu) & (\pembimbingDua) \\[\UI@approvalBoardNameToRoleGap]
+            \UI@label@mbkmSupervisorTitle~\UI@kampusMerdekaType & \partnerPosition \\
+            \UI@facultyDisplay~Universitas Indonesia & \partnerInstance \\
+          \end{tabularx}%
+        \end{center}%
+      \fi
+      \vfill%
+      \begin{tabular}{ll l}%
+        \UI@label@setAt & : & \UI@kota \\
+        \UI@label@date  & : & \tanggalLulus \\
+      \end{tabular}%
+    }{%
+      \strcompare{Doktor}{\UI@jenjang}{%
+        % Varian Doktor (S3)
+        \UI@frontpageHead{\UI@label@pengesahan}%
+        \if@UImonograph\thispagestyle{onlypage}\else\thispagestyle{journal-front}\fi
+        \vspace*{\UI@frontpage@sectionGapM}%
+        \noindent
+        \begin{tabularx}{\linewidth}{llX}%
+          \UI@type@display~\UI@label@submitted & : & \\
+          \UI@label@authorName   & : & \penulisSatu \\
+          \UI@label@authorNPM    & : & \npmSatu \\
+          \UI@label@studyProgram & : & \UI@studyProgramSatuDisplay \\
+          \UI@label@title        & : & \if@UIenglish\judulInggris\else\judul\fi \\
+        \end{tabularx}\par
+        \vspace*{\UI@approval@metaToStatementGap}%
+        \noindent\bo{\UI@label@approvedBody}\\[\UI@approval@statementToBoardGap]%
+        \begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.2cm}
+          >{\centering\arraybackslash}p{0.3cm}
+          >{\raggedright\arraybackslash}p{\dimexpr\linewidth-2.2cm-0.3cm-3.0cm-6\tabcolsep\relax}
+          >{\centering\arraybackslash}p{3.0cm}@{}}%
+          \multicolumn{4}{c}{\bo{\UI@label@examBoard}}\\[\UI@approvalBoardHeaderToRowsGap]
+          & & & \\[\UI@approvalBoardInterRowGap]
+          \UI@label@promotor & : & \pembimbingSatu & (\hspace*{3.0cm}) \\
+          \ifx\blank\pembimbingDua\else
+            & & & \\[\UI@approvalBoardInterRowGap]
+            \UI@label@kopromotor & : & \pembimbingDua & (\hspace*{3.0cm}) \\
+          \fi
+          \ifx\blank\pembimbingTiga\else
+            & & & \\[\UI@approvalBoardInterRowGap]
+             & : & \pembimbingTiga & (\hspace*{3.0cm}) \\
+          \fi
+          & & & \\[\UI@approvalBoardInterRowGap]
+          \UI@label@examinerTeam & : & \pengujiSatu~(\UI@label@examChair)   & (\hspace*{3.0cm}) \\
+          & & & \\[\UI@approvalBoardInterRowGap]
+          & : & \pengujiDua~(\UI@label@examMember)  & (\hspace*{3.0cm}) \\
+          \ifx\blank\pengujiTiga\else
+            & & & \\[\UI@approvalBoardInterRowGap]
+            & : & \pengujiTiga~(\UI@label@examMember) & (\hspace*{3.0cm}) \\
+          \fi
+          \ifx\blank\pengujiEmpat\else
+            & & & \\[\UI@approvalBoardInterRowGap]
+            & : & \pengujiEmpat~(\UI@label@examMember) & (\hspace*{3.0cm}) \\
+          \fi
+          \ifx\blank\pengujiLima\else
+            & & & \\[\UI@approvalBoardInterRowGap]
+            & : & \pengujiLima~(\UI@label@examMember) & (\hspace*{3.0cm}) \\
+          \fi
+          \ifx\blank\pengujiEnam\else
+            & & & \\[\UI@approvalBoardInterRowGap]
+            & : & \pengujiEnam~(\UI@label@examMember) & (\hspace*{3.0cm}) \\
+          \fi
+        \end{longtable}%
+        \vfill%
+        \begin{tabular}{ll l}%
+          \UI@label@setAt & : & \UI@kota \\
+          \UI@label@date  & : & \tanggalLulus \\
+        \end{tabular}%
+      }{%
+        % Varian S1/S2
+        \UI@frontpageHead{\UI@label@pengesahan}%
+        \if@UImonograph\thispagestyle{onlypage}\else\thispagestyle{journal-front}\fi
+        \vspace*{\UI@frontpage@sectionGapM}%
+        \noindent
+        \begin{tabularx}{\linewidth}{llX}%
+          \UI@type@display~\UI@label@submitted & : & \\
+          \UI@IfSingleAuthor{%
+            \UI@label@authorName   & : & \penulisSatu \\
+            \UI@label@authorNPM    & : & \npmSatu \\
+            \UI@label@studyProgram & : & \UI@studyProgramSatuDisplay \\
+          }{%
+            \bo{\UI@label@authorPrefix~1}\\
+            \UI@label@authorName   & : & \penulisSatu \\
+            \UI@label@authorNPM    & : & \npmSatu \\
+            \UI@label@studyProgram & : & \UI@studyProgramSatuDisplay\vspace*{\UI@approvalMultiAuthorStudyGap}\\
+            \bo{\UI@label@authorPrefix~2}\\
+            \UI@label@authorName   & : & \penulisDua \\
+            \UI@label@authorNPM    & : & \npmDua \\
+            \UI@label@studyProgram & : & \UI@studyProgramDuaDisplay\vspace*{\UI@approvalMultiAuthorStudyGap}\\
+          }%
+          \UI@IfThirdAuthor{%
+            \bo{\UI@label@authorPrefix~3}\\
+            \UI@label@authorName   & : & \penulisTiga \\
+            \UI@label@authorNPM    & : & \npmTiga \\
+            \UI@label@studyProgram & : & \UI@studyProgramTigaDisplay\vspace*{\UI@approvalMultiAuthorStudyGap}\\
+          }{}%
+          \UI@label@title & : & \if@UIenglish\judulInggris\else\judul\fi \\
+        \end{tabularx}\par
+        \vspace*{\UI@approval@metaToStatementGap}%
+        \noindent\bo{\UI@label@approvedBody}\\[\UI@approval@statementToBoardGap]%
+        \UI@IfThirdAuthor{\clearpage}{}
+        \begin{tabularx}{\linewidth}{llXl}%
+          \multicolumn{4}{c}{\bo{\UI@label@examBoard}}\\[\UI@approvalBoardHeaderToRowsGap]
+          & & & \\[\UI@approvalBoardInterRowGap]
+          \UI@label@supervisor~1 & : & \pembimbingSatu & (\hspace*{3.0cm}) \\
+          \ifx\blank\pembimbingDua\else
+            & & & \\[\UI@approvalBoardInterRowGap]
+            \UI@label@supervisor~2 & : & \pembimbingDua & (\hspace*{3.0cm}) \\
+          \fi
+          & & & \\[\UI@approvalBoardInterRowGap]
+          \UI@label@examiner~1 & : & \pengujiSatu & (\hspace*{3.0cm}) \\
+          & & & \\[\UI@approvalBoardInterRowGap]
+          \UI@label@examiner~2 & : & \pengujiDua  & (\hspace*{3.0cm}) \\
+          \ifx\blank\pengujiTiga\else
+            & & & \\[\UI@approvalBoardInterRowGap]
+            \UI@label@examiner~3 & : & \pengujiTiga & (\hspace*{3.0cm}) \\
+          \fi
+        \end{tabularx}
+        \vfill%
+        \begin{tabular}{ll l}%
+          \UI@label@setAt & : & \UI@kota \\
+          \UI@label@date  & : & \tanggalLulus \\
+        \end{tabular}%
+      }%
+    }%
+  }%
+  \if@UImonograph\pagestyle{onlypage}\else\pagestyle{journal-front}\fi
+  \newpage
+}
+
+%--- Pernyataan Penggunaan Kecerdasan Artifisial ---%
+\newcommand{\UI@typeset@pernyataanAI}{%
+  \clearpage
+  \if@UImonograph\pagestyle{onlypage}\else\pagestyle{journal-front}\fi
+  \UI@frontpageHead{\UI@label@pernyataanAI}%
+  \if@UImonograph\thispagestyle{onlypage}\else\thispagestyle{journal-front}\fi
+  \vspace*{\UI@frontpage@bodyTopGap}%
+  \begin{center}%
+    \ifx\UI@content@AI\empty
+      \ifx\blank\UI@aiplatform
+        \bo{\UI@label@aiBodyNone}%
+      \else
+        \bo{\UI@label@aiBodyUsed}%
+      \fi
+    \else
+      \UI@content@AI
+    \fi
+  \end{center}%
+  \vspace{\UI@frontpage@bodyToSignatureGap}%
+  \noindent\begin{minipage}{\linewidth}%
+    \begin{center}%
+      \UI@sigTable
+    \end{center}%
+  \end{minipage}%
+  \if@UImonograph\pagestyle{onlypage}\else\pagestyle{journal-front}\fi
+  \newpage
+}
+
+%--- Surat Pernyataan ---%
+\newcommand{\UI@typeset@suratPernyataan}{%
+  \clearpage
+  \if@UImonograph\pagestyle{onlypage}\else\pagestyle{journal-front}\fi
+  {%
+    \setlength{\UI@frontpage@topskip}{\UI@suratHeadingTopskip}%
+    \setlength{\UI@frontpage@afterskip}{\UI@suratHeadingAfterSkip}%
+    \UI@frontpageHead{\UI@label@suratPernyataan}%
+  }%
+  \if@UImonograph\thispagestyle{onlypage}\else\thispagestyle{journal-front}\fi
+  \ifx\UI@content@suratPernyataan\empty
+    \noindent\UI@label@suratPernyataanBody\par
+    \vspace*{\UI@suratIdentityToMetaGap}%
+    \noindent\begin{tabularx}{\linewidth}{p{4.2cm} c X}
+      \UI@label@authorName   & : &
+        \UI@IfSingleAuthor{\penulisSatu}%
+        {\penulisSatu,~\penulisDua\UI@IfThirdAuthor{,~\penulisTiga}{}} \\
+      \UI@label@authorNPM    & : &
+        \UI@IfSingleAuthor{\npmSatu}%
+        {\npmSatu~/~\npmDua\UI@IfThirdAuthor{~/~\npmTiga}{}} \\
+      \UI@label@studyProgram & : & \UI@studyProgramAllDisplay \\
+      \UI@label@academicYear & : & \UI@academicYear \\
+    \end{tabularx}\par
+    \vspace*{\UI@suratParagraphGap}%
+    \noindent\UI@label@suratPernyataanPlagiarism\par
+    \begin{center}%
+      \textbf{``\MakeUppercase{\if@UIenglish\judulInggris\else\judul\fi}''}
+    \end{center}%
+    \noindent\UI@label@suratPernyataanSanction\par
+    \vspace*{\UI@suratParagraphGap}%
+    \noindent\UI@label@suratPernyataanClosing\par
+    \vspace*{\UI@frontpage@sectionGapL}%
+    \begin{flushleft}
+      \UI@kota, \tanggalSiapSidang\\[\UI@frontpage@signatureDateGap]
+      (\UI@IfSingleAuthor{\penulisSatu}{\UI@label@teamWriters})
+    \end{flushleft}%
+  \else
+    \UI@content@suratPernyataan
+  \fi
+  \if@UImonograph\pagestyle{onlypage}\else\pagestyle{journal-front}\fi
+  \newpage
+}
+
+%--- Kata Pengantar ---%
+\newcommand{\UI@typeset@kataPengantar}{%
+  \pagestyle{onlypage}%
+  \chapter*{\UI@label@kataPengantar}%
+  \thispagestyle{onlypage}%
+  \UI@content@kataPengantar
+  \vspace*{\UI@kataPengantarDateToNameGap}%
+  \begin{flushright}%
+    \UI@kota, \tanggalSiapSidang\\[\UI@kataPengantarDateToNameGap]%
+    \UI@IfSingleAuthor{%
+      \vspace*{\UI@kataPengantarSingleAuthorSignGap}%
+      \penulisSatu
+    }{%
+      \UI@label@teamWriters%
+    }%
+  \end{flushright}%
+  \newpage
+}
+
+%--- Persetujuan Publikasi ---%
+\newcommand{\UI@typeset@publikasi}{%
+  \clearpage
+  \if@UImonograph\thispagestyle{onlypage}\else\thispagestyle{journal-front}\fi
+  \global\@topnum\z@
+  \@afterindentfalse
+  \if@UImonograph
+    {\parindent\z@\centering\singlespacing\normalfont\bfseries
+      \interlinepenalty\@M
+      \MakeUppercase{\UI@label@publikasiHead}%
+      \vskip \UI@publikasiHeadingAfterGap}%
+  \else
+    {\parindent\z@\centering\singlespacing\normalfont\bfseries
+      \vspace*{\UI@frontpage@topskip}\par
+      \MakeUppercase{\UI@label@publikasiHead}\par
+      \vskip \UI@publikasiHeadingAfterGap}%
+  \fi
+  {\parskip=0pt\relax\hrule height 1.5pt\vspace*{\UI@publikasiRuleInnerGap}\hrule height 1.5pt}%
+  \vspace*{\UI@frontpage@sectionGapS}%
+  \noindent\UI@label@pubBody
+
+  \vspace*{\UI@frontpage@sectionGapS}%
+  \if@UImonograph\pagestyle{onlypage}\else\pagestyle{journal-front}\fi
+  \ifx\UI@content@publikasi\empty
+    \begin{center}%
+      \noindent\begin{tabularx}{\linewidth-2\parindent}{p{4.2cm} c X}%
+        \UI@label@authorName & : &
+          \UI@IfSingleAuthor{\penulisSatu}%
+          {\penulisSatu~/~\penulisDua\UI@IfThirdAuthor{~/~\penulisTiga}{}} \\
+        \UI@label@authorNPM & : &
+          \UI@IfSingleAuthor{\npmSatu}%
+          {\npmSatu~/~\npmDua\UI@IfThirdAuthor{~/~\npmTiga}{}} \\
+        \UI@label@studyProgram & : & \UI@studyProgramAllDisplay \\
+        \UI@label@workType & : & \UI@type@display \\
+      \end{tabularx}%
+    \end{center}%
+
+    \vspace*{\UI@frontpage@sectionGapS}%
+    \noindent\UI@label@pubMiddle
+    \begin{center}%
+      \if@UIenglish\judulInggris\else\judul\fi
+    \end{center}%
+    \noindent\UI@label@pubEnd
+
+    \noindent\begin{minipage}{\linewidth}%
+    \begin{center}%
+      \vspace*{\UI@frontpage@sectionGapXS}\vspace*{\UI@frontpage@sectionGapL}%
+      \begin{tabular}{lll}%
+        \UI@label@pubCity    & : & \UI@kota \\
+        \UI@label@pubSignDate & : & \tanggalSiapSidang \\
+      \end{tabular}\\%
+      \par
+      \vspace*{\UI@frontpage@sectionGapS}%
+      \UI@label@pubSigner\\%
+      \UI@IfSingleAuthor{%
+        \vspace*{\UI@frontpage@bodyTopGap}%
+        (\penulisSatu)\\%
+      }{%
+        \UI@IfThirdAuthor{%
+          \begin{tabular}{@{}>{{\centering\arraybackslash}}p{0.30\linewidth}@{\hspace{0.05\linewidth}}>{{\centering\arraybackslash}}p{0.30\linewidth}@{\hspace{0.05\linewidth}}>{{\centering\arraybackslash}}p{0.30\linewidth}@{}}%
+            \rule{0pt}{2cm} & & \tabularnewline
+            (\penulisSatu) & (\penulisDua) & (\penulisTiga)\tabularnewline%
+          \end{tabular}%
+        }{%
+          \begin{tabular}{@{}>{{\centering\arraybackslash}}p{0.45\linewidth}@{\hspace{0.10\linewidth}}>{{\centering\arraybackslash}}p{0.45\linewidth}@{}}%
+            \rule{0pt}{2cm} & \tabularnewline
+            (\penulisSatu) & (\penulisDua)\tabularnewline%
+          \end{tabular}%
+        }%
+      }%
+    \end{center}%
+    \end{minipage}%
+  \else
+    \UI@content@publikasi
+  \fi
+  \newpage
+}
+
+%--- Abstrak (Bahasa Indonesia) ---%
+\newcommand{\UI@typeset@abstrak}{%
+  \if@UImonograph
+    \chapter*{Abstrak}%
+    \thispagestyle{first-pages}%
+    \singlespacing
+    \noindent\begin{tabularx}{\linewidth}{l l X}%
+      \UI@IfSingleAuthor{%
+        Nama          & : & \penulisSatu \\
+        Program Studi & : & \programSatu \\
+      }{%
+        Nama Penulis 1 / Program Studi & : & \penulisSatu~/ \programSatu \\
+        Nama Penulis 2 / Program Studi & : & \penulisDua~/ \programDua \\
+      }%
+      \UI@IfThirdAuthor{%
+        Nama Penulis 3 / Program Studi & : & \penulisTiga~/ \programTiga \\
+      }{}%
+      Judul         & : & \judul \\
+      \UI@abstrakCounselorRows{Pembimbing}%
+    \end{tabularx}\par
+    \vspace*{\UI@abstrakMonoMetaToBodyGap}%
+  \else
+    \thispagestyle{first-pages}%
+    {\singlespacing
+      \begin{center}%
+        {\fontsize{12}{15}\selectfont\bo{\if@UIenglish\judulInggris\else\judul\fi}}\\%
+        \penulisSatu%
+        \UI@IfSingleAuthor{}{, \penulisDua\UI@IfThirdAuthor{, \penulisTiga}{}}%
+        \UI@abstrakCounselorInline%
+      \end{center}%
+      \vspace*{\UI@journalTitleToStudyGap}%
+      \noindent{\centering\if@UIenglish\studyProgramSatu, \fakultasEN\else\programSatu, \fakultasID\fi, Universitas Indonesia\par}%
+      \vspace*{\UI@journalStudyToAbstrakGap}%
+      \noindent{\centering\bo{ABSTRAK}\par}%
+      \noindent\UI@content@abstrakID\par
+      \vspace*{\UI@journalAbstrakToKeywordsGap}%
+      \noindent\textbf{Kata kunci:} \UI@keywords@ID\par
+    }%
+  \fi
+  \if@UImonograph
+    \noindent\UI@content@abstrakID\\
+    \vspace*{\UI@abstrakMonoBodyToKeywordsGap}%
+    \noindent\textbf{Kata kunci:} \UI@keywords@ID\\
+    \vspace*{\UI@abstrakMonoAfterKeywordsGap}%
+  \fi
+  \UI@restoreMainSpacing%
+  \if@UImonograph\newpage\fi
+}
+
+%--- Abstract (English) ---%
+\newcommand{\UI@typeset@abstract}{%
+  \if@UImonograph
+    \chapter*{ABSTRACT}%
+    \thispagestyle{first-pages}%
+    \singlespacing
+    \noindent\begin{tabularx}{\linewidth}{l l X}%
+      \UI@IfSingleAuthor{%
+        Name          & : & \penulisSatu \\
+        Study Program & : & \studyProgramSatu \\
+      }{%
+        Writer 1 / Study Program & : & \penulisSatu~/ \studyProgramSatu \\
+        Writer 2 / Study Program & : & \penulisDua~/ \studyProgramDua \\
+      }%
+      \UI@IfThirdAuthor{%
+        Writer 3 / Study Program & : & \penulisTiga~/ \studyProgramTiga \\
+      }{}%
+      Title     & : & \judulInggris \\
+      \UI@abstrakCounselorRows{Counselor}%
+    \end{tabularx}\par
+    \vspace*{\UI@abstractMonoMetaToBodyGap}%
+  \else
+    \thispagestyle{first-pages}%
+    {\singlespacing
+      \vspace*{\UI@journalKeywordsToAbstractGap}%
+      \noindent{\centering\textbf{\textit{ABSTRACT}}\par}%
+      \noindent\textit{\UI@content@abstractEN}\par
+      \vspace*{\UI@journalAbstractToKeywordsGap}%
+      \noindent\textit{\textbf{Keywords:} \UI@keywords@EN}\par
+    }%
+  \fi
+  \if@UImonograph
+    \noindent\UI@content@abstractEN\\
+    \vspace*{\UI@abstractMonoBodyToKeywordsGap}%
+    \noindent\textbf{Keywords:} \UI@keywords@EN\\
+  \fi
+  \if@UImonograph
+    \vspace*{\UI@abstractMonoAfterKeywordsGap}%
+  \fi
+  \UI@restoreMainSpacing%
+  \newpage
+}
+
+
+%==============================================================================%
+%  FRONT MATTER: PERAKITAN HALAMAN DEPAN (\makefrontmatter)
+%==============================================================================%
+
+\newcommand{\makefrontmatter}{%
+  \if@UImonograph
+    %--- Alur monograf ---%
+    \UI@typeset@sampul
+    \UI@insertdummyblank
+    \pagenumbering{roman}%
+
+    % Halaman Judul Dalam (dilewati untuk Kampus Merdeka)
+    \strcompare{Kampus Merdeka}{\UI@type}{}{%
+      \addChapter{\UI@label@halamanJudul}%
+      \UI@typeset@judulDalam
+      \UI@insertdummyblankonlypage
+    }
+
+    % Halaman Orisinalitas (dilewati untuk KP dan MBKM)
+    \strcompare{Laporan Kerja Praktik}{\UI@type}{}{%
+    \strcompare{Kampus Merdeka}{\UI@type}{}{%
+      \addChapter{\UI@label@orisinalitas}%
+      \UI@typeset@orisinalitas
+      \UI@insertdummyblankonlypage
+    }}
+
+    % Tentukan nomor awal halaman romawi
+    \strcompare{Laporan Kerja Praktik}{\UI@type}{%
+      \setcounter{page}{2}%
+    }{%
+      \strcompare{Kampus Merdeka}{\UI@type}{%
+        \setcounter{page}{2}%
+      }{%
+        \setcounter{page}{3}%
+      }%
+    }
+
+    % Lembar Pengesahan
+    \addChapter{\UI@label@pengesahan}%
+    \ifx\UI@pengesahanPDFfile\empty
+      \UI@typeset@pengesahan
+    \else
+      \includepdf[pages=-,pagecommand={\if@UImonograph\thispagestyle{onlypage}\else\thispagestyle{journal-front}\fi}]{\UI@pengesahanPDFfile.pdf}%
+      \newpage
+    \fi
+    \UI@insertdummyblankonlypage
+
+    % Pernyataan Penggunaan AI (semua tipe)
+    \addChapter{\UI@label@pernyataanAI}%
+    \UI@typeset@pernyataanAI
+    \UI@insertdummyblankonlypage
+
+    % Surat Pernyataan (semua tipe)
+    \addChapter{\UI@label@suratPernyataan}%
+    \UI@typeset@suratPernyataan
+    \UI@insertdummyblankonlypage
+
+    % Kata Pengantar & Persetujuan Publikasi (dilewati untuk KP dan MBKM)
+    \strcompare{Laporan Kerja Praktik}{\UI@type}{}{%
+    \strcompare{Kampus Merdeka}{\UI@type}{}{%
+      \addChapter{\UI@label@kataPengantar}%
+      \UI@typeset@kataPengantar
+      \UI@insertdummyblankonlypage
+
+      \addChapter{\UI@label@publikasi}%
+      \UI@typeset@publikasi
+      \UI@insertdummyblankonlypage
+    }}
+
+    % Abstrak dan daftar-daftar
+    \pagestyle{first-pages}%
+    \addChapter{\UI@label@abstrak}%
+    \UI@typeset@abstrak
+    \UI@typeset@abstract
+
+    % Conditional list decisions use counts from the PREVIOUS successful run.
+    % After clean builds or structural edits, run LaTeX at least twice.
+    \addDefaultListPage{\tableofcontents}%
+    \UI@condListPage{\UI@prev@count@lof}{\addDefaultListPage{\listoffigures}}%
+    \UI@condListPage{\UI@prev@count@lot}{\addDefaultListPage{\listoftables}}%
+    \UI@condListPage{\UI@prev@count@lol}{\addCustomListPage{\listoflistings}{\lstlistlistingname}}%
+    \UI@condListPage{\UI@prev@count@loe}{\addCustomListPage{\listofequ}{\listofequname}}%
+    \addCustomListPage{\listofappendix}{\listofappendixname}%
+    % Keep user-defined lists in the same flushed front-matter block so page
+    % numbering and footer style match the built-in list pages.
+    \UI@renderFrontmatterLists
+
+    \noCAPinToC
+    \ifUI@twosideprint
+      \ifodd\numexpr\value{UI@physicalpage}+1\relax\forceclearchapter\else\clearpage\fi
+    \else
+      \clearpage
+    \fi
+
+    \global\UI@chapterstartedfalse
+    \global\UI@chapterautoclearenabledtrue
+    \pagenumbering{arabic}%
+    \pagestyle{standard}%
+    \setoddevenheader
+
+  \else
+    %--- Alur jurnal ---%
+    \pagenumbering{roman}%
+    \setcounter{page}{1}%
+    \pagestyle{journal-front}%
+    \newgeometry{left=3cm,top=3cm,right=3cm,bottom=3cm}%
+    \UI@syncPageStyleWidth
+    \UI@typeset@sampul
+    \disableboldchapterintoc
+
+    % Halaman Judul Dalam
+    \addChapter{\UI@label@halamanJudul}%
+    \UI@typeset@judulDalam
+
+    % Orisinalitas (dilewati untuk KP)
+    \strcompare{Laporan Kerja Praktik}{\UI@type}{}{%
+      \UI@typeset@orisinalitas
+    }
+
+    % Lembar Pengesahan
+    \addChapter{\UI@label@pengesahan}%
+    \UI@typeset@pengesahan
+
+    % Pernyataan Penggunaan AI
+    \addChapter{\UI@label@pernyataanAI}%
+    \UI@typeset@pernyataanAI
+
+    % Surat Pernyataan
+    \addChapter{\UI@label@suratPernyataan}%
+    \UI@typeset@suratPernyataan
+
+    % Persetujuan Publikasi
+    \addChapter{\UI@label@publikasi}%
+    \UI@typeset@publikasi
+
+    % Abstrak (jurnal: gunakan bahasa yang dipilih)
+    \restoregeometry
+    \UI@syncPageStyleWidth
+    \pagenumbering{arabic}%
+    \setcounter{page}{1}%
+    \pagestyle{first-pages}%
+    \addChapter{\UI@label@abstrak}%
+    \UI@typeset@abstrak
+    \UI@typeset@abstract
+    \clearpage
+    \global\UI@chapterautoclearenabledfalse
+    \global\UI@chapterstartedfalse
+    \UI@restoreMainSpacing
+    \pagestyle{standard}%
+    % Aktifkan dua kolom jika diminta (jurnal)
+    \if@UItwocolumn
+      % Keep a conference-like gutter; narrow enough to preserve readable column width.
+      \setlength{\columnsep}{0.25in}%
+      \setlength{\tabcolsep}{4pt}%
+      \twocolumn
+    \fi
+  \fi
+}
+
+
+%==============================================================================%
+%  METADATA API: PERINTAH PENGATURAN DOKUMEN (acmart-style accumulator)
+%==============================================================================%
+
+%--- Inisialisasi slot (diisi oleh accumulator) ---%
+\def\penulisSatu{}\def\penulisDua{}\def\penulisTiga{}
+\def\npmSatu{}\def\npmDua{}\def\npmTiga{}
+\def\programSatu{}\def\programDua{}\def\programTiga{}
+\def\studyProgramSatu{}\def\studyProgramDua{}\def\studyProgramTiga{}
+\def\UI@academicYear{}
+\def\pembimbingSatu{}\def\pembimbingDua{}\def\pembimbingTiga{}
+\def\pengujiSatu{}\def\pengujiDua{}\def\pengujiTiga{}
+\def\pengujiEmpat{}\def\pengujiLima{}\def\pengujiEnam{}
+
+%--- Inisialisasi medan skalar dengan guard \ifx\blank ---%
+\def\UI@aiplatform{}\def\UI@tujuanai{}
+\def\UI@kampusMerdekaType{}\def\partnerPosition{}\def\partnerInstance{}
+
+%--- Penghitung accumulator ---%
+\newcounter{@UI@penuliscount}
+\newcounter{@UI@pembimbingcount}
+\newcounter{@UI@pengujicount}
+
+%--- \penulis{Nama} -> memulai blok penulis baru ---%
+\newcommand{\penulis}[1]{%
+  \stepcounter{@UI@penuliscount}%
+  \ifnum\c@@UI@penuliscount=1\def\penulisSatu{#1}\fi
+  \ifnum\c@@UI@penuliscount=2\def\penulisDua{#1}\fi
+  \ifnum\c@@UI@penuliscount=3\def\penulisTiga{#1}\fi
+}
+
+%--- \npm{NPM} -> menempel ke \penulis terakhir ---%
+\newcommand{\npm}[1]{%
+  \ifnum\c@@UI@penuliscount=1\def\npmSatu{#1}\fi
+  \ifnum\c@@UI@penuliscount=2\def\npmDua{#1}\fi
+  \ifnum\c@@UI@penuliscount=3\def\npmTiga{#1}\fi
+}
+
+%--- \programStudi{Nama PS ID}{Study Program EN} ---%
+\newcommand{\programStudi}[2]{%
+  \ifnum\c@@UI@penuliscount=1\def\programSatu{#1}\def\studyProgramSatu{#2}\fi
+  \ifnum\c@@UI@penuliscount=2\def\programDua{#1}\def\studyProgramDua{#2}\fi
+  \ifnum\c@@UI@penuliscount=3\def\programTiga{#1}\def\studyProgramTiga{#2}\fi
+}
+\newcommand{\tahunAkademik}[1]{\gdef\UI@academicYear{#1}}
+
+% Language-aware study-program display helpers.
+% Use these to keep rendering logic consistent and avoid duplicated conditionals.
+% Helper: resolve study-program label for the active language.
+% #1 = slot suffix (Satu/Dua/Tiga).
+\newcommand{\UI@studyProgramLabel}[1]{%
+  \if@UIenglish\csname studyProgram#1\endcsname\else\csname program#1\endcsname\fi}
+\newcommand{\UI@studyProgramSatuDisplay}{\UI@studyProgramLabel{Satu}}
+\newcommand{\UI@studyProgramDuaDisplay}{\UI@studyProgramLabel{Dua}}
+\newcommand{\UI@studyProgramTigaDisplay}{\UI@studyProgramLabel{Tiga}}
+\newcommand{\UI@StudyProgramSatuDisplay}{\MakeUppercase{\UI@studyProgramLabel{Satu}}}
+\newcommand{\UI@StudyProgramDuaDisplay}{\MakeUppercase{\UI@studyProgramLabel{Dua}}}
+\newcommand{\UI@StudyProgramTigaDisplay}{\MakeUppercase{\UI@studyProgramLabel{Tiga}}}
+\newcommand{\UI@studyProgramUniqueDisplay}{%
+  \UI@studyProgramSatuDisplay%
+  \UI@IfSingleAuthor{}{%
+    \ifx\programSatu\programDua\else~/~\UI@studyProgramDuaDisplay\fi%
+  }%
+  \UI@IfThirdAuthor{%
+    \ifx\programSatu\programTiga\else%
+      \UI@IfSingleAuthor{%
+        ~/~\UI@studyProgramTigaDisplay%
+      }{%
+        \ifx\programDua\programTiga\else~/~\UI@studyProgramTigaDisplay\fi%
+      }%
+    \fi%
+  }{}%
+}%
+\newcommand{\UI@studyProgramUniqueDisplayUpper}{\MakeUppercase{\UI@studyProgramUniqueDisplay}}
+\newcommand{\UI@studyProgramAllDisplay}{%
+  \UI@studyProgramSatuDisplay%
+  \UI@IfSingleAuthor{}{~/~\UI@studyProgramDuaDisplay}%
+  \UI@IfThirdAuthor{~/~\UI@studyProgramTigaDisplay}{}%
+}%
+\newcommand{\UI@studyProgramAllDisplayUpper}{\MakeUppercase{\UI@studyProgramAllDisplay}}
+
+%--- \pembimbing{Nama} -> accumulator dosen pembimbing ---%
+\newcommand{\pembimbing}[1]{%
+  \stepcounter{@UI@pembimbingcount}%
+  \ifnum\c@@UI@pembimbingcount=1\def\pembimbingSatu{#1}\fi
+  \ifnum\c@@UI@pembimbingcount=2\def\pembimbingDua{#1}\fi
+  \ifnum\c@@UI@pembimbingcount=3\def\pembimbingTiga{#1}\fi
+}
+
+%--- \penguji{Nama} -> accumulator dosen penguji ---%
+\newcommand{\penguji}[1]{%
+  \stepcounter{@UI@pengujicount}%
+  \ifnum\c@@UI@pengujicount=1\def\pengujiSatu{#1}\fi
+  \ifnum\c@@UI@pengujicount=2\def\pengujiDua{#1}\fi
+  \ifnum\c@@UI@pengujicount=3\def\pengujiTiga{#1}\fi
+  \ifnum\c@@UI@pengujicount=4\def\pengujiEmpat{#1}\fi
+  \ifnum\c@@UI@pengujicount=5\def\pengujiLima{#1}\fi
+  \ifnum\c@@UI@pengujicount=6\def\pengujiEnam{#1}\fi
+}
+
+%--- \mitra{Jabatan}{Instansi} -> penanggung jawab Kampus Merdeka ---%
+\newcommand{\mitra}[2]{%
+  \def\partnerPosition{#1}%
+  \def\partnerInstance{#2}%
+}
+
+%--- Perintah skalar (mendefinisikan ulang diri sendiri) ---%
+\newcommand{\aiplatform}[1]{\gdef\UI@aiplatform{#1}}
+\newcommand{\tujuanai}[1]{\gdef\UI@tujuanai{#1}}
+\newcommand{\kampusMerdekaType}[1]{\gdef\UI@kampusMerdekaType{#1}}
+\newcommand{\judul}[1]{\gdef\judul{#1}}
+\newcommand{\judulInggris}[1]{\gdef\judulInggris{#1}}
+\newcommand{\fakultas}[2]{\gdef\fakultasID{#1}\gdef\fakultasEN{#2}}
+\newcommand{\gelar}[1]{\gdef\gelar{#1}}
+\newcommand{\bulanTahun}[1]{\gdef\bulanTahun{#1}}
+\newcommand{\tanggalSiapSidang}[1]{\gdef\tanggalSiapSidang{#1}}
+\newcommand{\tanggalLulus}[1]{\gdef\tanggalLulus{#1}}
+
+% Kota (default: Depok; dapat diubah dengan \kota{Jakarta} di settings.tex)
+\def\UI@kota{Depok}
+\newcommand{\kota}[1]{\gdef\UI@kota{#1}}
+
+% Berkas PDF Lembar Pengesahan eksternal (opsional)
+% Jika diisi, halaman pengesahan bawaan digantikan oleh PDF yang diberikan.
+% Gunakan: \pengesahanPDF{nama-berkas-tanpa-ekstensi}
+\def\UI@pengesahanPDFfile{}
+\newcommand{\pengesahanPDF}[1]{\gdef\UI@pengesahanPDFfile{#1}}
+
+
+%==============================================================================%
+%  MATERI BELAKANG: KONFIGURASI LAMPIRAN
+%==============================================================================%
+
+% Penghitung lampiran & judul berjalan.
+\def\UI@lampiran@header{}
+
+\if@UIenglish
+  \def\UI@label@lampiranCont{(continued)}
+\else
+  \def\UI@label@lampiranCont{(lanjutan)}
+\fi
+
+% Gaya halaman lampiran: halaman pertama tanpa sufiks, halaman berikutnya
+% dengan sufiks lanjutan.
+\if@UImonograph
+  \ifUI@plagiarismcheck
+    \fancypagestyle{lampiran-first}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+    \fancypagestyle{lampiran}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0pt}}
+  \else
+    \fancypagestyle{lampiran-first}{%
+      \fancyhf{}%
+      \renewcommand{\headrulewidth}{0.0pt}%
+      \ifUI@twosideprint
+        \fancyfoot[L]{\UI@showOnPhysEven{\UI@footerText}}%
+        \fancyfoot[R]{\UI@showOnPhysOdd{\UI@footerText}}%
+        \fancyhead[L]{\UI@showOnPhysEven{\UI@pageNumberText\\[\UI@lampiranHeaderLineGap]}}%
+        \fancyhead[R]{\UI@showOnPhysOdd{\UI@pageNumberText\\[\UI@lampiranHeaderLineGap]\UI@lampiran@header}\UI@showOnPhysEven{\\[\UI@lampiranHeaderLineGap]\UI@lampiran@header}}%
+      \else
+        \fancyfoot[R]{\UI@footerText}%
+        \fancyhead[R]{\UI@pageNumberText\\[\UI@lampiranHeaderLineGap]\UI@lampiran@header}%
+      \fi
+    }
+    \fancypagestyle{lampiran}{%
+      \fancyhf{}%
+      \renewcommand{\headrulewidth}{0.0pt}%
+      \ifUI@twosideprint
+        \fancyfoot[L]{\UI@showOnPhysEven{\UI@footerText}}%
+        \fancyfoot[R]{\UI@showOnPhysOdd{\UI@footerText}}%
+        \fancyhead[L]{\UI@showOnPhysEven{\UI@pageNumberText\\[\UI@lampiranHeaderLineGap]}}%
+        \fancyhead[R]{\UI@showOnPhysOdd{\UI@pageNumberText\\[\UI@lampiranHeaderLineGap]\UI@lampiran@header~\UI@label@lampiranCont}\UI@showOnPhysEven{\\[\UI@lampiranHeaderLineGap]\UI@lampiran@header~\UI@label@lampiranCont}}%
+      \else
+        \fancyfoot[R]{\UI@footerText}%
+        \fancyhead[R]{\UI@pageNumberText\\[\UI@lampiranHeaderLineGap]\UI@lampiran@header~\UI@label@lampiranCont}%
+      \fi
+    }
+  \fi
+\fi
+
+% Daftar Lampiran
+\newcommand{\listofappendixname}{Daftar \apdx}
+\newlistof{appendix}{lox}{\listofappendixname}
+\newcommand{\addappendix}[1]{%
+  \refstepcounter{appendix}%
+  \addcontentsline{lox}{appendix}%
+    {\apdx~\protect\numberline{\theappendix.}{\ignorespaces #1}}\par
+}
+
+% Simpan headheight lama agar dipulihkan saat environment berakhir.
+\newlength{\UI@lamp@hh}
+\setlength{\UI@lamp@hh}{0pt}
+\newlength{\UI@lamp@prevhh}
+\setlength{\UI@lamp@prevhh}{0pt}
+
+% Environment lampiran bernomor dengan header berjalan.
+\newenvironment{lampiranBab}[1]{%
+  \if@UImonograph\clearpage\fi
+  \addappendix{#1}%
+  \gdef\UI@lampiran@header{\apdx~\theappendix: #1}%
+  \if@UImonograph
+    \setlength{\UI@lamp@prevhh}{\headheight}%
+    \setlength{\UI@lamp@hh}{\dimexpr 2\baselineskip + 1em\relax}%
+    \setlength{\headheight}{\UI@lamp@hh}%
+    \thispagestyle{lampiran-first}%
+    \pagestyle{lampiran}%
+  \else
+    % Jurnal: judul lampiran ditampilkan sebagai heading bab.
+    \@makeschapterhead{\apdx~\theappendix: #1}%
+    \thispagestyle{plain}%
+  \fi
+}{%
+  \if@UImonograph
+    \clearpage
+    \setlength{\headheight}{\UI@lamp@prevhh}%
+  \fi
+}
+
+
+%==============================================================================%
+%  MATERI BELAKANG: PENGELOLA (\makebibliography, \makeglossarypage, \makeappendixseparator)
+%==============================================================================%
+
+% \makeglossarypage -> mencetak Daftar Istilah (glossary) ke dalam dokumen.
+% Hanya efektif pada format monograf.
+%
+% Hindari duplikasi entri ToC dengan TETAP mempertahankan heading glossary:
+% kita tidak menambahkan entri ToC manual di sini. Heading bawaan dari
+% glossaries (\glossarysection) tetap dipakai.
+\newcommand{\makeglossarypage}{%
+  \if@UImonograph
+    \singlespacing
+    \printglossaries
+    \UI@restoreMainSpacing%
+    \clearchapter
+  \fi
+}
+
+% \makebibliography -> mencetak daftar referensi ke dalam dokumen dan ToC.
+% Menangani CAPinToC dan page break secara otomatis.
+% Judul otomatis disesuaikan dengan bahasa kelas.
+\newcommand{\makebibliography}{%
+  \if@UItwocolumn
+    % Two-column journal: no page break; bibliography continues from last chapter.
+  \else
+    \clearpage
+  \fi
+  \CAPinToC%
+  \if@UIenglish
+    \printbibliography[heading=bibintoc, title={References}]%
+  \else
+    \printbibliography[heading=bibintoc, title={Daftar Referensi}]%
+  \fi%
+  \clearchapter%
+}
+
+% \makeappendixseparator -> menyisipkan halaman pemisah "LAMPIRAN" sebelum lampiran.
+% Hanya efektif pada format monograf; untuk jurnal tidak menghasilkan halaman.
+% Nomor halaman dipulihkan ke nilai sebelum halaman pemisah.
+\newcounter{UI@appendix@pagetemp}
+\newcommand{\makeappendixseparator}{%
+  \if@UImonograph
+    \ifUI@plagiarismcheck
+      \clearpage
+    \else
+      % Ensure separator starts on right physical page in twoside mode.
+      \UI@insertdummyblank
+      \setcounter{UI@appendix@pagetemp}{\value{page}}%
+      \begin{titlepage}%
+        \phantomsection
+        \thispagestyle{empty}%
+        \centering
+        \vspace*{\UI@appendixSeparatorTopGap}
+        \if@UIenglish%
+          \noindent\Huge{APPENDIX}%
+        \else
+          \noindent\Huge{LAMPIRAN}%
+        \fi%
+      \end{titlepage}%
+      \setcounter{page}{\value{UI@appendix@pagetemp}}%
+      \clearchapter
+    \fi
+  \fi
+}
+
+
+%==============================================================================%
+%  STYLING NON-ALUR: DEFINISI BAHASA PEMROGRAMAN BAWAAN
+%==============================================================================%
+%  Semua warna memenuhi rasio kontras WCAG AA (>= 4.5:1) pada latar putih.
+%  Alias \keywordcolor, \typecolor, dan \greencomments didefinisikan di atas
+%  bersama \lstdefinestyle{uistyle}.
+%  Kelompok bahasa pada bagian ini:
+%  (1) Domain-specific & markup
+%  (2) Systems, game, and shader languages
+%  (3) JVM ecosystem
+%  (4) Script and functional languages
+%  (5) Compiled and general-purpose languages
+%  (6) Config and data formats
+%==============================================================================%
+
+%--- (1) Domain-specific & markup ---%
+%--- ABS (Abstract Behavioural Specification) ---%
+\lstdefinelanguage{ABS}{
+    escapeinside={(§}{§)},
+    basicstyle=\small\ttfamily,
+    keywords={package,relative,init,base,product,with,unique,do,assert,this,new,data,type,def,case,of,cog,class,interface,
+    extends,implements,if,then,else,await,get,Fut,return,skip,while,module,
+    import,export,from,to,suspend,delta,adds,modifies,removes,original,productline,
+    features,core,corefeatures,optionalfeatures,after,when,product,hasAttribute,
+    hasMethod,hasField,hasInterface,uses,root,extension,group,allof,oneof,require,
+    stateupdate,objectupdate,classupdate,
+    exclude,original,ifin,ifout,opt,null,
+    newgroup,data,thiscomp,in,joins,leaves,subtypeOf,wait,acquire,except,as,component,Pre1,Abs,exposes
+    },
+    keywordstyle=\color{keywordcolor}\small\bfseries\sffamily,
+    morekeywords=[2]{Unit, Int, Bool, Rat, List, Set, Pair, Fut, Maybe, String, Triple, Either, Map},
+    keywordstyle=[2]\color{typecolor},
+    morekeywords=[3]{JMdl,JProj,Pkg,PkgC,PkgD,Decl,MDecl,requires,exports,MdlP,AO,AD,HD,tC,Prg,Mdl,MdlH,tN,MdlC,MdlD,ID,CD,PD,IR,MH,MD,FD,T,S,E,CR,PE,Dlt,CO,IO,SO,CK,DAO,DAC,}
+    keywordstyle=[3]\small\fontfamily{phv}\selectfont\textsl,
+    sensitive=true,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]"
+}
+
+%--- Acceleo (text-to-text transformation) ---%
+\lstdefinelanguage{acceleo}{
+    morekeywords=[1]{template,self,query,comment,for,if,elseif,else,file,let,protected,super,module},
+    morekeywords=[2]{false,null,true,boolean,number,undefined,
+        Array,Boolean,Date,Math,Number,String,Object,Sequence,Bag,Set},
+    morekeywords=[3]{ViewContainer,DataBinding,List,Form,Details,
+        InteractionFlowModelElement,ViewElement,ViewComponent,IFMLAction,
+        IFMLParameter},
+    morecomment=[s]{[**}{*/]},
+    morecomment=[s]{[comment]}{[/comment]},
+    morestring=[b]',
+}[keywords,comments,strings]
+
+%--- CSS ---%
+\lstdefinelanguage{CSS}{
+    keywords={accelerator,azimuth,background,background-attachment,
+          background-color,background-image,background-position,
+          background-position-x,background-position-y,background-repeat,
+          behavior,border,border-bottom,border-bottom-color,
+          border-bottom-style,border-bottom-width,border-collapse,
+          border-color,border-left,border-left-color,border-left-style,
+          border-left-width,border-right,border-right-color,
+          border-right-style,border-right-width,border-spacing,
+          border-style,border-top,border-top-color,border-top-style,
+          border-top-width,border-width,bottom,caption-side,clear,
+          clip,color,content,counter-increment,counter-reset,cue,
+          cue-after,cue-before,cursor,direction,display,elevation,
+          empty-cells,filter,float,font,font-family,font-size,
+          font-size-adjust,font-stretch,font-style,font-variant,
+          font-weight,height,ime-mode,include-source,
+          layer-background-color,layer-background-image,layout-flow,
+          layout-grid,layout-grid-char,layout-grid-char-spacing,
+          layout-grid-line,layout-grid-mode,layout-grid-type,left,
+          letter-spacing,line-break,line-height,list-style,
+          list-style-image,list-style-position,list-style-type,margin,
+          margin-bottom,margin-left,margin-right,margin-top,
+          marker-offset,marks,max-height,max-width,min-height,
+          min-width,transition-duration,transition-property,
+          transition-timing-function,transform,
+          -moz-transform,-moz-binding,-moz-border-radius,
+          -moz-border-radius-topleft,-moz-border-radius-topright,
+          -moz-border-radius-bottomright,-moz-border-radius-bottomleft,
+          -moz-border-top-colors,-moz-border-right-colors,
+          -moz-border-bottom-colors,-moz-border-left-colors,-moz-opacity,
+          -moz-outline,-moz-outline-color,-moz-outline-style,
+          -moz-outline-width,-moz-user-focus,-moz-user-input,
+          -moz-user-modify,-moz-user-select,orphans,outline,
+          outline-color,outline-style,outline-width,overflow,
+          overflow-X,overflow-Y,padding,padding-bottom,padding-left,
+          padding-right,padding-top,page,page-break-after,
+          page-break-before,page-break-inside,pause,pause-after,
+          pause-before,pitch,pitch-range,play-during,position,quotes,
+          -replace,richness,right,ruby-align,ruby-overhang,
+          ruby-position,-set-link-source,size,speak,speak-header,
+          speak-numeral,speak-punctuation,speech-rate,stress,
+          scrollbar-arrow-color,scrollbar-base-color,
+          scrollbar-dark-shadow-color,scrollbar-face-color,
+          scrollbar-highlight-color,scrollbar-shadow-color,
+          scrollbar-3d-light-color,scrollbar-track-color,table-layout,
+          text-align,text-align-last,text-decoration,text-indent,
+          text-justify,text-overflow,text-shadow,text-transform,
+          text-autospace,text-kashida-space,text-underline-position,top,
+          unicode-bidi,-use-link-source,vertical-align,visibility,
+          voice-family,volume,white-space,widows,width,word-break,
+          word-spacing,word-wrap,writing-mode,z-index,zoom},
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]',
+    morestring=[b]",
+    alsoletter={:},
+    alsodigit={-}
+}
+
+%--- (2) Systems, game, and shader languages ---%
+%--- D language ---%
+\lstdefinelanguage{D}{
+  morekeywords=[1]{
+    abstract,alias,align,auto,body,break,cast,catch,class,const,
+    continue,debug,delegate,delete,deprecated,do,else,enum,export,
+    false,final,finally,for,foreach,foreach_reverse,function,goto,if,
+    immutable,import,in,inout,interface,invariant,is,lazy,macro,mixin,
+    module,new,nothrow,null,out,override,package,pragma,private,
+    protected,public,pure,ref,return,shared,static,struct,super,
+    switch,synchronized,template,this,throw,true,try,typedef,typeid,
+    typeof,union,unittest,volatile,while,with
+  },
+  morekeywords=[2]{enforce},
+  morekeywords=[3]{
+    __DATE__,__EOF__,__FILE__,__LINE__,__TIMESTAMP__,__TIME__,__VENDOR__,
+    __VERSION__,__ctfe,__gshared,__monitor,__thread,__vptr,_argptr,
+    _arguments,_ctor,_dtor
+  },
+  morekeywords=[4]{
+    byte,ubyte,short,ushort,int,uint,long,ulong,cent,ucent,void,
+    bool,bit,float,double,real,char,wchar,dchar,string,wstring,dstring,
+    ireal,ifloat,idouble,creal,cfloat,cdouble,size_t,ptrdiff_t,
+    sizediff_t,equals_t,hash_t
+  },
+  morestring=[b]{"},
+  morestring=[b]{'},
+  morestring=[b]{`},
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morecomment=[s][\color{blue}]{/**}{*/},
+  morecomment=[n]{/+}{+/},
+  morecomment=[n][\color[rgb]{0,0,0.75}]{/++}{+/},
+  sensitive=true
+}
+
+%--- Dart ---%
+\lstdefinelanguage{Dart}{
+    morekeywords={
+        abstract,as,assert,async,await,break,case,catch,class,const,continue,
+        covariant,default,deferred,do,dynamic,else,enum,export,extends,extension,
+        external,factory,false,final,finally,for,Function,get,hide,if,implements,
+        import,in,inferface,is,late,library,mixin,new,null,on,operator,part,
+        required,rethrow,return,set,show,static,super,switch,sync,this,throw,
+        true,try,typedef,var,void,while,with,yield
+    },
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]{"},
+    morestring=[b]{'}
+}
+
+%--- Dockerfile ---%
+\lstdefinelanguage{Docker}{
+    morekeywords={
+        FROM,MAINTAINER,RUN,CMD,LABEL,EXPOSE,ENV,ADD,COPY,ENTRYPOINT,VOLUME,USER,WORKDIR,ARG,ONBUILD,STOPSIGNAL,HEALTHCHECK,SHELL
+    },
+    sensitive=true,
+    morecomment=[l]{\#},
+    morestring=[b]{"},
+    morestring=[b]{'}
+}
+
+%--- F# ---%
+\lstdefinelanguage{FSharp}{
+    morekeywords={let,new,match,with,rec,open,module,namespace,type,of,member,and,for,in,do,begin,end,fun,function,try,mutable,if,then,else},
+    sensitive=false,
+    morecomment=[l][\color{greencomments}]{///},
+    morecomment=[l][\color{greencomments}]{//},
+    morecomment=[s][\color{greencomments}]{{(*}{*)}},
+    morestring=[b]"
+}
+
+%--- GDScript (Godot) ---%
+\lstdefinelanguage{GDScript}{
+    morekeywords={
+        and,in,not,or,as,assert,break,class,class_name,const,continue,elif,else,enum,export,extends,for,
+        func,if,is,onready,pass,preload,return,setget,signal,static,tool,var,while,yield
+    },
+    sensitive=true,
+    morecomment=[l]{\#},
+    morecomment=[s]{"""}{"""},
+    morestring=[b]{"},
+    morestring=[b]{'}
+}
+
+%--- GLSL (OpenGL Shading Language) ---%
+\lstdefinelanguage{GLSL}{
+    morekeywords={
+        attribute,const,uniform,varying,buffer,shared,coherent,volatile,restrict,readonly,writeonly,
+        atomic_uint,layout,centroid,flat,smooth,noperspective,patch,sample,break,continue,do,for,while,
+        switch,case,default,if,else,subroutine,in,out,inout,float,double,int,void,bool,true,false,
+        invariant,discard,return,mat2,mat3,mat4,dmat2,dmat3,dmat4,mat2x2,mat2x3,mat2x4,mat3x2,mat3x3,
+        mat3x4,mat4x2,mat4x3,mat4x4,dmat2x2,dmat2x3,dmat2x4,dmat3x2,dmat3x3,dmat3x4,dmat4x2,dmat4x3,
+        dmat4x4,vec2,vec3,vec4,ivec2,ivec3,ivec4,bvec2,bvec3,bvec4,dvec2,dvec3,dvec4,uint,uvec2,uvec3,
+        uvec4,lowp,mediump,highp,precision,sampler1D,sampler2D,sampler3D,samplerCube,sampler1DShadow,
+        sampler2DShadow,samplerCubeShadow,sampler1DArray,sampler2DArray,sampler1DArrayShadow,sampler2DArrayShadow,
+        isampler1D,isampler2D,isampler3D,isamplerCube,isampler1DArray,isampler2DArray,usampler1D,usampler2D,
+        usampler3D,usamplerCube,usampler1DArray,usampler2DArray,sampler2DRect,sampler2DRectShadow,isampler2DRect,
+        usampler2DRect,samplerBuffer,isamplerBuffer,usamplerBuffer,sampler2DMS,isampler2DMS,usampler2DMS,
+        sampler2DMSArray,isampler2DMSArray,usampler2DMSArray,samplerCubeArray,samplerCubeArrayShadow,
+        isamplerCubeArray,usamplerCubeArray,image1D,iimage1D,uimage1D,image2D,iimage2D,uimage2D,image3D,
+        iimage3D,uimage3D,image2DRect,iimage2DRect,uimage2DRect,imageCube,iimageCube,uimageCube,imageBuffer,
+        iimageBuffer,uimageBuffer,image1DArray,iimage1DArray,uimage1DArray,image2DArray,iimage2DArray,uimage2DArray,
+        image2DMS,iimage2DMS,uimage2DMS,image2DMSArray,iimage2DMSArray,uimage2DMSArray,struct
+    },
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]{"},
+    morestring=[b]{'}
+}
+
+%--- HLSL (High-Level Shading Language) ---%
+\lstdefinelanguage{HLSL}{
+  morekeywords={
+      AppendStructuredBuffer,asm,asm_fragment,BlendState,bool,break,Buffer,ByteAddressBuffer,case,cbuffer,
+      centroid,class,column_major,compile,compile_fragment,CompileShader,const,continue,ComputeShader,
+      ConsumeStructuredBuffer,default,DepthStencilState,DepthStencilView,discard,do,double,DomainShader,
+      dword,else,export,extern,false,float,for,fxgroup,GeometryShader,groupshared,half,Hullshader,if,in,
+      inline,inout,InputPatch,int,interface,line,lineadj,linear,LineStream,matrix,min16float,min10float,
+      min16int,min12int,min16uint,namespace,nointerpolation,noperspective,NULL,out,OutputPatch,packoffset,
+      pass,pixelfragment,PixelShader,point,PointStream,precise,RasterizerState,RenderTargetView,return,
+      register,row_major,RWBuffer,RWByteAddressBuffer,RWStructuredBuffer,RWTexture1D,RWTexture1DArray,
+      RWTexture2D,RWTexture2DArray,RWTexture3D,sample,sampler,SamplerState,SamplerComparisonState,shared,
+      snorm,stateblock,stateblock_state,static,string,struct,switch,StructuredBuffer,tbuffer,technique,
+      technique10,technique11,texture,Texture1D,Texture1DArray,Texture2D,Texture2DArray,Texture2DMS,
+      Texture2DMSArray,Texture3D,TextureCube,TextureCubeArray,true,typedef,triangle,triangleadj,
+      TriangleStream,uint,uniform,unorm,unsigned,vector,vertexfragment,VertexShader,void,volatile,while
+  },
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]{"},
+  morestring=[b]{'}
+}
+
+%--- (3) JVM ecosystem ---%
+%--- Java dialek (Java 9, ContextJ, DeltaJ, FOP) ---%
+\lstdefinelanguage[v9]{Java}[]{Java}{
+    morekeywords={module,requires,provides,with,exports,local,optional,service}
+}
+\lstdefinelanguage[ContextJ]{Java}[]{Java}{
+    morekeywords={layer,with,without,proceed,before,after}
+}
+\lstdefinelanguage[DeltaJ]{Java}[]{Java}{
+    morekeywords={SPL,Features,Deltas,Constraints,Partitions,Products,when}
+}
+\lstdefinelanguage[FOP]{Java}[]{Java}{
+    morekeywords={refines,original,Super}
+}
+
+%--- Groovy ---%
+\lstdefinelanguage{Groovy}[]{Java}{
+  keywords=[3]{each,findAll,groupBy,collect,inject,eachWithIndex},
+  morekeywords={def,as,in,use},
+  moredelim=[is][\textcolor{darkgray}]{\%\%}{\%\%},
+  moredelim=[il][\textcolor{darkgray}]{§§}
+}
+
+%--- Kotlin ---%
+\lstdefinelanguage{Kotlin}{
+  comment=[l]{//},
+  commentstyle={\color{darkgray}\ttfamily},
+  emph={filter,first,firstOrNull,forEach,lazy,map,mapNotNull,println},
+  emphstyle={\color{BrickRed}},
+  identifierstyle=\color{black},
+  keywords={!in,!is,abstract,actual,annotation,as,as?,break,by,catch,class,companion,const,constructor,continue,crossinline,data,delegate,do,dynamic,else,enum,expect,external,false,field,file,final,finally,for,fun,get,if,import,in,infix,init,inline,inner,interface,internal,is,lateinit,noinline,null,object,open,operator,out,override,package,param,private,property,protected,public,receiveris,reified,return,return@,sealed,set,setparam,super,suspend,tailrec,this,throw,true,try,typealias,typeof,val,var,vararg,when,where,while},
+  keywordstyle={\color{NavyBlue}\bfseries},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+  morestring=[s]{"""*}{*"""},
+  ndkeywords={@Deprecated,@JvmField,@JvmName,@JvmOverloads,@JvmStatic,@JvmSynthetic,Array,Byte,Double,Float,Int,Integer,Iterable,Long,Runnable,Short,String,Any,Unit,Nothing},
+  ndkeywordstyle={\color{Mahogany}\bfseries},
+  sensitive=true,
+  stringstyle={\color{OliveGreen}\ttfamily},
+}
+
+%--- (4) Script and functional languages ---%
+%--- JavaScript / ECMAScript2015 / TypeScript ---%
+\lstdefinelanguage[ECMAScript2015]{JavaScript}[]{JavaScript}{
+  morekeywords=[1]{await,async,case,catch,class,const,default,do,
+    enum,export,extends,finally,from,implements,import,instanceof,
+    let,static,super,switch,throw,try},
+  morestring=[b]`
+}
+\lstdefinelanguage{JavaScript}{
+  morekeywords=[1]{break,continue,delete,else,for,function,if,in,
+    new,return,this,typeof,var,void,while,with},
+  morekeywords=[2]{false,null,true,boolean,number,undefined,
+    Array,Boolean,Date,Math,Number,String,Object},
+  morekeywords=[3]{eval,parseInt,parseFloat,escape,unescape},
+  sensitive,
+  morecomment=[s]{/*}{*/},
+  morecomment=[l]//,
+  morecomment=[s]{/**}{*/},
+  morestring=[b]',
+  morestring=[b]"
+}[keywords,comments,strings]
+\lstalias[]{ES6}[ECMAScript2015]{JavaScript}
+\lstalias[]{TypeScript}[ECMAScript2015]{JavaScript}
+\lstalias[]{TS}[ECMAScript2015]{JavaScript}
+\lstalias[]{JS}[]{JavaScript}
+
+%--- Julia ---%
+\lstdefinelanguage{Julia}{
+  morekeywords={abstract,break,case,catch,const,continue,do,else,elseif,
+      end,export,false,for,function,immutable,import,importall,if,in,
+      macro,module,otherwise,quote,return,switch,true,try,type,typealias,
+      using,while},
+  sensitive=true,
+  alsoother={\$},
+  morecomment=[l]\#,
+  morecomment=[n]{\#=}{=\#},
+  morestring=[s]{"}{"},
+  morestring=[m]{'}{'},
+}[keywords,comments,strings]
+
+%--- Clojure ---%
+\lstdefinelanguage{Clojure}[]{Lisp}{
+  morekeywords={*,*1,*2,*3,*agent*,*allow-unresolved-vars*,*assert*,*clojure-version*,
+      *command-line-args*,*compile-files*,*compile-path*,*e,*err*,*file*,
+      *flush-on-newline*,*in*,*macro-meta*,*math-context*,*ns*,*out*,*print-dup*,
+      *print-length*,*print-level*,*print-meta*,*print-readably*,*read-eval*,
+      *source-path*,*use-context-classloader*,*warn-on-reflection*,+,-,->,->>,..,/,
+      :else,<,<=,=,==,>,>=,@,accessor,aclone,add-classpath,add-watch,agent,
+      agent-errors,aget,alength,alias,all-ns,alter,alter-meta!,alter-var-root,amap,
+      ancestors,and,apply,areduce,array-map,aset,aset-boolean,aset-byte,aset-char,
+      aset-double,aset-float,aset-int,aset-long,aset-short,assert,assoc,assoc!,
+      assoc-in,associative?,atom,await,await-for,await1,bases,bean,bigdec,bigint,
+      binding,bit-and,bit-and-not,bit-clear,bit-flip,bit-not,bit-or,bit-set,
+      bit-shift-left,bit-shift-right,bit-test,bit-xor,boolean,boolean-array,
+      booleans,bound-fn,bound-fn*,butlast,byte,byte-array,bytes,cast,char,
+      char-array,char-escape-string,char-name-string,char?,chars,chunk,chunk-append,
+      chunk-buffer,chunk-cons,chunk-first,chunk-next,chunk-rest,chunked-seq?,class,
+      class?,clear-agent-errors,clojure-version,coll?,comment,commute,comp,
+      comparator,compare,compare-and-set!,compile,complement,concat,cond,condp,
+      conj,conj!,cons,constantly,construct-proxy,contains?,count,counted?,
+      create-ns,create-struct,cycle,dec,decimal?,declare,def,definline,defmacro,
+      defmethod,defmulti,defn,defn-,defonce,defprotocol,defstruct,deftype,delay,
+      delay?,deliver,deref,derive,descendants,destructure,disj,disj!,dissoc,dissoc!,
+      distinct,distinct?,do,doall,doc,dorun,doseq,dosync,dotimes,doto,double,
+      double-array,doubles,drop,drop-last,drop-while,empty,empty?,ensure,
+      enumeration-seq,eval,even?,every?,false,false?,ffirst,file-seq,filter,
+      finally,find,find-doc,find-ns,find-var,first,float,float-array,float?,
+      floats,flush,fn,fn?,fnext,for,force,format,future,future-call,future-cancel,
+      future-cancelled?,future-done?,future?,gen-class,gen-interface,gensym,get,
+      get-in,get-method,get-proxy-class,get-thread-bindings,get-validator,hash,
+      hash-map,hash-set,identical?,identity,if,if-let,if-not,ifn?,import,in-ns,
+      inc,init-proxy,instance?,int,int-array,integer?,interleave,intern,interpose,
+      into,into-array,ints,io!,isa?,iterate,iterator-seq,juxt,key,keys,keyword,
+      keyword?,last,lazy-cat,lazy-seq,let,letfn,line-seq,list,list*,list?,load,
+      load-file,load-reader,load-string,loaded-libs,locking,long,long-array,longs,
+      loop,macroexpand,macroexpand-1,make-array,make-hierarchy,map,map?,mapcat,
+      max,max-key,memfn,memoize,merge,merge-with,meta,method-sig,methods,min,
+      min-key,mod,monitor-enter,monitor-exit,name,namespace,neg?,new,newline,next,
+      nfirst,nil,nil?,nnext,not,not-any?,not-empty,not-every?,not=,ns,ns-aliases,
+      ns-imports,ns-interns,ns-map,ns-name,ns-publics,ns-refers,ns-resolve,
+      ns-unalias,ns-unmap,nth,nthnext,num,number?,odd?,or,parents,partial,partition,
+      pcalls,peek,persistent!,pmap,pop,pop!,pos?,pr,pr-str,prefer-method,prefers,
+      print,print-str,printf,println,println-str,prn,prn-str,promise,proxy,
+      push-thread-bindings,pvalues,quot,rand,rand-int,range,ratio?,rational?,
+      rationalize,re-find,re-groups,re-matcher,re-matches,re-pattern,re-seq,read,
+      read-line,read-string,recur,reduce,ref,ref-history-count,ref-max-history,
+      ref-min-history,ref-set,refer,refer-clojure,reify,release-pending-sends,rem,
+      remove,remove-method,remove-ns,remove-watch,repeat,repeatedly,replace,
+      replicate,require,reset!,reset-meta!,resolve,rest,resultset-seq,reverse,
+      reversible?,rseq,rsubseq,second,select-keys,send,send-off,seq,seq?,seque,
+      sequence,sequential?,set,set!,set-validator!,set?,short,short-array,shorts,
+      shutdown-agents,slurp,some,sort,sort-by,sorted-map,sorted-map-by,sorted-set,
+      sorted-set-by,sorted?,split-at,split-with,str,stream?,string?,struct,
+      struct-map,subs,subseq,subvec,supers,swap!,symbol,symbol?,sync,take,
+      take-last,take-nth,take-while,test,the-ns,throw,time,to-array,to-array-2d,
+      trampoline,transient,tree-seq,true,true?,try,type,unchecked-add,unchecked-dec,
+      unchecked-divide,unchecked-inc,unchecked-multiply,unchecked-negate,
+      unchecked-remainder,unchecked-subtract,underive,unquote,unquote-splicing,
+      update-in,update-proxy,use,val,vals,var,var-get,var-set,var?,vary-meta,vec,
+      vector,vector?,when,when-first,when-let,when-not,while,with-bindings,
+      with-bindings*,with-in-str,with-loading-context,with-local-vars,with-meta,
+      with-open,with-out-str,with-precision,xml-seq,zero?,zipmap},
+  sensitive,
+  alsodigit=-,
+  morecomment=[l];,
+  morestring=[b]"
+}[keywords,comments,strings]
+
+%--- Scheme ---%
+\lst@definelanguage[Scheme]{Lisp}{
+  morekeywords=[1]{define,define-syntax,define-macro,lambda,define-stream,stream-lambda},
+  morekeywords=[2]{begin,call-with-current-continuation,call/cc,
+    call-with-input-file,call-with-output-file,case,cond,
+    do,else,for-each,if,
+    let*,let,let-syntax,letrec,letrec-syntax,
+    let-values,let*-values,
+    and,or,not,delay,force,
+    quasiquote,quote,unquote,unquote-splicing,
+    map,fold,syntax,syntax-rules,eval,environment,query},
+  morekeywords=[3]{import,export},
+  alsodigit=!\$\%&*+-./:<=>?@^_~,
+  sensitive=true,
+  morecomment=[l]{;},
+  morecomment=[s]{\#|}{|\#},
+  morestring=[b]",
+  basicstyle=\small\ttfamily,
+  keywordstyle=\bf\ttfamily\color[rgb]{0,.3,.7},
+  commentstyle=\color{OliveGreen},
+  stringstyle={\color{BrickRed}},
+  upquote=true,
+  literate=*{`}{{`}}{1}
+}
+
+%--- Markdown ---%
+\lstdefinelanguage{Markdown}{
+    morekeywords={
+        \#,\#\#,\#\#\#,\#\#\#\#,\#\#\#\#\#,\#\#\#\#\#\#,*,**,***,-,+,>,_,__,`,```
+    },
+    sensitive=false,
+    morecomment=[l]{<!--},
+    morecomment=[s]{<!--}{-->},
+    morestring=[b]{"},
+    morestring=[b]{'}
+}
+
+%--- PowerShell ---%
+\lstdefinelanguage{PowerShell}{
+    morekeywords={
+        Add-Content,Add-PSSnapin,Clear-Content,Clear-History,Clear-Host,Clear-Item,
+        Clear-ItemProperty,Clear-Variable,Compare-Object,Connect-PSSession,
+        ConvertFrom-String,Convert-Path,Copy-Item,Copy-ItemProperty,
+        Disable-PSBreakpoint,Disconnect-PSSession,Enable-PSBreakpoint,
+        Enter-PSSession,Exit-PSSession,Export-Alias,Export-Csv,Export-PSSession,
+        ForEach-Object,Format-Custom,Format-Hex,Format-List,Format-Table,
+        Format-Wide,Get-Alias,Get-ChildItem,Get-Clipboard,Get-Command,
+        Get-ComputerInfo,Get-Content,Get-History,Get-Item,Get-ItemProperty,
+        Get-ItemPropertyValue,Get-Job,Get-Location,Get-Member,Get-Module,
+        Get-Process,Get-PSBreakpoint,Get-PSCallStack,Get-PSDrive,Get-PSSession,
+        Get-PSSnapin,Get-Service,Get-TimeZone,Get-Unique,Get-Variable,
+        Get-WmiObject,Group-Object,help,Import-Alias,Import-Csv,Import-Module,
+        Import-PSSession,Invoke-Command,Invoke-Expression,Invoke-History,
+        Invoke-Item,Invoke-RestMethod,Invoke-WebRequest,Invoke-WmiMethod,
+        Measure-Object,mkdir,Move-Item,Move-ItemProperty,New-Alias,New-Item,
+        New-Module,New-PSDrive,New-PSSession,New-PSSessionConfigurationFile,
+        New-Variable,Out-GridView,Out-Host,Out-Printer,Pop-Location,
+        powershell_ise.exe,Push-Location,Receive-Job,Receive-PSSession,
+        Remove-Item,Remove-ItemProperty,Remove-Job,Remove-Module,
+        Remove-PSBreakpoint,Remove-PSDrive,Remove-PSSession,Remove-PSSnapin,
+        Remove-Variable,Remove-WmiObject,Rename-Item,Rename-ItemProperty,
+        Resolve-Path,Resume-Job,Select-Object,Select-String,Set-Alias,
+        Set-Clipboard,Set-Content,Set-Item,Set-ItemProperty,Set-Location,
+        Set-PSBreakpoint,Set-TimeZone,Set-Variable,Set-WmiInstance,Show-Command,
+        Sort-Object,Start-Job,Start-Process,Start-Service,Start-Sleep,Stop-Job,
+        Stop-Process,Stop-Service,Suspend-Job,Tee-Object,Trace-Command,Wait-Job,
+        Where-Object,Write-Output
+    },
+    morekeywords={Do,Else,For,ForEach,Function,If,In,Until,While},
+    alsodigit={-},
+    sensitive=false,
+    morecomment=[l]{\#},
+    morecomment=[n]{<\#}{\#>},
+    morestring=[b]{"},
+    morestring=[b]{'},
+    morestring=[s]{@'}{'@},
+    morestring=[s]{@"}{"@}
+}
+
+%--- (5) Compiled and general-purpose languages ---%
+%--- Rust ---%
+\lstdefinelanguage{Rust}{
+  sensitive,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  moredelim=[s][{\itshape\color[rgb]{0,0,0.75}}]{\#[}{]},
+  morestring=[b]{"},
+  alsodigit={},
+  alsoother={},
+  alsoletter={!},
+  morekeywords={break,continue,else,for,if,in,loop,match,return,while},
+  morekeywords={as,const,let,move,mut,ref,static},
+  morekeywords={dyn,enum,fn,impl,Self,self,struct,trait,type,union,use,where},
+  morekeywords={crate,extern,mod,pub,super},
+  morekeywords={unsafe},
+  morekeywords={abstract,alignof,become,box,do,final,macro,offsetof,override,priv,proc,pure,sizeof,typeof,unsized,virtual,yield},
+  morekeywords=[2]{Add,AddAssign,Any,AsMut,AsRef,Binary,BitAnd,BitAndAssign,BitOr,BitOrAssign,BitXor,BitXorAssign,Borrow,BorrowMut,BufRead,BuildHasher,Clone,Copy,Debug,Default,Deref,DerefMut,Display,Div,DivAssign,Drop,Eq,Error,ExactSizeIterator,Extend,Fn,FnMut,FnOnce,From,FromIterator,FromStr,Hash,Hasher,Index,IndexMut,Into,IntoIterator,Iterator,Mul,MulAssign,Neg,Not,Ord,PartialEq,PartialOrd,Pattern,Product,Read,Rem,RemAssign,Seek,Send,Shl,ShlAssign,Shr,ShrAssign,Sized,Sub,SubAssign,Sum,Sync,ToOwned,ToString,Try,Write},
+  morekeywords=[3]{bool,char,f32,f64,i8,i16,i32,i64,isize,str,u8,u16,u32,u64,unit,usize,i128,u128},
+  morekeywords=[4]{Err,false,None,Ok,Some,true},
+  morekeywords=[5]{assert!,assert_eq!,assert_ne!,cfg!,column!,compile_error!,concat!,debug_assert!,debug_assert_eq!,debug_assert_ne!,env!,eprint!,eprintln!,file!,format!,format_args!,include!,include_bytes!,include_str!,line!,module_path!,option_env!,panic!,print!,println!,stringify!,thread_local!,try!,unimplemented!,unreachable!,vec!,write!,writeln!}
+}
+
+%--- Scala ---%
+\lstdefinelanguage{Scala}{
+  morekeywords={
+    abstract,case,catch,class,def,do,else,extends,
+    false,final,finally,for,forSome,if,implicit,import,lazy,
+    match,new,null,object,override,package,private,protected,
+    return,sealed,super,this,throw,trait,true,try,type,
+    val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}[keywords,comments,strings]
+
+%--- Solidity ---%
+\lstdefinelanguage{Solidity}{
+    keywords=[1]{anonymous,assembly,assert,balance,break,call,callcode,case,catch,class,
+        constant,continue,constructor,contract,debugger,default,delegatecall,delete,
+        do,else,emit,event,experimental,export,external,false,finally,for,function,gas,
+        if,implements,import,in,indexed,instanceof,interface,internal,is,length,library,
+        log0,log1,log2,log3,log4,memory,modifier,new,payable,pragma,private,protected,
+        public,pure,push,require,return,returns,revert,selfdestruct,send,solidity,storage,
+        struct,suicide,super,switch,then,this,throw,transfer,true,try,typeof,using,value,
+        view,while,with,addmod,ecrecover,keccak256,mulmod,ripemd160,sha256,sha3},
+    keywordstyle=[1]\color{NavyBlue}\bfseries,
+    keywords=[2]{address,bool,byte,bytes,bytes1,bytes2,bytes3,bytes4,bytes5,bytes6,bytes7,
+        bytes8,bytes9,bytes10,bytes11,bytes12,bytes13,bytes14,bytes15,bytes16,bytes17,
+        bytes18,bytes19,bytes20,bytes21,bytes22,bytes23,bytes24,bytes25,bytes26,bytes27,
+        bytes28,bytes29,bytes30,bytes31,bytes32,enum,int,int8,int16,int24,int32,int40,
+        int48,int56,int64,int72,int80,int88,int96,int104,int112,int120,int128,int136,
+        int144,int152,int160,int168,int176,int184,int192,int200,int208,int216,int224,
+        int232,int240,int248,int256,mapping,string,uint,uint8,uint16,uint24,uint32,
+        uint40,uint48,uint56,uint64,uint72,uint80,uint88,uint96,uint104,uint112,uint120,
+        uint128,uint136,uint144,uint152,uint160,uint168,uint176,uint184,uint192,uint200,
+        uint208,uint216,uint224,uint232,uint240,uint248,uint256,var,void,ether,finney,
+        szabo,wei,days,hours,minutes,seconds,weeks,years},
+    keywordstyle=[2]\color{teal}\bfseries,
+    keywords=[3]{block,blockhash,coinbase,difficulty,gaslimit,number,timestamp,msg,data,gas,sender,sig,value,now,tx,gasprice,origin},
+    keywordstyle=[3]\color{Plum}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=true,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{darkgray}\ttfamily,
+    stringstyle=\color{BrickRed}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+
+%--- Swift ---%
+\lstdefinelanguage{Swift}{
+  morekeywords={
+    open,catch,@escaping,nil,throws,func,if,then,else,for,in,while,do,switch,case,
+    default,where,break,continue,fallthrough,return,typealias,struct,class,enum,
+    protocol,var,func,let,get,set,willSet,didSet,inout,init,deinit,extension,
+    subscript,prefix,operator,infix,postfix,precedence,associativity,left,right,none,
+    convenience,dynamic,final,lazy,mutating,nonmutating,optional,override,required,
+    static,unowned,safe,weak,internal,private,public,is,as,self,unsafe,dynamicType,
+    true,false,nil,Type,Protocol,
+  },
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+  escapeinside={\%*}{*)}
+}
+
+%--- (6) Config and data formats ---%
+%--- TOML ---%
+\lstdefinelanguage{TOML}{
+    morekeywords={true,false,inf,nan,datetime},
+    sensitive=true,
+    morecomment=[l]{\#},
+    morestring=[b]{"},
+    morestring=[b]{'}
+}
+
+%--- YAML ---%
+\lstdefinelanguage{YAML}{
+    morekeywords={true,false,null,NULL,~,yes,no,on,off},
+    sensitive=false,
+    morecomment=[l]{\#},
+    morestring=[b]{"},
+    morestring=[b]{'}
+}
+
+%==============================================================================%
+%  HOOK \AtBeginDocument
+%==============================================================================%
+
+\AtBeginDocument{%
+  % Install addtocontents filter after package-level patches (e.g., biblatex).
+  \let\addtocontents\UI@addtocontents
+  % Keep ToC chapter spacing toggle in sync with list separator toggle.
+  \UI@applytocchapterseparatorspacing
+  % Keep chapter transition spacing consistent across all list pages.
+  % Apply only on numbered chapters (\@chapter), matching ToC/LoF/LoT behavior.
+  \pretocmd{\@chapter}{\UI@addchapterlistseparatorspacing}{}{}%
+  % Patch \appendix: otomatis set \noCAPinToC dan sisipkan halaman pemisah
+  % (halaman pemisah hanya muncul pada format monograf).
+  \let\UI@orig@appendix\appendix%
+  \renewcommand\appendix{%
+    \noCAPinToC%
+    \if@UImonograph
+      \makeappendixseparator%
+    \else
+      \clearpage
+    \fi
+    \UI@orig@appendix%
+  }%
+  % Penamaan ulang string standar LaTeX
+  \if@UIenglish
+    \renewcommand{\bibname}{References}%
+    \renewcommand{\contentsname}{Table of Contents}%
+    \renewcommand{\listfigurename}{List of Figures}%
+    \renewcommand{\listtablename}{List of Tables}%
+    \renewcommand{\lstlistlistingname}{List of Code Listings}%
+  \else
+    \renewcommand{\bibname}{Daftar Referensi}%
+    \renewcommand{\contentsname}{Daftar Isi}%
+    \renewcommand{\listfigurename}{Daftar Gambar}%
+    \renewcommand{\listtablename}{Daftar Tabel}%
+    \renewcommand{\lstlistlistingname}{Daftar Kode Program}%
+  \fi
+  % Judul Daftar Istilah (glossaries-extra): disesuaikan per bahasa
+  \if@UIenglish
+    \renewcommand{\glossaryname}{Glossary}%
+    \if@UImonograph\renewcommand{\acronymname}{Glossary}\fi%
+  \else
+    \renewcommand{\glossaryname}{Daftar Istilah}%
+    \if@UImonograph\renewcommand{\acronymname}{Daftar Istilah}\fi%
+  \fi
+  % Setelah preamble, \kota tanpa argumen mengembang menjadi nama kota aktif.
+  \let\kota\UI@kota
+  % Varian huruf kapital -> dievaluasi saat digunakan agar perubahan metadata tetap terefleksi
+  \def\Judul{\MakeUppercase{\judul}}%
+  \def\JudulInggris{\MakeUppercase{\judulInggris}}%
+  \def\Type{\MakeUppercase{\UI@type}}%
+  \def\PenulisSatu{\MakeUppercase{\penulisSatu}}%
+  \def\PenulisDua{\MakeUppercase{\penulisDua}}%
+  \def\PenulisTiga{\MakeUppercase{\penulisTiga}}%
+  \def\Fakultas{\MakeUppercase{\UI@facultyDisplay}}%
+  \def\ProgramSatu{\UI@StudyProgramSatuDisplay}%
+  \def\ProgramDua{\UI@StudyProgramDuaDisplay}%
+  \def\ProgramTiga{\UI@StudyProgramTigaDisplay}%
+  % Compatibility aliases for manually-capitalized study-program macros.
+  \def\StudyProgramSatu{\UI@StudyProgramSatuDisplay}%
+  \def\StudyProgramDua{\UI@StudyProgramDuaDisplay}%
+  \def\StudyProgramTiga{\UI@StudyProgramTigaDisplay}%
+  \let\Penulis\PenulisSatu
+  \let\Program\ProgramSatu
+  % Format titik-titik di daftar isi (tocloft)
+  \renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}}%
+  \renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}%
+  \renewcommand{\cftchapaftersnum}{.}%
+  % Format daftar gambar
+  \renewcommand{\cftfigindent}{0pt}%
+  \renewcommand{\cftfignumwidth}{70pt}%
+  \renewcommand{\cftfigaftersnum}{.}%
+  \renewcommand{\cftfigpresnum}{\pic~}%
+  % Format daftar tabel
+  \renewcommand{\cfttabindent}{0pt}%
+  \renewcommand{\cfttabnumwidth}{60pt}%
+  \renewcommand{\cfttabaftersnum}{.}%
+  \renewcommand{\cfttabpresnum}{\tab~}%
+}
+
+%==============================================================================%
+%  HOOK \AtEndDocument  (menyimpan jumlah entri daftar ke run kompilasi berikutnya)
+%==============================================================================%
+
+\AtEndDocument{%
+  % Write all registered list counts to main .aux for the NEXT run.
+  % Contributor note: use \immediate\write so values are present even when
+  % build tools stop after this pass and rerun separately.
+  \@for\UI@ext:=\UI@listExtRegistry\do{%
+    \@ifundefined{c@UI@count@\UI@ext}{}{%
+      \immediate\write\@mainaux{%
+        \string\gdef\expandafter\string\csname UI@prev@count@\UI@ext\endcsname
+        {\number\csname c@UI@count@\UI@ext\endcsname}%
+      }%
+    }%
+  }%
+  \@ifundefined{c@UI@count@glossary}{}{%
+    \immediate\write\@mainaux{\string\gdef\string\UI@prev@count@glossary{\the\value{UI@count@glossary}}}%
+  }%
+}
+
+
+%==============================================================================%
+%  Akhir dari uithesis.cls
+%==============================================================================%
+%</class>
+%    \end{macrocode}

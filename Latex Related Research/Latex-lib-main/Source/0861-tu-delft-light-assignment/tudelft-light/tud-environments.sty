@@ -1,0 +1,43 @@
+% -----------------------------------------------------------------------------
+%
+% Copyright (c) 2020. San Kilkis. All rights reserved.
+%
+% This Source Code Form is subject to the terms of the Mozilla Public
+% License, v. 2.0. If a copy of the MPL was not distributed with this
+% file, You can obtain one at http://mozilla.org/MPL/2.0/
+%
+% --- Package Documentation: --------------------------------------------------
+%
+% This package custom environments for the tudelft-light template.
+%
+% -----------------------------------------------------------------------------
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tudelft-light/tud-environments}
+
+\RequirePackage{enumitem}
+\RequirePackage{cleveref}
+
+% --- Environment for Research Questions: -------------------------------------
+
+\newlist{questions}{enumerate}{2}
+\setlist[questions,1]{
+    label=\bf{RQ-\arabic*.},
+    ref=\arabic*,
+    leftmargin=*,
+}
+\setlist[questions,2]{
+    label*=\indent\bf{\arabic*.},
+    ref=\thequestionsi.\arabic*,
+}
+% Updating lowercase & uppercase cleveref names used for referencing
+% depending on if the capitalise argument was given
+\if@cref@capitalise
+    \crefname{questionsi}{Research Question}{Research Question}
+    \crefname{questionsii}{Research Sub-Question}{Research Sub-Questions}
+\else
+    \crefname{questionsi}{research question}{research question}
+    \crefname{questionsii}{research sub-question}{research sub-questions}
+\fi
+\Crefname{questionsi}{Research Question}{Research Questions}
+\Crefname{questionsii}{Reseach Sub-Question}{Research Sub-Questions}

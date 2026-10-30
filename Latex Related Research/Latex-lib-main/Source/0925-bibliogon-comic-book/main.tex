@@ -1,0 +1,85 @@
+\documentclass[11pt]{book}
+\usepackage[margin=0.7in]{geometry}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\definecolor{ink}{HTML}{17202A}
+\definecolor{paper}{HTML}{FFF9ED}
+\definecolor{accent}{HTML}{D35400}
+\pagecolor{paper}
+\color{ink}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\small\sffamily\thepage}
+\fancyhead[RE]{\small\sffamily\nouppercase{\leftmark}}
+\fancyhead[LO]{\small\sffamily\nouppercase{\rightmark}}
+\renewcommand{\headrulewidth}{0.4pt}
+\newcommand{\panel}[2]{%
+  \begin{tikzpicture}
+    \node[draw=ink, line width=1.2pt, fill=white, minimum width=0.43\textwidth,
+      minimum height=2.7cm, align=center, inner sep=8pt] (p) {\sffamily\Large #1};
+    \node[anchor=south west, fill=ink, text=white, font=\scriptsize\sffamily,
+      inner sep=3pt] at (p.south west) {#2};
+  \end{tikzpicture}%
+}
+\newcommand{\speech}[1]{\begin{tikzpicture}[baseline=(b.base)]
+  \node[draw=ink, fill=white, rounded corners=5pt, inner sep=5pt,
+    text width=0.30\textwidth, align=center] (b) {\sffamily #1};
+  \draw[ink, thick] (b.south west) -- ++(-5pt,-8pt) -- (b.south east);
+\end{tikzpicture}}
+\begin{document}
+\frontmatter
+\begin{titlepage}
+  \centering
+  \vspace*{1.3in}
+  {\fontsize{42}{46}\selectfont\sffamily\bfseries STORY\\[4pt]BOARD\par}
+  \vspace{12pt}\textcolor{accent}{\rule{0.72\textwidth}{4pt}}\par
+  \vspace{22pt}{\Large A comic-book starter for a small, vivid story\par}
+  \vfill
+  {\large Author Name\par}
+  \vspace{6pt}{\sffamily Issue 01 \textbullet{} \the\year\par}
+\end{titlepage}
+\chapter*{Credits}
+This starter is designed for an editable panel-by-panel workflow. Replace the
+sample dialogue, captions, and panel labels with your own work. Keep a short
+credits page in every issue so collaborators and artists are easy to identify.
+\tableofcontents
+\mainmatter
+\chapter{The Signal}
+\section*{Page 1}
+\noindent\panel{A quiet observatory under a wide night sky}{PANEL 1}
+\hfill\panel{A console wakes with one red light}{PANEL 2}
+\par\medskip
+\noindent\speech{Did you hear that?}\hfill
+\speech{The receiver has been silent for years.}
+\section*{Page 2}
+\noindent\panel{Mara reaches for the switch}{PANEL 3}
+\hfill\panel{A pattern fills the monitor}{PANEL 4}
+\par\medskip
+\begin{center}\fbox{\parbox{0.82\textwidth}{\centering\sffamily\itshape
+CAPTION: The first message was not a sound. It was a map.}}\end{center}
+\chapter{Story Bible}
+\section{Characters}
+\begin{description}
+  \item[Mara Venn] Systems engineer; patient, observant, and too curious to
+  leave an unexplained signal alone.
+  \item[The Listener] An unknown presence whose messages arrive as geometry.
+\end{description}
+\section{Places and continuity}
+Record recurring locations, props, and visual motifs here. A short story bible
+keeps a long-running comic consistent when pages are written out of order.
+\chapter*{Issue notes}
+\addcontentsline{toc}{chapter}{Issue notes}
+\begin{itemize}
+  \item Trim size and bleed: choose them before drawing final artwork.
+  \item Keep dialogue short enough to read comfortably at the printed size.
+  \item Replace the panel placeholders with your own licensed artwork.
+\end{itemize}
+\backmatter
+\chapter*{Colophon}
+Typeset with \LaTeX{}. Replace this text with your production credits,
+letterer, editor, and edition information.
+\end{document}

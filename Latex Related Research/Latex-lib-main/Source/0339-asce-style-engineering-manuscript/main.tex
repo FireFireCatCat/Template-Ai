@@ -1,0 +1,80 @@
+%% ASCE-style engineering manuscript starter — ascelike document class.
+%%
+%% ascelike is NOT included in this download: it ships with every modern TeX
+%% distribution (and with latextemplates.com's compiler), so bundling a copy
+%% would only risk pinning you to an older version than your own system
+%% already has.
+%%
+%% ascelike is an UNOFFICIAL class that approximates the American Society of
+%% Civil Engineers manuscript format. Check ASCE's current author guidelines
+%% before submitting.
+%%
+%% Class documentation: texdoc ascelike   |   https://ctan.org/pkg/ascelike
+%% Licence: ascelike is LPPL-1.3, (c) Matthew R. Kuhn.
+%%
+%% Class options: `Review' gives the double-spaced review layout ASCE asks for
+%% at submission; `NewProof' gives the camera-ready single-spaced form.
+\documentclass[Review]{ascelike}
+
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+
+\NameTag{Lovelace, \today}
+
+\begin{document}
+
+\title{Your Paper Title Here}
+
+%% ascelike uses authblk: authors and affiliations are declared separately,
+%% with \affil following the \author(s) it applies to. Do NOT use \thanks or
+%% \and here — authblk collects the lists itself and those break \maketitle.
+\author[1]{Ada Lovelace}
+\author[2]{Second Author}
+\affil[1]{Analytical Engines Laboratory, Institute of Analytical Engines,
+London, United Kingdom. E-mail: ada.lovelace@example.edu}
+\affil[2]{Department of Civil Engineering, Another University, Springfield, USA.}
+
+\maketitle
+
+\begin{abstract}
+Replace this with your abstract. A good abstract states the problem, what you
+did, and what you found --- in that order, and without citations.
+\end{abstract}
+
+\KeyWords{First keyword; second keyword; third keyword}
+
+\section{Introduction}
+Start here. Cite things like this~\cite{knuth1984texbook}.
+
+ASCE journals expect a review-stage manuscript to be double spaced with
+numbered lines, and the camera-ready version to be single spaced. The class
+option at the top of this file switches between the two.
+
+\section{Method}
+Describe what you did.
+
+\section{Results}
+
+\begin{table}
+\caption{A caption belongs above a table.}
+\label{tab:results}
+\centering
+\begin{tabular}{lrr}
+\hline
+Method & Capacity (kN) & Deflection (mm)\\
+\hline
+Baseline & 118 & 4.2\\
+Proposed & 143 & 3.1\\
+\hline
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:results} reports the comparison.
+
+\section{Conclusion}
+Summarise the contribution and name the next step.
+
+\bibliographystyle{ascelike}
+\bibliography{references}
+
+\end{document}

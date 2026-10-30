@@ -1,0 +1,293 @@
+\ProvidesFile{jyu-chem.bbx}[2024/02/05 JYU Chemistry Department bibliography style]
+
+% Based on numeric style
+\RequireBibliographyStyle{numeric}
+
+% Finnish locale
+\DeclareLanguageMapping{finnish}{finnish}
+
+% Remove unwanted fields
+\ExecuteBibliographyOptions{
+  isbn=false,
+  doi=false,
+  eprint=false,
+  sorting=none,
+  giveninits=true,
+  minnames=999,
+  maxnames=999,
+}
+
+\DeclareFieldFormat{labelnumberwidth}{#1\adddot}
+
+% Name format: Last, F. I.; Last2, F. I.
+\DeclareNameAlias{author}{family-given}
+\DeclareNameAlias{editor}{family-given}
+\DeclareNameAlias{translator}{family-given}
+
+
+% Semicolon separator between authors, 'ja' before last author
+\renewcommand*{\multinamedelim}{\addsemicolon\space}
+\renewcommand*{\finalnamedelim}{\space ja\space}
+
+% Initialize with period and space
+\renewcommand*{\bibinitdelim}{\addspace}
+\renewcommand*{\bibinitperiod}{.}
+
+% Comma after names
+\renewcommand*{\labelnamepunct}{\addcomma\space}
+
+% Format for article titles (no quotes, normal text)
+\DeclareFieldFormat[article,inbook,incollection,inproceedings,patent,thesis,unpublished,report,online]{title}{#1\addcomma}
+
+% Format for book titles (italic)
+\DeclareFieldFormat[book,thesis]{title}{\mkbibemph{#1}}
+
+% Format for container titles (italic, abbreviated for journals)
+\DeclareFieldFormat{journaltitle}{\mkbibemph{#1}\isdot}
+\DeclareFieldFormat{booktitle}{\mkbibemph{#1}}
+
+% Volume in italics for articles
+\DeclareFieldFormat[article]{volume}{\mkbibemph{#1}}
+
+% Year in bold for articles
+\DeclareFieldFormat[article]{year}{\mkbibbold{#1}}
+
+% Pages without "pp."
+\DeclareFieldFormat{pages}{#1}
+% ss for books
+\DeclareFieldFormat[inbook]{pages}{ss. #1}
+\DeclareFieldFormat[book]{pages}{ss. #1}
+% DOI format (only if user enables it)
+\DeclareFieldFormat{doi}{%
+  \mkbibacro{DOI}\addcolon\space
+  \ifhyperref
+    {\href{https://doi.org/#1}{\nolinkurl{#1}}}
+    {\nolinkurl{#1}}}
+    
+% Edition format
+\DeclareFieldFormat{edition}{%
+  \ifinteger{#1}
+    {\mkbibordinal{#1}~\bibstring{edition}}
+    {#1}}
+
+% URL format for webpages
+\DeclareFieldFormat{url}{\url{#1}}
+\DeclareFieldFormat{urldate}{#1}
+% Suppress URL for all types except online
+\AtEveryBibitem{%
+  \ifentrytype{online}{}{\clearfield{url}\clearfield{urldate}}}
+  
+% Define "In:" for chapters
+\DefineBibliographyStrings{finnish}{%
+  in = {in},
+  edition = {painos},
+  page = {s\adddot},
+  pages = {s\adddot},
+}
+
+
+% Modify the date macro to handle bold year for articles
+\renewbibmacro*{date}{%
+  \iffieldundef{year}
+    {}
+    {\printfield{year}}}
+
+% Journal article driver
+\DeclareBibliographyDriver{article}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{title}%
+  \newunit\newblock
+  \usebibmacro{journal}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{date}%
+  \setunit{\addcomma\space}%
+  \printfield{volume}%
+  \setunit{\addcomma\space}%
+  \printfield{pages}%
+  \newunit\newblock
+  \iftoggle{bbx:doi}{\printfield{doi}}{}%
+  \usebibmacro{finentry}}
+
+% Book driver
+\DeclareBibliographyDriver{book}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/editor+others/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{maintitle+title}%
+  \setunit{\addcomma\space}%
+  \printfield{edition}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{publisher+location+date}%
+  \setunit{\addcomma\space}%
+  \printfield{volume}%
+  \setunit{\addcomma\space}%
+  \printfield{pages}%
+  \usebibmacro{finentry}}
+
+% Thesis driver - Format: Author, Title, thesis type, Institution, Location, Year
+\DeclareBibliographyDriver{thesis}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author}%
+  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{title}%
+  \setunit{\addcomma\space}%
+  \printfield{type}%
+  \setunit{\addcomma\space}%
+  \printlist{institution}%
+  \setunit{\addcomma\space}%
+  \printlist{location}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{date}%
+  \usebibmacro{finentry}}
+
+% In-collection/chapter driver
+\DeclareBibliographyDriver{incollection}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{title}%
+  \newunit\newblock
+  \usebibmacro{in:}%
+  \usebibmacro{byeditor+others}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{maintitle+booktitle}%
+  \setunit{\addcomma\space}%
+  \printfield{edition}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{publisher+location+date}%
+  \setunit{\addcomma\space}%
+  \printfield{volume}%
+  \setunit{\addcomma\space}%
+  \printfield{pages}%
+  \usebibmacro{finentry}}
+
+% In-proceedings driver
+\DeclareBibliographyDriver{inproceedings}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{title}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{maintitle+booktitle}%
+  \setunit{\addcomma\space}%
+  \printfield{venue}%
+  \setunit{\addcomma\space}%
+  \printeventdate%
+  \setunit{\addcomma\space}%
+  \usebibmacro{publisher+location+date}%
+  \setunit{\addcomma\space}%
+  \printfield{pages}%
+  \usebibmacro{finentry}}
+
+% Patent driver - Format: Authors, Title, Patent type, Number, dd.mm.yyyy
+\DeclareBibliographyDriver{patent}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author}%
+  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{title}%
+  \setunit{\addcomma\space}%
+  \printfield{type}%
+  \setunit{\addcomma\space}%
+  \printfield{number}%
+  \setunit{\addcomma\space}%
+  \printfield{day}\adddot
+  \printfield{month}\adddot
+  \printfield{year}%
+  \usebibmacro{finentry}}
+
+% Online/webpage driver
+\DeclareBibliographyDriver{online}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{title}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{author/editor+others/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \setunit{\addcomma\space}%
+  \printfield{url}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{organization+location+date}%
+  \setunit{\addspace}%
+  \printfield{note}
+  \usebibmacro{finentry}}
+
+% URL date format (accessed date)
+\renewbibmacro*{urldate}{%
+  \iffieldundef{urlyear}
+    {}
+    {\mkbibbrackets{%
+       \printfield{urlday}\adddot
+       \printfield{urlmonth}\adddot
+       \printfield{urlyear}}}}
+
+% Journal macro
+\renewbibmacro*{journal}{%
+  \iffieldundef{journaltitle}
+    {}
+    {\printfield{journaltitle}}}
+
+% Publisher+location+date macro
+\renewbibmacro*{publisher+location+date}{%
+  \printlist{publisher}%
+  \setunit{\addcomma\space}%
+  \printlist{location}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{date}}
+
+% Organization+location+date macro
+\newbibmacro*{organization+location+date}{%
+  \printlist{organization}%
+  \setunit{\addcomma\space}%
+  \printlist{location}}
+
+% Event date printing
+\newcommand*{\printeventdate}{%
+  \iffieldundef{eventyear}
+    {}
+    {\printfield{eventday}\adddot
+     \printfield{eventmonth}\adddot
+     \printfield{eventyear}}}
+
+% Misc driver for software, informal sources
+\DeclareBibliographyDriver{misc}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author/editor+others/translator+others}%
+  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{title}%
+  \setunit{\addcomma\space}%
+  \printlist{organization}%
+  \setunit{\addcomma\space}%
+  \printlist{location}%
+  \setunit{\addcomma\space}%
+  \usebibmacro{date}%
+  \usebibmacro{finentry}}
+
+% Report driver for technical reports
+\DeclareBibliographyDriver{report}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{author}%
+  \setunit{\labelnamepunct}\newblock
+  \usebibmacro{title}%
+  \setunit{\addcomma\space}%
+  %\printfield{type}%
+  \setunit{,}%
+  \printfield{number}%
+  \setunit{\addcomma\space}%
+  \printfield{day}\adddot
+  \printfield{month}\adddot
+  \printfield{year}%
+  \setunit{\addcomma\space}%
+  \printlist{institution}%
+  \usebibmacro{finentry}}
+
+\endinput

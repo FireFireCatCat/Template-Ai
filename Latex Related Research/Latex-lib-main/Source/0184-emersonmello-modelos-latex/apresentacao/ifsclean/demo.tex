@@ -1,0 +1,375 @@
+%-------------------------------------------------%
+% 2026-04-08 - Emerson Ribeiro de Mello - mello@ifsc.edu.br
+%-------------------------------------------------%
+\documentclass[aspectratio=169]{beamer}
+\usepackage[english,brazilian]{babel}
+
+% Cores disponíveis para o tema:
+% amarelo     % HEX: #FEE886
+% vermelho    % HEX: #E44131
+% verde       % HEX: #31A250
+% azul        % HEX: #4080EC
+% cinzaescuro % HEX: #595959
+% azulescuro  % HEX: #242B3A
+% redwine     % HEX: #880E4F
+% azulcinza   % HEX: #435172
+% cyanIFSC    % HEX: #0D4F4D
+% fundoIFSC   % HEX: #EEF1EC
+% azulclaro   % HEX: #1B558E
+
+% Crie cores personalizadas para usar no tema
+% \definecolor[named]{novaCor}{HTML}{303A52}
+% \definecolor{verdeescuro}{RGB}{0,112,19}
+
+% Parâmetros do tema
+\usetheme[
+    % logo=img/ifsc-logo-h-branco.png, % imagem do logo da instituição
+    % logowidth=3.5cm,
+    titlefg=white, % texto do slide de título
+    titlebg=azulclaro, % fundo do slide de título
+    frametitlefg=azulclaro, % texto do título do frame
+    frametitlebg=white, % fundo do título do frame
+    % textfg=black, % texto dos slides
+    % background=white, % fundo dos slides
+    % sectionfg=white, % texto do slide de seção
+    sectionbg=azulclaro, % fundo do slide de seção
+    % blocktitlefg=white, % texto do título dos blocos
+    blocktitlebg=azulclaro, % fundo do título dos blocos
+    % blockbodyfg=cinzaescuro, % texto dos blocos
+    % itemsep=7pt % Espaço entre itens das listas
+    titlebackground=img/sao-jose.jpg, % imagem de fundo do slide de título
+    titlebackgroundopacity=1, % opacidade da imagem de fundo (0 a 1)
+]{ifsclean}
+
+\usepackage[style=abnt,noslsn,justify]{biblatex}
+\renewcommand*{\bibfont}{\small}
+\usepackage{csquotes}
+\addbibresource{referencias.bib}
+
+
+% -------------------------------------------------%
+%              Título 
+% -------------------------------------------------%
+\title{Título da apresentação}
+
+\subtitle{Modelo de slides para o IFSC}
+
+\subject{Disciplina de \LaTeX~para o IFSC}
+
+\author{Emerson Ribeiro de Mello}
+
+\institute{mello@ifsc.edu.br}
+
+% \date{}
+
+
+%-------------------------------------------------%
+\begin{document}
+% -------------------------------------------------%
+
+\begin{frame}[plain, noframenumbering]
+    \maketitle
+\end{frame}
+
+\begin{frame}[plain, noframenumbering]{Licenciamento}
+    \licenciamentoLivre
+\end{frame}
+
+\begin{frame}[plain, noframenumbering]{Agenda}
+    \tableofcontents
+\end{frame}
+% -------------------------------------------------%
+
+
+\section{Listas}
+
+
+\begin{frame}{Lista de itens}
+    \begin{enumerate}
+        \item Primeiro item
+        \begin{itemize}
+            \item \Myhref{https://emersonmello.me}{Aqui tem um exemplo de \textit{link} para um \textit{site} usando o comando \texttt{Myhref}}
+            \item Segundo item
+        \end{itemize}
+        \item Segundo item
+        \begin{itemize}
+            \item Uma entrada com \texttt{fonte monoespaçada} em \texttt{\textit{itálico}} e em \texttt{\textbf{negrito}}
+            \item Formatação de unidade usando o pacote \texttt{siunitx}: 
+            \begin{itemize}
+                \item A velocidade da luz é \SI{299792458}{\meter\per\second}
+                \item A aceleração da gravidade é \SI{9.81}{\meter\per\second\squared}
+                \item \num{12345.678}, \num{0.000001}, \num{1e-6}, \num{1e6}, \num{1.23e-4}, \num{1.23e4}, \num{1.23e-4}, \num{1.23e4}
+            \end{itemize}
+        \end{itemize}
+
+        \item Terceiro item 
+        \begin{itemize}
+            \item Nesta linha é apresentada um item que tem um texto grande que deverá ocupar mais de uma linha no slide. Assim, espera-se mostrar como será o alinhamento na margem esquerda
+        \end{itemize}
+    \end{enumerate}
+\end{frame}
+
+\subsection{Animações}
+
+\begin{frame}{Animação com lista de itens}
+\begin{itemize}[<+->]
+    \item\only<1>{Eu não sei quem criou o~\TeX}\only<2->{\st{Eu não sei quem criou o~\TeX}} 
+    \item O~\TeX~foi criado por Donald Knuth
+    \begin{itemize}
+        \item<.-> O~\TeX~é um sistema de tipografia 
+    \end{itemize}
+    \item Leslie Lamport criou o~\LaTeX~\cite{lamport94}
+    \begin{itemize}
+        \item<.-> O~\LaTeX~é um conjunto de macros para o~\TeX 
+    \end{itemize}
+    \item Em \textcite{knuth74} temos um dos trabalhos mais importantes de Donald Knuth
+    
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Uso do \texttt{alert}}
+    \begin{itemize}
+        \item<1-| alert@1> Aparecerá desde do slide 1 e receberá destaque no slide 1
+        \item<1-| alert@2> Aparecerá desde do slide 1 e receberá destaque no slide 2
+        \item<1-| alert@3> Aparecerá desde do slide 1 e receberá destaque no slide 3
+        \item<4-| alert@4> Aparecerá desde do slide 4 e receberá destaque no slide 4
+    \end{itemize} 
+\end{frame}
+
+\subsection{Colunas}
+
+\begin{frame}{Listas em colunas}
+    \begin{columns}[t, onlytextwidth]
+        \column{0.5\textwidth}
+            \begin{itemize}
+                \item Item 1
+                \begin{itemize}
+                    \item Subitem 1.1
+                    \item Subitem 1.2
+                \end{itemize}
+                \item Item 2
+                \item Item 3
+            \end{itemize}
+        
+        \column{0.5\textwidth}
+            \begin{enumerate}
+                \item First
+                \item Second
+                \begin{enumerate}
+                    \item Sub-first
+                    \item Sub-second
+                \end{enumerate}
+                \item Third
+            \end{enumerate}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Listas e figuras}
+\begin{columns}
+    \column{.5\linewidth}
+     \begin{center}
+        \includegraphics[width=\linewidth]{figs/4x3.png}
+     \end{center}
+    \column{.5\linewidth}
+    \begin{itemize}
+        \item Item 1
+        \begin{itemize}
+            \item Subitem 1.1
+            \item Subitem 1.2
+        \end{itemize}
+        \item Item 2
+        \item Item 3
+    \end{itemize}
+\end{columns} 
+\end{frame}
+
+
+\section{Blocos}
+
+
+\begin{frame}{Blocos}
+    \begin{block}{Esse é um bloco}
+        Isso é um teste
+    \end{block}
+    \begin{block}{}
+    Bloco sem título	
+    \end{block}
+    \begin{alertblock}{Alerta}
+        Esse é um alerta
+    \end{alertblock}
+
+    \begin{exampleblock}{Exemplo}
+        Esse é um exemplo
+    \end{exampleblock}
+\end{frame}
+
+
+\begin{frame}{Blocos personalizados}
+
+    \begin{informacao}
+    Isso é uma mensagem de informação
+    \end{informacao}
+    
+    \begin{informacaoazul}
+        Isso é uma mensagem de informação
+    \end{informacaoazul}
+
+    \begin{atencao}
+        Isso é uma mensagem de atenção
+    \end{atencao}
+    
+    \begin{cuidado}
+        Isso é uma mensagem de cuidado
+    \end{cuidado}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Blocos personalizados}{Inspirados nos blocos Markdown do GitHub}
+\begin{nota}
+    Para apresentar uma informação útil
+\end{nota}
+
+\begin{tip}
+    Para apresentar uma dica
+\end{tip}
+
+\begin{important}
+    Informação importante que precisa ser destacada
+\end{important}
+
+\begin{warning}
+    Algo que precisa ser observado com atenção
+\end{warning}
+
+\begin{caution}
+    Para chamar a atenção do leitor para algo que pode ser perigoso
+\end{caution}
+\end{frame}
+
+\begin{frame}{Horários}
+    {Veja outros ícones em \url{https://ctan.org/pkg/fontawesome6}}
+    \begin{itemize}
+        \item Horário das aulas 
+        \begin{caixa}[azul]{white}{\faCalendarDays[regular]}
+            \begin{itemize}
+                \item 15:40 -- 17:30 - quarta-feira
+                \item 13:30 -- 15:20 - quinta-feira
+            \end{itemize}
+        \end{caixa}
+        \item Atendimento extraclasse
+        \begin{caixa}[azul]{white}{\faCalendarDays[regular]}
+            \begin{itemize}
+                \item 10:00 -- 12:00 - sexta-feira
+            \end{itemize}
+        \end{caixa}
+    \end{itemize}
+\end{frame}
+
+
+\section{Figuras}
+
+\begin{frame}{Figura 4x3}
+    \begin{center}
+        \includegraphics[height=.7\paperheight]{figs/4x3.png}
+    \end{center}
+\end{frame}
+    
+
+\begin{frame}{Figura 16x9}
+\begin{center}
+    \includegraphics[width=.8\linewidth]{figs/16x9.png}
+\end{center}
+\end{frame}
+
+\section{Tabelas}
+
+\begin{frame}{Tabelas}{Usando pacotes booktabs e siunitx}
+
+    
+    \begin{center}
+        % Campo S do pacote siunitx para alinhar os números pela vírgula decimal
+        % A opção table-format é usada para alinhar os números pela vírgula decimal
+        % 3.2 significa que o número pode ter até 3 dígitos antes da vírgula e 2 dígitos depois da vírgula
+    \begin{tabular}{S[table-format=3.2]}\toprule
+        {Temperatura (\si{\celsius})} \\\midrule
+        23.5 \\
+        100.0 \\
+        -5.25 \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    
+    \begin{center}
+        \begin{tabular}{l r r}\\\toprule
+            Produto & Quantidade & Valor (R\$)  \\\midrule
+            Água    &      1000  &  1234,50 \\ 
+            Banana  &       10   &   12,34 \\
+            Maça    &        1   &   0,57 \\ \bottomrule
+        \end{tabular}
+    \end{center}
+
+\end{frame}
+
+
+\section{Equações}
+
+
+
+\begin{frame}{Equações}
+\begin{equation}
+    \int_a^b f(x) dx = F(b) - F(a)
+\end{equation}
+
+\begin{equation}
+    \sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
+\end{equation}
+\end{frame}
+
+\section{Incluindo código fonte}
+
+\begin{frame}[fragile]{Olá mundo em C}
+    \lstinputlisting[style=C,caption={Olá mundo em C},label={cod:olac}]{codigos/olamundo.c}
+\end{frame}
+
+\begin{frame}[fragile]{Olá mundo em Java}
+\begin{lstlisting}[style=java, caption={Olá mundo em Java},label={cod:olajava}]
+public class App{
+
+    // Método principal
+    public static void main(String[] args){
+        if (args.length > 0) {
+            System.out.println("Olá " + args[0]);
+        } else {
+            System.out.println("Olá mundo");
+        }
+    }
+}
+\end{lstlisting}
+\end{frame}
+
+% Para permitir que o código fonte seja quebrado em mais de um slide. Se as referências couberem em um único slide, então pode omitir o uso do allowframebreaks
+\begin{frame}[allowframebreaks]{Referências}
+    % para incluir todas as referências do arquivo referencias.bib, mesmo sem citá-las explicitamente com os comandos \cite ou \textcite
+    \nocite{*}
+    \printbibliography
+\end{frame}
+    
+% Se não quiser usar o pacote biblatex, use o seguinte código
+% \begin{frame}{Referências}
+%     \nocite{*}
+%     \bibliography{referencias}
+%     \bibliographystyle{plain}
+% \end{frame}
+
+\appendix
+
+\section{Slides de backup}
+
+\begin{frame}{Slide de backup}
+    \usebeamercolor[fg]{normal text}
+    Slides de backup são úteis para incluir materiais adicionais, necessários somente para ajudar a responder possíveis perguntas da plateia
+    \vfill
+    O pacote \texttt{appendixnumberbeamer} é usado para não numerar os slides de backup
+\end{frame}
+
+
+\end{document}

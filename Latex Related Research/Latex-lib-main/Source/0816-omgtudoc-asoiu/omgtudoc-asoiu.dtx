@@ -1,0 +1,1453 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2025 Danila A. Kondratenko
+%
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3 of this license or (at your option) any later
+% version. The latest version of this license is in:
+%
+%     http://www.latex-project.org/lppl.txt
+%
+% and version 1.3c or later is part of all distributions of
+% LaTeX version 2008-05-04 or later.
+%
+% \fi
+% \iffalse
+%    \begin{macrocode}
+%<class>\NeedsTeXFormat{LaTeX2e}
+%<class>\ProvidesClass{omgtudoc-asoiu}
+%<labreport>\ProvidesFile{omgtudoc-asoiu-labreport.tpt}
+%<courseproj>\ProvidesFile{omgtudoc-asoiu-courseproj.tpt}
+%<minimal>\ProvidesFile{omgtudoc-asoiu-minimal.tpt}
+%<bibstyle>\ProvidesFile{omgtudoc-asoiu-gost-numeric.bbx}
+%<*driver>
+\ProvidesFile{\jobname.dtx}
+%</driver>
+    [2025-02-21 v1.1b
+%<class>Class for ASOIU documents]
+%<labreport>Laboratory report document template for omgtudoc-asoiu]
+%<courseproj>ASOIU course project document template for omgtudoc-asoiu]
+%<minimal>Minimal document template for omgtudoc-asoiu]
+%<bibstyle>Modification of biblatex-gost gost-numeric style for omgtudoc-asoiu]
+%<*driver>
+]
+\documentclass{ltxdoc}
+\newcommand*{\rfrac}[2]{{}^{#1}\!/_{#2}}
+\newcommand{\ToDo}[1]{}
+\usepackage{shortvrb}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\SetupDoc{reportchangedates}
+\MakeShortVerb\|
+\GlossaryPrologue{\clearpage\section*{{Таблица изменений}}%
+	\markboth{{Таблица изменений}}{{Таблица изменений}}}
+\begin{document}
+\DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+%    \end{macrocode}
+% \fi
+%
+% ^^A \def\filedate{2025-01-16}\def\fileversion{v1.0}
+% ^^A \def\filedate{2025-01-17}\def\fileversion{v1.0a}
+% ^^A \def\filedate{2025-01-20}\def\fileversion{v1.0b}
+% ^^A \def\filedate{2025-02-04}\def\fileversion{v1.0c}
+% ^^A \def\filedate{2025-02-06}\def\fileversion{v1.0d}
+% ^^A \def\filedate{2025-02-14}\def\fileversion{v1.0e}
+% ^^A \def\filedate{2025-02-16}\def\fileversion{v1.1}
+% ^^A \def\filedate{2025-02-18}\def\fileversion{v1.1a}
+% ^^A \def\filedate{2025-02-21}\def\fileversion{v1.1b}
+% \GetFileInfo{\jobname.dtx}
+%
+% \changes{v1.0}{2025-01-16}{Первый выпуск}
+% \changes{v1.0a}{2025-01-17}{Добавлена нумерация в пределах раздела,
+%    счётчики страниц, рисунков, таблиц, уравнений, приложений,
+%    источников, исправлен стиль заголовков и оглавления}
+% \changes{v1.0d}{2025-02-06}{Параметры документа вынесены в файлы
+%    определения параметра документа}
+% \changes{v1.1a}{2025-02-18}{Изменено название пакета с otuasoiu
+%    на omgtudoc-asoiu}
+% \changes{v1.1b}{2025-02-21}{Изменены названия файлов на более
+%    локальные}
+%
+% \NewDocElement[macrolike=false,toplevel=false,idxtype=option,
+%                idxgroup=Параметры класса,printtype=\textit{параметр}]
+%               {Option}{option}
+% \RenewDocElement[macrolike=false,toplevel=false,idxtype=env.,
+%                idxgroup=Среда,printtype=\textit{среда}]
+%               {Env}{environment}
+%
+% \title{\texttt{omgtudoc-asoiu}~--- класс документов кафедры АСОИУ}
+%
+% \author{Данила А. Кондратенко}
+%
+% \date{\fileversion~\filedate}
+%
+% \MaybeStop{^^A
+%    \PrintChanges
+% }
+%
+% \maketitle
+%
+% \begin{abstract}
+%   Класс \texttt{omgtudoc-asoiu} предназначен для создания отчётов по
+%   лабораторным, практическим работам, пояснительных записок по
+%   курсовым проектам и выпускным квалификационным работам. Оформление
+%   соответствует рабочей инструкции, введённой 29 января 2024 года.
+% \end{abstract}
+%
+% \section{Введение}
+%
+% На кафедре АСОИУ действует стандарт оформления документов, описанный в
+% соответствующей рабочей инструкции.  В ней сказано, что все документы,
+% которые делают студенты, магистранты и аспиранты кафедры, должны
+% подчиняться этому стандарту. Проблемой является то, что те, кто хочет
+% делать документы с использованием \LaTeX, испытывают трудности в
+% приведении документов в полное соответствие с этим нормативным
+% документом. Данный класс позволит сократить затраты и в полной мере
+% реализовать первоначальную цель \LaTeX'а~--- отделить содержимое от
+% стилей.
+%
+% Класс |omgtudoc-asoiu| основан на стандартном классе |article|, 
+% который сам по себе предоставляет практически все необходимые 
+% возможности для создания документов в системе LaTeX. Проблемой его 
+% является то, что форматирование этого класса не соответствует нормам
+% оформления ГОСТ 7.32-2017, а именно:
+%
+% \begin{itemize}
+% \item не соответствует шрифт;
+% \item не соответствует размер листа и поля;
+% \item заголовки оформляются неправильно;
+% \item неправильно оформляется абзацный отступ;
+% \end{itemize}
+%
+% И это далеко не полный список проблем с использованием стандартного
+% класса |article|. Обычно эту проблему решают с применением
+% дополнительных пакетов, в которых довольно сложно запутаться, в
+% результате чего на оформление уходит больше времени, чем на написание
+% самого отчёта.
+%
+% \section{Использование}
+%
+% Для того, чтобы использовать класс |omgtudoc-asoiu|, достаточно в преамбуле
+% документа указать |\documentclass{omgtudoc-asoiu}|\relax.
+%
+% \subsection{Дополнительные команды}
+%
+% Класс |omgtudoc-asoiu| вводит следующие команды:
+%
+% \DescribeMacro{\appendix}
+% Заголовок обязательного приложения. Принимает на вход обязательный
+% аргумент \marg{name}, который указывает название приложения.
+%
+% \DescribeMacro{\appendixrec}
+% Заголовок рекомендуемого приложения. Аналогично \cs{appendix}.
+%
+% \DescribeMacro{\appendixhelp}
+% Заголовок справочного приложения. Аналогично \cs{appendix}.
+%
+% \DescribeMacro{\theappendix}
+% Номер приложения.
+%
+% \DescribeMacro{\appendices}
+% Переход в режим приложений. В этом режиме рисунки, таблицы и формулы
+% нумеруются в пределах приложения.
+%
+% \DescribeMacro{\paragraph}
+% Определение именованного пункта.
+%
+% \DescribeMacro{\paragraph*}
+% Определение неименованного нумерованного пункта.
+%
+% \DescribeMacro{\subparagraph}
+% Определение именованного подпункта.
+%
+% \DescribeMacro{\subparagraph*}
+% Определение неименованного нумерованного подпункта.
+%
+% \DescribeMacro{\totalappendices}
+% Количество приложений.
+%
+% \DescribeMacro{\totalfigures}
+% Количество изображений.
+%
+% \DescribeMacro{\totaltables}
+% Количество таблиц.
+%
+% \DescribeMacro{\totalpages}
+% Общее количество страниц.
+%
+% \DescribeMacro{\totalsources}
+% Количество источников.
+%
+% \subsection{Параметры}
+%
+% Кроме того, класс |omgtudoc-asoiu| определяет следующие типы документов:
+%
+% \DescribeOption{courseproj}
+% Курсовой проект.
+%
+% \DescribeOption{labreport}
+% Отчёт о лабораторной работе.
+%
+% \DescribeOption{minimal}
+% Минимальный документ со стандартным форматированием. 
+% Титульные листы не предусмотрены.
+%
+% Также существуют дополнительные параметры:
+%
+% \DescribeOption{withinsection}
+% Нумерация таблиц, рисунков, формул в пределах раздела.
+%
+% \MaybeStop{\PrintChanges\PrintIndex}
+%
+% \section{Реализация}
+%
+% \subsection{Размеры бумаги и поля}
+%
+% Начнём с загрузки стандартных параметров класса |article|.
+% Естественно, необходимо указать правильный размер бумаги~--- A4.
+%    \begin{macrocode}
+%<*class>
+\LoadClass[a4paper,12pt]{article}
+%    \end{macrocode}
+%
+% Далее укажем размер полей при помощи пакета |geometry|: левое поле~---
+% 30 мм, правое~--- 15 мм, верхнее и нижнее~--- по 20 мм.
+%    \begin{macrocode}
+\RequirePackage[left=30mm,right=15mm,top=20mm,bottom=20mm]{geometry}
+%    \end{macrocode}
+%
+% \subsection{Параметры}
+%
+% Для того, чтобы можно было выбрать подкласс документа, необходимо
+% определить параметры класса.
+%
+% \changes{v1.1}{2025-02-16}{Добавлен тип документов minimal, он
+%    установлен по умолчанию}
+% \changes{v1.1b}{2025-02-21}{Изменено название файлов для типов
+%    документов}
+% 
+%    \begin{macrocode}
+\newcommand\@document@type{}
+\def\CurrentOption{}
+\newif\if@within@section
+\@within@sectionfalse
+\DeclareOption{labreport}{\renewcommand\@document@type{labreport}}
+\DeclareOption{courseproj}{\renewcommand\@document@type{courseproj}}
+\DeclareOption{minimal}{\renewcommand\@document@type{minimal}}
+\DeclareOption{withinsection}{\@within@sectiontrue}
+\ExecuteOptions{minimal}
+\ProcessOptions
+\input{omgtudoc-asoiu-\@document@type.tpt}
+%    \end{macrocode}
+%
+% \subsection{Языковые настройки}
+%
+% Установим русский язык для создаваемого документа.
+%
+%    \begin{macrocode}
+\RequirePackage{polyglossia}
+\setdefaultlanguage[forceheadingpunctuation=false]{russian}
+%    \end{macrocode}
+%
+% Далее нужно установить формат подписей к рисункам и таблицам. Подпись
+% состоит из обозначения объекта (таблица или рисунок) и длинного тире
+% между ними.
+%
+%    \begin{macrocode}
+\addto\captionsrussian{%
+    \renewcommand\figurename{Рисунок}%
+    \renewcommand\tablename{Таблица}%
+}
+\RequirePackage{caption}
+\DeclareCaptionLabelSeparator{emdash}{~---~}
+\captionsetup[figure]{labelsep=emdash,justification=centerlast}
+\captionsetup[table]{labelsep=emdash,justification=justified,singlelinecheck=false}
+%    \end{macrocode}
+%
+% \subsection{Общее форматирование текста}
+%
+% Укажем шрифт Tempora, который похож на Times New Roman, для обычного
+% текста, и шрифт из пакета \texttt{newtxmath}.
+%
+% \changes{v1.0e}{2025-02-14}{Исправлены проблемы с лигатурами \TeX\ и определением
+%     кириллицы в шрифтах: шрифты заменены на Tempora и newtxmath}
+%
+%    \begin{macrocode}
+\renewcommand*{\rmdefault}{minntx}
+\RequirePackage[]{newtxmath}
+\RequirePackage{tempora}
+\RequirePackage[no-math]{fontspec}
+\setmainfont{tempora}
+%    \end{macrocode}
+%
+% Установим шрифт в 14 пт и прочие соответствующие шрифты.
+%
+% \changes{v1.0b}{2025-01-20}{Исправлены настройки шрифтов}
+%
+%    \begin{macrocode}
+\renewcommand\normalsize{\@setfontsize\normalsize{14}{16}%
+    \abovedisplayskip 14pt plus 3pt minus 7pt%
+    \abovedisplayshortskip 0pt plus 4pt%
+    \belowdisplayshortskip 7pt plus 4pt minus 3pt%
+    \belowdisplayskip \abovedisplayskip}
+\renewcommand\small{\@setfontsize\small\@xiipt{14}%
+    \abovedisplayskip 12pt plus 3pt minus 7pt%
+    \abovedisplayshortskip 0pt plus 3pt%
+    \belowdisplayshortskip 6pt plus 3pt minus 3pt%
+    \belowdisplayskip \abovedisplayskip}
+\renewcommand\footnotesize{\@setfontsize\footnotesize\@xpt\@xiipt}
+\renewcommand\scriptsize{\@setfontsize\scriptsize\@viiipt{9.5}}
+\renewcommand\tiny{\@setfontsize\tiny\@vipt\@viipt}
+\renewcommand\large{\@setfontsize\large\@xviipt{22}}
+\renewcommand\Large{\@setfontsize\Large\@xxpt{25}}
+\renewcommand\LARGE{\@setfontsize\LARGE\@xxvpt{30}}
+\renewcommand\huge{\@setfontsize\huge{30}{35}}
+\renewcommand\Huge{\@setfontsize\Huge{36}{40}}
+\normalsize
+%    \end{macrocode}
+%
+% \begin{macro}{\linespread}
+% Установим межстрочный интервал в 130%.
+%    \begin{macrocode}
+\linespread{1.3}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\parskip}
+% Дополнительных промежутков между абзацами быть не должно.
+%    \begin{macrocode}
+\setlength\parskip{0pt}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\parindent}
+% Установим абзацный отступ в 12,5 мм.
+%    \begin{macrocode}
+\setlength\parindent{12.5mm}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ps@plain}
+% Зададим стиль страниц по умолчанию (это необходимо, чтобы на всех страницах
+% номер писался одним и тем же шрифтом):
+%    \begin{macrocode}
+\def\ps@plain{\let\@mkboth\@gobbletwo
+     \let\@oddhead\@empty\def\@oddfoot{\hfil\rmfamily\thepage
+     \hfil}\let\@evenhead\@empty\let\@evenfoot\@oddfoot}
+\pagestyle{plain}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Заголовки}
+%
+% Изменим стиль заголовков первых двух уровней. Разделы должны
+% начинаться с новой страницы, сами заголовки от остальных абзацев
+% отличаются не сильно, каждый заголовок раздела начинается с абзацного
+% отступа, за которым идёт номер и название раздела.
+%    \begin{macrocode}
+\renewcommand\section{\clearpage\@startsection{section}{1}{\parindent}%
+        {0pt}{1sp}{\normalfont\normalsize\bfseries}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\parindent}%
+    {0pt}{1sp}{\normalfont\normalsize\bfseries}}
+%    \end{macrocode}
+%
+% \subsection{Переопределение модели структуры документа}
+%
+% Кафедральная инструкция определяет, что существует четыре уровня
+% дробления разделов:
+%
+% \begin{itemize}
+% \item разделы;
+% \item подразделы;
+% \item пункты;
+% \item подпункты.
+% \end{itemize}
+%
+%    \begin{macrocode}
+\setcounter{secnumdepth}{4}
+%    \end{macrocode}
+%
+% Определим команды \cs{paragraph} и \cs{paragraph*},
+% \cs{subparagraph} и \cs{subparagraph*}.
+%
+% \begin{macro}{\paragraph}\oarg{tocname}\marg{name}. Записывает пункт в
+% содержание под названием \marg{name} или \oarg{tocname}, если имеется,
+% и выдаёт пункт с названием, выделенным полужирным шрифтом.
+%    \begin{macrocode}
+\renewcommand\paragraph{\@startparagraph{paragraph}{3}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\paragraph*} Выдаёт неназванный нумерованный пункт.
+% \end{macro}
+%
+% \begin{macro}{\subparagraph}\oarg{tocname}\marg{name}. Выдаёт подпункт
+% с заголовком, выделенным жирным шрифтом.
+%    \begin{macrocode}
+\renewcommand\subparagraph{\@startparagraph{subparagraph}{4}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\subparagraph*} Выдаёт неназванный нумерованный
+% подпункт.
+% \end{macro}
+%
+% Поскольку эти команды имеют много общего, определим общую команду
+% \cs{@startparagraph}:
+%
+% \begin{macro}{\@startparagraph}\marg{name}\marg{level}*\oarg{tocname}\marg{name}.
+%    \begin{macrocode}
+\def\@startparagraph#1#2{
+    \if #2>\c@secnumdepth%
+    \else%
+    \refstepcounter{#1}%
+    \fi%
+    \@ifstar{{}\unnamed@paragraph{#1}{#2}}{\@dblarg{\named@paragraph{#1}{#2}}}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\named@paragraph}\marg{name}\marg{level}\oarg{tocname}\marg{name}
+%    \begin{macrocode}
+\def\named@paragraph#1#2[#3]#4{%
+    \addcontentsline{toc}{#1}{%
+        \protect\numberline{%
+            \csname the#1\endcsname\space}%
+            #3%
+    }%\par
+    \def\otu@partitle{{#4}}%
+    \paragraph@heading{#1}%
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\unnamed@paragraph}\marg{name}\marg{level}
+%    \begin{macrocode}
+\def\unnamed@paragraph#1#2{
+    \let\otu@partitle\@empty%
+    \paragraph@heading{#1}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% Теперь нужно будет сделать так, чтобы название пункта/подпункта соединялось
+% со следующим абзацем. Код был заимствован из стандартной поставки \LaTeX
+% и изначально отвечал за печать заголовков со значением отступа после
+% заголовка меньше 0.
+%
+% \begin{macro}{\paragraph@heading}\marg{name}
+% \changes{v1.0d}{2025-02-06}{Исправлено размещение пробела между номером пункта
+%     и остальным текстом}
+%    \begin{macrocode}
+\def\paragraph@heading#1{%
+    \@nobreakfalse
+    \global\@noskipsectrue
+    \everypar{%
+      \if@noskipsec
+        \global\@noskipsecfalse
+       {\setbox\z@\lastbox}%
+        \clubpenalty\@M
+        \begingroup%
+            \hskip\parindent%
+            \normalfont\normalsize\bfseries
+            \csname the#1\endcsname\,%
+            \ifx\otu@partitle\empty\relax\else\otu@partitle\relax\fi\,%
+        \endgroup
+        \unskip
+      \else
+        \clubpenalty \@clubpenalty
+        \everypar{}%
+      \fi}%
+    \ignorespaces%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% Далее переопределим связи между счётчиками уровней.
+%
+%    \begin{macrocode}
+\counterwithout{paragraph}{subsubsection}
+\counterwithout{subsubsection}{subsection}
+\counterwithout{subsubsection}{section}
+\counterwithin{paragraph}{subsection}
+%    \end{macrocode}
+%
+% Далее определим формат нумерации для всех уровней. Разделы,
+% подразделы, пункты и подпункты нумеруются арабскими цифрами, все цифры
+% объединяются через точки.
+%
+%    \begin{macrocode}
+\renewcommand\theparagraph{\thesubsection.\@arabic\c@paragraph}
+\renewcommand\thesubparagraph{\theparagraph.\@arabic\c@subparagraph}
+%    \end{macrocode}
+%
+% В стандартном классе \LaTeX{} между пунктами и подпунктами имеется ещё
+% одна степень дробления~--- подподразделы. Её необходимо исключить:
+%
+%    \begin{macrocode}
+\let\subsubsection\@@@undefined@@@
+\let\l@subsubsection\@@@undefined@@@
+\let\c@subsubsection\@@@undefined@@@
+%    \end{macrocode}
+%
+% \subsection{Содержание}
+%
+% Теперь приступим к форматированию содержания. В \LaTeX за это отвечают
+% команды вида \cs{l@}\meta{level}. Необходимо, чтобы в содержании после
+% заголовков каждого элемента стояло отточие и чтобы соблюдались отступы
+% подразделов и пунктов в 2 и 4 знака соответственно.
+%
+% \begin{macro}{\l@section,\l@subsection,\l@paragraph}
+%    \begin{macrocode}
+\renewcommand*\l@section[2]{\@dottedtocline{1}{0em}{1em}{\textbf{#1}}{#2}}
+\renewcommand*\l@subsection{\@dottedtocline{2}{2ex}{2em}}
+\renewcommand*\l@paragraph{\@dottedtocline{3}{4ex}{3em}}
+%</class>
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Библиография}
+%
+% Для библиографии будем использовать пакет |biblatex| и
+% |biblatex-gost|.
+%
+% Для начала исправим один изъян в генерации библиографии.
+% Библиографические записи должны начинаться с абзацного отступа и
+% нумероваться. Для того, чтобы это реализовать, необходимо исправить
+% стилевой файл библиографии:
+%
+%    \begin{macrocode}
+%<*bibstyle>
+\RequireBibliographyStyle{gost-standard}
+\ExecuteBibliographyOptions{labelnumber,bibisbn,biburl,bibdoi,bibeprint}
+
+\providebool{bbx:subentry}
+
+\DeclareBibliographyOption{subentry}[true]{%
+  \setbool{bbx:subentry}{#1}}
+
+\DeclareFieldFormat{bibentrysetcount}{\mkbibparens{\mknumalph{#1}}}
+\DeclareFieldFormat{labelnumberwidth}{#1\addperiod}
+\DeclareFieldFormat{shorthandwidth}{\mkbibbrackets{#1}}
+
+\defbibenvironment{bibliography}
+  {\list
+     {\printtext[labelnumberwidth]{%
+    \printfield{labelprefix}%
+    \printfield{labelnumber}}}
+     {\setlength{\labelwidth}{0pt}%
+      \setlength{\leftmargin}{0pt}%
+      \setlength{\labelsep}{0pt}%
+      \setlength{\itemindent}{\parindent}%
+      \setlength{\itemsep}{0pt}%
+      \setlength{\parsep}{0pt}}%
+%    \end{macrocode}
+% В этой строке устанавливается формат номера в библиографии. Такая же
+% модификация сделана для короткой записи библиографии (|shorthand|).
+%    \begin{macrocode}
+    \renewcommand*{\makelabel}[1]{##1\>}}
+  {\endlist}
+  {\item}
+
+\defbibenvironment{shorthand}
+  {\list
+     {\printfield[shorthandwidth]{shorthand}}
+     {\setlength{\labelwidth}{\shorthandwidth}%
+      \setlength{\leftmargin}{\labelwidth}%
+      \setlength{\labelsep}{\biblabelsep}%
+      \addtolength{\leftmargin}{\labelsep}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}%
+      \renewcommand*{\makelabel}[1]{\hspace{12.5mm}\hss##1\>}}}
+  {\endlist}
+  {\item}
+
+\DeclareBibliographyDriver{set}{%
+  \entryset
+    {\ifbool{bbx:subentry}
+       {\printfield[bibentrysetcount]{entrysetcount}%
+    \printunit*{\addnbspace}}
+       {}}
+    {}%
+  \newunit\newblock
+  \usebibmacro{setpageref}%
+  \finentry}
+%</bibstyle>
+%    \end{macrocode}
+%
+% \begin{macro}{biblatex}
+% Теперь можно подключать пакет |biblatex|:
+% \changes{v1.1b}{2025-02-21}{Изменено название стиля библиографии}
+%    \begin{macrocode}
+%<*class>
+\RequirePackage[sorting=none,bibstyle=omgtudoc-asoiu-gost-numeric,%
+citestyle=gost-numeric]{biblatex}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Заголовки структурных частей документа}
+% 
+% Стандарт предполагает следующие структурные части:
+% 
+% \begin{itemize}
+% \item содержание;
+% \item введение;
+% \item перечень сокращений и обозначений;
+% \item термины и определения (может быть объединена с предыдущим
+% пунктом под названием <<определения, сокращения и обозначения>>;
+% \item заключение;
+% \item список использованных источников;
+% \item реферат;
+% \item список исполнителей.
+% \end{itemize}
+%
+% Заголовки этих структурных частей размещаются посередине. Реализуем
+% команды для их помещения.
+%
+% Для начала реализуем общую команду для подобного рода заголовков
+% \cs{centered@heading}, которая будет помещать ненумерованный
+% отцентрованный заголовок в текст и в содержание.
+%
+% \begin{macro}{\centered@heading}
+% \changes{v1.0d}{2025-02-06}{Исправлено выравнивание заголовка
+%    отцентрованного ненумерованного с помещением в содержание}
+% Заголовок отцентрованный ненумерованный, помещается на уровень раздела
+% в содержание.
+%    \begin{macrocode}
+\def\centered@heading#1{%
+    \clearpage%
+    \par%
+    \addcontentsline{toc}{section}{#1}%
+    \begingroup%
+    \centering\normalfont\normalsize\bfseries\MakeUppercase%
+    {\hfill #1 \hfill}
+    \endgroup \par
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\centered@heading@nontoc}
+% \changes{v1.0d}{2025-02-06}{Исправлено выравнивание заголовка
+%    отцентрованного ненумерованного без помещения в содержание}
+% Заголовок отцентрованный ненумерованный, в содержание не помещается.
+%    \begin{macrocode}
+\def\centered@heading@nontoc#1{%
+    \begingroup%
+    \centering\normalfont\normalsize\bfseries\MakeUppercase%
+    {\hfill #1 \hfill}
+    \endgroup \par
+}
+%    \end{macrocode}
+% \end{macro}
+% 
+% Далее~--- определим уже сами макросы.
+%
+% \begin{macro}{\preface} Заголовок введения.
+%    \begin{macrocode}
+\newcommand{\preface}{\centered@heading{Введение}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\conclusion} Заголовок заключения.
+%    \begin{macrocode}
+\newcommand{\conclusion}{\centered@heading{Заключение}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\abbreviations} Заголовок перечня сокращений и
+% обозначений.
+%    \begin{macrocode}
+\newcommand{\abbreviations}{\centered@heading{Перечень сокращений и
+обозначений}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\terms} Заголовок списка терминов и определений.
+%    \begin{macrocode}
+\newcommand{\terms}{\centered@heading{Термины и определения}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\termsandabbrev} Заголовок списка терминов и
+% сокращений.
+%    \begin{macrocode}
+\newcommand{\termsandabbrev}{\centered@heading{Определения,
+сокращения и обозначения}}
+%    \end{macrocode}
+% \end{macro}
+%
+% Определим также заголовок содержания. Параметры его находятся в
+% команде \cs{tableofcontents}, которую необходимо переопределить:
+%
+% \changes{v1.0d}{2025-02-06}{Убраны избыточные команды из определения оглавления}
+%
+%    \begin{macrocode}
+\renewcommand\tableofcontents{%
+    \centered@heading@nontoc{\contentsname}%
+    \@starttoc{toc}%
+    }
+%    \end{macrocode}
+%
+% Определим также заголовок для списка использованных источников:
+% \begin{macro}{otuasoiubibliography}
+% \changes{v1.0d}{2025-02-06}{Убраны избыточные команды из определения
+%     заголовка библиографии}
+% Стиль заголовка для списка использованных источников в соответствии с
+% ГОСТ 7.32-2017 и рабочей инструкцией.
+%    \begin{macrocode}
+\defbibheading{otuasoiubibliography}[\bibname]{%
+    \centered@heading{#1}}
+\DeclarePrintbibliographyDefaults{heading=otuasoiubibliography}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Формулы}
+%
+% Согласно инструкции, формулы обязательно нумеруются, сама формула
+% помещается по центру, а номер формулы помещается справа. Для того,
+% чтобы добиться такого вида, необходимо использовать пакет |amsmath|.
+%
+%    \begin{macrocode}
+\RequirePackage{amsmath}
+%    \end{macrocode}
+%
+% Ссылки на формулы указываются в скобках: для этого используется команда
+% \cs{eqref}.
+%
+% \subsection{Нумерация}
+%
+% Нумерация рисунков, таблиц и формул может осуществляться как по всему
+% документу, так и по разделам. Для установки нумерации по разделам
+% применяется параметр |withinsection|.
+%
+%    \begin{macrocode}
+\if@within@section
+\numberwithin{equation}{section}
+\counterwithin{table}{section}
+\counterwithin{figure}{section}
+\fi
+%    \end{macrocode}
+%
+% \subsection{Счётчики}
+%
+% Несмотря на введение |withinsection|, необходимо считать количество
+% таблиц и рисунков. Тем не менее, при установке счётчиков в 0
+% информация о количестве может потеряться.
+%
+%    \begin{macrocode}
+\RequirePackage{totcount}
+\RequirePackage{assoccnt}
+\RequirePackage{xspace}
+%    \end{macrocode}
+%
+% \begin{macro}{\totalfigures} Количество рисунков.
+%    \begin{macrocode}
+\newtotcounter{@figures}
+\regtotcounter{figure}
+\DeclareAssociatedCounters{figure}{@figures}
+\newcommand\totalfigures{\total{@figures}\xspace}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\totaltables} Количество таблиц.
+%    \begin{macrocode}
+\newtotcounter{@tables}
+\regtotcounter{table}
+\DeclareAssociatedCounters{table}{@tables}
+\newcommand\totaltables{\total{@tables}\xspace}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\totalappendices} Количество приложений.
+%    \begin{macrocode}
+\newtotcounter{@appendices}
+\setcounter{@appendices}{0}
+\DeclareAssociatedCounters{appendix}{@appendices}
+\newcommand\totalappendices{\total{@appendices}\xspace}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\totalequations} Количество уравнений.
+%    \begin{macrocode}
+\newtotcounter{@equations}
+\DeclareAssociatedCounters{equation}{@equations}
+\newcommand\totalequations{\total{@equations}\xspace}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\totalpages} Количество страниц.
+%    \begin{macrocode}
+\regtotcounter{page}
+\newcommand\totalpages{\total{page}\xspace}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\totalsources} Количество источников.
+%    \begin{macrocode}
+\newtotcounter{@sourceref}
+\AtEveryBibitem{\stepcounter{@sourceref}}
+\newcommand\totalsources{\total{@sourceref}\xspace}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Приложения}
+%
+% Теперь реализуем приложения. Для отделения основного текста от
+% приложений будем использовать команду \cs{appendices}, которая
+% переопределяет некоторые счётчики.
+%
+% Для нумерации приложений будут использоваться заглавные буквы русского
+% алфавита за исключением Ё, З, Й, О, Ч, Ъ, Ы, Ь. З, О и Ч похожи на
+% цифры 3, 0 и 4. Доступ к этим буквам можно будет получить через
+% команду \cs{GostAsbuk}.
+%
+%    \begin{macrocode}
+\def\gostasbuk@Alph#1{\ifcase#1\or
+   А\or Б\or В\or Г\or Д\or Е\or Ж\or
+   И\or К\or Л\or М\or Н\or П\or Р\or
+   С\or Т\or У\or Ф\or Х\or Ц\or Ш\or 
+   Щ\or Э\or Ю\or Я%
+   \else\ClassError{omgtudoc-asoiu}{Invalid value of counter}\fi
+}
+\def\GostAsbuk#1{\expandafter\gostasbuk@Alph\csname c@#1\endcsname}
+%    \end{macrocode}
+%
+% Теперь можно реализовать команду \cs{appendices}, которая переведёт
+% дальнейший документ в режим приложений. В этом режиме в оглавление
+% будут попадать только заголовки самих приложений, но не их
+% подразделов.
+%
+% \begin{macro}{\appendices}
+%    \begin{macrocode}
+\newtotcounter{appendix}
+\newcommand\appendices{%
+    \counterwithin{section}{appendix}%
+    \addtocontents{toc}{\setcounter{tocdepth}{0}}%
+    \renewcommand\thesection{\theappendix.\arabic{section}}%
+    \renewcommand\section{\@startsection{section}{1}{\parindent}%
+        {0pt}{1sp}{\normalfont\normalsize\bfseries}}%
+    \renewcommand\theappendix{\GostAsbuk{appendix}}%
+%    \end{macrocode}
+%
+% Далее нужно будет переопределить счётчики.
+%
+%    \begin{macrocode}
+    \counterwithout{equation}{section}%
+    \counterwithout{figure}{section}%
+    \counterwithout{table}{section}%
+    \numberwithin{equation}{appendix}%
+    \counterwithin{figure}{appendix}%
+    \counterwithin{table}{appendix}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% Теперь приложения начинаются с команд вида
+% \cs{appendix}\meta{type}\oarg{tocname}\marg{name}. Существует три типа
+% приложений:
+%
+% \begin{itemize}
+% \item обязательное (команда \cs{appendix});
+% \item рекомендуемое (команда \cs{appendixrec});
+% \item справочное (команда \cs{appendixhelp})
+% \end{itemize}
+%
+% Эти три команды имеют общую структру, поэтому они будут вызывать более
+% общую команду \cs{@startappendix}:
+%
+% \begin{macro}{\@startappendix}\marg{type}\marg{name}
+%
+% Печатает заголовок приложения с типом \meta{type} и названием
+% \meta{name}.
+%
+%    \begin{macrocode}
+\def\@startappendix#1#2{
+    \clearpage%
+    \SuspendCounters{@figures}%
+    \SuspendCounters{@tables}%
+    \SuspendCounters{@equations}%
+    \refstepcounter{appendix}%
+    \ResumeSuspendedCounters%
+    \addcontentsline{toc}{appendix}{Приложение \theappendix\space (#1) #2}%
+    \begingroup
+    \centering\normalfont\normalsize\bfseries%
+    ПРИЛОЖЕНИЕ \theappendix{}\\
+    \centering ({#1})\\
+    \centering {\hfill #2 \hfill}
+    \endgroup
+    \par
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\appendix,\appendixhelp,\appendixrec}
+%    \begin{macrocode}
+\renewcommand{\appendix}{\@startappendix{обязательное}}
+\newcommand{\appendixhelp}{\@startappendix{справочное}}
+\newcommand{\appendixrec}{\@startappendix{рекомендуемое}}
+%    \end{macrocode}
+% \end{macro}
+%
+% Определим также стиль пункта оглавления для приложений.
+%
+%    \begin{macrocode}
+\newcommand*\l@appendix[2]{\@dottedtocline{0}{0em}{3em}{\textbf{#1}}{#2}}
+%    \end{macrocode}
+%
+% \subsection{Титульные листы} \label{titlepage}
+%
+% Первой страницей любого отчёта является титульный лист, который не
+% нумеруется и содержит все основные данные о работе.
+%
+% \begin{macro}{\maketitle} Создаёт титульный лист.
+%
+% \changes{v1.1}{2025-02-16}{Титульный лист не создаётся, если не определена
+%    команда \cs{@titlepage@template}}
+%
+%    \begin{macrocode}
+\RequirePackage{etoolbox}
+\renewcommand\maketitle{%
+    \ifcsdef{@titlepage@template}{\@titlepage@template%
+    \thispagestyle{empty}%
+    \newpage}{}
+}
+%</class>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@titlepage@template}
+% Команда \cs{@titlepage@template} определяется в одном из файлов с
+% расширением |tpt|, который соответствует переданному параметру.
+%
+%    \begin{macrocode}
+%<*labreport>
+\long\def\@titlepage@template{%
+    \begin{center}%
+        Министерство науки и высшего образования Российской Федерации
+
+        Федеральное государственное автономное образовательное
+        учреждение высшего образования
+
+        <<Омский государственный технический университет>>
+
+        Кафедра <<Автоматизированные системы обработки информации и
+        управления>>
+        ~\par
+        ~\par
+        ~\par
+        \textbf{ОТЧЁТ}\par
+        о лабораторной работе\@laboratory@index\@laboratory@theme
+        по дисциплине
+        <<\@laboratory@subject>>\par
+        студента \@student@surname@g\ \@student@name@g\space
+        \@student@fathername@g\ группы \@student@group\par
+        ~\par
+        ~\par
+        \textbf{Пояснительная записка}\par
+        Шифр проекта ЛР-02068999-43-\@student@id-ПЗ\par
+        \@student@direction@a\ \@student@direction@id\space
+        \@student@direction@name\par
+        \vfill
+        \@professor@value \hfill \@professor@initials\par
+        ~\par
+        Студент \hfill \@student@initials\par
+        \vfill
+        Омск \@doc@year
+    \end{center}
+}
+%</labreport>
+%<*courseproj>
+\long\def\@titlepage@template{%
+    \begin{center}
+        Министерство науки и высшего образования Российской Федерации
+
+        Федеральное государственное автономное образовательное
+        учреждение высшего образования
+
+        <<Омский государственный технический университет>>
+
+        Кафедра <<Автоматизированные системы обработки информации и
+        управления>>
+        ~\par
+        ~\par
+        ~\par
+        {\bfseries КУРСОВОЙ ПРОЕКТ}\par
+        на тему <<\@courseproj@theme>>\par
+        по дисциплине <<\@courseproj@subject>>\par
+        студента \@student@surname@g\ \@student@name@g\space
+        \@student@fathername@g\ группы \@student@group\par
+        ~\par
+        ~\par
+        {\bfseries Пояснительная записка}\par
+        Шифр проекта КП-02068999-43-\@student@id-ПЗ\par
+        \@student@direction@a\space \@student@direction@id\space
+            \@student@direction@name\par
+        \vfill
+        \@professor@value\hfill \@professor@initials\par
+        ~\par
+        Студент \hfill \@student@initials\par
+        ~\par
+        {\raggedleft К защите:\hfill}
+        \vskip\baselineskip
+        \begin{tabular}{|c|c|c|}
+            \hline
+            \begin{minipage}[t]{5.5cm}
+            \begin{center}
+            \setlength{\parindent}{0em}
+            Выполнение и подготовка к защите, баллы
+            \end{center}
+            \end{minipage} & 
+            \begin{minipage}[t]{5cm}
+            \begin{center}
+            Защита КП, баллы
+            \end{center} 
+            \end{minipage} & 
+            \begin{minipage}[t]{5cm}
+            \begin{center}
+            Итоговый рейтинг, баллы
+            \end{center}
+            \end{minipage} \\
+            \hline
+            ~&~&~ \\ \hline
+        \end{tabular}\par
+        \vskip\baselineskip
+    \end{center}
+    \begin{flushleft}
+        {Проект защищён с оценкой:}\par
+    \end{flushleft}
+    \vfill
+    \begin{center}
+        Омск \@doc@year
+        \setlength{\parindent}{12.5mm}
+    \end{center}
+}
+%</courseproj>
+%    \end{macrocode}
+%
+% Для типа документа |minimal| титульный лист не предусмотрен.
+%    \begin{macrocode}
+%<*minimal>
+\ClassWarning{omgtudoc-asoiu}{Minimal document type is selected: %
+   no metadata setting commands are available, title page %
+   won't be created.}
+%</minimal>
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Параметры документа}
+%
+% Класс |otuasoiu| определяет следующие общие параметры:
+%
+% \begin{macro}{\studentname}\marg{surnamen}\marg{namen}
+% \marg{fathernamen}\marg{surnameg}\marg{nameg}\marg{fathernameg}.
+% 
+% Определяет имя студента в именительном и родительном падежах.
+%
+% \changes{v1.0c}{2025-02-04}{Исправлено получение инициалов студента}
+% \changes{v1.0d}{2025-02-06}{Все параметры студента (ФИО) перемещены
+%    ближе к определению \cs{studentname}}
+% \ToDo{вынести получение инициалов в отдельную функцию}
+% \ToDo{реализовать склонение для имён - склонение вынести в отдельный пакет}
+%
+%    \begin{macrocode}
+%<*labreport|courseproj>
+\gdef\@student@surname@n{\ClassError{omgtudoc-asoiu}{Не указана фамилия
+студента}}
+\gdef\@student@surname@g{\ClassError{omgtudoc-asoiu}{Не указана фамилия
+студента}}
+\gdef\@student@name@n{\ClassError{omgtudoc-asoiu}{Не указано имя
+студента}}
+\gdef\@student@name@g{\ClassError{omgtudoc-asoiu}{Не указано имя
+студента}}
+\gdef\@student@fathername@n{\ClassError{omgtudoc-asoiu}{Не указано отчество
+студента}}
+\gdef\@student@fathername@g{\ClassError{omgtudoc-asoiu}{Не указано отчество
+студента}}
+\ExplSyntaxOn
+\str_new:N \l__otuasoiu_nameinitial_str
+\str_new:N \l__otuasoiu_fathernameinitial_str
+\tl_new:N \l__otuasoiu_shortname_tl
+\newcommand{\studentname}[6]{%
+    \xdef\@student@surname@n{#1}%
+    \xdef\@student@name@n{#2}%
+    \xdef\@student@fathername@n{#3}%
+    \xdef\@student@surname@g{#4}%
+    \xdef\@student@name@g{#5}%
+    \xdef\@student@fathername@g{#6}%
+    \str_set:Ne \l__otuasoiu_nameinitial_str 
+        { \str_item:Nn { \@student@name@n } {1} }
+    \str_set:Ne \l__otuasoiu_fathernameinitial_str 
+        { \str_item:Nn { \@student@fathername@n } {1} }
+    \tl_set:Nn \l__otuasoiu_shortname_tl { 
+        \text_uppercase:n { \str_use:N \l__otuasoiu_nameinitial_str } .~ 
+        \text_uppercase:n { \str_use:N \l__otuasoiu_fathernameinitial_str } .~
+        \@student@surname@n }
+    \xdef\@student@initials{\tl_use:N \l__otuasoiu_shortname_tl}
+}
+\ExplSyntaxOff
+%</labreport|courseproj>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\studentgroup}\marg{group}.
+%
+% Определяет группу студента.
+%
+%    \begin{macrocode}
+%<*labreport|courseproj>
+\gdef\@student@group{\ClassError{omgtudoc-asoiu}{Не указана группа студента}}
+\newcommand{\studentgroup}[1]{\gdef\@student@group{#1}}
+%</labreport|courseproj>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\studentid}\marg{id}.
+%
+% Определяет номер студента.
+%
+%    \begin{macrocode}
+%<*labreport|courseproj>
+\gdef\@student@id{\ClassError{omgtudoc-asoiu}{Не указан номер зачётной
+книжки/студенческого билета}}
+\newcommand{\studentid}[1]{\gdef\@student@id{#1}}
+%</labreport|courseproj>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\speciality}\marg{spec}\marg{id}\marg{name}.
+%
+% Определяет специальность студента. В поле \marg{spec} вписывается обычно или
+% <<Направление>>, или <<Специальность>>.
+%
+%    \begin{macrocode}
+%<*labreport|courseproj>
+\gdef\@student@direction@a{\ClassError{omgtudoc-asoiu}{Не указано
+направление студента}}
+\gdef\@student@direction@id{\ClassError{omgtudoc-asoiu}{Не указано
+направление студента}}
+\gdef\@student@direction@name{\ClassError{omgtudoc-asoiu}{Не указано
+направление студента}}
+\newcommand{\speciality}[3]{%
+    \gdef\@student@direction@a{#1}%
+    \gdef\@student@direction@id{#2}%
+    \gdef\@student@direction@name{#3}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \changes{v1.1}{2025-02-16}{Добавление макросов для конкретных значений направления:
+%    \cs{directionIVT}, \cs{directionPIN}, \cs{specialityPE}}
+%
+% \begin{macro}{\directionIVT}
+% Задаёт направление 09.03.01 <<Информатика и вычислительная техника>>
+%    \begin{macrocode}
+\newcommand{\directionIVT}{\speciality{Направление}%
+	{09.03.01}{Информатика и вычислительная техника}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\directionPIN}
+% Задаёт направление 09.03.04 <<Программная инженерия>>
+%    \begin{macrocode}
+\newcommand{\directionPIN}{\speciality{Направление}%
+	{09.03.04}{Программная инженерия}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\specialityPE}
+% \changes{v1.1b}{2025-02-21}{Исправлено определение макроса \cs{specialityPE}}
+% Задаёт специальность 09.05.01 <<Применение и эксплуатация автоматизированных
+% систем специального назначения>>.
+%    \begin{macrocode}
+\newcommand{\specialityPE}{\speciality{Специальность}%
+	{09.05.01}{Применение и эксплуатация автоматизированных систем %
+	специального назначения}}
+%</labreport|courseproj>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\laboratoryid}\marg{id}.
+%
+% Определяет номер лабораторной работы. Только для типа документа |labreport|.
+%
+%    \begin{macrocode}
+%<*labreport>
+\gdef\@laboratory@index{\ClassWarning{omgtudoc-asoiu}{Не указан номер
+лабораторной работы}} 
+\ExplSyntaxOn
+\newcommand{\laboratoryid}[1]{\gdef\@laboratory@index{~№#1~}}
+\ExplSyntaxOff
+%</labreport>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\laboratorytheme}{\marg{name}}.
+%
+% Определяет тему лабораторной работы. Только для типа документа |labreport|.
+%
+%    \begin{macrocode}
+%<*labreport>
+\gdef\@laboratory@theme{\ClassWarning{omgtudoc-asoiu}{Не указана тема
+лабораторной работы}\par}
+\newcommand{\laboratorytheme}[1]{\gdef\@laboratory@theme{\par<<#1>>\par}}
+%</labreport>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\laboratorysubject}\marg{name}.
+%
+% Определяет дисциплину, по которой выполнена лабораторная работа. Только для
+% типа документа |labreport|.
+%
+% \changes{v1.0e}{2025-02-14}{Исправлена ошибка: непонятный 0 в
+%     определении}
+%    \begin{macrocode}
+%<*labreport>
+\gdef\@laborartory@subject{\ClassError{omgtudoc-asoiu}{Не указана
+дисциплина, по которой выполнена лабораторная работа}}
+\newcommand{\laboratorysubject}[1]{\gdef\@laboratory@subject{#1}}
+%</labreport>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\courseprojsubject}\marg{name}.
+% 
+% Дисциплина, по которой сдаётся курсовой проект. Только для типа документа
+% |courseproj|.
+%
+%    \begin{macrocode}
+%<*courseproj>
+\gdef\@courseproj@subject{\ClassError{omgtudoc-asoiu}{Не указана дисциплина,
+по которой выполнен курсовой проект}}
+\newcommand{\courseprojsubject}[1]{\gdef\@courseproj@subject{#1}}
+%</courseproj>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\courseprojtheme}\marg{name}.
+% 
+% Тема курсового проекта. Только для типа документа |courseproj|.
+%
+%    \begin{macrocode}
+%<*courseproj>
+\gdef\@courseproj@theme{\ClassError{omgtudoc-asoiu}{Не указана тема курсового
+проекта}}
+\newcommand{\courseprojtheme}[1]{\gdef\@courseproj@theme{#1}}
+%</courseproj>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\professorvalue}\marg{value}.
+%
+% Должность и степень преподавателя.
+%
+%    \begin{macrocode}
+%<*labreport|courseproj>
+\gdef\@professor@value{\ClassError{omgtudoc-asoiu}{Не указан
+преподаватель}}
+\gdef\@professor@initials{\ClassError{omgtudoc-asoiu}{Не указан
+преподаватель}}
+\newcommand{\professorvalue}[1]{\gdef\@professor@value{#1}}
+%</labreport|courseproj>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\professorinitials}\marg{initials}.
+%
+% Фамилия и инициалы преподавателя.
+%
+%    \begin{macrocode}
+%<*labreport|courseproj>
+\newcommand{\professorinitials}[1]{\gdef\@professor@initials{#1}}
+%</labreport|courseproj>
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\docyear}\marg{year}
+%
+% Год создания документа. По умолчанию \cs{year}.
+%
+%    \begin{macrocode}
+%<*labreport|courseproj>
+\gdef\@doc@year{\the\year}
+\newcommand{\docyear}[1]{\gdef\@doc@year{#1}}
+%</labreport|courseproj>
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Перечисления}
+%
+% \changes{v1.0e}{2025-02-14}{Устранение дублирования исходного текста во всех
+%     файлах}
+% \changes{v1.1}{2025-02-16}{Отказ от использования пакета enumitem}
+% \textit{Из класса article.} Следующие команды используются, чтобы выставить 
+% значения по умолчанию для параметров списка (среды list) (см. мануал \LaTeX\ 
+% для объяснения значений этих параметров). Начальные установки таковы: 
+% для начала правое поле списка \cs{rightmargin}, абзацный отступ 
+% внутри списка \cs{listparindent} и отступ элемента \cs{itemindent} 
+% устанавливаются в  0~пт. Затем для |K|-го уровня списка вызывается команда
+% \cs{@listK}, где |K| обозначает римскую цифру от 1 до 6 (i, ii, ..., vi). 
+% По умолчанию, \cs{@listK} должна устанавливать левое поле списка \cs{leftmargin} в 
+% значение \cs{leftmarginK}.
+%
+% \ToDo{сделать настройку для дополнительных отступов}
+%
+% \begin{macro}{\leftmargini,\leftmarginii,\leftmarginiii,\leftmarginiv,\leftmarginv,\leftmarginvi,\itemindent,\listparindent}
+% В ГОСТ предусмотрено, что элементы списков ведут себя как обычные абзацы:
+% начинаются они с абзацного отступа, затем за ними идёт маркер или номер, а далее
+% сам текст элемента. Никаких отступов от левого края страницы не предусмотрено.
+%
+%    \begin{macrocode}
+%<*class>
+\setlength\leftmargini{0pt}
+\setlength\leftmarginii{0pt}
+\setlength\leftmarginiii{0pt}
+\setlength\leftmarginiv{0pt}
+\setlength\leftmarginv{0pt}
+\setlength\leftmarginvi{0pt}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\labelsep,\labelwidth}
+% Между маркером/номером и текстом элемента списка стоит пробел, сам маркер/номер
+% должен иметь естественную ширину. Пробел определим позднее.
+%
+%    \begin{macrocode}
+\setlength\labelwidth{0pt}
+\setlength\labelsep{0pt}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@listi,\@listii,\@listiii,\@listiv,\@listv,\@listvi}
+% Никаких дополнительных межстрочных отступов не предусмотрено.
+%    \begin{macrocode}
+\def\@listI{\leftmargin=\leftmargini
+            \itemindent\parindent
+            \listparindent\parindent
+            \itemsep=0pt
+            \parsep=0pt
+            \topsep=0pt}
+\let\@listi\@listI
+\def\@listii{\leftmargin=\leftmarginii
+            \itemindent\parindent
+            \listparindent\parindent
+            \itemsep=0pt
+            \parsep=0pt
+            \topsep=0pt}
+\def\@listiii{\leftmargin=\leftmarginiii
+            \itemindent\parindent
+            \listparindent\parindent
+            \itemsep=0pt
+            \parsep=0pt
+            \topsep=0pt}
+\def\@listiv{\leftmargin=\leftmarginiv
+            \itemindent\parindent
+            \listparindent\parindent
+            \itemsep=0pt
+            \parsep=0pt
+            \topsep=0pt}
+\def\@listv{\leftmargin=\leftmarginv
+            \itemindent\parindent
+            \listparindent\parindent
+            \itemsep=0pt
+            \parsep=0pt
+            \topsep=0pt}
+\def\@listvi{\leftmargin=\leftmarginvi
+            \itemindent\parindent
+            \listparindent\parindent
+            \itemsep=0pt
+            \parsep=0pt
+            \topsep=0pt}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\gostasbuk}\oarg{counter}
+% Представляет значение счётчика в виде буквы русского алфавита, за
+% исключением ё, з, й, о, ч, ъ, ы, ь.
+%    \begin{macrocode}
+\def\gostasbuk@alph#1{\ifcase#1\or
+   а\or б\or в\or г\or д\or е\or ж\or
+   и\or к\or л\or м\or н\or п\or р\or
+   с\or т\or у\or ф\or х\or ц\or ш\or 
+   щ\or э\or ю\or я%
+   \else\ClassError{omgtudoc-asoiu}{Invalid value of counter}\fi
+}
+\def\gostasbuk#1{\expandafter\gostasbuk@alph\csname c@#1\endcsname}
+%    \end{macrocode}
+% \end{macro}
+%
+% Далее определим перечисления, пункты которых начинаются по стандарту.
+% Для этого сначала переопределим среды |itemize| и |enumerate|:
+%
+% \begin{environment}{itemize}
+% Ненумерованный список.
+% \changes{v1.1b}{2025-02-21}{Исправлены абзацные отступы у
+% ненумерованных списков}
+%    \begin{macrocode}
+\def\itemize{%
+  \ifnum \@itemdepth >\thr@@\@toodeep\else
+    \advance\@itemdepth\@ne
+    \edef\@itemitem{labelitem\romannumeral\the\@itemdepth}%
+    \expandafter
+    \list
+      \csname\@itemitem\endcsname
+      {\def\makelabel##1{##1~}}%
+  \fi}
+%    \end{macrocode}
+% \end{environment}
+% \begin{environment}{enumerate}
+% \changes{v1.1b}{2025-02-21}{Исправлены абзацные отступы у
+% нумерованных списков}
+% Нумерованный список.
+%    \begin{macrocode}
+\def\enumerate{%
+  \ifnum \@enumdepth >\thr@@\@toodeep\else
+    \advance\@enumdepth\@one
+    \edef\@enumctr{enum\romannumeral\the\@enumdepth}%
+    \expandafter
+    \list
+      \csname label\@enumctr\endcsname
+      {\usecounter\@enumctr\def\makelabel##1{##1~}}%
+  \fi}
+%    \end{macrocode}
+% \end{environment}
+%
+% Далее определим маркеры перечислений.
+% \begin{macro}{\labelitemi,\labelitemii,\labelitemiii,\labelitemiv}
+% Маркеры для ненумерованных списков. В соответствии со стандартом, это
+% должно быть тире.
+%    \begin{macrocode}
+\renewcommand\labelitemi{---}
+\renewcommand\labelitemii{---}
+\renewcommand\labelitemiii{---}
+\renewcommand\labelitemiv{---}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\theenumi,\theenumii,\theenumiii,\theenumiv}
+% Представление счётчиков для нумерованныых списков. По стандарту
+% это~--- буквы русского алфавита.
+%    \begin{macrocode}
+\renewcommand\theenumi{\gostasbuk{enumi}}
+\renewcommand\theenumii{\gostasbuk{enumii}}
+\renewcommand\theenumiii{\gostasbuk{enumii}}
+\renewcommand\theenumiv{\gostasbuk{enumii}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\labelenumi,\labelenumii,\labelenumiii,\labelenumiv}
+% Метки для нумерованных списков. После буквы или цифры ставится круглая
+% скобка.
+%    \begin{macrocode}
+\renewcommand\labelenumi{\theenumi)}
+\renewcommand\labelenumii{\theenumii)}
+\renewcommand\labelenumiii{\theenumiii)}
+\renewcommand\labelenumiv{\theenumiv)}
+%</class>
+%    \end{macrocode}
+% \end{macro}
+%
+% \Finale
+\endinput
+% vi: ts=2 sw=2 expandtab tw=72 formatoptions+=t linebreak

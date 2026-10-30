@@ -1,0 +1,40 @@
+% United States Graphics Company invoice -- github:usgraphics/usgc-invoice,
+% BSD-3-Clause (verified in the repo's LICENSE). pdflatex, no bundled fonts:
+% usgc-invoice.cls sets \familydefault to \ttdefault (monospace) and pulls no
+% external font, so it renders identically on any TeX Live install.
+\documentclass{usgc-invoice}
+
+\begin{document}
+
+\header{2026-0142}
+       {Aug 12, 2026}
+       {Sep 11, 2026}
+
+\begin{company}
+  Harlow \& Vance Design Studio
+  228 Kestrel Street, Suite 4
+  Austin, TX 78702
+  Attn: Accounts Payable
+\end{company}
+
+\order{ORD-88213}
+      {CHK-40F9A2}
+      {Aug 12, 2026}
+
+\begin{orderTable}
+  \N & BRD-100 & Brand identity package (logo, palette, type system) & 1850.00 & 1 & 1850.00 \\
+  \N & WEB-205 & Website design, 5 pages                             & 2400.00 & 1 & 2400.00 \\
+  \N & REV-010 & Extra revision round                                &  150.00 & 2 &  300.00 \\
+  \totals
+    {4550.00}   % Subtotal
+    {-185.00}   % Discount (early-payment, 4%)
+    {4365.00}   % Net sales total
+    {349.20}    % Tax (8%)
+    {4714.20}   % Total
+    {-1000.00}  % Paid (deposit)
+    {3714.20}   % Balance
+\end{orderTable}
+
+\footer{Wire transfer -- Chase Bank, Acct \#00219948217, Routing \#111000025}
+
+\end{document}

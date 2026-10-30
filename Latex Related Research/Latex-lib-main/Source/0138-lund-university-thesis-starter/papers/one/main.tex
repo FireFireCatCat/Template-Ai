@@ -1,0 +1,32 @@
+%%% TODO: Set the title for the paper.
+\chapter[Paper with Interesting Title]{Paper with Interesting Title}
+
+%%% TODO: Add reference for the paper.
+\paperRemark{\paperOne}
+%%% TODO: Add a label to the paper.
+\paper{paper:one}
+
+%%% TODO: Set up paths for included graphics and bib files.
+\makeatletter
+  \def\input@path{{papers/one/}}
+  \graphicspath{{papers/one/}}
+\makeatother
+\renewcommand{\bibpath}[1]{papers/one/#1}
+
+%%% Add paper specific macros.
+\input{macros-local}
+
+%%% Input abstract of paper.
+\input{abstract}
+
+%%% TODO: Files of the paper.
+\input{introduction}
+\input{preliminaries}
+\input{contributions}
+\input{conclusion}
+
+\input{acknowledgements}
+
+%%% TODO: Add bib for paper.
+\bibliographystyle{alpha}
+\bibliography{\bibpath{refLocal}}
