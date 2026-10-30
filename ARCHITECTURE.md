@@ -6,7 +6,8 @@ the contexts, the compat writer, the Flouest pin; the 7 theorem handlers with
 keys and presets from the Solution files; 46 class profiles (9 measured by
 the class probe, 37 read from requirement documents, Solution files and class
 source) and class rules on the ways' keys; a resolver; and the library's ways in
-the testing pipeline's matrix (`compat run --library`). Beyond the pilot,
+the testing pipeline's matrix (`compat run --library`: 97 ways over 28 nodes,
+every preset, under a class setting for each profile; planned, not compiled). Beyond the pilot,
 every one of Flouest's 32 nodes has its ways at the pilot's depth: 110
 handlers, 507 parameters typed from the packages' documented interfaces, 347
 presets citing the Solution rows that use them (243 Solution files), each
@@ -655,7 +656,8 @@ siamart, MDPI, AASTeX, A&A, MNRAS, LIPIcs, EasyChair, Elsevier's cas-sc and
 cas-dc, IOP's iopjournal). Nine are measured by the probe
 (`testing-pipeline`); the other 37 are read from their requirement documents,
 the research's Solution files and CTAN, each source cited, and wait for the
-probe. A class that loads
+probe. Each has a class setting in `testing-pipeline/settings/classes/` (jlreq
+aside, as it does not run in ZeroTeX-NG), so `compat probe` measures them all. A class that loads
 another names it as its `base` (ctexbeamer on beamer, ltxdoc and the journal
 classes built on article), and a key's rule for the base holds under it. Each profile says what the class defines: its counters, its
 environments (abstract, figure, table, thebibliography, theorems), its commands
@@ -1020,7 +1022,11 @@ then the `doc` ways (page, fonts, headers and footers, spacing, colour).
 handlers at the pilot's depth (section 2.1). What M3 still lacks is what M1
 went on to do: compiling each preset in the matrix, the parent rules and
 context needs the matrix finds, and the Solution check for each node (the
-pilot's `node cli.ts solutions`). Those wait for the matrix runs. Captions
+pilot's `node cli.ts solutions`). Those wait for the matrix runs. The matrix
+now takes 28 of the 32 nodes, every preset of their 97 ways
+(`testing-pipeline/ARCHITECTURE.md` section 10, step 6b). Code, inline maths,
+references and footnote anchors need a change in Flouest first, since its
+emitter prints them in one fixed style. Captions
 (the research's `cap.*`) and the `doc` ways are not built.
 
 **M4: the automation.** Intake from Solution files and requirement documents,

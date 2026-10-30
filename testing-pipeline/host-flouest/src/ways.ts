@@ -20,15 +20,27 @@ import type { Realization } from '@flouest/JSON->Latex Compiler/src/Profile/Prof
 import type { ProfileRealizationLibrary } from '@flouest/JSON->Latex Compiler/src/Profile/Profile_General/types.ts';
 import type { VariantsResult } from '@flouest/Template/test/dynamic-testing/variants.ts';
 
-/** A handler a way adds: a style in a node's handler, in the compiler's family for the node. */
+/**
+ * A handler a way adds: a style in a node's handler, in the compiler's family
+ * for the node. `presets`: a style for each preset, which a member names
+ * (`host.ts`); `style` is then the first preset's.
+ */
 export type WayPlugin = {
   readonly family: keyof ProfileRealizationLibrary;
   readonly kind: string;
   readonly style: string;
   readonly realization: Realization;
+  readonly presets?: readonly { readonly id: string; readonly style: string; readonly realization: Realization }[];
 };
 
-export type FlouestWay = Way & { readonly plugin?: WayPlugin };
+/** Every style a plug-in adds, each once: its own and its presets'. */
+export const stylesOf = (plugin: WayPlugin): { readonly style: string; readonly realization: Realization }[] => {
+  const styles = new Map([[plugin.style, plugin.realization], ...(plugin.presets ?? []).map((p) => [p.style, p.realization] as const)]);
+  return [...styles].map(([style, realization]) => ({ style, realization }));
+};
+
+/** `folder`: for a way the handler library brings, its folder under the library's root. */
+export type FlouestWay = Way & { readonly plugin?: WayPlugin; readonly folder?: string };
 
 export const GENERAL = 'general';
 
@@ -95,7 +107,10 @@ export class FlouestLibrary implements Library {
     const { plugin, ...key } = way;
     return hashJson({
       key,
-      plugin: plugin === undefined ? null : { ...plugin, realization: { preamble: String(plugin.realization.preamble), emit: String(plugin.realization.emit) } },
+      plugin:
+        plugin === undefined
+          ? null
+          : { family: plugin.family, kind: plugin.kind, styles: stylesOf(plugin).map((s) => ({ style: s.style, preamble: String(s.realization.preamble), emit: String(s.realization.emit) })) },
     });
   }
 
@@ -103,7 +118,7 @@ export class FlouestLibrary implements Library {
     this.written.push(table);
     if (this.#library?.ways.has(table.way)) {
       const way = this.#ways.find((w) => w.id === table.way);
-      const folder = join(this.#library.root, 'nodes', (way?.node ?? '').replace(/\//g, '.'), table.way);
+      const folder = join(this.#library.root, way?.folder ?? join('nodes', (way?.node ?? '').replace(/\//g, '.'), table.way));
       writeFileSync(join(folder, 'matrix.generated.json'), `${JSON.stringify(table, null, 2)}\n`);
       return;
     }

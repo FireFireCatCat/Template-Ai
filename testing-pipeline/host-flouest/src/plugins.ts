@@ -23,7 +23,7 @@ import type { TemplateCall } from '@flouest/Template/template-pipeline-journal/d
 import { TEMPLATE_CALLERS } from '@flouest/Template/templates/index.ts';
 import { hashJson } from 'compat-core';
 
-import type { WayPlugin } from './ways.ts';
+import { stylesOf, type WayPlugin } from './ways.ts';
 
 /**
  * General's class line and the lines after it (`DOCUMENT_DECLARATION` in the
@@ -43,7 +43,7 @@ export const GENERAL_DECLARATION = [
   '\\usepackage{mathtools}',
 ] as const;
 
-/** The plug-ins for these ways: one per node handler, General's styles and each way's own. */
+/** The plug-ins for these ways: one per node handler, General's styles and each way's own (one per preset). */
 export const handlerPlugins = (plugins: readonly WayPlugin[]): HandlerPlugin[] => {
   const byHandler = new Map<string, WayPlugin[]>();
   for (const p of plugins) byHandler.set(`${p.family}/${p.kind}`, [...(byHandler.get(`${p.family}/${p.kind}`) ?? []), p]);
@@ -51,8 +51,12 @@ export const handlerPlugins = (plugins: readonly WayPlugin[]): HandlerPlugin[] =
     const [{ family, kind }] = ways as [WayPlugin, ...WayPlugin[]];
     const general = defaultProfile[family][kind];
     if (general === undefined) throw new Error(`plug-in: General has no handler ${family}/${kind} to add a style to`);
-    for (const w of ways) if (w.style in general) throw new Error(`plug-in: ${family}/${kind} already has a style "${w.style}" in General`);
-    return { family, kind, handler: { ...general, ...Object.fromEntries(ways.map((w) => [w.style, w.realization])) } };
+    const styles = ways.flatMap(stylesOf);
+    for (const s of styles) if (s.style in general) throw new Error(`plug-in: ${family}/${kind} already has a style "${s.style}" in General`);
+    const names = styles.map((s) => s.style);
+    const twice = names.find((name, i) => names.indexOf(name) !== i);
+    if (twice !== undefined) throw new Error(`plug-in: ${family}/${kind} is given the style "${twice}" twice`);
+    return { family, kind, handler: { ...general, ...Object.fromEntries(styles.map((s) => [s.style, s.realization])) } };
   });
 };
 
@@ -60,7 +64,7 @@ export const handlerPlugins = (plugins: readonly WayPlugin[]): HandlerPlugin[] =
 export const pluginTemplate = (plugins: readonly WayPlugin[]): string | undefined => {
   if (plugins.length === 0) return undefined;
   const handlers = handlerPlugins(plugins);
-  const name = `compat-${hashJson(plugins.map((p) => ({ family: p.family, kind: p.kind, style: p.style, preamble: String(p.realization.preamble), emit: String(p.realization.emit) }))).slice(0, 12)}`;
+  const name = `compat-${hashJson(plugins.flatMap((p) => stylesOf(p).map((s) => ({ family: p.family, kind: p.kind, style: s.style, preamble: String(s.realization.preamble), emit: String(s.realization.emit) })))).slice(0, 12)}`;
   if (Object.hasOwn(TEMPLATE_BUNDLES, name)) return name;
   const [line, ...preamble] = GENERAL_DECLARATION;
   const bundle = {

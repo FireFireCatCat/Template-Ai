@@ -16,7 +16,7 @@
  * goes through the store, so a second run compiles nothing, and a change
  * compiles only the documents whose LaTeX it changed.
  */
-import { latexLibWays } from '../src/latexLib.ts';
+import { latexLibWays, UNPLUGGED } from '../src/latexLib.ts';
 import { branchIndex, runMatrix } from '../src/matrix.ts';
 import { printFailures, printOrigins, printPlan, printRun, seconds } from '../src/report.ts';
 import { runSolo } from '../src/solo.ts';
@@ -30,6 +30,7 @@ const ws = openWorkspace();
 const started = performance.now();
 const subject = loadSubject(ws.flouest, depth).withWays(flag('library') ? await latexLibWays(ws) : []);
 console.log(`compat run: General to depth ${depth}, ${size} branches to a document, under ${ws.under.length} class setting and setup pair(s). Flouest's variants, marks and escapes in ${seconds(performance.now() - started)}.`);
+if (flag('library')) console.log(`library: not plugged in, so not tested: ${Object.keys(UNPLUGGED).join(', ')} (src/latexLib.ts says why)`);
 printPlan(subject);
 try {
   if (!flag('plan-only')) {

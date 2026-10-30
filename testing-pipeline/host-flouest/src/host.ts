@@ -142,6 +142,16 @@ export type FlouestDoc = {
 /** A combination's values as a member: JSON, as it is stored and hashed. */
 const valuesOf = (c: Combination): MemberValues => JSON.parse(JSON.stringify({ values: c.values, look: c.look, stored: c.stored })) as MemberValues;
 
+/** The value a library way's member carries beside General's: which of the way's presets prints it. */
+const PRESET = 'preset';
+
+/** The key a library reference list's document lists when nothing in it cites. */
+const LISTED = 'compatListed';
+
+/** A library citation or reference-list way's engine (its folder's way, `bib.natbib`); nothing for any other way. */
+const engineOf = (way: FlouestWay | undefined): string | undefined =>
+  way?.folder !== undefined && (way.plugin?.kind === 'cite' || way.plugin?.kind === 'refContainer') ? way.folder.split('/').at(-1) : undefined;
+
 const memberOf = (c: Combination): Member =>
   c.parent === undefined ? { values: valuesOf(c) } : { values: valuesOf(c), needs: { node: c.parent.label, values: valuesOf(c.parent.combination) } };
 
@@ -221,6 +231,8 @@ export class FlouestHost implements Host<FlouestDoc, FlouestPart> {
   readonly #build: ReturnType<typeof createBranchBuilder>;
   readonly #pair: ReturnType<typeof createFootnotePairing>;
   readonly #ways: ReadonlyMap<WayId, FlouestWay>;
+  /** The library's reference-list ways by engine. */
+  readonly #references = new Map<string, FlouestWay>();
   readonly #kinds: ReadonlyMap<NodeId, VariantsResult['kinds'][number]>;
   /** Each node's members, by their values: the Flouest variant and member that hold them. */
   readonly #members = new Map<NodeId, Map<string, readonly [number, number]>>();
@@ -244,6 +256,25 @@ export class FlouestHost implements Host<FlouestDoc, FlouestPart> {
       this.#members.set(kind.identity.label, byValues);
     }
     this.#template = pluginTemplate(ways.flatMap((w) => (w.plugin === undefined ? [] : [w.plugin])));
+    for (const way of ways) if (way.plugin?.kind === 'refContainer' && engineOf(way) !== undefined) this.#references.set(engineOf(way) as string, way);
+  }
+
+  /**
+   * The library's reference-list way a branch's document prints its
+   * bibliography with, and that way's preset: the branch's own, when it holds
+   * the reference-list way, else the way's first. A library citation way
+   * prints only its command and leaves its package to the reference list
+   * (`bib.natbib@cite` with `bib.natbib@containerBlock/refContainer`).
+   */
+  #referenceOf(branch: BranchSpec): { readonly engine: string; readonly way: FlouestWay; readonly preset: string | undefined } | undefined {
+    for (const step of branch.path) {
+      const engine = engineOf(this.#ways.get(step.variant.way));
+      const way = engine === undefined ? undefined : this.#references.get(engine);
+      if (engine === undefined || way === undefined) continue;
+      const preset = way.id === step.variant.way && typeof step.member[PRESET] === 'string' ? step.member[PRESET] : undefined;
+      return { engine, way, preset };
+    }
+    return undefined;
   }
 
   fingerprint(): string {
@@ -259,7 +290,8 @@ export class FlouestHost implements Host<FlouestDoc, FlouestPart> {
     const kind = this.#kinds.get(node);
     if (kind === undefined) return [];
     return ways.flatMap((way): HostVariant[] => {
-      if (this.#ways.get(way.id)?.plugin === undefined) {
+      const plugin = this.#ways.get(way.id)?.plugin;
+      if (plugin === undefined) {
         return kind.variants
           .filter((v) => generalWayId(node, v.packages) === way.id)
           .map((v) => ({ variant: { way: way.id, compat: {}, flags: v.flags as Flags }, members: v.members.map(memberOf), cover: v.cover }));
@@ -276,15 +308,38 @@ export class FlouestHost implements Host<FlouestDoc, FlouestPart> {
           groups.set(key, group);
         }
       }
-      return [...groups.values()].map((g) => ({ variant: { way: way.id, compat: {}, flags: g.flags }, members: [...g.members.values()], cover: g.members.size }));
+      if (plugin.presets === undefined) {
+        return [...groups.values()].map((g) => ({ variant: { way: way.id, compat: {}, flags: g.flags }, members: [...g.members.values()], cover: g.members.size }));
+      }
+      // With a style for each preset, the presets whose compat params agree share a
+      // variant, and the presets rotate over its members, so each is shown (core's
+      // `Way`: compat params split variants, the rest only change the look).
+      const byCompat = new Map<string, { compat: { [name: string]: Json }; presets: string[] }>();
+      for (const preset of way.presets) {
+        const compat = Object.fromEntries(way.compat.map((name) => [name, preset.params[name] ?? null]));
+        const entry = byCompat.get(canonical(compat)) ?? { compat, presets: [] };
+        entry.presets.push(preset.id);
+        byCompat.set(canonical(compat), entry);
+      }
+      return [...byCompat.values()].flatMap(({ compat, presets }) =>
+        [...groups.values()].map((g): HostVariant => {
+          const base = [...g.members.values()];
+          const members = Array.from({ length: Math.max(base.length, presets.length) }, (_, i): Member => {
+            const member = base[i % base.length] as Member;
+            return { ...member, values: { ...member.values, [PRESET]: presets[i % presets.length] as string } };
+          });
+          return { variant: { way: way.id, compat, flags: g.flags }, members, cover: members.length };
+        }),
+      );
     });
   }
 
   build(branch: BranchSpec, probes: BuildProbes): FlouestPart {
     const last = branch.path.length - 1;
     const path = branch.path.map((step, depth): SplitNode => {
-      const at = this.#members.get(step.node)?.get(canonical(step.member));
-      if (at === undefined) throw new Error(`host: ${step.node} has no member ${canonical(step.member).slice(0, 160)}`);
+      const { [PRESET]: _preset, ...values } = step.member;
+      const at = this.#members.get(step.node)?.get(canonical(values));
+      if (at === undefined) throw new Error(`host: ${step.node} has no member ${canonical(values).slice(0, 160)}`);
       return { label: step.node, depth, variant: at[0], member: at[1], children: [], ...(depth === last ? { branch: 0, marked: probes.marked } : {}) };
     });
     this.#build.restart();
@@ -364,7 +419,14 @@ export class FlouestHost implements Host<FlouestDoc, FlouestPart> {
       // Built as for its document; the sentinels' text only has to be text.
       const part = this.build(branch, { marked: markedOf(branch.id), sentinel: (id) => id });
       const nodes = [part.main, ...part.text, ...part.end].flatMap((n) => [...nodesIn(n.toJSON())]);
-      needs = nodes.some((n) => n.type === 'cite' || isBibliography(n)) ? [BIBLIOGRAPHY] : [];
+      // A library citation or reference list needs a bibliography by its engine, a reference list by its preset too.
+      const reference = this.#referenceOf(branch);
+      needs =
+        reference !== undefined
+          ? [[BIBLIOGRAPHY, reference.engine, ...(reference.preset === undefined ? [] : [reference.preset])].join(':')]
+          : nodes.some((n) => n.type === 'cite' || isBibliography(n))
+            ? [BIBLIOGRAPHY]
+            : [];
       this.#requires.set(branch.id, needs);
     }
     return needs;
@@ -382,7 +444,10 @@ export class FlouestHost implements Host<FlouestDoc, FlouestPart> {
   /**
    * The parts as one document, filed as the app stores one (Flouest's
    * `createFiler`), in the order given. A document that cites ends its text
-   * with its bibliography, before the footnote bodies the app stores last.
+   * with its bibliography, before the footnote bodies the app stores last. So
+   * does one holding a library reference list, which cites one entry if
+   * nothing else does: the app drops a blank reference list (Flouest's
+   * `withoutBlankReferences`), so the bibliography is what prints its way.
    */
   pack(parts: readonly FlouestPart[]): FlouestDoc {
     const schema = this.#schema;
@@ -390,6 +455,7 @@ export class FlouestHost implements Host<FlouestDoc, FlouestPart> {
     for (const p of parts) {
       for (const node of new Set([p.main, ...p.text, ...p.end])) for (const n of nodesIn(node.toJSON())) if (n.type === 'cite') for (const k of citedKeys(n)) keys.add(k);
     }
+    if (keys.size === 0 && parts.some((p) => this.#referenceOf(p.branch) !== undefined)) keys.add(LISTED);
     const blocks = [
       ...parts.flatMap((p, i) => p.text.map((node) => ({ node, part: i }))),
       ...(keys.size === 0 ? [] : [{ node: this.#bibliography([...keys].sort()), part: -1 }]),
@@ -452,7 +518,7 @@ export class FlouestHost implements Host<FlouestDoc, FlouestPart> {
     return result.ok ? result.latex : undefined;
   }
 
-  /** The document's LaTeX as the app writes it, each node bound to a plug-in way given its style. */
+  /** The document's LaTeX as the app writes it, each node bound to a plug-in way given its style (its preset's, when it has one). */
   #generalLatex(doc: FlouestDoc): { readonly json: NodeJson; readonly latex: string } {
     const saved = this.#latex.get(doc);
     if (saved !== undefined) return saved;
@@ -461,11 +527,19 @@ export class FlouestHost implements Host<FlouestDoc, FlouestPart> {
       const block = doc.mains[part] ?? -1;
       if (block < 0) return;
       branch.path.forEach((step, depth) => {
-        const style = this.#ways.get(step.variant.way)?.plugin?.style;
+        const plugin = this.#ways.get(step.variant.way)?.plugin;
+        const style = plugin?.presets?.find((p) => p.id === step.member[PRESET])?.style ?? plugin?.style;
         if (style === undefined) return;
         json = changeAt(json, [block], (root) => bindAt(root, branch.path.slice(1, depth + 1).map((s) => s.node), style));
       });
     });
+    // The document's bibliography, printed by the library reference list its branches need.
+    const reference = doc.parts.map((branch) => this.#referenceOf(branch)).find((r) => r !== undefined);
+    const bibliography = doc.order.indexOf(-1);
+    if (reference !== undefined && bibliography >= 0) {
+      const style = reference.way.plugin?.presets?.find((p) => p.id === reference.preset)?.style ?? reference.way.plugin?.style;
+      if (style !== undefined) json = changeAt(json, [bibliography], (root) => bindAt(root, [], style));
+    }
     const latex = this.#compile(json);
     if (latex === undefined) throw new Error('host: the app\'s compiler refused a filed document');
     if (!latex.includes(GENERAL_DECLARATION.join('\n'))) throw new Error(`host: General's class and preamble lines changed; update GENERAL_DECLARATION in plugins.ts. The document begins:\n${latex.slice(0, 600)}`);

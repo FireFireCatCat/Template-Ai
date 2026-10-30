@@ -31,7 +31,7 @@
  */
 import { canonical, hashJson } from './hash.ts';
 import { branchId, variantKey } from './ids.ts';
-import type { BranchId, BranchSpec, HostVariant, Member, NestingNode, NestingTree, NodeId, PathStep, Variant } from './model.ts';
+import type { BranchId, BranchSpec, HostVariant, Member, MemberValues, NestingNode, NestingTree, NodeId, PathStep, Variant } from './model.ts';
 
 /** A node's variants, as the host holds them under the library's ways. */
 export type VariantsOf = (node: NodeId) => readonly HostVariant[];
@@ -64,10 +64,13 @@ export const markedOf = (id: BranchId): boolean => Number.parseInt(id.slice(-1),
 /** A number from 0 to `n` - 1, the same for the same seed. */
 const pick = (seed: string, n: number): number => Number.parseInt(hashJson(seed).slice(0, 12), 16) % n;
 
-/** Whether a member can sit under `parent` (the step above it, if any): it needs no parent, or that one with those values. */
+/** Whether `values` hold every one of `wanted`; a host may add values of its own beside them (a library way's preset). */
+const holds = (values: MemberValues, wanted: MemberValues): boolean =>
+  Object.entries(wanted).every(([name, value]) => canonical(values[name] ?? null) === canonical(value));
+
+/** Whether a member can sit under `parent` (the step above it, if any): it needs no parent, or that one holding those values. */
 export const fits = (member: Member, parent: PathStep | undefined): boolean =>
-  member.needs === undefined ||
-  (parent !== undefined && parent.node === member.needs.node && canonical(parent.member) === canonical(member.needs.values));
+  member.needs === undefined || (parent !== undefined && parent.node === member.needs.node && holds(parent.member, member.needs.values));
 
 /** The member a node takes at a variant under `above`: a hash of all three, among the members that fit the parent. */
 const memberAt = (above: readonly PathStep[], node: NodeId, hv: HostVariant): number | undefined => {
@@ -99,7 +102,7 @@ const placeAlone = (
     let at: [HostVariant, number] | undefined;
     if (needs !== undefined && needs.node === node) {
       for (const candidate of variantsFor(node)) {
-        const i = candidate.members.findIndex((m) => canonical(m.values) === canonical(needs.values) && fits(m, path.at(-1)));
+        const i = candidate.members.findIndex((m) => holds(m.values, needs.values) && fits(m, path.at(-1)));
         if (i >= 0) {
           at = [candidate, i];
           break;

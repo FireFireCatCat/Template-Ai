@@ -80,37 +80,31 @@ Run these from the folder each one names, and compare with the results expected 
 | `Latex-Lib` | `node cli.ts ways` | every node with its ways |
 | `testing-pipeline` | `npm test` | 94 tests pass (core alone, with fakes) |
 | `testing-pipeline` | `node host-flouest/typecheck.mjs` | exits 0 |
-| `testing-pipeline` | `npm run compat -- run --classes article --setups A --library --plan-only` | `plan 12,330 branches`, `same tree yes`, 867 branches holding a library way (only theorem ways today, see 4b); compiles nothing |
+| `testing-pipeline` | `npm run compat -- run --library --plan-only` | `under 70 class setting and setup pair(s)`, the four nodes not plugged in (4b), `plan 73,845 branches`, `same tree yes`; compiles nothing |
 
 If `verify` reports `flouest: … changed since the pin`, the copied Flouest differs from the one the library was built against. Find out what changed before going on.
 
-## 4. What the matrix covers today, and what to add first
+## 4. What the matrix covers
 
-Running "every handler under every class" needs two additions. Neither is built yet.
+Both are built. What's left for this machine is the compiling.
 
 ### 4a. A class setting for every class profile
 
-`Latex-Lib/classes/` has 46 profiles. The pipeline compiles only under the class settings in `testing-pipeline/settings/classes/`, and there are 17 of those, covering 14 classes: article, amsart, book, report, beamer, memoir, scrartcl, scrbook, scrreprt, llncs, acmart (manuscript, sigconf), elsarticle (preprint, 5p), IEEEtran (conference, journal) and revtex4-2. These 32 profiles have no setting yet:
+`Latex-Lib/classes/` has 46 profiles, and `testing-pipeline/settings/classes/` has a setting for every one except jlreq, which does not run in ZeroTeX-NG. That makes 48 settings (acmart, elsarticle and IEEEtran have two each) and 70 class-and-setup pairs. Setup B adds `twocolumn` (`settings/setups.json`), so a class that is already two columns, or has no two-column mode, has `"setups": ["A"]`.
 
-a0poster, aa, aastex, amsbook, amsproc, cas-dc, cas-sc, ctexart, ctexbeamer, ctexbook, ctexrep, easychair, exam, extarticle, extbook, extreport, iopjournal, jlreq, letter, lipics, ltxdoc, mdpi, minimal, mnras, moderncv, proc, scrlttr2, siamart, sn-jnl, tikzposter, tufte-book, tufte-handout
+Some notes on particular classes:
+- **Class files copied in.** The engine's mirror may not have these classes, so their files are copied into `settings/classes/files/` from the research's template folders and checked by SHA-256:
+  - aa, with `linenoaa.sty`;
+  - iopjournal;
+  - `siamart251216`;
+  - MDPI, with its `Definitions/` folder, loaded as `Definitions/mdpi` the way its template does;
+  - `aastex701`.
+- **Class names that differ from the profile id:** lipics is `lipics-v2021`, and aastex is `aastex701`.
+- **sn-jnl:** the research has no copy of `sn-jnl.cls`. If the probe says it isn't found, take it from the publisher's zip (named in Flouest's `Template/template-requirement/Springer_Nature_SN_Jnl.md`), add it to `files/` with its hash, and list it in `sn-jnl.json`.
+- **ctex classes** use `fontset=fandol`, so the fonts don't depend on the platform.
+- **moderncv** sets the classic style in its preamble, because it defines its sections only once a style is set.
 
-jlreq does not run in ZeroTeX-NG (its profile says `zerotex: 'no'`), so it can be skipped.
-
-**Add a setting** as one JSON file per setting in `testing-pipeline/settings/classes/`, named by its id:
-
-```json
-{
-  "id": "siamart",
-  "description": "SIAM's siamart.",
-  "class": "siamart",
-  "options": [],
-  "preamble": [],
-  "files": []
-}
-```
-
-- Add `"setups": ["A"]` for a class that is two columns already, or that has no two-column mode. Setup B adds `twocolumn` (`settings/setups.json`).
-- A class the engine's mirror doesn't have (MDPI's, for example) goes in `settings/classes/files/`. Copy its `.cls` (and any `.sty` or `.bst` it loads) from the template's folder under `Latex Related Research/Latex-lib-main/Source/<id>/`, then list each file as `{ "path": "mdpi.cls", "sha256": "<64 hex>" }`. The probe says when a class isn't found.
+Each setting is a guess until the probe has run. Fix any setting the probe shows to be wrong: its options, its files, or which setups apply to it.
 
 **Probe them:**
 
@@ -126,32 +120,28 @@ Each profile is written to `testing-pipeline/out/profiles/<setting>.<setup>.json
 
 On the old machine, 12 settings with 25 compiles each took 92 seconds.
 
-### 4b. Every node's handlers in the binding
+### 4b. Every node's handlers in the matrix
 
-`testing-pipeline/host-flouest/src/latexLib.ts` turns the library's handlers into plug-in ways for the matrix (`compat run --library`). Today its `PLUGGED` table has one entry, the theorem node (`containerBlock/mathElement`), and it uses each way's first preset only.
+`testing-pipeline/host-flouest/src/latexLib.ts` turns the library's handlers into plug-in ways for the matrix (`compat run --library`). Its `PLUGGED` table holds 28 of the 32 nodes: 97 of the 110 ways, with all 305 of their presets. Each preset is a style of its own. `testing-pipeline/ARCHITECTURE.md` section 10, step 6b, has the details.
 
-To test every node:
-- Add one `PLUGGED` entry per node, with the node's `HANDLERS` from `Latex-Lib/nodes/<node>/index.ts`. All 32 nodes have one.
-- Give each preset a variant of its own, not just the first.
+**What isn't plugged in, and why.** These 4 nodes, with 13 ways between them, are listed in `UNPLUGGED`, and `compat run --library` names them. Testing them needs a change in Flouest first.
+- **`code/code`:** Flouest's emitter always prints code in General's `listings` style, whatever style the node names.
+- **Inline maths:** always printed in `plain`.
+- **References:** always printed in `href`.
+- **Footnote anchors:** Flouest refuses a plug-in there.
 
-The family and kind each node plugs in as come from Flouest's registry (`JSON->Latex Compiler/src/Profile/Profile_General/*/index.ts`). Flouest's `checkPlugins` refuses a wrong one with a sentence saying why.
+**How presets are tested.** Making each preset a variant of its own gave 819,509 branches under one pair, because every parent's preset meets every child's. So the binding does what core's model says:
+- only a way's `compat` parameters split its variants;
+- its presets rotate over each variant's members;
+- every preset is still compiled at least once.
 
-| Library node | Flouest family | Kind |
-|---|---|---|
-| `containerBlock/<x>` (abstract, acknowledgement, appendix, blockMath, columns, customLatex, listing, mathElement, note, refContainer) | `containerBlock` | `<x>` |
-| `code/code` | `containerBlock` | `code` |
-| `table`, `table_row`, `table_cell`, `table_header` | `containerBlock` | the same name |
-| `paragraph/<x>` (heading, title, paragraph, lstParagraph, mathPara, refPara, customLatexPara) | `Paragraph` | `<x>` |
-| `atomicBlock/<x>` (image, pageBreak, tableContents) | `blockAtom` | `<x>` |
-| `cite/cite`, `hyperlink/hyperlink`, `codeEscape/codeEscape`, `customLatex/customLatex`, `inlineMath/inlineMath`, `ref/ref` | `inlineAtomic` | `cite`, `hyperlink`, … |
-| `footnoteAnchor/footnoteAnchor` | open question | Flouest refuses a plug-in at `inlineAtomic/footnoteAnchor` (only that handler's preamble is read; the emitter writes the footnote itself). The footnote ways need the `containerBlock/footnote` handler or another route, so read `JSON->Latex Compiler/src/Plugins/plugins.ts` first. |
+That gives 73,845 branches filed into 1,567 documents per pair, plus 372 solo branches. A solo branch shows only one preset of its variant, so a failure that another preset shows on its own counts against the nesting until `explain` narrows it down.
 
-After the change:
-- run `node host-flouest/typecheck.mjs`;
-- run `npm run compat -- run --classes article --setups A --library --plan-only`, to see how many branches and documents the plan makes before compiling any;
-- update `testing-pipeline/ARCHITECTURE.md` (section 3 and step 7 of section 10).
+**Bibliographies.** Flouest drops a reference list with no entries, and the test samples' lists are blank, so the only bibliography printed is the one the host adds to a document that cites. A library citation way prints only its command (`\citep`) and leaves the package to its reference list. So the two are paired by engine: `bib.natbib@cite` with `bib.natbib@containerBlock/refContainer`. Filing keeps engines in separate documents, and the document's bibliography is printed by that engine's reference-list way.
 
-The plan grows fast: every preset of every way of every node, nested to depth 2. If it is too big, go node by node, or use `--depth 1`.
+Way ids that several nodes share are named with their node in the matrix (`bib.natbib@cite`). Their compat tables are still written to the library's own folder.
+
+**Run size.** About 110,000 document compiles over the 70 pairs, plus the solo branches. That works out to roughly 40 hours at the old machine's rate, and less with more engines. Start with one class (step 4 below) to measure the rate here.
 
 ## 5. Run the tests
 
@@ -163,7 +153,7 @@ Run each long command in the background, from `testing-pipeline/`. Every compile
 | 2 | `npm run compat -- probe` (then `--setup B`) | Step 4a |
 | 3 | `npm run compat -- stability` | The acceptance test: adding a dummy way recompiles only the documents holding it |
 | 4 | `npm run compat -- run --classes article --setups A --library` | One class first, to see the compile rate |
-| 5 | `npm run compat -- run --library` | Every class setting and setup. On the old machine, General alone under 19 pairs took 36 min (1,938 cells), plus 14 min of solo branches. With every handler and preset it will be many times that. |
+| 5 | `npm run compat -- run --library` | Every class setting and setup: 1,567 documents under each of 70 pairs. On the old machine, General alone under 19 pairs took 36 min (1,938 cells), plus 14 min of solo branches, so plan on about 40 hours at that rate. It can be split up with `--classes`. |
 | 6 | `npm run compat -- explain --library --limit 300` | Failures grouped, the biggest groups explained, candidate rules with reproducers in the review queue, compat tables in `out/compat/`. On the old machine, 300 groups took 28 min. |
 | 7 | `npm run compat -- review` | List the candidates. Then `--show <id>` writes the reproducer as `.tex`; decide each with `--accept <id> --why "…"` or `--reject <id> --why "…"`. |
 
