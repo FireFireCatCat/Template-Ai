@@ -4,7 +4,7 @@ Template automation on Flouest. There are three parts:
 
 - **A handler library.** Every way of writing each Flouest node in LaTeX, each with a key that says what it achieves, what it conflicts with and where it can sit.
 - **A testing pipeline.** It compiles every legal nesting of those handlers under each document class on ZeroTeX-NG, judges the output and turns failures into rules.
-- **An AI layer, still a plan.** The AI only builds keys, and a deterministic matcher picks the handlers.
+- **An AI layer, started.** The AI only describes each part as a key in the library's words; a deterministic search over the library alone picks the handlers and the class. Its groundwork (A0) is built; the search and the AI step are not.
 
 This README is written for an AI agent (or a person) setting this up on a new machine to run the tests that were deferred: the class probe and the compatibility matrix over every node's handlers and every class profile. Read it top to bottom before running anything.
 
@@ -12,7 +12,7 @@ This README is written for an AI agent (or a person) setting this up on a new ma
 |---|---|---|
 | `Latex-Lib/` | The handler library: 110 handlers over Flouest's 32 nodes, 507 typed parameters, 347 presets, 46 class profiles, 68 package facts | `ARCHITECTURE.md` (this folder), sections 2.1, 5, 9 and 11 |
 | `testing-pipeline/` | The compatibility matrix: `core/` (no Flouest), `host-flouest/` (the Flouest binding and the commands) | `testing-pipeline/ARCHITECTURE.md`, sections 3, 7 and 8 |
-| `Ai/` | The AI layer's plan (not built) | `Ai/ARCHITECTURE.md` |
+| `Ai/` | The AI layer: the key format, its check against the library, and the research's answers as test data (`npm run gold`); the search and the model step come next | `Ai/ARCHITECTURE.md`, sections 3, 5 and 11 |
 | `Latex Related Research/Latex-lib-main/` | The study the library is built from: 1000 template zips (`Source/`), one analysis each (`Solution/`), the manifest and tools | its `_README.md` |
 
 ## Rules

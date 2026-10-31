@@ -1,6 +1,6 @@
 # The AI layer: architecture plan
 
-**Status: plan, 2026-10-29. Nothing here is built yet.**
+**Status: plan, 2026-10-29; A0 built 2026-10-31 (section 11). The rest is not built yet.**
 
 The AI layer turns a template someone feeds in (a zip of LaTeX sources) into a
 Flouest template: one `defineTemplate` call with the document class, a handler
@@ -10,7 +10,9 @@ the automation of `../ARCHITECTURE.md` section 8, built on the handler library
 
 One step is the model's: reading the template and writing down what each part
 of it is, in the library's own vocabulary. Every other step is code, and the
-same input always gives the same template.
+same input always gives the same template. The search that turns the model's
+words into handlers reads the library alone: the model's key on one side, the
+library's handler keys and class profiles on the other.
 
 ---
 
@@ -18,10 +20,10 @@ same input always gives the same template.
 
 It does:
 
-- read a template's files and the facts code can read from them (the class
-  line, the packages, the theorem declarations, the zip's own classes);
+- hand the model a template's files;
 - ask the model for one **target key** per node and one for the class: what the
-  template's look is, in the library's words;
+  template's look is, in the library's words, with the same fields a handler
+  key describes itself with;
 - check what the model wrote against the library, and ask again when it is
   wrong;
 - **match** each target key to the library's handlers by a scored search, then
@@ -32,8 +34,11 @@ It does:
 
 It does not:
 
-- let the model choose a handler. The model reports what it sees, including
-  the way it recognises (`thm.amsthm`); the matcher decides.
+- let the model choose a handler or a class. Its keys hold no way id and no
+  class id; it describes, and the search over the library decides.
+- read the template's meaning with code. There are no recognisers and no
+  facts table: what the template is comes only from the model's keys, and what
+  it becomes only from the library.
 - decide what works. That is the library's keys and the resolver
   (`Latex-Lib/engine/resolve.ts`), measured by the testing pipeline.
 - consider any engine but ZeroTeX-NG.
@@ -45,7 +50,7 @@ It does not:
 ## 2. The flow
 
 ```
- template zip ─▶ [intake] ─▶ files ─▶ [facts] ─▶ facts ──────┐
+ template zip ─▶ [intake] ─▶ files ─────────────────────────┐
                                                             ▼
                      library catalogue, vocabulary ─▶ [extract]   the model's one step
                                                             │      cached by input hash
@@ -69,44 +74,44 @@ It does not:
                                      [verify] ─▶ compile in ZeroTeX (testing pipeline), later fidelity
 ```
 
-1. **intake.** The zip's files, hashed: the main file (the one with
-   `\documentclass`), the `.tex`, `.cls`, `.sty`, `.bst` and images. Each
-   `.cls` and `.sty` is published or zip-local, by the research's rubric (W1:
-   on CTAN, or a publisher's official kit).
-2. **facts.** What code reads without judgement: `\documentclass[options]{x}`,
-   every `\usepackage[options]{x}` with its line, a zip-local class's
-   `\LoadClass` (its base), `\newtheorem` and `\theoremstyle`,
-   `\titleformat`, `\setlist`, `\newtcbtheorem`, `\lstset`, and so on: a table of
-   recognisers, one per family. Facts are evidence the model starts from, and a
-   check on what it writes: a way it names must load the packages the facts
-   show.
-3. **extract.** The model's one step (section 4).
-4. **check.** The library's own rules on the model's answer: every way, class,
-   package and parameter it names resolves; every feature is in the vocabulary;
-   every value fits its parameter's type. Problems go back to the model with
-   the answer, twice at most; what is still wrong is dropped and reported.
-5. **class.** The class key to a profile (section 6).
-6. **match.** Each target key to the handlers of its node (section 5).
-7. **select.** One handler per node, chosen together (section 6).
-8. **params.** The chosen handler's preset nearest the template, with the
+1. **intake.** The folder's files, hashed and sorted by kind (`.tex`, `.cls`,
+   `.sty`, `.bst`, images); the main file (an uncommented `\documentclass`, then
+   `\begin{document}`, a `.tex` sample before a `.dtx`, a usual name, the
+   shallowest, the first by name); the classes and styles it ships. This is
+   what the model is handed; intake reads no meaning.
+2. **extract.** The model's one step (section 4).
+3. **check.** The library's vocabulary on the model's answer: every node is
+   Flouest's; every feature is in the vocabulary; every parameter is one some
+   handler of the node has, and its value fits that parameter; every package
+   is a package name; every key has evidence. Problems go back to the model
+   with the answer, twice at most; what is still wrong is dropped and reported.
+4. **class.** The class key to a profile, searched in the library (section 6).
+5. **match.** Each target key to the handlers of its node, searched in the
+   library (section 5).
+6. **select.** One handler per node, chosen together (section 6).
+7. **params.** The chosen handler's preset nearest the template, with the
    template's own values over it where the handler has a parameter for them;
    a value with nowhere to go is reported as lost.
-9. **bundle.** The Flouest template and the report (section 7).
-10. **verify.** The bundle's starter document compiled in ZeroTeX-NG through
-    the testing pipeline; later, page images against the original. Needs the
-    compute that the matrix waits for.
+8. **bundle.** The Flouest template and the report (section 7).
+9. **verify.** The bundle's starter document compiled in ZeroTeX-NG through
+   the testing pipeline; later, page images against the original. Needs the
+   compute that the matrix waits for.
 
 ---
 
 ## 3. The target document
 
-The model writes this, and nothing else. Its words are the library's: the same
-node ids, way ids, class ids, feature words, parameter names, package loads and
-evidence (`Latex-Lib/schema/`), so the library's validator checks it.
+The model writes this, and nothing else (`src/model.ts`). Its words are the
+library's: the same node ids, feature words, parameter names, package loads and
+evidence (`Latex-Lib/schema/`), so `src/check.ts` holds it to the library's
+vocabulary. It holds no way id and no class id: which handler a key stands for,
+and which profile the class key stands for, is the search's answer.
 
 A target key is not a handler key. A handler key says everything a handler can
 do (its parameter schema, its rules, its parents). A target key says what one
-template's look is.
+template's look is, in the fields a handler key describes itself with (node,
+features, parameters, packages, description), so the search compares like with
+like.
 
 ```ts
 type TargetDocument = {
@@ -119,24 +124,20 @@ type TargetDocument = {
 
 type TargetClass = {
   /** The class as \documentclass names it, and its options. */
-  name: string;
+  name: string;                       // 'IEEEtran'
   options: string[];
-  /** The library's id for it, when the model recognises a published class. */
-  id: ClassId | null;
-  /** A zip-local class: its file, and the class it loads (from the facts). */
-  local?: { file: string; base: ClassId | null };
+  /** A class the template ships: its file, and the class it loads (\LoadClass), by name. */
+  local?: { file: string | null; loads: string | null };
   description: string;
   evidence: Evidence[];
 };
 
 type TargetKey = {
   node: NodeId;                       // 'containerBlock/mathElement'
-  /** The way the template uses, when the model recognises it; null when it does not. */
-  way: WayId | null;                  // 'thm.amsthm'
   features: Feature[];                // the closed vocabulary
-  /** Values for the way's parameters, by the library's names. */
+  /** Values by the library's parameter names, each one some handler of the node has. */
   params: { [name: string]: Json };
-  /** Packages the template loads for this part (the facts', with options). */
+  /** Packages the template loads for this part, with options. */
   packages: PackageLoad[];
   /** The look in words, for the embedding match. */
   description: string;
@@ -155,18 +156,18 @@ A node the template does not style has no target key: it keeps General's way.
 
 **What the model reads.** The template's main file and its zip-local classes
 and styles (within a token budget, the main file first, then what it inputs,
-then the zip's classes), the facts, and, as instructions:
+then the zip's classes), and, as instructions:
 
-- the research's rubric, cut to what a way is and what a parameter is (a
-  parameter never makes a new way);
-- the library's catalogue: each node, its ways with their descriptions and
-  parameter names (`node cli.ts ways`), and the feature vocabulary;
-- the class profiles' ids and names.
+- what a target key is: a description of one part's look, never a choice of
+  handler;
+- the library's vocabulary: each node, the parameter names its handlers have
+  with their types, and the feature words.
 
 **What it writes.** The target document, through a tool whose input schema is
-generated from the library: node ids, way ids and feature words as enums, each
-way's parameters with their types. The schema changes when the library does,
-and its hash is part of the cache key.
+generated from the library: node ids and feature words as enums, each node's
+parameter names with their types. There is no field for a way id or a class
+id. The schema changes when the library does, and its hash is part of the
+cache key.
 
 **How it is held to it.** The check (section 2, step 4). An answer is never
 partly trusted: what fails the check after two re-asks is dropped from the
@@ -178,7 +179,7 @@ the tests. Flouest's gateway calls Claude through the AI SDK; the layer can use
 the same client, but not the gateway's server, which is the app's.
 
 **Replay.** Each answer is saved under the hash of everything that made it:
-the files, the facts, the prompt's version, the schema's hash, the model's id.
+the files, the prompt's version, the schema's hash, the model's id.
 Running again reads the saved answer, so from the target document on, a run is
 a pure function of its inputs.
 
@@ -190,7 +191,8 @@ cached call.
 
 ## 5. The match
 
-For each target key, the handlers of its node, filtered, then scored.
+For each target key, the handlers of its node, filtered, then scored. The
+search reads the library and the key, nothing else.
 
 **Filters.** The handler runs in ZeroTeX-NG; it goes under the matched class on
 its own (`resolve` with that one choice: class rules, names the class defines,
@@ -202,23 +204,22 @@ said, not hidden.
 
 ```
 score(target, handler, preset) =
-    W_way   · [target.way = handler.id]
-  + W_feat  · weighted Jaccard(target.features, preset.features ∪ handler.features)
+    W_feat  · weighted Jaccard(target.features, preset.features ∪ handler.features)
   + W_param · preset similarity(target.params, preset.params)
   + W_pkg   · overlap(target.packages, handler.loads)
   + W_desc  · cosine(embed(target.description), embed(preset or handler description))
 ```
 
-- **The way.** When the model names a way and the handler is it, that term
-  outweighs all the others together: an exact way wins. The research found 74%
-  of templates rebuildable from known ways, so most nodes end here.
+There is no term for a way the model names, since it names none: the
+template's own way is found when its packages, features, parameters and
+description all point at the same handler.
+
 - **Features.** Weighted by rarity across the library (a rare feature such as
   `title-bar` says more than `numbered`).
 - **Presets.** Each preset of the handler is scored, and the best is kept:
   values compared by their type (an enum equal or not, a length as a number, a
   colour as a colour, a font command by the font it names).
-- **Packages.** The template's packages for this part against the handler's
-  loads.
+- **Packages.** The packages the key names against the handler's loads.
 - **Description.** An embedding of the target's description against each
   preset's and handler's (section 5.1). It decides between handlers the other
   terms leave close, and carries the approximate cases, a custom look with no
@@ -248,8 +249,8 @@ network, cost and drift, held off by the same cache.
 
 | Tier | When |
 |---|---|
-| `exact` | The class has a profile (46 today). |
-| `base` | A zip-local class whose base has a profile (its `\LoadClass`, from the facts): the base's profile, and what the local class adds is reported. |
+| `exact` | The class key's name is a profile's name (46 profiles today). |
+| `base` | A class the template ships, whose `local.loads` names a profiled class: that profile, and what the shipped class adds is reported. |
 | `ship-class` | A zip-local class shipped with the template (`DocumentClass.files`, with its hash), when its licence allows (`../ARCHITECTURE.md` section 8, the licence gate); its profile waits for the class probe. |
 | `nearest` | Otherwise the nearest profile by name and description, reported as approximate. |
 
@@ -310,14 +311,19 @@ The research is a ready answer key: 1,000 template sources
 Solution file with the class, and a component map whose rows name the way, the
 evidence lines and the parameters.
 
-1. **The matcher alone.** Each Solution file read into a target document by
-   code (its rows' ways, their parameters by name where they have one), then
-   matched and selected. This is the ceiling: how often the library holds the
-   template's way, how often the class lets it, how often a combination
-   resolves. `node cli.ts solutions` is its theorem-node part already.
-2. **The model's extraction.** The model on a template's source, against its
-   Solution file: class right or not; per node, the way found or not
-   (precision and recall), the parameters right or not.
+1. **The search alone.** Each Solution file read by code into a target
+   document, with the research's answer beside each key (`src/gold.ts`, `npm
+   run gold`): the way the row names, or the class profile. The search gets the
+   target document without the answers and is scored on finding them: how
+   often the library holds the template's way and the search finds it, how
+   often the class lets it, how often a combination resolves. A key is the
+   row's part and parameters in words, with every way id taken out, and the
+   packages the library knows that those words name; the Way column is the
+   answer and never reaches a key.
+2. **The model's extraction, end to end.** The model on a template's source,
+   then the search, against its Solution file: class profile right or not; per
+   node, the research's way found or not (precision and recall), the
+   parameters right or not.
 3. **End to end.** The bundle builds, checks and compiles; later, fidelity.
 
 Templates used to seed presets are kept out of the measure (a held-out set, as
@@ -335,9 +341,9 @@ Ai/
   ARCHITECTURE.md
   package.json
   src/
-    model.ts       the target document's types, in the library's vocabulary
-    intake.ts      a zip or folder to files: the main file, published or zip-local
-    facts.ts       the recognisers: class line, packages, theorem and heading declarations, \LoadClass
+    model.ts       the target document's types, in the library's vocabulary; no way or class id
+    intake.ts      a folder to its files: the main file, the classes and styles it ships
+    check.ts       the target document against the library's vocabulary
     llm.ts         the Model port, the Claude adapter, and a fake for the tests
     extract.ts     the instructions, the tool schema from the library, the check and re-asks, the cache
     embed.ts       the Embedder port, the pinned local model, the cache
@@ -347,8 +353,8 @@ Ai/
     params.ts      preset and values
     bundle.ts      the defineTemplate caller and its plug-ins
     report.ts      report.json and report.md
-    gold.ts        a Solution file to a target document (evaluation 1)
-    cli.ts         npm run build-template <zip> | evaluate matcher | evaluate extract
+    gold.ts        a Solution file to a target document, the answers beside its keys (evaluation 1)
+    cli.ts         gold (built); later build-template <zip> | evaluate search | evaluate extract
   test/
   out/             built templates and reports, not committed
 ```
@@ -357,8 +363,11 @@ Ai/
 
 ## 10. What stays fixed
 
-- **The model writes target keys, nothing else.** Code reads facts, checks,
-  matches, selects, sets parameters and writes the template.
+- **The model writes target keys, nothing else.** Code checks, searches,
+  selects, sets parameters and writes the template.
+- **The search reads the library alone.** The key on one side; handler keys,
+  presets and class profiles on the other. No way or class id comes from the
+  model.
 - **Same input, same template.** The model's answer is replayed from its cache;
   everything after it is a pure function of the target document, the library's
   version, the embedding model and the weights.
@@ -372,12 +381,21 @@ Ai/
 
 | Step | Builds | Done when |
 |---|---|---|
-| **A0** | The package; `model.ts`; `intake`, `facts`; `gold.ts` | Every Solution file reads into a valid target document; facts agree with the Solution files' class and package lines |
+| **A0** | The package; `model.ts`, `check.ts`; `intake`; `gold.ts` | Every Solution file reads into a valid target document, its answers beside it and none inside it. **Built.** |
 | **A1** | `score` (no embeddings), `match`, `select`, `params`, `report` | Evaluation 1 over the 924 Solution files, per node: way recovered, class allowed, combination resolved |
 | **A2** | `embed`, the library's embeddings, their staleness check | Evaluation 1 again, approximate cases scored by description |
 | **A3** | `llm`, `extract`: instructions, schema, check, re-asks, cache | Evaluation 2 on a sample of templates, then all; replay gives the same target documents |
 | **A4** | `bundle`: theorem node first (the library's pilot), then every node | A template folder and report for any template; `check_template` passes |
 | **A5** | Verify: compile the bundles in ZeroTeX-NG; later, fidelity | When the compute the matrix waits for is there |
+
+**A0 as built.** `npm run gold` reads all 924 Solution files into valid target
+documents (`out/gold/<id>.json`, not committed). Of the 14,175 node keys, the
+answer is a library way for 11,662 and a way the library lacks for 2,513;
+2,264 keys name a package the library knows. There are 12,082 document-level
+keys, waiting for document-level handlers. The class answer is a profile, the
+class's own or the one a shipped class builds on, for 599 templates; 97 ship
+their own class. `npm test` runs the synthetic tests (intake, check, gold); no
+test reads `Source/`.
 
 ---
 
