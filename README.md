@@ -4,7 +4,7 @@ Template automation on Flouest. There are three parts:
 
 - **A handler library.** Every way of writing each Flouest node in LaTeX, each with a key that says what it achieves, what it conflicts with and where it can sit.
 - **A testing pipeline.** It compiles every legal nesting of those handlers under each document class on ZeroTeX-NG, judges the output and turns failures into rules.
-- **An AI layer, started.** The AI only describes each part as a key in the library's words; a deterministic search over the library alone picks the handlers and the class. Its groundwork (A0) is built; the search and the AI step are not.
+- **An AI layer, half built.** The AI only describes each part as a key in the library's words; a deterministic search over the library alone picks the handlers and the class. The key format, its check and the search (with a local embedding model for descriptions) are built and scored on the research; the AI step itself and the template bundle are not.
 
 This README is written for an AI agent (or a person) setting this up on a new machine to run the tests that were deferred: the class probe and the compatibility matrix over every node's handlers and every class profile. Read it top to bottom before running anything.
 
@@ -12,7 +12,7 @@ This README is written for an AI agent (or a person) setting this up on a new ma
 |---|---|---|
 | `Latex-Lib/` | The handler library: 110 handlers over Flouest's 32 nodes, 507 typed parameters, 347 presets, 46 class profiles, 68 package facts | `ARCHITECTURE.md` (this folder), sections 2.1, 5, 9 and 11 |
 | `testing-pipeline/` | The compatibility matrix: `core/` (no Flouest), `host-flouest/` (the Flouest binding and the commands) | `testing-pipeline/ARCHITECTURE.md`, sections 3, 7 and 8 |
-| `Ai/` | The AI layer: the key format, its check against the library, and the research's answers as test data (`npm run gold`); the search and the model step come next | `Ai/ARCHITECTURE.md`, sections 3, 5 and 11 |
+| `Ai/` | The AI layer: the key format and its check (`src/extract/`), the search over the library with embeddings (`src/search/`), and its evaluation on the research (`src/evaluate/`); the model step and the bundle come next | `Ai/ARCHITECTURE.md`, sections 3, 5, 6 and 11 |
 | `Latex Related Research/Latex-lib-main/` | The study the library is built from: 1000 template zips (`Source/`), one analysis each (`Solution/`), the manifest and tools | its `_README.md` |
 
 ## Rules
@@ -67,18 +67,28 @@ cd Latex-Lib && npm ci
 cd testing-pipeline && npm ci
 ```
 
+```bash
+cd Ai && npm ci
+```
+
+`Ai` brings about 500 MB of packages (onnxruntime, for the embedding model). Its first `npm run embed` or `npm run evaluate` downloads the model itself, about 23 MB, from huggingface.co into `Ai/.cache/models/`. The library's vectors are committed (`Latex-Lib/embeddings.generated.json`), so `Latex-Lib`'s `verify` needs no model.
+
 ## 3. Check everything is in place (nothing compiles)
 
-Run these from the folder each one names, and compare with the results expected here. Each one passed on the old machine on 2026-10-30.
+Run these from the folder each one names, and compare with the results expected here. Each one passed on the old machine on 2026-10-30, the `Ai` rows on 2026-10-31.
 
 | Folder | Command | Expected |
 |---|---|---|
 | `Latex-Lib` | `npm test` | 45 tests pass (`test/snapshots/ways.json` holds the LaTeX every preset prints) |
 | `Latex-Lib` | `npm run check` | no errors |
-| `Latex-Lib` | `npm run verify` | `library: 110 handlers, 46 class profiles, 68 package facts`, then `verify: ok` |
+| `Latex-Lib` | `npm run verify` | `library: 110 handlers, 46 class profiles, 68 package facts`, then `verify: ok` (it also finds `embeddings.generated.json` missing or stale; `npm run embed` in `Ai` rewrites it) |
 | `Latex-Lib` | `node cli.ts solutions` | 210 checks: 118 picked as they are, 8 renamed, 3 by fallback, 80 under a class with no profile, 1 under jlreq |
 | `Latex-Lib` | `node cli.ts ways` | every node with its ways |
 | `testing-pipeline` | `npm test` | 94 tests pass (core alone, with fakes) |
+| `Ai` | `npm test` | 31 tests pass (no test reads `Source/` or needs the model) |
+| `Ai` | `npm run check` | no errors |
+| `Ai` | `npm run gold` | `924/924 (100%) Solution files read into a valid target document` |
+| `Ai` | `npm run evaluate` | the search on every gold target: top 1 58.0%, top 5 98.9%, chosen together 63.7% (a minute the first time, while it embeds) |
 | `testing-pipeline` | `node host-flouest/typecheck.mjs` | exits 0 |
 | `testing-pipeline` | `npm run compat -- run --library --plan-only` | `under 70 class setting and setup pair(s)`, the four nodes not plugged in (4b), `plan 73,845 branches`, `same tree yes`; compiles nothing |
 

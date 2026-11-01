@@ -11,7 +11,7 @@ import { loadLibrary } from '../../Latex-Lib/library.ts';
 import { readNesting } from '../../Latex-Lib/nesting.ts';
 import type { Feature } from '../../Latex-Lib/schema/features.ts';
 
-import { checkTarget } from '../src/check.ts';
+import { checkTarget } from '../src/extract/check.ts';
 import type { TargetDocument, TargetKey } from '../src/model.ts';
 
 const lib = join(import.meta.dirname, '..', '..', 'Latex-Lib');

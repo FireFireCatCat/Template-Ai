@@ -10,8 +10,8 @@ import { flouestRoot } from '../../Latex-Lib/flouest.ts';
 import { loadLibrary } from '../../Latex-Lib/library.ts';
 import { readNesting } from '../../Latex-Lib/nesting.ts';
 
-import { checkTarget } from '../src/check.ts';
-import { goldContext, readGold, readSolution, targetOf } from '../src/gold.ts';
+import { checkTarget } from '../src/extract/check.ts';
+import { goldContext, readGold, readSolution, targetOf } from '../src/evaluate/gold.ts';
 import { folder } from './fixtures.ts';
 
 const lib = join(import.meta.dirname, '..', '..', 'Latex-Lib');

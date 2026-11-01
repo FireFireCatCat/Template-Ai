@@ -6,14 +6,14 @@
  * a package name, every key carries evidence. Each problem is one sentence
  * naming where it is; the model gets them back with its answer.
  */
-import { EVIDENCE_KINDS } from '../../Latex-Lib/schema/evidence.ts';
-import { FEATURES } from '../../Latex-Lib/schema/features.ts';
-import { DOC_NODE, PACKAGE_ID } from '../../Latex-Lib/schema/ids.ts';
-import { paramProblem } from '../../Latex-Lib/schema/params.ts';
-import type { Library } from '../../Latex-Lib/schema/validate.ts';
-import type { Nesting } from '../../Latex-Lib/nesting.ts';
+import { EVIDENCE_KINDS } from '../../../Latex-Lib/schema/evidence.ts';
+import { FEATURES } from '../../../Latex-Lib/schema/features.ts';
+import { DOC_NODE, PACKAGE_ID } from '../../../Latex-Lib/schema/ids.ts';
+import { paramProblem } from '../../../Latex-Lib/schema/params.ts';
+import type { Library } from '../../../Latex-Lib/schema/validate.ts';
+import type { Nesting } from '../../../Latex-Lib/nesting.ts';
 
-import { CONFIDENCE, TIERS, type TargetDocument, type TargetKey } from './model.ts';
+import { CONFIDENCE, TIERS, type TargetDocument, type TargetKey } from '../model.ts';
 
 export const checkTarget = (doc: TargetDocument, library: Library, nesting: Nesting): string[] => {
   const problems: string[] = [];

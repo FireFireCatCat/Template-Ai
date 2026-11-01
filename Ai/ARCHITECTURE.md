@@ -1,6 +1,6 @@
 # The AI layer: architecture plan
 
-**Status: plan, 2026-10-29; A0 built 2026-10-31 (section 11). The rest is not built yet.**
+**Status: plan, 2026-10-29; A0, A1 and A2 built 2026-10-31 (section 11): the key format, its check, and the search over the library with embeddings. The model's step (A3) and the bundle (A4) are not built yet.**
 
 The AI layer turns a template someone feeds in (a zip of LaTeX sources) into a
 Flouest template: one `defineTemplate` call with the document class, a handler
@@ -85,14 +85,17 @@ It does not:
    handler of the node has, and its value fits that parameter; every package
    is a package name; every key has evidence. Problems go back to the model
    with the answer, twice at most; what is still wrong is dropped and reported.
-4. **class.** The class key to a profile, searched in the library (section 6).
+4. **class.** The class key to a profile, searched in the library (section 6;
+   `search/classes.ts`).
 5. **match.** Each target key to the handlers of its node, searched in the
-   library (section 5).
-6. **select.** One handler per node, chosen together (section 6).
-7. **params.** The chosen handler's preset nearest the template, with the
-   template's own values over it where the handler has a parameter for them;
-   a value with nowhere to go is reported as lost.
-8. **bundle.** The Flouest template and the report (section 7).
+   library (section 5; `search/nodes.ts`, `search/score.ts`).
+6. **select.** One handler per node, chosen together (section 6;
+   `search/select.ts`).
+7. **params.** The chosen handler's preset, with the template's own values
+   over it where the handler has a parameter for them and the value fits; a
+   value with nowhere to go is reported as lost (`search/params.ts`).
+8. **bundle.** The Flouest template and the report (section 7;
+   `search/report.ts` is built, the bundle is not).
 9. **verify.** The bundle's starter document compiled in ZeroTeX-NG through
    the testing pipeline; later, page images against the original. Needs the
    compute that the matrix waits for.
@@ -101,9 +104,9 @@ It does not:
 
 ## 3. The target document
 
-The model writes this, and nothing else (`src/model.ts`). Its words are the
+The model writes this, and nothing else (`model.ts`). Its words are the
 library's: the same node ids, feature words, parameter names, package loads and
-evidence (`Latex-Lib/schema/`), so `src/check.ts` holds it to the library's
+evidence (`Latex-Lib/schema/`), so `extract/check.ts` holds it to the library's
 vocabulary. It holds no way id and no class id: which handler a key stands for,
 and which profile the class key stands for, is the search's answer.
 
@@ -194,9 +197,14 @@ cached call.
 For each target key, the handlers of its node, filtered, then scored. The
 search reads the library and the key, nothing else.
 
-**Filters.** The handler runs in ZeroTeX-NG; it goes under the matched class on
+**Filters.** The handler runs in ZeroTeX-NG; with one of its presets (renamed
+when the class already defines its names) it goes under the matched class on
 its own (`resolve` with that one choice: class rules, names the class defines,
-forbidden packages, what it requires). A handler filtered out is listed in the
+forbidden packages). What another node's choice could supply does not refuse
+it (the citations need natbib, which the bibliography loads); that waits for
+select. Without a class profile, a name only a class defines (`\maketitle`,
+`counter:section`) refuses nothing, since what the class defines is unknown
+(`search/classes.ts`, `refusing`). A handler filtered out is listed in the
 report with the reason, so "the template's way is refused by its class" is
 said, not hidden.
 
@@ -214,32 +222,59 @@ There is no term for a way the model names, since it names none: the
 template's own way is found when its packages, features, parameters and
 description all point at the same handler.
 
-- **Features.** Weighted by rarity across the library (a rare feature such as
-  `title-bar` says more than `numbered`).
+Each term is between 0 and 1. A term the key says nothing about (no
+features, no parameters) is absent, not 0, so it neither helps nor hurts any
+handler. Scores are rounded to six places, so a last-digit difference between
+machines never reorders candidates.
+
+- **Features.** Weighted by rarity across the library's handlers and presets
+  (log(1 + N / df)): a rare feature such as `title-bar` says more than
+  `numbered`.
 - **Presets.** Each preset of the handler is scored, and the best is kept:
-  values compared by their type (an enum equal or not, a length as a number, a
-  colour as a colour, a font command by the font it names).
-- **Packages.** The packages the key names against the handler's loads.
-- **Description.** An embedding of the target's description against each
-  preset's and handler's (section 5.1). It decides between handlers the other
-  terms leave close, and carries the approximate cases, a custom look with no
-  named package.
+  values compared by their type (an enum or a boolean equal or not, a number
+  or a length in points by their difference, a colour as RGB, xcolor mixes
+  such as `blue!20` included, words by the words they share). A parameter the
+  handler lacks scores 0.
+- **Packages.** The share of the key's packages the handler loads with that
+  preset.
+- **Description.** The best cosine of the key's description against the
+  preset's and the handler's (section 5.1). It decides between handlers the
+  other terms leave close, and carries the approximate cases, a custom look
+  with no named package.
 
-The weights are set by hand first, then fitted on the evaluation (section 8);
-either way they are data, versioned, and part of every report.
+The weights are data, versioned, and part of every report (`search/weights.ts`).
+They are set by hand today (`hand-1`: features 1, parameters 1, packages 2,
+description 2), to be fitted on a held-out part of the evaluation (section 8).
 
-The match keeps the top k (about 5) handler and preset pairs per node.
+Every handler and preset that goes is ranked; the best preset of each of the
+top 5 handlers goes on to select.
 
 ### 5.1 Embeddings
 
-A local embedding model, pinned to one version, so a text always gives the
-same vector, offline and at no cost per run. The library's side is embedded
-ahead of time: every handler's and preset's description, stored beside the
-keys (`Latex-Lib/embeddings.generated.json`), each vector under the hash of its
-text and the model's id, and found stale by `npm run verify` as the compat
-tables are. The target's descriptions are embedded at match time and cached
-the same way. A hosted model (Voyage, say) is the alternative, at the price of
-network, cost and drift, held off by the same cache.
+A local embedding model, pinned, so a text always gives the same vector,
+offline and at no cost per run (`search/embed.ts`): all-MiniLM-L6-v2 as ONNX
+(`Xenova/all-MiniLM-L6-v2`), its 8-bit quantisation, at revision
+`751bff37182d3f1213fa05d7196b954e230abad9`, run through
+`@huggingface/transformers` 4.3.1 with mean pooling and normalised vectors (384
+dimensions). The model is downloaded once (about 23 MB) into `.cache/models/`.
+The package and its onnxruntime bring `node_modules` to about 500 MB.
+
+Texts go through the model one at a time. The 8-bit model scales each batch by
+its own largest value, so in a batch a text's vector depends on the texts
+beside it (measured: up to 0.03 per component). One at a time, two runs give
+identical vectors, and two evaluations from empty caches give identical
+results.
+
+The library's side is embedded ahead of time by `npm run embed`: 503 texts,
+every handler's description, every preset's, and every class profile's name
+with its own commands, stored beside the keys
+(`Latex-Lib/embeddings.generated.json`; `Latex-Lib/embeddings.ts` says which
+texts and how they are stored), each vector under the hash of its text and the
+model's id, and found missing or stale by the library's `npm run verify` as
+the compat tables are. A key's description is embedded before the search runs
+and cached by the hash of its text (`.cache/vectors/`), so the search itself
+stays synchronous: the first evaluation embeds about 10,000 gold descriptions
+in a minute, and later ones take about five seconds.
 
 ---
 
@@ -251,26 +286,34 @@ network, cost and drift, held off by the same cache.
 |---|---|
 | `exact` | The class key's name is a profile's name (46 profiles today). |
 | `base` | A class the template ships, whose `local.loads` names a profiled class: that profile, and what the shipped class adds is reported. |
-| `ship-class` | A zip-local class shipped with the template (`DocumentClass.files`, with its hash), when its licence allows (`../ARCHITECTURE.md` section 8, the licence gate); its profile waits for the class probe. |
-| `nearest` | Otherwise the nearest profile by name and description, reported as approximate. |
+| `ship-class` | A class the template ships, loading nothing profiled. The resolver works under its own name, so no class rule applies; shipping its files (`DocumentClass.files`, when its licence allows, `../ARCHITECTURE.md` section 8) is the bundle's (A4), and its profile waits for the class probe. |
+| `nearest` | The longest profile name inside the key's, of four letters or more (`ltjsarticle` holds `article`); else the nearest name by letter trigrams (0.6 or more: `scartcl` to `scrartcl`); else the nearest description (cosine 0.6 or more). Reported as approximate. |
+| `none` | No profile. As for `ship-class`, no class rule applies. |
 
 A class that does not run in ZeroTeX-NG stops the run, with the reason.
 
 **Then the handlers, together.** Choices interact: two theorem engines,
 biblatex under a class that loads natbib, two handlers claiming the section
-format. So select searches the combinations of each node's top k, with the
-resolver on the whole set:
+format, citations that need the package the bibliography loads. So select
+searches the combinations of each node's options, its top 5 handlers and,
+last, General's way (no handler, score 0), with the resolver on the set:
 
-- nodes in order of how constrained they are (fewest candidates, most claims
-  and conflicts first);
+- nodes in order of how constrained they are (fewest options first), each
+  node's best option first;
 - depth first, keeping the best total score found, and cutting a branch whose
-  best possible total cannot beat it (branch and bound; the constraints are
-  sparse, so this stays small);
+  best possible total cannot beat it (branch and bound);
+- a part-made set is cut for what no node still to choose could mend (a class
+  rule, a conflict, a claim owned twice, a package or claim none of the
+  remaining options supplies); a requirement a later node could supply waits;
+- the first complete set tried takes every node's best option, so when the
+  best options go together the search ends there; it stops at 20,000 sets
+  judged, with the best set found, and the report says so;
 - ties broken by way id, so the result never depends on order of discovery.
 
-When no combination resolves, the node of lowest confidence takes its handler's
-fallback, then the class's own (class-native), and the report says so. If
-still nothing resolves, the run stops with the resolver's sentences.
+A node none of whose handlers go with the rest keeps General's way. A
+handler's fallback and the class-native ways are handlers of the node, ranked
+like any other. For a node that did not get its best option, the report says
+why that option did not go with the rest.
 
 ---
 
@@ -312,13 +355,15 @@ Solution file with the class, and a component map whose rows name the way, the
 evidence lines and the parameters.
 
 1. **The search alone.** Each Solution file read by code into a target
-   document, with the research's answer beside each key (`src/gold.ts`, `npm
-   run gold`): the way the row names, or the class profile. The search gets the
-   target document without the answers and is scored on finding them: how
-   often the library holds the template's way and the search finds it, how
-   often the class lets it, how often a combination resolves. A key is the
-   row's part and parameters in words, with every way id taken out, and the
-   packages the library knows that those words name; the Way column is the
+   document, with the research's answer beside each key (`evaluate/gold.ts`,
+   `npm run gold`): the way the row names, or the class profile. The search
+   gets the target document without the answers and is scored on finding them
+   (`evaluate/tally.ts`, `npm run evaluate`, written to `out/evaluate/`): the
+   class profile found or not; for each key, where the research's handler
+   ranks among those the class allows, or that the class refused it; for each
+   node, whether the handler chosen together is one the research names. A key
+   is the row's part and parameters in words, with every way id taken out, and
+   the packages the library knows that those words name; the Way column is the
    answer and never reaches a key.
 2. **The model's extraction, end to end.** The model on a template's source,
    then the search, against its Solution file: class profile right or not; per
@@ -326,8 +371,11 @@ evidence lines and the parameters.
    parameters right or not.
 3. **End to end.** The bundle builds, checks and compiles; later, fidelity.
 
-Templates used to seed presets are kept out of the measure (a held-out set, as
-`../ARCHITECTURE.md` M4 asks).
+Templates used to seed presets are to be kept out of the measure (a held-out
+set, as `../ARCHITECTURE.md` M4 asks). That split is not drawn yet: the presets
+were written from these same Solution files, so the description term is
+measured on templates whose words helped write the presets it matches, and the
+numbers in section 11 lean high for that reason.
 
 ---
 
@@ -336,27 +384,38 @@ Templates used to seed presets are kept out of the measure (a held-out set, as
 `Ai/`, a package of its own beside `Latex-Lib/` and `testing-pipeline/`,
 depending on the library and on Flouest only through the bundle's types.
 
+`src/` has three folders, one for each kind of work: what the model does
+(`extract/`), the search over the library (`search/`), and the evaluation
+(`evaluate/`).
+
 ```
 Ai/
   ARCHITECTURE.md
   package.json
   src/
-    model.ts       the target document's types, in the library's vocabulary; no way or class id
-    intake.ts      a folder to its files: the main file, the classes and styles it ships
-    check.ts       the target document against the library's vocabulary
-    llm.ts         the Model port, the Claude adapter, and a fake for the tests
-    extract.ts     the instructions, the tool schema from the library, the check and re-asks, the cache
-    embed.ts       the Embedder port, the pinned local model, the cache
-    score.ts       the score terms
-    match.ts       filters and top k per node; the class tiers
-    select.ts      the joint search over the resolver
-    params.ts      preset and values
-    bundle.ts      the defineTemplate caller and its plug-ins
-    report.ts      report.json and report.md
-    gold.ts        a Solution file to a target document, the answers beside its keys (evaluation 1)
-    cli.ts         gold (built); later build-template <zip> | evaluate search | evaluate extract
+    model.ts              the target document's types, in the library's vocabulary; no way or class id
+    pipeline.ts           the search, stage after stage: check, class, nodes, select, params, report
+    cli.ts                gold | embed | evaluate [--no-embeddings]; later build-template <folder> | evaluate extract
+    extract/              the model's stage: the template in, keys out, held to the library
+      intake.ts           a folder to its files: the main file, the classes and styles it ships
+      check.ts            the target document against the library's vocabulary
+                          (A3 adds the Model port, the Claude adapter, the instructions, the tool schema, re-asks, the cache)
+    search/               everything after the keys, deterministic, reading the library alone
+      classes.ts          the class key to a profile, by tier; which resolver sentences refuse
+      nodes.ts            the filter under the class; every key's handlers and presets, ranked
+      score.ts            the score terms
+      weights.ts          the weights, versioned
+      embed.ts            the pinned local model, the vector cache, the description term
+      select.ts           one handler per node, chosen together over the resolver
+      params.ts           each chosen preset with the template's values; what is lost
+      report.ts           report.json and report.md
+                          (A4 adds the bundle: the defineTemplate caller and its plug-ins)
+    evaluate/
+      gold.ts             a Solution file to a target document, the answers beside its keys
+      tally.ts            the search scored against gold (evaluation 1)
   test/
-  out/             built templates and reports, not committed
+  out/                    gold, evaluation summaries and reports; not committed
+  .cache/                 the model and the key vectors; not committed
 ```
 
 ---
@@ -382,8 +441,8 @@ Ai/
 | Step | Builds | Done when |
 |---|---|---|
 | **A0** | The package; `model.ts`, `check.ts`; `intake`; `gold.ts` | Every Solution file reads into a valid target document, its answers beside it and none inside it. **Built.** |
-| **A1** | `score` (no embeddings), `match`, `select`, `params`, `report` | Evaluation 1 over the 924 Solution files, per node: way recovered, class allowed, combination resolved |
-| **A2** | `embed`, the library's embeddings, their staleness check | Evaluation 1 again, approximate cases scored by description |
+| **A1** | `score` (no embeddings), `match`, `select`, `params`, `report` | Evaluation 1 over the 924 Solution files, per node: way recovered, class allowed, combination resolved. **Built.** |
+| **A2** | `embed`, the library's embeddings, their staleness check | Evaluation 1 again, approximate cases scored by description. **Built.** |
 | **A3** | `llm`, `extract`: instructions, schema, check, re-asks, cache | Evaluation 2 on a sample of templates, then all; replay gives the same target documents |
 | **A4** | `bundle`: theorem node first (the library's pilot), then every node | A template folder and report for any template; `check_template` passes |
 | **A5** | Verify: compile the bundles in ZeroTeX-NG; later, fidelity | When the compute the matrix waits for is there |
@@ -394,15 +453,50 @@ answer is a library way for 11,662 and a way the library lacks for 2,513;
 2,264 keys name a package the library knows. There are 12,082 document-level
 keys, waiting for document-level handlers. The class answer is a profile, the
 class's own or the one a shipped class builds on, for 599 templates; 97 ship
-their own class. `npm test` runs the synthetic tests (intake, check, gold); no
+their own class.
+
+**A1 and A2 as built.** `npm run evaluate` runs the search on all 924 gold
+target documents (`out/evaluate/summary.md`, and a report per template in
+`out/evaluate/reports/`); `--no-embeddings` runs it as A1.
+
+| | Top 1 | Top 3 | Top 5 | Chosen together |
+|---|---|---|---|---|
+| Chance | 28.8% | | | |
+| A1, no embeddings | 29.4% | 76.3% | 90.4% | 38.3% |
+| A2, with embeddings | 58.0% | 91.7% | 98.9% | 63.7% |
+
+- **Keys.** 11,413 node keys are scored: their answer is a library way the
+  class allows. A1 is chance for most of them, since a gold key carries only
+  the row's words and, for 1,721 keys, a package; for those 1,721 its top 1 is
+  47.8%. With the description term every key has a signal.
+- **Weakest nodes** in A2, by top 1: abstracts 11.6%, listings 32.4%, headings
+  36.8%, block maths 42.7% and citations 42.7%. All but citations have the
+  research's handler in their top 3 at least 80% of the time.
+- **Choosing together.** The handler chosen is one the research names for
+  5,509 of 8,644 nodes; 119 took another handler so the set resolves, 58 kept
+  General's way, and one template's choice stopped at the search budget.
+- **Class.** The profile found is the research's for 598 of 599 templates
+  whose answer is a profile. Three templates stop at a class that does not run
+  in ZeroTeX-NG.
+- **Refused by the class.** For 249 keys the class refuses the research's
+  handler: it does not run in ZeroTeX-NG, the class is jlreq, letter,
+  moderncv and tikzposter lack floats and sections, beamer loads xcolor itself.
+- **Caveat.** The presets were written from these Solution files (section 8),
+  and gold keys are the research's words, not the model's; A3's evaluation is
+  the real measure.
+
+`npm test` runs the synthetic tests (intake, check, gold, score, class search
+and filter, select, embeddings without the model, the search end to end); no
 test reads `Source/`.
 
 ---
 
 ## 12. Open decisions
 
-- **The embedding model.** A small local sentence model pinned by version, or
-  a hosted one with a cache.
+- **The embedding model.** Decided: all-MiniLM-L6-v2, local and pinned
+  (section 5.1). A larger model is a version change and a new evaluation.
+- **Fitting the weights.** `hand-1` today; to be fitted on a held-out part of
+  gold once the split is drawn (section 8).
 - **One model call or several per template.** One with a schema to start;
   split by part for large templates.
 - **Document-level ways.** The model reads them now; the library has none yet

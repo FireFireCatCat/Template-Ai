@@ -21,12 +21,12 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 
-import type { Evidence } from '../../Latex-Lib/schema/evidence.ts';
-import { DOC_NODE, type ClassId, type NodeId, type WayId } from '../../Latex-Lib/schema/ids.ts';
-import type { Library } from '../../Latex-Lib/schema/validate.ts';
-import { RESEARCH } from '../../Latex-Lib/seed.ts';
+import type { Evidence } from '../../../Latex-Lib/schema/evidence.ts';
+import { DOC_NODE, type ClassId, type NodeId, type WayId } from '../../../Latex-Lib/schema/ids.ts';
+import type { Library } from '../../../Latex-Lib/schema/validate.ts';
+import { RESEARCH } from '../../../Latex-Lib/seed.ts';
 
-import type { TargetClass, TargetDocument, TargetKey } from './model.ts';
+import type { TargetClass, TargetDocument, TargetKey } from '../model.ts';
 
 /** One component-map row: its line, its part, the ways in its Way column (a proposal's `NEW:` dropped), its parameters. */
 export type Row = { readonly line: number; readonly component: string; readonly ways: readonly string[]; readonly parameters: string };

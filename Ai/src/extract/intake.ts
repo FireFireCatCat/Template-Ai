@@ -15,7 +15,7 @@ import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, extname, join, relative } from 'node:path';
 
-import type { SourceFile } from './model.ts';
+import type { SourceFile } from '../model.ts';
 
 export type FileKind = 'tex' | 'dtx' | 'cls' | 'sty' | 'bst' | 'bib' | 'image' | 'other';
 

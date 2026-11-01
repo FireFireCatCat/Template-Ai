@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { test } from 'node:test';
 
-import { readSource, uncommented } from '../src/intake.ts';
+import { readSource, uncommented } from '../src/extract/intake.ts';
 import { folder } from './fixtures.ts';
 
 const DOC = '\\documentclass{article}\n\\begin{document}\nx\n\\end{document}\n';
